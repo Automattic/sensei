@@ -14,7 +14,18 @@ import { useSelect } from '@wordpress/data';
  */
 import { hexToRGB } from '../shared/helpers/colors';
 
-const { getComputedStyle } = window;
+/**
+ * Resolve the document to probe against.
+ *
+ * When the editor is iframed, the theme's styles live inside the canvas iframe
+ * document, so probe there. Fall back to the outer document when there is no
+ * iframe.
+ *
+ * @return {Document} The document to probe against.
+ */
+const getProbeDocument = () =>
+	document.querySelector( 'iframe[name="editor-canvas"]' )?.contentDocument ||
+	document;
 
 /**
  * Get color object by probe.
@@ -51,43 +62,51 @@ export const useColorsByProbe = () => {
 };
 
 /**
- * Get probe styles (memoized).
+ * Get probe styles (memoized per document).
  *
- * It adds elements to the DOM as a probe, and get the computed styles
- * the default expected properties.
+ * It adds probe elements to the DOM and reads their computed styles to
+ * determine the theme's default colors. The result is memoized by the probed
+ * document so that a call made before the editor canvas iframe exists does not
+ * cache the outer document's values for the iframed document.
+ *
+ * @param {Document} probeDocument The document to probe against.
  *
  * @return {Object} Probe default styles.
  */
-export const getProbeStyles = memoize( () => {
-	// Create temporary probe elements.
-	const editorStylesWrapperDiv = document.createElement( 'div' );
-	editorStylesWrapperDiv.className =
-		'editor-styles-wrapper sensei-probe-element';
+export const getProbeStyles = memoize(
+	( probeDocument = getProbeDocument() ) => {
+		// Create temporary probe elements.
+		const editorStylesWrapperDiv = probeDocument.createElement( 'div' );
+		editorStylesWrapperDiv.className =
+			'editor-styles-wrapper sensei-probe-element';
 
-	const blockButtonDiv = document.createElement( 'div' );
-	blockButtonDiv.className = 'wp-block-button';
+		const blockButtonDiv = probeDocument.createElement( 'div' );
+		blockButtonDiv.className = 'wp-block-button';
 
-	const buttonLinkDiv = document.createElement( 'div' );
-	buttonLinkDiv.className = 'wp-block-button__link';
-	buttonLinkDiv.textContent = 'Probe';
+		const buttonLinkDiv = probeDocument.createElement( 'div' );
+		buttonLinkDiv.className = 'wp-block-button__link';
+		buttonLinkDiv.textContent = 'Probe';
 
-	// Set probe position outside the screen to be hidden.
-	editorStylesWrapperDiv.style.position = 'fixed';
-	editorStylesWrapperDiv.style.top = '-100vh';
+		// Set probe position outside the screen to be hidden.
+		editorStylesWrapperDiv.style.position = 'fixed';
+		editorStylesWrapperDiv.style.top = '-100vh';
 
-	// Add probe to the screen.
-	blockButtonDiv.appendChild( buttonLinkDiv );
-	editorStylesWrapperDiv.appendChild( blockButtonDiv );
-	document.body.appendChild( editorStylesWrapperDiv );
+		// Add probe to the screen.
+		blockButtonDiv.appendChild( buttonLinkDiv );
+		editorStylesWrapperDiv.appendChild( blockButtonDiv );
+		probeDocument.body.appendChild( editorStylesWrapperDiv );
 
-	// Save styles.
-	const styles = {
-		primaryColor: getComputedStyle( buttonLinkDiv ).backgroundColor,
-		primaryContrastColor: getComputedStyle( buttonLinkDiv ).color,
-	};
+		// Save styles, reading through the probed document's own window.
+		const { getComputedStyle } = probeDocument.defaultView || window;
+		const styles = {
+			primaryColor: getComputedStyle( buttonLinkDiv ).backgroundColor,
+			primaryContrastColor: getComputedStyle( buttonLinkDiv ).color,
+		};
 
-	// Remove probe.
-	document.body.removeChild( editorStylesWrapperDiv );
+		// Remove probe.
+		probeDocument.body.removeChild( editorStylesWrapperDiv );
 
-	return styles;
-} );
+		return styles;
+	},
+	( probeDocument = getProbeDocument() ) => probeDocument
+);

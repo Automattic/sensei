@@ -639,7 +639,7 @@ class Sensei_Quiz {
 
 		// Redirect to the target page.
 		wp_safe_redirect(
-			add_query_arg( [ 'bypass_server_cache' => uniqid() ], sanitize_text_field( wp_unslash( $_POST['quiz_target_page'] ) ) )
+			add_query_arg( [ 'bypass_server_cache' => uniqid() ], sensei_request_text( $_POST['quiz_target_page'] ) )
 		);
 		exit;
 
@@ -800,7 +800,7 @@ class Sensei_Quiz {
 	/**
 	 * Build the cache key for a user's quiz data on a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @param string $prefix    Cache prefix.
 	 * @param int    $user_id   User ID.
@@ -814,7 +814,7 @@ class Sensei_Quiz {
 		 * The cached answers, grades, and feedback build their keys through
 		 * this filter, on reads, writes, and invalidations.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.3
 		 *
 		 * @hook sensei_quiz_cache_key_lesson_id
 		 *
@@ -1560,7 +1560,7 @@ class Sensei_Quiz {
 
 		$lesson = get_post( $lesson_id );
 
-		if ( is_singular( 'quiz' ) && ! $has_questions && $_SERVER['REQUEST_URI'] !== "/lesson/$lesson->post_name" ) {
+		if ( is_singular( 'quiz' ) && ! $has_questions && isset( $_SERVER['REQUEST_URI'] ) && sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) !== "/lesson/$lesson->post_name" ) {
 
 			wp_redirect( get_permalink( $lesson->ID ), 301 );
 			exit;

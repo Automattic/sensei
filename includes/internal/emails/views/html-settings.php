@@ -49,7 +49,7 @@ $options           = isset( $options ) ? $options : [];
 			<th scope="row">
 				<?php
 				esc_html_e( 'MailPoet', 'sensei-lms' );
-				echo Sensei()->assets->get_icon( 'mailpoet-logo', 'sensei-mailpoet-icon' ); // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the method.
+				echo Sensei()->assets->get_icon( 'mailpoet-logo', 'sensei-mailpoet-icon' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_icon() escapes its own dynamic parts.
 				?>
 			</th>
 			<td>
@@ -76,7 +76,7 @@ $options           = isset( $options ) ? $options : [];
 			<th scope="row">
 				<?php
 				esc_html_e( 'AutomateWoo', 'sensei-lms' );
-				echo Sensei()->assets->get_icon( 'woo-logo', 'sensei-woo-icon' ); // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the method.
+				echo Sensei()->assets->get_icon( 'woo-logo', 'sensei-woo-icon' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_icon() escapes its own dynamic parts.
 				?>
 			</th>
 			<td>

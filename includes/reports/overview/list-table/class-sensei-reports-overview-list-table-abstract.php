@@ -110,7 +110,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		// Handle search.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
-		$search = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
+		$search = sensei_request_text( $_GET['s'] ?? '' );
 		if ( ! empty( $search ) ) {
 			$args['search'] = esc_html( $search );
 		}
@@ -184,7 +184,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		// Handle search.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
-		$search = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
+		$search = sensei_request_text( $_GET['s'] ?? '' );
 		if ( ! empty( $search ) ) {
 			$args['search'] = esc_html( $search );
 		}
@@ -489,6 +489,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 */
 	private function get_search_value(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
-		return isset( $_GET['s'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['s'] ) ) ) : '';
+		return isset( $_GET['s'] ) ? esc_attr( sensei_request_text( $_GET['s'] ) ) : '';
 	}
 }

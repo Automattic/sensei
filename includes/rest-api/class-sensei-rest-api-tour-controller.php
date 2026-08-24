@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Deprecated Sensei Tour REST API endpoints.
  *
  * @since 4.22.0
- * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+ * @deprecated 4.26.3 The onboarding tours are no longer supported.
  */
 class Sensei_REST_API_Tour_Controller extends \WP_REST_Controller {
 
@@ -44,13 +44,13 @@ class Sensei_REST_API_Tour_Controller extends \WP_REST_Controller {
 	/**
 	 * Sensei_REST_API_Tour_Controller constructor.
 	 *
-	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 *
 	 * @param string      $rest_namespace REST API namespace.
 	 * @param Sensei_Tour $tour           Sensei Tour.
 	 */
 	public function __construct( $rest_namespace, Sensei_Tour $tour ) {
-		_deprecated_constructor( __CLASS__, '$$next-version$$' );
+		_deprecated_constructor( __CLASS__, '4.26.3' );
 		$this->namespace = $rest_namespace;
 		$this->tour      = $tour;
 	}
@@ -58,10 +58,10 @@ class Sensei_REST_API_Tour_Controller extends \WP_REST_Controller {
 	/**
 	 * Register the routes for the objects of the controller.
 	 *
-	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 */
 	public function register_routes() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.26.3' );
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->rest_base,
@@ -88,14 +88,14 @@ class Sensei_REST_API_Tour_Controller extends \WP_REST_Controller {
 	/**
 	 * Set tour status.
 	 *
-	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response
 	 */
 	public function set_tour_completion_status( $request ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.26.3' );
 		$complete = (bool) $request->get_param( 'complete' );
 		$tour_id  = sanitize_text_field( $request->get_param( 'tour_id' ) ?? '' );
 
@@ -107,14 +107,14 @@ class Sensei_REST_API_Tour_Controller extends \WP_REST_Controller {
 	/**
 	 * Check if a given request has access to update a tour.
 	 *
-	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
 	 *
 	 * @return bool|\WP_Error
 	 */
 	public function get_tour_permissions_check( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required REST callback signature.
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.26.3' );
 
 		return current_user_can( \Sensei_Admin::get_top_menu_capability() );
 	}

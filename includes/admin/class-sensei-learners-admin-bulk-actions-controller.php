@@ -208,9 +208,9 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$this->check_nonce();
 
 		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce checked in check_nonce
-		$sensei_bulk_action = sanitize_text_field( wp_unslash( $_POST['sensei_bulk_action'] ) );
-		$course_ids         = explode( ',', sanitize_text_field( wp_unslash( $_POST['bulk_action_course_ids'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
-		$user_ids           = array_map( 'absint', explode( ',', sanitize_text_field( wp_unslash( $_POST['bulk_action_user_ids'] ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		$sensei_bulk_action = sensei_request_text( $_POST['sensei_bulk_action'] );
+		$course_ids         = explode( ',', sensei_request_text( $_POST['bulk_action_course_ids'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		$user_ids           = array_map( 'absint', explode( ',', sensei_request_text( $_POST['bulk_action_user_ids'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
 
 		if ( ! array_key_exists( $sensei_bulk_action, $this->get_known_bulk_actions() ) ) {
 			$this->redirect_to_learner_admin_index( 'error-invalid-action' );
@@ -415,7 +415,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of message.
-		$msg       = sanitize_text_field( wp_unslash( $_GET['message'] ) );
+		$msg       = sensei_request_text( $_GET['message'] );
 		$msg_class = 'notice notice-error';
 
 		switch ( $msg ) {

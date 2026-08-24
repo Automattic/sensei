@@ -1,6 +1,6 @@
 {
   "name": "sensei-lms/course-navigation",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "category": "theme",
   "supports": {
     "align": true,

@@ -1,4 +1,5 @@
 {
+	"apiVersion": 3,
 	"name": "sensei-lms/lesson-properties",
 	"title": "Lesson Properties",
 	"description": "Add lesson properties such as length and difficulty.",
