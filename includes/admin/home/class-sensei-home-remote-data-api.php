@@ -58,7 +58,7 @@ class Sensei_Home_Remote_Data_API {
 	 *
 	 * @return array|\WP_Error
 	 */
-	public function fetch( int $max_age = null ) {
+	public function fetch( ?int $max_age = null ) {
 		$url       = $this->get_api_url();
 		$cache_key = self::CACHE_KEY_PREFIX . md5( $url );
 		$data      = $this->remote_data[ $cache_key ] ?? get_transient( $cache_key );

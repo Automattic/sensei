@@ -41,7 +41,7 @@ class Clock implements Clock_Interface {
 	 * @param DateTimeZone|null $timezone The timezone to use.
 	 * @return \DateTimeImmutable
 	 */
-	public function now( DateTimeZone $timezone = null ) {
+	public function now( ?DateTimeZone $timezone = null ) {
 		return new \DateTimeImmutable( 'now', $timezone ?? $this->timezone );
 	}
 }

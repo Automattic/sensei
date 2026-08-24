@@ -84,7 +84,7 @@ abstract class Sensei_Import_Model {
 	 *
 	 * @return static
 	 */
-	public static function from_source_array( $line_number, $data, Sensei_Data_Port_Schema $schema, Sensei_Import_File_Process_Task $task = null ) {
+	public static function from_source_array( $line_number, $data, Sensei_Data_Port_Schema $schema, ?Sensei_Import_File_Process_Task $task = null ) {
 		$self                 = new static();
 		$self->line_number    = $line_number;
 		$self->schema         = $schema;

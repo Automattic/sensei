@@ -88,7 +88,7 @@ class Sensei_Notices {
 	 *
 	 * @return void
 	 */
-	public function add_notice( string $content, string $type = 'alert', string $key = null ) {
+	public function add_notice( string $content, string $type = 'alert', ?string $key = null ) {
 		$notice = [
 			'content' => $content,
 			'type'    => $type,
