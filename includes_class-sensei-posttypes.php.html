@@ -377,6 +377,7 @@ class Sensei_PostTypes {
 			wp_safe_redirect( esc_url_raw( $course_url ) );
 			exit;
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -1102,7 +1103,7 @@ class Sensei_PostTypes {
 			// translators: Placeholder is the singular label for the post type.
 			4  => sprintf( __( '%1$s updated.', 'sensei-lms' ), $labels['singular'] ),
 			// translators: Placeholders are the singular label for the post type and the post's revision, respectively.
-			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.', 'sensei-lms' ), $labels['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.', 'sensei-lms' ), $labels['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false, // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only post-updated message.
 			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
 			6  => sprintf( __( '%1$s published. %2$sView %1$s%3$s.', 'sensei-lms' ), $labels['singular'], '&lt;a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '&lt;/a>' ),
 			// translators: Placeholder is the singular label for the post type.

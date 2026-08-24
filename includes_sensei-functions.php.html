@@ -581,6 +581,26 @@ function sensei_log_jetpack_event( $event_name, $properties = [] ) {
 function sensei_has_translation_or_is_english( $text ) {
 	return get_locale() === 'en_US' || ( function_exists( 'has_translation' ) &amp;&amp; has_translation( $text, 'sensei-lms' ) );
 }
+
+/**
+ * Unslash and sanitize a raw request value into a plain-text string.
+ *
+ * Intended for values read from the request superglobals ($_GET/$_POST/$_REQUEST),
+ * which WordPress slashes and which may arrive as arrays. Arrays are treated as
+ * empty so the return value is always a string: callers expecting a single value
+ * get one, and array input is discarded.
+ *
+ * Do not use for data that is not slashed by WordPress (e.g. database or option
+ * values), since it runs wp_unslash() on the input.
+ *
+ * @since $$next-version$$
+ *
+ * @param mixed $raw Raw request value, e.g. `$_GET['orderby'] ?? ''`.
+ * @return string The unslashed, sanitized value, or '' when an array is given.
+ */
+function sensei_request_text( $raw ): string {
+	return is_array( $raw ) ? '' : sanitize_text_field( wp_unslash( $raw ) );
+}
 </code></pre>
         </article>
     </section>
