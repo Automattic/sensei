@@ -31,7 +31,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - `make build` runs `composer install --no-dev` inside the container, which strips all dev dependencies (`vendor/bin/phpunit`, `vendor/bin/psalm`, etc.). After a build, restore dev tooling before running tests or static analysis with `make install-php`.
 
 ## Testing
-- **Test-driven development**: Follow a TDD approach for new behavior and bug fixes — write a failing test that captures the desired behavior first, then implement until it passes. This applies to PHPUnit, JS unit, and (where practical) Playwright suites.
+- **Test-driven development**: Follow a TDD approach for non-trivial new behavior and bug fixes — write a failing test first, then implement until it passes. Skip tests for trivial changes: copy/string tweaks, config, mechanical renames, one-line passthroughs, styling. If unsure a change needs a test, ask rather than write one by default.
 - **PHPUnit**: `make test-php` (runs inside wp-env). Targeted runs: `make test-php-filter FILTER="TestClass"` or `FILTER="TestClass::method"`.
 - **PHPUnit with HPPS enabled**: `npm run test-php:wp-env:hpps`.
 - **JS unit tests**: `npm run test-js`.
