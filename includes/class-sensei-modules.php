@@ -711,8 +711,8 @@ class Sensei_Core_Modules {
 		header( 'Content-Type: application/json; charset=utf-8' );
 
 		// Get user input
-		$term = isset( $_GET['term'] ) ? sensei_request_text( $_GET['term'] ) : '';
-		$term = urldecode( $term );
+		// Decode before sanitizing: sanitize_text_field() strips percent-encoded octets, so it must run after urldecode().
+		$term = isset( $_GET['term'] ) ? sanitize_text_field( urldecode( wp_unslash( is_array( $_GET['term'] ) ? '' : $_GET['term'] ) ) ) : '';
 
 		// Return nothing if term is empty
 		if ( empty( $term ) ) {
