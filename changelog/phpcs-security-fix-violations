@@ -1,4 +1,4 @@
 Significance: patch
 Type: security
 
-Hardened handling of request input across the admin and frontend by consistently unslashing and sanitizing user-supplied values.
+Hardened handling of request input across the admin and frontend.
