@@ -1793,8 +1793,7 @@ class Sensei_Admin {
 	 * Recursively sanitize the string values of an event property array.
 	 *
 	 * Non-string scalar values (int, float, bool, null) are returned untouched so the
-	 * logged event keeps the types produced by json_decode(), rather than coercing them
-	 * to strings the way map_deep( ..., 'sanitize_text_field' ) would.
+	 * logged event keeps the types produced by json_decode().
 	 *
 	 * @since $$next-version$$
 	 *
