@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Made request-input handling consistent across the admin and frontend.
