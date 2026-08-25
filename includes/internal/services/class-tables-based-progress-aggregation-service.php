@@ -100,7 +100,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Same shape as count_statuses(); 'type' and 'user_id' honored.
+	 * @param array $args Same $args as count_statuses() ('type' is required).
 	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
 	 */
 	public function count_statuses_by_user( array $args ): array {
