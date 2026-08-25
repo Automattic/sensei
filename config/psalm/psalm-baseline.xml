@@ -1440,9 +1440,6 @@
       <code><![CDATA[$courses_url_base]]></code>
       <code><![CDATA[WooThemes_Sensei_Course_Results]]></code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant>
-      <code><![CDATA[OBJECT]]></code>
-    </UndefinedConstant>
   </file>
   <file src="includes/class-sensei-course-structure.php">
     <DocblockTypeContradiction>
@@ -1759,9 +1756,6 @@
     <MissingClosureReturnType>
       <code><![CDATA[function( $row ) use ( $last_activity_date_by_users ) {]]></code>
     </MissingClosureReturnType>
-    <UndefinedConstant>
-      <code><![CDATA[OBJECT_K]]></code>
-    </UndefinedConstant>
   </file>
   <file src="includes/class-sensei-dependency-checker.php">
     <PossiblyNullPropertyFetch>
@@ -3193,7 +3187,6 @@
       <code><![CDATA[empty( $this->teacher_role )]]></code>
     </TypeDoesNotContainType>
     <UndefinedConstant>
-      <code><![CDATA[ARRAY_A]]></code>
       <code><![CDATA[DOING_AJAX]]></code>
     </UndefinedConstant>
     <UndefinedPropertyFetch>
@@ -3282,9 +3275,6 @@
     <TypeDoesNotContainType>
       <code><![CDATA[null]]></code>
     </TypeDoesNotContainType>
-    <UndefinedConstant>
-      <code><![CDATA[ARRAY_A]]></code>
-    </UndefinedConstant>
   </file>
   <file src="includes/class-sensei-usage-tracking-data.php">
     <DocblockTypeContradiction>
@@ -3688,7 +3678,6 @@
       <code><![CDATA[init]]></code>
     </TooManyArguments>
     <UndefinedConstant>
-      <code><![CDATA[ARRAY_A]]></code>
       <code><![CDATA[WP_LANG_DIR]]></code>
     </UndefinedConstant>
     <UnresolvableInclude>
@@ -5199,9 +5188,6 @@
       <code><![CDATA[$row->lesson_start_count]]></code>
       <code><![CDATA[$row->unique_student_count]]></code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedConstant>
-      <code><![CDATA[ARRAY_A]]></code>
-    </UndefinedConstant>
   </file>
   <file src="includes/internal/services/class-progress-aggregation-service-interface.php">
     <InvalidDocblock>
@@ -5219,9 +5205,6 @@
       <code><![CDATA[$row->updated_at]]></code>
       <code><![CDATA[$row->user_id]]></code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedConstant>
-      <code><![CDATA[ARRAY_A]]></code>
-    </UndefinedConstant>
   </file>
   <file src="includes/internal/services/class-tables-based-grading-stats-service.php">
     <PossiblyInvalidPropertyFetch>
@@ -5240,10 +5223,6 @@
       <code><![CDATA[$row->lesson_start_count]]></code>
       <code><![CDATA[$row->unique_student_count]]></code>
     </PossiblyInvalidPropertyFetch>
-    <UndefinedConstant>
-      <code><![CDATA[ARRAY_A]]></code>
-      <code><![CDATA[ARRAY_A]]></code>
-    </UndefinedConstant>
   </file>
   <file src="includes/internal/services/class-tables-based-reports-listing-service.php">
     <PossiblyInvalidCast>
@@ -6504,9 +6483,6 @@
     <ParamNameMismatch>
       <code><![CDATA[$post_to_copy]]></code>
     </ParamNameMismatch>
-    <UndefinedConstant>
-      <code><![CDATA[OBJECT]]></code>
-    </UndefinedConstant>
   </file>
   <file src="includes/unsupported-theme-handlers/class-sensei-unsupported-theme-handler-cpt.php">
     <InvalidArgument>
