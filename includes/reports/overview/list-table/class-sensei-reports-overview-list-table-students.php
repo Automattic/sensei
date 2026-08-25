@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Sensei\Internal\Services\Progress_Query_Service_Factory;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 
 /**
  * Students overview list table class.
@@ -26,16 +26,25 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	private $reports_overview_service_students;
 
 	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface
+	 */
+	private $aggregation_service;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
 	 * @param Sensei_Reports_Overview_Service_Students        $reports_overview_service_students reports students service.
+	 * @param Progress_Aggregation_Service_Interface          $aggregation_service The progress aggregation service.
 	 */
-	public function __construct( Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Students $reports_overview_service_students ) {
+	public function __construct( Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Students $reports_overview_service_students, Progress_Aggregation_Service_Interface $aggregation_service ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'users', $data_provider );
 
 		$this->reports_overview_service_students = $reports_overview_service_students;
+		$this->aggregation_service               = $aggregation_service;
 	}
 
 	/**
@@ -56,14 +65,12 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$user_ids = $this->get_all_item_ids();
 		if ( $user_ids ) {
 			// Header totals for the Completed Courses and Active Courses (started - completed) columns.
-			$counts                  = ( new Progress_Query_Service_Factory() )
-				->create_aggregation_service()
-				->count_statuses(
-					array(
-						'type'    => 'course',
-						'user_id' => $user_ids,
-					)
-				);
+			$counts                  = $this->aggregation_service->count_statuses(
+				array(
+					'type'    => 'course',
+					'user_id' => $user_ids,
+				)
+			);
 			$total_completed_courses = $counts['complete'] ?? 0;
 			$total_courses_started   = array_sum( $counts );
 

@@ -1,5 +1,8 @@
 <?php
 
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 /**
  * Tests for Sensei_Reports_Overview_List_Table_Students class.
  *
@@ -56,7 +59,8 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		$data_provider->method( 'get_items' )->willReturn( array( $user_id ) );
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$data_provider,
-			$student_service
+			$student_service,
+			( new Progress_Query_Service_Factory() )->create_aggregation_service()
 		);
 
 		/* Act. */
@@ -84,7 +88,8 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$this->createMock( Sensei_Reports_Overview_Service_Students::class )
+			$this->createMock( Sensei_Reports_Overview_Service_Students::class ),
+			$this->createMock( Progress_Aggregation_Service_Interface::class )
 		);
 
 		/* Act. */
@@ -107,7 +112,8 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$this->createMock( Sensei_Reports_Overview_Service_Students::class )
+			$this->createMock( Sensei_Reports_Overview_Service_Students::class ),
+			$this->createMock( Progress_Aggregation_Service_Interface::class )
 		);
 
 		/* Act. */
@@ -121,7 +127,8 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$this->createMock( Sensei_Reports_Overview_Service_Students::class )
+			$this->createMock( Sensei_Reports_Overview_Service_Students::class ),
+			$this->createMock( Progress_Aggregation_Service_Interface::class )
 		);
 
 		/* Act. */

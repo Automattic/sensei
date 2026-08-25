@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Sensei\Internal\Services\Progress_Query_Service_Factory;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 
 /**
  * Courses overview list table class.
@@ -38,6 +38,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 */
 	private $reports_overview_service_courses;
 
+	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface
+	 */
+	private $aggregation_service;
 
 	/**
 	 * Constructor
@@ -46,14 +52,16 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 * @param Sensei_Course                                   $course Sensei course related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
 	 * @param Sensei_Reports_Overview_Service_Courses         $reports_overview_service_courses reports courses service.
+	 * @param Progress_Aggregation_Service_Interface          $aggregation_service The progress aggregation service.
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Courses $reports_overview_service_courses ) {
+	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Courses $reports_overview_service_courses, Progress_Aggregation_Service_Interface $aggregation_service ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'courses', $data_provider );
 
 		$this->grading                          = $grading;
 		$this->course                           = $course;
 		$this->reports_overview_service_courses = $reports_overview_service_courses;
+		$this->aggregation_service              = $aggregation_service;
 	}
 
 	/**
@@ -69,14 +77,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$all_course_ids   = $this->get_all_item_ids();
 		$total_completion = 0;
 		if ( ! empty( $all_course_ids ) ) {
-			$counts           = ( new Progress_Query_Service_Factory() )
-				->create_aggregation_service()
-				->count_statuses(
-					array(
-						'type'     => 'course',
-						'post__in' => $all_course_ids,
-					)
-				);
+			$counts           = $this->aggregation_service->count_statuses(
+				array(
+					'type'     => 'course',
+					'post__in' => $all_course_ids,
+				)
+			);
 			$total_completion = $counts['complete'] ?? 0;
 		}
 
