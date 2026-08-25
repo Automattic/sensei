@@ -100,7 +100,7 @@ class Action_Scheduler {
 	 * @param array|null $args  Args that have been passed to the action. Null will matches any args.
 	 * @return bool True if a matching action is pending or in-progress, false otherwise.
 	 */
-	public function has_scheduled_action( string $hook, array $args = null ): bool {
+	public function has_scheduled_action( string $hook, ?array $args = null ): bool {
 		return as_has_scheduled_action( $hook, $args, self::GROUP_ID );
 	}
 
