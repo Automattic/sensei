@@ -69,4 +69,14 @@ interface Grading_Stats_Service_Interface {
 	 * @return array<int, array{count:int, sum:float}> Map of user_id => totals.
 	 */
 	public function get_grade_totals_by_user( array $user_ids ): array;
+
+	/**
+	 * Get grade count and sum grouped by course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @return array<int, array{count:int, sum:float}> Map of course_id => totals.
+	 */
+	public function get_grade_totals_by_course( array $course_ids ): array;
 }

@@ -486,4 +486,148 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 2, $result[ $user ]['count'], 'Auto-passed lesson without quiz_answers should be excluded.' );
 		$this->assertSame( 140.0, $result[ $user ]['sum'] );
 	}
+
+	/**
+	 * Test testGetGradeTotalsByCourse_WithNoCourseIds_ReturnsEmptyArray.
+	 */
+	public function testGetGradeTotalsByCourse_WithNoCourseIds_ReturnsEmptyArray(): void {
+		global $wpdb;
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+
+		$result = $service->get_grade_totals_by_course( array() );
+
+		$this->assertSame( array(), $result );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByCourse_WithMultipleStudents_GroupsByCourse.
+	 */
+	public function testGetGradeTotalsByCourse_WithMultipleStudents_GroupsByCourse(): void {
+		global $wpdb;
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_id,
+				),
+			)
+		);
+
+		$this->create_lesson_status_with_grade( $lesson_id, $user_1, 'graded', 80 );
+		$this->create_lesson_status_with_grade( $lesson_id, $user_2, 'passed', 60 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals_by_course( array( $course_id ) );
+
+		$this->assertSame( 2, $result[ $course_id ]['count'] );
+		$this->assertSame( 140.0, $result[ $course_id ]['sum'] );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByCourse_WithMultipleCourses_ReturnsSeparateTotals.
+	 */
+	public function testGetGradeTotalsByCourse_WithMultipleCourses_ReturnsSeparateTotals(): void {
+		global $wpdb;
+		$user_id  = $this->sensei_factory->user->create();
+		$course_1 = $this->sensei_factory->course->create();
+		$course_2 = $this->sensei_factory->course->create();
+		$lesson_1 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_1,
+				),
+			)
+		);
+		$lesson_2 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_2,
+				),
+			)
+		);
+
+		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
+		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'failed', 90 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals_by_course( array( $course_1, $course_2 ) );
+
+		$this->assertSame( 1, $result[ $course_1 ]['count'] );
+		$this->assertSame( 80.0, $result[ $course_1 ]['sum'] );
+		$this->assertSame( 1, $result[ $course_2 ]['count'] );
+		$this->assertSame( 90.0, $result[ $course_2 ]['sum'] );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByCourse_WithCourseIdsFilter_ExcludesUnrequestedCourses.
+	 */
+	public function testGetGradeTotalsByCourse_WithCourseIdsFilter_ExcludesUnrequestedCourses(): void {
+		global $wpdb;
+		$user_id  = $this->sensei_factory->user->create();
+		$course_1 = $this->sensei_factory->course->create();
+		$course_2 = $this->sensei_factory->course->create();
+		$lesson_1 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_1,
+				),
+			)
+		);
+		$lesson_2 = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_2,
+				),
+			)
+		);
+
+		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
+		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'graded', 60 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals_by_course( array( $course_1 ) );
+
+		$this->assertArrayHasKey( $course_1, $result );
+		$this->assertArrayNotHasKey( $course_2, $result, 'Only the requested course should be present in the result.' );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByCourse_WithAutoPassedLesson_ExcludesFromTotals.
+	 *
+	 * Pins parity with the tables-based implementation: an auto-passed lesson
+	 * (graded, but with no quiz_answers meta because the student never took the
+	 * quiz) must not be counted, mirroring how the tables-based implementation
+	 * excludes lessons without a quiz submission row.
+	 */
+	public function testGetGradeTotalsByCourse_WithAutoPassedLesson_ExcludesFromTotals(): void {
+		global $wpdb;
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_1  = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_id,
+				),
+			)
+		);
+		$lesson_2  = $this->sensei_factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_id,
+				),
+			)
+		);
+
+		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
+		// Auto-passed lesson: graded, but no quiz_answers meta.
+		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'graded', 100, false );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals_by_course( array( $course_id ) );
+
+		$this->assertSame( 1, $result[ $course_id ]['count'], 'Auto-passed lesson without quiz_answers should be excluded.' );
+		$this->assertSame( 80.0, $result[ $course_id ]['sum'] );
+	}
 }

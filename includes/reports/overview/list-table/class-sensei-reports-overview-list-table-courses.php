@@ -38,6 +38,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 */
 	private $reports_overview_service_courses;
 
+	/**
+	 * Per-course grade totals cache for the current page.
+	 *
+	 * @var array<int, array{count:int, sum:float}>
+	 */
+	private $grade_totals_by_course = array();
 
 	/**
 	 * Constructor
@@ -54,6 +60,50 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$this->grading                          = $grading;
 		$this->course                           = $course;
 		$this->reports_overview_service_courses = $reports_overview_service_courses;
+
+		if ( has_filter( 'sensei_analysis_course_percentage' ) ) {
+			_deprecated_hook( 'sensei_analysis_course_percentage', '$$next-version$$' );
+		}
+	}
+
+	/**
+	 * Prepare the table items and prime the per-course grade totals cache for the current page.
+	 */
+	public function prepare_items() {
+		parent::prepare_items();
+		$this->prime_row_aggregates( $this->items );
+	}
+
+	/**
+	 * Prime the per-course grade totals cache before generating CSV report rows.
+	 *
+	 * @param array $items The items that will be exported.
+	 */
+	protected function before_generate_report_rows( array $items ) {
+		$this->prime_row_aggregates( $items );
+	}
+
+	/**
+	 * Prime the per-course grade totals cache for the given page items.
+	 *
+	 * @param array $items Current page items (course post objects with an ID).
+	 */
+	private function prime_row_aggregates( array $items ) {
+		$course_ids = array_map(
+			static function ( $item ) {
+				return (int) $item->ID;
+			},
+			$items
+		);
+
+		$this->grade_totals_by_course = array();
+		if ( empty( $course_ids ) ) {
+			return;
+		}
+
+		$this->grade_totals_by_course = ( new Progress_Query_Service_Factory() )
+			->create_grading_stats_service()
+			->get_grade_totals_by_course( $course_ids );
 	}
 
 	/**
@@ -223,24 +273,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 
 		// Get grades only if the course has lessons and quizzes.
 		if ( ! empty( $lessons ) && $this->course->course_quizzes( $item->ID, true ) ) {
-			$grade_args = array(
-				'post__in' => $lessons,
-				'type'     => 'sensei_lesson_status',
-				'status'   => array( 'graded', 'passed', 'failed' ),
-				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			$grade_totals  = $this->grade_totals_by_course[ (int) $item->ID ] ?? array(
+				'count' => 0,
+				'sum'   => 0,
 			);
-
-			/**
-			 * Filter the course completion percentage query arguments.
-			 *
-			 * @hook sensei_analysis_course_percentage
-			 *
-			 * @param {array} $grade_args Array of query arguments for course percentage.
-			 * @param {WP_Post} $item Current course post object.
-			 * @return {array} Filtered array of query arguments for course percentage.
-			 */
-			$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
-			$percent_total = $this->grading::get_course_users_grades_sum( $item->ID );
+			$percent_count = $grade_totals['count'];
+			$percent_total = $grade_totals['sum'];
 
 			if ( $percent_count > 0 && $percent_total >= 0 ) {
 				$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 ) . '%';
