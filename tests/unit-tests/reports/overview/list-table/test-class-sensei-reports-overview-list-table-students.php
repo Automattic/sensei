@@ -25,12 +25,15 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+		$this->maybe_enable_hpps_tables_repository();
 	}
 
 	/**
 	 * Tear down after each test.
 	 */
 	public function tearDown(): void {
+		$this->maybe_reset_hpps_repository();
+
 		parent::tearDown();
 
 		$this->factory->tearDown();
@@ -38,10 +41,6 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 
 	public function testGetColumns_WithGradingAndCompletions_ReturnsColumnsWithCorrectTotals() {
 		/* Arrange. */
-		if ( self::is_hpps_tables_mode() ) {
-			$this->enable_hpps_tables_repository();
-		}
-
 		$user_id             = $this->factory->user->create();
 		$active_course_id    = $this->factory->course->create();
 		$completed_course_id = $this->factory->course->create();
@@ -78,10 +77,6 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		);
 
 		self::assertSame( $expected, $actual );
-
-		if ( self::is_hpps_tables_mode() ) {
-			$this->reset_hpps_repository();
-		}
 	}
 
 	public function testGetSortableColumns_WhenCalled_ReturnsMatchingArray() {
