@@ -681,4 +681,155 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Assert. */
 		$this->assertSame( array(), $result );
 	}
+
+	public function testCountStatusesByPost_CourseType_ReturnsCountsGroupedByPost(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1      = $this->sensei_factory->user->create();
+		$user2      = $this->sensei_factory->user->create();
+		$course_id1 = $this->sensei_factory->course->create();
+		$course_id2 = $this->sensei_factory->course->create();
+
+		\Sensei_Utils::update_course_status( $user1, $course_id1, 'complete' );
+		\Sensei_Utils::update_course_status( $user2, $course_id1, 'in-progress' );
+		\Sensei_Utils::update_course_status( $user1, $course_id2, 'in-progress' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_post(
+			array(
+				'type'     => 'course',
+				'post__in' => array( $course_id1, $course_id2 ),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $course_id1 ]['complete'] );
+		$this->assertSame( 1, $result[ $course_id1 ]['in-progress'] );
+		$this->assertSame( 1, $result[ $course_id2 ]['in-progress'] );
+		$this->assertArrayNotHasKey( 'complete', $result[ $course_id2 ] );
+	}
+
+	public function testCountStatusesByPost_InvalidType_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$this->setExpectedIncorrectUsage( 'Sensei\Internal\Services\Comments_Based_Progress_Aggregation_Service::count_statuses_by_post' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_post( array( 'type' => 'invalid' ) );
+
+		/* Assert. */
+		$this->assertSame( array(), $result );
+	}
+
+	public function testGetLessonCompletionCounts_ReturnsCorrectPerLessonCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+
+		$ungraded_lesson = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$complete_lesson = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$progress_lesson = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		\Sensei_Utils::update_lesson_status( $user1, $ungraded_lesson, 'ungraded' );
+		\Sensei_Utils::update_lesson_status( $user1, $complete_lesson, 'complete' );
+		\Sensei_Utils::update_lesson_status( $user2, $complete_lesson, 'complete' );
+		\Sensei_Utils::update_lesson_status( $user1, $progress_lesson, 'in-progress' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_completion_counts( array( $ungraded_lesson, $complete_lesson, $progress_lesson ) );
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $ungraded_lesson ], 'Ungraded lesson status should be counted as a completion.' );
+		$this->assertSame( 2, $result[ $complete_lesson ], 'Both completions for the complete lesson should be counted.' );
+		$this->assertArrayNotHasKey( $progress_lesson, $result, 'In-progress lesson should not be counted as a completion.' );
+	}
+
+	public function testGetLessonCompletionCounts_WithEmptyLessonIds_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_completion_counts( array() );
+
+		/* Assert. */
+		$this->assertSame( array(), $result );
+	}
+
+	public function testGetCoursesAverageDaysToCompletion_ReturnsCorrectAverage(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1      = $this->sensei_factory->user->create();
+		$user2      = $this->sensei_factory->user->create();
+		$course_id1 = $this->sensei_factory->course->create();
+		$course_id2 = $this->sensei_factory->course->create();
+
+		$comment1_id = \Sensei_Utils::update_course_status( $user1, $course_id1, 'complete' );
+		wp_update_comment(
+			array(
+				'comment_ID'   => $comment1_id,
+				'comment_date' => '2022-03-11 23:29:06',
+			)
+		);
+		update_comment_meta( $comment1_id, 'start', '2022-03-11 23:27:51' );
+
+		$comment2_id = \Sensei_Utils::update_course_status( $user2, $course_id1, 'complete' );
+		wp_update_comment(
+			array(
+				'comment_ID'   => $comment2_id,
+				'comment_date' => '2022-03-14 21:34:37',
+			)
+		);
+		update_comment_meta( $comment2_id, 'start', '2022-03-14 21:34:27' );
+
+		$comment3_id = \Sensei_Utils::update_course_status( $user1, $course_id2, 'complete' );
+		wp_update_comment(
+			array(
+				'comment_ID'   => $comment3_id,
+				'comment_date' => '2022-03-12 00:22:37',
+			)
+		);
+		update_comment_meta( $comment3_id, 'start', '2022-03-09 00:22:34' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_courses_average_days_to_completion( array( $course_id1, $course_id2 ) );
+
+		/* Assert. */
+		// Course 1 average: (1 + 1) / 2 = 1. Course 2 average: 4 / 1 = 4. Total: (1 + 4) / 2 = 2.5.
+		$this->assertSame( 2.5, $result );
+	}
+
+	public function testGetCoursesAverageDaysToCompletion_WithEmptyCourseIds_ReturnsZero(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_courses_average_days_to_completion( array() );
+
+		/* Assert. */
+		$this->assertSame( 0.0, $result );
+	}
 }

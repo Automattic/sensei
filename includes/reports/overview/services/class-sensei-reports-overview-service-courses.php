@@ -32,7 +32,14 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0.0;
 		}
 		$lessons_count_per_courses = $this->get_lessons_in_courses( $course_ids );
-		$lessons_completions       = $this->get_lessons_completions();
+
+		$all_lesson_ids = array();
+		foreach ( $lessons_count_per_courses as $course_lessons ) {
+			$all_lesson_ids = array_merge( $all_lesson_ids, array_map( 'intval', explode( ',', $course_lessons->lessons ) ) );
+		}
+		$all_lesson_ids = array_unique( $all_lesson_ids );
+
+		$lessons_completions       = $this->get_lessons_completions( $all_lesson_ids );
 		$student_count_per_courses = $this->get_students_count_in_courses( $course_ids );
 		$total_average_progress    = 0;
 
@@ -107,24 +114,10 @@ class Sensei_Reports_Overview_Service_Courses {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
-		global $wpdb;
 
-		$query = "
-		SELECT AVG( aggregated.days_to_completion )
-		FROM (
-			SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
-			FROM {$wpdb->comments}
-			LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
-				AND {$wpdb->commentmeta}.meta_key = 'start'
-			WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
-				AND {$wpdb->comments}.comment_approved = 'complete'
-				AND {$wpdb->comments}.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		. " GROUP BY {$wpdb->comments}.comment_post_ID
-		) AS aggregated
-		";
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		return (float) $wpdb->get_var( $query );
+		return ( new Progress_Query_Service_Factory() )
+			->create_aggregation_service()
+			->get_courses_average_days_to_completion( $course_ids );
 	}
 
 
@@ -154,31 +147,31 @@ class Sensei_Reports_Overview_Service_Courses {
 	}
 
 	/**
-	 * Get all lessons completions.
+	 * Get lessons completions.
 	 *
 	 * @since  4.4.1
 	 *
+	 * @param array $lesson_ids The list of lesson ids to get completions for.
 	 * @return array lessons completions.
 	 */
-	private function get_lessons_completions(): array {
+	private function get_lessons_completions( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
 
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		return $wpdb->get_results(
-			"SELECT wcom.comment_post_id lesson_id, COUNT(*) completion_count
-						FROM {$wpdb->comments} wcom
-						WHERE wcom.comment_approved IN ('graded', 'ungraded', 'passed', 'failed','complete')
-						AND comment_type IN ('sensei_lesson_status')
-						AND wcom.comment_post_ID IN
-						(
-						SELECT wpm.post_id lesson_id from {$wpdb->posts} wpc
-						JOIN {$wpdb->postmeta} wpm on wpm.meta_value = wpc.id
-						WHERE wpm.meta_key = '_lesson_course'
-						AND wpc.post_status in ('publish','private')
-						)
-						GROUP BY wcom.comment_post_id",
-			'OBJECT_K'
-		);
+		$counts = ( new Progress_Query_Service_Factory() )
+			->create_aggregation_service()
+			->get_lesson_completion_counts( $lesson_ids );
+
+		$result = array();
+		foreach ( $counts as $lesson_id => $completion_count ) {
+			$result[ $lesson_id ] = (object) array(
+				'lesson_id'        => $lesson_id,
+				'completion_count' => $completion_count,
+			);
+		}
+
+		return $result;
 	}
 
 	/**
@@ -212,17 +205,27 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @return array students in courses.
 	 */
 	private function get_students_count_in_courses( array $course_ids ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
 
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		return $wpdb->get_results(
-			"SELECT c.comment_post_ID as course_id, count(c.comment_post_ID) as students_count
-				FROM {$wpdb->comments} c
-				WHERE c.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )'  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			. " AND c.comment_type = 'sensei_course_status'
-				AND c.comment_approved IN ( 'in-progress', 'complete' )
-				GROUP BY c.comment_post_ID",
-			'OBJECT_K'
-		);
+		$by_post = ( new Progress_Query_Service_Factory() )
+			->create_aggregation_service()
+			->count_statuses_by_post(
+				array(
+					'type'     => 'course',
+					'post__in' => $course_ids,
+				)
+			);
+
+		$result = array();
+		foreach ( $by_post as $course_id => $statuses ) {
+			$result[ $course_id ] = (object) array(
+				'course_id'      => $course_id,
+				'students_count' => ( $statuses['in-progress'] ?? 0 ) + ( $statuses['complete'] ?? 0 ),
+			);
+		}
+
+		return $result;
 	}
 }
