@@ -220,6 +220,114 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		}
 	}
 
+	public function testGetRowData_WhenCalledAfterPrepareItems_UsesPrimedCompletionsAndAverageProgress() {
+		/* Arrange. */
+		if ( self::is_hpps_tables_mode() ) {
+			$this->enable_hpps_tables_repository();
+		}
+
+		$course_id = $this->factory->course->create();
+		$user_1    = $this->factory->user->create();
+		$user_2    = $this->factory->user->create();
+
+		$lesson_1 = $this->factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$lesson_2 = $this->factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		// Enroll and complete the course for user_1, and complete both lessons.
+		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_1, true );
+		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_1, true );
+		Sensei_Utils::update_course_status( $user_1, $course_id, 'complete' );
+
+		// Enroll user_2 in the course, but don't complete any lessons or the course.
+		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_2 );
+		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_2 );
+		Sensei_Utils::update_course_status( $user_2, $course_id, 'in-progress' );
+
+		$item                       = new stdClass();
+		$item->ID                   = $course_id;
+		$item->post_title           = get_the_title( $course_id );
+		$item->count_of_completions = 0;
+		$item->days_to_completion   = 0;
+		$item->last_activity_date   = null;
+
+		$course = $this->createMock( Sensei_Course::class );
+		$course->method( 'course_lessons' )->willReturn( array( $lesson_1, $lesson_2 ) );
+		$course->method( 'course_quizzes' )->willReturn( false );
+
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$data_provider->method( 'get_items' )->willReturn( array( $item ) );
+		$data_provider->method( 'get_last_total_items' )->willReturn( 1 );
+
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
+			$this->createMock( Sensei_Grading::class ),
+			$course,
+			$data_provider,
+			new Sensei_Reports_Overview_Service_Courses()
+		);
+
+		/* Act. */
+		$list_table->prepare_items();
+		$row = $this->invoke_get_row_data( $list_table, $item );
+
+		/* Assert. */
+		self::assertSame( '1', $row['completions'], 'One student completed the course.' );
+		self::assertSame( '50%', $row['completion_rate'], '1 of 2 enrolled students completed the course.' );
+		self::assertSame( '50%', $row['average_progress'], '2 of 4 possible lesson completions were made.' );
+
+		if ( self::is_hpps_tables_mode() ) {
+			$this->reset_hpps_repository();
+		}
+	}
+
+	public function testGetRowData_CourseWithNoEnrolledStudents_ReturnsNAForAverageProgress() {
+		/* Arrange. */
+		if ( self::is_hpps_tables_mode() ) {
+			$this->enable_hpps_tables_repository();
+		}
+
+		$course_id = $this->factory->course->create();
+		$lesson    = $this->factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		$item                       = new stdClass();
+		$item->ID                   = $course_id;
+		$item->post_title           = get_the_title( $course_id );
+		$item->count_of_completions = 0;
+		$item->days_to_completion   = 0;
+		$item->last_activity_date   = null;
+
+		$course = $this->createMock( Sensei_Course::class );
+		$course->method( 'course_lessons' )->willReturn( array( $lesson ) );
+		$course->method( 'course_quizzes' )->willReturn( false );
+
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$data_provider->method( 'get_items' )->willReturn( array( $item ) );
+		$data_provider->method( 'get_last_total_items' )->willReturn( 1 );
+
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
+			$this->createMock( Sensei_Grading::class ),
+			$course,
+			$data_provider,
+			new Sensei_Reports_Overview_Service_Courses()
+		);
+
+		/* Act. */
+		$list_table->prepare_items();
+		$row = $this->invoke_get_row_data( $list_table, $item );
+
+		/* Assert. */
+		self::assertSame( 'N/A', $row['average_progress'], 'A course with no enrolled students has no computable average progress.' );
+
+		if ( self::is_hpps_tables_mode() ) {
+			$this->reset_hpps_repository();
+		}
+	}
+
 	/**
 	 * Seed a graded lesson (with a quiz submission and grade) belonging to a
 	 * course, for a user, via the progress/quiz submission repositories so

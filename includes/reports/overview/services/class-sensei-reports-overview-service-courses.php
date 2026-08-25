@@ -31,6 +31,34 @@ class Sensei_Reports_Overview_Service_Courses {
 		if ( empty( $course_ids ) ) {
 			return 0.0;
 		}
+
+		$progress_by_course = $this->get_average_progress_per_course( $course_ids );
+
+		if ( empty( $progress_by_course ) ) {
+			return 0.0;
+		}
+
+		$total_average_progress = array_sum( $progress_by_course );
+
+		// Divide total value to get average total value for average progress for courses.
+		return ceil( $total_average_progress / count( $course_ids ) );
+	}
+
+	/**
+	 * Average progress percentage per course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $course_ids Course IDs.
+	 * @return array<int, float> Map of course_id => average progress percent (0-100).
+	 */
+	public function get_average_progress_per_course( array $course_ids ): array {
+		$progress_by_course = array();
+
+		if ( empty( $course_ids ) ) {
+			return $progress_by_course;
+		}
+
 		$lessons_count_per_courses = $this->get_lessons_in_courses( $course_ids );
 
 		$all_lesson_ids = array();
@@ -41,7 +69,6 @@ class Sensei_Reports_Overview_Service_Courses {
 
 		$lessons_completions       = $this->get_lessons_completions( $all_lesson_ids );
 		$student_count_per_courses = $this->get_students_count_in_courses( $course_ids );
-		$total_average_progress    = 0;
 
 		foreach ( $course_ids as $course_id ) {
 			if ( ! isset( $lessons_count_per_courses[ $course_id ] ) || ! isset( $student_count_per_courses[ $course_id ] ) ) {
@@ -74,14 +101,10 @@ class Sensei_Reports_Overview_Service_Courses {
 			);
 
 			// Calculate average progress for a course.
-			$course_average_progress = $completed_count / ( $students_count * count( $lessons ) ) * 100;
-
-			// Add value to the total average progress.
-			$total_average_progress += $course_average_progress;
+			$progress_by_course[ $course_id ] = $completed_count / ( $students_count * count( $lessons ) ) * 100;
 		}
-		// Divide total value to get average total value for average progress for courses.
-		$average_total_average_progress = ceil( $total_average_progress / count( $course_ids ) );
-		return $average_total_average_progress;
+
+		return $progress_by_course;
 	}
 
 	/**
