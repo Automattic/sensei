@@ -328,8 +328,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $course_title . '</a></strong>';
 		}
 
-		$average_course_progress = $this->average_progress_by_course[ (int) $item->ID ] ?? 0;
-		$average_course_progress = esc_html( sprintf( '%d%%', round( $average_course_progress ) ) );
+		// A course with no enrolled students or no lessons has no computable average, so show N/A rather than 0%.
+		if ( isset( $this->average_progress_by_course[ (int) $item->ID ] ) ) {
+			$average_course_progress = esc_html( sprintf( '%d%%', round( $this->average_progress_by_course[ (int) $item->ID ] ) ) );
+		} else {
+			$average_course_progress = __( 'N/A', 'sensei-lms' );
+		}
 
 		/**
 		 * Filter the row data for the Analysis Overview list table.
