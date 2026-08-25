@@ -31,6 +31,7 @@ class Custom_Fields {
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_course_prerequisite_before_copied' ), 10, 4 );
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_quiz_id_before_copied' ), 10, 4 );
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_course_woocommerce_product_before_copied' ), 10, 4 );
+		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_lesson_prerequisite_before_copied' ), 10, 4 );
 	}
 
 	/**
@@ -165,5 +166,37 @@ class Custom_Fields {
 		}
 
 		return $this->get_object_id( $product_id, 'product', false, $target_language_code );
+	}
+
+	/**
+	 * Update lesson prerequisite before copied.
+	 *
+	 * @since 4.26.3
+	 *
+	 * @internal
+	 *
+	 * @param mixed  $copied_value Copied value.
+	 * @param int    $post_id_from Post ID from.
+	 * @param int    $post_id_to   Post ID to.
+	 * @param string $meta_key     Meta key.
+	 * @return mixed
+	 */
+	public function update_lesson_prerequisite_before_copied( $copied_value, $post_id_from, $post_id_to, $meta_key ) {
+		if ( '_lesson_prerequisite' !== $meta_key ) {
+			return $copied_value;
+		}
+
+		if ( empty( $copied_value ) ) {
+			return $copied_value;
+		}
+
+		$lesson_id = (int) $copied_value;
+
+		$target_language_code = $this->get_element_language_code( $post_id_to, 'lesson' );
+		if ( ! $target_language_code ) {
+			$target_language_code = $this->get_current_language();
+		}
+
+		return $this->get_object_id( $lesson_id, 'lesson', false, $target_language_code );
 	}
 }

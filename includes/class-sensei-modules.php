@@ -477,7 +477,7 @@ class Sensei_Core_Modules {
 
 		// Verify post type and nonce
 		if ( ( get_post_type( $post ) != 'lesson' ) || ! isset( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ] )
-			|| ! wp_verify_nonce( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ], plugin_basename( $this->file ) ) ) {
+			|| ! wp_verify_nonce( sensei_request_text( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ] ), plugin_basename( $this->file ) ) ) {
 			return $post_id;
 		}
 
@@ -495,8 +495,8 @@ class Sensei_Core_Modules {
 		// Get module and course IDs
 		$lesson_module_id_key = 'lesson_module';
 		$lesson_course_id_key = 'lesson_course';
-		$module_id            = isset( $_POST[ $lesson_module_id_key ] ) ? $_POST[ $lesson_module_id_key ] : null;
-		$course_id            = isset( $_POST[ $lesson_course_id_key ] ) ? $_POST[ $lesson_course_id_key ] : null;
+		$module_id            = isset( $_POST[ $lesson_module_id_key ] ) ? sensei_request_text( $_POST[ $lesson_module_id_key ] ) : '';
+		$course_id            = isset( $_POST[ $lesson_course_id_key ] ) ? sensei_request_text( $_POST[ $lesson_course_id_key ] ) : '';
 
 		// Set the module on the lesson
 		$lesson_modules = new Sensei_Core_Lesson_Modules( $post_id );
@@ -658,7 +658,7 @@ class Sensei_Core_Modules {
 		if ( isset( $_POST['module_courses'] ) && ! empty( $_POST['module_courses'] ) ) {
 
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$course_ids = is_array( $_POST['module_courses'] ) ? $_POST['module_courses'] : explode( ',', $_POST['module_courses'] );
+			$course_ids = is_array( $_POST['module_courses'] ) ? array_map( 'absint', wp_unslash( $_POST['module_courses'] ) ) : explode( ',', sensei_request_text( $_POST['module_courses'] ) );
 
 			foreach ( $course_ids as $course_id ) {
 
@@ -686,7 +686,7 @@ class Sensei_Core_Modules {
 		$module           = get_term( $module_id );
 		$event_properties = [
 			// phpcs:ignore WordPress.Security.NonceVerification
-			'page'      => isset( $_REQUEST['from_page'] ) ? $_REQUEST['from_page'] : '',
+			'page'      => isset( $_REQUEST['from_page'] ) ? sensei_request_text( $_REQUEST['from_page'] ) : '',
 			'parent_id' => -1,
 		];
 
@@ -711,7 +711,9 @@ class Sensei_Core_Modules {
 		header( 'Content-Type: application/json; charset=utf-8' );
 
 		// Get user input
-		$term = urldecode( stripslashes( $_GET['term'] ) );
+		// Decode before sanitizing: sanitize_text_field() strips percent-encoded octets, so it must run after urldecode().
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized with sanitize_text_field() after urldecode(); the sniff cannot trace sanitization through urldecode().
+		$term = isset( $_GET['term'] ) ? sanitize_text_field( urldecode( wp_unslash( is_array( $_GET['term'] ) ? '' : $_GET['term'] ) ) ) : '';
 
 		// Return nothing if term is empty
 		if ( empty( $term ) ) {
@@ -719,7 +721,7 @@ class Sensei_Core_Modules {
 		}
 
 		// Set a default if none is given
-		$default = isset( $_GET['default'] ) ? $_GET['default'] : __( 'No course', 'sensei-lms' );
+		$default = isset( $_GET['default'] ) ? sensei_request_text( $_GET['default'] ) : __( 'No course', 'sensei-lms' );
 
 		// Set up array of results
 		$found_courses = array( '' => $default );
@@ -1302,7 +1304,7 @@ class Sensei_Core_Modules {
 		check_admin_referer( 'order_modules' );
 
 		$course_id    = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
-		$module_order = isset( $_POST['module-order'] ) ? sanitize_text_field( wp_unslash( $_POST['module-order'] ) ) : '';
+		$module_order = isset( $_POST['module-order'] ) ? sensei_request_text( $_POST['module-order'] ) : '';
 
 		if (
 			! Sensei_Course::can_current_user_edit_course( $course_id )
@@ -2387,10 +2389,15 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Looks at a term slug and figures out
-	 * which author created the slug. The author was
-	 * appended when the user saved the module term in the course edit
-	 * screen.
+	 * Looks at a term slug and figures out which author created the slug. The author
+	 * was appended when the user saved the module term in the course edit screen.
+	 *
+	 * Modules created outside a teacher's account have no recorded owner, so an
+	 * administrator is returned as a stand-in for "global" ownership. This does not
+	 * identify who created the module; callers only need any administrator to treat
+	 * the module as global rather than owned by a specific teacher. When no
+	 * administrator can be resolved either (the admin email and `site_admins` do not
+	 * map to real users), `false` is returned.
 	 *
 	 * @since 1.8.0
 	 *
@@ -2401,7 +2408,6 @@ class Sensei_Core_Modules {
 
 		$term_owner = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
-		// Fallaback in case the admin email does not match a user, otherwise it shows warnings.
 		if ( ! $term_owner ) {
 			$site_admins = get_super_admins();
 
@@ -2509,12 +2515,12 @@ class Sensei_Core_Modules {
 	 */
 	public static function add_new_module_term() {
 
-		if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( $_POST['security'], '_ajax_nonce-add-module' ) ) {
+		if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( sensei_request_text( $_POST['security'] ), '_ajax_nonce-add-module' ) ) {
 			wp_send_json_error( array( 'error' => 'wrong security nonce' ) );
 		}
 
 		// get the term an create the new term storing infomration
-		$term_name = sanitize_text_field( $_POST['newTerm'] );
+		$term_name = isset( $_POST['newTerm'] ) ? sensei_request_text( $_POST['newTerm'] ) : '';
 
 		if ( current_user_can( 'manage_options' ) ) {
 
@@ -2526,10 +2532,10 @@ class Sensei_Core_Modules {
 
 		}
 
-		$course_id = sanitize_text_field( $_POST['course_id'] );
+		$course_id = isset( $_POST['course_id'] ) ? sensei_request_text( $_POST['course_id'] ) : '';
 
-		// save the term
-		$slug = wp_insert_term( $term_name, 'module', array( 'slug' => $term_slug ) );
+		// save the term. wp_insert_term() unslashes internally, so re-slash to preserve any backslashes in the name.
+		$slug = wp_insert_term( wp_slash( $term_name ), 'module', array( 'slug' => $term_slug ) );
 
 		// send error for all errors except term exits
 		if ( is_wp_error( $slug ) ) {

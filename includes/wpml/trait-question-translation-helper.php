@@ -37,7 +37,7 @@ trait Question_Translation_Helper {
 	 * in the same request. Mark the lesson so the sync runs when that write
 	 * happens.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @param int $lesson_id Translated lesson ID.
 	 */
@@ -53,7 +53,7 @@ trait Question_Translation_Helper {
 	 * defer_question_translations_update(), and only once the write carries
 	 * content.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *
@@ -123,9 +123,8 @@ trait Question_Translation_Helper {
 			}
 
 			// A question post stores the question block's whole inner content
-			// (description, answers, and feedback blocks), mirroring how the
-			// editor saves it (see getBlockContent in the quiz editor and the
-			// REST question helpers).
+			// (description, answers, and feedback blocks), mirroring how the editor saves it
+			// (see getBlockContent in the quiz editor and the REST question helpers).
 			if ( ! empty( $block['innerBlocks'] ) ) {
 				$question_updates['post_content'] = implode( '', array_map( 'serialize_block', $block['innerBlocks'] ) );
 			}

@@ -107,7 +107,7 @@ export const withDefaultBlockStyle =
 	( defaultStyleName = 'default' ) =>
 	( Component ) =>
 	( props ) => {
-		let { className } = props;
+		let className = props.attributes?.className;
 
 		const extraProps = {};
 
@@ -115,7 +115,11 @@ export const withDefaultBlockStyle =
 			className = extraProps.className = [
 				className,
 				`is-style-${ defaultStyleName }`,
-			].join( ' ' );
+			]
+				.filter( Boolean )
+				.join( ' ' );
+		} else {
+			extraProps.className = className;
 		}
 
 		const style = className.match( /is-style-(\w+)/ );

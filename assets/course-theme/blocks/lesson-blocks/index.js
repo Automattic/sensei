@@ -216,7 +216,6 @@ export default [
 			'Display pagination and related actions for the current page.',
 			'sensei-lms'
 		),
-		apiVersion: 2,
 		edit: function EditPageActions() {
 			const blockProps = useBlockProps( {
 				className: 'sensei-course-theme__post-pagination',
@@ -239,7 +238,6 @@ export default [
 			'Displays the featured video if there is one for the lesson.',
 			'sensei-lms'
 		),
-		apiVersion: 2,
 		edit: function EditLessonVideo() {
 			const blockProps = useBlockProps( {
 				className: 'sensei-course-theme-lesson-video',

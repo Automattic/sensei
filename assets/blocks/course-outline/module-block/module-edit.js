@@ -7,7 +7,7 @@ import AnimateHeight from 'react-animate-height';
 /**
  * WordPress dependencies
  */
-import { InnerBlocks, RichText } from '@wordpress/block-editor';
+import { InnerBlocks, RichText, useBlockProps } from '@wordpress/block-editor';
 import { Icon, chevronUp } from '@wordpress/icons';
 import { compose } from '@wordpress/compose';
 import { useContext, useState, useEffect } from '@wordpress/element';
@@ -35,7 +35,6 @@ const ALLOWED_BLOCKS = [ 'sensei-lms/course-outline-lesson' ];
  *
  * @param {Object}   props                             Component props.
  * @param {string}   props.clientId                    The module block id.
- * @param {string}   props.className                   Custom class name.
  * @param {Object}   props.attributes                  Block attributes.
  * @param {string}   props.attributes.title            Module title.
  * @param {string}   props.attributes.description      Module description.
@@ -52,7 +51,6 @@ const ALLOWED_BLOCKS = [ 'sensei-lms/course-outline-lesson' ];
 export const ModuleEdit = ( props ) => {
 	const {
 		clientId,
-		className,
 		attributes: {
 			title,
 			description,
@@ -115,10 +113,24 @@ export const ModuleEdit = ( props ) => {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
+	const bordered =
+		undefined !== borderedSelected ? borderedSelected : outlineBordered;
+
+	const blockProps = useBlockProps( {
+		className: classnames( {
+			'wp-block-sensei-lms-course-outline-module-bordered': bordered,
+		} ),
+		style: bordered
+			? {
+					borderColor: borderColorValue || defaultBorderColor?.color,
+			  }
+			: undefined,
+	} );
+
 	const styleRegex = /is-style-(\w+)/;
 	const style =
-		className.match( styleRegex )?.[ 1 ] ||
-		outlineClassName.match( styleRegex )?.[ 1 ];
+		blockProps.className?.match( styleRegex )?.[ 1 ] ||
+		outlineClassName?.match( styleRegex )?.[ 1 ];
 
 	// Header styles.
 	const headerStyles = {
@@ -159,9 +171,6 @@ export const ModuleEdit = ( props ) => {
 		[]
 	);
 
-	const bordered =
-		undefined !== borderedSelected ? borderedSelected : outlineBordered;
-
 	return (
 		<>
 			<ModuleSettings
@@ -172,15 +181,7 @@ export const ModuleEdit = ( props ) => {
 				customSlug={ slug }
 				setCustomSlug={ updateSlug }
 			/>
-			<section
-				className={ classnames( className, {
-					'wp-block-sensei-lms-course-outline-module-bordered':
-						bordered,
-				} ) }
-				style={ {
-					borderColor: borderColorValue || defaultBorderColor?.color,
-				} }
-			>
+			<section { ...blockProps }>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
 					style={ headerStyles }

@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Compatibility code with WPML.
  *
- * @since $$next-version$$
+ * @since 4.26.3
  *
  * @internal
  */
@@ -36,7 +36,7 @@ class Grading {
 	 * Display only: the rebuilt links keep the original-language IDs, which is
 	 * what the listing filters expect.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *

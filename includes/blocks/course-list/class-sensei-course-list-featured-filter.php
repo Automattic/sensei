@@ -54,7 +54,7 @@ class Sensei_Course_List_Featured_Filter extends Sensei_Course_List_Filter_Abstr
 		$is_inherited     = $block->context['query']['inherit'] ?? false;
 		$filter_param_key = $is_inherited ? 'course_filter' : self::PARAM_KEY . $query_id;
 		$default_option   = $attributes['defaultOptions']['featured'] ?? 'all';
-		$selected_option  = isset( $_GET[ $filter_param_key ] ) ? sanitize_text_field( wp_unslash( $_GET[ $filter_param_key ] ) ) : $default_option; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
+		$selected_option  = isset( $_GET[ $filter_param_key ] ) ? sensei_request_text( $_GET[ $filter_param_key ] ) : $default_option; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
 
 		return '<select data-param-key="' . esc_attr( $filter_param_key ) . '">' .
 			implode(
@@ -81,7 +81,7 @@ class Sensei_Course_List_Featured_Filter extends Sensei_Course_List_Filter_Abstr
 			return [];
 		}
 		// phpcs:ignore WordPress.Security.NonceVerification
-		$selected_option = sanitize_text_field( wp_unslash( $_GET[ $filter_param_key ] ) );
+		$selected_option = sensei_request_text( $_GET[ $filter_param_key ] );
 
 		if ( 'all' === $selected_option || ! in_array( $selected_option, array_keys( $this->featured_options ), true ) ) {
 			return [];

@@ -7,6 +7,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { Icon, check, chevronRight } from '@wordpress/icons';
+import { useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -23,7 +24,6 @@ import { useLessonPreviewStatus } from './use-lesson-preview-status';
  * Edit lesson block component.
  *
  * @param {Object}   props                     Component props.
- * @param {string}   props.className           Custom class name.
  * @param {Object}   props.attributes          Block attributes.
  * @param {string}   props.attributes.title    Lesson title.
  * @param {number}   props.attributes.id       Lesson Post ID
@@ -36,7 +36,6 @@ import { useLessonPreviewStatus } from './use-lesson-preview-status';
  */
 export const LessonEdit = ( props ) => {
 	const {
-		className,
 		attributes: { title, id, fontSize, draft, preview, placeholder },
 		backgroundColor,
 		textColor,
@@ -62,21 +61,16 @@ export const LessonEdit = ( props ) => {
 		postStatus = __( 'Draft', 'sensei-lms' );
 	}
 
-	const wrapperStyles = {
-		className: classnames(
-			className,
-			backgroundColor?.class,
-			textColor?.class,
-			{
-				completed: lessonStatus.previewStatus === Status.COMPLETED,
-				'is-auto-draft': ! id && ! title,
-			}
-		),
+	const blockProps = useBlockProps( {
+		className: classnames( backgroundColor?.class, textColor?.class, {
+			completed: lessonStatus.previewStatus === Status.COMPLETED,
+			'is-auto-draft': ! id && ! title,
+		} ),
 		style: {
 			backgroundColor: backgroundColor?.color,
 			color: textColor?.color,
 		},
-	};
+	} );
 
 	const inputContainerClasses = classnames(
 		'wp-block-sensei-lms-course-outline-lesson__input-container',
@@ -89,7 +83,7 @@ export const LessonEdit = ( props ) => {
 	return (
 		<>
 			<LessonSettings { ...props } { ...lessonStatus } />
-			<div { ...wrapperStyles } data-lesson-id={ id }>
+			<div { ...blockProps } data-lesson-id={ id }>
 				<Icon
 					icon={ check }
 					className="wp-block-sensei-lms-course-outline-lesson__status"

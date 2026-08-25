@@ -16,11 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Compatibility code with WPML.
  *
- * Renders quiz questions in the viewer's language: submissions store the
- * questions as taken, and this class swaps the display data for the
- * current-language translation at render time.
+ * Renders quiz questions in the viewer's language: submissions store the questions as taken,
+ * and this class swaps the display data for the current-language translation at render time.
  *
- * @since $$next-version$$
+ * @since 4.26.3
  *
  * @internal
  */
@@ -31,14 +30,12 @@ class Question_Display {
 	 * Init hooks.
 	 */
 	public function init() {
-		// Run after the question-type loaders (priority 10), so the student's
-		// selection is already resolved when the labels get translated.
+		// Run after the question-type loaders, so the student's selection is already resolved when the labels get translated.
 		add_filter( 'sensei_get_question_template_data', array( $this, 'translate_template_data' ), 15, 2 );
 		// The question heading is rendered from get_the_title(), outside the template data.
 		add_filter( 'the_title', array( $this, 'translate_question_title' ), 10, 2 );
-		// The description renderer asks through this filter which question to
-		// read from.
-		add_filter( 'sensei_the_question_description_question_id', array( $this, 'translate_question_description_id' ) );
+		// The description renderer asks through this filter which question to read from.
+		add_filter( 'sensei_question_description_question_id', array( $this, 'translate_question_description_id' ) );
 		// The "Right Answer:" reveal shown on failed questions.
 		add_filter( 'sensei_question_answer_message_correct_answer', array( $this, 'translate_correct_answer_message' ), 10, 3 );
 		// The feedback text shown under Correct/Incorrect.
@@ -48,14 +45,14 @@ class Question_Display {
 	/**
 	 * Show the question-authored answer feedback in the current language.
 	 *
-	 * Runs when the feedback box of a graded question is rendered on the quiz
-	 * page. If the notes are the question's own feedback (the correct/incorrect
-	 * feedback blocks or the answer feedback field), it swaps them for the
-	 * translation's version. Notes written by the teacher for this student
-	 * while grading have no translation and are shown as written; they are
-	 * told apart because they match none of the question's feedback sources.
+	 * Runs when the feedback box of a graded question is rendered on the quiz page.
+	 * If the notes are the question's own feedback (the correct/incorrect feedback
+	 * blocks or the answer feedback field), it swaps them for the translation's version.
+	 * Notes written by the teacher for this student while grading have no translation
+	 * and are shown as written; they are told apart because they match none of the
+	 * question's feedback sources.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *
@@ -101,12 +98,11 @@ class Question_Display {
 	/**
 	 * Show the "Right Answer:" reveal in the current language.
 	 *
-	 * Runs when the feedback box of a failed question reveals the right answer
-	 * on the quiz page. It rebuilds the message from the question's
-	 * translation. Gap fill stays as taken on purpose: the right answer only
-	 * makes sense against the gap in its own language.
+	 * Runs when the feedback box of a failed question reveals the right answer on the quiz page.
+	 * It rebuilds the message from the question's translation. Gap fill stays as taken on purpose:
+	 * the right answer only makes sense against the gap in its own language.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *
@@ -135,11 +131,11 @@ class Question_Display {
 	/**
 	 * Render the question description from the current-language question.
 	 *
-	 * Runs whenever a question description is rendered on the frontend. In
-	 * wp-admin (the grading screen renders descriptions too), or without a
+	 * Runs whenever a question description is rendered on the frontend.
+	 * In wp-admin (the grading screen renders descriptions too), or without a
 	 * translation, the question renders its own description, exactly like core.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *
@@ -159,11 +155,10 @@ class Question_Display {
 	/**
 	 * Show a question's title in the current language on the frontend.
 	 *
-	 * Runs whenever a question title is fetched on the frontend (the quiz page
-	 * heading among others). In wp-admin, or without a translation, the title
-	 * is returned unchanged.
+	 * Runs whenever a question title is fetched on the frontend (the quiz page heading among others).
+	 * In wp-admin, or without a translation, the title is returned unchanged.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *
@@ -212,14 +207,13 @@ class Question_Display {
 	/**
 	 * Show a question of a completed quiz in the current language.
 	 *
-	 * Runs every time a question is rendered on the quiz page, after the type
-	 * loaders have built its template data. On a completed quiz it replaces the
-	 * title, content, and option labels with the ones from the question's
-	 * translation. While the quiz is open, or when the options cannot be
-	 * mapped, the question renders as taken. Display only: stored answers and
-	 * grades are never modified.
+	 * Runs every time a question is rendered on the quiz page, after the type loaders
+	 * have built its template data. On a completed quiz it replaces the title, content,
+	 * and option labels with the ones from the question's translation. While the quiz
+	 * is open, or when the options cannot be mapped, the question renders as taken.
+	 * Display only: stored answers and grades are never modified.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *
@@ -228,10 +222,9 @@ class Question_Display {
 	 * @return array
 	 */
 	public function translate_template_data( $question_data, $question_id ) {
-		// Only translate once the quiz is completed (review mode). While it is
-		// open, the option labels are live form values: translating them would
-		// make the form submit display-language labels against the as-taken
-		// questions and corrupt the stored answers.
+		// Only translate once the quiz is completed (review mode). While it is open,
+		// the option labels are live form values: translating them would make the form
+		// submit display-language labels against the as-taken questions and corrupt the stored answers.
 		if ( empty( $question_data['quiz_is_completed'] ) ) {
 			return $question_data;
 		}
@@ -241,8 +234,8 @@ class Question_Display {
 			return $question_data;
 		}
 
-		// All-or-nothing per question: if this is a choice question and its
-		// options cannot be mapped, render the whole question as taken.
+		// All-or-nothing per question: if this is a choice question
+		// and its options cannot be mapped, render the whole question as taken.
 		$translated = $this->translate_answer_options( $question_data, (int) $question_id, $display_question_id );
 		if ( null === $translated ) {
 			return $question_data;
@@ -260,9 +253,8 @@ class Question_Display {
 	 * Swap the option labels of a choice question for the display question's,
 	 * matching right answers with right answers and wrong with wrong, by position.
 	 *
-	 * Multilingual plugins translate option labels in place, never reordering
-	 * them or moving them between the right and wrong lists, so same list + same
-	 * position is the same answer.
+	 * Multilingual plugins translate option labels in place, never reordering them
+	 * or moving them between the right and wrong lists, so same list + same position is the same answer.
 	 *
 	 * @param array $question_data       Question template data, as left by the type loaders.
 	 * @param int   $question_id         As-taken question ID.
@@ -310,10 +302,9 @@ class Question_Display {
 	/**
 	 * Translate answer labels through the label map, keeping the value's shape.
 	 *
-	 * The type loaders reshape these fields (the right answer gets merged into
-	 * the wrong list to build the options), so the existing values are mapped
-	 * in place rather than replaced with the translation's raw meta. Labels
-	 * missing from the map are kept as they are.
+	 * The type loaders reshape these fields (the right answer gets merged into the wrong list
+	 * to build the options), so the existing values are mapped in place rather than replaced
+	 * with the translation's raw meta. Labels missing from the map are kept as they are.
 	 *
 	 * @param string|array $labels    Label or list of labels, as the loaders left them.
 	 * @param array        $label_map As-taken label => display-language label.

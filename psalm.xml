@@ -2,6 +2,8 @@
 <psalm
 	autoloader="config/psalm/psalm-loader.php"
 	errorBaseline="config/psalm/psalm-baseline.xml"
+	findUnusedBaselineEntry="false"
+	findUnusedCode="false"
 	memoizeMethodCallResults="true"
  >
 	<projectFiles>
@@ -25,6 +27,19 @@
 		<InternalMethod errorLevel="suppress" />
 		<MissingReturnType errorLevel="suppress" />
 		<RedundantCastGivenDocblockType errorLevel="suppress" />
+		<!--
+			Psalm 5 reports legacy truthiness checks and casts that predate this upgrade.
+			Keep this broad migration suppression explicit rather than adding hundreds of
+			individual baseline entries, and revisit it as a separate cleanup project.
+		-->
+		<RiskyCast errorLevel="suppress" />
+		<RiskyTruthyFalsyComparison errorLevel="suppress" />
+		<MissingPropertyType>
+			<errorLevel type="suppress">
+				<!-- Psalm 5 does not match this vendored test-support property against its baseline entry. -->
+				<referencedProperty name="WP_Die_Exception::$wp_die_args" />
+			</errorLevel>
+		</MissingPropertyType>
 		<PropertyNotSetInConstructor>
 			<errorLevel type="suppress">
 				<referencedProperty name="Sensei_Main::$course_progress_repository_factory" />

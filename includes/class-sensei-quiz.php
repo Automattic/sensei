@@ -421,7 +421,7 @@ class Sensei_Quiz {
 		}
 
 		// Save transient to make retrieval faster.
-		$transient_key = self::get_user_data_transient_key( 'sensei_answers_', $user_id, $lesson_id );
+		$transient_key = self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id );
 		set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
 
 		return true;
@@ -449,7 +449,7 @@ class Sensei_Quiz {
 		}
 
 		// save some time and get the transient cached data
-		$transient_key            = self::get_user_data_transient_key( 'sensei_answers_', $user_id, $lesson_id );
+		$transient_key            = self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id );
 		$transient_cached_answers = get_transient( $transient_key );
 
 		// return the transient or get the values get the values from the comment meta
@@ -639,7 +639,7 @@ class Sensei_Quiz {
 
 		// Redirect to the target page.
 		wp_safe_redirect(
-			add_query_arg( [ 'bypass_server_cache' => uniqid() ], sanitize_text_field( wp_unslash( $_POST['quiz_target_page'] ) ) )
+			add_query_arg( [ 'bypass_server_cache' => uniqid() ], sensei_request_text( $_POST['quiz_target_page'] ) )
 		);
 		exit;
 
@@ -798,30 +798,30 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Build the transient key for a user's cached quiz data on a lesson.
+	 * Build the cache key for a user's quiz data on a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @param string $prefix    Cache prefix.
 	 * @param int    $user_id   User ID.
 	 * @param int    $lesson_id Lesson ID.
 	 * @return string
 	 */
-	private static function get_user_data_transient_key( $prefix, $user_id, $lesson_id ) {
+	private static function get_cache_key( $prefix, $user_id, $lesson_id ) {
 		/**
 		 * Filter the lesson ID that keys a user's cached quiz data.
 		 *
 		 * The cached answers, grades, and feedback build their keys through
 		 * this filter, on reads, writes, and invalidations.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.3
 		 *
-		 * @hook sensei_quiz_user_data_cache_lesson_id
+		 * @hook sensei_quiz_cache_key_lesson_id
 		 *
 		 * @param {int} $lesson_id Lesson ID.
 		 * @return {int} Lesson ID to key the cache by.
 		 */
-		$lesson_id = (int) apply_filters( 'sensei_quiz_user_data_cache_lesson_id', $lesson_id );
+		$lesson_id = (int) apply_filters( 'sensei_quiz_cache_key_lesson_id', $lesson_id );
 
 		return $prefix . $user_id . '_' . $lesson_id;
 	}
@@ -870,9 +870,9 @@ class Sensei_Quiz {
 		}
 
 		// Reset the transients.
-		$answers_transient_key          = self::get_user_data_transient_key( 'sensei_answers_', $user_id, $lesson_id );
-		$grades_transient_key           = self::get_user_data_transient_key( 'quiz_grades_', $user_id, $lesson_id );
-		$answers_feedback_transient_key = self::get_user_data_transient_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
+		$answers_transient_key          = self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id );
+		$grades_transient_key           = self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id );
+		$answers_feedback_transient_key = self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
 		delete_transient( $answers_transient_key );
 		delete_transient( $grades_transient_key );
 		delete_transient( $answers_feedback_transient_key );
@@ -1162,7 +1162,7 @@ class Sensei_Quiz {
 			Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
 		}
 
-		$transient_key = self::get_user_data_transient_key( 'quiz_grades_', $user_id, $lesson_id );
+		$transient_key = self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id );
 		set_transient( $transient_key, $quiz_grades, 10 * DAY_IN_SECONDS );
 
 		return true;
@@ -1201,7 +1201,7 @@ class Sensei_Quiz {
 		}
 
 		// save some time and get the transient cached data
-		$transient_key = self::get_user_data_transient_key( 'quiz_grades_', $user_id, $lesson_id );
+		$transient_key = self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id );
 		$grades_map    = get_transient( $transient_key );
 
 		// get the data if nothing was stored in the transient
@@ -1321,7 +1321,7 @@ class Sensei_Quiz {
 		Sensei()->quiz_grade_repository->save_many( $submission, $grades );
 
 		// Save transient to make retrieval faster in the future.
-		$transient_key = self::get_user_data_transient_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
+		$transient_key = self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
 		set_transient( $transient_key, $encoded_answers_feedback, 10 * DAY_IN_SECONDS );
 
 		return true;
@@ -1360,7 +1360,7 @@ class Sensei_Quiz {
 		}
 
 		// first check the transient to save a few split seconds
-		$transient_key    = self::get_user_data_transient_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
+		$transient_key    = self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
 		$encoded_feedback = get_transient( $transient_key );
 
 		// get the data if nothing was stored in the transient
@@ -1560,7 +1560,7 @@ class Sensei_Quiz {
 
 		$lesson = get_post( $lesson_id );
 
-		if ( is_singular( 'quiz' ) && ! $has_questions && $_SERVER['REQUEST_URI'] !== "/lesson/$lesson->post_name" ) {
+		if ( is_singular( 'quiz' ) && ! $has_questions && isset( $_SERVER['REQUEST_URI'] ) && sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) !== "/lesson/$lesson->post_name" ) {
 
 			wp_redirect( get_permalink( $lesson->ID ), 301 );
 			exit;

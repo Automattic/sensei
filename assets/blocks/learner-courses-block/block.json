@@ -1,4 +1,5 @@
 {
+  "apiVersion": 3,
   "name": "sensei-lms/learner-courses",
   "title": "Student Courses",
   "description": "Manage what students see on their dashboard. This block is only displayed to logged in students.",

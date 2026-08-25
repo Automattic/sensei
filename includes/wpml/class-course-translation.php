@@ -62,7 +62,8 @@ class Course_Translation {
 			return;
 		}
 
-		$lesson_ids = Sensei()->course->course_lessons( $master_id, 'any', 'ids' );
+		$lesson_ids          = Sensei()->course->course_lessons( $master_id, 'any', 'ids' );
+		$duplicate_languages = array();
 		foreach ( $lesson_ids as $lesson_id ) {
 			if ( ! is_int( $lesson_id ) ) {
 				$lesson_id = (int) $lesson_id;
@@ -75,15 +76,28 @@ class Course_Translation {
 			}
 
 			$translations = $this->get_post_duplicates( $lesson_id );
-			foreach ( $translations as $translated_lesson_id ) {
+			foreach ( $translations as $language_code => $translated_lesson_id ) {
+				if ( empty( $this->get_element_language_details( (int) $translated_lesson_id, 'lesson' ) ) ) {
+					continue;
+				}
+
 				$this->update_lesson_course( (int) $translated_lesson_id, $new_course_id );
-				$this->update_translated_lesson_properties( (int) $translated_lesson_id, $lesson_id );
+				$this->set_module_taxonomies( (int) $translated_lesson_id, $lesson_id, array( 'language_code' => $language_code ) );
+				$duplicate_languages[ $language_code ] = true;
 			}
 
 			$this->update_quiz_translations( $lesson_id, $details['language_code'] );
 
 			// Sync lesson course field across translations.
 			$this->sync_custom_field( $lesson_id, '_lesson_course' );
+		}
+
+		// One order sync per language instead of one per lesson.
+		foreach ( array_keys( $duplicate_languages ) as $language_code ) {
+			$translated_course_id = $this->get_object_id( $master_id, 'course', false, $language_code );
+			if ( $translated_course_id && $translated_course_id !== $master_id ) {
+				$this->sync_course_lesson_order( $master_id, $translated_course_id, $language_code );
+			}
 		}
 	}
 }

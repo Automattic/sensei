@@ -257,7 +257,7 @@ class Sensei_Grading {
 			$user_id = intval( $_GET['user_id'] );
 		}
 		if ( ! empty( $_GET['view'] ) ) {
-			$view = esc_html( $_GET['view'] );
+			$view = sensei_request_text( $_GET['view'] );
 		}
 
 		$sensei_grading_overview = new Sensei_Grading_Main( compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
@@ -457,7 +457,7 @@ class Sensei_Grading {
 		}
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
 
-			$user_name = Sensei_Learner::get_full_name( $_GET['user_id'] );
+			$user_name = Sensei_Learner::get_full_name( absint( $_GET['user_id'] ) );
 			$title    .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . esc_html( $user_name ) . '</span>';
 
 		}
@@ -511,7 +511,7 @@ class Sensei_Grading {
 		}
 		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
 
-			$user_name = Sensei_Learner::get_full_name( $_GET['user'] );
+			$user_name = Sensei_Learner::get_full_name( absint( $_GET['user'] ) );
 			$title    .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . esc_html( $user_name ) . '</span>';
 
 		}
@@ -678,6 +678,11 @@ class Sensei_Grading {
 	 * @return string
 	 */
 	public function get_lessons_dropdown() {
+		// The dropdown is only used by the Grading screen, so we gate it with the same capability.
+		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
+			wp_die( '', '', 403 );
+		}
+
 		if ( ! isset( $_GET['course_id'] ) ) {
 			// Try deprecated functionality as a fallback.
 			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
@@ -714,8 +719,8 @@ class Sensei_Grading {
 	 */
 	private function deprecated_get_lessons_dropdown() {
 		// Parse POST data
-		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
-		$data        = $_POST['data'];
+		// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- No modifications are made here. URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data        = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$course_data = array();
 		parse_str( $data, $course_data );
 
@@ -750,6 +755,13 @@ class Sensei_Grading {
 				'suppress_filters' => 0,
 				'fields'           => 'ids',
 			);
+
+			// Teachers may only see their own lessons. The Grading screen does that with a
+			// pre_get_posts filter that never runs during AJAX requests, so we repeat it here.
+			if ( ! current_user_can( 'edit_others_lessons' ) ) {
+				$lesson_args['author'] = get_current_user_id();
+			}
+
 			/**
 			 * Filter the arguments used to query for lessons in the grading dropdown.
 			 *
@@ -783,7 +795,8 @@ class Sensei_Grading {
 	public function admin_process_grading_submission() {
 
 		if ( ! isset( $_POST['sensei_manual_grade'] )
-			|| ! wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' )
+			|| ! isset( $_POST['_wp_sensei_manual_grading_nonce'] )
+			|| ! wp_verify_nonce( sensei_request_text( $_POST['_wp_sensei_manual_grading_nonce'] ), 'sensei_manual_grading' )
 			|| ! isset( $_GET['quiz_id'] )
 			|| $_GET['quiz_id'] != $_POST['sensei_manual_grade'] ) {
 
@@ -792,7 +805,7 @@ class Sensei_Grading {
 		}
 
 		$quiz_id = absint( $_GET['quiz_id'] );
-		$user_id = absint( $_GET['user'] );
+		$user_id = isset( $_GET['user'] ) ? absint( $_GET['user'] ) : 0;
 
 		$quiz_lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
@@ -812,7 +825,7 @@ class Sensei_Grading {
 
 		$questions            = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 		$quiz_grade           = 0;
-		$quiz_grade_total     = $_POST['quiz_grade_total'];
+		$quiz_grade_total     = isset( $_POST['quiz_grade_total'] ) ? absint( wp_unslash( $_POST['quiz_grade_total'] ) ) : 0;
 		$all_question_grades  = array();
 		$all_answers_feedback = array();
 
@@ -836,7 +849,7 @@ class Sensei_Grading {
 			$question_feedback = '';
 			if ( isset( $_POST['questions_feedback'][ $question_id ] ) ) {
 
-				$question_feedback = wp_unslash( $_POST['questions_feedback'][ $question_id ] );
+				$question_feedback = wp_kses_post( wp_unslash( is_array( $_POST['questions_feedback'][ $question_id ] ) ? '' : $_POST['questions_feedback'][ $question_id ] ) );
 
 			}
 			$all_answers_feedback[ $question_id ] = $question_feedback;
@@ -864,7 +877,7 @@ class Sensei_Grading {
 
 		// $_POST['all_questions_graded'] is set when all questions have been graded
 		// in the class sensei grading user quiz -> display()
-		if ( $_POST['all_questions_graded'] == 'yes' ) {
+		if ( isset( $_POST['all_questions_graded'] ) && 'yes' == $_POST['all_questions_graded'] ) {
 
 			// Set the users total quiz grade.
 			$grade = Sensei_Utils::quotient_as_absolute_rounded_percentage( $quiz_grade, $quiz_grade_total, 2 );
@@ -919,13 +932,13 @@ class Sensei_Grading {
 
 		}
 
-		if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
+		if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( sensei_request_text( $_POST['sensei_grade_next_learner'] ) ) > 0 ) {
 
 			$load_url = add_query_arg( array( 'message' => 'graded' ) );
 
 		} elseif ( isset( $_POST['_wp_http_referer'] ) ) {
 
-			$load_url = add_query_arg( array( 'message' => 'graded' ), $_POST['_wp_http_referer'] );
+			$load_url = add_query_arg( array( 'message' => 'graded' ), esc_url_raw( wp_unslash( is_array( $_POST['_wp_http_referer'] ) ? '' : $_POST['_wp_http_referer'] ) ) );
 
 		} else {
 
@@ -955,7 +968,7 @@ class Sensei_Grading {
 		// Get data.
 		$course_id    = intval( $_GET['course_id'] );
 		$lesson_id    = intval( $_GET['lesson_id'] );
-		$grading_view = ( isset( $_GET['view'] ) && $_GET['view'] ) ? $_GET['view'] : 'ungraded';
+		$grading_view = ( isset( $_GET['view'] ) && '' !== $_GET['view'] ) ? sensei_request_text( $_GET['view'] ) : 'ungraded';
 
 		if ( 0 < $lesson_id && 0 < $course_id ) {
 			echo esc_url_raw(
@@ -984,8 +997,8 @@ class Sensei_Grading {
 	 */
 	private function deprecated_get_redirect_url() {
 		// Parse POST data
-		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
-		$data        = $_POST['data'];
+		// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- No modifications are made here. URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data        = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$lesson_data = array();
 		parse_str( $data, $lesson_data );
 
@@ -1016,8 +1029,8 @@ class Sensei_Grading {
 	}
 
 	public function add_grading_notices() {
-		$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : false;
-		$message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : false;
+		$page    = isset( $_GET['page'] ) ? sensei_request_text( $_GET['page'] ) : false;
+		$message = isset( $_GET['message'] ) ? sensei_request_text( $_GET['message'] ) : false;
 
 		if (
 			$page

@@ -1,7 +1,7 @@
 {
     "name": "sensei-lms/course-theme-lesson-module",
     "category": "theme",
-    "apiVersion": 2,
+    "apiVersion": 3,
     "attributes": {
         "className": {
             "type": "string"

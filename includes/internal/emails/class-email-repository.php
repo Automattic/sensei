@@ -192,7 +192,7 @@ class Email_Repository {
 	 *     total_pages: int,
 	 * }
 	 */
-	public function get_all( string $type = null, $per_page = 10, $offset = 0 ) {
+	public function get_all( ?string $type = null, $per_page = 10, $offset = 0 ) {
 		$query_args = [
 			'post_type'      => Email_Post_Type::POST_TYPE,
 			'posts_per_page' => $per_page,

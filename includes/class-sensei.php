@@ -431,7 +431,9 @@ class Sensei_Main {
 	public $clock;
 
 	/**
-	 * Sensei Tour.
+	 * Sensei Tour compatibility API.
+	 *
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 *
 	 * @var Sensei_Tour|null
 	 */
@@ -828,9 +830,8 @@ class Sensei_Main {
 			Email_Customization::instance( $this->settings, $this->assets, $this->lesson_progress_repository )->init();
 		}
 
-		$this->tour   = null;
-		$tour_enabled = $this->feature_flags->is_enabled( 'onboarding_tour' );
-		if ( $tour_enabled ) {
+		$this->tour = null;
+		if ( $this->feature_flags->is_enabled( 'onboarding_tour' ) ) {
 			$this->tour = Sensei_Tour::instance();
 			$this->tour->init();
 		}

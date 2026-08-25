@@ -14,9 +14,25 @@ import { createBlock } from '@wordpress/blocks';
  */
 import { LessonEdit } from './lesson-edit';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../tests/mocks/wordpress-data' )( {
+		useDispatch: jest.fn(),
+		select: jest.fn(),
+	} )
+);
 
 jest.mock( '@wordpress/blocks' );
+jest.mock( '@wordpress/block-editor', () => ( {
+	useBlockProps: ( props = {} ) => ( {
+		...props,
+		className: [
+			'wp-block-sensei-lms-course-outline-lesson',
+			props.className,
+		]
+			.filter( Boolean )
+			.join( ' ' ),
+	} ),
+} ) );
 jest.mock( '../../../shared/blocks/settings', () => ( {
 	withColorSettings: () => ( Component ) => Component,
 } ) );
@@ -64,14 +80,15 @@ describe( '<LessonEdit />', () => {
 
 	it( 'Should render the edit lesson block correctly', () => {
 		const { container, getByPlaceholderText } = render(
-			<LessonEdit
-				className="custom-class"
-				attributes={ { title: 'Test' } }
-			/>
+			<LessonEdit attributes={ { title: 'Test' } } />
 		);
 
 		expect( getByPlaceholderText( 'Add Lesson' ) ).toBeTruthy();
-		expect( container.querySelector( '.custom-class' ) ).toBeTruthy();
+		expect(
+			container.querySelector(
+				'.wp-block-sensei-lms-course-outline-lesson'
+			)
+		).toBeTruthy();
 	} );
 
 	it( 'Should render the edit lesson block with preview correctly', () => {

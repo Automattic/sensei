@@ -9,7 +9,12 @@ import { createBlock } from '@wordpress/blocks';
  */
 import { useAddExistingLessons } from './use-add-existing-lessons';
 
-jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/data', () =>
+	require( '../../../../../tests/mocks/wordpress-data' )( {
+		useSelect: jest.fn(),
+		useDispatch: jest.fn(),
+	} )
+);
 jest.mock( '@wordpress/api-fetch' );
 jest.mock( '@wordpress/blocks' );
 

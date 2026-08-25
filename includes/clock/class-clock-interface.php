@@ -21,5 +21,5 @@ interface Clock_Interface {
 	 * @param DateTimeZone|null $timezone The timezone to use. Uses the default timezone if not provided.
 	 * @return \DateTimeImmutable
 	 */
-	public function now( DateTimeZone $timezone = null );
+	public function now( ?DateTimeZone $timezone = null );
 }

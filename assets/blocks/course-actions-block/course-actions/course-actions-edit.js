@@ -6,6 +6,7 @@ import {
 	InnerBlocks,
 	BlockControls,
 	store as blockEditorStore,
+	useBlockProps,
 } from '@wordpress/block-editor';
 import { useCallback, useMemo, useState } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -17,11 +18,6 @@ import InvalidUsageError from '../../../shared/components/invalid-usage';
 import CourseStatusToolbar from '../course-status-toolbar';
 import CourseStatusOptions from '../course-status-options';
 import CourseStatusContext from '../course-status-context';
-
-/**
- * External dependencies
- */
-import classnames from 'classnames';
 
 const innerBlocksTemplate = [
 	[
@@ -72,16 +68,11 @@ const useSelectChildBlock = ( clientId ) => {
  * Edit course actions block component.
  *
  * @param {Object} props
- * @param {Object} props.className        Block className.
  * @param {Object} props.context          Block context.
  * @param {Object} props.context.postType Post type.
  * @param {string} props.clientId         Block client ID.
  */
-const CourseActionsEdit = ( {
-	className,
-	context: { postType },
-	clientId,
-} ) => {
+const CourseActionsEdit = ( { context: { postType }, clientId } ) => {
 	const [ courseStatus, setCourseStatus ] = useState(
 		CourseStatusOptions[ 0 ].value
 	);
@@ -114,6 +105,10 @@ const CourseActionsEdit = ( {
 		};
 	}, [ courseStatus, setCourseStatusAndSelectChildBlock ] );
 
+	const blockProps = useBlockProps( {
+		className: `is-status-${ courseStatus }`,
+	} );
+
 	if ( 'course' !== postType ) {
 		return (
 			<InvalidUsageError
@@ -127,12 +122,7 @@ const CourseActionsEdit = ( {
 
 	return (
 		<CourseStatusContext.Provider value={ contextValue }>
-			<div
-				className={ classnames(
-					className,
-					`is-status-${ courseStatus }`
-				) }
-			>
+			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [
 						'sensei-lms/button-take-course',

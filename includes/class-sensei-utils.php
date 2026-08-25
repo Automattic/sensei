@@ -314,12 +314,15 @@ class Sensei_Utils {
 	/**
 	 * Load the WordPress rich text editor
 	 *
-	 * @param  string $content    Initial content for editor
-	 * @param  string $editor_id  ID of editor (only lower case characters - no spaces, underscores, hyphens, etc.)
-	 * @param  string $input_name Name for text area form element
+	 * @param  string|null $content    Initial content for editor. Null is treated as empty.
+	 * @param  string      $editor_id  ID of editor (only lower case characters - no spaces, underscores, hyphens, etc.)
+	 * @param  string      $input_name Name for text area form element
 	 * @return void
 	 */
 	public static function sensei_text_editor( $content = '', $editor_id = 'senseitexteditor', $input_name = '' ) {
+
+		// Normalise the null of an unsaved answer, which raises a PHP 8.1+ deprecation in wp_editor().
+		$content = $content ?? '';
 
 		if ( ! $input_name ) {
 			$input_name = $editor_id;
@@ -909,11 +912,11 @@ class Sensei_Utils {
 	 * @return array $return_array ordered data
 	 */
 	public static function array_sort_reorder( $return_array ) {
-		if ( isset( $_GET['orderby'] ) && '' != esc_html( $_GET['orderby'] ) ) {
+		if ( isset( $_GET['orderby'] ) && '' != sensei_request_text( $_GET['orderby'] ) ) {
 			$sort_key = '';
 			if ( '' != $sort_key ) {
 					self::sort_array_by_key( $return_array, $sort_key );
-				if ( isset( $_GET['order'] ) && 'desc' == esc_html( $_GET['order'] ) ) {
+				if ( isset( $_GET['order'] ) && 'desc' == sensei_request_text( $_GET['order'] ) ) {
 					$return_array = array_reverse( $return_array, true );
 				}
 			}

@@ -1,4 +1,5 @@
 {
+	"apiVersion": 3,
 	"name": "sensei-lms/featured-video",
 	"title": "Featured Video",
 	"description": "Add a featured video to your lesson to highlight the video and make use of our video templates.",

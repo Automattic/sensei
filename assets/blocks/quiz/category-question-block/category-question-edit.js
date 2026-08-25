@@ -3,6 +3,7 @@
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
+import { useBlockProps } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -51,6 +52,12 @@ const CategoryQuestionEdit = ( props ) => {
 		getCategoryTermById( category )?.name ?? props.attributes.categoryName;
 	const categoryNameMatch = categoryName === props.attributes.categoryName;
 
+	const blockProps = useBlockProps( {
+		className: `sensei-lms-question-block sensei-lms-category-question-block ${
+			! category ? 'is-draft' : ''
+		}`,
+	} );
+
 	useEffect( () => {
 		if ( categoryName && ! categoryNameMatch ) {
 			setAttributes( {
@@ -62,11 +69,7 @@ const CategoryQuestionEdit = ( props ) => {
 	return (
 		<>
 			<CategoryQuestionSettings { ...props } />
-			<div
-				className={ `sensei-lms-question-block sensei-lms-category-question-block ${
-					! category ? 'is-draft' : ''
-				}` }
-			>
+			<div { ...blockProps }>
 				{ questionIndex }
 				<h2 className="sensei-lms-question-block__title">
 					{ categoryName ? (

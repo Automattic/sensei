@@ -22,7 +22,7 @@ class Email_Page_Template {
 
 
 	public const THEME         = 'sensei-email';
-	public const SLUG          = 'single-sensei_email';
+	public const SLUG          = 'single-' . Email_Post_Type::POST_TYPE;
 	public const ID            = self::THEME . '//' . self::SLUG;
 	public const TEMPLATE_PATH = 'block-templates/email-template.php';
 
@@ -137,11 +137,17 @@ class Email_Page_Template {
 
 		$from_db = $this->repository->get( self::ID );
 
-		if ( ! empty( $from_db ) ) {
-			$query_result[] = $from_db;
-		} else {  // Use the PHP email template.
-			$query_result[] = $this->repository->get_from_file( self::TEMPLATE_PATH, self::ID );
+		$template = ! empty( $from_db ) ? $from_db : $this->repository->get_from_file( self::TEMPLATE_PATH, self::ID );
+
+		if ( empty( $template ) ) {
+			return $query_result;
 		}
+
+		// Mark as a plugin template so the Site Editor groups it under "Sensei LMS".
+		$template->origin = 'plugin';
+		$template->plugin = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
+
+		$query_result[] = $template;
 
 		return $query_result;
 	}

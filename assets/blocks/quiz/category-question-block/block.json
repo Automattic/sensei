@@ -1,4 +1,5 @@
 {
+  "apiVersion": 3,
   "name": "sensei-lms/quiz-category-question",
   "title": "Category Question",
   "description": "Pull questions from a question category.",
