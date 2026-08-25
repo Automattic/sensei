@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Compatibility layer for the removed onboarding tours.
  *
  * @since 4.22.0
- * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+ * @deprecated 4.26.3 The onboarding tours are no longer supported.
  */
 class Sensei_Tour {
 
@@ -36,12 +36,12 @@ class Sensei_Tour {
 	 * Fetches an instance of the class.
 	 *
 	 * @since 4.22.0
-	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 *
 	 * @return self
 	 */
 	public static function instance() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.26.3' );
 
 		if ( ! self::$instance ) {
 			self::$instance = new self();
@@ -54,10 +54,10 @@ class Sensei_Tour {
 	 * Initializes the compatibility layer.
 	 *
 	 * @since 4.22.0
-	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 */
 	public function init() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.26.3' );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 	}
 
@@ -89,13 +89,13 @@ class Sensei_Tour {
 		 * @hook sensei_tour_loaders Load tours for Sensei.
 		 *
 		 * @since 4.22.0
-		 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+		 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 		 *
 		 * @param {array} $tour_loaders The tour loaders.
 		 *
 		 * @return {array} Filtered tour loaders.
 		 */
-		$tour_loaders = apply_filters_deprecated( 'sensei_tour_loaders', array( $tour_loaders ), '$$next-version$$' );
+		$tour_loaders = apply_filters_deprecated( 'sensei_tour_loaders', array( $tour_loaders ), '4.26.3' );
 
 		$incomplete_tours = array();
 
@@ -114,7 +114,7 @@ class Sensei_Tour {
 			 * @hook sensei_tour_is_complete Check if a tour is complete.
 			 *
 			 * @since 4.22.0
-			 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+			 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 			 *
 			 * @param {bool}   $is_tour_complete The tour completion status.
 			 * @param {string} $tour_id          The tour ID.
@@ -124,7 +124,7 @@ class Sensei_Tour {
 			$is_tour_complete = apply_filters_deprecated(
 				'sensei_tour_is_complete',
 				array( $this->get_tour_completion_status( $handle, get_current_user_id() ), $handle ),
-				'$$next-version$$'
+				'4.26.3'
 			);
 
 			if ( ! $is_tour_complete ) {
@@ -141,14 +141,14 @@ class Sensei_Tour {
 	 * Set tour status for user.
 	 *
 	 * @since 4.22.0
-	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 *
 	 * @param string $tour_id The tour ID.
 	 * @param bool   $status  The tour status.
 	 * @param int    $user_id The user ID.
 	 */
 	public function set_tour_completion_status( $tour_id, $status, $user_id = 0 ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.26.3' );
 		$user_id = $user_id ? $user_id : get_current_user_id();
 
 		if ( ! $user_id ) {
@@ -169,7 +169,7 @@ class Sensei_Tour {
 	 * Get tour status for user.
 	 *
 	 * @since 4.22.0
-	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 *
 	 * @param string $tour_id The tour ID.
 	 * @param int    $user_id The user ID.
@@ -177,7 +177,7 @@ class Sensei_Tour {
 	 * @return bool The tour status.
 	 */
 	public function get_tour_completion_status( $tour_id, $user_id = 0 ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.26.3' );
 		$user_id = $user_id ? $user_id : get_current_user_id();
 
 		if ( ! $user_id ) {
@@ -197,7 +197,7 @@ class Sensei_Tour {
 	 * Get the former callback for a course or lesson tour.
 	 *
 	 * @since 4.23.0
-	 * @deprecated $$next-version$$ The onboarding tours are no longer supported.
+	 * @deprecated 4.26.3 The onboarding tours are no longer supported.
 	 *
 	 * @param string $post_type The post type.
 	 * @param string $handle    The script handle.
@@ -205,7 +205,7 @@ class Sensei_Tour {
 	 * @return callable A no-op callback retained for backward compatibility.
 	 */
 	public function get_course_lesson_tour_enqueue_callback( $post_type, $handle ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Retained for backward compatibility.
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.26.3' );
 
 		return static function () {
 		};

@@ -81,8 +81,6 @@ class Sensei_Admin {
 
 		// Add notices to WP dashboard
 		add_action( 'admin_notices', array( $this, 'theme_compatibility_notices' ) );
-		// warn users in case admin_email is not a real WP_User
-		add_action( 'admin_notices', array( $this, 'notify_if_admin_email_not_real_admin_user' ) );
 
 		// remove a course from course order when trashed
 		add_action( 'transition_post_status', array( $this, 'remove_trashed_course_from_course_order' ) );
@@ -645,7 +643,7 @@ class Sensei_Admin {
 			wp_die( esc_html( sprintf( __( 'Please supply a %1$s ID.', 'sensei-lms' ) ), $post_type ) );
 		}
 
-		$post_id = $_GET['post'];
+		$post_id = absint( $_GET['post'] );
 		$post    = get_post( $post_id );
 		if ( ! in_array( get_post_type( $post_id ), array( 'lesson', 'course' ), true ) ) {
 			wp_die( esc_html__( 'Invalid post type. Can duplicate only lessons and courses', 'sensei-lms' ) );
@@ -723,7 +721,7 @@ class Sensei_Admin {
 			);
 			$courses = get_posts( $args );
 
-			$selected       = isset( $_GET['lesson_course'] ) ? $_GET['lesson_course'] : '';
+			$selected       = isset( $_GET['lesson_course'] ) ? absint( $_GET['lesson_course'] ) : '';
 			$course_options = '';
 			foreach ( $courses as $course ) {
 				$course_options .= '<option value="' . esc_attr( $course->ID ) . '" ' . selected( $selected, $course->ID, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>';
@@ -759,7 +757,7 @@ class Sensei_Admin {
 		global $typenow;
 
 		if ( is_admin() && 'lesson' == $typenow ) {
-			$lesson_course = isset( $_GET['lesson_course'] ) ? $_GET['lesson_course'] : '';
+			$lesson_course = isset( $_GET['lesson_course'] ) ? absint( $_GET['lesson_course'] ) : '';
 
 			if ( $lesson_course ) {
 				$request['meta_key']     = '_lesson_course';
@@ -1105,8 +1103,8 @@ class Sensei_Admin {
 		check_admin_referer( 'order_courses' );
 
 		$ordered = null;
-		if ( isset( $_POST['course-order'] ) && 0 < strlen( $_POST['course-order'] ) ) {
-			$ordered = $this->save_course_order( esc_attr( $_POST['course-order'] ) );
+		if ( isset( $_POST['course-order'] ) && 0 < strlen( sensei_request_text( $_POST['course-order'] ) ) ) {
+			$ordered = $this->save_course_order( sensei_request_text( $_POST['course-order'] ) );
 		}
 
 		wp_redirect(
@@ -1139,7 +1137,7 @@ class Sensei_Admin {
 
 								$html = '';
 
-								if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
+								if ( isset( $_GET['ordered'] ) && '' !== $_GET['ordered'] ) {
 									$html .= '<div class="updated fade">' . "\n";
 									$html .= '<p>' . esc_html__( 'The course order has been saved.', 'sensei-lms' ) . '</p>' . "\n";
 									$html .= '</div>' . "\n";
@@ -1520,7 +1518,7 @@ class Sensei_Admin {
 					&& ! empty( $course_structure[ $key ]['lessons'] )
 				) {
 					// phpcs:ignore WordPress.Security.NonceVerification
-					$order = sanitize_text_field( wp_unslash( $_POST[ 'lesson-order-module-' . $module['id'] ] ) );
+					$order = sensei_request_text( $_POST[ 'lesson-order-module-' . $module['id'] ] );
 					$order = array_map( 'absint', explode( ',', $order ) );
 
 					$course_structure[ $key ]['lessons'] = Sensei_Course_Structure::sort_structure( $course_structure[ $key ]['lessons'], $order, 'lesson' );
@@ -1692,7 +1690,7 @@ class Sensei_Admin {
 	public function theme_compatibility_notices() {
 
 		if ( isset( $_GET['sensei_hide_notice'] ) ) {
-			switch ( esc_attr( $_GET['sensei_hide_notice'] ) ) {
+			switch ( sensei_request_text( $_GET['sensei_hide_notice'] ) ) {
 				case 'menu_settings':
 					add_user_meta( get_current_user_id(), 'sensei_hide_menu_settings_notice', true );
 					break;
@@ -1744,35 +1742,14 @@ class Sensei_Admin {
 		}
 	}
 
+	/**
+	 * Previously rendered a dashboard notice when the administration email did not
+	 * belong to an administrator user.
+	 *
+	 * @deprecated 4.26.3
+	 */
 	public function notify_if_admin_email_not_real_admin_user() {
-		$maybe_admin = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
-
-		if ( false === $maybe_admin || false === user_can( $maybe_admin, 'manage_options' ) ) {
-			$general_settings_url         = '<a href="' . esc_url( admin_url( 'options-general.php' ) ) . '">' . esc_html__( 'Settings > General', 'sensei-lms' ) . '</a>';
-			$add_new_user_url             = '<a href="' . esc_url( admin_url( 'user-new.php' ) ) . '">' . esc_html__( 'add a new Administrator', 'sensei-lms' ) . '</a>';
-			$existing_administrators_link = '<a href="' . esc_url( admin_url( 'users.php?role=administrator' ) ) . '">' . esc_html__( 'existing Administrator', 'sensei-lms' ) . '</a>';
-			$current_setting              = get_bloginfo( 'admin_email' );
-
-			/*
-			 * translators: The %s placeholders are as follows:
-			 *
-			 * - A link to the General Settings page with the translated text "Settings > General".
-			 * - A link to add an admin user with the translated text "add a new Administrator".
-			 * - The current admin email address from the Settings.
-			 * - A link to view the existing admin users, with the translated text "existing Administrator".
-			 */
-			$warning = __( 'To prevent issues with Sensei LMS module names, your Email Address in %1$s should also belong to an Administrator user. You can either %2$s with the email address %3$s, or change that email address to match the email of an %4$s.', 'sensei-lms' );
-
-			?>
-			<div id="message" class="error sensei-message sensei-connect">
-				<p>
-					<strong>
-						<?php printf( esc_html( $warning ), wp_kses_post( $general_settings_url ), wp_kses_post( $add_new_user_url ), esc_html( $current_setting ), wp_kses_post( $existing_administrators_link ) ); ?>
-					</strong>
-				</p>
-			</div>
-			<?php
-		}
+		_deprecated_function( __METHOD__, '4.26.3' );
 	}
 
 	/**
@@ -1787,12 +1764,18 @@ class Sensei_Admin {
 			wp_die();
 		}
 
-		$event_name = $_REQUEST['event_name'];
-		$properties = isset( $_REQUEST['properties'] ) ? $_REQUEST['properties'] : [];
+		$event_name = sensei_request_text( $_REQUEST['event_name'] );
+		// $_REQUEST['properties'] is a JSON string or array; string values are sanitized via sanitize_event_properties() after decoding below.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$properties = isset( $_REQUEST['properties'] ) ? wp_unslash( $_REQUEST['properties'] ) : array();
 
 		if ( is_string( $properties ) ) {
-			$properties = json_decode( stripslashes( $properties ), true );
+			$properties = json_decode( $properties, true );
 		}
+
+		// Sanitize string values only, preserving the JSON-decoded scalar types (int/float/bool/null)
+		// so logged event properties keep the same types and values they had before sanitization.
+		$properties = is_array( $properties ) ? $this->sanitize_event_properties( $properties ) : array();
 
 		// Set the source to js-event.
 		add_filter(
@@ -1804,6 +1787,29 @@ class Sensei_Admin {
 
 		sensei_log_event( $event_name, $properties );
 		// phpcs:enable WordPress.Security.NonceVerification
+	}
+
+	/**
+	 * Recursively sanitize the string values of an event property array.
+	 *
+	 * Non-string scalar values (int, float, bool, null) are returned untouched so the
+	 * logged event keeps the types produced by json_decode().
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $properties Decoded event properties.
+	 * @return array The properties with their string values sanitized.
+	 */
+	private function sanitize_event_properties( array $properties ): array {
+		foreach ( $properties as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$properties[ $key ] = $this->sanitize_event_properties( $value );
+			} elseif ( is_string( $value ) ) {
+				$properties[ $key ] = sanitize_text_field( $value );
+			}
+		}
+
+		return $properties;
 	}
 
 	/**

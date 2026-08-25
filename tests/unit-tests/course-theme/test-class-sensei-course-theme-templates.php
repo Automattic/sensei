@@ -106,6 +106,22 @@ class Sensei_Course_Theme_Templates_Test extends WP_UnitTestCase {
 		$this->assertCount( 2, $filtered_templates );
 	}
 
+	public function testGetBlockTemplates_LessonTemplateNotCustomized_ReturnsWpBlockTemplate() {
+		add_filter( 'pre_http_request', '__return_empty_array' );
+
+		$templates = Sensei_Course_Theme_Templates::instance()->get_block_templates();
+
+		$this->assertInstanceOf( WP_Block_Template::class, $templates['lesson'] );
+	}
+
+	public function testGetBlockTemplates_LessonTemplateNotCustomized_ReturnsTemplateWithLessonSlug() {
+		add_filter( 'pre_http_request', '__return_empty_array' );
+
+		$templates = Sensei_Course_Theme_Templates::instance()->get_block_templates();
+
+		$this->assertSame( 'lesson', $templates['lesson']->slug );
+	}
+
 	public function testShouldUseQuizTemplate_QuizPassed_ReturnsFalse(): void {
 		/* Arrange. */
 		global $post;

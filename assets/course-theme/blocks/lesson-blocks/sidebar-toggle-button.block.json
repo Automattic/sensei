@@ -1,4 +1,5 @@
 {
+  "apiVersion": 3,
   "name": "sensei-lms/sidebar-toggle-button",
   "category": "theme",
   "supports": {

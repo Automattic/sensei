@@ -416,7 +416,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$selected_course = 0;
 
 		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
-		if ( isset( $_GET['filter_by_course_id'] ) && '' !== esc_html( sanitize_text_field( wp_unslash( $_GET['filter_by_course_id'] ) ) ) ) {
+		if ( isset( $_GET['filter_by_course_id'] ) && '' !== esc_html( sensei_request_text( $_GET['filter_by_course_id'] ) ) ) {
 			$selected_course = (int) $_GET['filter_by_course_id']; // phpcs:ignore WordPress.Security.NonceVerification
 		}
 		?>
@@ -537,7 +537,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to order columns.
 		if ( ! empty( $_GET['orderby'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$orderby_input = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			$orderby_input = sensei_request_text( $_GET['orderby'] );
 			if ( array_key_exists( $orderby_input, $this->get_sortable_columns() ) ) {
 				$orderby = $orderby_input;
 			}
@@ -548,7 +548,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to order columns.
 		if ( ! empty( $_GET['order'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$order = 'ASC' === strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ? 'ASC' : 'DESC';
+			$order = 'ASC' === strtoupper( sensei_request_text( $_GET['order'] ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle search.
@@ -602,7 +602,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for filtering.
 		if ( ! empty( $_GET['filter_type'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$filter_type_input = sanitize_text_field( wp_unslash( $_GET['filter_type'] ) );
+			$filter_type_input = sensei_request_text( $_GET['filter_type'] );
 			$filter_type       = in_array( $filter_type_input, array( 'inc', 'exc' ), true ) ? $filter_type_input : 'inc';
 		}
 		$page = $this->page_slug;

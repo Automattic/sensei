@@ -462,7 +462,7 @@ class Sensei_Question {
 			$output = '';
 
 			// Question type
-			$selected       = isset( $_GET['question_type'] ) ? $_GET['question_type'] : '';
+			$selected       = isset( $_GET['question_type'] ) ? sensei_request_text( $_GET['question_type'] ) : '';
 			$type_options   = '<option value="">' . esc_html__( 'All types', 'sensei-lms' ) . '</option>';
 			$question_types = $this->question_types();
 
@@ -483,7 +483,7 @@ class Sensei_Question {
 			);
 
 			if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
-				$selected    = isset( $_GET['question_cat'] ) ? $_GET['question_cat'] : '';
+				$selected    = isset( $_GET['question_cat'] ) ? sensei_request_text( $_GET['question_cat'] ) : '';
 				$cat_options = '<option value="">' . esc_html__( 'All categories', 'sensei-lms' ) . '</option>';
 				foreach ( $cats as $cat ) {
 					$cat_options .= '<option value="' . esc_attr( $cat->slug ) . '" ' . selected( $selected, $cat->slug, false ) . '>' . esc_html( $cat->name ) . '</option>';
@@ -521,7 +521,7 @@ class Sensei_Question {
 		if ( is_admin() && 'question' == $typenow ) {
 
 			// Question type
-			$question_type = isset( $_GET['question_type'] ) ? $_GET['question_type'] : '';
+			$question_type = isset( $_GET['question_type'] ) ? sensei_request_text( $_GET['question_type'] ) : '';
 			if ( $question_type ) {
 				$type_query             = array(
 					'taxonomy' => 'question-type',
@@ -532,7 +532,7 @@ class Sensei_Question {
 			}
 
 			// Question category
-			$question_cat = isset( $_GET['question_cat'] ) ? $_GET['question_cat'] : '';
+			$question_cat = isset( $_GET['question_cat'] ) ? sensei_request_text( $_GET['question_cat'] ) : '';
 			if ( $question_cat ) {
 				$cat_query              = array(
 					'taxonomy' => 'question-category',
@@ -710,7 +710,7 @@ class Sensei_Question {
 		/**
 		 * Filter the question whose description is rendered.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.3
 		 *
 		 * @hook sensei_question_description_question_id
 		 *

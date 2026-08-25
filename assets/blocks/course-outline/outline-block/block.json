@@ -1,4 +1,5 @@
 {
+  "apiVersion": 3,
   "name": "sensei-lms/course-outline",
   "title": "Course Outline",
   "description": "Manage your Sensei LMS course outline.",

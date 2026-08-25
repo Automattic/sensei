@@ -2,7 +2,7 @@
 	"name": "sensei-lms/template-style",
 	"category": "theme",
 	"parent": [],
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"attributes": {
 		"content": {
             "source": "text",
