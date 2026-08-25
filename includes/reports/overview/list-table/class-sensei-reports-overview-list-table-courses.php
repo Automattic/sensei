@@ -5,6 +5,10 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -36,6 +40,40 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 */
 	private $reports_overview_service_courses;
 
+	/**
+	 * Per-course grade totals cache for the current page.
+	 *
+	 * @var array<int, array{count:int, sum:float}>
+	 */
+	private $grade_totals_by_course = array();
+
+	/**
+	 * Per-course completions count cache for the current page.
+	 *
+	 * @var array<int, int>
+	 */
+	private $completions_by_course = array();
+
+	/**
+	 * Per-course average progress percentage cache for the current page.
+	 *
+	 * @var array<int, float>
+	 */
+	private $average_progress_by_course = array();
+
+	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface
+	 */
+	private Progress_Aggregation_Service_Interface $aggregation_service;
+
+	/**
+	 * The grading stats service.
+	 *
+	 * @var Grading_Stats_Service_Interface
+	 */
+	private Grading_Stats_Service_Interface $grading_stats_service;
 
 	/**
 	 * Constructor
@@ -44,14 +82,80 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 * @param Sensei_Course                                   $course Sensei course related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
 	 * @param Sensei_Reports_Overview_Service_Courses         $reports_overview_service_courses reports courses service.
+	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service The progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null            $grading_stats_service The grading stats service.
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Courses $reports_overview_service_courses ) {
+	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Courses $reports_overview_service_courses, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'courses', $data_provider );
 
 		$this->grading                          = $grading;
 		$this->course                           = $course;
 		$this->reports_overview_service_courses = $reports_overview_service_courses;
+		$this->aggregation_service              = $aggregation_service ?? ( new Progress_Query_Service_Factory() )->create_aggregation_service();
+		$this->grading_stats_service            = $grading_stats_service ?? ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+
+		if ( has_filter( 'sensei_analysis_course_percentage' ) ) {
+			_deprecated_hook( 'sensei_analysis_course_percentage', '$$next-version$$' );
+		}
+
+		if ( has_filter( 'sensei_analysis_course_completions' ) ) {
+			_deprecated_hook( 'sensei_analysis_course_completions', '$$next-version$$' );
+		}
+	}
+
+	/**
+	 * Prepare the table items and prime the per-course grade totals cache for the current page.
+	 */
+	public function prepare_items() {
+		parent::prepare_items();
+		$this->prime_row_aggregates( $this->items );
+	}
+
+	/**
+	 * Prime the per-course grade totals cache before generating CSV report rows.
+	 *
+	 * @param array $items The items that will be exported.
+	 */
+	protected function before_generate_report_rows( array $items ) {
+		$this->prime_row_aggregates( $items );
+	}
+
+	/**
+	 * Prime the per-course grade totals cache for the given page items.
+	 *
+	 * @param array $items Current page items (course post objects with an ID).
+	 */
+	private function prime_row_aggregates( array $items ) {
+		$course_ids = array_map(
+			static function ( $item ) {
+				return (int) $item->ID;
+			},
+			$items
+		);
+
+		$this->grade_totals_by_course     = array();
+		$this->completions_by_course      = array();
+		$this->average_progress_by_course = array();
+
+		if ( empty( $course_ids ) ) {
+			return;
+		}
+
+		$this->grade_totals_by_course = $this->grading_stats_service->get_grade_totals_by_course( $course_ids );
+
+		$completion_counts_by_course = $this->aggregation_service->count_statuses_by_post(
+			array(
+				'type'     => 'course',
+				'post__in' => $course_ids,
+			)
+		);
+
+		foreach ( $completion_counts_by_course as $course_id => $statuses ) {
+			$this->completions_by_course[ (int) $course_id ] = $statuses['complete'] ?? 0;
+		}
+
+		$this->average_progress_by_course = $this->reports_overview_service_courses->get_average_progress_per_course( $course_ids );
 	}
 
 	/**
@@ -67,13 +171,13 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$all_course_ids   = $this->get_all_item_ids();
 		$total_completion = 0;
 		if ( ! empty( $all_course_ids ) ) {
-			$total_completion = Sensei_Utils::sensei_check_for_activity(
+			$counts           = $this->aggregation_service->count_statuses(
 				array(
-					'type'     => 'sensei_course_status',
-					'status'   => 'complete',
+					'type'     => 'course',
 					'post__in' => $all_course_ids,
 				)
 			);
+			$total_completion = $counts['complete'] ?? 0;
 		}
 
 		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress( $all_course_ids );
@@ -197,21 +301,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$lessons = $this->course->course_lessons( $item->ID, 'any', 'ids' );
 
 		// Get Course Completions.
-		$course_args = array(
-			'post_id' => $item->ID,
-			'type'    => 'sensei_course_status',
-			'status'  => 'complete',
-		);
-		/**
-		 * Filter the course completions query arguments.
-		 *
-		 * @hook sensei_analysis_course_completions
-		 *
-		 * @param {array} $course_args Array of query arguments for course completions.
-		 * @param {WP_Post} $item Current course post object.
-		 * @return {array} Filtered array of query arguments for course completions.
-		 */
-		$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
+		$course_completions = $this->completions_by_course[ (int) $item->ID ] ?? 0;
 
 		// Average Grade will be N/A if the course has no lessons or quizzes, if none of the lessons
 		// have a status of 'graded', 'passed' or 'failed', or if none of the quizzes have grades.
@@ -219,24 +309,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 
 		// Get grades only if the course has lessons and quizzes.
 		if ( ! empty( $lessons ) && $this->course->course_quizzes( $item->ID, true ) ) {
-			$grade_args = array(
-				'post__in' => $lessons,
-				'type'     => 'sensei_lesson_status',
-				'status'   => array( 'graded', 'passed', 'failed' ),
-				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			$grade_totals  = $this->grade_totals_by_course[ (int) $item->ID ] ?? array(
+				'count' => 0,
+				'sum'   => 0,
 			);
-
-			/**
-			 * Filter the course completion percentage query arguments.
-			 *
-			 * @hook sensei_analysis_course_percentage
-			 *
-			 * @param {array} $grade_args Array of query arguments for course percentage.
-			 * @param {WP_Post} $item Current course post object.
-			 * @return {array} Filtered array of query arguments for course percentage.
-			 */
-			$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
-			$percent_total = $this->grading::get_course_users_grades_sum( $item->ID );
+			$percent_count = $grade_totals['count'];
+			$percent_total = $grade_totals['sum'];
 
 			if ( $percent_count > 0 && $percent_total >= 0 ) {
 				$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 ) . '%';
@@ -250,7 +328,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 
 		// Output course data.
 		$course_title   = apply_filters( 'the_title', $item->post_title, $item->ID ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
-		$total_enrolled = $this->reports_overview_service_courses->get_total_enrollments( [ $item->ID ] );
+		$total_enrolled = $this->reports_overview_service_courses->get_total_enrollments( array( $item->ID ) );
 
 		if ( ! $this->csv_output ) {
 			$url = add_query_arg(
@@ -264,7 +342,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $course_title . '</a></strong>';
 		}
 
-		$average_course_progress = $this->get_average_progress_for_courses_table( $item->ID );
+		// A course with no enrolled students or no lessons has no computable average, so show N/A rather than 0%.
+		if ( isset( $this->average_progress_by_course[ (int) $item->ID ] ) ) {
+			$average_course_progress = esc_html( sprintf( '%d%%', round( $this->average_progress_by_course[ (int) $item->ID ] ) ) );
+		} else {
+			$average_course_progress = __( 'N/A', 'sensei-lms' );
+		}
 
 		/**
 		 * Filter the row data for the Analysis Overview list table.
@@ -320,51 +403,6 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	}
 
 	/**
-	 * Calculate average lesson progress per student for course.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param int $course_id Id of the course for which average progress is calculated.
-	 *
-	 * @return string The average progress for the course, or N/A if none.
-	 */
-	private function get_average_progress_for_courses_table( $course_id ) {
-		// Fetch learners in course.
-		$course_args = array(
-			'post_id' => $course_id,
-			'type'    => 'sensei_course_status',
-			'status'  => array( 'in-progress', 'complete' ),
-		);
-
-		$course_students_count = Sensei_Utils::sensei_check_for_activity( $course_args );
-
-		// Get all course lessons.
-		$lessons        = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
-		$course_lessons = is_array( $lessons ) ? $lessons : array( $lessons );
-		$total_lessons  = count( $course_lessons );
-
-		// Get all completed lessons.
-		$lesson_args     = array(
-			'post__in' => $course_lessons,
-			'type'     => 'sensei_lesson_status',
-			'status'   => array( 'graded', 'ungraded', 'passed', 'failed', 'complete' ),
-			'count'    => true,
-		);
-		$completed_count = (int) Sensei_Utils::sensei_check_for_activity( $lesson_args );
-		// Calculate average progress.
-		$average_course_progress = __( 'N/A', 'sensei-lms' );
-		if ( $course_students_count && $total_lessons ) {
-			// Average course progress is calculated based on lessons completed for the course
-			// divided by the total possible lessons completed.
-			$average_course_progress_value = $completed_count / ( $course_students_count * $total_lessons ) * 100;
-			$average_course_progress       = esc_html(
-				sprintf( '%d%%', round( $average_course_progress_value ) )
-			);
-		}
-		return $average_course_progress;
-	}
-
-	/**
 	 * The text for the search button.
 	 *
 	 * @return string
@@ -379,9 +417,9 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 * @return array
 	 */
 	protected function get_additional_filters(): array {
-		return [
+		return array(
 			'last_activity_date_from' => $this->get_start_date_and_time(),
 			'last_activity_date_to'   => $this->get_end_date_and_time(),
-		];
+		);
 	}
 }

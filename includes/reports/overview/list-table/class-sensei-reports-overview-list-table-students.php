@@ -5,6 +5,10 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -24,16 +28,112 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	private $reports_overview_service_students;
 
 	/**
+	 * Per-user course-count cache for the current page.
+	 *
+	 * @var array<int, array{started:int, completed:int}>
+	 */
+	private $course_counts_by_user = array();
+
+	/**
+	 * Per-user grade totals cache for the current page.
+	 *
+	 * @var array<int, array{count:int, sum:float}>
+	 */
+	private $grade_totals_by_user = array();
+
+	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface
+	 */
+	private Progress_Aggregation_Service_Interface $aggregation_service;
+
+	/**
+	 * The grading stats service.
+	 *
+	 * @var Grading_Stats_Service_Interface
+	 */
+	private Grading_Stats_Service_Interface $grading_stats_service;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
 	 * @param Sensei_Reports_Overview_Service_Students        $reports_overview_service_students reports students service.
+	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service The progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null            $grading_stats_service The grading stats service.
 	 */
-	public function __construct( Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Students $reports_overview_service_students ) {
+	public function __construct( Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Students $reports_overview_service_students, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'users', $data_provider );
 
 		$this->reports_overview_service_students = $reports_overview_service_students;
+		$this->aggregation_service               = $aggregation_service ?? ( new Progress_Query_Service_Factory() )->create_aggregation_service();
+		$this->grading_stats_service             = $grading_stats_service ?? ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+
+		if ( has_filter( 'sensei_analysis_user_courses_started' ) ) {
+			_deprecated_hook( 'sensei_analysis_user_courses_started', '$$next-version$$' );
+		}
+		if ( has_filter( 'sensei_analysis_user_courses_ended' ) ) {
+			_deprecated_hook( 'sensei_analysis_user_courses_ended', '$$next-version$$' );
+		}
+		if ( has_filter( 'sensei_analysis_user_lesson_grades' ) ) {
+			_deprecated_hook( 'sensei_analysis_user_lesson_grades', '$$next-version$$' );
+		}
+	}
+
+	/**
+	 * Prepare the table items and prime the per-user course-count cache for the current page.
+	 */
+	public function prepare_items() {
+		parent::prepare_items();
+		$this->prime_row_aggregates( $this->items );
+	}
+
+	/**
+	 * Prime the per-user course-count cache before generating CSV report rows.
+	 *
+	 * @param array $items The items that will be exported.
+	 */
+	protected function before_generate_report_rows( array $items ) {
+		$this->prime_row_aggregates( $items );
+	}
+
+	/**
+	 * Prime the per-user course-count cache for the given page items.
+	 *
+	 * @param array $items Current page items (user objects with an ID).
+	 */
+	private function prime_row_aggregates( array $items ) {
+		$user_ids = array_map(
+			static function ( $item ) {
+				return (int) $item->ID;
+			},
+			$items
+		);
+
+		$this->course_counts_by_user = array();
+		$this->grade_totals_by_user  = array();
+		if ( empty( $user_ids ) ) {
+			return;
+		}
+
+		$counts = $this->aggregation_service->count_statuses_by_user(
+			array(
+				'type'    => 'course',
+				'user_id' => $user_ids,
+			)
+		);
+
+		foreach ( $user_ids as $user_id ) {
+			$statuses                                = $counts[ $user_id ] ?? array();
+			$this->course_counts_by_user[ $user_id ] = array(
+				'started'   => array_sum( $statuses ),
+				'completed' => $statuses['complete'] ?? 0,
+			);
+		}
+
+		$this->grade_totals_by_user = $this->grading_stats_service->get_grade_totals_by_user( $user_ids );
 	}
 
 	/**
@@ -53,23 +153,15 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 
 		$user_ids = $this->get_all_item_ids();
 		if ( $user_ids ) {
-			// Get total value for Courses Completed column in users table.
-			$total_completed_courses = Sensei_Utils::sensei_check_for_activity(
-				[
+			// Header totals for the Completed Courses and Active Courses (started - completed) columns.
+			$counts                  = $this->aggregation_service->count_statuses(
+				array(
+					'type'    => 'course',
 					'user_id' => $user_ids,
-					'type'    => 'sensei_course_status',
-					'status'  => 'complete',
-				]
+				)
 			);
-
-			// Get the number of the courses that users have started.
-			$total_courses_started = Sensei_Utils::sensei_check_for_activity(
-				[
-					'user_id' => $user_ids,
-					'type'    => 'sensei_course_status',
-					'status'  => 'any',
-				]
-			);
+			$total_completed_courses = $counts['complete'] ?? 0;
+			$total_courses_started   = array_sum( $counts );
 
 			// Get total average students grade.
 			$total_average_grade = $this->reports_overview_service_students->get_graded_lessons_average_grade( $user_ids );
@@ -123,12 +215,12 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 * @return array The array of columns to use with the table
 	 */
 	public function get_sortable_columns() {
-		$columns = [
+		$columns = array(
 			'title'           => array( 'display_name', false ),
 			'email'           => array( 'user_email', false ),
 			'date_registered' => array( 'user_registered', false ),
 			'last_activity'   => array( 'last_activity_date', false ),
-		];
+		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.
 		/**
@@ -165,62 +257,21 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 * @throws Exception If date-time conversion fails.
 	 */
 	protected function get_row_data( $item ) {
-		// Get Started Courses.
-		$course_args = array(
-			'user_id' => $item->ID,
-			'type'    => 'sensei_course_status',
-			'status'  => 'any',
+		// Get Started/Completed Courses from the primed per-page cache.
+		$counts               = $this->course_counts_by_user[ (int) $item->ID ] ?? array(
+			'started'   => 0,
+			'completed' => 0,
 		);
+		$user_courses_started = $counts['started'];
+		$user_courses_ended   = $counts['completed'];
 
-		/**
-		 * Filter user progress query arguments for courses: find started courses.
-		 *
-		 * @hook sensei_analysis_user_courses_started
-		 *
-		 * @param {array} $course_args Array of query arguments for started user courses.
-		 * @param {WP_User} $item Current user object.
-		 * @return {array} Filtered array of query arguments for started user courses.
-		*/
-		$course_args          = apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item );
-		$user_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args );
-
-		// Get Completed Courses.
-		$course_args = array(
-			'user_id' => $item->ID,
-			'type'    => 'sensei_course_status',
-			'status'  => 'complete',
+		// Get Quiz Grades from the primed per-page cache.
+		$grade_totals       = $this->grade_totals_by_user[ (int) $item->ID ] ?? array(
+			'count' => 0,
+			'sum'   => 0,
 		);
-
-		/**
-		 * Filter user progress query arguments for courses: find completed courses.
-		 *
-		 * @hook sensei_analysis_user_courses_ended
-		 *
-		 * @param {array} $course_args Array of query arguments for ended user courses.
-		 * @param {WP_User} $item Current user object.
-		 * @return {array} Filtered array of query arguments for ended user courses.
-		 */
-		$user_courses_ended = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_ended', $course_args, $item ) );
-
-		// Get Quiz Grades.
-		$grade_args = array(
-			'user_id'  => $item->ID,
-			'type'     => 'sensei_lesson_status',
-			'status'   => 'any',
-			'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Filtering graded only.
-		);
-
-		/**
-		 * Filter user progress query arguments for lessons: find graded lessons.
-		 *
-		 * @hook sensei_analysis_user_lesson_grades
-		 *
-		 * @param {array} $grade_args Array of query arguments for graded user lessons.
-		 * @param {WP_User} $item Current user object.
-		 * @return {array} Filtered array of query arguments for graded user lessons.
-		 */
-		$grade_count        = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), false );
-		$grade_total        = Sensei_Grading::get_user_graded_lessons_sum( $item->ID );
+		$grade_count        = $grade_totals['count'];
+		$grade_total        = $grade_totals['sum'];
 		$user_average_grade = 0;
 
 		if ( $grade_total > 0 && $grade_count > 0 ) {
@@ -289,10 +340,10 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 * @return array
 	 */
 	protected function get_additional_filters(): array {
-		return [
+		return array(
 			'last_activity_date_from' => $this->get_start_date_and_time(),
 			'last_activity_date_to'   => $this->get_end_date_and_time(),
-		];
+		);
 	}
 
 	/**

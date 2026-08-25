@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Reports Overview: Students and Courses tabs now read progress from High-Performance Progress Storage when it is enabled.

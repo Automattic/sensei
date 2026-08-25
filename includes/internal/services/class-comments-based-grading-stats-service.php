@@ -227,6 +227,110 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	}
 
 	/**
+	 * Get grade count and sum grouped by user.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $user_ids User IDs to include.
+	 * @return array<int, array{count:int, sum:float}> Map of user_id => totals.
+	 */
+	public function get_grade_totals_by_user( array $user_ids ): array {
+		if ( empty( $user_ids ) ) {
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants; placeholders dynamic; caching by callers.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT c.user_id AS user_id, COUNT(*) AS grade_count, COALESCE( SUM( cm.meta_value ), 0 ) AS grade_sum
+				FROM `{$wpdb->comments}` c
+				INNER JOIN `{$wpdb->commentmeta}` cm ON c.comment_ID = cm.comment_id
+				WHERE c.comment_type = 'sensei_lesson_status'
+					AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
+					AND cm.meta_key = 'grade'
+					AND EXISTS (
+						SELECT 1 FROM `{$wpdb->commentmeta}` cm2
+						WHERE cm2.comment_id = c.comment_ID AND cm2.meta_key = 'quiz_answers'
+					)
+					AND c.user_id IN ( $placeholders )
+				GROUP BY c.user_id",
+				$user_ids
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Comments-based grade totals by user' );
+
+		$totals = array();
+		foreach ( (array) $rows as $row ) {
+			$totals[ (int) $row->user_id ] = array(
+				'count' => (int) $row->grade_count,
+				'sum'   => (float) $row->grade_sum,
+			);
+		}
+
+		return $totals;
+	}
+
+	/**
+	 * Get grade count and sum grouped by course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @return array<int, array{count:int, sum:float}> Map of course_id => totals.
+	 */
+	public function get_grade_totals_by_course( array $course_ids ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
+
+		// The quiz_answers EXISTS check restricts results to attempts where the
+		// student actually submitted answers. This excludes auto-passed students
+		// whose lesson was marked passed without ever taking the quiz.
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants. Placeholders created dynamically. Caching handled by callers.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT course.meta_value AS course_id, COUNT(*) AS grade_count, COALESCE( SUM( cm.meta_value ), 0 ) AS grade_sum
+				FROM `{$wpdb->comments}` c
+				INNER JOIN `{$wpdb->commentmeta}` cm ON c.comment_ID = cm.comment_id
+				INNER JOIN `{$wpdb->postmeta}` course ON c.comment_post_ID = course.post_id
+				INNER JOIN `{$wpdb->posts}` p ON p.ID = course.meta_value
+				WHERE c.comment_type = 'sensei_lesson_status'
+					AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
+					AND cm.meta_key = 'grade'
+					AND course.meta_key = '_lesson_course'
+					AND course.meta_value <> ''
+					AND EXISTS (
+						SELECT 1 FROM `{$wpdb->commentmeta}` cm2
+						WHERE cm2.comment_id = c.comment_ID
+							AND cm2.meta_key = 'quiz_answers'
+					)
+					AND course.meta_value IN ( $placeholders )
+				GROUP BY course.meta_value",
+				$course_ids
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Comments-based grade totals by course' );
+
+		$totals = array();
+		foreach ( (array) $rows as $row ) {
+			$totals[ (int) $row->course_id ] = array(
+				'count' => (int) $row->grade_count,
+				'sum'   => (float) $row->grade_sum,
+			);
+		}
+
+		return $totals;
+	}
+
+	/**
 	 * Build SQL clause for filtering by user ID.
 	 *
 	 * @since 4.26.0

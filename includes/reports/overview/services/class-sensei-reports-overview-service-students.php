@@ -5,6 +5,7 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,6 +18,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.4.1
  */
 class Sensei_Reports_Overview_Service_Students {
+
+	/**
+	 * The grading stats service.
+	 *
+	 * @var Grading_Stats_Service_Interface
+	 */
+	private Grading_Stats_Service_Interface $grading_stats_service;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Grading_Stats_Service_Interface|null $grading_stats_service The grading stats service.
+	 */
+	public function __construct( ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
+		$this->grading_stats_service = $grading_stats_service ?? ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+	}
 
 	/**
 	 * Get average grade of all lessons graded in all the courses filtered by students.
@@ -32,6 +49,6 @@ class Sensei_Reports_Overview_Service_Students {
 			return 0;
 		}
 
-		return ceil( ( new Progress_Query_Service_Factory() )->create_grading_stats_service()->get_users_average_grade( $user_ids ) );
+		return ceil( $this->grading_stats_service->get_users_average_grade( $user_ids ) );
 	}
 }

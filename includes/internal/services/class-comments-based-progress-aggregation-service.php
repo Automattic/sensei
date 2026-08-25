@@ -89,9 +89,45 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
 		Utils::log_query_error( $wpdb, 'Comments-based status counts' );
 
-		$counts = [];
+		$counts = array();
 		foreach ( $results as $row ) {
 			$counts[ $row['comment_approved'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Count progress records grouped by user and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'user_id' honored.
+	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
+	 */
+	public function count_statuses_by_user( array $args ): array {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
+		$query  = $wpdb->prepare( "SELECT user_id, comment_approved, COUNT(*) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( 'publish', 'private' ) WHERE comment_type = %s", $comment_type );
+		$query .= $this->build_post_filter_clause( $args );
+		$query .= $this->build_user_filter_clause( $args );
+		$query .= $this->build_user_exclusion_clause( $args );
+		$query .= ' GROUP BY user_id, comment_approved';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Comments-based status counts by user' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['user_id'] ][ $row['comment_approved'] ] = (int) $row['total'];
 		}
 
 		return $counts;
@@ -106,13 +142,13 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_count, days_to_complete_sum.
 	 */
 	public function get_lesson_totals( array $lesson_ids ): array {
-		$defaults = [
+		$defaults = array(
 			'unique_student_count'   => 0,
 			'lesson_start_count'     => 0,
 			'lesson_completed_count' => 0,
 			'days_to_complete_count' => 0,
 			'days_to_complete_sum'   => 0,
-		];
+		);
 
 		if ( empty( $lesson_ids ) ) {
 			return $defaults;
@@ -134,7 +170,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			INNER JOIN {$wpdb->posts} post ON post.ID = lesson_students.comment_post_ID AND post.post_status IN ( 'publish', 'private' )
 			LEFT JOIN {$wpdb->commentmeta} lesson_start ON lesson_start.comment_id = lesson_students.comment_id
 			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( $placeholders )",
-			array_merge( [ '%Y-%m-%d %H:%i:%s' ], $lesson_ids )
+			array_merge( array( '%Y-%m-%d %H:%i:%s' ), $lesson_ids )
 		);
 		// phpcs:enable
 
@@ -146,13 +182,13 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			return $defaults;
 		}
 
-		return [
+		return array(
 			'unique_student_count'   => (int) $row->unique_student_count,
 			'lesson_start_count'     => (int) $row->lesson_start_count,
 			'lesson_completed_count' => (int) $row->lesson_completed_count,
 			'days_to_complete_count' => (int) $row->days_to_complete_count,
 			'days_to_complete_sum'   => (int) $row->days_to_complete_sum,
-		];
+		);
 	}
 
 	/**
@@ -184,6 +220,129 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		Utils::log_query_error( $wpdb, 'Comments-based ungraded quizzes count' );
 
 		return $count;
+	}
+
+	/**
+	 * Count progress records grouped by post and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	public function count_statuses_by_post( array $args ): array {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
+		$query  = $wpdb->prepare( "SELECT comment_post_ID, comment_approved, COUNT(*) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( 'publish', 'private' ) WHERE comment_type = %s", $comment_type );
+		$query .= $this->build_post_filter_clause( $args );
+		$query .= $this->build_user_filter_clause( $args );
+		$query .= $this->build_user_exclusion_clause( $args );
+		$query .= ' GROUP BY comment_post_ID, comment_approved';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Comments-based status counts by post' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['comment_post_ID'] ][ $row['comment_approved'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Count completed lesson progress per lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs.
+	 * @return array<int, int> Map of lesson_id => completion count.
+	 */
+	public function get_lesson_completion_counts( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$placeholders = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb. Placeholders created dynamically.
+		$query = $wpdb->prepare(
+			"SELECT wcom.comment_post_id AS lesson_id, COUNT(*) AS completion_count
+			FROM {$wpdb->comments} wcom
+			WHERE wcom.comment_approved IN ('graded', 'ungraded', 'passed', 'failed','complete')
+			AND comment_type IN ('sensei_lesson_status')
+			AND wcom.comment_post_ID IN ( $placeholders )
+			AND wcom.comment_post_ID IN
+			(
+			SELECT wpm.post_id FROM {$wpdb->posts} wpc
+			JOIN {$wpdb->postmeta} wpm ON wpm.meta_value = wpc.id
+			WHERE wpm.meta_key = '_lesson_course'
+			AND wpc.post_status IN ('publish','private')
+			)
+			GROUP BY wcom.comment_post_id",
+			$lesson_ids
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Comments-based lesson completion counts' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['lesson_id'] ] = (int) $row['completion_count'];
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Average days-to-completion across the given courses (AVG of per-course averages).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @return float
+	 */
+	public function get_courses_average_days_to_completion( array $course_ids ): float {
+		if ( empty( $course_ids ) ) {
+			return 0.0;
+		}
+
+		$wpdb         = $this->wpdb;
+		$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb. Placeholders created dynamically. Date format string passed as %s to avoid conflicting with prepare().
+		$query = $wpdb->prepare(
+			"SELECT AVG( aggregated.days_to_completion )
+			FROM (
+				SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, %s ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
+				FROM {$wpdb->comments}
+				LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
+					AND {$wpdb->commentmeta}.meta_key = 'start'
+				WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
+					AND {$wpdb->comments}.comment_approved = 'complete'
+					AND {$wpdb->comments}.comment_post_ID IN ( $placeholders )
+				GROUP BY {$wpdb->comments}.comment_post_ID
+			) AS aggregated",
+			array_merge( array( '%Y-%m-%d %H:%i:%s' ), $course_ids )
+		);
+		// phpcs:enable
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$result = $wpdb->get_var( $query );
+		Utils::log_query_error( $wpdb, 'Comments-based courses average days to completion' );
+
+		return (float) $result;
 	}
 
 	/**
@@ -255,7 +414,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		}
 
 		$wpdb             = $this->wpdb;
-		$not_like_clauses = [];
+		$not_like_clauses = array();
 		foreach ( $prefixes as $prefix ) {
 			$escaped_prefix     = $wpdb->esc_like( $prefix );
 			$not_like_clauses[] = $wpdb->prepare( 'comment_author NOT LIKE %s', $escaped_prefix . '%' );

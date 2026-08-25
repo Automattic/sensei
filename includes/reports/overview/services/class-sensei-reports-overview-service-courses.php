@@ -5,6 +5,8 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,6 +21,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Reports_Overview_Service_Courses {
 
 	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface
+	 */
+	private Progress_Aggregation_Service_Interface $aggregation_service;
+
+	/**
+	 * The grading stats service.
+	 *
+	 * @var Grading_Stats_Service_Interface
+	 */
+	private Grading_Stats_Service_Interface $grading_stats_service;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service The progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service The grading stats service.
+	 */
+	public function __construct( ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
+		$this->aggregation_service   = $aggregation_service ?? ( new Progress_Query_Service_Factory() )->create_aggregation_service();
+		$this->grading_stats_service = $grading_stats_service ?? ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+	}
+
+	/**
 	 * Get total average progress value for courses.
 	 *
 	 * @since  4.4.1
@@ -31,10 +58,44 @@ class Sensei_Reports_Overview_Service_Courses {
 		if ( empty( $course_ids ) ) {
 			return 0.0;
 		}
+
+		$progress_by_course = $this->get_average_progress_per_course( $course_ids );
+
+		if ( empty( $progress_by_course ) ) {
+			return 0.0;
+		}
+
+		$total_average_progress = array_sum( $progress_by_course );
+
+		// Divide total value to get average total value for average progress for courses.
+		return ceil( $total_average_progress / count( $course_ids ) );
+	}
+
+	/**
+	 * Average progress percentage per course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $course_ids Course IDs.
+	 * @return array<int, float> Map of course_id => average progress percent (0-100).
+	 */
+	public function get_average_progress_per_course( array $course_ids ): array {
+		$progress_by_course = array();
+
+		if ( empty( $course_ids ) ) {
+			return $progress_by_course;
+		}
+
 		$lessons_count_per_courses = $this->get_lessons_in_courses( $course_ids );
-		$lessons_completions       = $this->get_lessons_completions();
+
+		$all_lesson_ids = array();
+		foreach ( $lessons_count_per_courses as $course_lessons ) {
+			$all_lesson_ids = array_merge( $all_lesson_ids, array_map( 'intval', explode( ',', $course_lessons->lessons ) ) );
+		}
+		$all_lesson_ids = array_unique( $all_lesson_ids );
+
+		$lessons_completions       = $this->get_lessons_completions( $all_lesson_ids );
 		$student_count_per_courses = $this->get_students_count_in_courses( $course_ids );
-		$total_average_progress    = 0;
 
 		foreach ( $course_ids as $course_id ) {
 			if ( ! isset( $lessons_count_per_courses[ $course_id ] ) || ! isset( $student_count_per_courses[ $course_id ] ) ) {
@@ -67,14 +128,10 @@ class Sensei_Reports_Overview_Service_Courses {
 			);
 
 			// Calculate average progress for a course.
-			$course_average_progress = $completed_count / ( $students_count * count( $lessons ) ) * 100;
-
-			// Add value to the total average progress.
-			$total_average_progress += $course_average_progress;
+			$progress_by_course[ $course_id ] = $completed_count / ( $students_count * count( $lessons ) ) * 100;
 		}
-		// Divide total value to get average total value for average progress for courses.
-		$average_total_average_progress = ceil( $total_average_progress / count( $course_ids ) );
-		return $average_total_average_progress;
+
+		return $progress_by_course;
 	}
 
 	/**
@@ -91,7 +148,7 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 
-		return ( new Progress_Query_Service_Factory() )->create_grading_stats_service()->get_courses_average_grade( $course_ids );
+		return $this->grading_stats_service->get_courses_average_grade( $course_ids );
 	}
 
 	/**
@@ -107,24 +164,8 @@ class Sensei_Reports_Overview_Service_Courses {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
-		global $wpdb;
 
-		$query = "
-		SELECT AVG( aggregated.days_to_completion )
-		FROM (
-			SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
-			FROM {$wpdb->comments}
-			LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
-				AND {$wpdb->commentmeta}.meta_key = 'start'
-			WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
-				AND {$wpdb->comments}.comment_approved = 'complete'
-				AND {$wpdb->comments}.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		. " GROUP BY {$wpdb->comments}.comment_post_ID
-		) AS aggregated
-		";
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		return (float) $wpdb->get_var( $query );
+		return $this->aggregation_service->get_courses_average_days_to_completion( $course_ids );
 	}
 
 
@@ -154,31 +195,29 @@ class Sensei_Reports_Overview_Service_Courses {
 	}
 
 	/**
-	 * Get all lessons completions.
+	 * Get lessons completions.
 	 *
 	 * @since  4.4.1
 	 *
+	 * @param array $lesson_ids The list of lesson ids to get completions for.
 	 * @return array lessons completions.
 	 */
-	private function get_lessons_completions(): array {
+	private function get_lessons_completions( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
 
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		return $wpdb->get_results(
-			"SELECT wcom.comment_post_id lesson_id, COUNT(*) completion_count
-						FROM {$wpdb->comments} wcom
-						WHERE wcom.comment_approved IN ('graded', 'ungraded', 'passed', 'failed','complete')
-						AND comment_type IN ('sensei_lesson_status')
-						AND wcom.comment_post_ID IN
-						(
-						SELECT wpm.post_id lesson_id from {$wpdb->posts} wpc
-						JOIN {$wpdb->postmeta} wpm on wpm.meta_value = wpc.id
-						WHERE wpm.meta_key = '_lesson_course'
-						AND wpc.post_status in ('publish','private')
-						)
-						GROUP BY wcom.comment_post_id",
-			'OBJECT_K'
-		);
+		$counts = $this->aggregation_service->get_lesson_completion_counts( $lesson_ids );
+
+		$result = array();
+		foreach ( $counts as $lesson_id => $completion_count ) {
+			$result[ $lesson_id ] = (object) array(
+				'lesson_id'        => $lesson_id,
+				'completion_count' => $completion_count,
+			);
+		}
+
+		return $result;
 	}
 
 	/**
@@ -212,17 +251,25 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @return array students in courses.
 	 */
 	private function get_students_count_in_courses( array $course_ids ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
 
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		return $wpdb->get_results(
-			"SELECT c.comment_post_ID as course_id, count(c.comment_post_ID) as students_count
-				FROM {$wpdb->comments} c
-				WHERE c.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )'  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			. " AND c.comment_type = 'sensei_course_status'
-				AND c.comment_approved IN ( 'in-progress', 'complete' )
-				GROUP BY c.comment_post_ID",
-			'OBJECT_K'
+		$by_post = $this->aggregation_service->count_statuses_by_post(
+			array(
+				'type'     => 'course',
+				'post__in' => $course_ids,
+			)
 		);
+
+		$result = array();
+		foreach ( $by_post as $course_id => $statuses ) {
+			$result[ $course_id ] = (object) array(
+				'course_id'      => $course_id,
+				'students_count' => ( $statuses['in-progress'] ?? 0 ) + ( $statuses['complete'] ?? 0 ),
+			);
+		}
+
+		return $result;
 	}
 }
