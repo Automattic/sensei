@@ -157,6 +157,62 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		}
 	}
 
+	public function test_get_row_data_uses_primed_grade_totals() {
+		/* Arrange. */
+		if ( self::is_hpps_tables_mode() ) {
+			$this->enable_hpps_tables_repository();
+		}
+
+		$user_id = $this->factory->user->create();
+
+		$this->grade_lesson_for_user( $user_id, 80 );
+		$this->grade_lesson_for_user( $user_id, 60 );
+
+		$user = get_user_by( 'id', $user_id );
+
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$data_provider->method( 'get_items' )->willReturn( array( $user ) );
+		$data_provider->method( 'get_last_total_items' )->willReturn( 1 );
+
+		$list_table = new Sensei_Reports_Overview_List_Table_Students(
+			$data_provider,
+			$this->createMock( Sensei_Reports_Overview_Service_Students::class )
+		);
+
+		/* Act. */
+		$list_table->prepare_items();
+		$row = $this->invoke_get_row_data( $list_table, $user );
+
+		/* Assert. */
+		self::assertSame( '70%', $row['average_grade'] );
+
+		if ( self::is_hpps_tables_mode() ) {
+			$this->reset_hpps_repository();
+		}
+	}
+
+	/**
+	 * Seed a graded lesson (with a quiz submission and grade) for a user, via the
+	 * progress/quiz submission repositories so both storage modes have data.
+	 *
+	 * @param int $user_id User ID.
+	 * @param int $grade   Grade to assign.
+	 */
+	private function grade_lesson_for_user( int $user_id, int $grade ): void {
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+
+		$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id, $grade );
+		Sensei()->quiz_answer_repository->create( $submission, 0, 'answer' );
+
+		$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+		$quiz_progress->grade();
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
+	}
+
 	/**
 	 * Helper to call the protected get_row_data() method.
 	 *

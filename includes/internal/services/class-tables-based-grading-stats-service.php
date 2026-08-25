@@ -229,6 +229,52 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	}
 
 	/**
+	 * Get grade count and sum grouped by user.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $user_ids User IDs to include.
+	 * @return array<int, array{count:int, sum:float}> Map of user_id => totals.
+	 */
+	public function get_grade_totals_by_user( array $user_ids ): array {
+		if ( empty( $user_ids ) ) {
+			return array();
+		}
+
+		$wpdb              = $this->wpdb;
+		$table             = $this->get_progress_table_name();
+		$submissions_table = $this->get_submissions_table_name();
+		$placeholders      = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants; placeholders dynamic; caching by callers.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT q.user_id AS user_id, COUNT(*) AS grade_count, COALESCE( SUM( qs.final_grade ), 0 ) AS grade_sum
+				FROM `$table` q
+				INNER JOIN `$submissions_table` qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
+				WHERE q.type = 'quiz'
+					AND q.status IN " . $this->get_graded_statuses_sql() . "
+					AND qs.final_grade IS NOT NULL
+					AND q.user_id IN ( $placeholders )
+				GROUP BY q.user_id",
+				$user_ids
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Tables-based grade totals by user' );
+
+		$totals = array();
+		foreach ( (array) $rows as $row ) {
+			$totals[ (int) $row->user_id ] = array(
+				'count' => (int) $row->grade_count,
+				'sum'   => (float) $row->grade_sum,
+			);
+		}
+
+		return $totals;
+	}
+
+	/**
 	 * Build SQL clause for filtering by user ID.
 	 *
 	 * @since 4.26.0
