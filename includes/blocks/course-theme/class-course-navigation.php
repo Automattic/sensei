@@ -316,7 +316,7 @@ class Course_Navigation {
 		$status               = 'not-started';
 		$completed            = \Sensei_Utils::user_completed_lesson( $lesson_id, $this->user_id );
 		$in_progress_statuses = [ 'failed', 'ungraded' ];
-		$completed_statuses   = [ 'passed', 'graded' ];
+		$completed_statuses   = array( 'passed', 'graded' );
 
 		if ( $completed ) {
 			$status = 'completed';
