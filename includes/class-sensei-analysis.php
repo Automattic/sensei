@@ -1023,7 +1023,7 @@ class Sensei_Analysis {
 	public function report_write_download( $report_data = array() ) {
 		$fp = fopen( 'php://output', 'w' );
 		foreach ( $report_data as $row ) {
-			fputcsv( $fp, $row );
+			fputcsv( $fp, $row, ',', '"', '' );
 		}
 		fclose( $fp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 	}
