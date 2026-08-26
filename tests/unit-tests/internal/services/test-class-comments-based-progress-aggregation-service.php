@@ -493,6 +493,104 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->assertSame( 1, $result['complete'], 'Completed lesson with quiz but no answers should be included by default.' );
 	}
 
+	public function testCountStatusesByUser_CourseType_ReturnsCountsGroupedByUser(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_a     = $this->sensei_factory->user->create();
+		$user_b     = $this->sensei_factory->user->create();
+		$course_id1 = $this->sensei_factory->course->create();
+		$course_id2 = $this->sensei_factory->course->create();
+
+		\Sensei_Utils::update_course_status( $user_a, $course_id1, 'complete' );
+		\Sensei_Utils::update_course_status( $user_a, $course_id2, 'in-progress' );
+		\Sensei_Utils::update_course_status( $user_b, $course_id1, 'in-progress' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_user(
+			array(
+				'type'    => 'course',
+				'user_id' => array( $user_a, $user_b ),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $user_a ]['complete'], 'User A should have one completed course.' );
+		$this->assertSame( 1, $result[ $user_a ]['in-progress'], 'User A should have one in-progress course.' );
+		$this->assertSame( 1, $result[ $user_b ]['in-progress'], 'User B should have one in-progress course.' );
+		$this->assertArrayNotHasKey( 'complete', $result[ $user_b ], 'User B should have no completed course.' );
+	}
+
+	public function testCountStatusesByUser_WithUserIdArray_FiltersToSpecifiedUsers(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$included_user = $this->sensei_factory->user->create();
+		$excluded_user = $this->sensei_factory->user->create();
+		$course_id     = $this->sensei_factory->course->create();
+
+		\Sensei_Utils::update_course_status( $included_user, $course_id, 'complete' );
+		\Sensei_Utils::update_course_status( $excluded_user, $course_id, 'in-progress' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_user(
+			array(
+				'type'    => 'course',
+				'user_id' => array( $included_user ),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $included_user ]['complete'], 'Requested user should be counted.' );
+		$this->assertArrayNotHasKey( $excluded_user, $result, 'User not in user_id should be excluded.' );
+	}
+
+	public function testCountStatusesByUser_TrashedCourse_ExcludedFromCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$published = $this->sensei_factory->course->create();
+		$trashed   = $this->sensei_factory->course->create();
+
+		\Sensei_Utils::update_course_status( $user_id, $published, 'complete' );
+		\Sensei_Utils::update_course_status( $user_id, $trashed, 'in-progress' );
+		wp_trash_post( $trashed );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_user(
+			array(
+				'type'    => 'course',
+				'user_id' => array( $user_id ),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $user_id ]['complete'], 'Published course should be counted.' );
+		$this->assertArrayNotHasKey( 'in-progress', $result[ $user_id ], 'Trashed course should be excluded.' );
+	}
+
+	public function testCountStatusesByUser_LessonType_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$this->setExpectedIncorrectUsage( 'Sensei\Internal\Services\Comments_Based_Progress_Aggregation_Service::count_statuses_by_user' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_user( array( 'type' => 'lesson' ) );
+
+		/* Assert. */
+		$this->assertSame( array(), $result );
+	}
+
 	public function testCountUngradedQuizzes_NoUngradedComments_ReturnsZero(): void {
 		/* Arrange. */
 		global $wpdb;
