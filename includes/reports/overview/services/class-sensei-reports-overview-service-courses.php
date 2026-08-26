@@ -165,8 +165,9 @@ class Sensei_Reports_Overview_Service_Courses {
 
 		global $wpdb;
 		$reports_statuses = Utils::get_reports_post_status_sql();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Safe direct sql; statuses come from a fixed constant.
-		return $wpdb->get_results(
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Statuses come from a fixed constant.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
+		$results = $wpdb->get_results(
 			"SELECT wcom.comment_post_id lesson_id, COUNT(*) completion_count
 						FROM {$wpdb->comments} wcom
 						WHERE wcom.comment_approved IN ('graded', 'ungraded', 'passed', 'failed','complete')
@@ -181,6 +182,8 @@ class Sensei_Reports_Overview_Service_Courses {
 						GROUP BY wcom.comment_post_id",
 			'OBJECT_K'
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		return $results;
 	}
 
 	/**
