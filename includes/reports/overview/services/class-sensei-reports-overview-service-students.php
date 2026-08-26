@@ -12,7 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Students overview service class.
+ * Service (business-logic) class for the Students tab of Reports → Overview.
+ *
+ * Calculates the figures shown there, so the list table that displays them
+ * holds no calculation logic of its own.
  *
  * @since 4.4.1
  */
@@ -33,5 +36,40 @@ class Sensei_Reports_Overview_Service_Students {
 		}
 
 		return ceil( ( new Progress_Query_Service_Factory() )->create_grading_stats_service()->get_users_average_grade( $user_ids ) );
+	}
+
+	/**
+	 * Get the active and completed course counts for each of the given students.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $user_ids Student user IDs.
+	 * @return array<int, array{active:int, completed:int}> Map of user_id => [ active, completed ].
+	 */
+	public function get_course_counts_by_user( array $user_ids ): array {
+		if ( empty( $user_ids ) ) {
+			return array();
+		}
+
+		$counts = ( new Progress_Query_Service_Factory() )
+			->create_aggregation_service()
+			->count_statuses_by_user(
+				array(
+					'type'    => 'course',
+					'user_id' => $user_ids,
+				)
+			);
+
+		$result = array();
+		foreach ( $user_ids as $user_id ) {
+			$statuses           = $counts[ $user_id ] ?? array();
+			$completed          = $statuses['complete'] ?? 0;
+			$result[ $user_id ] = array(
+				'active'    => array_sum( $statuses ) - $completed,
+				'completed' => $completed,
+			);
+		}
+
+		return $result;
 	}
 }

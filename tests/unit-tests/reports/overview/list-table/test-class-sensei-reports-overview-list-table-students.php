@@ -138,7 +138,7 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$data_provider,
-			$this->createMock( Sensei_Reports_Overview_Service_Students::class ),
+			new Sensei_Reports_Overview_Service_Students(),
 			( new Progress_Query_Service_Factory() )->create_aggregation_service()
 		);
 

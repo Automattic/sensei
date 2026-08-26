@@ -12,7 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 
 /**
- * Students overview list table class.
+ * View (WordPress list table) for the Students tab of Reports → Overview.
+ *
+ * Displays the report table and its totals. The figures come from the data
+ * provider and the students service; this class only arranges and displays them.
  *
  * @since 4.3.0
  */
@@ -35,7 +38,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	/**
 	 * Per-user course-count cache for the current page.
 	 *
-	 * @var array<int, array{started:int, completed:int}>
+	 * @var array<int, array{active:int, completed:int}>
 	 */
 	private $course_counts_by_user = array();
 
@@ -91,25 +94,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			$items
 		);
 
-		$this->course_counts_by_user = array();
-		if ( empty( $user_ids ) ) {
-			return;
-		}
-
-		$counts = $this->aggregation_service->count_statuses_by_user(
-			array(
-				'type'    => 'course',
-				'user_id' => $user_ids,
-			)
-		);
-
-		foreach ( $user_ids as $user_id ) {
-			$statuses                                = $counts[ $user_id ] ?? array();
-			$this->course_counts_by_user[ $user_id ] = array(
-				'started'   => array_sum( $statuses ),
-				'completed' => $statuses['complete'] ?? 0,
-			);
-		}
+		$this->course_counts_by_user = $this->reports_overview_service_students->get_course_counts_by_user( $user_ids );
 	}
 
 	/**
@@ -233,13 +218,13 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 * @throws Exception If date-time conversion fails.
 	 */
 	protected function get_row_data( $item ) {
-		// Get Started/Completed Courses from the primed per-page cache.
-		$counts               = $this->course_counts_by_user[ (int) $item->ID ] ?? array(
-			'started'   => 0,
+		// Get Active/Completed Courses from the primed per-page cache.
+		$counts            = $this->course_counts_by_user[ (int) $item->ID ] ?? array(
+			'active'    => 0,
 			'completed' => 0,
 		);
-		$user_courses_started = $counts['started'];
-		$user_courses_ended   = $counts['completed'];
+		$active_courses    = $counts['active'];
+		$completed_courses = $counts['completed'];
 
 		// Get Quiz Grades.
 		$grade_args = array(
@@ -296,8 +281,8 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 				'email'             => $user_email,
 				'date_registered'   => $this->format_date_registered( $item->user_registered ),
 				'last_activity'     => $last_activity_date,
-				'active_courses'    => ( $user_courses_started - $user_courses_ended ),
-				'completed_courses' => $user_courses_ended,
+				'active_courses'    => $active_courses,
+				'completed_courses' => $completed_courses,
 				'average_grade'     => $user_average_grade,
 			),
 			$item,
