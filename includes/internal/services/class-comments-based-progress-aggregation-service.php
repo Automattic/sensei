@@ -70,7 +70,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		}
 
 		$wpdb         = $this->wpdb;
-		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
+		$comment_type = $this->get_comment_type( $args );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
 		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( 'publish', 'private' ) WHERE comment_type = %s", $comment_type );
@@ -112,7 +112,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		}
 
 		$wpdb         = $this->wpdb;
-		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
+		$comment_type = $this->get_comment_type( $args );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
 		$query  = $wpdb->prepare( "SELECT user_id, comment_approved, COUNT(*) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( 'publish', 'private' ) WHERE comment_type = %s", $comment_type );
@@ -220,6 +220,18 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		Utils::log_query_error( $wpdb, 'Comments-based ungraded quizzes count' );
 
 		return $count;
+	}
+
+	/**
+	 * Map the progress type to its comment_type.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Query arguments with a validated 'type'.
+	 * @return string The comment_type ('sensei_course_status' or 'sensei_lesson_status').
+	 */
+	private function get_comment_type( array $args ): string {
+		return 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
 	}
 
 	/**
