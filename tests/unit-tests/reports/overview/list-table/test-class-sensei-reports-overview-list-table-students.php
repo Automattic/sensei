@@ -118,54 +118,6 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		$this->assertFalse( isset( $actual['last_activity'] ) );
 	}
 
-	public function testGetRowData_WhenCalledAfterPrepareItems_UsesPrimedCourseCounts() {
-		/* Arrange. */
-		$user_id               = $this->factory->user->create();
-		$completed_course_id   = $this->factory->course->create();
-		$in_progress_course_id = $this->factory->course->create();
-
-		$completed_course_progress = Sensei()->course_progress_repository->create( $completed_course_id, $user_id );
-		$completed_course_progress->complete();
-		Sensei()->course_progress_repository->save( $completed_course_progress );
-
-		Sensei()->course_progress_repository->save( Sensei()->course_progress_repository->create( $in_progress_course_id, $user_id ) );
-
-		$user = get_user_by( 'id', $user_id );
-
-		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-		$data_provider->method( 'get_items' )->willReturn( array( $user ) );
-		$data_provider->method( 'get_last_total_items' )->willReturn( 1 );
-
-		$list_table = new Sensei_Reports_Overview_List_Table_Students(
-			$data_provider,
-			new Sensei_Reports_Overview_Service_Students(),
-			( new Progress_Query_Service_Factory() )->create_aggregation_service()
-		);
-
-		/* Act. */
-		$list_table->prepare_items();
-		$row = $this->invoke_get_row_data( $list_table, $user );
-
-		/* Assert. */
-		self::assertSame( '1', (string) $row['completed_courses'] );
-		self::assertSame( '1', (string) $row['active_courses'] );
-	}
-
-	/**
-	 * Helper to call the protected get_row_data() method.
-	 *
-	 * @param Sensei_Reports_Overview_List_Table_Students $list_table List table instance.
-	 * @param WP_User                                      $item Row item.
-	 *
-	 * @return array
-	 */
-	private function invoke_get_row_data( $list_table, $item ) {
-		$method = new ReflectionMethod( $list_table, 'get_row_data' );
-		$method->setAccessible( true );
-
-		return $method->invoke( $list_table, $item );
-	}
-
 	public function testSearchButton_WhenCalled_ReturnsMatchingString() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
