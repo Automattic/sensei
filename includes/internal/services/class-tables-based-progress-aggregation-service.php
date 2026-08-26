@@ -100,7 +100,12 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Same $args as count_statuses(), but 'type' must be 'course'.
+	 * @param array $args {
+	 *     Query arguments.
+	 *
+	 *     @type string    $type    Must be 'course'.
+	 *     @type int|array $user_id Restrict to specific user IDs.
+	 * }
 	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
 	 */
 	public function count_statuses_by_user( array $args ): array {
@@ -118,9 +123,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$query  = "SELECT p.user_id, p.status, COUNT(*) AS total FROM {$table} p";
 		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$reports_statuses} )";
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', $args['type'] );
-		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
-		$query .= $this->build_user_exclusion_clause( $args );
 		$query .= ' GROUP BY p.user_id, p.status';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.

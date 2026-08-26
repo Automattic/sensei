@@ -47,7 +47,12 @@ interface Progress_Aggregation_Service_Interface {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Same $args as count_statuses(), but 'type' must be 'course'.
+	 * @param array $args {
+	 *     Query arguments.
+	 *
+	 *     @type string    $type    Must be 'course'.
+	 *     @type int|array $user_id Restrict to specific user IDs.
+	 * }
 	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
 	 */
 	public function count_statuses_by_user( array $args ): array;

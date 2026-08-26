@@ -104,7 +104,12 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Same $args as count_statuses(), but 'type' must be 'course'.
+	 * @param array $args {
+	 *     Query arguments.
+	 *
+	 *     @type string    $type    Must be 'course'.
+	 *     @type int|array $user_id Restrict to specific user IDs.
+	 * }
 	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
 	 */
 	public function count_statuses_by_user( array $args ): array {
@@ -120,9 +125,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
 		$query  = $wpdb->prepare( "SELECT user_id, comment_approved, COUNT(*) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( {$reports_statuses} ) WHERE comment_type = %s", $comment_type );
-		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
-		$query .= $this->build_user_exclusion_clause( $args );
 		$query .= ' GROUP BY user_id, comment_approved';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
