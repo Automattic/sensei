@@ -28,15 +28,17 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	 * @throws InvalidArgumentException If the report type is not supported.
 	 */
 	public function create( string $type ) {
-		$aggregation_service = ( new Progress_Query_Service_Factory() )->create_aggregation_service();
+		$query_service_factory = new Progress_Query_Service_Factory();
 
 		switch ( $type ) {
 			case 'users':
 			case 'students':
 				return new Sensei_Reports_Overview_List_Table_Students(
 					new Sensei_Reports_Overview_Data_Provider_Students(),
-					new Sensei_Reports_Overview_Service_Students(),
-					$aggregation_service
+					new Sensei_Reports_Overview_Service_Students(
+						$query_service_factory->create_aggregation_service(),
+						$query_service_factory->create_grading_stats_service()
+					)
 				);
 			case 'courses':
 				return new Sensei_Reports_Overview_List_Table_Courses(
@@ -44,7 +46,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 					Sensei()->course,
 					new Sensei_Reports_Overview_Data_Provider_Courses(),
 					new Sensei_Reports_Overview_Service_Courses(),
-					$aggregation_service
+					$query_service_factory->create_aggregation_service()
 				);
 			case 'lessons':
 				return new Sensei_Reports_Overview_List_Table_Lessons(

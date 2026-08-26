@@ -1,8 +1,5 @@
 <?php
 
-use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
-use Sensei\Internal\Services\Progress_Query_Service_Factory;
-
 /**
  * Tests for Sensei_Reports_Overview_List_Table_Students class.
  *
@@ -41,25 +38,22 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 
 	public function testGetColumns_WithGradingAndCompletions_ReturnsColumnsWithCorrectTotals() {
 		/* Arrange. */
-		$user_id             = $this->factory->user->create();
-		$active_course_id    = $this->factory->course->create();
-		$completed_course_id = $this->factory->course->create();
-
-		Sensei()->course_progress_repository->save( Sensei()->course_progress_repository->create( $active_course_id, $user_id ) );
-
-		$completed_course_progress = Sensei()->course_progress_repository->create( $completed_course_id, $user_id );
-		$completed_course_progress->complete();
-		Sensei()->course_progress_repository->save( $completed_course_progress );
+		$user_id = $this->factory->user->create();
 
 		$student_service = $this->createMock( Sensei_Reports_Overview_Service_Students::class );
 		$student_service->method( 'get_graded_lessons_average_grade' )->willReturn( 50 );
+		$student_service->method( 'get_total_course_counts' )->willReturn(
+			array(
+				'active'    => 1,
+				'completed' => 1,
+			)
+		);
 
 		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
 		$data_provider->method( 'get_items' )->willReturn( array( $user_id ) );
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$data_provider,
-			$student_service,
-			( new Progress_Query_Service_Factory() )->create_aggregation_service()
+			$student_service
 		);
 
 		/* Act. */
@@ -83,8 +77,7 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$this->createMock( Sensei_Reports_Overview_Service_Students::class ),
-			$this->createMock( Progress_Aggregation_Service_Interface::class )
+			$this->createMock( Sensei_Reports_Overview_Service_Students::class )
 		);
 
 		/* Act. */
@@ -107,8 +100,7 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$this->createMock( Sensei_Reports_Overview_Service_Students::class ),
-			$this->createMock( Progress_Aggregation_Service_Interface::class )
+			$this->createMock( Sensei_Reports_Overview_Service_Students::class )
 		);
 
 		/* Act. */
@@ -122,8 +114,7 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$this->createMock( Sensei_Reports_Overview_Service_Students::class ),
-			$this->createMock( Progress_Aggregation_Service_Interface::class )
+			$this->createMock( Sensei_Reports_Overview_Service_Students::class )
 		);
 
 		/* Act. */
