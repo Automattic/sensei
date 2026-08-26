@@ -1094,7 +1094,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertArrayNotHasKey( 'complete', $result[ $user_b ] );
 	}
 
-	public function testCountStatusesByUser_InvalidType_ReturnsEmptyArray(): void {
+	public function testCountStatusesByUser_LessonType_ReturnsEmptyArray(): void {
 		/* Arrange. */
 		global $wpdb;
 
@@ -1103,7 +1103,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->count_statuses_by_user( array( 'type' => 'invalid' ) );
+		$result = $service->count_statuses_by_user( array( 'type' => 'lesson' ) );
 
 		/* Assert. */
 		$this->assertSame( array(), $result );

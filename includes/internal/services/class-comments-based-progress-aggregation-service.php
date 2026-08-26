@@ -98,16 +98,16 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	}
 
 	/**
-	 * Count progress records grouped by user and status.
+	 * Count course progress records grouped by user and status.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Same $args as count_statuses() ('type' is required).
+	 * @param array $args Same $args as count_statuses(), but 'type' must be 'course'.
 	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
 	 */
 	public function count_statuses_by_user( array $args ): array {
-		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
-			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
+		if ( empty( $args['type'] ) || 'course' !== $args['type'] ) {
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course". Per-user lesson counts are not supported.', '$$next-version$$' );
 			return array();
 		}
 
