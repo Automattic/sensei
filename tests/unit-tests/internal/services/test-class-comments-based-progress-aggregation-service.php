@@ -30,7 +30,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
@@ -39,9 +39,9 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		/* Act. */
 		$result = $service->count_statuses(
-			array(
+			[
 				'type' => 'lesson',
-			)
+			]
 		);
 
 		/* Assert. */
@@ -55,10 +55,10 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson1   = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 		$lesson2   = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		\Sensei_Utils::update_lesson_status( $user_id, $lesson1, 'in-progress' );
@@ -68,10 +68,10 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		/* Act. */
 		$result = $service->count_statuses(
-			array(
+			[
 				'type'    => 'lesson',
 				'post_id' => $lesson1,
-			)
+			]
 		);
 
 		/* Assert. */
@@ -85,11 +85,11 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		$regular_user = $this->sensei_factory->user->create();
 		$guest_user   = $this->sensei_factory->user->create(
-			array( 'user_login' => 'sensei_guest_12345' )
+			[ 'user_login' => 'sensei_guest_12345' ]
 		);
 		$course_id    = $this->sensei_factory->course->create();
 		$lesson_id    = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		\Sensei_Utils::update_lesson_status( $regular_user, $lesson_id, 'in-progress' );
@@ -99,10 +99,10 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		/* Act. */
 		$result = $service->count_statuses(
-			array(
+			[
 				'type'                        => 'lesson',
-				'exclude_user_login_prefixes' => array( 'sensei_guest_' ),
-			)
+				'exclude_user_login_prefixes' => [ 'sensei_guest_' ],
+			]
 		);
 
 		/* Assert. */
@@ -117,7 +117,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
@@ -126,9 +126,9 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		/* Act. */
 		$result = $service->count_statuses(
-			array(
+			[
 				'type' => 'lesson',
-			)
+			]
 		);
 
 		/* Assert. */
@@ -142,10 +142,10 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson1   = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 		$lesson2   = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		\Sensei_Utils::update_lesson_status( $user_id, $lesson1, 'complete' );
@@ -155,10 +155,10 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		/* Act. */
 		$result = $service->count_statuses(
-			array(
+			[
 				'type'     => 'lesson',
-				'post__in' => array( $lesson1 ),
-			)
+				'post__in' => [ $lesson1 ],
+			]
 		);
 
 		/* Assert. */
@@ -174,7 +174,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$user2     = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete' );
@@ -184,10 +184,10 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		/* Act. */
 		$result = $service->count_statuses(
-			array(
+			[
 				'type'    => 'lesson',
-				'user_id' => array( $user1 ),
-			)
+				'user_id' => [ $user1 ],
+			]
 		);
 
 		/* Assert. */
@@ -208,12 +208,12 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$user2     = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		$start_date = wp_date( 'Y-m-d H:i:s', strtotime( '-2 days' ) );
-		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete', array( 'start' => $start_date ) );
-		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'in-progress', array( 'start' => $start_date ) );
+		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete', [ 'start' => $start_date ] );
+		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'in-progress', [ 'start' => $start_date ] );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bypass WP filters to test SQL post_status filter directly.
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $included_status ), array( 'ID' => $lesson_id ) );
@@ -222,7 +222,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_lesson_totals( array( $lesson_id ) );
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
 
 		/* Assert. */
 		$this->assertSame( 2, $result['unique_student_count'], 'Expected two distinct students.' );
@@ -239,16 +239,16 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		$start_date = current_time( 'mysql' );
-		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded', array( 'start' => $start_date ) );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded', [ 'start' => $start_date ] );
 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_lesson_totals( array( $lesson_id ) );
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
 
 		/* Assert. */
 		$this->assertSame( 1, $result['lesson_completed_count'], 'Ungraded status should count as completed.' );
@@ -263,16 +263,16 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		$start_date = current_time( 'mysql' );
-		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'failed', array( 'start' => $start_date ) );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'failed', [ 'start' => $start_date ] );
 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_lesson_totals( array( $lesson_id ) );
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
 
 		/* Assert. */
 		$this->assertSame( 1, $result['lesson_completed_count'], 'Failed status should count as completed.' );
@@ -287,16 +287,16 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		$start_date = wp_date( 'Y-m-d H:i:s', strtotime( '-3 days' ) );
-		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed', array( 'start' => $start_date ) );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed', [ 'start' => $start_date ] );
 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_lesson_totals( array( $lesson_id ) );
+		$result = $service->get_lesson_totals( [ $lesson_id ] );
 
 		/* Assert. */
 		$this->assertSame( 1, $result['lesson_completed_count'], 'Passed status should count as completed.' );
@@ -311,7 +311,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_lesson_totals( array() );
+		$result = $service->get_lesson_totals( [] );
 
 		/* Assert. */
 		$this->assertSame( 0, $result['unique_student_count'] );
@@ -364,11 +364,11 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		$regular_user = $this->sensei_factory->user->create();
 		$guest_user   = $this->sensei_factory->user->create(
-			array( 'user_login' => 'sensei_guest_12345' )
+			[ 'user_login' => 'sensei_guest_12345' ]
 		);
 		$course_id    = $this->sensei_factory->course->create();
 		$lesson_id    = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
 		\Sensei_Utils::update_lesson_status( $regular_user, $lesson_id, 'in-progress' );
@@ -378,11 +378,11 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		/* Act. */
 		$result = $service->count_statuses(
-			array(
+			[
 				'type'                        => 'lesson',
-				'exclude_user_login_prefixes' => array( 'sensei_guest_' ),
-				'include_statuses_override'   => array( 'ungraded' ),
-			)
+				'exclude_user_login_prefixes' => [ 'sensei_guest_' ],
+				'include_statuses_override'   => [ 'ungraded' ],
+			]
 		);
 
 		/* Assert. */
@@ -468,13 +468,13 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
 		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 		$quiz_id   = $this->sensei_factory->quiz->create(
-			array(
+			[
 				'post_parent' => $lesson_id,
-				'meta_input'  => array( '_quiz_lesson' => $lesson_id ),
-			)
+				'meta_input'  => [ '_quiz_lesson' => $lesson_id ],
+			]
 		);
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
@@ -484,13 +484,111 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 
 		/* Act. */
 		$result = $service->count_statuses(
-			array(
+			[
 				'type' => 'lesson',
-			)
+			]
 		);
 
 		/* Assert. */
 		$this->assertSame( 1, $result['complete'], 'Completed lesson with quiz but no answers should be included by default.' );
+	}
+
+	public function testCountStatusesByUser_CourseType_ReturnsCountsGroupedByUser(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_a     = $this->sensei_factory->user->create();
+		$user_b     = $this->sensei_factory->user->create();
+		$course_id1 = $this->sensei_factory->course->create();
+		$course_id2 = $this->sensei_factory->course->create();
+
+		\Sensei_Utils::update_course_status( $user_a, $course_id1, 'complete' );
+		\Sensei_Utils::update_course_status( $user_a, $course_id2, 'in-progress' );
+		\Sensei_Utils::update_course_status( $user_b, $course_id1, 'in-progress' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_user(
+			array(
+				'type'    => 'course',
+				'user_id' => array( $user_a, $user_b ),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $user_a ]['complete'], 'User A should have one completed course.' );
+		$this->assertSame( 1, $result[ $user_a ]['in-progress'], 'User A should have one in-progress course.' );
+		$this->assertSame( 1, $result[ $user_b ]['in-progress'], 'User B should have one in-progress course.' );
+		$this->assertArrayNotHasKey( 'complete', $result[ $user_b ], 'User B should have no completed course.' );
+	}
+
+	public function testCountStatusesByUser_WithUserIdArray_FiltersToSpecifiedUsers(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$included_user = $this->sensei_factory->user->create();
+		$excluded_user = $this->sensei_factory->user->create();
+		$course_id     = $this->sensei_factory->course->create();
+
+		\Sensei_Utils::update_course_status( $included_user, $course_id, 'complete' );
+		\Sensei_Utils::update_course_status( $excluded_user, $course_id, 'in-progress' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_user(
+			array(
+				'type'    => 'course',
+				'user_id' => array( $included_user ),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $included_user ]['complete'], 'Requested user should be counted.' );
+		$this->assertArrayNotHasKey( $excluded_user, $result, 'User not in user_id should be excluded.' );
+	}
+
+	public function testCountStatusesByUser_TrashedCourse_ExcludedFromCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$published = $this->sensei_factory->course->create();
+		$trashed   = $this->sensei_factory->course->create();
+
+		\Sensei_Utils::update_course_status( $user_id, $published, 'complete' );
+		\Sensei_Utils::update_course_status( $user_id, $trashed, 'in-progress' );
+		wp_trash_post( $trashed );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_user(
+			array(
+				'type'    => 'course',
+				'user_id' => array( $user_id ),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result[ $user_id ]['complete'], 'Published course should be counted.' );
+		$this->assertArrayNotHasKey( 'in-progress', $result[ $user_id ], 'Trashed course should be excluded.' );
+	}
+
+	public function testCountStatusesByUser_LessonType_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$this->setExpectedIncorrectUsage( 'Sensei\Internal\Services\Comments_Based_Progress_Aggregation_Service::count_statuses_by_user' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_user( array( 'type' => 'lesson' ) );
+
+		/* Assert. */
+		$this->assertSame( array(), $result );
 	}
 
 	public function testCountUngradedQuizzes_NoUngradedComments_ReturnsZero(): void {
@@ -635,50 +733,5 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		/* Act & Assert. */
 		$this->assertSame( 1, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'sensei_guest_' ) ) ), 'Matching prefix should exclude the guest user.' );
 		$this->assertSame( 2, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'no_match_' ) ) ), 'Non-matching prefix should leave both users counted.' );
-	}
-
-	public function testCountStatusesByUser_CourseType_ReturnsCountsGroupedByUser(): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$user_a     = $this->sensei_factory->user->create();
-		$user_b     = $this->sensei_factory->user->create();
-		$course_id1 = $this->sensei_factory->course->create();
-		$course_id2 = $this->sensei_factory->course->create();
-
-		\Sensei_Utils::update_course_status( $user_a, $course_id1, 'complete' );
-		\Sensei_Utils::update_course_status( $user_a, $course_id2, 'in-progress' );
-		\Sensei_Utils::update_course_status( $user_b, $course_id1, 'in-progress' );
-
-		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->count_statuses_by_user(
-			array(
-				'type'    => 'course',
-				'user_id' => array( $user_a, $user_b ),
-			)
-		);
-
-		/* Assert. */
-		$this->assertSame( 1, $result[ $user_a ]['complete'] );
-		$this->assertSame( 1, $result[ $user_a ]['in-progress'] );
-		$this->assertSame( 1, $result[ $user_b ]['in-progress'] );
-		$this->assertArrayNotHasKey( 'complete', $result[ $user_b ] );
-	}
-
-	public function testCountStatusesByUser_LessonType_ReturnsEmptyArray(): void {
-		/* Arrange. */
-		global $wpdb;
-
-		$this->setExpectedIncorrectUsage( 'Sensei\Internal\Services\Comments_Based_Progress_Aggregation_Service::count_statuses_by_user' );
-
-		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->count_statuses_by_user( array( 'type' => 'lesson' ) );
-
-		/* Assert. */
-		$this->assertSame( array(), $result );
 	}
 }
