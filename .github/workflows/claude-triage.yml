@@ -158,7 +158,7 @@ jobs:
       # No `label_trigger` here, unlike claude-code.yml: this workflow has no
       # label trigger at all, and a label_trigger the event can never match
       # risks making the action no-op. The job `if` above is the only gate.
-      - uses: anthropics/claude-code-action@1623c36729ac1cd5895198cded705a287de7db79  # v1.0.187
+      - uses: anthropics/claude-code-action@d40ddef4c030e508327d6e35a9c45f3368482c50  # v1.0.195
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           additional_permissions: |

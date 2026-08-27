@@ -72,8 +72,8 @@ This skill triages **bug reports only**. A report qualifies when either signal s
 gh api repos/Automattic/sensei/issues/<number> --jq '{type: (.type.name // "none"), labels: [.labels[].name]}'
 ```
 
-- **`[Type] Bug` label present, or `type == "Bug"`** → continue to [Duplicate check](#3-duplicate-check).
-- **Neither signal, but the report plainly describes a defect** (broken behavior, error, regression) → continue, and apply `[Type] Bug` as part of the final labelling.
+- **`[Type] Bug` label present, or `type == "Bug"`** → continue to [Duplicate check](#3-duplicate-check). On an autonomous run this is always the case: `claude-triage.yml` only fires on `issues: opened` when one of the two signals is already set, so the gate is satisfied before you start.
+- **Neither signal, but the report plainly describes a defect** (broken behavior, error, regression) → continue, and apply `[Type] Bug` as part of the final labelling. This case is reachable **only on a manual `@claude-triage` invocation**, where a staff member has judged an unlabelled, untyped report worth triaging. It never arises autonomously.
 - **Anything else — enhancement, proposal, feature request, question, support request, task, technical debt** → **stop silently.** Post no comment, change no labels, leave `[Status] Needs Triage` in place, and note in your run summary that the issue was skipped as a non-bug. Humans triage those. Do not analyse feasibility, demand, or scope for them, and do not answer questions on the issue.
 
 If the report is genuinely ambiguous between a defect and a feature ask, treat it as a non-bug and stop silently rather than guessing.
