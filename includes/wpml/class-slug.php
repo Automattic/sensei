@@ -34,7 +34,6 @@ class Slug {
 		add_filter( 'sensei_course_slug', array( $this, 'get_course_slug' ) );
 		add_filter( 'sensei_lesson_slug', array( $this, 'get_lesson_slug' ) );
 		add_filter( 'sensei_quiz_slug', array( $this, 'get_quiz_slug' ) );
-		add_filter( 'sensei_question_slug', array( $this, 'get_question_slug' ) );
 	}
 
 	/**
@@ -68,24 +67,6 @@ class Slug {
 	public function get_lesson_slug( $slug ) {
 		if ( Sensei()->settings->get( 'wpml_slug_translation' ) ) {
 			return 'lesson';
-		}
-
-		return $slug;
-	}
-
-	/**
-	 * Get question slug.
-	 *
-	 * @since 4.23.1
-	 *
-	 * @internal
-	 *
-	 * @param string $slug Question slug.
-	 * @return string
-	 */
-	public function get_question_slug( $slug ) {
-		if ( Sensei()->settings->get( 'wpml_slug_translation' ) ) {
-			return 'question';
 		}
 
 		return $slug;
