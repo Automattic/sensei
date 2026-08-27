@@ -148,8 +148,8 @@ class Sensei_Grading_User_Quiz {
 				switch ( $type ) {
 					case 'boolean':
 						$type_name           = __( 'True/False', 'sensei-lms' );
-						$right_answer        = ucfirst( $right_answer );
-						$user_answer_content = ucfirst( $user_answer_content );
+						$right_answer        = ucfirst( (string) $right_answer );
+						$user_answer_content = ucfirst( (string) $user_answer_content );
 						$grade_type          = 'auto-grade';
 						break;
 					case 'multiple-choice':
