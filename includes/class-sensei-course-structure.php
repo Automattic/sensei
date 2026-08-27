@@ -354,7 +354,12 @@ class Sensei_Course_Structure {
 		// If the previous id does not match the current id, remove the previous module.
 		if ( $item['id'] && $item['id'] !== $module_id ) {
 			wp_remove_object_terms( $this->course_id, $item['id'], 'module' );
-			Sensei()->modules->remove_if_unused( $item['id'] );
+
+			// Only delete the previous module when the current user may delete it.
+			// The id is client-supplied, so this prevents deleting another teacher's module.
+			if ( current_user_can( 'delete_term', $item['id'] ) ) {
+				Sensei()->modules->remove_if_unused( $item['id'] );
+			}
 		}
 
 		Sensei_Core_Modules::update_module_teacher_meta( $module_id, get_post( $this->course_id )->post_author );

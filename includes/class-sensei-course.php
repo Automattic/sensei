@@ -1000,7 +1000,7 @@ class Sensei_Course {
 		global $post;
 
 		/* Verify the nonce before proceeding. */
-		if ( ( get_post_type() != $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_noonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_noonce' ], plugin_basename( __FILE__ ) ) ) {
+		if ( ( get_post_type() != $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_noonce' ] ) || ! wp_verify_nonce( sensei_request_text( $_POST[ 'woo_' . $this->token . '_noonce' ] ), plugin_basename( __FILE__ ) ) ) {
 			return;
 		}
 
@@ -1012,7 +1012,7 @@ class Sensei_Course {
 			return $post_id;
 		}
 
-		if ( 'page' == $_POST['post_type'] ) {
+		if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 				return $post_id;
 			}
@@ -1048,7 +1048,8 @@ class Sensei_Course {
 		$meta_key = '_' . $post_key;
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'course_video_embed' == $post_key ) {
-			// phpcs:ignore WordPress.Security.NonceVerification
+			// Passed slashed to update_post_meta() below, which unslashes internally; sanitized by Sensei_Wp_Kses::maybe_sanitize().
+			// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$new_meta_value = ( isset( $_POST[ $post_key ] ) ) ? $_POST[ $post_key ] : '';
 			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, self::$allowed_html );
 		} else {
@@ -1057,7 +1058,7 @@ class Sensei_Course {
 				return;
 			}
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$new_meta_value = sanitize_html_class( $_POST[ $post_key ] );
+			$new_meta_value = sanitize_html_class( wp_unslash( is_array( $_POST[ $post_key ] ) ? '' : $_POST[ $post_key ] ) );
 		}
 
 		/**
@@ -2081,7 +2082,7 @@ class Sensei_Course {
 
 				$current_page = 1;
 				if ( isset( $_GET['active_page'] ) && 0 < intval( $_GET['active_page'] ) ) {
-					$current_page = $_GET['active_page'];
+					$current_page = absint( $_GET['active_page'] );
 				}
 
 				$active_html .= '<nav class="pagination woo-pagination">';
@@ -2193,7 +2194,7 @@ class Sensei_Course {
 
 				$current_page = 1;
 				if ( isset( $_GET['completed_page'] ) && 0 < intval( $_GET['completed_page'] ) ) {
-					$current_page = $_GET['completed_page'];
+					$current_page = absint( $_GET['completed_page'] );
 				}
 
 				$complete_html .= '<nav class="pagination woo-pagination">';
@@ -2722,7 +2723,7 @@ class Sensei_Course {
 	public function save_course_notification_meta_box( $course_id ) {
 
 		if ( ! isset( $_POST['_sensei_course_notification'] )
-			|| ! wp_verify_nonce( $_POST['_sensei_course_notification'], 'update-course-notification-setting' ) ) {
+			|| ! wp_verify_nonce( sensei_request_text( $_POST['_sensei_course_notification'] ), 'update-course-notification-setting' ) ) {
 			return;
 		}
 
@@ -3172,7 +3173,7 @@ class Sensei_Course {
 		$selected = 'default';
 		if ( isset( $_REQUEST['course-orderby'] ) && in_array( $selected, array_keys( $course_order_by_options ), true ) ) {
 
-			$selected = sanitize_text_field( $_REQUEST['course-orderby'] );
+			$selected = sensei_request_text( $_REQUEST['course-orderby'] );
 
 		}
 
@@ -3180,13 +3181,14 @@ class Sensei_Course {
 
 		<form class="sensei-ordering" name="sensei-course-order" method="get">
 			<?php
-			// phpcs:disable WordPress.Security.NonceVerification.Recommended
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only ordering form; preserves existing query args.
 			foreach ( $_GET as $param => $value ) {
 				// We should ignore the field that will be set just below.
 				if ( 'course-orderby' !== $param ) {
 					echo '<input type="hidden" name="' . esc_attr( $param ) . '" value="' . esc_attr( $value ) . '" />';
 				}
 			}
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 			?>
 			<select name="course-orderby" class="orderby">
 				<?php
@@ -3245,7 +3247,8 @@ class Sensei_Course {
 		<ul class="sensei-course-filters clearfix" >
 			<?php
 
-			$active_course_filter = isset( $_GET['course_filter'] ) ? sanitize_text_field( $_GET['course_filter'] ) : 'all';
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only archive filter.
+			$active_course_filter = isset( $_GET['course_filter'] ) ? sensei_request_text( $_GET['course_filter'] ) : 'all';
 
 			foreach ( $filters as $filter ) {
 
@@ -3272,6 +3275,7 @@ class Sensei_Course {
 	 * @return WP_Query $query
 	 */
 	public static function course_archive_featured_filter( $query ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only archive filter.
 		if ( isset( $_GET['course_filter'] ) && 'featured' == $_GET['course_filter'] && $query->is_main_query() ) {
 			// setup meta query for featured courses
 			$query->set( 'meta_value', 'featured' );
@@ -3295,6 +3299,7 @@ class Sensei_Course {
 	 * @return WP_Query $query
 	 */
 	public static function course_archive_category_filter( $query ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only archive filter.
 		if ( isset( $_GET['course_category_filter'] ) && intval( $_GET['course_category_filter'] ) > 0 && $query->is_main_query() ) {
 			$query->set(
 				'tax_query',
@@ -3302,6 +3307,7 @@ class Sensei_Course {
 					[
 						'taxonomy' => 'course-category',
 						'field'    => 'id',
+						// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only archive filter.
 						'terms'    => intval( $_GET['course_category_filter'] ),
 					],
 				]
@@ -3324,10 +3330,11 @@ class Sensei_Course {
 	 * @return WP_Query $query
 	 */
 	public static function course_archive_student_course_state_filter( $query ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only archive filter.
 		if ( isset( $_GET['student_course_filter'] ) && $query->is_main_query() && is_user_logged_in() ) {
 			$learner_manager = Sensei_Learner::instance();
 			$user_id         = get_current_user_id();
-			$selected_option = sanitize_text_field( wp_unslash( $_GET['student_course_filter'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+			$selected_option = sensei_request_text( $_GET['student_course_filter'] ); // phpcs:ignore WordPress.Security.NonceVerification
 			$args            = [
 				'posts_per_page' => -1,
 				'fields'         => 'ids',
@@ -3364,7 +3371,8 @@ class Sensei_Course {
 	public static function course_archive_order_by_title( $query ) {
 		_deprecated_function( __METHOD__, '3.15.0' );
 
-		if ( isset( $_REQUEST['course-orderby'] ) && 'title' === sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) )
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only archive sort.
+		if ( isset( $_REQUEST['course-orderby'] ) && 'title' === sensei_request_text( $_REQUEST['course-orderby'] )
 			&& 'course' === $query->get( 'post_type' ) && $query->is_main_query() ) {
 			// Setup the order by title for this query.
 			$query->set( 'orderby', 'title' );
@@ -3400,7 +3408,7 @@ class Sensei_Course {
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_REQUEST['course-orderby'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$request_orderby = sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) );
+			$request_orderby = sensei_request_text( $_REQUEST['course-orderby'] );
 			switch ( $request_orderby ) {
 				case 'title':
 					$orderby = 'title';

@@ -171,7 +171,7 @@ class Custom_Fields {
 	/**
 	 * Update lesson prerequisite before copied.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *

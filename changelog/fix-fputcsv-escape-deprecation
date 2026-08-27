@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix a PHP 8.4 deprecation notice when exporting CSV files.

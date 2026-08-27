@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix a thick border showing on Course Outline modules in the editor when the module border setting is off.

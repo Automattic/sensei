@@ -96,6 +96,49 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Count course progress records grouped by user and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args {
+	 *     Query arguments.
+	 *
+	 *     @type string    $type    Must be 'course'.
+	 *     @type int|array $user_id Restrict to specific user IDs.
+	 * }
+	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
+	 */
+	public function count_statuses_by_user( array $args ): array {
+		if ( empty( $args['type'] ) || 'course' !== $args['type'] ) {
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course". Per-user lesson counts are not supported.', '$$next-version$$' );
+			return array();
+		}
+
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
+
+		$reports_statuses = Utils::get_reports_post_status_sql();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query  = "SELECT p.user_id, p.status, COUNT(*) AS total FROM {$table} p";
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$reports_statuses} )";
+		$query .= $wpdb->prepare( ' WHERE p.type = %s', $args['type'] );
+		$query .= $this->build_user_filter_clause( $args );
+		$query .= ' GROUP BY p.user_id, p.status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based status counts by user' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['user_id'] ][ $row['status'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
 	 * @since 4.26.0
@@ -104,13 +147,13 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @return array Associative array with keys: unique_student_count, lesson_start_count, lesson_completed_count, days_to_complete_count, days_to_complete_sum.
 	 */
 	public function get_lesson_totals( array $lesson_ids ): array {
-		$defaults = [
+		$defaults = array(
 			'unique_student_count'   => 0,
 			'lesson_start_count'     => 0,
 			'lesson_completed_count' => 0,
 			'days_to_complete_count' => 0,
 			'days_to_complete_sum'   => 0,
-		];
+		);
 
 		if ( empty( $lesson_ids ) ) {
 			return $defaults;
@@ -124,6 +167,8 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$has_completion    = "('" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "')";
 		$utc_offset        = Utils::get_utc_offset_string();
 
+		$reports_statuses = Utils::get_reports_post_status_sql();
+
 		// Plain COALESCE suffices here because quiz rows are already filtered
 		// by submission existence in the JOIN condition (AND EXISTS ...).
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb prefix. Placeholders and status list created dynamically.
@@ -134,7 +179,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, 1, 0)) AS days_to_complete_count
 			, SUM(IF(COALESCE( q.status, p.status ) IN $has_completion, ABS( DATEDIFF( CONVERT_TZ( p.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( p.started_at, '+00:00', '$utc_offset' ) ) ) + 1, 0)) AS days_to_complete_sum
 			FROM {$table} p
-			INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )
+			INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$reports_statuses} )
 			LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0
 			LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
 				AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )
@@ -151,13 +196,13 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			return $defaults;
 		}
 
-		return [
+		return array(
 			'unique_student_count'   => (int) $row->unique_student_count,
 			'lesson_start_count'     => (int) $row->lesson_start_count,
 			'lesson_completed_count' => (int) $row->lesson_completed_count,
 			'days_to_complete_count' => (int) $row->days_to_complete_count,
 			'days_to_complete_sum'   => (int) $row->days_to_complete_sum,
-		];
+		);
 	}
 
 	/**
@@ -172,10 +217,12 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
+		$reports_statuses = Utils::get_reports_post_status_sql();
+
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix; status/type values are constants.
 		$query = "SELECT COUNT(*) FROM {$table} p
 			INNER JOIN {$wpdb->postmeta} pm ON pm.meta_key = '_lesson_quiz' AND pm.meta_value = p.post_id
-			INNER JOIN {$wpdb->posts} lesson_post ON lesson_post.ID = pm.post_id AND lesson_post.post_status IN ( 'publish', 'private' )
+			INNER JOIN {$wpdb->posts} lesson_post ON lesson_post.ID = pm.post_id AND lesson_post.post_status IN ( {$reports_statuses} )
 			INNER JOIN {$table} lp ON lp.post_id = pm.post_id AND lp.user_id = p.user_id AND lp.type = 'lesson'
 			WHERE p.type = 'quiz' AND p.status = 'ungraded'";
 
@@ -214,10 +261,12 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
+		$reports_statuses = Utils::get_reports_post_status_sql();
+
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query = "SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
-		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$reports_statuses} )";
 		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
@@ -234,7 +283,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
 		Utils::log_query_error( $wpdb, 'Tables-based lesson status counts' );
 
-		$counts = [];
+		$counts = array();
 		foreach ( $results as $row ) {
 			$counts[ $row['effective_status'] ] = (int) $row['total'];
 		}
@@ -254,9 +303,11 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
+		$reports_statuses = Utils::get_reports_post_status_sql();
+
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
 		$query  = "SELECT p.status, COUNT(*) AS total FROM {$table} p";
-		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( 'publish', 'private' )";
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$reports_statuses} )";
 
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', $args['type'] );
 		$query .= $this->build_post_filter_clause( $args );
@@ -269,7 +320,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
 		Utils::log_query_error( $wpdb, 'Tables-based course status counts' );
 
-		$counts = [];
+		$counts = array();
 		foreach ( $results as $row ) {
 			$counts[ $row['status'] ] = (int) $row['total'];
 		}

@@ -12,7 +12,11 @@ import { createBlock } from '@wordpress/blocks';
 import { useState } from '@wordpress/element';
 import { Icon, image } from '@wordpress/icons';
 import { Button } from '@wordpress/components';
-import { store as blockEditorStore, Warning } from '@wordpress/block-editor';
+import {
+	store as blockEditorStore,
+	Warning,
+	useBlockProps,
+} from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -93,12 +97,14 @@ const FeaturedImagePlaceholder = () => (
  * @param {Array}  props.variables CSS variables.
  * @param {Object} props.children  Children elements.
  * @param {string} props.className Classes.
+ * @param {Object} props.style     Inline styles.
  */
 const StylesWrapper = ( {
 	tagName: TagName = 'div',
 	variables,
 	children,
 	className,
+	style,
 	...props
 } ) => {
 	const isEmpty = ( value ) => {
@@ -110,16 +116,20 @@ const StylesWrapper = ( {
 				'has-sensei-primary-color': !! variables.primaryColor,
 				'has-sensei-accent-color': !! variables.accentColor,
 			} ) }
-			style={ omitBy(
-				{
-					'--sensei-progress-bar-height': variables.progressBarHeight,
-					'--sensei-progress-bar-border-radius':
-						variables.progressBarBorderRadius,
-					'--sensei-primary-color': variables.primaryColor,
-					'--sensei-accent-color': variables.accentColor,
-				},
-				isEmpty
-			) }
+			style={ {
+				...style,
+				...omitBy(
+					{
+						'--sensei-progress-bar-height':
+							variables.progressBarHeight,
+						'--sensei-progress-bar-border-radius':
+							variables.progressBarBorderRadius,
+						'--sensei-primary-color': variables.primaryColor,
+						'--sensei-accent-color': variables.accentColor,
+					},
+					isEmpty
+				),
+			} }
 			{ ...props }
 		>
 			{ children }
@@ -132,18 +142,17 @@ const StylesWrapper = ( {
  *
  * @param {Object}   props
  * @param {Object}   props.clientId           Block client ID.
- * @param {Object}   props.className          Block className.
  * @param {Object}   props.attributes         Block attributes.
  * @param {Object}   props.attributes.options Block options attribute.
  * @param {Function} props.setAttributes      Block set attributes function.
  */
 const LearnerCoursesEdit = ( {
 	clientId,
-	className,
 	attributes: { options },
 	setAttributes,
 } ) => {
 	const [ filter, setFilter ] = useState( 'all' );
+	const blockProps = useBlockProps();
 
 	const filterHandler = ( filterValue ) => ( e ) => {
 		e.preventDefault();
@@ -249,7 +258,7 @@ const LearnerCoursesEdit = ( {
 		<>
 			<StylesWrapper
 				tagName="section"
-				className={ className }
+				{ ...blockProps }
 				variables={ {
 					primaryColor: options.primaryColor,
 					accentColor: options.accentColor,

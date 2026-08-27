@@ -110,7 +110,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		// Handle search.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
-		$search = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
+		$search = sensei_request_text( $_GET['s'] ?? '' );
 		if ( ! empty( $search ) ) {
 			$args['search'] = esc_html( $search );
 		}
@@ -148,10 +148,10 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		return $this->data_provider->get_items(
 			array_merge(
 				$this->get_filter_args(),
-				[
+				array(
 					'number' => -1,
 					'fields' => 'ids',
-				]
+				)
 			)
 		);
 	}
@@ -184,7 +184,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		// Handle search.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
-		$search = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
+		$search = sensei_request_text( $_GET['s'] ?? '' );
 		if ( ! empty( $search ) ) {
 			$args['search'] = esc_html( $search );
 		}
@@ -203,12 +203,28 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		$data[]                   = $column_headers;
 		$columns_keys_assoc_array = array_fill_keys( array_keys( $columns ), '' );
+
+		$this->before_generate_report_rows( $this->items );
+
 		// Process each row.
 		foreach ( $this->items as $item ) {
 			$data[] = array_replace( $columns_keys_assoc_array, $this->get_row_data( $item ) );
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Runs after the full (unpaginated) item set for a CSV export is fetched, but before
+	 * row data is generated for each item. Subclasses may override to prime any per-item
+	 * caches needed by get_row_data().
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $items The items that will be exported.
+	 */
+	protected function before_generate_report_rows( array $items ) {
+		// No-op by default. Subclasses may override.
 	}
 
 	/**
@@ -282,7 +298,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 */
 	public function output_top_filters() {
 		Sensei_Utils::output_query_params_as_inputs(
-			[
+			array(
 				'course_filter',
 				'start_date',
 				'end_date',
@@ -291,7 +307,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				'post_type',
 				'page',
 				'search',
-			]
+			)
 		);
 		?>
 
@@ -489,6 +505,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 */
 	private function get_search_value(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
-		return isset( $_GET['s'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['s'] ) ) ) : '';
+		return isset( $_GET['s'] ) ? esc_attr( sensei_request_text( $_GET['s'] ) ) : '';
 	}
 }

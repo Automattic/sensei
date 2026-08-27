@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Renders quiz questions in the viewer's language: submissions store the questions as taken,
  * and this class swaps the display data for the current-language translation at render time.
  *
- * @since $$next-version$$
+ * @since 4.26.3
  *
  * @internal
  */
@@ -52,7 +52,7 @@ class Question_Display {
 	 * and are shown as written; they are told apart because they match none of the
 	 * question's feedback sources.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *
@@ -102,7 +102,7 @@ class Question_Display {
 	 * It rebuilds the message from the question's translation. Gap fill stays as taken on purpose:
 	 * the right answer only makes sense against the gap in its own language.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *
@@ -135,7 +135,7 @@ class Question_Display {
 	 * In wp-admin (the grading screen renders descriptions too), or without a
 	 * translation, the question renders its own description, exactly like core.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *
@@ -158,7 +158,7 @@ class Question_Display {
 	 * Runs whenever a question title is fetched on the frontend (the quiz page heading among others).
 	 * In wp-admin, or without a translation, the title is returned unchanged.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *
@@ -213,7 +213,7 @@ class Question_Display {
 	 * is open, or when the options cannot be mapped, the question renders as taken.
 	 * Display only: stored answers and grades are never modified.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.3
 	 *
 	 * @internal
 	 *

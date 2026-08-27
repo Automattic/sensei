@@ -100,7 +100,7 @@ class Sensei_Import_CSV_Reader {
 		$forced_delimiter = apply_filters( 'sensei_import_csv_delimiter', false );
 
 		if ( $forced_delimiter ) {
-			$this->file->setCsvControl( $forced_delimiter );
+			$this->file->setCsvControl( $forced_delimiter, '"', '' );
 			return;
 		}
 
@@ -119,7 +119,7 @@ class Sensei_Import_CSV_Reader {
 		$selected_delimiter = $delimiters[0];
 
 		foreach ( $delimiters as $delimiter ) {
-			$this->file->setCsvControl( $delimiter );
+			$this->file->setCsvControl( $delimiter, '"', '' );
 
 			$columns = $this->get_columns_number();
 
@@ -129,7 +129,7 @@ class Sensei_Import_CSV_Reader {
 			}
 		}
 
-		$this->file->setCsvControl( $selected_delimiter );
+		$this->file->setCsvControl( $selected_delimiter, '"', '' );
 	}
 
 	/**

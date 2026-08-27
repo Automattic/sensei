@@ -56,9 +56,9 @@ class Sensei_Exit_Survey {
 		check_ajax_referer( 'sensei_exit_survey' );
 
 		$feedback = [
-			'reason'  => isset( $_POST['reason'] ) ? sanitize_text_field( wp_unslash( $_POST['reason'] ) ) : null,
-			'details' => isset( $_POST['details'] ) ? sanitize_text_field( wp_unslash( $_POST['details'] ) ) : null,
-			'theme'   => isset( $_POST['theme'] ) ? sanitize_text_field( wp_unslash( $_POST['theme'] ) ) : null,
+			'reason'  => isset( $_POST['reason'] ) ? sensei_request_text( $_POST['reason'] ) : null,
+			'details' => isset( $_POST['details'] ) ? sensei_request_text( $_POST['details'] ) : null,
+			'theme'   => isset( $_POST['theme'] ) ? sensei_request_text( $_POST['theme'] ) : null,
 		];
 
 		update_option( 'sensei_exit_survey_data', $feedback );

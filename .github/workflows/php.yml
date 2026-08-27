@@ -51,6 +51,9 @@ jobs:
             - name: Check for nonces
               run: ./vendor/bin/phpcs -sn --sniffs=WordPress.Security.NonceVerification .
 
+            - name: Check for input sanitization
+              run: ./vendor/bin/phpcs -sn --sniffs=WordPress.Security.ValidatedSanitizedInput .
+
             - name: Check WPCOM rules
               run: ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
     test:

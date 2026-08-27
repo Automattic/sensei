@@ -6,6 +6,7 @@
  */
 
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
+use Sensei\Internal\Services\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -163,8 +164,10 @@ class Sensei_Reports_Overview_Service_Courses {
 	private function get_lessons_completions(): array {
 
 		global $wpdb;
+		$reports_statuses = Utils::get_reports_post_status_sql();
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Statuses come from a fixed constant.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		return $wpdb->get_results(
+		$results = $wpdb->get_results(
 			"SELECT wcom.comment_post_id lesson_id, COUNT(*) completion_count
 						FROM {$wpdb->comments} wcom
 						WHERE wcom.comment_approved IN ('graded', 'ungraded', 'passed', 'failed','complete')
@@ -174,11 +177,13 @@ class Sensei_Reports_Overview_Service_Courses {
 						SELECT wpm.post_id lesson_id from {$wpdb->posts} wpc
 						JOIN {$wpdb->postmeta} wpm on wpm.meta_value = wpc.id
 						WHERE wpm.meta_key = '_lesson_course'
-						AND wpc.post_status in ('publish','private')
+						AND wpc.post_status in ( {$reports_statuses} )
 						)
 						GROUP BY wcom.comment_post_id",
 			'OBJECT_K'
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		return $results;
 	}
 
 	/**

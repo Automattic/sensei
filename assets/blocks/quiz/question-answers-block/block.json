@@ -1,6 +1,6 @@
 {
 	"name": "sensei-lms/question-answers",
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"title": "Answers",
 	"description": "Question Answers.",
 	"parent": [ "sensei-lms/quiz-question" ],
