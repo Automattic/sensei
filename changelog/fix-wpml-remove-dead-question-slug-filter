@@ -1,0 +1,4 @@
+Significance: patch
+Type: development
+
+Remove the unused sensei_question_slug filter registration from the WPML compatibility class.
