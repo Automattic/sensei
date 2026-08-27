@@ -231,18 +231,18 @@ jobs:
           #   grant nothing the `Read`/`Grep` tools don't already. Deliberately
           #   excluded: `sort` (`-o` writes files) and `tee`.
           # * The list is single-quoted so the patterns can contain `CMD="`.
-          # * The deny list carries both `close*` and `close:*` forms per verb.
-          #   Patterns are globs against the literal command, so the colon form
-          #   never matches a real `gh issue close 123`. Denies are additive, so
-          #   both are listed. Defence in depth only — the allowlist already omits
-          #   these commands.
+          # * The deny patterns' trailing `:*` is correct and does enforce. Per
+          #   https://code.claude.com/docs/en/permissions a trailing `:*` is
+          #   equivalent to a space-separated wildcard — `Bash(ls:*)` matches what
+          #   `Bash(ls *)` matches. The colon is literal only mid-pattern, e.g.
+          #   `Bash(git:* push)`. Reviewers have read these as broken; they aren't.
           claude_args: |
             --model claude-sonnet-4-6
             --max-turns 80
             --max-budget-usd 4.00
             --mcp-config /tmp/mcp-chrome.json
             --allowedTools 'Read,Glob,Grep,Write,mcp__chrome-devtools,Bash(make wp CMD="post *),Bash(make wp CMD="term *),Bash(make wp CMD="user *),Bash(make wp CMD="option get*),Bash(make wp CMD="plugin list*),Bash(make wp CMD="theme list*),Bash(make wp CMD="theme activate*),Bash(make wp CMD="action-scheduler *),Bash(make wp CMD="sensei db seed*),Bash(make test-php-filter*),Bash(npm run build:assets),Bash(curl -sI http://localhost:8888*),Bash(curl -sSf http://localhost:8888*),Bash(mkdir -p .claude/tmp*),Bash(head*),Bash(tail*),Bash(grep*),Bash(wc*),Bash(git grep*),Bash(git log*),Bash(git show*),Bash(git diff*),Bash(git status*),Bash(git rev-parse*),Bash(gh issue view*),Bash(gh issue comment*),Bash(gh issue edit*),Bash(gh issue list*),Bash(gh search issues*),Bash(gh repo view*),Bash(gh api *),Bash(gh label list*)'
-            --disallowedTools "Edit" "Bash(gh pr *)" "Bash(gh issue close*)" "Bash(gh issue close:*)" "Bash(gh issue delete*)" "Bash(gh issue delete:*)" "Bash(gh issue create*)" "Bash(gh issue create:*)" "Bash(gh label delete*)" "Bash(gh label delete:*)" "Bash(gh label create*)" "Bash(gh label create:*)" "Bash(gh run delete*)" "Bash(gh run delete:*)" "Bash(gh run cancel*)" "Bash(gh run cancel:*)" "Bash(git push*)" "Bash(git commit*)" "Bash(git add *)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"
+            --disallowedTools "Edit" "Bash(gh pr *)" "Bash(gh issue close:*)" "Bash(gh issue delete:*)" "Bash(gh label delete:*)" "Bash(gh label create:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push*)" "Bash(git commit*)" "Bash(git add *)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"
 
       - name: Upload screenshots
         if: always()
