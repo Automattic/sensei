@@ -52,6 +52,12 @@ Both environments can drive a real browser — reproduction is always a browser 
 - **wp-cli is restricted to seeding and inspection.** `make wp CMD="post …"`, `"term …"`, `"user …"`, `"option get …"`, `"plugin list"`, `"theme list"`, `"theme activate …"`, and `"action-scheduler …"` are permitted. Use the documented `CMD="…"` double-quote form — other quoting is denied. `wp eval`, `wp shell`, `wp db`, and `wp plugin install` are not available: they amount to arbitrary code execution with network access, which would bypass the browser confinement.
 - **You cannot create issues in CI.** See the [Sensei Pro auto-submit](#auto-submit-into-sensei-pro-on-the-users-behalf) rules — the CI path posts the staff-follow-up comment rather than filing anything.
 
+### Seeding notes (learned from a real test run)
+
+- **To get an enrolled student, use `make wp CMD="sensei db seed --users=1 --courses=1 --lessons=2"`.** Sensei ships this WP-CLI command and it enrols the users it creates. Don't reach for `wp eval` — it's blocked, and you don't need it. The two browser routes also work: **Students → Add Student to Course** in wp-admin, and the frontend **Take Course** button for self-enrolment.
+- **Create `question` posts only after confirming Sensei is active.** The `question-type` taxonomy doesn't exist until then, so `wp post term set` fails and you end up with a quiz holding zero usable questions — which silently makes a pagination or progress-bar bug un-reproducible.
+- **Don't fetch a quiz by URL.** Sensei redirects the quiz permalink to its lesson until the lesson has been started, so you'll get the lesson page and may misread it as the quiz rendering wrongly. Reach the quiz through the lesson's **Take Quiz** action.
+
 Never claim a browser reproduction you didn't actually run, and never present a code-level trace as a browser repro. If the browser is genuinely unavailable (env didn't come up), say so explicitly and fall back to a code-level trace, labelled as such.
 
 ## Workflow
@@ -84,8 +90,9 @@ Before spending effort on scope or reproduction, search for an existing report o
 
 ```bash
 # By the report's key terms: symptom, error text, block or feature name.
-gh search issues "<key terms>" --repo Automattic/sensei --state all --limit 20
-# Tighten if noisy:
+# Note: `gh search issues` has no `--state all` — omitting --state searches both.
+gh search issues "<key terms>" --repo Automattic/sensei --limit 20 --json number,title,state
+# Tighten if noisy. `gh issue list` DOES accept --state all:
 gh issue list --repo Automattic/sensei --search "<key terms> in:title,body" --state all --limit 20
 ```
 

@@ -97,6 +97,15 @@ jobs:
       - name: Build assets
         run: npm run build:assets
 
+      # `make up` does NOT reliably leave the plugin and theme active — a local
+      # test run found Sensei inactive and twentytwentyfive active after a clean
+      # boot. Activation must come after `make install-php`, because activating
+      # against a stale Composer classmap fatals on Sensei\WPML\* classes.
+      - name: Activate Sensei and the course theme
+        run: |
+          make wp CMD="plugin activate sensei"
+          make wp CMD="theme activate course"
+
       - name: Wait for the dev site
         run: |
           for _ in $(seq 1 36); do
@@ -108,6 +117,18 @@ jobs:
           done
           echo "::error::wp-env did not become reachable at http://localhost:8888 within 3 minutes."
           exit 1
+
+      # An HTTP 200 is not proof the environment is usable: vanilla WordPress
+      # with Sensei inactive also returns 200, and a browser reproduction
+      # against it would "fail to reproduce" every Sensei bug. Assert the real
+      # preconditions instead of trusting the status code.
+      - name: Verify the Sensei environment
+        run: |
+          make wp CMD="plugin list --status=active --field=name" | tr -d '\r' | grep -qx sensei || {
+            echo "::error::Sensei is not active in wp-env; a browser reproduction would be meaningless."; exit 1; }
+          make wp CMD="theme list --status=active --field=name" | tr -d '\r' | grep -qx course || {
+            echo "::error::The 'course' theme is not active; Learning Mode surfaces will not render correctly."; exit 1; }
+          echo "Sensei plugin and course theme are both active."
 
       # Chrome 149+ is required for --allowedUrlPattern, which is what keeps the
       # browser off attacker-supplied URLs. Fail loudly rather than silently
@@ -200,7 +221,7 @@ jobs:
             --max-turns 80
             --max-budget-usd 4.00
             --mcp-config /tmp/mcp-chrome.json
-            --allowedTools 'Read,Glob,Grep,Write,mcp__chrome-devtools,Bash(make wp CMD="post *),Bash(make wp CMD="term *),Bash(make wp CMD="user *),Bash(make wp CMD="option get*),Bash(make wp CMD="plugin list*),Bash(make wp CMD="theme list*),Bash(make wp CMD="theme activate*),Bash(make wp CMD="action-scheduler *),Bash(make test-php-filter*),Bash(npm run build:assets),Bash(curl -sI http://localhost:8888*),Bash(curl -sSf http://localhost:8888*),Bash(mkdir -p .claude/tmp*),Bash(git grep*),Bash(git log*),Bash(git show*),Bash(git diff*),Bash(git status*),Bash(git rev-parse*),Bash(gh issue view*),Bash(gh issue comment*),Bash(gh issue edit*),Bash(gh issue list*),Bash(gh search issues*),Bash(gh repo view*),Bash(gh api *),Bash(gh label list*)'
+            --allowedTools 'Read,Glob,Grep,Write,mcp__chrome-devtools,Bash(make wp CMD="post *),Bash(make wp CMD="term *),Bash(make wp CMD="user *),Bash(make wp CMD="option get*),Bash(make wp CMD="plugin list*),Bash(make wp CMD="theme list*),Bash(make wp CMD="theme activate*),Bash(make wp CMD="action-scheduler *),Bash(make wp CMD="sensei db seed*),Bash(make test-php-filter*),Bash(npm run build:assets),Bash(curl -sI http://localhost:8888*),Bash(curl -sSf http://localhost:8888*),Bash(mkdir -p .claude/tmp*),Bash(git grep*),Bash(git log*),Bash(git show*),Bash(git diff*),Bash(git status*),Bash(git rev-parse*),Bash(gh issue view*),Bash(gh issue comment*),Bash(gh issue edit*),Bash(gh issue list*),Bash(gh search issues*),Bash(gh repo view*),Bash(gh api *),Bash(gh label list*)'
             --disallowedTools "Edit" "Bash(gh pr *)" "Bash(gh issue close:*)" "Bash(gh issue delete:*)" "Bash(gh label delete:*)" "Bash(gh label create:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push*)" "Bash(git commit*)" "Bash(git add *)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)"
 
       - name: Upload screenshots
