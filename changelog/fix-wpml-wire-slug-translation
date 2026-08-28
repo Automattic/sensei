@@ -1,0 +1,4 @@
+Significance: minor
+Type: changed
+
+Let WPML translate the course, lesson, and quiz URL slugs when the WPML slug translation setting is enabled.
