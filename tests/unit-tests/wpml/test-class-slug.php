@@ -12,6 +12,7 @@ class Slug_Test extends \WP_UnitTestCase {
 
 	public function tear_down(): void {
 		unset( \Sensei()->settings->settings['wpml_slug_translation'] );
+		delete_option( 'wpml_base_slug_translation' );
 		parent::tear_down();
 	}
 
@@ -114,6 +115,35 @@ class Slug_Test extends \WP_UnitTestCase {
 			),
 			$saved
 		);
+	}
+
+	public function testMaybeActivateWpmlSlugTranslation_NoPriorSlugSettingsGiven_EnablesTheRuntimeOption() {
+		/* Arrange. */
+		$slug = $this->create_slug_with_settings_spy( $saved );
+		\Sensei()->settings->settings['wpml_slug_translation'] = true;
+		delete_option( 'wpml_base_slug_translation' );
+
+		/* Act. */
+		$slug->maybe_activate_wpml_slug_translation();
+
+		/* Assert. */
+		$this->assertSame( 1, (int) get_option( 'wpml_base_slug_translation' ) );
+	}
+
+	public function testMaybeActivateWpmlSlugTranslation_MasterSwitchExplicitlyOffGiven_KeepsTheRuntimeOptionOff() {
+		/* Arrange. */
+		$slug = $this->create_slug_with_settings_spy( $saved );
+		\Sensei()->settings->settings['wpml_slug_translation'] = true;
+		update_option( 'wpml_base_slug_translation', 0 );
+
+		$setting_filter = $this->stub_wpml_slug_setting( array( 'on' => 0 ) );
+
+		/* Act. */
+		$slug->maybe_activate_wpml_slug_translation();
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_setting', $setting_filter );
+		$this->assertSame( 0, (int) get_option( 'wpml_base_slug_translation' ) );
 	}
 
 	public function testMaybeActivateWpmlSlugTranslation_MasterSwitchExplicitlyOffWithOnlySenseiTypesGiven_KeepsTheMasterSwitchOff() {

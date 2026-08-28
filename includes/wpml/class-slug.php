@@ -70,9 +70,12 @@ class Slug {
 
 		// Turn the master switch on only when it was never set: an explicit off is an
 		// admin decision, and re-enabling it would change the URLs of every post type
-		// with a translated slug behind the admin's back.
-		if ( ! isset( $original['on'] ) && empty( $slug_settings['on'] ) ) {
+		// with a translated slug behind the admin's back. The runtime reads the
+		// standalone `wpml_base_slug_translation` option (the `on` flag is legacy,
+		// kept in sync by WPML's own UI), so both are set together.
+		if ( ! isset( $original['on'] ) ) {
 			$slug_settings['on'] = 1;
+			update_option( 'wpml_base_slug_translation', 1 );
 		}
 
 		if ( $slug_settings !== $original ) {
