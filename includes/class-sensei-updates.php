@@ -132,6 +132,10 @@ class Sensei_Updates {
 
 		$settings['wpml_slug_translation'] = false;
 		update_option( 'sensei-settings', $settings );
+
+		// The in-memory settings were loaded before this ran, so reload them
+		// or the rest of this request would still read the new default.
+		Sensei()->settings->get_settings();
 	}
 
 	/**
