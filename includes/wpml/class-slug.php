@@ -68,11 +68,10 @@ class Slug {
 			$slug_settings['types'][ $post_type ] = 1;
 		}
 
-		// Turn the master switch on only when no other post type was configured before:
-		// re-enabling it on a site that deliberately disabled slug translation would
-		// change the URLs of those other post types.
-		$foreign_types = array_diff_key( $original['types'] ?? array(), array_flip( $sensei_types ) );
-		if ( empty( $slug_settings['on'] ) && empty( $foreign_types ) ) {
+		// Turn the master switch on only when it was never set: an explicit off is an
+		// admin decision, and re-enabling it would change the URLs of every post type
+		// with a translated slug behind the admin's back.
+		if ( ! isset( $original['on'] ) && empty( $slug_settings['on'] ) ) {
 			$slug_settings['on'] = 1;
 		}
 

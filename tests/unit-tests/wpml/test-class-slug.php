@@ -116,6 +116,33 @@ class Slug_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	public function testMaybeActivateWpmlSlugTranslation_MasterSwitchExplicitlyOffWithOnlySenseiTypesGiven_KeepsTheMasterSwitchOff() {
+		/* Arrange. */
+		$slug = $this->create_slug_with_settings_spy( $saved );
+		\Sensei()->settings->settings['wpml_slug_translation'] = true;
+
+		$setting_filter = $this->stub_wpml_slug_setting( array( 'on' => 0 ) );
+
+		/* Act. */
+		$slug->maybe_activate_wpml_slug_translation();
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_setting', $setting_filter );
+		$this->assertSame(
+			array(
+				array(
+					'on'    => 0,
+					'types' => array(
+						'course' => 1,
+						'lesson' => 1,
+						'quiz'   => 1,
+					),
+				),
+			),
+			$saved
+		);
+	}
+
 	public function testMaybeActivateWpmlSlugTranslation_SlugTranslationAlreadyActiveGiven_SavesNothing() {
 		/* Arrange. */
 		$slug = $this->create_slug_with_settings_spy( $saved );
