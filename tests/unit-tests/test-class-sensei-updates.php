@@ -255,7 +255,7 @@ END;
 		);
 	}
 
-	public function testRunUpdates_UpgradeWithoutAStoredWpmlSlugSettingGiven_StampsTheOldDefault() {
+	public function testRunUpdates_UpgradeWithoutAStoredWpmlSlugSettingGiven_SavesTheOldDefault() {
 		/* Arrange. */
 		$settings = get_option( 'sensei-settings', array() );
 		unset( $settings['wpml_slug_translation'] );
@@ -287,7 +287,7 @@ END;
 		$this->assertSame( true, $stored['wpml_slug_translation'] ?? null );
 	}
 
-	public function testRunUpdates_NewInstallGiven_StampsNothing() {
+	public function testRunUpdates_NewInstallGiven_SavesNothing() {
 		/* Arrange. */
 		$settings = get_option( 'sensei-settings', array() );
 		unset( $settings['wpml_slug_translation'] );
