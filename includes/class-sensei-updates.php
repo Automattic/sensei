@@ -114,8 +114,8 @@ class Sensei_Updates {
 	 * Keep the WPML slug translation setting disabled on existing sites.
 	 *
 	 * The default for the `wpml_slug_translation` setting changed to enabled.
-	 * Sites upgrading without a stored value get the old default stamped so
-	 * their URLs do not change.
+	 * Sites upgrading without a stored value get the old default (disabled)
+	 * saved explicitly so their URLs do not change.
 	 *
 	 * @since $$next-version$$
 	 */
