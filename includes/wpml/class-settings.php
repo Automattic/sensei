@@ -66,8 +66,8 @@ class Settings {
 	 */
 	public function add_fields( $fields ) {
 		$fields['wpml_slug_translation'] = array(
-			'name'        => __( 'Don\'t translate Sensei slugs', 'sensei-lms' ),
-			'description' => __( 'Sensei slugs will not be translated. Enable this setting if your translated courses return a 404 page.', 'sensei-lms' ),
+			'name'        => __( 'Use WPML slug translation', 'sensei-lms' ),
+			'description' => __( 'Sensei stops translating its course, lesson, and quiz URL slugs and registers them with WPML String Translation instead. Translate the "URL slug" strings there to localize your URLs. Enable this if your translated courses return a 404 page.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'sensei-wpml-settings',
