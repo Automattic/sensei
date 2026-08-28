@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Enable the WPML slug translation setting by default on new installs.
