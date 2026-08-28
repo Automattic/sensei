@@ -67,9 +67,9 @@ class Settings {
 	public function add_fields( $fields ) {
 		$fields['wpml_slug_translation'] = array(
 			'name'        => __( 'Don\'t translate Sensei slugs', 'sensei-lms' ),
-			'description' => __( 'Sensei slugs will not be translated. Enable this setting if your translated courses return a 404 page.', 'sensei-lms' ),
+			'description' => __( 'Sensei slugs will not be translated. If you disable this setting, translated slugs may return 404 errors.', 'sensei-lms' ),
 			'type'        => 'checkbox',
-			'default'     => false,
+			'default'     => true,
 			'section'     => 'sensei-wpml-settings',
 		);
 

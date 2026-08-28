@@ -90,6 +90,7 @@ class Sensei_Updates {
 		$this->v4_19_2_update_legacy_quiz_data();
 		$this->v4_24_1_update_capabilities();
 		$this->v4_26_2_backfill_course_welcome_email_sent();
+		$this->v4_26_4_preserve_wpml_slug_translation_behavior();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
@@ -107,6 +108,30 @@ class Sensei_Updates {
 		}
 
 		Sensei_Scheduler::instance()->schedule_job( new Sensei_Update_Backfill_Course_Welcome_Email_Sent() );
+	}
+
+	/**
+	 * Keep the WPML slug translation setting disabled on existing sites.
+	 *
+	 * The default for the `wpml_slug_translation` setting changed to enabled.
+	 * Sites upgrading without a stored value get the old default stamped so
+	 * their URLs do not change.
+	 *
+	 * @since $$next-version$$
+	 */
+	private function v4_26_4_preserve_wpml_slug_translation_behavior() {
+		// Only run this if we're upgrading from a version before 4.26.4.
+		if ( ! $this->is_upgrade || null === $this->current_version || version_compare( $this->current_version, '4.26.4', '>=' ) ) {
+			return;
+		}
+
+		$settings = get_option( 'sensei-settings', array() );
+		if ( ! is_array( $settings ) || isset( $settings['wpml_slug_translation'] ) ) {
+			return;
+		}
+
+		$settings['wpml_slug_translation'] = false;
+		update_option( 'sensei-settings', $settings );
 	}
 
 	/**

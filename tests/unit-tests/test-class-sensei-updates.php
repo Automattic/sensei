@@ -254,4 +254,52 @@ END;
 			]
 		);
 	}
+
+	public function testRunUpdates_UpgradeWithoutAStoredWpmlSlugSettingGiven_StampsTheOldDefault() {
+		/* Arrange. */
+		$settings = get_option( 'sensei-settings', array() );
+		unset( $settings['wpml_slug_translation'] );
+		update_option( 'sensei-settings', $settings );
+
+		$updates = new Sensei_Updates( '4.26.3', false, true );
+
+		/* Act. */
+		$updates->run_updates();
+
+		/* Assert. */
+		$stored = get_option( 'sensei-settings' );
+		$this->assertSame( false, $stored['wpml_slug_translation'] ?? null );
+	}
+
+	public function testRunUpdates_UpgradeWithAStoredWpmlSlugSettingGiven_LeavesItUntouched() {
+		/* Arrange. */
+		$settings                          = get_option( 'sensei-settings', array() );
+		$settings['wpml_slug_translation'] = true;
+		update_option( 'sensei-settings', $settings );
+
+		$updates = new Sensei_Updates( '4.26.3', false, true );
+
+		/* Act. */
+		$updates->run_updates();
+
+		/* Assert. */
+		$stored = get_option( 'sensei-settings' );
+		$this->assertSame( true, $stored['wpml_slug_translation'] ?? null );
+	}
+
+	public function testRunUpdates_NewInstallGiven_StampsNothing() {
+		/* Arrange. */
+		$settings = get_option( 'sensei-settings', array() );
+		unset( $settings['wpml_slug_translation'] );
+		update_option( 'sensei-settings', $settings );
+
+		$updates = new Sensei_Updates( null, true, false );
+
+		/* Act. */
+		$updates->run_updates();
+
+		/* Assert. */
+		$stored = get_option( 'sensei-settings' );
+		$this->assertArrayNotHasKey( 'wpml_slug_translation', (array) $stored );
+	}
 }
