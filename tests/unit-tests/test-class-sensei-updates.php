@@ -287,6 +287,22 @@ END;
 		$this->assertSame( true, $stored['wpml_slug_translation'] ?? null );
 	}
 
+	public function testRunUpdates_UpgradeFromVersionWithNewDefaultGiven_SavesNothing() {
+		/* Arrange. */
+		$settings = get_option( 'sensei-settings', array() );
+		unset( $settings['wpml_slug_translation'] );
+		update_option( 'sensei-settings', $settings );
+
+		$updates = new Sensei_Updates( '4.26.4', false, true );
+
+		/* Act. */
+		$updates->run_updates();
+
+		/* Assert. */
+		$stored = get_option( 'sensei-settings' );
+		$this->assertArrayNotHasKey( 'wpml_slug_translation', (array) $stored );
+	}
+
 	public function testRunUpdates_NewInstallGiven_SavesNothing() {
 		/* Arrange. */
 		$settings = get_option( 'sensei-settings', array() );
