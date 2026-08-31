@@ -444,6 +444,45 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( array( 'title' => 'Modulo' ), $module_attrs, 'A module without a translation should keep its title but lose its source term id and slug.' );
 	}
 
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ModuleWithATranslationGiven_SyncsTheModuleSlug() {
+		/* Arrange. */
+		$translated_term = wp_insert_term( 'El modulo', 'module' );
+		$content         = '<!-- wp:sensei-lms/course-outline --><!-- wp:sensei-lms/course-outline-module {"id":91,"slug":"the-module","title":"El modulo"} --><!-- /wp:sensei-lms/course-outline-module --><!-- /wp:sensei-lms/course-outline -->';
+		$course_id       = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( 91 => $translated_term['term_id'] ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$module_attrs = parse_blocks( get_post( $course_id )->post_content )[0]['innerBlocks'][0]['attrs'];
+		$this->assertSame( get_term( $translated_term['term_id'], 'module' )->slug, $module_attrs['slug'], 'The remapped module should carry the translated term slug, not the source one.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_CourseWithoutASourceLanguageGiven_LeavesTheContentUntouched() {
+		/* Arrange. */
+		$source_lesson_id = $this->factory->lesson->create();
+		$content          = $this->outline_content( array( array( $source_lesson_id, 'Original' ) ) );
+		$course_id        = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'en', '' );
+		$this->stub_object_id_map( array() );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertSame( $content, get_post( $course_id )->post_content, 'A course that is not a translation should not have its outline touched.' );
+	}
+
 	public function testTranslateOutlineLessonIdsOnCourseDuplicated_DuplicateWithSourceLessonIdsGiven_RewritesThemToTheDuplicateLanguage() {
 		/* Arrange. */
 		$source_lesson_id     = $this->factory->lesson->create();

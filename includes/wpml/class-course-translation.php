@@ -126,7 +126,7 @@ class Course_Translation {
 		}
 
 		$details = $this->get_element_language_details( $new_course_id, 'course' );
-		if ( empty( $details ) || empty( $details['language_code'] ) ) {
+		if ( empty( $details ) || empty( $details['language_code'] ) || empty( $details['source_language_code'] ) ) {
 			return;
 		}
 
@@ -225,6 +225,13 @@ class Course_Translation {
 
 				if ( $translated_module_id ) {
 					$block['attrs']['id'] = (int) $translated_module_id;
+
+					// The slug travels with the block too, and a stale source slug would
+					// point a later save back at the source language's term.
+					$translated_term = get_term( (int) $translated_module_id, 'module' );
+					if ( $translated_term && ! is_wp_error( $translated_term ) ) {
+						$block['attrs']['slug'] = $translated_term->slug;
+					}
 				} else {
 					// Without id and slug the structure save creates the course's own
 					// module instead of renaming or adopting the source language's term.
