@@ -21,6 +21,47 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Utils {
 
 	/**
+	 * Post statuses that Reports counts as live content: a course or lesson that
+	 * exists and is accessible.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string[]
+	 */
+	public const REPORTS_POST_STATUSES = array( 'publish', 'private' );
+
+	/**
+	 * Post statuses that Grading counts as live content.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string[]
+	 */
+	public const GRADING_POST_STATUSES = array( 'publish', 'private' );
+
+	/**
+	 * Get the Reports post statuses as a quoted list for a `post_status IN ( ... )` SQL clause.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string Quoted, comma-separated statuses, e.g. "'publish','private'".
+	 */
+	public static function get_reports_post_status_sql(): string {
+		return "'" . implode( "','", self::REPORTS_POST_STATUSES ) . "'";
+	}
+
+	/**
+	 * Get the Grading post statuses as a quoted list for a `post_status IN ( ... )` SQL clause.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string Quoted, comma-separated statuses.
+	 */
+	public static function get_grading_post_status_sql(): string {
+		return "'" . implode( "','", self::GRADING_POST_STATUSES ) . "'";
+	}
+
+	/**
 	 * Get the site's UTC offset in '+HH:MM' / '-HH:MM' format for CONVERT_TZ.
 	 *
 	 * Uses a numeric offset so that MySQL timezone tables are not required.

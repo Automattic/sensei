@@ -31,7 +31,7 @@ class Comments_Based_Grading_Listing_Service implements Grading_Listing_Service_
 	 * @return array{ items: Grading_Item[], total_count: int }
 	 */
 	public function get_lesson_progress_items( array $args ): array {
-		$args['post_status'] = array( 'publish', 'private' );
+		$args['post_status'] = Utils::GRADING_POST_STATUSES;
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so run
 		// a separate count query first with no limit/offset.
