@@ -349,6 +349,7 @@ class Course_Navigation {
 		$status               = 'not-started';
 		$completed            = \Sensei_Utils::user_completed_lesson( $lesson_id, $this->user_id );
 		$in_progress_statuses = [ 'failed', 'ungraded' ];
+		$completed_statuses   = array( 'passed', 'graded' );
 
 		if ( $completed ) {
 			$status = 'completed';
@@ -364,6 +365,8 @@ class Course_Navigation {
 				$status = $quiz_progress->get_status();
 				if ( in_array( $status, $in_progress_statuses, true ) ) {
 					$status = 'in-progress';
+				} elseif ( in_array( $status, $completed_statuses, true ) ) {
+					$status = 'completed';
 				}
 			} else {
 				$lesson_progress = \Sensei()->lesson_progress_repository->get( $lesson_id, $this->user_id );
