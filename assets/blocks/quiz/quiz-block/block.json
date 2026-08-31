@@ -32,6 +32,7 @@
 				"failedShowAnswerFeedback": false,
 				"failedShowCorrectAnswers": false,
 				"failedIndicateIncorrect": false,
+				"passedShowCorrectAnswers": true,
 				"buttonTextColor": null,
 				"buttonBackgroundColor": null,
 				"pagination": {}

@@ -183,6 +183,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 				'_failed_indicate_incorrect'   => 'yes',
 				'_failed_show_answer_feedback' => 'yes',
 				'_failed_show_correct_answers' => 'no',
+				'_passed_show_correct_answers' => 'no',
 				'_button_text_color'           => '#ffffff',
 				'_button_background_color'     => '#000000',
 			],
@@ -200,6 +201,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertTrue( $response_data['options']['failed_indicate_incorrect'] );
 		$this->assertTrue( $response_data['options']['failed_show_answer_feedback'] );
 		$this->assertFalse( $response_data['options']['failed_show_correct_answers'] );
+		$this->assertFalse( $response_data['options']['passed_show_correct_answers'] );
 		$this->assertEquals( '#ffffff', $response_data['options']['button_text_color'] );
 		$this->assertEquals( '#000000', $response_data['options']['button_background_color'] );
 
@@ -226,6 +228,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertTrue( $response_data['options']['failed_indicate_incorrect'] );
 		$this->assertTrue( $response_data['options']['failed_show_answer_feedback'] );
 		$this->assertTrue( $response_data['options']['failed_show_correct_answers'] );
+		$this->assertTrue( $response_data['options']['passed_show_correct_answers'] );
 	}
 
 	/**
@@ -484,6 +487,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 				'failed_indicate_incorrect'   => true,
 				'failed_show_answer_feedback' => true,
 				'failed_show_correct_answers' => false,
+				'passed_show_correct_answers' => false,
 			],
 			'questions' => [],
 		];
@@ -500,6 +504,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertEquals( 'yes', $quiz_meta['_failed_indicate_incorrect'][0] );
 		$this->assertEquals( 'yes', $quiz_meta['_failed_show_answer_feedback'][0] );
 		$this->assertEquals( 'no', $quiz_meta['_failed_show_correct_answers'][0] );
+		$this->assertEquals( 'no', $quiz_meta['_passed_show_correct_answers'][0] );
 	}
 
 	/**

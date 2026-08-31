@@ -955,7 +955,9 @@ class Sensei_Question {
 
 		// Explicit gradual feedback options.
 		$indicate_incorrect   = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_indicate_incorrect', $default );
-		$show_correct_answers = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_show_correct_answers', $default );
+		$show_correct_answers = $succeeded
+			? Sensei_Quiz::get_option( $lesson_id, 'passed_show_correct_answers', true )
+			: Sensei_Quiz::get_option( $lesson_id, 'failed_show_correct_answers', $default );
 		$show_feedback_notes  = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_show_answer_feedback', $default );
 
 		/**
@@ -1126,7 +1128,7 @@ class Sensei_Question {
 
 		$quiz_id            = $sensei_question_loop['quiz_id'];
 		$question_item      = $sensei_question_loop['current_question'];
-		$lesson_id          = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$lesson_id          = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
 
