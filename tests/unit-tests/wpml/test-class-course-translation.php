@@ -351,6 +351,26 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( 'Titulo entregado', get_post( $translated_lesson_id )->post_title, 'The delivered outline title should land on the lesson translation.' );
 	}
 
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_OutlineNestedInAWrapperBlockGiven_RewritesItsLessonIds() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$content              = '<!-- wp:group --><div class="wp-block-group">' . $this->outline_content( array( array( $source_lesson_id, 'Anidado' ) ) ) . '</div><!-- /wp:group -->';
+		$course_id            = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertStringContainsString( '"id":' . $translated_lesson_id, get_post( $course_id )->post_content, 'An outline nested inside a wrapper block should be remapped too.' );
+	}
+
 	public function testTranslateOutlineLessonIdsOnCourseDuplicated_DuplicateWithSourceLessonIdsGiven_RewritesThemToTheDuplicateLanguage() {
 		/* Arrange. */
 		$source_lesson_id     = $this->factory->lesson->create();

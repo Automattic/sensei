@@ -198,6 +198,12 @@ class Course_Translation {
 		foreach ( $blocks as $i => $block ) {
 			if ( 'sensei-lms/course-outline' === $block['blockName'] ) {
 				$blocks[ $i ] = $this->map_inner_blocks( $block, array( $this, 'outline_item_to_language' ), $language_code );
+				continue;
+			}
+
+			// The outline can sit inside wrapper blocks such as groups or columns.
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$blocks[ $i ]['innerBlocks'] = $this->translate_outline_blocks( $block['innerBlocks'], $language_code );
 			}
 		}
 
