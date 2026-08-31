@@ -3633,6 +3633,8 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 *
+	 * @since $$next-version$$ Falls back to the `_lesson_quiz` lesson meta when the post query returns nothing.
+	 *
 	 * @param int    $lesson_id   The lesson id (default: 0).
 	 * @param string $post_status The post status (default: 'any').
 	 * @param string $fields      The fields to return (default: 'ids').
@@ -3656,30 +3658,49 @@ class Sensei_Lesson {
 		$posts_array = get_posts( $post_args );
 		$quiz_id     = array_shift( $posts_array );
 
-		return $quiz_id;
-	}
-
-	/**
-	 * Get the quiz ID for a lesson.
-	 *
-	 * Resolves the quiz from the lesson meta first: post queries can be
-	 * filtered by plugins and miss the quiz.
-	 *
-	 * @since 4.26.3
-	 *
-	 * @param int $lesson_id The lesson ID.
-	 *
-	 * @return int|null Quiz ID, or null when the lesson has no quiz.
-	 */
-	public function get_quiz_id( $lesson_id ) {
-		$quiz_id = (int) get_post_meta( $lesson_id, '_lesson_quiz', true );
-		if ( ! $quiz_id || 'quiz' !== get_post_type( $quiz_id ) ) {
-			$quiz_id = $this->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			// Post queries can be filtered by plugins and miss the quiz.
+			$quiz_id = $this->get_quiz_from_meta( $lesson_id, $post_status, $fields );
 		}
 
 		return $quiz_id;
 	}
 
+	/**
+	 * Get a lesson's quiz from the lesson meta, matching what the post query returns.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int             $lesson_id   The lesson id.
+	 * @param string|string[] $post_status The post status.
+	 * @param string          $fields      The fields to return.
+	 *
+	 * @return int|WP_Post|null The quiz, or null when the meta has no quiz matching the post status.
+	 */
+	private function get_quiz_from_meta( $lesson_id, $post_status, $fields ) {
+		$quiz_id = (int) get_post_meta( $lesson_id, '_lesson_quiz', true );
+
+		if ( ! $quiz_id ) {
+			return null;
+		}
+
+		// The quiz is looked up by ID instead of returned straight from the meta because the
+		// caller can ask for specific post statuses and for a different fields format, and the
+		// query is what applies them. Filters are suppressed here: they are what hid the quiz
+		// from the query above.
+		$posts_array = get_posts(
+			array(
+				'p'                => $quiz_id,
+				'post_type'        => 'quiz',
+				'posts_per_page'   => 1,
+				'post_status'      => $post_status,
+				'fields'           => $fields,
+				'suppress_filters' => true,
+			)
+		);
+
+		return array_shift( $posts_array );
+	}
 
 	/**
 	 * Get quiz permalink.
