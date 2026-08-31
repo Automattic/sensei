@@ -204,6 +204,41 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'more', $column_output, 'The "more" link shouldn\'t be present.' );
 	}
 
+	/**
+	 * Ensure the courses column lists all courses a module is assigned to.
+	 *
+	 * @covers Sensei_Core_Modules::taxonomy_column_content
+	 */
+	public function testTaxonomyColumnContent_CoursesColumnGiven_ReturnsLinkedCourseNames() {
+		$this->login_as_admin();
+
+		$module_id = $this->factory->module->create();
+		$course_1  = $this->factory->course->create_and_get();
+		$course_2  = $this->factory->course->create_and_get();
+
+		wp_set_object_terms( $course_1->ID, $module_id, Sensei()->modules->taxonomy );
+		wp_set_object_terms( $course_2->ID, $module_id, Sensei()->modules->taxonomy );
+
+		$column_output = Sensei()->modules->taxonomy_column_content( '', 'courses', $module_id );
+
+		foreach ( array( $course_1, $course_2 ) as $course ) {
+			$this->assertStringContainsString( $course->post_title, $column_output, 'The course link should be present.' );
+		}
+	}
+
+	/**
+	 * Ensure the courses column is empty when a module has no assigned courses.
+	 *
+	 * @covers Sensei_Core_Modules::taxonomy_column_content
+	 */
+	public function testTaxonomyColumnContent_CoursesColumnGivenModuleWithNoCourses_ReturnsEmptyString() {
+		$module_id = $this->factory->module->create();
+
+		$column_output = Sensei()->modules->taxonomy_column_content( '', 'courses', $module_id );
+
+		$this->assertSame( '', $column_output, 'A module with no assigned courses should render an empty column.' );
+	}
+
 	public function testModuleTeacherMeta_WhenAddedToACourse_TeacherIdGetsAddedToMeta() {
 		/* Arrange */
 		$this->login_as_teacher();
