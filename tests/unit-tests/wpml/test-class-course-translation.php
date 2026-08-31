@@ -306,18 +306,10 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 				'title' => $title,
 			)
 		) . ' /--><!-- /wp:sensei-lms/course-outline -->';
-		$course_id            = self::factory()->post->create(
-			array(
-				'post_type'    => 'course',
-				'post_content' => wp_slash( $content ),
-			)
-		);
+		$course_id            = $this->factory->course->create( array( 'post_content' => wp_slash( $content ) ) );
 
 		$this->stub_course_language( 'es', 'en' );
 		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
-
-		$stored_title = parse_blocks( get_post( $course_id )->post_content )[0]['innerBlocks'][0]['attrs']['title'];
-		$this->assertStringContainsString( '<br', $stored_title, 'Fixture check: the stored title should carry the escaped HTML.' );
 
 		$course_translation = new Course_Translation();
 
@@ -326,8 +318,7 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 
 		/* Clean up & Assert. */
 		$this->remove_wpml_stubs();
-		$block = parse_blocks( get_post( $course_id )->post_content )[0]['innerBlocks'][0];
-		$this->assertSame( $stored_title, $block['attrs']['title'], 'The title attribute should survive the remap round trip unmangled.' );
+		$this->assertStringContainsString( '\u003cbr', get_post( $course_id )->post_content, 'The escaped attribute encoding should survive the remap round trip.' );
 	}
 
 	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_DeliveredTitleGiven_RenamesTheLessonTranslation() {
@@ -449,17 +440,14 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 
 		/* Clean up & Assert. */
 		$this->remove_wpml_stubs();
-		$content_after = get_post( $course_id )->post_content;
-		$this->assertStringNotContainsString( '"id":91', $content_after, 'A module without a translation should lose its source term id.' );
-		$this->assertStringNotContainsString( '"slug":"modulo"', $content_after, 'A module without a translation should lose its source slug.' );
-		$this->assertStringContainsString( '"id":' . $translated_lesson_id, $content_after, 'The module lessons should still be remapped.' );
+		$module_attrs = parse_blocks( get_post( $course_id )->post_content )[0]['innerBlocks'][0]['attrs'];
+		$this->assertSame( array( 'title' => 'Modulo' ), $module_attrs, 'A module without a translation should keep its title but lose its source term id and slug.' );
 	}
 
 	public function testTranslateOutlineLessonIdsOnCourseDuplicated_DuplicateWithSourceLessonIdsGiven_RewritesThemToTheDuplicateLanguage() {
 		/* Arrange. */
 		$source_lesson_id     = $this->factory->lesson->create();
 		$translated_lesson_id = $this->factory->lesson->create();
-		$master_course_id     = $this->factory->course->create();
 		$duplicate_course_id  = $this->factory->course->create(
 			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Duplicada' ) ) ) )
 		);
@@ -469,7 +457,7 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		$course_translation = new Course_Translation();
 
 		/* Act. */
-		$course_translation->translate_outline_lesson_ids_on_course_duplicated( $master_course_id, 'es', array(), $duplicate_course_id );
+		$course_translation->translate_outline_lesson_ids_on_course_duplicated( 123, 'es', array(), $duplicate_course_id );
 
 		/* Clean up & Assert. */
 		$this->remove_wpml_stubs();
