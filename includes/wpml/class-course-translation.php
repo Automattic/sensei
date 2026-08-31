@@ -220,6 +220,20 @@ class Course_Translation {
 	 */
 	private function outline_item_to_language( array $block, $language_code ) {
 		if ( 'sensei-lms/course-outline-module' === $block['blockName'] ) {
+			$module_id = (int) ( $block['attrs']['id'] ?? 0 );
+
+			if ( $module_id ) {
+				$translated_module_id = $this->get_object_id( $module_id, 'module', false, $language_code );
+
+				if ( $translated_module_id ) {
+					$block['attrs']['id'] = (int) $translated_module_id;
+				} else {
+					// Without id and slug the structure save creates the course's own
+					// module instead of renaming or adopting the source language's term.
+					unset( $block['attrs']['id'], $block['attrs']['slug'] );
+				}
+			}
+
 			return $this->map_inner_blocks( $block, array( $this, 'outline_item_to_language' ), $language_code );
 		}
 

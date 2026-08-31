@@ -414,6 +414,47 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( '"id":' . $translated_lesson_id, get_post( $course_id )->post_content, 'An outline nested inside a wrapper block should be remapped too.' );
 	}
 
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ModuleWithATranslationGiven_RewritesTheModuleId() {
+		/* Arrange. */
+		$content   = '<!-- wp:sensei-lms/course-outline --><!-- wp:sensei-lms/course-outline-module {"id":91,"title":"Modulo"} --><!-- /wp:sensei-lms/course-outline-module --><!-- /wp:sensei-lms/course-outline -->';
+		$course_id = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( 91 => 95 ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertStringContainsString( '"id":95', get_post( $course_id )->post_content, 'A module with a translation in the course language should be remapped to it.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ModuleWithoutATranslationGiven_DropsItsIdAndSlug() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$content              = '<!-- wp:sensei-lms/course-outline --><!-- wp:sensei-lms/course-outline-module {"id":91,"slug":"modulo","title":"Modulo"} --><!-- wp:sensei-lms/course-outline-lesson {"id":' . $source_lesson_id . ',"title":"Anidada"} /--><!-- /wp:sensei-lms/course-outline-module --><!-- /wp:sensei-lms/course-outline -->';
+		$course_id            = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$content_after = get_post( $course_id )->post_content;
+		$this->assertStringNotContainsString( '"id":91', $content_after, 'A module without a translation should lose its source term id.' );
+		$this->assertStringNotContainsString( '"slug":"modulo"', $content_after, 'A module without a translation should lose its source slug.' );
+		$this->assertStringContainsString( '"id":' . $translated_lesson_id, $content_after, 'The module lessons should still be remapped.' );
+	}
+
 	public function testTranslateOutlineLessonIdsOnCourseDuplicated_DuplicateWithSourceLessonIdsGiven_RewritesThemToTheDuplicateLanguage() {
 		/* Arrange. */
 		$source_lesson_id     = $this->factory->lesson->create();
