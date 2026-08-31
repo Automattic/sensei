@@ -107,12 +107,12 @@ class Course_Translation {
 	}
 
 	/**
-	 * Rewrite the delivered course outline to the lesson IDs of the course language.
+	 * Rewrite the delivered course outline to the lesson and module IDs of the course language.
 	 *
-	 * WPML delivers translated content with the source-language lesson IDs (its ID
-	 * conversion runs at render time only), so the stored outline points at another
-	 * language's lessons and a later editor save adopts them. Remapping the stored
-	 * outline right after delivery keeps every consumer of the content safe.
+	 * WPML delivers translated content with the source language's lesson and module
+	 * IDs (its ID conversion runs at render time only), so the stored outline points
+	 * at another language's content and a later editor save adopts it. Remapping the
+	 * stored outline right after delivery keeps every consumer of the content safe.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -134,7 +134,7 @@ class Course_Translation {
 	}
 
 	/**
-	 * Rewrite a duplicated course outline to the lesson IDs of the duplicate's language.
+	 * Rewrite a duplicated course outline to the lesson and module IDs of the duplicate's language.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -249,9 +249,9 @@ class Course_Translation {
 		// The lesson translation is created with the source language's title, and the
 		// translated title only exists in this block attribute, so apply it to the
 		// lesson here.
-		$title            = isset( $block['attrs']['title'] ) ? (string) $block['attrs']['title'] : '';
-		$translated_title = get_post( $translated_id ) ? get_post( $translated_id )->post_title : '';
-		if ( '' !== $title && $translated_title !== $title ) {
+		$title             = isset( $block['attrs']['title'] ) ? (string) $block['attrs']['title'] : '';
+		$translated_lesson = get_post( $translated_id );
+		if ( '' !== $title && $translated_lesson && $translated_lesson->post_title !== $title ) {
 			wp_update_post(
 				wp_slash(
 					array(
