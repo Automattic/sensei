@@ -461,7 +461,7 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		/* Clean up & Assert. */
 		$this->remove_wpml_stubs();
 		$module_attrs = parse_blocks( get_post( $course_id )->post_content )[0]['innerBlocks'][0]['attrs'];
-		$this->assertSame( get_term( $translated_term['term_id'], 'module' )->slug, $module_attrs['slug'], 'The remapped module should carry the translated term slug, not the source one.' );
+		$this->assertSame( 'el-modulo', $module_attrs['slug'], 'The remapped module should carry the translated term slug, not the source one.' );
 	}
 
 	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_CourseWithoutASourceLanguageGiven_LeavesTheContentUntouched() {
