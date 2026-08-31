@@ -351,6 +351,49 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( 'Titulo entregado', get_post( $translated_lesson_id )->post_title, 'The delivered outline title should land on the lesson translation.' );
 	}
 
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_DeliveredTitleAlreadyApplied_DoesNotRewriteTheLessonAgain() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$course_id            = $this->factory->course->create(
+			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Titulo especial' ) ) ) )
+		);
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map(
+			array(
+				$source_lesson_id     => $translated_lesson_id,
+				$translated_lesson_id => $translated_lesson_id,
+			)
+		);
+
+		$course_translation = new Course_Translation();
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		// Display filters (wptexturize, plugins) must not defeat the comparison.
+		$title_filter = function ( $title ) {
+			return $title . ' [filtered]';
+		};
+		add_filter( 'the_title', $title_filter );
+
+		$lesson_updates = 0;
+		$count_updates  = function ( $post_id ) use ( $translated_lesson_id, &$lesson_updates ) {
+			if ( $post_id === $translated_lesson_id ) {
+				++$lesson_updates;
+			}
+		};
+		add_action( 'post_updated', $count_updates );
+
+		/* Act: a re-delivery runs the handler again with the same titles. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		remove_action( 'post_updated', $count_updates );
+		remove_filter( 'the_title', $title_filter );
+		$this->remove_wpml_stubs();
+		$this->assertSame( 0, $lesson_updates, 'A re-delivery with an unchanged title should not rewrite the lesson.' );
+	}
+
 	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_OutlineNestedInAWrapperBlockGiven_RewritesItsLessonIds() {
 		/* Arrange. */
 		$source_lesson_id     = $this->factory->lesson->create();
