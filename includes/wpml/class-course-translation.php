@@ -154,7 +154,7 @@ class Course_Translation {
 	}
 
 	/**
-	 * Rewrite a course's stored outline to the lesson IDs of the given language.
+	 * Rewrite a course's stored outline to the lesson and module IDs of the given language.
 	 *
 	 * @param int    $course_id     Course ID.
 	 * @param string $language_code Language to map the outline to.
@@ -185,10 +185,10 @@ class Course_Translation {
 	}
 
 	/**
-	 * Map outline lesson blocks to the given language, dropping untranslated ones.
+	 * Map outline lesson and module blocks to the given language, dropping untranslated lessons.
 	 *
 	 * @param array  $blocks        Parsed blocks.
-	 * @param string $language_code Language to map the lesson IDs to.
+	 * @param string $language_code Language to map the outline IDs to.
 	 *
 	 * @return array
 	 */
