@@ -35,9 +35,7 @@ class Course_Translation {
 
 		// After the lesson translations above exist, point the delivered outline at them.
 		add_action( 'wpml_pro_translation_completed', array( $this, 'translate_outline_lesson_ids_on_course_translation_created' ), 20 );
-
 		// The Duplicate feature copies the outline verbatim too.
-		// "icl_make_duplicate" is WPML-internal but the WPML team confirmed it's safe to rely on.
 		add_action( 'icl_make_duplicate', array( $this, 'translate_outline_lesson_ids_on_course_duplicated' ), 10, 4 );
 	}
 
@@ -248,9 +246,9 @@ class Course_Translation {
 
 		$block['attrs']['id'] = (int) $translated_id;
 
-		// The translated title lives in the block attribute; the lesson translation
-		// was created with the source title, so hand it the delivered one. Compared
-		// raw: display filters on the title would defeat the check.
+		// The lesson translation is created with the source language's title, and the
+		// translated title only exists in this block attribute, so apply it to the
+		// lesson here.
 		$title            = isset( $block['attrs']['title'] ) ? (string) $block['attrs']['title'] : '';
 		$translated_title = get_post( $translated_id ) ? get_post( $translated_id )->post_title : '';
 		if ( '' !== $title && $translated_title !== $title ) {
