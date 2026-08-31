@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Detect completion for YouTube videos when the player does not emit the ended state at the very end of playback.
