@@ -1823,7 +1823,7 @@ class Sensei_Utils {
 			}
 
 			// In the comments-based progress we use one entry to store both the lesson progress and the quiz progress.
-			// In the tables-based progress we split them. Here is important to use the quiz proress if the quiz pass is required.
+			// In the tables-based progress we split them. Here is important to use the quiz progess if the quiz pass is required.
 			$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 			if ( $lesson_quiz_id ) {
 				$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
@@ -1831,7 +1831,9 @@ class Sensei_Utils {
 					$quiz_progress = Sensei()->quiz_progress_repository->get( $lesson_quiz_id, $user_id );
 					if ( $quiz_progress ) {
 						$user_lesson_status = $quiz_progress->get_status();
-					} else {
+					} elseif ( 'complete' !== $user_lesson_status ) {
+						// A lesson already marked complete is authoritative: no quiz row exists for manual
+						// completions and lessons migrated from the comments-based system.
 						return false;
 					}
 				}
