@@ -330,6 +330,27 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( $stored_title, $block['attrs']['title'], 'The title attribute should survive the remap round trip unmangled.' );
 	}
 
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_DeliveredTitleGiven_RenamesTheLessonTranslation() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create( array( 'post_title' => 'Source title' ) );
+		$course_id            = $this->factory->course->create(
+			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Titulo entregado' ) ) ) )
+		);
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertSame( 'Titulo entregado', get_post( $translated_lesson_id )->post_title, 'The delivered outline title should land on the lesson translation.' );
+	}
+
 	public function testTranslateOutlineLessonIdsOnCourseDuplicated_DuplicateWithSourceLessonIdsGiven_RewritesThemToTheDuplicateLanguage() {
 		/* Arrange. */
 		$source_lesson_id     = $this->factory->lesson->create();

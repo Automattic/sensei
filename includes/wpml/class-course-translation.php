@@ -228,6 +228,20 @@ class Course_Translation {
 
 		$block['attrs']['id'] = (int) $translated_id;
 
+		// The translated title lives in the block attribute; the lesson translation
+		// was created with the source title, so hand it the delivered one.
+		$title = isset( $block['attrs']['title'] ) ? (string) $block['attrs']['title'] : '';
+		if ( '' !== $title && get_the_title( $translated_id ) !== $title ) {
+			wp_update_post(
+				wp_slash(
+					array(
+						'ID'         => (int) $translated_id,
+						'post_title' => $title,
+					)
+				)
+			);
+		}
+
 		return $block;
 	}
 
