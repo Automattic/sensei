@@ -101,6 +101,116 @@ class Custom_Fields_Test extends \WP_UnitTestCase {
 		$this->assertSame( 4, $actual );
 	}
 
+	public function testUpdateLessonQuizBeforeCopied_QuizWithATranslationGiven_ReturnsTheTranslatedQuiz() {
+		/* Arrange. */
+		$master_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+
+		$custom_fields = new Custom_Fields();
+
+		$language_code_filter = function () {
+			return 'es';
+		};
+		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 0 );
+
+		$object_id_filter = function () {
+			return 7;
+		};
+		add_filter( 'wpml_object_id', $object_id_filter, 10, 0 );
+
+		/* Act. */
+		$actual = $custom_fields->update_lesson_quiz_before_copied( 5, $master_lesson_id, $translated_lesson_id, '_lesson_quiz' );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_element_language_code', $language_code_filter );
+		remove_filter( 'wpml_object_id', $object_id_filter );
+
+		$this->assertSame( 7, $actual );
+	}
+
+	public function testUpdateLessonQuizBeforeCopied_QuizWithoutATranslationGiven_KeepsTheOriginalQuiz() {
+		/* Arrange. */
+		$master_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+
+		$custom_fields = new Custom_Fields();
+
+		$language_code_filter = function () {
+			return 'es';
+		};
+		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 0 );
+
+		// WPML returns the original ID only when asked to, and null otherwise.
+		$object_id_filter = function ( $object_id, $element_type, $return_original_if_missing ) {
+			return $return_original_if_missing ? $object_id : null;
+		};
+		add_filter( 'wpml_object_id', $object_id_filter, 10, 3 );
+
+		/* Act. */
+		$actual = $custom_fields->update_lesson_quiz_before_copied( 5, $master_lesson_id, $translated_lesson_id, '_lesson_quiz' );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_element_language_code', $language_code_filter );
+		remove_filter( 'wpml_object_id', $object_id_filter );
+
+		$this->assertSame( 5, $actual, 'Without a quiz translation the meta must keep the original quiz, which is what the lesson falls back to.' );
+	}
+
+	public function testUpdateQuizLessonBeforeCopied_LessonWithATranslationGiven_ReturnsTheTranslatedLesson() {
+		/* Arrange. */
+		$master_quiz_id     = $this->factory->quiz->create();
+		$translated_quiz_id = $this->factory->quiz->create();
+
+		$custom_fields = new Custom_Fields();
+
+		$language_code_filter = function () {
+			return 'es';
+		};
+		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 0 );
+
+		$object_id_filter = function () {
+			return 9;
+		};
+		add_filter( 'wpml_object_id', $object_id_filter, 10, 0 );
+
+		/* Act. */
+		$actual = $custom_fields->update_quiz_lesson_before_copied( 3, $master_quiz_id, $translated_quiz_id, '_quiz_lesson' );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_element_language_code', $language_code_filter );
+		remove_filter( 'wpml_object_id', $object_id_filter );
+
+		$this->assertSame( 9, $actual );
+	}
+
+	public function testUpdateQuizLessonBeforeCopied_LessonWithoutATranslationGiven_KeepsTheOriginalLesson() {
+		/* Arrange. */
+		$master_quiz_id     = $this->factory->quiz->create();
+		$translated_quiz_id = $this->factory->quiz->create();
+
+		$custom_fields = new Custom_Fields();
+
+		$language_code_filter = function () {
+			return 'es';
+		};
+		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 0 );
+
+		// WPML returns the original ID only when asked to, and null otherwise.
+		$object_id_filter = function ( $object_id, $element_type, $return_original_if_missing ) {
+			return $return_original_if_missing ? $object_id : null;
+		};
+		add_filter( 'wpml_object_id', $object_id_filter, 10, 3 );
+
+		/* Act. */
+		$actual = $custom_fields->update_quiz_lesson_before_copied( 3, $master_quiz_id, $translated_quiz_id, '_quiz_lesson' );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_element_language_code', $language_code_filter );
+		remove_filter( 'wpml_object_id', $object_id_filter );
+
+		$this->assertSame( 3, $actual, 'Without a lesson translation the meta must keep the original lesson.' );
+	}
+
 	public function testUpdateLessonPrerequisiteBeforeCopied_WhenCalled_ReturnsMatchingPrerequisiteForNewLesson() {
 		/* Arrange. */
 		$custom_fields = new Custom_Fields();
