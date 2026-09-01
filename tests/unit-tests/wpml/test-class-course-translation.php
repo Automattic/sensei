@@ -483,6 +483,26 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( $content, get_post( $course_id )->post_content, 'A course that is not a translation should not have its outline touched.' );
 	}
 
+	public function testTranslateOutlineLessonIdsOnCourseDuplicated_DuplicateWithSourceTitlesGiven_LeavesTheLessonTitleAlone() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create( array( 'post_title' => 'Titulo traducido' ) );
+		$duplicate_course_id  = $this->factory->course->create(
+			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Source title' ) ) ) )
+		);
+
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_duplicated( 123, 'es', array(), $duplicate_course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertSame( 'Titulo traducido', get_post( $translated_lesson_id )->post_title, 'A duplicate carries source-language titles, so it must not rename the lesson translation.' );
+	}
+
 	public function testTranslateOutlineLessonIdsOnCourseDuplicated_DuplicateWithSourceLessonIdsGiven_RewritesThemToTheDuplicateLanguage() {
 		/* Arrange. */
 		$source_lesson_id     = $this->factory->lesson->create();

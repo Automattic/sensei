@@ -131,6 +131,8 @@ class Course_Translation {
 		}
 
 		$this->translate_outline_to_language( $new_course_id, $details['language_code'] );
+
+		$this->apply_outline_titles_to_lessons( $new_course_id );
 	}
 
 	/**
@@ -253,23 +255,65 @@ class Course_Translation {
 
 		$block['attrs']['id'] = (int) $translated_id;
 
-		// The lesson translation is created with the source language's title, and the
-		// translated title only exists in this block attribute, so apply it to the
-		// lesson here.
-		$title             = isset( $block['attrs']['title'] ) ? (string) $block['attrs']['title'] : '';
-		$translated_lesson = get_post( $translated_id );
-		if ( '' !== $title && $translated_lesson && $translated_lesson->post_title !== $title ) {
+		return $block;
+	}
+
+	/**
+	 * Rename a course's lessons to the titles held in its outline.
+	 *
+	 * Lesson translations are created with the source language's title, and the
+	 * translated title only exists in the outline block attribute, so it is applied
+	 * to the lessons here.
+	 *
+	 * @param int $course_id Course ID.
+	 */
+	private function apply_outline_titles_to_lessons( $course_id ) {
+		$course = get_post( $course_id );
+		if ( ! $course ) {
+			return;
+		}
+
+		foreach ( $this->get_outline_lesson_blocks( parse_blocks( $course->post_content ) ) as $block ) {
+			$lesson_id = (int) ( $block['attrs']['id'] ?? 0 );
+			$title     = isset( $block['attrs']['title'] ) ? (string) $block['attrs']['title'] : '';
+			$lesson    = $lesson_id ? get_post( $lesson_id ) : null;
+
+			if ( '' === $title || ! $lesson || $lesson->post_title === $title ) {
+				continue;
+			}
+
 			wp_update_post(
 				wp_slash(
 					array(
-						'ID'         => (int) $translated_id,
+						'ID'         => $lesson_id,
 						'post_title' => $title,
 					)
 				)
 			);
 		}
+	}
 
-		return $block;
+	/**
+	 * Collect the outline lesson blocks held anywhere in the given blocks.
+	 *
+	 * @param array $blocks Parsed blocks.
+	 *
+	 * @return array The lesson blocks.
+	 */
+	private function get_outline_lesson_blocks( array $blocks ) {
+		$lesson_blocks = array();
+		foreach ( $blocks as $block ) {
+			if ( 'sensei-lms/course-outline-lesson' === $block['blockName'] ) {
+				$lesson_blocks[] = $block;
+				continue;
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$lesson_blocks = array_merge( $lesson_blocks, $this->get_outline_lesson_blocks( $block['innerBlocks'] ) );
+			}
+		}
+
+		return $lesson_blocks;
 	}
 
 	/**
