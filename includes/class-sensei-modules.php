@@ -122,11 +122,7 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Update module teacher meta when a course's teacher (author) changes.
-	 *
-	 * WordPress can fire `post_updated` with a null `$post_after` (for example
-	 * during some autosaves). PHP 8+ type hints would fatal before we can ignore
-	 * those requests, so the post objects are nullable.
+	 * Add teacher id as term meta when a module is added to a course.
 	 *
 	 * @since 4.9.0
 	 * @access private
