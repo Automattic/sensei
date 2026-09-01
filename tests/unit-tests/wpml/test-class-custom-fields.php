@@ -140,11 +140,11 @@ class Custom_Fields_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'wpml_element_language_code', $language_code_filter, 10, 0 );
 
-		// WPML returns the original ID when the element has no translation and it is asked to.
-		$object_id_filter = function ( $object_id ) {
-			return $object_id;
+		// WPML returns the original ID only when asked to, and null otherwise.
+		$object_id_filter = function ( $object_id, $element_type, $return_original_if_missing ) {
+			return $return_original_if_missing ? $object_id : null;
 		};
-		add_filter( 'wpml_object_id', $object_id_filter, 10, 1 );
+		add_filter( 'wpml_object_id', $object_id_filter, 10, 3 );
 
 		/* Act. */
 		$actual = $custom_fields->update_lesson_quiz_before_copied( 5, $master_lesson_id, $translated_lesson_id, '_lesson_quiz' );
