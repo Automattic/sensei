@@ -275,10 +275,16 @@ class Course_Translation {
 
 		foreach ( $this->get_outline_lesson_blocks( parse_blocks( $course->post_content ) ) as $block ) {
 			$lesson_id = (int) ( $block['attrs']['id'] ?? 0 );
-			$title     = isset( $block['attrs']['title'] ) ? (string) $block['attrs']['title'] : '';
 			$lesson    = $lesson_id ? get_post( $lesson_id ) : null;
 
-			if ( '' === $title || ! $lesson || $lesson->post_title === $title ) {
+			if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
+				continue;
+			}
+
+			// Sanitized like the structure save does, so both write the same title.
+			$title = isset( $block['attrs']['title'] ) ? trim( sanitize_text_field( $block['attrs']['title'] ) ) : '';
+
+			if ( '' === $title || $lesson->post_title === $title ) {
 				continue;
 			}
 
@@ -318,8 +324,6 @@ class Course_Translation {
 
 	/**
 	 * Map the inner blocks of a block, dropping the ones mapped to false.
-	 *
-	 * Mirror of `Sensei_Import_Block_Migrator::map_inner_blocks()`.
 	 *
 	 * @param array    $block         The block whose inner blocks to map.
 	 * @param callable $map           Map receiving the inner block and the language code.
