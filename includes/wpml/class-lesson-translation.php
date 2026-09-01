@@ -38,6 +38,32 @@ class Lesson_Translation {
 		// "icl_make_duplicate" is WPML-internal but the WPML team confirmed it's safe to rely on.
 		// It also fires on duplicate refresh, so the handler must stay idempotent.
 		add_action( 'icl_make_duplicate', array( $this, 'update_lesson_properties_on_lesson_duplicated' ), 10, 4 );
+		// Give the duplicate its own quiz, or writes from it would land on the master's.
+		add_action( 'icl_make_duplicate', array( $this, 'update_quiz_on_lesson_duplicated' ), 10, 4 );
+	}
+
+	/**
+	 * Copy the master lesson's quiz for a duplicated lesson.
+	 *
+	 * A duplicate copies the `_lesson_quiz` meta but not the quiz itself, so it
+	 * would point at the master lesson's quiz and any edit made from the duplicate
+	 * would land on the master's quiz and questions.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param int    $master_post_id Master lesson ID.
+	 * @param string $lang           Language of the duplicate.
+	 * @param array  $post_array     Post data of the duplicate.
+	 * @param int    $new_lesson_id  Duplicated lesson ID.
+	 */
+	public function update_quiz_on_lesson_duplicated( $master_post_id, $lang, $post_array, $new_lesson_id ) {
+		if ( 'lesson' !== get_post_type( $new_lesson_id ) || empty( $lang ) ) {
+			return;
+		}
+
+		$this->update_quiz_translations( (int) $master_post_id, $lang );
 	}
 
 	/**
