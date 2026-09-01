@@ -298,6 +298,26 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$this->assertSame( absint( get_term_meta( $module['term_id'], 'module_author', true ) ), wp_get_current_user()->ID, 'Module teacher ID meta not set to the updated Author ID' );
 	}
 
+	public function testUpdateModuleTeacherIdMetaOnPostTeacherUpdate_WhenPostAfterIsNull_DoesNotThrowTypeError() {
+		/* Arrange */
+		$course_id   = $this->factory->course->create();
+		$post_before = get_post( $course_id );
+
+		/* Assert */
+		$this->expectNotToPerformAssertions();
+
+		/* Act */
+		Sensei()->modules->update_module_teacher_id_meta_on_post_teacher_update( $course_id, null, $post_before );
+	}
+
+	public function testPostUpdatedHook_WhenPostAfterIsNull_DoesNotThrowTypeError() {
+		/* Assert */
+		$this->expectNotToPerformAssertions();
+
+		/* Act */
+		do_action( 'post_updated', 1, null, null );
+	}
+
 	public function testFilterModuleTerms_WhenViewedByTeacher_ExcludesOtherUsersModules() {
 		/* Arrange */
 		set_current_screen( 'edit-module' );
