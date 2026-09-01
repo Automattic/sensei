@@ -233,6 +233,8 @@ class Course_Translation {
 					$translated_term = get_term( (int) $translated_module_id, 'module' );
 					if ( $translated_term && ! is_wp_error( $translated_term ) ) {
 						$block['attrs']['slug'] = $translated_term->slug;
+					} else {
+						unset( $block['attrs']['slug'] );
 					}
 				} else {
 					// Without id and slug the structure save creates the course's own

@@ -423,6 +423,26 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( '"id":95', get_post( $course_id )->post_content, 'A module with a translation in the course language should be remapped to it.' );
 	}
 
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ModuleTranslationMissingItsTermGiven_DropsTheSourceSlug() {
+		/* Arrange. */
+		$content   = '<!-- wp:sensei-lms/course-outline --><!-- wp:sensei-lms/course-outline-module {"id":91,"slug":"the-module","title":"Modulo"} --><!-- /wp:sensei-lms/course-outline-module --><!-- /wp:sensei-lms/course-outline -->';
+		$course_id = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		// WPML maps the module to a term that no longer exists.
+		$this->stub_object_id_map( array( 91 => 99999 ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$module_attrs = parse_blocks( get_post( $course_id )->post_content )[0]['innerBlocks'][0]['attrs'];
+		$this->assertArrayNotHasKey( 'slug', $module_attrs, 'A slug that cannot be confirmed for the course language would send a later save back to the source term.' );
+	}
+
 	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ModuleWithoutATranslationGiven_DropsItsIdAndSlug() {
 		/* Arrange. */
 		$source_lesson_id     = $this->factory->lesson->create();
