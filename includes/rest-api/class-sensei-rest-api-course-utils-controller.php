@@ -104,7 +104,10 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 		// If a custom slug is of a module that belongs to another teacher from another course, don't process farther.
 		if ( isset( $module_custom_slugs ) ) {
 			$module_custom_slugs = json_decode( sanitize_text_field( wp_unslash( $module_custom_slugs ) ) );
-			foreach ( (array) $module_custom_slugs as $module_custom_slug ) {
+			if ( ! is_array( $module_custom_slugs ) ) {
+				$module_custom_slugs = array();
+			}
+			foreach ( $module_custom_slugs as $module_custom_slug ) {
 				$course_name = Sensei()->teacher::is_module_in_use_by_different_course_and_teacher( $module_custom_slug, $post_id, $teacher );
 				if ( $course_name ) {
 					return new WP_REST_Response(
