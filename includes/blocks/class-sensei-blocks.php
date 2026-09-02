@@ -222,7 +222,7 @@ class Sensei_Blocks {
 		}
 
 		$dom = new DomDocument();
-		$dom->loadHTML( $block_content );
+		$dom->loadHTML( '<?xml encoding="UTF-8">' . $block_content );
 		$parent_node = $dom->getElementsByTagName( 'div' )->length > 0 ? $dom->getElementsByTagName( 'div' )[0] : '';
 
 		if ( ! $parent_node || ! $parent_node->hasAttributes() ) {
