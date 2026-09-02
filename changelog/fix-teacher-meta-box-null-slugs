@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed a PHP warning when changing a course's teacher on a course with no modules.
