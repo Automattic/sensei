@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Fixed a PHP warning when saving a course whose module slugs field is empty or invalid.
+Fixed a PHP warning when changing a course's teacher on a course with no modules.
