@@ -76,7 +76,7 @@
     "@wordpress/prettier-config": "4.8.1",
     "@wordpress/scripts": "34.1.0",
     "comment-parser": "1.4.8",
-    "copy-webpack-plugin": "10.2.0",
+    "copy-webpack-plugin": "14.0.0",
     "cross-env": "7.0.2",
     "date-fns": "4.4.0",
     "eslint-import-resolver-typescript": "4.4.5",
