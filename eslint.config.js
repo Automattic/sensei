@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 const globals = require( 'globals' );
+
+/**
+ * WordPress dependencies
+ */
 const wpScriptsConfig = require( '@wordpress/scripts/config/eslint.config.cjs' );
 
 module.exports = [
@@ -44,7 +51,7 @@ module.exports = [
 						'postcss.config.js',
 						'jest.setup.js',
 						'jest.config.js',
-						'eslint.config.js',
+						'**/eslint.config.js',
 					],
 					peerDependencies: false,
 					optionalDependencies: false,
