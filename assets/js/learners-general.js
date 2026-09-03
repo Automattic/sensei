@@ -122,7 +122,7 @@ jQuery( document ).ready( function ( $ ) {
 	} );
 
 	jQuery( '.learner-action' ).click( function ( event ) {
-		const current_action = jQuery( this ).attr( 'data-action' );
+		const currentAction = jQuery( this ).attr( 'data-action' );
 
 		const actions = {
 			withdraw: {
@@ -141,16 +141,16 @@ jQuery( document ).ready( function ( $ ) {
 				eventName: 'learner_management_restore_enrollment',
 			},
 		};
-		const action = actions[ current_action ];
+		const action = actions[ currentAction ];
 
 		if ( typeof action === 'undefined' ) {
 			return;
 		}
 
-		const confirm_message = action.message;
+		const confirmMessage = action.message;
 
 		// eslint-disable-next-line no-alert -- Intentional confirmation before a destructive enrollment change.
-		if ( ! confirm( confirm_message ) ) {
+		if ( ! confirm( confirmMessage ) ) {
 			event.preventDefault();
 		} else {
 			const provider = jQuery( this ).attr( 'data-provider' );
@@ -162,9 +162,9 @@ jQuery( document ).ready( function ( $ ) {
 	jQuery( '.learner-async-action' ).click( function () {
 		let dataToPost = '';
 
-		const current_action = jQuery( this ).attr( 'data-action' );
+		const currentAction = jQuery( this ).attr( 'data-action' );
 
-		let confirm_message =
+		let confirmMessage =
 			window.woo_learners_general_data.remove_generic_confirm;
 
 		const actions = {
@@ -182,32 +182,32 @@ jQuery( document ).ready( function ( $ ) {
 			},
 		};
 
-		if ( typeof actions[ current_action ] === 'undefined' ) {
+		if ( typeof actions[ currentAction ] === 'undefined' ) {
 			return;
 		}
 
-		const post_type = jQuery( this ).attr( 'data-post-type' );
+		const postType = jQuery( this ).attr( 'data-post-type' );
 
-		confirm_message = actions[ current_action ][ post_type ];
+		confirmMessage = actions[ currentAction ][ postType ];
 
 		// eslint-disable-next-line no-alert -- Intentional confirmation before a destructive progress change.
-		if ( ! confirm( confirm_message ) ) {
+		if ( ! confirm( confirmMessage ) ) {
 			return;
 		}
 
-		const user_id = jQuery( this ).attr( 'data-user-id' );
-		const post_id = jQuery( this ).attr( 'data-post-id' );
-		const table_row = jQuery( this ).closest( 'tr' );
+		const userId = jQuery( this ).attr( 'data-user-id' );
+		const postId = jQuery( this ).attr( 'data-post-id' );
+		const tableRow = jQuery( this ).closest( 'tr' );
 
-		if ( user_id && post_id && post_type ) {
-			dataToPost += 'user_id=' + user_id;
-			dataToPost += '&post_id=' + post_id;
-			dataToPost += '&post_type=' + post_type;
+		if ( userId && postId && postType ) {
+			dataToPost += 'user_id=' + userId;
+			dataToPost += '&post_id=' + postId;
+			dataToPost += '&post_type=' + postType;
 
 			jQuery.post(
 				ajaxurl,
 				{
-					action: actions[ current_action ].action,
+					action: actions[ currentAction ].action,
 					data: dataToPost,
 					security:
 						window.woo_learners_general_data.modify_user_post_nonce,
@@ -215,15 +215,15 @@ jQuery( document ).ready( function ( $ ) {
 				function ( response ) {
 					if ( response ) {
 						if ( 'removed' === response ) {
-							table_row.fadeTo( 400, 0, function () {
-								table_row.remove();
+							tableRow.fadeTo( 400, 0, function () {
+								tableRow.remove();
 							} );
 
 							return;
 						}
-						switch ( current_action ) {
+						switch ( currentAction ) {
 							case 'reset_progress':
-								table_row
+								tableRow
 									.find( '.graded' )
 									.html( window.slgL10n.inprogress )
 									.removeClass( 'graded' )
@@ -234,7 +234,7 @@ jQuery( document ).ready( function ( $ ) {
 				}
 			);
 
-			window.sensei_log_event( 'learner_management_' + current_action );
+			window.sensei_log_event( 'learner_management_' + currentAction );
 		}
 	} );
 

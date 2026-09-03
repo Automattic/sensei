@@ -83,7 +83,17 @@ module.exports = [
 	{
 		files: [ 'assets/js/**' ],
 		rules: {
-			camelcase: 'off',
+			camelcase: [
+				'error',
+				{
+					properties: 'never',
+					allow: [
+						'ajax_object',
+						'sensei_log_event',
+						'sensei_event_logging',
+					],
+				},
+			],
 		},
 	},
 ];

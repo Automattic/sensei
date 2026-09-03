@@ -72,7 +72,7 @@ domReady( () => {
 
 	jQuery( '#course-prerequisite-options' ).select2( { width: '100%' } );
 
-	const trackLinkClickCallback = ( event_name ) => ( e ) => {
+	const trackLinkClickCallback = ( eventName ) => ( e ) => {
 		const properties = {
 			course_status: e.target.dataset.courseStatus,
 		};
@@ -84,7 +84,7 @@ domReady( () => {
 				.getCurrentPostAttribute( 'status' );
 		}
 
-		sensei_log_event( event_name, properties );
+		sensei_log_event( eventName, properties );
 	};
 
 	// Log when the "Add Lesson" link is clicked.

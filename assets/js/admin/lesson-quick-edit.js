@@ -1,11 +1,11 @@
 ( function ( $ ) {
 	// we create a copy of the WP inline edit post function
-	const $wp_inline_edit = window.inlineEditPost.edit;
+	const $wpInlineEdit = window.inlineEditPost.edit;
 	// and then we overwrite the function with our own code
 	window.inlineEditPost.edit = function ( id ) {
 		// "call" the original WP edit function
 		// we don't want to leave WordPress hanging
-		$wp_inline_edit.apply( this, arguments );
+		$wpInlineEdit.apply( this, arguments );
 
 		// now we take care of our business
 

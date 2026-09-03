@@ -125,14 +125,14 @@ const CourseGeneralSidebar = () => {
 				<SelectControl
 					value={ author }
 					options={ teachers }
-					onChange={ ( new_author ) => {
-						new_author = parseInt( new_author );
-						setAuthor( new_author );
+					onChange={ ( newAuthor ) => {
+						newAuthor = parseInt( newAuthor );
+						setAuthor( newAuthor );
 						dispatch( 'core' ).editEntityRecord(
 							'postType',
 							'course',
 							course.id,
-							{ author: new_author }
+							{ author: newAuthor }
 						);
 					} }
 				/>
