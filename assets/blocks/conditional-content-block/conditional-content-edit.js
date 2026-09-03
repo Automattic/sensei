@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -24,7 +24,6 @@ export const ConditionLabels = {
 };
 
 const ConditionalContentEdit = ( {
-	className,
 	hasInnerBlocks,
 	clientId,
 	attributes: { condition },
@@ -32,7 +31,7 @@ const ConditionalContentEdit = ( {
 } ) => {
 	return (
 		<>
-			<div className={ className }>
+			<div { ...useBlockProps() }>
 				<InnerBlocks
 					renderAppender={
 						! hasInnerBlocks && InnerBlocks.ButtonBlockAppender

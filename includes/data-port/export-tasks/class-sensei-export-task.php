@@ -148,7 +148,7 @@ abstract class Sensei_Export_Task extends Sensei_Data_Port_Task implements Sense
 		foreach ( $posts as $post ) {
 			$serialized_posts = $this->get_serialized_post( $post );
 
-			$output_file->fputcsv( $serialized_posts );
+			$output_file->fputcsv( $serialized_posts, ',', '"', '' );
 			++$this->completed_posts;
 		}
 		$output_file = null;
@@ -197,7 +197,7 @@ abstract class Sensei_Export_Task extends Sensei_Data_Port_Task implements Sense
 
 		$filename = wp_tempnam( 'sensei-export-csv-' . $this->get_content_type() );
 		$file     = new SplFileObject( $filename, 'w' );
-		$file->fputcsv( $headers );
+		$file->fputcsv( $headers, ',', '"', '' );
 		$file = null;
 
 		return $filename;

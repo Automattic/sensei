@@ -332,7 +332,7 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 	private function simulateSettingsRequest() {
 		global $current_screen;
 
-		$this->original_request_method = $_SERVER['REQUEST_METHOD'];
+		$this->original_request_method = isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : '';
 		$this->original_screen         = $current_screen;
 
 		// Simulate the request.

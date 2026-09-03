@@ -683,4 +683,48 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 'in-progress', $previous_status );
 	}
+
+	/**
+	 * Tests that the course grade counts a lesson's quiz when a plugin filter hides the
+	 * quiz from post queries, as multilingual plugins do when the quiz belongs to another
+	 * language.
+	 *
+	 * @covers Sensei_Utils::sensei_course_user_grade
+	 */
+	public function testSenseiCourseUserGrade_QuizHiddenFromPostQueries_ReturnsTheGrade() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$created   = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 1,
+			)
+		);
+		$course_id = $created['course_id'];
+		$lesson_id = $created['lesson_ids'][0];
+		$quiz_id   = $created['quiz_ids'][0];
+
+		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
+
+		// The quiz progress piggybacks on the lesson progress, and the submission is only readable once it has an answer.
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+		Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id, 80 );
+		Sensei()->quiz_answer_repository->create( $submission, $question_id, base64_encode( 'Answer' ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Mirrors the stored format.
+
+		$language_filter = function ( $where, $query ) {
+			if ( 'quiz' === $query->get( 'post_type' ) ) {
+				$where .= ' AND 1=0';
+			}
+			return $where;
+		};
+		add_filter( 'posts_where', $language_filter, 10, 2 );
+
+		/* Act. */
+		$course_grade = Sensei_Utils::sensei_course_user_grade( $course_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertSame( 80.0, (float) $course_grade, 'The course grade should count the quiz when it is hidden from post queries.' );
+	}
 }

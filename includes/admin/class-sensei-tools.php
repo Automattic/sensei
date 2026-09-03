@@ -123,7 +123,7 @@ class Sensei_Tools {
 		$tools = $this->get_tools();
 
 		if ( ! empty( $_GET['tool'] ) ) {
-			$tool_id = sanitize_text_field( wp_unslash( $_GET['tool'] ) );
+			$tool_id = sensei_request_text( $_GET['tool'] );
 			if ( ! isset( $tools[ $tool_id ] ) ) {
 				$this->trigger_invalid_request();
 
@@ -169,7 +169,7 @@ class Sensei_Tools {
 		$tools = $this->get_tools();
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$tool_id = ! empty( $_GET['tool'] ) ? sanitize_text_field( wp_unslash( $_GET['tool'] ) ) : false;
+		$tool_id = ! empty( $_GET['tool'] ) ? sensei_request_text( $_GET['tool'] ) : false;
 
 		if (
 			$tool_id

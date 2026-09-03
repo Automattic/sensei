@@ -78,6 +78,7 @@ export const createButtonBlockType = ( {
 
 	return merge(
 		{
+			apiVersion: 3,
 			name: 'sensei-lms/button',
 			title: 'Sensei Button',
 			category: 'sensei-lms',

@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Update Sensei blocks to Block API version 3 so they render in the WordPress iframe block editor.

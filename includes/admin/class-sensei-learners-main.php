@@ -97,14 +97,14 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		}
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'lessons', 'learners' ), true ) ) {
-			$this->view = sanitize_text_field( wp_unslash( $_GET['view'] ) );
+			$this->view = sensei_request_text( $_GET['view'] );
 		} else {
 			$this->view = '';
 		}
 
 		$this->enrolment_status = 'all';
 		if ( isset( $_GET['enrolment_status'] ) ) {
-			$this->enrolment_status = sanitize_text_field( wp_unslash( $_GET['enrolment_status'] ) );
+			$this->enrolment_status = sensei_request_text( $_GET['enrolment_status'] );
 
 			$valid_enrolment_statuses = [ 'all', 'enrolled', 'unenrolled' ];
 
@@ -270,7 +270,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		// Handle orderby.
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			$orderby_arg = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			$orderby_arg = sensei_request_text( $_GET['orderby'] );
 			if ( array_key_exists( $orderby_arg, $this->get_sortable_columns() ) ) {
 				$orderby = $orderby_arg;
 			}
@@ -279,7 +279,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		// Handle order.
 		$order = 'DESC';
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = 'ASC' === strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ? 'ASC' : 'DESC';
+			$order = 'ASC' === strtoupper( sensei_request_text( $_GET['order'] ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle category selection.
@@ -291,7 +291,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		// Handle search.
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
-			$search = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+			$search = sensei_request_text( $_GET['s'] );
 		}
 		// phpcs:enable WordPress.Security.NonceVerification
 

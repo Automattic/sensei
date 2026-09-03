@@ -70,6 +70,9 @@ updates:
       - dependency-name: "php-stubs/wordpress-stubs"
         update-types:
           - "version-update:semver-major"
+      - dependency-name: "pelago/emogrifier"
+        versions:
+          - ">=8.0.0"
     groups:
       composer-development-minor-patch:
         dependency-type: "development"
@@ -95,8 +98,7 @@ updates:
       - "/"
       - "/.github/actions/**"
     schedule:
-      interval: "weekly"
-      day: "friday"
+      interval: "monthly"
     open-pull-requests-limit: 10
     labels:
       - "No Changelog"

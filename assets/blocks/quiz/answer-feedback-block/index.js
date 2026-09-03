@@ -11,6 +11,7 @@ import edit from './answer-feedback';
 import icon from '../../../icons/question.svg';
 
 const sharedMetadata = {
+	apiVersion: 3,
 	parent: [ 'sensei-lms/quiz-question' ],
 	category: 'sensei-lms',
 	supports: {

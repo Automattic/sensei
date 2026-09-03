@@ -93,7 +93,6 @@ export default [
 			'Display pagination and actions the learner can take for the current quiz page.',
 			'sensei-lms'
 		),
-		apiVersion: 2,
 		edit: function EditQuizActions() {
 			const blockProps = useBlockProps( {
 				className: 'sensei-quiz-pagination',

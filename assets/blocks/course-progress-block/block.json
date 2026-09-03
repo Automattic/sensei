@@ -1,5 +1,5 @@
 {
-  "apiVersion": 2,
+  "apiVersion": 3,
   "name": "sensei-lms/course-progress",
   "title": "Course Progress",
   "description": "Display the user's progress in the course. This block is only displayed if the user is enrolled.",

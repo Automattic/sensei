@@ -141,21 +141,21 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		// Handle orderby
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
-				$orderby = esc_html( $_GET['orderby'] );
+			if ( array_key_exists( sensei_request_text( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
+				$orderby = sensei_request_text( $_GET['orderby'] );
 			}
 		}
 
 		// Handle order
 		$order = 'DESC';
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( $_GET['order'] ) ) ? 'ASC' : 'DESC';
+			$order = ( 'ASC' == strtoupper( sensei_request_text( $_GET['order'] ) ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle search
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
-			$search = esc_html( $_GET['s'] );
+			$search = sensei_request_text( $_GET['s'] );
 		}
 		$this->search = $search;
 
@@ -343,7 +343,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		$title = Sensei_Learner::get_full_name( $user_id );
 
-		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$quiz_link = add_query_arg(
 			array(

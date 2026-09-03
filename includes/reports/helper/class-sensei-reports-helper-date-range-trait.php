@@ -19,8 +19,8 @@ trait Sensei_Reports_Helper_Date_Range_Trait {
 	 * @return string The start date.
 	 */
 	protected function get_start_date_filter_value(): string {
-		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
-		$start_date = $_GET['start_date'] ?? '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only report filter.
+		$start_date = isset( $_GET['start_date'] ) ? sensei_request_text( $_GET['start_date'] ) : '';
 
 		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : '';
 	}
@@ -53,8 +53,8 @@ trait Sensei_Reports_Helper_Date_Range_Trait {
 	 * @return string The end date or empty string if none.
 	 */
 	protected function get_end_date_filter_value(): string {
-		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
-		$end_date = $_GET['end_date'] ?? '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only report filter.
+		$end_date = isset( $_GET['end_date'] ) ? sensei_request_text( $_GET['end_date'] ) : '';
 
 		return DateTime::createFromFormat( 'Y-m-d', $end_date ) ? $end_date : '';
 	}
@@ -87,11 +87,19 @@ trait Sensei_Reports_Helper_Date_Range_Trait {
 	 * @return string The timezone string.
 	 */
 	protected function get_timezone(): string {
-		// phpcs:ignore WordPress.Security -- The timezone is sanitized by DateTime.
-		$user_timezone = $_GET['timezone'] ?? '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only report filter.
+		$user_timezone = isset( $_GET['timezone'] ) ? sensei_request_text( $_GET['timezone'] ) : '';
 
 		if ( $user_timezone ) {
-			return $user_timezone;
+			try {
+				// Validate the requested timezone; accepts IANA identifiers and UTC offsets, rejects anything else.
+				new DateTimeZone( $user_timezone );
+
+				return $user_timezone;
+			} catch ( Exception $e ) {
+				// Invalid timezone requested; fall through to the site timezone below.
+				unset( $e );
+			}
 		}
 
 		return wp_timezone_string();

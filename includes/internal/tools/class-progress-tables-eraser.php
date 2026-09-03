@@ -100,7 +100,7 @@ class Progress_Tables_Eraser implements Sensei_Tool_Interface, Sensei_Tool_Inter
 			return;
 		}
 
-		$wpnonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';
+		$wpnonce = isset( $_POST['_wpnonce'] ) ? sensei_request_text( $_POST['_wpnonce'] ) : '';
 		if ( empty( $wpnonce ) || ! wp_verify_nonce( wp_unslash( $wpnonce ), self::NONCE_ACTION ) ) {
 			Sensei_Tools::instance()->trigger_invalid_request( $this );
 			return;

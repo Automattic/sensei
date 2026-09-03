@@ -20,7 +20,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 ## Development environment
 - Run all dev commands inside the `make up` (wp-env) sandbox rather than against any host WordPress install — this keeps mistakes off shared/local state.
 - Use the Node version pinned in `.nvmrc`.
-- Ensure Docker Desktop (or Colima) is running before `make up`; verify with `docker info`. If it isn't running, start it without asking — this is a routine local action, not a user-facing change. Use `open -a Docker` on macOS, `colima start` on Colima, or `sudo systemctl start docker` on Linux, then wait until `docker info` succeeds.
+- Ensure Docker Desktop is running before `make up`; verify with `docker info`. If it isn't running, start it without asking — this is a routine local action, not a user-facing change. Use `open -a Docker` on macOS or `sudo systemctl start docker` on Linux, then wait until `docker info` succeeds.
 - `make up` boots the wp-env Docker stack; `make down` stops it; `make destroy` wipes containers and data for a clean slate.
 - `make shell` opens a shell inside the WordPress container; `make wp CMD="..."` runs wp-cli commands against it.
 - Override the WordPress or PHP version with `make up WP=6.8 PHP=8.3` (writes a transient `.wp-env.override.json`).
@@ -31,7 +31,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - `make build` runs `composer install --no-dev` inside the container, which strips all dev dependencies (`vendor/bin/phpunit`, `vendor/bin/psalm`, etc.). After a build, restore dev tooling before running tests or static analysis with `make install-php`.
 
 ## Testing
-- **Test-driven development**: Follow a TDD approach for new behavior and bug fixes — write a failing test that captures the desired behavior first, then implement until it passes. This applies to PHPUnit, JS unit, and (where practical) Playwright suites.
+- **Test-driven development**: Follow a TDD approach for non-trivial new behavior and bug fixes — write a failing test first, then implement until it passes. Skip tests for trivial changes such as copy/string tweaks, config, mechanical renames, one-line passthroughs, styling etc.. If unsure a change needs a test, ask rather than write one by default.
 - **PHPUnit**: `make test-php` (runs inside wp-env). Targeted runs: `make test-php-filter FILTER="TestClass"` or `FILTER="TestClass::method"`.
 - **PHPUnit with HPPS enabled**: `npm run test-php:wp-env:hpps`.
 - **JS unit tests**: `npm run test-js`.
@@ -50,4 +50,4 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - **Version placeholders in docblocks**: Never hardcode a release number in `@since` tags for new code. Use `@since $$next-version$$` — release tooling replaces the placeholder on version bump.
 - **Coding standards**: Follow the WordPress coding standards for the language you're touching — [PHP](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/), [JavaScript](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/), [CSS](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/css/), [HTML](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/html/). See **Linting** above for the enforcing commands; HTML has no linter, so apply that standard by hand.
 - **Documenting hooks and functions**: Document new or updated actions/filters and public functions with docblocks (params, return, `@since` per the version-placeholder rule above). When a change adds or updates a hook, describe it and apply the `Hooks` label; when it deprecates code, name the replacement and apply the `Deprecation` label.
-- **Minimum supported versions**: Test changes against the minimum supported PHP (7.4) and WordPress (6.8), not only the latest — use the `make up WP=… PHP=…` override (see Development environment) before pushing anything version-sensitive.
+- **Minimum supported versions**: The `sensei-lms.php` plugin header is the source of truth — `Requires PHP` is the minimum PHP and `Requires at least` is the minimum WordPress. Test changes against those minimums, not only the latest — use the `make up WP=… PHP=…` override (see Development environment) before pushing anything version-sensitive.

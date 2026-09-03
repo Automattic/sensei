@@ -7,6 +7,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { compose } from '@wordpress/compose';
+import { useBlockProps } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -130,10 +131,12 @@ const CourseResultsEdit = ( props ) => {
 			borderColor?.color || defaultBorderColor?.color,
 	};
 
+	const blockProps = useBlockProps( { className, style: styleVars } );
+
 	return (
 		<>
 			<CourseResultsSettings { ...props } />
-			<section className={ className } style={ styleVars }>
+			<section { ...blockProps }>
 				<div className="wp-block-sensei-lms-course-results__grade">
 					<span className="wp-block-sensei-lms-course-results__grade-label">
 						{ __( 'Your Total Grade', 'sensei-lms' ) }

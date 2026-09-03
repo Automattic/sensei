@@ -692,12 +692,12 @@ class Sensei_Lesson {
 			}
 		}
 
-		$new_pass_required     = isset( $_POST['pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['pass_required'] ) ) : null;
-		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_passmark'] ) ) : null;
-		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['enable_quiz_reset'] ) ) : null;
-		$show_questions        = isset( $_POST['show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['show_questions'] ) ) : null;
-		$random_question_order = isset( $_POST['random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['random_question_order'] ) ) : null;
-		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_grade_type'] ) ) : null;
+		$new_pass_required     = isset( $_POST['pass_required'] ) ? sensei_request_text( $_POST['pass_required'] ) : null;
+		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sensei_request_text( $_POST['quiz_passmark'] ) : null;
+		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sensei_request_text( $_POST['enable_quiz_reset'] ) : null;
+		$show_questions        = isset( $_POST['show_questions'] ) ? sensei_request_text( $_POST['show_questions'] ) : null;
+		$random_question_order = isset( $_POST['random_question_order'] ) ? sensei_request_text( $_POST['random_question_order'] ) : null;
+		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sensei_request_text( $_POST['quiz_grade_type'] ) : null;
 
 		$new_settings = array(
 			'pass_required'         => $new_pass_required,
@@ -925,7 +925,7 @@ class Sensei_Lesson {
 		}
 
 		// Verify the nonce before proceeding.
-		if ( ( 'lesson' != get_post_type( $post_id ) ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
+		if ( ( 'lesson' != get_post_type( $post_id ) ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( sensei_request_text( $_POST[ 'woo_' . $this->token . '_nonce' ] ), 'sensei-save-post-meta' ) ) {
 			if ( isset( $post->ID ) ) {
 				return $post->ID;
 			} else {
@@ -1083,7 +1083,7 @@ class Sensei_Lesson {
 		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
 		if ( isset( $_POST[ $field['id'] ] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
-			$value = sanitize_text_field( wp_unslash( $_POST[ $field['id'] ] ) );
+			$value = sensei_request_text( $_POST[ $field['id'] ] );
 		}
 
 		return $value;
@@ -2058,7 +2058,7 @@ class Sensei_Lesson {
 		$nonce = '';
 		if ( isset( $_POST['filter_existing_questions_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = esc_html( $_POST['filter_existing_questions_nonce'] );
+			$nonce = sensei_request_text( $_POST['filter_existing_questions_nonce'] );
 		}
 
 		if ( ! wp_verify_nonce( $nonce, 'filter_existing_questions_nonce' ) ) {
@@ -2066,7 +2066,8 @@ class Sensei_Lesson {
 		}
 
 		// Parse POST data
-		$data          = $_POST['data'];
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data          = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$question_data = array();
 		parse_str( $data, $question_data );
 
@@ -2411,7 +2412,8 @@ class Sensei_Lesson {
 			}
 			wp_die();
 		}
-		$answer    = $_GET['answer_value'];
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Value is only md5-hashed for lookup, never stored or output; it must match the raw answer text hashed by every other get_answer_id() caller.
+		$answer    = wp_unslash( $_GET['answer_value'] );
 		$answer_id = $this->get_answer_id( $answer );
 		echo esc_html( $answer_id );
 		wp_die();
@@ -2421,11 +2423,11 @@ class Sensei_Lesson {
 	 * Deprecated version of question_get_answer_id() to use as a fallback.
 	 */
 	private function deprecated_question_get_answer_id() {
-		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
-		$data        = $_POST['data'];
+		// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- No modifications are made here. URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data        = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$answer_data = array();
 		parse_str( $data, $answer_data );
-		$answer    = $answer_data['answer_value'];
+		$answer    = $answer_data['answer_value'] ?? '';
 		$answer_id = $this->get_answer_id( $answer );
 		echo esc_html( $answer_id );
 		die();
@@ -2913,7 +2915,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request.
 		if ( isset( $_POST['lesson_update_question_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = esc_html( $_POST['lesson_update_question_nonce'] );
+			$nonce = sensei_request_text( $_POST['lesson_update_question_nonce'] );
 		}
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_nonce' )
 			|| ! current_user_can( 'edit_questions' ) ) {
@@ -2926,7 +2928,8 @@ class Sensei_Lesson {
 		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that
 		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed.
 		// So first restore the original unslashed apostrophes by removing those slashes.
-		$data = wp_unslash( $_POST['data'] );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		// Then parse the string to an array (note that parse_str automatically urldecodes all the variables).
 		$question_data = array();
 		parse_str( $data, $question_data );
@@ -2976,7 +2979,7 @@ class Sensei_Lesson {
 		$nonce = '';
 		if ( isset( $_POST['lesson_add_multiple_questions_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = esc_html( $_POST['lesson_add_multiple_questions_nonce'] );
+			$nonce = sensei_request_text( $_POST['lesson_add_multiple_questions_nonce'] );
 		}
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_add_multiple_questions_nonce' )
@@ -2985,7 +2988,8 @@ class Sensei_Lesson {
 		}
 
 		// Parse POST data
-		$data          = $_POST['data'];
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data          = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$question_data = array();
 		parse_str( $data, $question_data );
 
@@ -3039,7 +3043,7 @@ class Sensei_Lesson {
 		$nonce = '';
 		if ( isset( $_POST['lesson_remove_multiple_questions_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = esc_html( $_POST['lesson_remove_multiple_questions_nonce'] );
+			$nonce = sensei_request_text( $_POST['lesson_remove_multiple_questions_nonce'] );
 		}
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_remove_multiple_questions_nonce' )
@@ -3049,7 +3053,8 @@ class Sensei_Lesson {
 
 		// Parse POST data
 		$question_data = array();
-		parse_str( $_POST['data'], $question_data );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		parse_str( wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ), $question_data );
 
 		$question_id_to_remove      = $question_data['question_id'];
 		$quiz_id_to_be_removed_from = $question_data['quiz_id'];
@@ -3086,7 +3091,7 @@ class Sensei_Lesson {
 		$return = 1;
 
 		if ( isset( $_GET['cat'] ) && '' != $_GET['cat'] ) {
-			$cat = get_term( $_GET['cat'], 'question-category' );
+			$cat = get_term( absint( $_GET['cat'] ), 'question-category' );
 			if ( isset( $cat->count ) ) {
 				$return = $cat->count;
 			}
@@ -3119,8 +3124,8 @@ class Sensei_Lesson {
 		$return = 1;
 
 		// Parse POST data
-		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
-		$data     = $_POST['data'];
+		// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- No modifications are made here. URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data     = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$cat_data = array();
 		parse_str( $data, $cat_data );
 
@@ -3142,7 +3147,7 @@ class Sensei_Lesson {
 		$nonce = '';
 		if ( isset( $_POST['lesson_add_existing_questions_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = esc_html( $_POST['lesson_add_existing_questions_nonce'] );
+			$nonce = sensei_request_text( $_POST['lesson_add_existing_questions_nonce'] );
 		}
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_add_existing_questions_nonce' )
@@ -3151,7 +3156,8 @@ class Sensei_Lesson {
 		}
 
 		// Parse POST data
-		$data          = $_POST['data'];
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data          = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$question_data = array();
 		parse_str( $data, $question_data );
 
@@ -3207,7 +3213,7 @@ class Sensei_Lesson {
 		if ( isset( $_POST['lesson_update_grade_type_nonce'] ) ) {
 
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = esc_html( $_POST['lesson_update_grade_type_nonce'] );
+			$nonce = sensei_request_text( $_POST['lesson_update_grade_type_nonce'] );
 
 		}
 
@@ -3219,7 +3225,8 @@ class Sensei_Lesson {
 		}
 
 		// Parse POST data
-		$data      = $_POST['data'];
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data      = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
 
@@ -3236,7 +3243,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_order_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = esc_html( $_POST['lesson_update_question_order_nonce'] );
+			$nonce = sensei_request_text( $_POST['lesson_update_question_order_nonce'] );
 		}
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_nonce' )
@@ -3245,7 +3252,8 @@ class Sensei_Lesson {
 		}
 
 		// Parse POST data
-		$data      = $_POST['data'];
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data      = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
 
@@ -3270,7 +3278,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_order_random_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = esc_html( $_POST['lesson_update_question_order_random_nonce'] );
+			$nonce = sensei_request_text( $_POST['lesson_update_question_order_random_nonce'] );
 		}
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_random_nonce' )
 			|| ! current_user_can( 'edit_lessons' ) ) {
@@ -3279,7 +3287,8 @@ class Sensei_Lesson {
 
 		}
 		// Parse POST data
-		$data      = $_POST['data'];
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- URL-encoded payload; parse_str urldecodes it and the parsed fields are sanitized before use.
+		$data      = isset( $_POST['data'] ) ? wp_unslash( is_array( $_POST['data'] ) ? '' : $_POST['data'] ) : '';
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
 
@@ -3624,6 +3633,8 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 *
+	 * @since $$next-version$$ Falls back to the `_lesson_quiz` lesson meta when the post query returns nothing.
+	 *
 	 * @param int    $lesson_id   The lesson id (default: 0).
 	 * @param string $post_status The post status (default: 'any').
 	 * @param string $fields      The fields to return (default: 'ids').
@@ -3647,30 +3658,49 @@ class Sensei_Lesson {
 		$posts_array = get_posts( $post_args );
 		$quiz_id     = array_shift( $posts_array );
 
-		return $quiz_id;
-	}
-
-	/**
-	 * Get the quiz ID for a lesson.
-	 *
-	 * Resolves the quiz from the lesson meta first: post queries can be
-	 * filtered by plugins and miss the quiz.
-	 *
-	 * @since 4.26.3
-	 *
-	 * @param int $lesson_id The lesson ID.
-	 *
-	 * @return int|null Quiz ID, or null when the lesson has no quiz.
-	 */
-	public function get_quiz_id( $lesson_id ) {
-		$quiz_id = (int) get_post_meta( $lesson_id, '_lesson_quiz', true );
-		if ( ! $quiz_id || 'quiz' !== get_post_type( $quiz_id ) ) {
-			$quiz_id = $this->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			// Post queries can be filtered by plugins and miss the quiz.
+			$quiz_id = $this->get_quiz_from_meta( $lesson_id, $post_status, $fields );
 		}
 
 		return $quiz_id;
 	}
 
+	/**
+	 * Get a lesson's quiz from the lesson meta, matching what the post query returns.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int             $lesson_id   The lesson id.
+	 * @param string|string[] $post_status The post status.
+	 * @param string          $fields      The fields to return.
+	 *
+	 * @return int|WP_Post|null The quiz, or null when the meta has no quiz matching the post status.
+	 */
+	private function get_quiz_from_meta( $lesson_id, $post_status, $fields ) {
+		$quiz_id = (int) get_post_meta( $lesson_id, '_lesson_quiz', true );
+
+		if ( ! $quiz_id ) {
+			return null;
+		}
+
+		// The quiz is looked up by ID instead of returned straight from the meta because the
+		// caller can ask for specific post statuses and for a different fields format, and the
+		// query is what applies them. Filters are suppressed here: they are what hid the quiz
+		// from the query above.
+		$posts_array = get_posts(
+			array(
+				'p'                => $quiz_id,
+				'post_type'        => 'quiz',
+				'posts_per_page'   => 1,
+				'post_status'      => $post_status,
+				'fields'           => $fields,
+				'suppress_filters' => true,
+			)
+		);
+
+		return array_shift( $posts_array );
+	}
 
 	/**
 	 * Get quiz permalink.
@@ -3743,7 +3773,7 @@ class Sensei_Lesson {
 
 		// Setup the user id.
 		if ( is_admin() ) {
-			$user_id = isset( $_GET['user'] ) ? $_GET['user'] : '';
+			$user_id = isset( $_GET['user'] ) ? absint( $_GET['user'] ) : '';
 		} else {
 			$user_id = get_current_user_id();
 		}
