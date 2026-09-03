@@ -149,6 +149,7 @@ jQuery( document ).ready( function ( $ ) {
 
 		const confirm_message = action.message;
 
+		// eslint-disable-next-line no-alert -- Intentional confirmation before a destructive enrollment change.
 		if ( ! confirm( confirm_message ) ) {
 			event.preventDefault();
 		} else {
@@ -189,6 +190,7 @@ jQuery( document ).ready( function ( $ ) {
 
 		confirm_message = actions[ current_action ][ post_type ];
 
+		// eslint-disable-next-line no-alert -- Intentional confirmation before a destructive progress change.
 		if ( ! confirm( confirm_message ) ) {
 			return;
 		}

@@ -85,7 +85,6 @@ module.exports = [
 		rules: {
 			camelcase: 'off',
 			eqeqeq: 'off',
-			'no-alert': 'off',
 		},
 	},
 ];
