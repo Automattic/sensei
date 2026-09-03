@@ -102,14 +102,10 @@ jQuery( document ).ready( function () {
 
 	jQuery( '#sensei-module-add-submit' ).on( 'click', function () {
 		// setup the fields
-		const courseId = getParameterByName( 'post' );
 		const moduleInput = jQuery( this ).parent().children( '#newmodule' );
 		const nonceField = jQuery( this )
 			.parent()
 			.children( '#add_module_nonce' );
-		const termListContainer = jQuery(
-			'#module_course_mb #taxonomy-module #module-all ul#modulechecklist'
-		);
 
 		// get the new term value
 		const newTerm = moduleInput.val();
@@ -119,6 +115,11 @@ jQuery( document ).ready( function () {
 			moduleInput.focus();
 			return;
 		}
+
+		const courseId = getParameterByName( 'post' );
+		const termListContainer = jQuery(
+			'#module_course_mb #taxonomy-module #module-all ul#modulechecklist'
+		);
 
 		const newTermData = {
 			newTerm,

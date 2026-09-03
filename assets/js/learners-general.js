@@ -123,7 +123,6 @@ jQuery( document ).ready( function ( $ ) {
 
 	jQuery( '.learner-action' ).click( function ( event ) {
 		const current_action = jQuery( this ).attr( 'data-action' );
-		const provider = jQuery( this ).attr( 'data-provider' );
 
 		const actions = {
 			withdraw: {
@@ -153,6 +152,7 @@ jQuery( document ).ready( function ( $ ) {
 		if ( ! confirm( confirm_message ) ) {
 			event.preventDefault();
 		} else {
+			const provider = jQuery( this ).attr( 'data-provider' );
 			const properties = provider ? { provider } : null;
 			window.sensei_log_event( action.eventName, properties );
 		}
@@ -161,9 +161,6 @@ jQuery( document ).ready( function ( $ ) {
 	jQuery( '.learner-async-action' ).click( function () {
 		let dataToPost = '';
 
-		const user_id = jQuery( this ).attr( 'data-user-id' );
-		const post_id = jQuery( this ).attr( 'data-post-id' );
-		const post_type = jQuery( this ).attr( 'data-post-type' );
 		const current_action = jQuery( this ).attr( 'data-action' );
 
 		let confirm_message =
@@ -188,12 +185,16 @@ jQuery( document ).ready( function ( $ ) {
 			return;
 		}
 
+		const post_type = jQuery( this ).attr( 'data-post-type' );
+
 		confirm_message = actions[ current_action ][ post_type ];
 
 		if ( ! confirm( confirm_message ) ) {
 			return;
 		}
 
+		const user_id = jQuery( this ).attr( 'data-user-id' );
+		const post_id = jQuery( this ).attr( 'data-post-id' );
 		const table_row = jQuery( this ).closest( 'tr' );
 
 		if ( user_id && post_id && post_type ) {

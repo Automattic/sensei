@@ -86,9 +86,6 @@ module.exports = [
 			camelcase: 'off',
 			eqeqeq: 'off',
 			'no-alert': 'off',
-			'no-shadow': 'off',
-			'@wordpress/i18n-text-domain': 'off',
-			'@wordpress/no-unused-vars-before-return': 'off',
 		},
 	},
 ];

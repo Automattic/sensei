@@ -122,7 +122,7 @@ jQuery( document ).ready( function () {
 		};
 	} )();
 
-	( function ( bulkUserActions ) {
+	( function () {
 		const { __ } = wp.i18n;
 		const $hiddenSelectedUserIdsField = $( '#bulk-action-user-ids' ),
 			$actionSelector = $( '#bulk-action-selector-top' ),
@@ -218,8 +218,8 @@ jQuery( document ).ready( function () {
 				type: 'POST',
 				url: ajax_object.ajax_url,
 				data,
-				success( data ) {
-					$hiddenPosts.append( data.data );
+				success( response ) {
+					$hiddenPosts.append( response.data );
 				},
 				error( errorThrown ) {
 					$hiddenPosts.append(

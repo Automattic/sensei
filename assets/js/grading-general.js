@@ -144,10 +144,8 @@ jQuery( document ).ready( function ( $ ) {
 
 						all_correct = true;
 
-						user_answers.forEach( function ( user_answer ) {
-							if (
-								-1 === $.inArray( user_answer, correct_answers )
-							) {
+						user_answers.forEach( function ( answer ) {
+							if ( -1 === $.inArray( answer, correct_answers ) ) {
 								all_correct = false;
 							}
 						} );
