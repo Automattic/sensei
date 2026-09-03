@@ -92,7 +92,10 @@ class Sensei_Db_Query_Learners {
 		 * @param {array} $args Query arguments.
 		 * @return {array} Filtered query arguments.
 		 */
-		$args = apply_filters( 'sensei_learners_query_args', $args );
+		$filtered_args = apply_filters( 'sensei_learners_query_args', $args );
+		if ( is_array( $filtered_args ) ) {
+			$args = $filtered_args;
+		}
 
 		$this->per_page            = isset( $args['per_page'] ) ? absint( $args['per_page'] ) : 25;
 		$this->offset              = isset( $args['offset'] ) ? absint( $args['offset'] ) : 0;

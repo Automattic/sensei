@@ -137,6 +137,21 @@ class Sensei_Utils {
 	 * @return mixed | int
 	 */
 	public static function sensei_check_for_activity( $args = array(), $return_comments = false ) {
+		/**
+		 * Filter the arguments used to query the activity.
+		 *
+		 * @hook sensei_check_for_activity_args
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {array} $args Search arguments.
+		 * @return {array} Filtered search arguments.
+		 */
+		$filtered_args = apply_filters( 'sensei_check_for_activity_args', $args );
+		if ( is_array( $filtered_args ) ) {
+			$args = $filtered_args;
+		}
+
 		if ( ! $return_comments ) {
 			$args['count'] = true;
 		}
@@ -150,18 +165,6 @@ class Sensei_Utils {
 		if ( ! isset( $args['status'] ) ) {
 			$args['status'] = 'any';
 		}
-
-		/**
-		 * Filter the arguments used to query the activity.
-		 *
-		 * @hook sensei_check_for_activity_args
-		 *
-		 * @since $$next-version$$
-		 *
-		 * @param {array} $args Search arguments.
-		 * @return {array} Filtered search arguments.
-		 */
-		$args = apply_filters( 'sensei_check_for_activity_args', $args );
 
 		/**
 		 * This action runs before getting the comments for the given request.
