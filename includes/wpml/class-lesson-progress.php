@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Lesson_Progress {
+	use Progress_Query_Helper;
 	use WPML_API;
 
 	/**
@@ -34,6 +35,32 @@ class Lesson_Progress {
 		add_filter( 'sensei_lesson_progress_delete_for_lesson_lesson_id', array( $this, 'translate_lesson_id' ) );
 		add_filter( 'sensei_lesson_progress_find_lesson_id', array( $this, 'translate_lesson_id' ) );
 		add_filter( 'sensei_quiz_cache_key_lesson_id', array( $this, 'translate_lesson_id' ) );
+
+		// The student management screens query lesson progress with the ID of the lesson they show.
+		add_filter( 'sensei_check_for_activity_args', array( $this, 'translate_lesson_query_args' ) );
+		// The grading screen queries it through the progress query services.
+		add_filter( 'sensei_grading_filter_statuses', array( $this, 'translate_lesson_query_args' ) );
+		// A teacher's own lessons come from the current language, and the grading
+		// screen intersects them with the query above, so they need the same IDs.
+		add_filter( 'sensei_count_statuses_args', array( $this, 'translate_lesson_query_args' ), 20 );
+	}
+
+	/**
+	 * Point the lesson IDs of a progress query at the original language.
+	 *
+	 * Progress is stored against the original language, but the admin screens
+	 * query it with the ID of the lesson they are showing, which in a secondary
+	 * language is the translation, so the query finds nothing.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param mixed $args Query arguments.
+	 * @return mixed
+	 */
+	public function translate_lesson_query_args( $args ) {
+		return $this->translate_query_post_ids( $args, 'lesson', array( $this, 'translate_lesson_id' ) );
 	}
 
 	/**

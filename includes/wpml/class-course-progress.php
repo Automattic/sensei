@@ -24,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Course_Progress {
+	use Progress_Query_Helper;
 	use WPML_API;
 
 	/**
@@ -41,6 +42,8 @@ class Course_Progress {
 		add_filter( 'sensei_course_start_course_id', array( $this, 'translate_course_id' ) );
 		add_filter( 'sensei_learner_get_course_ids_by_progress_status_course_ids', array( $this, 'translate_course_ids' ) );
 		add_filter( 'sensei_learner_get_enrolled_courses_query_args_term_id', array( $this, 'translate_term_id' ) );
+		// The student management screens query course progress with the ID of the course they show.
+		add_filter( 'sensei_check_for_activity_args', array( $this, 'translate_course_query_args' ) );
 
 		add_action( 'sensei_manual_enrolment_learner_enrolled', array( $this, 'enrol_learner' ), 10, 2 );
 		add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'withdraw_learner' ), 10, 2 );
@@ -100,6 +103,24 @@ class Course_Progress {
 
 		add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'withdraw_learner' ), 10, 2 );
 		add_filter( 'sensei_course_is_user_enrolled_course_id', array( $this, 'translate_course_id' ) );
+	}
+
+	/**
+	 * Point the course IDs of a progress query at the original language.
+	 *
+	 * Progress is stored against the original language, but the admin screens
+	 * query it with the ID of the course they are showing, which in a secondary
+	 * language is the translation, so the query finds nothing.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param mixed $args Query arguments.
+	 * @return mixed
+	 */
+	public function translate_course_query_args( $args ) {
+		return $this->translate_query_post_ids( $args, 'course', array( $this, 'translate_course_id' ) );
 	}
 
 	/**

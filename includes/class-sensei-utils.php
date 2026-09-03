@@ -152,6 +152,18 @@ class Sensei_Utils {
 		}
 
 		/**
+		 * Filter the arguments used to query the activity.
+		 *
+		 * @hook sensei_check_for_activity_args
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {array} $args Search arguments.
+		 * @return {array} Filtered search arguments.
+		 */
+		$args = apply_filters( 'sensei_check_for_activity_args', $args );
+
+		/**
 		 * This action runs before getting the comments for the given request.
 		 *
 		 * @hook sensei_utils_check_for_activity_before_get_comments
