@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+#
+# Fixed wp-cli wrapper for the issue-triage skill.
+#
+# The Makefile interpolates its arguments into a shell recipe, so an allowlist
+# glob over `make wp CMD=…` cannot constrain what actually runs. Validation
+# lives here instead; the triage workflow allowlists only this wrapper.
+#
+# Usage: scripts/triage-wp <wp-cli command and args>
+#   scripts/triage-wp post list --post_type=course --format=csv
+#   scripts/triage-wp sensei db seed --users=3 --courses=1
+
+set -euo pipefail
+
+# wp-cli verbs the skill needs, matched against the first 1-3 words.
+ALLOWED_VERBS=(
+	"post"
+	"term"
+	"user"
+	"option get"
+	"plugin list"
+	"theme list"
+	"theme activate"
+	"action-scheduler"
+	"sensei db seed"
+)
+
+die() {
+	echo "triage-wp: $*" >&2
+	exit 64
+}
+
+[ "$#" -gt 0 ] || die "no wp-cli command given"
+
+# Character allowlist, not a metacharacter blocklist: anything outside this set
+# is refused. wp-env may re-join argv into a shell inside the container, so this
+# holds even though we exec with an argument array. Outer-shell quoting is
+# already stripped by the time we see argv, so legitimate values don't need
+# quote characters.
+for arg in "$@"; do
+	case $arg in
+		*[!A-Za-z0-9_./=:@,\ +-]*) die "refusing argument with unexpected characters: $arg" ;;
+	esac
+done
+
+one="${1:-}"
+two="${1:-} ${2:-}"
+three="${1:-} ${2:-} ${3:-}"
+
+permitted=""
+for allowed in "${ALLOWED_VERBS[@]}"; do
+	if [ "$one" = "$allowed" ] || [ "$two" = "$allowed" ] || [ "$three" = "$allowed" ]; then
+		permitted="$allowed"
+		break
+	fi
+done
+[ -n "$permitted" ] || die "verb not permitted: $*"
+
+# exec with an argument array — no shell re-parsing at this layer.
+exec env COMPOSE_PROJECT_NAME=sensei-lms npx @wordpress/env run cli wp "$@"
