@@ -285,7 +285,24 @@ Two things this rule does **not** license:
 
 If you *do* identify the fix — a merged PR or release note that matches — then say so, link it, and recommend closing as already-resolved per the [duplicate rules](#3-duplicate-check).
 
-**The converse matters when you reproduced on a released build** (the interactive default, via Jurassic Ninja): check the same code path still exists on trunk before citing line numbers or calling the bug open. It may already be fixed, and the lines will have moved regardless.
+**You can answer "already fixed?" from history alone**, which is how CI does it without the released build — the checkout has full history and tags:
+
+1. `git log -S'<symbol>' -- <implicated path>` — find the commit that changed the code.
+2. `git tag --contains <sha>` — the first `version/X.Y.Z` carrying it. Newer than the reporter's version means their build predates the fix.
+3. `gh api "search/issues?q=repo:Automattic/sensei+is:pr+is:merged+<terms>"` for the PR. `gh pr` is denied, so use the search endpoint.
+
+Claim it's fixed only when you can name **both** the commit and the release that contains it. A plausible-looking commit on its own isn't enough — report "could not reproduce" instead.
+
+**Interactively, reproduce on both and report the difference.** Jurassic Ninja runs the reporter's released build; wp-env runs trunk. Running both answers "has this already been fixed?", which neither can answer alone:
+
+| Released (JN) | Trunk (wp-env) | Verdict |
+|---|---|---|
+| reproduces | reproduces | Live bug. Triage normally and cite trunk lines. |
+| reproduces | doesn't | Likely **already fixed**. Find the fix, then recommend closing as already-resolved or say which release carries it. |
+| doesn't | reproduces | **Regression** since the last release — say so explicitly; it raises priority. |
+| doesn't | doesn't | Could not reproduce. |
+
+Either way, confirm line numbers against this checkout before citing them — they move between releases.
 
 #### Status label by outcome
 
