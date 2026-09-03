@@ -20,7 +20,7 @@ module.exports = [
 				...globals.jquery,
 				wp: 'readonly',
 				ajaxurl: 'readonly',
-				ajax_object: 'readonly',
+				ajaxObject: 'readonly',
 				sensei_log_event: 'readonly',
 				sensei_event_logging: 'readonly',
 			},
@@ -87,11 +87,7 @@ module.exports = [
 				'error',
 				{
 					properties: 'never',
-					allow: [
-						'ajax_object',
-						'sensei_log_event',
-						'sensei_event_logging',
-					],
+					allow: [ 'sensei_log_event', 'sensei_event_logging' ],
 				},
 			],
 		},

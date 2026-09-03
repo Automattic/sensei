@@ -216,7 +216,7 @@ jQuery( document ).ready( function () {
 
 			$.ajax( {
 				type: 'POST',
-				url: ajax_object.ajax_url,
+				url: ajaxObject.ajax_url,
 				data,
 				success( response ) {
 					$hiddenPosts.append( response.data );

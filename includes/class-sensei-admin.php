@@ -423,7 +423,7 @@ class Sensei_Admin {
 		$ajax_object = array(
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
 		);
-		wp_localize_script( 'sensei-learners-admin-bulk-actions-js', 'ajax_object', $ajax_object );
+		wp_localize_script( 'sensei-learners-admin-bulk-actions-js', 'ajaxObject', $ajax_object );
 
 		Sensei()->assets->register( 'sensei-chosen', '../vendor/chosen/chosen.jquery.min.js', [ 'jquery' ], true );
 		Sensei()->assets->register( 'sensei-chosen-ajax', '../vendor/chosen/ajax-chosen.jquery.min.js', [ 'jquery', 'sensei-chosen' ], true );
