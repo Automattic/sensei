@@ -82,6 +82,18 @@ class Sensei_Db_Query_Learners {
 	 * @param array $args Arguments to build query.
 	 */
 	public function __construct( $args ) {
+		/**
+		 * Filter the arguments used to query the learners.
+		 *
+		 * @hook sensei_learners_query_args
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {array} $args Query arguments.
+		 * @return {array} Filtered query arguments.
+		 */
+		$args = apply_filters( 'sensei_learners_query_args', $args );
+
 		$this->per_page            = isset( $args['per_page'] ) ? absint( $args['per_page'] ) : 25;
 		$this->offset              = isset( $args['offset'] ) ? absint( $args['offset'] ) : 0;
 		$this->course_id           = isset( $args['course_id'] ) ? intval( $args['course_id'] ) : 0;

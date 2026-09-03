@@ -43,6 +43,25 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 		$this->assertEquals( 10, has_filter( 'sensei_lesson_progress_count_course_id', array( $course_progress, 'translate_course_id' ) ) );
 		$this->assertEquals( 10, has_filter( 'sensei_course_start_course_id', array( $course_progress, 'translate_course_id' ) ) );
 		$this->assertEquals( 10, has_filter( 'sensei_check_for_activity_args', array( $course_progress, 'translate_course_query_args' ) ) );
+		$this->assertEquals( 10, has_filter( 'sensei_learners_query_args', array( $course_progress, 'translate_learners_query_args' ) ) );
+	}
+
+	public function testTranslateLearnersQueryArgs_TranslatedCourseFiltered_FindsTheOriginalCourseStudents() {
+		/* Arrange. */
+		$user_id              = $this->factory->user->create();
+		$original_course_id   = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+
+		\Sensei_Utils::update_course_status( $user_id, $original_course_id, 'in-progress' );
+
+		$this->stub_translations( array( $translated_course_id => $original_course_id ) );
+		( new Course_Progress() )->init();
+
+		/* Act. */
+		$learners = ( new \Sensei_Db_Query_Learners( array( 'filter_by_course_id' => $translated_course_id ) ) )->get_all();
+
+		/* Assert. */
+		$this->assertSame( array( $user_id ), array_map( 'intval', wp_list_pluck( $learners, 'user_id' ) ) );
 	}
 
 	public function testTranslateCourseQueryArgs_TranslatedCourseQueried_FindsTheOriginalCourseProgress() {

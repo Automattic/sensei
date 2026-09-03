@@ -44,6 +44,8 @@ class Course_Progress {
 		add_filter( 'sensei_learner_get_enrolled_courses_query_args_term_id', array( $this, 'translate_term_id' ) );
 		// The student management screens query course progress with the ID of the course they show.
 		add_filter( 'sensei_check_for_activity_args', array( $this, 'translate_course_query_args' ) );
+		// The Students screen filters its learners query with the ID of the course it shows.
+		add_filter( 'sensei_learners_query_args', array( $this, 'translate_learners_query_args' ) );
 
 		add_action( 'sensei_manual_enrolment_learner_enrolled', array( $this, 'enrol_learner' ), 10, 2 );
 		add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'withdraw_learner' ), 10, 2 );
@@ -121,6 +123,26 @@ class Course_Progress {
 	 */
 	public function translate_course_query_args( $args ) {
 		return $this->translate_query_post_ids( $args, 'course', array( $this, 'translate_course_id' ) );
+	}
+
+	/**
+	 * Point the course filter of a learners query at the original language.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param mixed $args Query arguments.
+	 * @return mixed
+	 */
+	public function translate_learners_query_args( $args ) {
+		if ( ! is_array( $args ) || empty( $args['filter_by_course_id'] ) || ! $this->get_current_language() ) {
+			return $args;
+		}
+
+		$args['filter_by_course_id'] = $this->translate_course_id( $args['filter_by_course_id'] );
+
+		return $args;
 	}
 
 	/**
