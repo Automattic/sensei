@@ -15,8 +15,8 @@ jQuery( document ).ready( function ( $ ) {
 	jQuery( '.edit-date-date-picker' ).datepicker( {
 		// The space and colon characters are added to allow users typing a datetime manually.
 		dateFormat: 'yy-mm-dd :',
-		onSelect: function ( newDate ) {
-			let oldDate = $( this ).attr( 'value' ).split( ' ' );
+		onSelect( newDate ) {
+			const oldDate = $( this ).attr( 'value' ).split( ' ' );
 
 			if ( newDate.indexOf( ' :' ) > -1 ) {
 				newDate = newDate.substring( 0, newDate.length - 2 );
@@ -42,7 +42,7 @@ jQuery( document ).ready( function ( $ ) {
 	jQuery( document ).tooltip( {
 		items: '.sensei-tooltip',
 		tooltipClass: 'sensei-ui-tooltip',
-		content: function () {
+		content() {
 			return jQuery( this ).data( 'tooltip' );
 		},
 	} );
@@ -54,7 +54,7 @@ jQuery( document ).ready( function ( $ ) {
 	 * @access public
 	 */
 	jQuery( '#course-category-options' ).on( 'change', '', function () {
-		var dataToPost = 'course_cat=' + jQuery( this ).val();
+		const dataToPost = 'course_cat=' + jQuery( this ).val();
 
 		jQuery.post(
 			ajaxurl,
@@ -74,12 +74,12 @@ jQuery( document ).ready( function ( $ ) {
 	} );
 
 	$( '.edit-start-date-submit' ).click( function () {
-		let $this = $( this );
-		let userId = $this.attr( 'data-user-id' );
-		let postId = $this.attr( 'data-post-id' );
-		let postType = $this.attr( 'data-post-type' );
-		let commentId = $this.attr( 'data-comment-id' );
-		let newDates = {};
+		const $this = $( this );
+		const userId = $this.attr( 'data-user-id' );
+		const postId = $this.attr( 'data-post-id' );
+		const postType = $this.attr( 'data-post-type' );
+		const commentId = $this.attr( 'data-comment-id' );
+		const newDates = {};
 
 		$this
 			.parents( 'tr' )
@@ -98,7 +98,7 @@ jQuery( document ).ready( function ( $ ) {
 			return;
 		}
 
-		let dataToPost = {
+		const dataToPost = {
 			user_id: userId,
 			post_id: postId,
 			post_type: postType,
@@ -122,10 +122,10 @@ jQuery( document ).ready( function ( $ ) {
 	} );
 
 	jQuery( '.learner-action' ).click( function ( event ) {
-		var current_action = jQuery( this ).attr( 'data-action' );
-		var provider = jQuery( this ).attr( 'data-provider' );
+		const current_action = jQuery( this ).attr( 'data-action' );
+		const provider = jQuery( this ).attr( 'data-provider' );
 
-		var actions = {
+		const actions = {
 			withdraw: {
 				message:
 					window.woo_learners_general_data.remove_from_course_confirm,
@@ -142,34 +142,34 @@ jQuery( document ).ready( function ( $ ) {
 				eventName: 'learner_management_restore_enrollment',
 			},
 		};
-		var action = actions[ current_action ];
+		const action = actions[ current_action ];
 
 		if ( typeof action === 'undefined' ) {
 			return;
 		}
 
-		var confirm_message = action.message;
+		const confirm_message = action.message;
 
 		if ( ! confirm( confirm_message ) ) {
 			event.preventDefault();
 		} else {
-			var properties = provider ? { provider: provider } : null;
+			const properties = provider ? { provider } : null;
 			window.sensei_log_event( action.eventName, properties );
 		}
 	} );
 
 	jQuery( '.learner-async-action' ).click( function () {
-		var dataToPost = '';
+		let dataToPost = '';
 
-		var user_id = jQuery( this ).attr( 'data-user-id' );
-		var post_id = jQuery( this ).attr( 'data-post-id' );
-		var post_type = jQuery( this ).attr( 'data-post-type' );
-		var current_action = jQuery( this ).attr( 'data-action' );
+		const user_id = jQuery( this ).attr( 'data-user-id' );
+		const post_id = jQuery( this ).attr( 'data-post-id' );
+		const post_type = jQuery( this ).attr( 'data-post-type' );
+		const current_action = jQuery( this ).attr( 'data-action' );
 
-		var confirm_message =
+		let confirm_message =
 			window.woo_learners_general_data.remove_generic_confirm;
 
-		var actions = {
+		const actions = {
 			remove_progress: {
 				lesson: window.woo_learners_general_data
 					.remove_from_lesson_confirm,
@@ -194,7 +194,7 @@ jQuery( document ).ready( function ( $ ) {
 			return;
 		}
 
-		var table_row = jQuery( this ).closest( 'tr' );
+		const table_row = jQuery( this ).closest( 'tr' );
 
 		if ( user_id && post_id && post_type ) {
 			dataToPost += 'user_id=' + user_id;
@@ -235,11 +235,11 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	} );
 
-	let $learnerSearchSelect = jQuery( 'select#add_learner_search' );
-	let $learnerAddToCourseSubmitButton = jQuery(
+	const $learnerSearchSelect = jQuery( 'select#add_learner_search' );
+	const $learnerAddToCourseSubmitButton = jQuery(
 		"[name='add_learner_submit']"
 	).first();
-	let $learnerSearchboxFormContainer = jQuery(
+	const $learnerSearchboxFormContainer = jQuery(
 		'.sensei-learners-extra .add-student-form-container'
 	);
 	$learnerSearchSelect.select2( {
@@ -251,10 +251,10 @@ jQuery( document ).ready( function ( $ ) {
 			url: window.ajaxurl,
 			dataType: 'json',
 			cache: true,
-			id: function ( bond ) {
+			id( bond ) {
 				return bond._id;
 			},
-			data: function ( params ) {
+			data( params ) {
 				// page is the one-based page number tracked by Select2
 				return {
 					term: params.term, //search term
@@ -265,8 +265,8 @@ jQuery( document ).ready( function ( $ ) {
 					default: '',
 				};
 			},
-			processResults: function ( users, page ) {
-				var validUsers = [];
+			processResults( users, page ) {
+				const validUsers = [];
 				jQuery.each( users, function ( i, val ) {
 					if ( ! jQuery.isEmptyObject( val ) ) {
 						validUsers.push( { id: i, text: val } );
@@ -275,13 +275,13 @@ jQuery( document ).ready( function ( $ ) {
 				// wrap the users inside results for select 2 usage
 				return {
 					results: validUsers,
-					page: page,
+					page,
 				};
 			},
 		},
 	} ); // end select2
 	$learnerSearchSelect.on( 'change.select2', () => {
-		let isNoStudentSelected =
+		const isNoStudentSelected =
 			$learnerSearchSelect.select2( 'data' ).length < 1;
 		$learnerAddToCourseSubmitButton.prop( 'disabled', isNoStudentSelected );
 		if ( isNoStudentSelected ) {
@@ -293,19 +293,19 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	} );
 	// For mobile devices (below 783px) put the filters and bulk actions below the table, else keep above.
-	let $bulkActionContainer = $(
+	const $bulkActionContainer = $(
 			'.tablenav.top > .sensei-student-bulk-actions__wrapper'
 		).first(),
 		$tableBottomActionContainer = $( '.tablenav.bottom > .tablenav-pages' ),
 		$tableTopActionContainer = $( '.tablenav.top > .tablenav-pages' ),
 		$themeContainer = $( '#woothemes-sensei' ),
 		placeElementsBasedOnScreenSize = () => {
-			let width = $( window ).width();
-			let $targetContainer =
+			const width = $( window ).width();
+			const $targetContainer =
 				width < 783
 					? $tableBottomActionContainer
 					: $tableTopActionContainer;
-			let themeDivPosition = width < 783 ? 'inherit' : '';
+			const themeDivPosition = width < 783 ? 'inherit' : '';
 			if ( $targetContainer.has( $bulkActionContainer ).length ) {
 				return;
 			}

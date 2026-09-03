@@ -73,7 +73,7 @@ domReady( () => {
 	jQuery( '#course-prerequisite-options' ).select2( { width: '100%' } );
 
 	const trackLinkClickCallback = ( event_name ) => ( e ) => {
-		var properties = {
+		const properties = {
 			course_status: e.target.dataset.courseStatus,
 		};
 

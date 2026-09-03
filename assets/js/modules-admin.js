@@ -9,7 +9,7 @@
 
 function getParameterByName( name ) {
 	name = name.replace( /[\[]/, '\\[' ).replace( /[\]]/, '\\]' );
-	var regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' ),
+	const regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' ),
 		results = regex.exec( location.search );
 	return results === null
 		? ''
@@ -17,7 +17,7 @@ function getParameterByName( name ) {
 }
 
 jQuery( document ).ready( function () {
-	var _ = window._;
+	const _ = window._;
 
 	/**
 	 * Add select to the modules select boxes
@@ -32,7 +32,7 @@ jQuery( document ).ready( function () {
 	jQuery( '.sortable-tab-list' ).disableSelection();
 
 	jQuery( '.sortable-module-list' ).on( 'sortstop', function () {
-		var orderString = '';
+		let orderString = '';
 
 		jQuery( this )
 			.find( '.module' )
@@ -60,7 +60,7 @@ jQuery( document ).ready( function () {
 			delay: 250,
 			dataType: 'json',
 			cache: true,
-			data: function ( params ) {
+			data( params ) {
 				// page is the one-based page number tracked by Select2
 				return {
 					term: params.term, //search term
@@ -70,67 +70,66 @@ jQuery( document ).ready( function () {
 					default: '',
 				};
 			},
-			processResults: function ( courses, page ) {
-				var validCourses = [];
+			processResults( courses, page ) {
+				const validCourses = [];
 				jQuery.each( courses, function ( i, val ) {
 					if ( ! jQuery.isEmptyObject( val ) ) {
-						var validcourse = { id: i, text: val };
+						const validcourse = { id: i, text: val };
 						validCourses.push( validcourse );
 					}
 				} );
 				// wrap the users inside results for select 2 usage
 				return {
 					results: validCourses,
-					page: page,
+					page,
 				};
 			},
 		},
 	} ); // end select2
 
 	jQuery( '#sensei-module-add-toggle' ).on( 'click', function () {
-		var hidden = 'wp-hidden-child';
-		var addBlock = jQuery( this ).parent().next( 'p#sensei-module-add' );
-		var moduleInput = addBlock.children( '#newmodule' );
+		const hidden = 'wp-hidden-child';
+		const addBlock = jQuery( this ).parent().next( 'p#sensei-module-add' );
+		const moduleInput = addBlock.children( '#newmodule' );
 		if ( addBlock.hasClass( hidden ) ) {
 			addBlock.removeClass( hidden );
 			moduleInput.val( '' );
 			moduleInput.focus();
 			return;
-		} else {
-			addBlock.addClass( hidden );
 		}
+		addBlock.addClass( hidden );
 	} );
 
 	jQuery( '#sensei-module-add-submit' ).on( 'click', function () {
 		// setup the fields
-		var courseId = getParameterByName( 'post' );
-		var moduleInput = jQuery( this ).parent().children( '#newmodule' );
-		var nonceField = jQuery( this )
+		const courseId = getParameterByName( 'post' );
+		const moduleInput = jQuery( this ).parent().children( '#newmodule' );
+		const nonceField = jQuery( this )
 			.parent()
 			.children( '#add_module_nonce' );
-		var termListContainer = jQuery(
+		const termListContainer = jQuery(
 			'#module_course_mb #taxonomy-module #module-all ul#modulechecklist'
 		);
 
 		// get the new term value
-		var newTerm = moduleInput.val();
-		var security = nonceField.val();
+		const newTerm = moduleInput.val();
+		const security = nonceField.val();
 
 		if ( _.isEmpty( newTerm ) || _.isEmpty( security ) ) {
 			moduleInput.focus();
 			return;
 		}
 
-		var newTermData = {
-			newTerm: newTerm,
-			security: security,
+		const newTermData = {
+			newTerm,
+			security,
 			action: 'sensei_add_new_module_term',
 			course_id: courseId,
 			from_page: 'course',
 		};
 
 		jQuery.post( ajaxurl, newTermData, function ( response ) {
-			var termId, termName;
+			let termId, termName;
 			if ( response.success ) {
 				termId = response.data.termId;
 				termName = response.data.termName;
@@ -142,7 +141,7 @@ jQuery( document ).ready( function () {
 				}
 
 				// setup the new list item
-				var li = '<li id="module-' + termId + '">';
+				let li = '<li id="module-' + termId + '">';
 				li += '<label class="selectit">';
 				li +=
 					'<input value="' +
@@ -159,8 +158,6 @@ jQuery( document ).ready( function () {
 				// clear the input
 				moduleInput.val( '' );
 				moduleInput.focus();
-
-				return;
 			} else if (
 				typeof response.data.errors != 'undefined' &&
 				typeof response.data.errors.term_exists != 'undefined'
@@ -168,7 +165,7 @@ jQuery( document ).ready( function () {
 				termId = response.data.term.id;
 
 				// find term with id and just make sure it is
-				var termCheckBox = termListContainer.find(
+				const termCheckBox = termListContainer.find(
 					'#module-' + termId + ' input'
 				);
 
@@ -192,9 +189,8 @@ jQuery( document ).ready( function () {
 	);
 	if ( courseTeacherInput ) {
 		courseTeacherInput.addEventListener( 'change', () => {
-			const modulesMetabox = document.querySelector(
-				'#module_course_mb'
-			);
+			const modulesMetabox =
+				document.querySelector( '#module_course_mb' );
 
 			if ( modulesMetabox ) {
 				modulesMetabox.parentNode.removeChild( modulesMetabox );

@@ -6,11 +6,8 @@ import { doAction, applyFilters } from '@wordpress/hooks';
 /**
  * The Course Video Progression settings.
  */
-const {
-	courseVideoRequired,
-	courseVideoAutoComplete,
-	courseVideoAutoPause,
-} = window.sensei.courseVideoSettings;
+const { courseVideoRequired, courseVideoAutoComplete, courseVideoAutoPause } =
+	window.sensei.courseVideoSettings;
 
 /**
  * Map of videos.

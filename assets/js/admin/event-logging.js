@@ -69,9 +69,9 @@ window.sensei_log_event = function ( event_name, properties ) {
 		return;
 	}
 
-	let data = {
+	const data = {
 		action: actionName,
-		event_name: event_name,
+		event_name,
 	};
 
 	if ( properties ) {
@@ -90,7 +90,7 @@ jQuery( document ).ready( function ( $ ) {
 	} );
 
 	$( 'body' ).on( 'click', 'a[data-sensei-log-event]', function ( event ) {
-		let sensei_event_name = $( event.target ).data( 'sensei-log-event' );
+		const sensei_event_name = $( event.target ).data( 'sensei-log-event' );
 		sensei_log_event( sensei_event_name );
 	} );
 } );

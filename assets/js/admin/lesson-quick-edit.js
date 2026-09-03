@@ -1,6 +1,6 @@
 ( function ( $ ) {
 	// we create a copy of the WP inline edit post function
-	var $wp_inline_edit = window.inlineEditPost.edit;
+	const $wp_inline_edit = window.inlineEditPost.edit;
 	// and then we overwrite the function with our own code
 	window.inlineEditPost.edit = function ( id ) {
 		// "call" the original WP edit function
@@ -10,15 +10,15 @@
 		// now we take care of our business
 
 		// get the post ID
-		var postId = 0;
+		let postId = 0;
 		if ( id instanceof Element ) {
 			postId = parseInt( this.getId( id ) );
 		}
 
 		if ( postId > 0 ) {
 			// define the edit row
-			var editRow = $( '#edit-' + postId );
-			var senseiFieldValues = window[ 'sensei_quick_edit_' + postId ];
+			const editRow = $( '#edit-' + postId );
+			const senseiFieldValues = window[ 'sensei_quick_edit_' + postId ];
 
 			//on the save button click, set senseiFieldValues to the values user entered in the form fields
 			editRow.find( '.save' ).on( 'click', function () {
@@ -74,7 +74,7 @@
 			for ( const [ key, value ] of Object.entries(
 				senseiFieldValues
 			) ) {
-				var elem = $( ':input[name="' + key + '"]', editRow );
+				const elem = $( ':input[name="' + key + '"]', editRow );
 				if ( elem.prop( 'nodeName' ) == 'INPUT' ) {
 					elem.val( parseInt( value ) );
 				} else {

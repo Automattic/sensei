@@ -13,7 +13,7 @@ jQuery( document ).ready( function ( $ ) {
 
 	/* Order Courses */
 	$courseList.on( 'sortstop', function () {
-		var orderString = '';
+		let orderString = '';
 
 		$( this )
 			.find( '.course' )

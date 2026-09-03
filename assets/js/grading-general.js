@@ -22,10 +22,10 @@ jQuery( document ).ready( function ( $ ) {
 	 * @return void
 	 */
 	jQuery.fn.calculateTotalGrade = function () {
-		var question_id;
-		var question_grade;
-		var total_grade = 0;
-		var total_graded_questions = 0;
+		let question_id;
+		let question_grade;
+		let total_grade = 0;
+		let total_graded_questions = 0;
 		jQuery( '.question_box.user_right' ).each( function () {
 			question_id = jQuery( this ).find( '.question_id' ).val();
 			question_grade = parseInt(
@@ -42,9 +42,11 @@ jQuery( document ).ready( function ( $ ) {
 
 		jQuery( '#total_graded_questions' ).val( total_graded_questions );
 
-		var total_questions = parseInt( jQuery( '#total_questions' ).val() );
-		var quiz_grade_total = parseInt( jQuery( '#quiz_grade_total' ).val() );
-		var percent = '0';
+		const total_questions = parseInt( jQuery( '#total_questions' ).val() );
+		const quiz_grade_total = parseInt(
+			jQuery( '#quiz_grade_total' ).val()
+		);
+		let percent = '0';
 
 		if ( 0 < quiz_grade_total ) {
 			percent = parseFloat(
@@ -70,17 +72,17 @@ jQuery( document ).ready( function ( $ ) {
 
 	jQuery.fn.updateFeedback = function () {
 		jQuery( '.question_box' ).each( function () {
-			var question_id = jQuery( this ).find( '.question_id' ).val();
-			var question_grade = parseInt(
+			const question_id = jQuery( this ).find( '.question_id' ).val();
+			const question_grade = parseInt(
 				jQuery( this )
 					.find( '#question_' + question_id + '_grade' )
 					.val()
 			);
 
-			var correctFeedback = jQuery( this ).find(
+			const correctFeedback = jQuery( this ).find(
 				'.answer-feedback-correct'
 			);
-			var incorrectFeedback = jQuery( this ).find(
+			const incorrectFeedback = jQuery( this ).find(
 				'.answer-feedback-incorrect'
 			);
 
@@ -95,8 +97,8 @@ jQuery( document ).ready( function ( $ ) {
 	 */
 	$.fn.autoGrade = function () {
 		$( '.question_box' ).each( function () {
-			var $this = $( this );
-			var all_correct = false;
+			const $this = $( this );
+			let all_correct = false;
 
 			// Only grade questions that haven't already been graded.
 			if (
@@ -104,7 +106,7 @@ jQuery( document ).ready( function ( $ ) {
 				! $this.hasClass( 'user_wrong' ) &&
 				! $this.hasClass( 'zero-graded' )
 			) {
-				var user_answer, correct_answer;
+				let user_answer, correct_answer;
 
 				$this.addClass( 'ungraded' );
 
@@ -139,8 +141,8 @@ jQuery( document ).ready( function ( $ ) {
 					// Split answers to multiple choice questions into an array since there may be
 					// multiple correct answers.
 					if ( $this.hasClass( 'multiple-choice' ) ) {
-						var user_answers = user_answer.split( '<br>' );
-						var correct_answers = correct_answer.split( '<br>' );
+						const user_answers = user_answer.split( '<br>' );
+						const correct_answers = correct_answer.split( '<br>' );
 
 						all_correct = true;
 
@@ -245,10 +247,10 @@ jQuery( document ).ready( function ( $ ) {
 	};
 
 	jQuery.fn.getQueryVariable = function ( variable ) {
-		var query = window.location.search.substring( 1 );
-		var vars = query.split( '&' );
-		for ( var i = 0; i < vars.length; i++ ) {
-			var pair = vars[ i ].split( '=' );
+		const query = window.location.search.substring( 1 );
+		const vars = query.split( '&' );
+		for ( let i = 0; i < vars.length; i++ ) {
+			const pair = vars[ i ].split( '=' );
 			if ( pair[ 0 ] == variable ) {
 				return pair[ 1 ];
 			}
@@ -268,7 +270,7 @@ jQuery( document ).ready( function ( $ ) {
 	 */
 	jQuery( '#grading-course-options' ).on( 'change', '', function () {
 		// Populate the Lessons select box
-		var courseId = jQuery( this ).val();
+		const courseId = jQuery( this ).val();
 		jQuery.get(
 			ajaxurl,
 			{
@@ -307,9 +309,9 @@ jQuery( document ).ready( function ( $ ) {
 	 */
 	jQuery( '#grading-lesson-options' ).on( 'change', '', function () {
 		// Populate the Lessons select box
-		var lessonId = jQuery( this ).val();
-		var courseId = jQuery( '#grading-course-options' ).val();
-		var gradingView = jQuery.fn.getQueryVariable( 'view' );
+		const lessonId = jQuery( this ).val();
+		const courseId = jQuery( '#grading-course-options' ).val();
+		const gradingView = jQuery.fn.getQueryVariable( 'view' );
 
 		// Perform the AJAX call to get the select box.
 		jQuery.get(
@@ -373,8 +375,8 @@ jQuery( document ).ready( function ( $ ) {
 	 * @access public
 	 */
 	jQuery( '.question-grade' ).on( 'change', '', function () {
-		var grade = parseInt( jQuery( this ).val() );
-		var question_label = this.id.replace( '_grade', '' );
+		const grade = parseInt( jQuery( this ).val() );
+		const question_label = this.id.replace( '_grade', '' );
 		if ( grade > 0 ) {
 			jQuery( '#' + question_label + '_box' )
 				.addClass( 'user_right' )
