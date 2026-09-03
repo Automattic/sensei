@@ -66,7 +66,7 @@ jQuery( document ).ready( function () {
 			validator() {
 				return {
 					validateBulkAction() {
-						if ( bulkAction == '' || bulkAction == 0 ) {
+						if ( bulkAction === '' || bulkAction === '0' ) {
 							return {
 								isValid: false,
 								reason: 'Select an action',

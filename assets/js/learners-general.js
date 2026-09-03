@@ -66,7 +66,7 @@ jQuery( document ).ready( function ( $ ) {
 			},
 			function ( response ) {
 				// Check for a response
-				if ( '' != response ) {
+				if ( '' !== response ) {
 					window.location = response;
 				}
 			}

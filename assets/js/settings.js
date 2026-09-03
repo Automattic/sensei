@@ -186,7 +186,7 @@ jQuery( document ).ready( function ( $ ) {
 	jQuery( document ).mousedown( function () {
 		jQuery( '.colorpicker' ).each( function () {
 			const display = jQuery( this ).css( 'display' );
-			if ( display == 'block' ) {
+			if ( display === 'block' ) {
 				jQuery( this ).fadeOut();
 			}
 		} );

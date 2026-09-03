@@ -84,7 +84,6 @@ module.exports = [
 		files: [ 'assets/js/**' ],
 		rules: {
 			camelcase: 'off',
-			eqeqeq: 'off',
 		},
 	},
 ];

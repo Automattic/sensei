@@ -60,7 +60,7 @@ jQuery( document ).ready( function ( $ ) {
 		jQuery( '.total_grade_percent' ).html( percent );
 		jQuery( '.quiz_grade_total' ).html( quiz_grade_total );
 
-		if ( total_questions == total_graded_questions ) {
+		if ( total_questions === total_graded_questions ) {
 			jQuery( '#all_questions_graded' ).val( 'yes' );
 			jQuery( '.grade-button' ).val( __( 'Grade', 'sensei-lms' ) );
 		} else {
@@ -247,7 +247,7 @@ jQuery( document ).ready( function ( $ ) {
 		const vars = query.split( '&' );
 		for ( let i = 0; i < vars.length; i++ ) {
 			const pair = vars[ i ].split( '=' );
-			if ( pair[ 0 ] == variable ) {
+			if ( pair[ 0 ] === variable ) {
 				return pair[ 1 ];
 			}
 		}
@@ -275,7 +275,7 @@ jQuery( document ).ready( function ( $ ) {
 			},
 			function ( response ) {
 				// Check for a response
-				if ( '' != response ) {
+				if ( '' !== response ) {
 					// Empty the results div's
 					jQuery( '#learners-to-grade' ).empty();
 					jQuery( '#learners-graded' ).empty();
@@ -320,7 +320,7 @@ jQuery( document ).ready( function ( $ ) {
 			},
 			function ( response ) {
 				// Check for a response
-				if ( '' != response ) {
+				if ( '' !== response ) {
 					window.location = response;
 				} else {
 					// Failed
@@ -341,7 +341,7 @@ jQuery( document ).ready( function ( $ ) {
 	 * @access public
 	 */
 	jQuery( '.grading-mark' ).on( 'change', 'input', function () {
-		if ( this.value == 'right' ) {
+		if ( this.value === 'right' ) {
 			jQuery( '#' + this.name + '_box' )
 				.addClass( 'user_right' )
 				.removeClass( 'user_wrong ungraded' );

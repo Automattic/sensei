@@ -217,7 +217,7 @@ const CourseGeneralSidebar = () => {
 			<h3>{ __( 'Featured Course', 'sensei-lms' ) }</h3>
 			<CheckboxControl
 				label={ __( 'Feature this course', 'sensei-lms' ) }
-				checked={ featured == 'featured' }
+				checked={ featured === 'featured' }
 				onChange={ ( checked ) =>
 					setMeta( {
 						...meta,

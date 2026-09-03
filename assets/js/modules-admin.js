@@ -160,8 +160,8 @@ jQuery( document ).ready( function () {
 				moduleInput.val( '' );
 				moduleInput.focus();
 			} else if (
-				typeof response.data.errors != 'undefined' &&
-				typeof response.data.errors.term_exists != 'undefined'
+				typeof response.data.errors !== 'undefined' &&
+				typeof response.data.errors.term_exists !== 'undefined'
 			) {
 				termId = response.data.term.id;
 

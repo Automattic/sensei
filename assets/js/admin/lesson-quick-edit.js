@@ -36,8 +36,7 @@
 			//data is localized in sensei_quick_edit object
 
 			if (
-				'on' == senseiFieldValues.pass_required ||
-				'1' == senseiFieldValues.pass_required
+				[ 'on', '1', 1 ].includes( senseiFieldValues.pass_required )
 			) {
 				senseiFieldValues.pass_required = 1;
 			} else {
@@ -45,8 +44,7 @@
 			}
 
 			if (
-				'on' == senseiFieldValues.enable_quiz_reset ||
-				'1' == senseiFieldValues.enable_quiz_reset
+				[ 'on', '1', 1 ].includes( senseiFieldValues.enable_quiz_reset )
 			) {
 				senseiFieldValues.enable_quiz_reset = 1;
 			} else {
@@ -63,8 +61,9 @@
 			}
 
 			if (
-				'yes' == senseiFieldValues.random_question_order ||
-				'1' == senseiFieldValues.random_question_order
+				[ 'yes', '1', 1 ].includes(
+					senseiFieldValues.random_question_order
+				)
 			) {
 				senseiFieldValues.random_question_order = 1;
 			} else {
@@ -75,7 +74,7 @@
 				senseiFieldValues
 			) ) {
 				const elem = $( ':input[name="' + key + '"]', editRow );
-				if ( elem.prop( 'nodeName' ) == 'INPUT' ) {
+				if ( elem.prop( 'nodeName' ) === 'INPUT' ) {
 					elem.val( parseInt( value ) );
 				} else {
 					$(
