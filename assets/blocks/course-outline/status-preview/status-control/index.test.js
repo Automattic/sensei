@@ -64,9 +64,9 @@ describe( '<StatusControl />', () => {
 			/>
 		);
 		await userEvent.click( getByLabelText( 'Completed' ) );
-		expect( setStatusMock ).toBeCalledWith( Status.COMPLETED );
+		expect( setStatusMock ).toHaveBeenCalledWith( Status.COMPLETED );
 
 		await userEvent.click( getByLabelText( 'In Progress' ) );
-		expect( setStatusMock ).toBeCalledWith( Status.IN_PROGRESS );
+		expect( setStatusMock ).toHaveBeenCalledWith( Status.IN_PROGRESS );
 	} );
 } );

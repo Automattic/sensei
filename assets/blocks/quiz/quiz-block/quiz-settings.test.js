@@ -153,7 +153,7 @@ describe( '<QuizSettings />', () => {
 		);
 
 		fireEvent.click( queryByLabelText( 'Pass Required' ) );
-		expect( mockSetAttributes ).toBeCalledWith( {
+		expect( mockSetAttributes ).toHaveBeenCalledWith( {
 			options: {
 				...defaultOptions,
 				passRequired: false,
@@ -163,7 +163,7 @@ describe( '<QuizSettings />', () => {
 		fireEvent.change( queryAllByLabelText( 'Passing Grade (%)' )[ 0 ], {
 			target: { value: '50' },
 		} );
-		expect( mockSetAttributes ).toBeCalledWith( {
+		expect( mockSetAttributes ).toHaveBeenCalledWith( {
 			options: {
 				...defaultOptions,
 				quizPassmark: 50,
@@ -171,7 +171,7 @@ describe( '<QuizSettings />', () => {
 		} );
 
 		fireEvent.click( queryByLabelText( 'Auto Grade' ) );
-		expect( mockSetAttributes ).toBeCalledWith( {
+		expect( mockSetAttributes ).toHaveBeenCalledWith( {
 			options: {
 				...defaultOptions,
 				passRequired: false,
@@ -179,7 +179,7 @@ describe( '<QuizSettings />', () => {
 		} );
 
 		fireEvent.click( queryByLabelText( 'Allow Retakes' ) );
-		expect( mockSetAttributes ).toBeCalledWith( {
+		expect( mockSetAttributes ).toHaveBeenCalledWith( {
 			options: {
 				...defaultOptions,
 				allowRetakes: false,
@@ -187,7 +187,7 @@ describe( '<QuizSettings />', () => {
 		} );
 
 		fireEvent.click( queryByLabelText( 'Random Question Order' ) );
-		expect( mockSetAttributes ).toBeCalledWith( {
+		expect( mockSetAttributes ).toHaveBeenCalledWith( {
 			options: {
 				...defaultOptions,
 				randomQuestionOrder: false,
@@ -197,7 +197,7 @@ describe( '<QuizSettings />', () => {
 		fireEvent.change( queryByLabelText( 'Number of Questions' ), {
 			target: { value: '10' },
 		} );
-		expect( mockSetAttributes ).toBeCalledWith( {
+		expect( mockSetAttributes ).toHaveBeenCalledWith( {
 			options: {
 				...defaultOptions,
 				showQuestions: 10,
@@ -214,7 +214,7 @@ describe( '<QuizSettings />', () => {
 			getAllByRole( 'button', { name: 'Quiz settings' } )[ 0 ]
 		);
 
-		expect( mockOpenGeneralSidebar ).toBeCalledTimes( 1 );
+		expect( mockOpenGeneralSidebar ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'Should hide the number of questions when the random question order is disabled', () => {

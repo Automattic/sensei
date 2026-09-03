@@ -44,7 +44,7 @@ describe( '<LimitedTextControl />', () => {
 			target: { value: 'SOME_OTHER_VALUE' },
 		} );
 
-		expect( onChangeMock ).toBeCalledWith( 'SOME_OTHER_VALUE' );
+		expect( onChangeMock ).toHaveBeenCalledWith( 'SOME_OTHER_VALUE' );
 	} );
 
 	it( 'Should display the correct character count', () => {
@@ -129,7 +129,7 @@ describe( '<LimitedTextControl multiline={ true }/>', () => {
 			target: { value: 'SOME_OTHER_VALUE' },
 		} );
 
-		expect( onChangeMock ).toBeCalledWith( 'SOME_OTHER_VALUE' );
+		expect( onChangeMock ).toHaveBeenCalledWith( 'SOME_OTHER_VALUE' );
 	} );
 
 	it( 'Should display the correct character count', () => {

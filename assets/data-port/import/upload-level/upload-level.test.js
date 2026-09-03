@@ -96,6 +96,6 @@ describe( '<UploadLevels />', () => {
 
 		fireEvent.click( deleteButtons[ 0 ] );
 
-		expect( deleteLevelFile ).toBeCalledTimes( 1 );
+		expect( deleteLevelFile ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
