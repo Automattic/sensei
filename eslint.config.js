@@ -22,7 +22,7 @@ module.exports = [
 				ajaxurl: 'readonly',
 				ajaxObject: 'readonly',
 				sensei_log_event: 'readonly',
-				sensei_event_logging: 'readonly',
+				senseiEventLogging: 'readonly',
 			},
 		},
 		settings: {
@@ -87,7 +87,7 @@ module.exports = [
 				'error',
 				{
 					properties: 'never',
-					allow: [ 'sensei_log_event', 'sensei_event_logging' ],
+					allow: [ 'sensei_log_event' ],
 				},
 			],
 		},

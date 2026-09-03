@@ -450,7 +450,7 @@ class Sensei_Admin {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
-		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
+		wp_localize_script( 'sensei-event-logging', 'senseiEventLogging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 	}
 
 	/**

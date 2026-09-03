@@ -51,7 +51,7 @@ const adminTracking = [
 window.sensei_log_event = function ( eventName, properties ) {
 	const actionName = 'sensei_log_event';
 
-	if ( ! sensei_event_logging.enabled ) {
+	if ( ! senseiEventLogging.enabled ) {
 		return;
 	}
 
