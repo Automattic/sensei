@@ -57,7 +57,7 @@
     "whatwg-fetch": "3.6.20"
   },
   "devDependencies": {
-    "@es-joy/jsdoccomment": "0.95.0",
+    "@es-joy/jsdoccomment": "0.96.0",
     "@faker-js/faker": "8.0.2",
     "@lifeomic/attempt": "3.1.0",
     "@playwright/test": "1.62.1",
@@ -65,7 +65,7 @@
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.3.2",
-    "@testing-library/user-event": "14.6.4",
+    "@testing-library/user-event": "14.6.6",
     "@types/lodash": "4.17.25",
     "@wordpress/babel-preset-default": "8.11.0",
     "@wordpress/dependency-extraction-webpack-plugin": "3.5.0",
