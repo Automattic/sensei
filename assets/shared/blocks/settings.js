@@ -61,11 +61,12 @@ export const ColorSettings = ( { colorSettings, props } ) => {
 		onChange: ( newColor ) => {
 			props[ `set${ upperFirst( color ) }` ]( newColor );
 
-			if ( colorSettings[ color ].onChange )
+			if ( colorSettings[ color ].onChange ) {
 				colorSettings[ color ].onChange( {
 					...props,
 					colorValue: newColor,
 				} );
+			}
 		},
 	} ) );
 
@@ -123,7 +124,9 @@ export const withDefaultBlockStyle =
 		}
 
 		const style = className.match( /is-style-(\w+)/ );
-		if ( style ) extraProps.blockStyle = style[ 1 ];
+		if ( style ) {
+			extraProps.blockStyle = style[ 1 ];
+		}
 
 		return <Component { ...props } { ...extraProps } />;
 	};

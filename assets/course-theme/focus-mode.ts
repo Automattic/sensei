@@ -21,13 +21,15 @@ const initFocusMode = () => {
  */
 const restoreFocusModeState = () => {
 	const savedState = window.sessionStorage.getItem( FOCUS_MODE_CLASS );
-	if ( ! savedState ) return;
+	if ( ! savedState ) {
+		return;
+	}
 	try {
 		const wasActive: unknown = JSON.parse( savedState );
 		if ( 'boolean' === typeof wasActive ) {
 			toggleFocusMode( wasActive, true );
 		}
-	} catch ( e ) {}
+	} catch {}
 };
 
 /**

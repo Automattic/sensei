@@ -147,7 +147,9 @@ export function registerStructureStore( {
 			yield actions.setEditorStructure( editorStructure );
 
 			yield clearError?.();
-			if ( ! editorStructure ) return;
+			if ( ! editorStructure ) {
+				return;
+			}
 
 			if ( select( storeName ).hasUnsavedEditorChanges() ) {
 				yield* actions.saveStructure();

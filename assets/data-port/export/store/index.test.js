@@ -29,12 +29,14 @@ let registry, store;
 
 async function mockActiveJob( job ) {
 	apiFetch.mockImplementation( () => {
-		if ( ! job )
+		if ( ! job ) {
 			throw {
 				code: 'sensei_data_port_job_not_found',
 				message: 'Not found',
 			};
-		else return job;
+		} else {
+			return job;
+		}
 	} );
 	registry.select( EXPORT_STORE ).getJob();
 	apiFetch.mockClear();

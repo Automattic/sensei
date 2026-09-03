@@ -158,7 +158,7 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	} );
 
-	jQuery( '.learner-async-action' ).click( function ( event ) {
+	jQuery( '.learner-async-action' ).click( function () {
 		var dataToPost = '';
 
 		var user_id = jQuery( this ).attr( 'data-user-id' );
@@ -171,10 +171,10 @@ jQuery( document ).ready( function ( $ ) {
 
 		var actions = {
 			remove_progress: {
-				lesson:
-					window.woo_learners_general_data.remove_from_lesson_confirm,
-				course:
-					window.woo_learners_general_data.remove_progress_confirm,
+				lesson: window.woo_learners_general_data
+					.remove_from_lesson_confirm,
+				course: window.woo_learners_general_data
+					.remove_progress_confirm,
 				action: 'remove_user_from_post',
 			},
 			reset_progress: {
