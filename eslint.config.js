@@ -71,6 +71,10 @@ module.exports = [
 				'error',
 				{ definedTypes: [ 'JSX' ] },
 			],
+			'jsdoc/check-tag-names': [
+				'error',
+				{ definedTags: [ 'hook', 'usage' ] },
+			],
 			'jsdoc/require-yields': 'off',
 			'jsdoc/tag-lines': 'off',
 			'react-hooks/exhaustive-deps': 'warn',
@@ -85,10 +89,6 @@ module.exports = [
 			'no-shadow': 'off',
 			'@wordpress/i18n-text-domain': 'off',
 			'@wordpress/no-unused-vars-before-return': 'off',
-			'jsdoc/check-tag-names': 'off',
-			'jsdoc/require-param-type': 'off',
-			'jsdoc/require-returns-type': 'off',
-			'jsdoc/require-returns-check': 'off',
 		},
 	},
 ];

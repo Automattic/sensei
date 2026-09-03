@@ -6,7 +6,7 @@ jQuery( document ).ready( function ( $ ) {
 	/**
 	 * exists checks if selector exists
 	 * @since  1.6.0
-	 * @return boolean
+	 * @return {boolean} Whether the selector matches any elements.
 	 */
 	jQuery.fn.exists = function () {
 		return this.length > 0;

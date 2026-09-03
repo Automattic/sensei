@@ -11,7 +11,7 @@ jQuery( document ).ready( function ( $ ) {
 	/**
 	 * exists checks if selector exists
 	 * @since  1.2.0
-	 * @return boolean
+	 * @return {boolean} Whether the selector matches any elements.
 	 */
 	jQuery.fn.exists = function () {
 		return this.length > 0;
@@ -19,7 +19,6 @@ jQuery( document ).ready( function ( $ ) {
 
 	/**
 	 * Calculates the total grade based on the questions already graded
-	 * @return void
 	 */
 	jQuery.fn.calculateTotalGrade = function () {
 		let question_id;
@@ -93,7 +92,6 @@ jQuery( document ).ready( function ( $ ) {
 
 	/**
 	 * Automatically grades questions where possible
-	 * @return void
 	 */
 	$.fn.autoGrade = function () {
 		$( '.question_box' ).each( function () {

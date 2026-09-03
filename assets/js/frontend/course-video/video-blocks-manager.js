@@ -151,7 +151,7 @@ const disableCompleteLessonButton = () => {
  * and from bubbling it up the DOM tree.
  *
  * @param {MouseEvent} event The click event.
- * @returns {false} Returns false always. This prevents event bubbling.
+ * @return {false} Returns false always. This prevents event bubbling.
  */
 const preventClick = ( event ) => {
 	event.preventDefault();
