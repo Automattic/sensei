@@ -127,12 +127,16 @@ class Sensei_Core_Modules {
 	 * @since 4.9.0
 	 * @access private
 	 *
-	 * @param int     $post_ID      Post ID.
-	 * @param WP_Post $post_after   Post object following the update.
-	 * @param WP_Post $post_before  Post object before the update.
+	 * @param int          $post_ID     Post ID.
+	 * @param WP_Post|null $post_after  Post object following the update.
+	 * @param WP_Post|null $post_before Post object before the update.
 	 */
-	public function update_module_teacher_id_meta_on_post_teacher_update( int $post_ID, WP_Post $post_after, WP_Post $post_before ) {
-		if ( 'course' !== get_post( $post_ID )->post_type ) {
+	public function update_module_teacher_id_meta_on_post_teacher_update( int $post_ID, ?WP_Post $post_after = null, ?WP_Post $post_before = null ) {
+		if ( ! $post_after instanceof WP_Post || ! $post_before instanceof WP_Post ) {
+			return;
+		}
+
+		if ( 'course' !== $post_after->post_type ) {
 			return;
 		}
 
