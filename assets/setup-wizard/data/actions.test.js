@@ -180,8 +180,8 @@ describe( 'Setup wizard actions', () => {
 		// Continue to callback.
 		gen.next();
 
-		expect( onSuccessMock ).toBeCalled();
-		expect( onErrorMock ).not.toBeCalled();
+		expect( onSuccessMock ).toHaveBeenCalled();
+		expect( onErrorMock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'Should catch error on the submit step action', () => {
@@ -211,8 +211,8 @@ describe( 'Setup wizard actions', () => {
 		// Continue to callback.
 		gen.next();
 
-		expect( onSuccessMock ).not.toBeCalled();
-		expect( onErrorMock ).toBeCalled();
+		expect( onSuccessMock ).not.toHaveBeenCalled();
+		expect( onErrorMock ).toHaveBeenCalled();
 	} );
 
 	it( 'Should return the set data action', () => {

@@ -171,7 +171,7 @@ export const StudentModal = ( {
 				{ signal: getSignal() }
 			);
 			onClose( true );
-		} catch ( e ) {
+		} catch {
 			if ( ! getSignal().aborted ) {
 				setError( true );
 				setIsSending( false );

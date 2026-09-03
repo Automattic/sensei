@@ -42,7 +42,7 @@ describe( '<CourseDetailsStep />', () => {
 
 		expect( queryByLabelText( 'Course Title' ) ).toBeTruthy();
 		expect( queryByLabelText( 'Course Description' ) ).toBeTruthy();
-		expect( editPostMock ).toBeCalledTimes( 0 );
+		expect( editPostMock ).toHaveBeenCalledTimes( 0 );
 	} );
 
 	it( 'Updates course title in data and as post title when changed.', () => {
@@ -61,8 +61,8 @@ describe( '<CourseDetailsStep />', () => {
 			target: { value: NEW_TITLE },
 		} );
 
-		expect( editPostMock ).toBeCalledWith( { title: NEW_TITLE } );
-		expect( setDataMock ).toBeCalledWith( { title: NEW_TITLE } );
+		expect( editPostMock ).toHaveBeenCalledWith( { title: NEW_TITLE } );
+		expect( setDataMock ).toHaveBeenCalledWith( { title: NEW_TITLE } );
 	} );
 
 	it( 'Updates course description in data and as post excerpt when changed.', () => {
@@ -81,8 +81,10 @@ describe( '<CourseDetailsStep />', () => {
 			target: { value: NEW_DESCRIPTION },
 		} );
 
-		expect( editPostMock ).toBeCalledWith( { excerpt: NEW_DESCRIPTION } );
-		expect( setDataMock ).toBeCalledWith( {
+		expect( editPostMock ).toHaveBeenCalledWith( {
+			excerpt: NEW_DESCRIPTION,
+		} );
+		expect( setDataMock ).toHaveBeenCalledWith( {
 			description: NEW_DESCRIPTION,
 		} );
 	} );
@@ -103,7 +105,7 @@ describe( '<CourseDetailsStep.Actions />', () => {
 		render(
 			<CourseDetailsStep.Actions goToNextStep={ goToNextStepMock } />
 		);
-		expect( goToNextStepMock ).toBeCalledTimes( 0 );
+		expect( goToNextStepMock ).toHaveBeenCalledTimes( 0 );
 	} );
 
 	it( 'Calls `goToNextStep` on click.', () => {
@@ -113,6 +115,6 @@ describe( '<CourseDetailsStep.Actions />', () => {
 			<CourseDetailsStep.Actions goToNextStep={ goToNextStepMock } />
 		);
 		fireEvent.click( queryByRole( 'button' ) );
-		expect( goToNextStepMock ).toBeCalledTimes( 1 );
+		expect( goToNextStepMock ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

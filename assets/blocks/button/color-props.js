@@ -49,9 +49,15 @@ export const getColorAndStyleProps = ( { attributes, colors } ) => {
 		backgroundColor
 	);
 
-	if ( ! style.color ) style.color = {};
-	if ( customBackgroundColor ) style.color.background = customBackgroundColor;
-	if ( customTextColor ) style.color.text = customTextColor;
+	if ( ! style.color ) {
+		style.color = {};
+	}
+	if ( customBackgroundColor ) {
+		style.color.background = customBackgroundColor;
+	}
+	if ( customTextColor ) {
+		style.color.text = customTextColor;
+	}
 
 	const borderColorClass = getColorClassName( 'border-color', borderColor );
 	const gradientClass = getGradientClass( gradient );

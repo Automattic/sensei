@@ -46,6 +46,6 @@ describe( '<InputControl />', () => {
 			target: { value: 'Ho!' },
 		} );
 
-		expect( onChangeMock ).toBeCalledWith( 'Ho!' );
+		expect( onChangeMock ).toHaveBeenCalledWith( 'Ho!' );
 	} );
 } );

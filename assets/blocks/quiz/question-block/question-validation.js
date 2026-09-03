@@ -24,7 +24,9 @@ export const validateQuestionBlock = ( attributes ) => {
 	const hasTitle = title?.length;
 	const isDraft = ! hasTitle && ! answer && ! id;
 
-	if ( isDraft ) return {};
+	if ( isDraft ) {
+		return {};
+	}
 
 	return {
 		noTitle: ! hasTitle,

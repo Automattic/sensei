@@ -36,13 +36,13 @@ describe( 'useSelectWithDebounce', () => {
 		const deps2 = [ 2 ];
 
 		const { rerender } = render( <TestComponent deps={ deps1 } /> );
-		expect( mockFn ).toBeCalledWith( mapSelect, deps1 );
+		expect( mockFn ).toHaveBeenCalledWith( mapSelect, deps1 );
 
 		rerender( <TestComponent deps={ deps2 } /> );
-		expect( mockFn ).toBeCalledWith( mapSelect, deps1 );
+		expect( mockFn ).toHaveBeenCalledWith( mapSelect, deps1 );
 
 		// TODO: Complete test running debounce to make sure it was called after the time.
 		// jest.runAllTimers();
-		// expect( mockFn ).toBeCalledWith( mapSelect, deps2 );
+		// expect( mockFn ).toHaveBeenCalledWith( mapSelect, deps2 );
 	} );
 } );
