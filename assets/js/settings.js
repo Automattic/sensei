@@ -84,7 +84,7 @@ jQuery( document ).ready( function ( $ ) {
 	/**
 	 * Get section id from the current URL.
 	 *
-	 * @returns {string}
+	 * @return {string} The current section id.
 	 */
 	function getCurrentSectionId() {
 		return getSectionIdFromUrl( window.location.href );
@@ -94,7 +94,7 @@ jQuery( document ).ready( function ( $ ) {
 	 * Get section id from a URL.
 	 *
 	 * @param {string} url
-	 * @returns {string}
+	 * @return {string} The section id parsed from the URL.
 	 */
 	function getSectionIdFromUrl( url ) {
 		const urlParams = new URLSearchParams( url );
@@ -110,7 +110,7 @@ jQuery( document ).ready( function ( $ ) {
 	 * Check if a section exists.
 	 *
 	 * @param {string} sectionId
-	 * @returns {boolean}
+	 * @return {boolean} Whether a section with that id exists.
 	 */
 	function sectionExists( sectionId ) {
 		return $( '#' + sectionId ).length > 0;
@@ -185,8 +185,8 @@ jQuery( document ).ready( function ( $ ) {
 
 	jQuery( document ).mousedown( function () {
 		jQuery( '.colorpicker' ).each( function () {
-			var display = jQuery( this ).css( 'display' );
-			if ( display == 'block' ) {
+			const display = jQuery( this ).css( 'display' );
+			if ( display === 'block' ) {
 				jQuery( this ).fadeOut();
 			}
 		} );

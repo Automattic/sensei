@@ -1,18 +1,17 @@
 jQuery( document ).ready( function () {
 	jQuery( 'select.range-input' ).each( function () {
 		// Get the range field's ID value.
-		var idValue = jQuery( this ).attr( 'id' );
+		const idValue = jQuery( this ).attr( 'id' );
 
 		if ( idValue ) {
-			var select = jQuery( this ); // The select element being targeted.
-			var selectedValue = select.val(); // The currently selected value.
-			var numberOfOptions = jQuery( this ).find( 'option' ).length; // The number of options in the current select element.
-			var sliderValue = jQuery( '<div></div>' ).addClass(
-				'slider-value'
-			); // A jQuery object to create the slider value display. To be filled below.
+			const select = jQuery( this ); // The select element being targeted.
+			const selectedValue = select.val(); // The currently selected value.
+			const numberOfOptions = jQuery( this ).find( 'option' ).length; // The number of options in the current select element.
+			const sliderValue =
+				jQuery( '<div></div>' ).addClass( 'slider-value' ); // A jQuery object to create the slider value display. To be filled below.
 
 			// Initialize the slider.
-			var slider = jQuery( '<div></div>' )
+			const slider = jQuery( '<div></div>' )
 				.addClass( 'slider' )
 				.insertAfter( select )
 				.slider( {
@@ -20,7 +19,7 @@ jQuery( document ).ready( function () {
 					max: parseInt( numberOfOptions ),
 					range: 'min',
 					value: select[ 0 ].selectedIndex + 1,
-					slide: function ( event, ui ) {
+					slide( event, ui ) {
 						select[ 0 ].selectedIndex = ui.value - 1;
 						jQuery( this )
 							.parents( 'td' )

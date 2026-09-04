@@ -6,11 +6,8 @@ import { doAction, applyFilters } from '@wordpress/hooks';
 /**
  * The Course Video Progression settings.
  */
-const {
-	courseVideoRequired,
-	courseVideoAutoComplete,
-	courseVideoAutoPause,
-} = window.sensei.courseVideoSettings;
+const { courseVideoRequired, courseVideoAutoComplete, courseVideoAutoPause } =
+	window.sensei.courseVideoSettings;
 
 /**
  * Map of videos.
@@ -154,7 +151,7 @@ const disableCompleteLessonButton = () => {
  * and from bubbling it up the DOM tree.
  *
  * @param {MouseEvent} event The click event.
- * @returns {false} Returns false always. This prevents event bubbling.
+ * @return {false} Returns false always. This prevents event bubbling.
  */
 const preventClick = ( event ) => {
 	event.preventDefault();

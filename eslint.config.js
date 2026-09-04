@@ -71,6 +71,7 @@ module.exports = [
 				'error',
 				{ definedTypes: [ 'JSX' ] },
 			],
+			'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'hook' ] } ],
 			'jsdoc/require-yields': 'off',
 			'jsdoc/tag-lines': 'off',
 			'react-hooks/exhaustive-deps': 'warn',
@@ -79,23 +80,17 @@ module.exports = [
 	{
 		files: [ 'assets/js/**' ],
 		rules: {
-			camelcase: 'off',
-			eqeqeq: 'off',
-			'no-alert': 'off',
-			'no-else-return': 'off',
-			'no-lonely-if': 'off',
-			'no-shadow': 'off',
-			'no-useless-return': 'off',
-			'no-var': 'off',
-			'object-shorthand': 'off',
-			'prefer-const': 'off',
-			'prettier/prettier': 'off',
-			'@wordpress/i18n-text-domain': 'off',
-			'@wordpress/no-unused-vars-before-return': 'off',
-			'jsdoc/check-tag-names': 'off',
-			'jsdoc/require-param-type': 'off',
-			'jsdoc/require-returns-type': 'off',
-			'jsdoc/require-returns-check': 'off',
+			camelcase: [
+				'error',
+				{
+					properties: 'never',
+					allow: [
+						'ajax_object',
+						'sensei_log_event',
+						'sensei_event_logging',
+					],
+				},
+			],
 		},
 	},
 ];

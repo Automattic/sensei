@@ -14,9 +14,10 @@ domReady( () => {
 			fileInput.addEventListener( 'change', ( event ) => {
 				const input = event.target;
 				const file = input.files?.[ 0 ];
-				const fileUploadName = input.parentElement.parentElement.querySelector(
-					'.sensei-lms-question-block__file-upload-name'
-				);
+				const fileUploadName =
+					input.parentElement.parentElement.querySelector(
+						'.sensei-lms-question-block__file-upload-name'
+					);
 
 				if ( fileUploadName ) {
 					fileUploadName.innerText = file && file.name;

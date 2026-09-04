@@ -11,7 +11,7 @@ jQuery( document ).ready( function ( $ ) {
 	/**
 	 * exists checks if selector exists
 	 * @since  1.2.0
-	 * @return boolean
+	 * @return {boolean} Whether the selector matches any elements.
 	 */
 	jQuery.fn.exists = function () {
 		return this.length > 0;
@@ -19,47 +19,46 @@ jQuery( document ).ready( function ( $ ) {
 
 	/**
 	 * Calculates the total grade based on the questions already graded
-	 * @return void
 	 */
 	jQuery.fn.calculateTotalGrade = function () {
-		var question_id;
-		var question_grade;
-		var total_grade = 0;
-		var total_graded_questions = 0;
+		let questionId;
+		let questionGrade;
+		let totalGrade = 0;
+		let totalGradedQuestions = 0;
 		jQuery( '.question_box.user_right' ).each( function () {
-			question_id = jQuery( this ).find( '.question_id' ).val();
-			question_grade = parseInt(
+			questionId = jQuery( this ).find( '.question_id' ).val();
+			questionGrade = parseInt(
 				jQuery( this )
-					.find( '#question_' + question_id + '_grade' )
+					.find( '#question_' + questionId + '_grade' )
 					.val()
 			);
-			total_grade += question_grade;
-			total_graded_questions++;
+			totalGrade += questionGrade;
+			totalGradedQuestions++;
 		} );
 		jQuery( '.question_box.user_wrong' ).each( function () {
-			total_graded_questions++;
+			totalGradedQuestions++;
 		} );
 
-		jQuery( '#total_graded_questions' ).val( total_graded_questions );
+		jQuery( '#total_graded_questions' ).val( totalGradedQuestions );
 
-		var total_questions = parseInt( jQuery( '#total_questions' ).val() );
-		var quiz_grade_total = parseInt( jQuery( '#quiz_grade_total' ).val() );
-		var percent = '0';
+		const totalQuestions = parseInt( jQuery( '#total_questions' ).val() );
+		const quizGradeTotal = parseInt( jQuery( '#quiz_grade_total' ).val() );
+		let percent = '0';
 
-		if ( 0 < quiz_grade_total ) {
+		if ( 0 < quizGradeTotal ) {
 			percent = parseFloat(
-				( total_grade * 100 ) / quiz_grade_total
+				( totalGrade * 100 ) / quizGradeTotal
 			).toFixed( 2 );
 		}
 
 		percent = percent.replace( '.00', '' );
 
-		jQuery( '#total_grade' ).val( total_grade );
-		jQuery( '.total_grade_total' ).html( total_grade );
+		jQuery( '#total_grade' ).val( totalGrade );
+		jQuery( '.total_grade_total' ).html( totalGrade );
 		jQuery( '.total_grade_percent' ).html( percent );
-		jQuery( '.quiz_grade_total' ).html( quiz_grade_total );
+		jQuery( '.quiz_grade_total' ).html( quizGradeTotal );
 
-		if ( total_questions == total_graded_questions ) {
+		if ( totalQuestions === totalGradedQuestions ) {
 			jQuery( '#all_questions_graded' ).val( 'yes' );
 			jQuery( '.grade-button' ).val( __( 'Grade', 'sensei-lms' ) );
 		} else {
@@ -70,33 +69,32 @@ jQuery( document ).ready( function ( $ ) {
 
 	jQuery.fn.updateFeedback = function () {
 		jQuery( '.question_box' ).each( function () {
-			var question_id = jQuery( this ).find( '.question_id' ).val();
-			var question_grade = parseInt(
+			const questionId = jQuery( this ).find( '.question_id' ).val();
+			const questionGrade = parseInt(
 				jQuery( this )
-					.find( '#question_' + question_id + '_grade' )
+					.find( '#question_' + questionId + '_grade' )
 					.val()
 			);
 
-			var correctFeedback = jQuery( this ).find(
+			const correctFeedback = jQuery( this ).find(
 				'.answer-feedback-correct'
 			);
-			var incorrectFeedback = jQuery( this ).find(
+			const incorrectFeedback = jQuery( this ).find(
 				'.answer-feedback-incorrect'
 			);
 
-			correctFeedback.toggle( 0 < question_grade );
-			incorrectFeedback.toggle( ! question_grade );
+			correctFeedback.toggle( 0 < questionGrade );
+			incorrectFeedback.toggle( ! questionGrade );
 		} );
 	};
 
 	/**
 	 * Automatically grades questions where possible
-	 * @return void
 	 */
 	$.fn.autoGrade = function () {
 		$( '.question_box' ).each( function () {
-			var $this = $( this );
-			var all_correct = false;
+			const $this = $( this );
+			let allCorrect = false;
 
 			// Only grade questions that haven't already been graded.
 			if (
@@ -104,21 +102,21 @@ jQuery( document ).ready( function ( $ ) {
 				! $this.hasClass( 'user_wrong' ) &&
 				! $this.hasClass( 'zero-graded' )
 			) {
-				var user_answer, correct_answer;
+				let userAnswer, correctAnswer;
 
 				$this.addClass( 'ungraded' );
 
 				if ( $this.hasClass( 'gap-fill' ) ) {
-					user_answer = $this
+					userAnswer = $this
 						.find( '.user-answer' )
 						.contents()
 						.find( '.highlight' )
 						.html();
-					correct_answer = $this
+					correctAnswer = $this
 						.find( '.correct-answer .highlight' )
 						.html();
 				} else {
-					user_answer = $this
+					userAnswer = $this
 						.find( '.user-answer' )
 						.contents()
 						.find( 'body' )
@@ -128,42 +126,40 @@ jQuery( document ).ready( function ( $ ) {
 						.toArray()
 						.join( '<br>' );
 
-					correct_answer = $this.find( '.correct-answer' ).html();
+					correctAnswer = $this.find( '.correct-answer' ).html();
 				}
 
-				user_answer = user_answer.trim();
-				correct_answer = correct_answer.trim();
+				userAnswer = userAnswer.trim();
+				correctAnswer = correctAnswer.trim();
 
 				// Auto-grading
 				if ( $this.hasClass( 'auto-grade' ) ) {
 					// Split answers to multiple choice questions into an array since there may be
 					// multiple correct answers.
 					if ( $this.hasClass( 'multiple-choice' ) ) {
-						var user_answers = user_answer.split( '<br>' );
-						var correct_answers = correct_answer.split( '<br>' );
+						const userAnswers = userAnswer.split( '<br>' );
+						const correctAnswers = correctAnswer.split( '<br>' );
 
-						all_correct = true;
+						allCorrect = true;
 
-						user_answers.forEach( function ( user_answer ) {
-							if (
-								-1 === $.inArray( user_answer, correct_answers )
-							) {
-								all_correct = false;
+						userAnswers.forEach( function ( answer ) {
+							if ( -1 === $.inArray( answer, correctAnswers ) ) {
+								allCorrect = false;
 							}
 						} );
 
 						if (
-							user_answers.length !==
-							correct_answers.length - 1
+							userAnswers.length !==
+							correctAnswers.length - 1
 						) {
-							all_correct = false;
+							allCorrect = false;
 						}
 					} else {
-						user_answer = user_answer.split( '<br>' )[ 0 ];
-						correct_answer = correct_answer.split( '<br>' )[ 0 ];
+						userAnswer = userAnswer.split( '<br>' )[ 0 ];
+						correctAnswer = correctAnswer.split( '<br>' )[ 0 ];
 					}
 
-					if ( all_correct || user_answer === correct_answer ) {
+					if ( allCorrect || userAnswer === correctAnswer ) {
 						// Right answer
 						$this
 							.addClass( 'user_right' )
@@ -245,11 +241,11 @@ jQuery( document ).ready( function ( $ ) {
 	};
 
 	jQuery.fn.getQueryVariable = function ( variable ) {
-		var query = window.location.search.substring( 1 );
-		var vars = query.split( '&' );
-		for ( var i = 0; i < vars.length; i++ ) {
-			var pair = vars[ i ].split( '=' );
-			if ( pair[ 0 ] == variable ) {
+		const query = window.location.search.substring( 1 );
+		const vars = query.split( '&' );
+		for ( let i = 0; i < vars.length; i++ ) {
+			const pair = vars[ i ].split( '=' );
+			if ( pair[ 0 ] === variable ) {
 				return pair[ 1 ];
 			}
 		}
@@ -268,7 +264,7 @@ jQuery( document ).ready( function ( $ ) {
 	 */
 	jQuery( '#grading-course-options' ).on( 'change', '', function () {
 		// Populate the Lessons select box
-		var courseId = jQuery( this ).val();
+		const courseId = jQuery( this ).val();
 		jQuery.get(
 			ajaxurl,
 			{
@@ -277,7 +273,7 @@ jQuery( document ).ready( function ( $ ) {
 			},
 			function ( response ) {
 				// Check for a response
-				if ( '' != response ) {
+				if ( '' !== response ) {
 					// Empty the results div's
 					jQuery( '#learners-to-grade' ).empty();
 					jQuery( '#learners-graded' ).empty();
@@ -307,9 +303,9 @@ jQuery( document ).ready( function ( $ ) {
 	 */
 	jQuery( '#grading-lesson-options' ).on( 'change', '', function () {
 		// Populate the Lessons select box
-		var lessonId = jQuery( this ).val();
-		var courseId = jQuery( '#grading-course-options' ).val();
-		var gradingView = jQuery.fn.getQueryVariable( 'view' );
+		const lessonId = jQuery( this ).val();
+		const courseId = jQuery( '#grading-course-options' ).val();
+		const gradingView = jQuery.fn.getQueryVariable( 'view' );
 
 		// Perform the AJAX call to get the select box.
 		jQuery.get(
@@ -322,7 +318,7 @@ jQuery( document ).ready( function ( $ ) {
 			},
 			function ( response ) {
 				// Check for a response
-				if ( '' != response ) {
+				if ( '' !== response ) {
 					window.location = response;
 				} else {
 					// Failed
@@ -343,7 +339,7 @@ jQuery( document ).ready( function ( $ ) {
 	 * @access public
 	 */
 	jQuery( '.grading-mark' ).on( 'change', 'input', function () {
-		if ( this.value == 'right' ) {
+		if ( this.value === 'right' ) {
 			jQuery( '#' + this.name + '_box' )
 				.addClass( 'user_right' )
 				.removeClass( 'user_wrong ungraded' );
@@ -373,42 +369,42 @@ jQuery( document ).ready( function ( $ ) {
 	 * @access public
 	 */
 	jQuery( '.question-grade' ).on( 'change', '', function () {
-		var grade = parseInt( jQuery( this ).val() );
-		var question_label = this.id.replace( '_grade', '' );
+		const grade = parseInt( jQuery( this ).val() );
+		const questionLabel = this.id.replace( '_grade', '' );
 		if ( grade > 0 ) {
-			jQuery( '#' + question_label + '_box' )
+			jQuery( '#' + questionLabel + '_box' )
 				.addClass( 'user_right' )
 				.removeClass( 'user_wrong' );
 			jQuery(
 				'#' +
-					question_label +
+					questionLabel +
 					'_box .grading-mark input.' +
-					question_label +
+					questionLabel +
 					'_right_option'
 			).attr( 'checked', 'checked' );
 			jQuery(
 				'#' +
-					question_label +
+					questionLabel +
 					'_box .grading-mark input.' +
-					question_label +
+					questionLabel +
 					'_wrong_option'
 			).attr( 'checked', false );
 		} else {
-			jQuery( '#' + question_label + '_box' )
+			jQuery( '#' + questionLabel + '_box' )
 				.addClass( 'user_wrong' )
 				.removeClass( 'user_right' );
 			jQuery(
 				'#' +
-					question_label +
+					questionLabel +
 					'_box .grading-mark input.' +
-					question_label +
+					questionLabel +
 					'_wrong_option'
 			).attr( 'checked', 'checked' );
 			jQuery(
 				'#' +
-					question_label +
+					questionLabel +
 					'_box .grading-mark input.' +
-					question_label +
+					questionLabel +
 					'_right_option'
 			).attr( 'checked', false );
 		}
