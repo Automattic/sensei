@@ -24,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Course_Progress {
+	use Progress_Query_Helper;
 	use WPML_API;
 
 	/**
@@ -41,6 +42,8 @@ class Course_Progress {
 		add_filter( 'sensei_course_start_course_id', array( $this, 'translate_course_id' ) );
 		add_filter( 'sensei_learner_get_course_ids_by_progress_status_course_ids', array( $this, 'translate_course_ids' ) );
 		add_filter( 'sensei_learner_get_enrolled_courses_query_args_term_id', array( $this, 'translate_term_id' ) );
+		add_filter( 'sensei_check_for_activity_args', array( $this, 'translate_course_query_args' ) );
+		add_filter( 'sensei_learners_query_args', array( $this, 'translate_learners_query_args' ) );
 
 		add_action( 'sensei_manual_enrolment_learner_enrolled', array( $this, 'enrol_learner' ), 10, 2 );
 		add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'withdraw_learner' ), 10, 2 );
@@ -100,6 +103,50 @@ class Course_Progress {
 
 		add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'withdraw_learner' ), 10, 2 );
 		add_filter( 'sensei_course_is_user_enrolled_course_id', array( $this, 'translate_course_id' ) );
+	}
+
+	/**
+	 * Translate the course IDs of a progress query to the original language.
+	 *
+	 * A course and its translations share one progress, stored against the
+	 * original language's ID. The admin screens query it with the ID of the
+	 * course they are showing, which in a secondary language is a translation,
+	 * so the query would find nothing. Translating the ID first makes the same
+	 * query hit the stored progress whatever the admin language is.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param mixed $args Query arguments.
+	 * @return mixed
+	 */
+	public function translate_course_query_args( $args ) {
+		return $this->translate_query_post_ids( $args, 'course', array( $this, 'translate_course_id' ) );
+	}
+
+	/**
+	 * Translate the course filter of a learners query to the original language.
+	 *
+	 * The Students screen filters by the course it is showing, which in a
+	 * secondary language is a translation, while the progress it lists is
+	 * stored against the original language's ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param mixed $args Query arguments.
+	 * @return mixed
+	 */
+	public function translate_learners_query_args( $args ) {
+		if ( ! is_array( $args ) || empty( $args['filter_by_course_id'] ) || ! $this->get_current_language() ) {
+			return $args;
+		}
+
+		$args['filter_by_course_id'] = $this->translate_course_id( $args['filter_by_course_id'] );
+
+		return $args;
 	}
 
 	/**
