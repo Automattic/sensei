@@ -54,7 +54,7 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 
 		\Sensei_Utils::update_course_status( $user_id, $original_course_id, 'complete' );
 
-		$this->stub_translations( array( $translated_course_id => $original_course_id ) );
+		$this->simulate_wpml_translations( array( $translated_course_id => $original_course_id ) );
 		( new Course_Progress() )->init();
 
 		/* Act. */
@@ -72,7 +72,7 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 
 		\Sensei_Utils::update_course_status( $user_id, $original_course_id, 'complete' );
 
-		$this->stub_translations( array( $translated_course_id => $original_course_id ) );
+		$this->simulate_wpml_translations( array( $translated_course_id => $original_course_id ) );
 		( new Course_Progress() )->init();
 
 		/* Act. */
@@ -91,7 +91,7 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id = $this->factory->lesson->create();
 
-		$this->stub_translations( array( $lesson_id => 999 ) );
+		$this->simulate_wpml_translations( array( $lesson_id => 999 ) );
 
 		$course_progress = new Course_Progress();
 
@@ -145,7 +145,7 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 	 *
 	 * @param array $map Translated ID => original ID.
 	 */
-	private function stub_translations( array $map ) {
+	private function simulate_wpml_translations( array $map ) {
 		add_filter(
 			'wpml_current_language',
 			function () {

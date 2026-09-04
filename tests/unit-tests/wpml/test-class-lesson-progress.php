@@ -53,7 +53,7 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 		\Sensei_Utils::update_lesson_status( $user_id, $original_lesson_id, 'complete' );
 
-		$this->stub_translations( array( $translated_lesson_id => $original_lesson_id ) );
+		$this->simulate_wpml_translations( array( $translated_lesson_id => $original_lesson_id ) );
 		( new Lesson_Progress() )->init();
 
 		/* Act. */
@@ -73,7 +73,7 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 		$original_lesson_id   = $this->factory->lesson->create();
 		$translated_lesson_id = $this->factory->lesson->create();
 
-		$this->stub_translations( array( $translated_lesson_id => $original_lesson_id ) );
+		$this->simulate_wpml_translations( array( $translated_lesson_id => $original_lesson_id ) );
 
 		$lesson_progress = new Lesson_Progress();
 
@@ -169,7 +169,7 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 	 *
 	 * @param array $map Translated ID => original ID.
 	 */
-	private function stub_translations( array $map ) {
+	private function simulate_wpml_translations( array $map ) {
 		add_filter(
 			'wpml_current_language',
 			function () {
