@@ -14,7 +14,7 @@ export const logEvent = ( eventName, properties ) => {
  * @param {boolean} enabled Enabled state.
  */
 logEvent.enable = ( enabled ) => {
-	window.senseiEventLogging.enabled = enabled;
+	window.sensei_event_logging.enabled = enabled;
 };
 
 /**
