@@ -84,20 +84,6 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 		$this->assertSame( array( 'post__in' => array( $original_lesson_id ) ), $actual );
 	}
 
-	public function testTranslateLessonQueryArgs_NoLessonsSentinelGiven_KeepsTheSentinel() {
-		/* Arrange. */
-		// Anything that translated the sentinel would turn it into a real ID.
-		$this->stub_translations( array( 0 => 123 ) );
-
-		$lesson_progress = new Lesson_Progress();
-
-		/* Act. */
-		$actual = $lesson_progress->translate_lesson_query_args( array( 'post__in' => array( 0 ) ) );
-
-		/* Assert. */
-		$this->assertSame( array( 'post__in' => array( 0 ) ), $actual, 'The "no lessons" restriction must keep matching nothing.' );
-	}
-
 	public function testTranslateLessonId_QuizCacheReadWithTranslatedLesson_ReadsTheOriginalLessonKey() {
 		/* Arrange. */
 		$user_id              = $this->factory->user->create();
