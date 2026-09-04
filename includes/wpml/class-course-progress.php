@@ -42,9 +42,7 @@ class Course_Progress {
 		add_filter( 'sensei_course_start_course_id', array( $this, 'translate_course_id' ) );
 		add_filter( 'sensei_learner_get_course_ids_by_progress_status_course_ids', array( $this, 'translate_course_ids' ) );
 		add_filter( 'sensei_learner_get_enrolled_courses_query_args_term_id', array( $this, 'translate_term_id' ) );
-		// The student management screens query course progress with the ID of the course they show.
 		add_filter( 'sensei_check_for_activity_args', array( $this, 'translate_course_query_args' ) );
-		// The Students screen filters its learners query with the ID of the course it shows.
 		add_filter( 'sensei_learners_query_args', array( $this, 'translate_learners_query_args' ) );
 
 		add_action( 'sensei_manual_enrolment_learner_enrolled', array( $this, 'enrol_learner' ), 10, 2 );
