@@ -52,7 +52,7 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 		$original_course_id   = $this->factory->course->create();
 		$translated_course_id = $this->factory->course->create();
 
-		\Sensei_Utils::update_course_status( $user_id, $original_course_id, 'in-progress' );
+		\Sensei_Utils::update_course_status( $user_id, $original_course_id, 'complete' );
 
 		$this->stub_translations( array( $translated_course_id => $original_course_id ) );
 		( new Course_Progress() )->init();
@@ -61,7 +61,7 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 		$learners = ( new \Sensei_Db_Query_Learners( array( 'filter_by_course_id' => $translated_course_id ) ) )->get_all();
 
 		/* Assert. */
-		$this->assertSame( array( $user_id ), array_map( 'intval', wp_list_pluck( $learners, 'user_id' ) ) );
+		$this->assertEquals( array( $user_id ), wp_list_pluck( $learners, 'user_id' ) );
 	}
 
 	public function testTranslateCourseQueryArgs_TranslatedCourseQueried_FindsTheOriginalCourseProgress() {
@@ -80,7 +80,6 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 			array(
 				'post_id' => $translated_course_id,
 				'type'    => 'sensei_course_status',
-				'status'  => 'any',
 			)
 		);
 

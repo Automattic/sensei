@@ -61,7 +61,6 @@ class Lesson_Progress_Test extends \WP_UnitTestCase {
 			array(
 				'post_id' => $translated_lesson_id,
 				'type'    => 'sensei_lesson_status',
-				'status'  => 'any',
 			)
 		);
 
