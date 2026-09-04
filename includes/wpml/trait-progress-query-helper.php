@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Trait Progress_Query_Helper
  *
- * Shared by the compatibility classes that point progress queries at the original language.
+ * Translates the IDs of progress queries to the original language. Meant for
+ * the compatibility classes that already use the WPML_API trait.
  *
  * @since $$next-version$$
  */
