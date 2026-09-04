@@ -71,10 +71,7 @@ module.exports = [
 				'error',
 				{ definedTypes: [ 'JSX' ] },
 			],
-			'jsdoc/check-tag-names': [
-				'error',
-				{ definedTags: [ 'hook', 'usage' ] },
-			],
+			'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'hook' ] } ],
 			'jsdoc/require-yields': 'off',
 			'jsdoc/tag-lines': 'off',
 			'react-hooks/exhaustive-deps': 'warn',
