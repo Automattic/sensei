@@ -140,6 +140,8 @@ class Sensei_Utils {
 		/**
 		 * Filter the arguments used to query the activity.
 		 *
+		 * A result that is not an array is ignored and the original arguments are kept.
+		 *
 		 * @hook sensei_check_for_activity_args
 		 *
 		 * @since $$next-version$$

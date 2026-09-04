@@ -85,6 +85,8 @@ class Sensei_Db_Query_Learners {
 		/**
 		 * Filter the arguments used to query the learners.
 		 *
+		 * A result that is not an array is ignored and the original arguments are kept.
+		 *
 		 * @hook sensei_learners_query_args
 		 *
 		 * @since $$next-version$$
