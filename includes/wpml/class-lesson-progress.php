@@ -38,8 +38,8 @@ class Lesson_Progress {
 
 		add_filter( 'sensei_check_for_activity_args', array( $this, 'translate_lesson_query_args' ) );
 		add_filter( 'sensei_grading_filter_statuses', array( $this, 'translate_lesson_query_args' ) );
-		// A teacher's own lessons come from the current language, and the grading
-		// screen intersects them with the query above, so they need the same IDs.
+		// Teachers only see their own lessons, and that list is built in the current
+		// language before this runs. It needs translating like the rest of the query.
 		add_filter( 'sensei_count_statuses_args', array( $this, 'translate_lesson_query_args' ), 20 );
 	}
 
