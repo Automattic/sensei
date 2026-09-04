@@ -44,11 +44,13 @@ class Lesson_Progress {
 	}
 
 	/**
-	 * Point the lesson IDs of a progress query at the original language.
+	 * Translate the lesson IDs of a progress query to the original language.
 	 *
-	 * Progress is stored against the original language, but the admin screens
-	 * query it with the ID of the lesson they are showing, which in a secondary
-	 * language is the translation, so the query finds nothing.
+	 * A lesson and its translations share one progress, stored against the
+	 * original language's ID. The admin screens query it with the ID of the
+	 * lesson they are showing, which in a secondary language is a translation,
+	 * so the query would find nothing. Translating the ID first makes the same
+	 * query hit the stored progress whatever the admin language is.
 	 *
 	 * @since $$next-version$$
 	 *

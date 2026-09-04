@@ -106,11 +106,13 @@ class Course_Progress {
 	}
 
 	/**
-	 * Point the course IDs of a progress query at the original language.
+	 * Translate the course IDs of a progress query to the original language.
 	 *
-	 * Progress is stored against the original language, but the admin screens
-	 * query it with the ID of the course they are showing, which in a secondary
-	 * language is the translation, so the query finds nothing.
+	 * A course and its translations share one progress, stored against the
+	 * original language's ID. The admin screens query it with the ID of the
+	 * course they are showing, which in a secondary language is a translation,
+	 * so the query would find nothing. Translating the ID first makes the same
+	 * query hit the stored progress whatever the admin language is.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -124,7 +126,11 @@ class Course_Progress {
 	}
 
 	/**
-	 * Point the course filter of a learners query at the original language.
+	 * Translate the course filter of a learners query to the original language.
+	 *
+	 * The Students screen filters by the course it is showing, which in a
+	 * secondary language is a translation, while the progress it lists is
+	 * stored against the original language's ID.
 	 *
 	 * @since $$next-version$$
 	 *
