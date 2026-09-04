@@ -91,7 +91,7 @@
     "nock": "13.2.4",
     "postcss-color-function": "4.1.0",
     "resolve-url-loader": "5.0.0",
-    "svg-spritemap-webpack-plugin": "4.4.0",
+    "svg-spritemap-webpack-plugin": "4.7.0",
     "typescript": "5.3.3",
     "wp-hookdoc": "0.2.0"
   },
