@@ -64,6 +64,11 @@ $promo_highlight: #43af99;
 	line-height: 1;
 }
 
+#adminmenuwrap #adminmenu li.current a > .awaiting-mod:not(.sensei-promo-groups__badge):not(.sensei-upsell-pro-badge) {
+	background-color: $promo_highlight;
+	color: #fff;
+}
+
 .sensei-wp-list-table-row--disabled .sensei-email-unavailable {
 	color: #999999;
 }
