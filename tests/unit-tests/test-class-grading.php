@@ -291,6 +291,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test grade_gap_fill_question with regex patterns.
+	 *
 	 * @dataProvider gradeGapFillQuestions
 	 * @covers Sensei_Grading::grade_gap_fill_question
 	 * @since 1.9.18
@@ -888,6 +890,79 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$question['quiz_id']     = $quiz_id;
 		$question['post_author'] = get_post( $quiz_id )->post_author;
 		return Sensei()->lesson->lesson_save_question( $question );
+	}
+
+	/**
+	 * Tests that grade_quiz_auto() ignores question IDs whose post type is not
+	 * 'question' (e.g. deleted posts or multiple_question containers) instead of
+	 * silently treating them as zero-grade via PHP's loose 0 == false comparison.
+	 *
+	 * Before the fix, get_question_grade() returns false for a non-'question' post type,
+	 * but `0 == false` evaluated to true in PHP, so the ID fell through to the zero-grade
+	 * branch and was stored with grade false via set_user_grades(). After the fix the
+	 * strict false === $achievable_grade guard skips the ID entirely (continue), so it
+	 * does not appear in the stored per-question grades and the percentage reflects only
+	 * valid questions.
+	 *
+	 * @covers Sensei_Grading::grade_quiz_auto
+	 */
+	public function testGradeQuizAuto_InvalidQuestionIdInSubmitted_IsSkippedAndNotStoredInGrades(): void {
+		/* Arrange. */
+		$user_id   = wp_create_user( 'grading_invalid_q', 'pass', 'grading_invalid_q@example.com' );
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		update_post_meta( $quiz_id, '_quiz_grade_type', 'auto' );
+
+		// One valid boolean question where 'true' is the correct answer (grade = 1 by default).
+		$question_args                                  = $this->factory->question->get_sample_question_data( 'boolean' );
+		$question_args['quiz_id']                       = $quiz_id;
+		$question_args['post_author']                   = get_post( $quiz_id )->post_author;
+		$question_args['question_right_answer_boolean'] = 'true';
+		$valid_question_id                              = Sensei()->lesson->lesson_save_question( $question_args );
+
+		// Precondition: the valid question must exist as a 'question' post type.
+		$this->assertSame( 'question', get_post_type( $valid_question_id ), 'Precondition: valid question must be of post type "question".' );
+
+		// A regular post (not a 'question' post type): get_question_grade() returns false for it.
+		$invalid_question_id = $this->factory->post->create();
+		$this->assertNotSame( 'question', get_post_type( $invalid_question_id ), 'Precondition: invalid question must NOT be of post type "question".' );
+		$this->assertFalse( Sensei()->question->get_question_grade( $invalid_question_id ), 'Precondition: get_question_grade() must return false for the invalid ID.' );
+
+		wp_set_current_user( $user_id );
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		// Both IDs are submitted — the valid one answered correctly, the invalid one with anything.
+		$submitted = array(
+			$valid_question_id   => 'true',
+			$invalid_question_id => 'true',
+		);
+		Sensei_Quiz::save_user_answers( $submitted, array(), $lesson_id, $user_id );
+
+		/* Act. */
+		$grade = Sensei_Grading::grade_quiz_auto( $quiz_id, $submitted, 0, 'auto' );
+
+		/* Assert. */
+
+		// The returned grade must be 100 — the valid question was answered correctly and the
+		// invalid ID must not inflate the denominator or corrupt the numerator.
+		$this->assertSame( 100, (int) $grade, 'grade_quiz_auto() should return 100 when the only valid question is answered correctly.' );
+
+		// The valid question must appear in stored grades with a passing mark.
+		$stored_grades = Sensei()->quiz->get_user_grades( $lesson_id, $user_id );
+		$this->assertIsArray( $stored_grades, 'get_user_grades() should return an array.' );
+		$this->assertArrayHasKey(
+			$valid_question_id,
+			$stored_grades,
+			'The valid question ID must be stored in per-question grades.'
+		);
+
+		// The invalid ID must not appear in stored grades at all.
+		$this->assertArrayNotHasKey(
+			$invalid_question_id,
+			$stored_grades,
+			'An invalid question ID (non-\'question\' post type) must not be stored in per-question grades.'
+		);
 	}
 
 	/**

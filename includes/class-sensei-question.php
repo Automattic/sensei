@@ -583,7 +583,7 @@ class Sensei_Question {
 	 *
 	 * @param int $question_id
 	 *
-	 * @return int $question_grade | bool
+	 * @return int|false
 	 */
 	public function get_question_grade( $question_id ) {
 
@@ -1024,7 +1024,7 @@ class Sensei_Question {
 
 		$correct_answer = $show_correct_answers && ! $answer_correct ? self::get_correct_answer( $question_id ) : false;
 
-		$grade = Sensei()->view_helper->format_question_points( $answer_grade . '/' . $question_grade );
+		$grade = Sensei()->view_helper->format_question_points( $answer_grade . '/' . (int) $question_grade );
 
 		/**
 		 * Filter the learner grade displayed.

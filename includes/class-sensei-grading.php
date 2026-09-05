@@ -1102,6 +1102,15 @@ class Sensei_Grading {
 			// check if the question is autogradable, either by type, or because the grade is 0
 			$question_type    = Sensei()->question->get_question_type( $question_id );
 			$achievable_grade = Sensei()->question->get_question_grade( $question_id );
+
+			// get_question_grade() returns false for non-'question' post types (e.g. deleted
+			// posts or multiple_question containers). Strict check must come before the loose
+			// 0 == comparison below, because PHP evaluates 0 == false as true, which would
+			// silently drop a correctly-answered question from grade_total.
+			if ( false === $achievable_grade ) {
+				continue;
+			}
+
 			// Question has a zero grade, so skip grading
 			if ( 0 == $achievable_grade ) {
 				$all_question_grades[ $question_id ] = $achievable_grade;
