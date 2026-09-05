@@ -211,6 +211,8 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get students count by courses.
 	 *
+	 * Guest and preview users are excluded, same as the grading counts.
+	 *
 	 * @since  4.4.1
 	 *
 	 * @param array $course_ids The array of courses ids.
@@ -219,14 +221,25 @@ class Sensei_Reports_Overview_Service_Courses {
 	private function get_students_count_in_courses( array $course_ids ): array {
 
 		global $wpdb;
+
+		$excluded_login_patterns = array(
+			$wpdb->esc_like( Sensei_Guest_User::LOGIN_PREFIX ) . '%',
+			$wpdb->esc_like( Sensei_Preview_User::LOGIN_PREFIX ) . '%',
+		);
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
 		return $wpdb->get_results(
-			"SELECT c.comment_post_ID as course_id, count(c.comment_post_ID) as students_count
-				FROM {$wpdb->comments} c
-				WHERE c.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )'  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			. " AND c.comment_type = 'sensei_course_status'
-				AND c.comment_approved IN ( 'in-progress', 'complete' )
-				GROUP BY c.comment_post_ID",
+			$wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Sniff miscounts %s across the concatenated query string.
+				"SELECT c.comment_post_ID as course_id, count(c.comment_post_ID) as students_count
+					FROM {$wpdb->comments} c
+					WHERE c.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )'  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				. " AND c.comment_type = 'sensei_course_status'
+					AND c.comment_approved IN ( 'in-progress', 'complete' )
+					AND c.comment_author NOT LIKE %s
+					AND c.comment_author NOT LIKE %s
+					GROUP BY c.comment_post_ID",
+				$excluded_login_patterns
+			),
 			'OBJECT_K'
 		);
 	}
