@@ -219,6 +219,66 @@ class Tables_Based_Lesson_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( $completed_at, $progress->get_completed_at() );
 	}
 
+	public function testGetStatus_ConstructedWithFailedStatusAndPassNotRequired_ReturnsComplete(): void {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+		$this->factory->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'meta_input'  => array(
+					'_pass_required' => 0,
+				),
+			)
+		);
+
+		$progress = new Tables_Based_Lesson_Progress(
+			1,
+			$lesson_id,
+			3,
+			'failed',
+			new \DateTime( '2020-01-01 00:00:00' ),
+			new \DateTime( '2020-01-01 00:00:01' ),
+			new \DateTime( '2020-01-01 00:00:02' ),
+			new \DateTime( '2020-01-01 00:00:03' )
+		);
+
+		/* Act. */
+		$actual = $progress->get_status();
+
+		/* Assert. */
+		self::assertSame( 'complete', $actual );
+	}
+
+	public function testGetStatus_ConstructedWithFailedStatusAndPassRequired_ReturnsInProgress(): void {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+		$this->factory->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'meta_input'  => array(
+					'_pass_required' => 1,
+				),
+			)
+		);
+
+		$progress = new Tables_Based_Lesson_Progress(
+			1,
+			$lesson_id,
+			3,
+			'failed',
+			new \DateTime( '2020-01-01 00:00:00' ),
+			new \DateTime( '2020-01-01 00:00:01' ),
+			new \DateTime( '2020-01-01 00:00:02' ),
+			new \DateTime( '2020-01-01 00:00:03' )
+		);
+
+		/* Act. */
+		$actual = $progress->get_status();
+
+		/* Assert. */
+		self::assertSame( 'in-progress', $actual );
+	}
+
 	private function create_progress( string $status = null ): Tables_Based_Lesson_Progress {
 		return new Tables_Based_Lesson_Progress(
 			1,
