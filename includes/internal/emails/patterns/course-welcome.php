@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<!-- wp:buttons {"style":{"spacing":{"margin":{"top":"40px"}}}} -->
 		<div class="wp-block-buttons" style="margin-top:40px"><!-- wp:button {"style":{"color":{"text":"#fefefe","background":"#101517"},"typography":{"fontSize":"16px"}},"className":"has-custom-font-size"} -->
-			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background wp-element-button" href="[course:url]" style="color:#fefefe;background-color:#101517"><?php echo esc_html__( 'Start Course', 'sensei-lms' ); ?></a></div>
+			<div class="wp-block-button has-custom-font-size" style="font-size:16px"><a class="wp-block-button__link has-text-color has-background wp-element-button" href="[course:first_lesson_url]" style="color:#fefefe;background-color:#101517"><?php echo esc_html__( 'Start Course', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:button -->
 		</div>
 		<!-- /wp:buttons -->
