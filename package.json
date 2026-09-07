@@ -58,7 +58,6 @@
   },
   "devDependencies": {
     "@es-joy/jsdoccomment": "0.96.0",
-    "@faker-js/faker": "8.0.2",
     "@lifeomic/attempt": "3.1.0",
     "@playwright/test": "1.62.1",
     "@svgr/webpack": "6.1.2",
@@ -76,7 +75,7 @@
     "@wordpress/prettier-config": "4.8.1",
     "@wordpress/scripts": "34.1.0",
     "comment-parser": "1.4.8",
-    "copy-webpack-plugin": "10.2.0",
+    "copy-webpack-plugin": "14.0.0",
     "cross-env": "7.0.2",
     "date-fns": "4.4.0",
     "eslint-import-resolver-typescript": "4.4.5",
@@ -91,7 +90,7 @@
     "nock": "13.2.4",
     "postcss-color-function": "4.1.0",
     "resolve-url-loader": "5.0.0",
-    "svg-spritemap-webpack-plugin": "4.4.0",
+    "svg-spritemap-webpack-plugin": "4.7.0",
     "typescript": "5.3.3",
     "wp-hookdoc": "0.2.0"
   },
