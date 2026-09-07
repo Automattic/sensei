@@ -1,6 +1,6 @@
 {
-  "apiVersion": 3,
-  "name": "sensei-lms/quiz-actions",
-  "category": "theme",
-  "supports": {}
+	"apiVersion": 3,
+	"name": "sensei-lms/quiz-actions",
+	"category": "theme",
+	"supports": {}
 }

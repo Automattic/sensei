@@ -1,14 +1,14 @@
 {
-  "apiVersion": 3,
-  "name": "sensei-lms/course-theme-post-title",
-  "category": "theme",
-  "supports": {
-    "align": true,
-    "color": true,
-    "spacing": {
-      "margin": true,
-      "padding": true,
-      "blockGap": true
-    }
-  }
+	"apiVersion": 3,
+	"name": "sensei-lms/course-theme-post-title",
+	"category": "theme",
+	"supports": {
+		"align": true,
+		"color": true,
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true
+		}
+	}
 }

@@ -1,9 +1,9 @@
 {
-  "name": "sensei-lms/course-theme-course-progress-bar",
-  "apiVersion": 3,
-  "category": "theme",
-  "supports": {
-    "align": true,
-    "color": true
-  }
+	"name": "sensei-lms/course-theme-course-progress-bar",
+	"apiVersion": 3,
+	"category": "theme",
+	"supports": {
+		"align": true,
+		"color": true
+	}
 }

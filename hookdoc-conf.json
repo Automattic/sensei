@@ -1,31 +1,22 @@
 {
-  "opts": {
-      "destination": "hookdocs",
-      "template": "node_modules/wp-hookdoc/template",
-      "readme": "./.github/hookdoc-tmpl/README.md",
-      "recurse": true
-  },
-  "source": {
-      "include": [
-        "./"
-      ],
-      "includePattern": ".+\\.(php)?$",
-      "exclude": [
-        "node_modules"
-      ]
-  },
-  "plugins": [
-    "node_modules/wp-hookdoc/plugin",
-    "plugins/markdown"
-  ],
-  "templates":  {
-    "default": {
-      "layoutFile": ".github/hookdoc-tmpl/layout.tmpl",
-      "staticFiles": {
-        "include": [
-          "./.github/hookdoc-tmpl/static"
-        ]
-      }
-    }
-  }
+	"opts": {
+		"destination": "hookdocs",
+		"template": "node_modules/wp-hookdoc/template",
+		"readme": "./.github/hookdoc-tmpl/README.md",
+		"recurse": true
+	},
+	"source": {
+		"include": [ "./" ],
+		"includePattern": ".+\\.(php)?$",
+		"exclude": [ "node_modules" ]
+	},
+	"plugins": [ "node_modules/wp-hookdoc/plugin", "plugins/markdown" ],
+	"templates": {
+		"default": {
+			"layoutFile": ".github/hookdoc-tmpl/layout.tmpl",
+			"staticFiles": {
+				"include": [ "./.github/hookdoc-tmpl/static" ]
+			}
+		}
+	}
 }
