@@ -40,7 +40,7 @@ describe( '<SingleLineInput />', () => {
 			target: { value: 'changed' },
 		} );
 
-		expect( onChangeMock ).toBeCalledWith( 'changed' );
+		expect( onChangeMock ).toHaveBeenCalledWith( 'changed' );
 	} );
 
 	it( 'Should not allow line breaks', async () => {

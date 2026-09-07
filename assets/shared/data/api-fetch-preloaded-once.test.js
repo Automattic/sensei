@@ -32,7 +32,7 @@ describe( 'preloadedDataUsedOnceMiddleware', () => {
 		await apiFetch( { path: '/test' } );
 		try {
 			await apiFetch( { path: '/test' } );
-		} catch ( err ) {}
+		} catch {}
 
 		expect( window.fetch ).toHaveBeenCalledWith(
 			expect.stringContaining( '/test' ),

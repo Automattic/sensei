@@ -125,7 +125,9 @@ const QuizValidationResult = ( { clientId, setMeta } ) => {
 
 	const { selectBlock } = useDispatch( blockEditorStore );
 	const selectFirstIncompleteQuestionBlock = () => {
-		if ( ! incompleteQuestions.length ) return;
+		if ( ! incompleteQuestions.length ) {
+			return;
+		}
 		toggleValidationErrors( true );
 		selectBlock( incompleteQuestions[ 0 ].clientId );
 	};
@@ -135,7 +137,9 @@ const QuizValidationResult = ( { clientId, setMeta } ) => {
 		[ toggleValidationErrors ]
 	);
 
-	if ( ! incompleteQuestions.length ) return null;
+	if ( ! incompleteQuestions.length ) {
+		return null;
+	}
 
 	const notice = (
 		<IncompleteQuestionsNotice

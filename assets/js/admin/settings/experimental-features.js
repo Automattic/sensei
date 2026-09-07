@@ -18,7 +18,7 @@ jQuery( document ).ready( function ( $ ) {
 	);
 	syncProgress.on( 'change', function () {
 		const savedState = $( this ).data( 'saved-state' );
-		let repositoryOptions = $(
+		const repositoryOptions = $(
 			'.sensei-settings_progress-storage-repository'
 		);
 		if ( $( this ).is( ':checked' ) ) {

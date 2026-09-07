@@ -47,7 +47,7 @@ describe( '<LessonDetailsStep />', () => {
 		);
 
 		expect( queryByLabelText( 'Lesson Title' ) ).toBeTruthy();
-		expect( editPostMock ).toBeCalledTimes( 0 );
+		expect( editPostMock ).toHaveBeenCalledTimes( 0 );
 	} );
 
 	it( 'Updates lesson title in data and as title post when changed.', () => {
@@ -67,8 +67,8 @@ describe( '<LessonDetailsStep />', () => {
 			target: { value: NEW_TITLE },
 		} );
 
-		expect( editPostMock ).toBeCalledWith( { title: NEW_TITLE } );
-		expect( setDataMock ).toBeCalledWith( { title: NEW_TITLE } );
+		expect( editPostMock ).toHaveBeenCalledWith( { title: NEW_TITLE } );
+		expect( setDataMock ).toHaveBeenCalledWith( { title: NEW_TITLE } );
 	} );
 
 	it( 'Renders post title in title field initially.', () => {
@@ -102,7 +102,7 @@ describe( '<LessonDetailsStep />', () => {
 			/>
 		);
 
-		expect( wizardDataSetter ).toBeCalledWith( {
+		expect( wizardDataSetter ).toHaveBeenCalledWith( {
 			description: initialContent,
 		} );
 	} );
@@ -115,7 +115,7 @@ describe( '<LessonDetailsStep.Actions />', () => {
 		render(
 			<LessonDetailsStep.Actions goToNextStep={ goToNextStepMock } />
 		);
-		expect( goToNextStepMock ).toBeCalledTimes( 0 );
+		expect( goToNextStepMock ).toHaveBeenCalledTimes( 0 );
 	} );
 
 	it( 'Calls `goToNextStep` on click.', () => {
@@ -125,6 +125,6 @@ describe( '<LessonDetailsStep.Actions />', () => {
 			<LessonDetailsStep.Actions goToNextStep={ goToNextStepMock } />
 		);
 		fireEvent.click( queryByRole( 'button' ) );
-		expect( goToNextStepMock ).toBeCalledTimes( 1 );
+		expect( goToNextStepMock ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

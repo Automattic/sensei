@@ -106,6 +106,6 @@ describe( '<Wizard />', () => {
 			/>
 		);
 		fireEvent.click( queryByText( 'Next' ) );
-		expect( onCompletionCallback ).toBeCalled();
+		expect( onCompletionCallback ).toHaveBeenCalled();
 	} );
 } );

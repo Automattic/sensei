@@ -118,7 +118,7 @@ import { ExitSurveyForm } from './form';
 				if ( result.length > 0 ) {
 					body.append( 'theme', result[ 0 ].name?.raw || '' );
 				}
-			} catch ( e ) {}
+			} catch {}
 
 			await window.fetch( window.ajaxurl, {
 				method: 'POST',

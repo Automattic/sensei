@@ -5,24 +5,24 @@
 jQuery( function ( $ ) {
 	$( '#the-list' ).on( 'click', '#bulk-edit #bulk_edit ', function () {
 		// define the bulk edit row
-		var $bulk_row = $( '#bulk-edit' );
+		const $bulkRow = $( '#bulk-edit' );
 
 		// get the selected post ids that are being edited
-		var postIds = new Array();
-		$bulk_row.find( '#bulk-titles-list button' ).each( function () {
+		const postIds = new Array();
+		$bulkRow.find( '#bulk-titles-list button' ).each( function () {
 			postIds.push( $( this ).attr( 'id' ).replace( /^(_)/i, '' ) );
 		} );
 
 		// get the data:
 
 		//security as the wordpress nonce
-		var nonceVal = $( 'input[name="_edit_lessons_nonce"]' ).val();
+		const nonceVal = $( 'input[name="_edit_lessons_nonce"]' ).val();
 
 		// selected course value
-		var newCourse = $bulk_row.find( '#sensei-edit-lesson-course' ).val();
+		const newCourse = $bulkRow.find( '#sensei-edit-lesson-course' ).val();
 
 		// lesson complexity value
-		var newComplexity = $bulk_row
+		const newComplexity = $bulkRow
 			.find( '#sensei-edit-lesson-complexity' )
 			.val();
 
@@ -31,32 +31,32 @@ jQuery( function ( $ ) {
 		//
 
 		// Quiz Pass required for completion
-		var newPassRequired = $bulk_row
+		const newPassRequired = $bulkRow
 			.find( '#sensei-edit-lesson-pass-required' )
 			.val();
 
 		// Quiz Pass percentage
-		var newPassPercentage = $bulk_row
+		const newPassPercentage = $bulkRow
 			.find( '#sensei-edit-quiz-pass-percentage' )
 			.val();
 
 		// Quiz Pass percentage
-		var newEnableQuizReset = $bulk_row
+		const newEnableQuizReset = $bulkRow
 			.find( '#sensei-edit-enable-quiz-reset' )
 			.val();
 
 		// Quiz number of questions to show
-		var newShowQuestions = $bulk_row
+		const newShowQuestions = $bulkRow
 			.find( '#sensei-edit-show-questions' )
 			.val();
 
 		// Quiz Random Question Order
-		var newRandomQuestionOrder = $bulk_row
+		const newRandomQuestionOrder = $bulkRow
 			.find( '#sensei-edit-random-question-order' )
 			.val();
 
 		// Quiz Grade Type
-		var newQuizGradeType = $bulk_row
+		const newQuizGradeType = $bulkRow
 			.find( '#sensei-edit-quiz-grade-type' )
 			.val();
 

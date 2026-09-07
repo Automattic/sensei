@@ -142,6 +142,6 @@ describe( '<DonePage />', () => {
 		expect( getAllByText( /Error message./ ) ).toBeTruthy();
 
 		fireEvent.click( getAllByText( 'Retry' )[ 0 ] );
-		expect( retryMock ).toBeCalled();
+		expect( retryMock ).toHaveBeenCalled();
 	} );
 } );
