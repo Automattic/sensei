@@ -1,13 +1,13 @@
 {
-  "apiVersion": 3,
-  "name": "sensei-lms/sidebar-toggle-button",
-  "category": "theme",
-  "supports": {
-    "align": true,
-    "spacing": {
-      "margin": true,
-      "padding": true,
-      "blockGap": true
-    }
-  }
+	"apiVersion": 3,
+	"name": "sensei-lms/sidebar-toggle-button",
+	"category": "theme",
+	"supports": {
+		"align": true,
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true
+		}
+	}
 }

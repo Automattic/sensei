@@ -6,13 +6,7 @@
 	"description": "Filter courses in Course List block",
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
-	"keywords": [
-		"course",
-		"categories",
-		"lessons",
-		"featured",
-		"filter"
-	],
+	"keywords": [ "course", "categories", "lessons", "featured", "filter" ],
 	"attributes": {
 		"align": {
 			"type": "string",
@@ -22,14 +16,14 @@
 			"type": "array",
 			"default": [ "categories", "featured", "student_course" ]
 		},
-        "defaultOptions": {
-            "type": "object",
-            "default": {
-                "categories": -1,
-                "featured": "all",
-                "student_course": "all"
-            }
-        }
+		"defaultOptions": {
+			"type": "object",
+			"default": {
+				"categories": -1,
+				"featured": "all",
+				"student_course": "all"
+			}
+		}
 	},
 	"usesContext": [ "queryId", "query" ],
 	"supports": {

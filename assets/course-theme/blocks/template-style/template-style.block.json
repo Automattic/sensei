@@ -5,7 +5,7 @@
 	"apiVersion": 3,
 	"attributes": {
 		"content": {
-            "source": "text",
+			"source": "text",
 			"type": "string",
 			"selector": "style"
 		}

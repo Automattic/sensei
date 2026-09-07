@@ -468,11 +468,12 @@ jQuery( document ).ready( function () {
 		str = str.toLowerCase();
 		str = str.replace( '-', ' ' );
 		str = str.replace( 'boolean', 'True/False' );
-		return str.replace( /(^([a-zA-Z{M}]))|([ -][a-zA-Z{M}])/g, function (
-			$1
-		) {
-			return $1.toUpperCase();
-		} );
+		return str.replace(
+			/(^([a-zA-Z{M}]))|([ -][a-zA-Z{M}])/g,
+			function ( $1 ) {
+				return $1.toUpperCase();
+			}
+		);
 	};
 
 	jQuery.fn.filterExistingQuestions = function ( page ) {
@@ -1021,9 +1022,8 @@ jQuery( document ).ready( function () {
 							jQuery.fn.resetAddQuestionForm();
 							jQuery.fn.checkQuizGradeType( questionType );
 
-							var max_questions = jQuery(
-								'#show_questions'
-							).attr( 'max' );
+							var max_questions =
+								jQuery( '#show_questions' ).attr( 'max' );
 							max_questions++;
 							jQuery( '#show_questions' ).attr(
 								'max',
@@ -1115,9 +1115,8 @@ jQuery( document ).ready( function () {
 
 							jQuery.fn.updateQuestionOrder();
 
-							var max_questions = jQuery(
-								'#show_questions'
-							).attr( 'max' );
+							var max_questions =
+								jQuery( '#show_questions' ).attr( 'max' );
 							max_questions += questionNumber;
 							jQuery( '#show_questions' ).attr(
 								'max',
@@ -1656,9 +1655,8 @@ jQuery( document ).ready( function () {
 
 							jQuery.fn.checkQuizGradeType();
 
-							var max_questions = jQuery(
-								'#show_questions'
-							).attr( 'max' );
+							var max_questions =
+								jQuery( '#show_questions' ).attr( 'max' );
 							max_questions += i;
 							jQuery( '#show_questions' ).attr(
 								'max',
