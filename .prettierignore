@@ -1,3 +1,8 @@
 assets/dist
 vendor
 *.min.js
+
+package-lock.json
+/.github/
+/tests/
+*.config.js
