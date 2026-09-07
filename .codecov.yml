@@ -6,11 +6,11 @@ coverage:
     round: down
     range: '70...100'
     status:
-        patch:
+        patch: 
             target: auto
             threshold: 2%
             only_pulls: true
-            paths:
+            paths: 
                 - 'assets'
                 - '!assets/dist'
                 - '!assets/vendor'
