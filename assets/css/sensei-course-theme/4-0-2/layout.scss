@@ -149,6 +149,7 @@ body.sensei-course-theme {
 			align-items: center;
 			gap: 24px;
 			flex: 1 1 auto !important;
+			min-width: 0;
 		}
 
 		&__navigation {
