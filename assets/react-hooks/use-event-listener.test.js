@@ -21,13 +21,13 @@ describe( 'useEventListener', () => {
 		const { unmount } = render( <TestComponent /> );
 
 		fireEvent.scroll( global );
-		expect( eventHandlerMock ).toBeCalled();
+		expect( eventHandlerMock ).toHaveBeenCalled();
 
 		eventHandlerMock.mockReset();
 		unmount();
 
 		fireEvent.scroll( global );
-		expect( eventHandlerMock ).not.toBeCalled();
+		expect( eventHandlerMock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'Should add event listener to an specific element', () => {
@@ -52,6 +52,6 @@ describe( 'useEventListener', () => {
 		render( <TestComponent /> );
 
 		fireEvent.click( document.getElementById( 'test-button' ) );
-		expect( eventHandlerMock ).toBeCalled();
+		expect( eventHandlerMock ).toHaveBeenCalled();
 	} );
 } );

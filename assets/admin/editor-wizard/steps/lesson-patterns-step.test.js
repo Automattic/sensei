@@ -63,6 +63,6 @@ describe( '<LessonPatternsStep />', () => {
 			</SlotFillProvider>
 		);
 
-		expect( mockFunction ).toBeCalledWith( expectedOutput );
+		expect( mockFunction ).toHaveBeenCalledWith( expectedOutput );
 	} );
 } );

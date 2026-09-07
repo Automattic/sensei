@@ -49,6 +49,6 @@ describe( '<PurposeItem />', () => {
 		);
 
 		fireEvent.click( queryByLabelText( 'Label' ) );
-		expect( onToggleMock ).toBeCalled();
+		expect( onToggleMock ).toHaveBeenCalled();
 	} );
 } );

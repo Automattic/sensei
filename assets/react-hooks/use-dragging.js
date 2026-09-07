@@ -106,7 +106,6 @@ export const useDragging = ( {
 			document.removeEventListener( 'mousemove', onMouseMove );
 			document.removeEventListener( 'touchmove', onMouseMove );
 		};
-		/* eslint-enable */
 	}, [ onMouseUp, onMouseMove ] );
 
 	return {

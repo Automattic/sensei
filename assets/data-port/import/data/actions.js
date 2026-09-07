@@ -74,7 +74,7 @@ export function* updateJobState( jobId ) {
 		} );
 
 		yield setJobState( normalizeImportData( data ) );
-	} catch ( error ) {
+	} catch {
 		// Silent.
 	}
 }
@@ -97,7 +97,7 @@ export const pollJobProgress = function* ( jobId ) {
 		if ( status !== 'completed' ) {
 			yield* pollJobProgress( jobId );
 		}
-	} catch ( err ) {
+	} catch {
 		yield wait( 2000 );
 		yield* pollJobProgress( jobId );
 	}

@@ -118,7 +118,7 @@ describe( '<StudentActionMenu />', () => {
 		windowSpy.mockImplementation( () => null );
 		fireEvent.click( menuItem );
 
-		expect( windowSpy ).toBeCalledWith(
+		expect( windowSpy ).toHaveBeenCalledWith(
 			`admin.php?page=sensei_grading&view=ungraded&s=${ studentName }`,
 			'_self'
 		);

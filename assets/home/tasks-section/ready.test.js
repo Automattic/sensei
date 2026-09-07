@@ -56,7 +56,7 @@ describe( '<Ready />', () => {
 		);
 
 		await waitFor( () => {
-			expect( onDismissMock ).toBeCalled();
+			expect( onDismissMock ).toHaveBeenCalled();
 			scope.done();
 		} );
 	} );
