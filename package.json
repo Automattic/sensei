@@ -194,6 +194,9 @@
 			"npm run format",
 			"wp-scripts lint-js"
 		],
+		"*.{ts,tsx,json}": [
+			"npm run format"
+		],
 		"*.php": [
 			"scripts/linter-new-php"
 		]
