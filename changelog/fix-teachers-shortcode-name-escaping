@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Escape the teacher name and archive link rendered by the sensei_teachers shortcode
