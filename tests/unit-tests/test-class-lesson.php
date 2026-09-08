@@ -92,6 +92,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		parent::tearDown();
 		$this->factory->tearDown();
 
+		$_POST = array();
+
 		global $current_screen, $taxnow, $typenow;
 		$current_screen = $this->initial_screen;
 		$taxnow         = $this->initial_taxnow;
@@ -2060,5 +2062,92 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		self::assertSame( $own_course, (int) get_post_meta( $lesson_id, '_lesson_course', true ) );
+	}
+
+	/**
+	 * A quiz ID coming from the request must never become the write target: the handler only
+	 * ever writes to the quiz that belongs to the lesson the save_post hook fired for.
+	 *
+	 * @covers Sensei_Lesson::quiz_update
+	 */
+	public function testQuizUpdate_UnrelatedPostIdSubmittedAsQuizId_LeavesThatPostUntouched(): void {
+		/* Arrange */
+		add_filter( 'sensei_quiz_enable_block_based_editor', '__return_false' );
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+		$victim_id = $this->factory->post->create(
+			array(
+				'post_type'    => 'page',
+				'post_title'   => 'Victim page',
+				'post_content' => 'Victim content',
+				'post_status'  => 'publish',
+				'post_author'  => $admin_id,
+			)
+		);
+		// The lesson differs from the victim in author and status, so those are load-bearing too.
+		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$lesson_id  = $this->factory->lesson->create(
+			array(
+				'post_author' => $teacher_id,
+				'post_status' => 'draft',
+			)
+		);
+		$_POST      = array(
+			'post_type'        => 'lesson',
+			'woo_lesson_nonce' => wp_create_nonce( 'sensei-save-post-meta' ),
+			'quiz_id'          => $victim_id,
+		);
+
+		/* Act */
+		Sensei()->lesson->quiz_update( $lesson_id );
+
+		/* Assert */
+		$victim   = get_post( $victim_id );
+		$expected = array(
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_title'   => 'Victim page',
+			'post_content' => 'Victim content',
+			'post_author'  => (string) $admin_id,
+		);
+		$actual   = array(
+			'post_type'    => $victim->post_type,
+			'post_status'  => $victim->post_status,
+			'post_title'   => $victim->post_title,
+			'post_content' => $victim->post_content,
+			'post_author'  => $victim->post_author,
+		);
+		self::assertSame( $expected, $actual );
+	}
+
+	/**
+	 * The listener must not act on a lesson the current user is not allowed to edit, even when a
+	 * valid nonce for their own session is supplied.
+	 *
+	 * @covers Sensei_Lesson::quiz_update
+	 */
+	public function testQuizUpdate_LessonTheUserCannotEditGiven_DoesNotCreateAQuiz(): void {
+		/* Arrange */
+		add_filter( 'sensei_quiz_enable_block_based_editor', '__return_false' );
+		$admin_id  = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$lesson_id = $this->factory->post->create(
+			array(
+				'post_type'   => 'lesson',
+				'post_author' => $admin_id,
+			)
+		);
+
+		$subscriber_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		wp_set_current_user( $subscriber_id );
+		$_POST = array(
+			'post_type'        => 'lesson',
+			'woo_lesson_nonce' => wp_create_nonce( 'sensei-save-post-meta' ),
+		);
+
+		/* Act */
+		Sensei()->lesson->quiz_update( $lesson_id );
+
+		/* Assert */
+		self::assertSame( '', get_post_meta( $lesson_id, '_lesson_quiz', true ) );
 	}
 }

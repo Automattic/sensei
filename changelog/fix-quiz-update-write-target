@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Restrict the legacy lesson quiz save handler to the lesson being saved

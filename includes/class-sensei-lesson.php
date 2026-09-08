@@ -933,6 +933,13 @@ class Sensei_Lesson {
 			}
 		}
 
+		// Check if the current user has permission to edit the lesson being saved.
+		$post_type_name = get_post_type( $post_id );
+		$post_type      = $post_type_name ? get_post_type_object( $post_type_name ) : null;
+		if ( ! $post_type || ! current_user_can( $post_type->cap->edit_post, $post_id ) ) {
+			return false;
+		}
+
 		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
 			return false;
 		}
@@ -948,9 +955,6 @@ class Sensei_Lesson {
 		// Retrieve the update lesson.
 		$lesson = get_post( $post_id );
 
-		if ( isset( $_POST['quiz_id'] ) && ( 0 < absint( $_POST['quiz_id'] ) ) ) {
-			$quiz_id = absint( $_POST['quiz_id'] );
-		}
 		$post_title   = esc_html( $lesson->post_title );
 		$post_status  = esc_html( $lesson->post_status );
 		$post_content = '';
