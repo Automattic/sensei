@@ -4461,6 +4461,11 @@ class Sensei_Lesson {
 		$random_question_order = isset( $data['random_question_order'] ) ? sanitize_text_field( (string) wp_unslash( $data['random_question_order'] ) ) : '';
 		$quiz_grade_type       = isset( $data['quiz_grade_type'] ) ? sanitize_text_field( (string) wp_unslash( $data['quiz_grade_type'] ) ) : '';
 
+		// Only move lessons into a course the current user can edit. Otherwise treat it as "no change".
+		if ( '' !== $new_course && '-1' !== $new_course && ! Sensei_Course::can_current_user_edit_course( (int) $new_course ) ) {
+			$new_course = '-1';
+		}
+
 		$new_quiz_settings = array(
 			'pass_required'         => $new_pass_required,
 			'pass_percentage'       => $new_pass_percentage,

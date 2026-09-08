@@ -1751,6 +1751,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testSaveAllLessonsEditFields_WhenCalled_UpdatesPostMeta(): void {
 		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+
 		$lesson_id = $this->factory->lesson->create();
 		$course_id = $this->factory->course->create();
 		$data      = array(
@@ -1777,6 +1779,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testBulkEditSavePost_WhenCalled_UpdatesPostMeta(): void {
 		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+
 		$lesson_id = $this->factory->lesson->create();
 		$course_id = $this->factory->course->create();
 		$_REQUEST  = array(
@@ -2001,5 +2005,60 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		add_filter( 'posts_where', $language_filter, 10, 2 );
 
 		return array( $lesson_id, $quiz_id, $language_filter );
+	}
+
+	public function testSaveAllLessonsEditFields_CourseTheUserCannotEditGiven_KeepsTheCourseAndUpdatesTheOtherFields(): void {
+		/* Arrange */
+		$other_teacher = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$other_course  = $this->factory->course->create( array( 'post_author' => $other_teacher ) );
+
+		$teacher = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher );
+
+		$own_course = $this->factory->course->create( array( 'post_author' => $teacher ) );
+		$lesson_id  = $this->factory->lesson->create( array( 'post_author' => $teacher ) );
+		update_post_meta( $lesson_id, '_lesson_course', $own_course );
+
+		$data   = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => $other_course,
+			'lesson_complexity'   => 'hard',
+		);
+		$lesson = new Sensei_Lesson();
+
+		/* Act */
+		$lesson->save_all_lessons_edit_fields( array( $lesson_id ), $data );
+
+		/* Assert */
+		$expected = array(
+			'_lesson_course'     => $own_course,
+			'_lesson_complexity' => 'hard',
+		);
+		$actual   = array(
+			'_lesson_course'     => (int) get_post_meta( $lesson_id, '_lesson_course', true ),
+			'_lesson_complexity' => get_post_meta( $lesson_id, '_lesson_complexity', true ),
+		);
+		self::assertSame( $expected, $actual );
+	}
+
+	public function testSaveAllLessonsEditFields_OwnCourseGiven_UpdatesTheLessonCourse(): void {
+		/* Arrange */
+		$teacher = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher );
+
+		$own_course = $this->factory->course->create( array( 'post_author' => $teacher ) );
+		$lesson_id  = $this->factory->lesson->create( array( 'post_author' => $teacher ) );
+
+		$data   = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => $own_course,
+		);
+		$lesson = new Sensei_Lesson();
+
+		/* Act */
+		$lesson->save_all_lessons_edit_fields( array( $lesson_id ), $data );
+
+		/* Assert */
+		self::assertSame( $own_course, (int) get_post_meta( $lesson_id, '_lesson_course', true ) );
 	}
 }
