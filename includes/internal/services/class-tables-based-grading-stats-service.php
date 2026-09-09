@@ -152,7 +152,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants; placeholders dynamic; caching by callers.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT q.user_id AS user_id, COUNT(*) AS grade_count, COALESCE( SUM( qs.final_grade ), 0 ) AS grade_sum
+				"SELECT q.user_id AS user_id, COUNT(*) AS count, COALESCE( SUM( qs.final_grade ), 0 ) AS sum
 				FROM `$table` q
 				INNER JOIN `$submissions_table` qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
 				WHERE q.type = 'quiz'
@@ -169,8 +169,8 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$totals = array();
 		foreach ( (array) $rows as $row ) {
 			$totals[ (int) $row->user_id ] = array(
-				'count' => (int) $row->grade_count,
-				'sum'   => (float) $row->grade_sum,
+				'count' => (int) $row->count,
+				'sum'   => (float) $row->sum,
 			);
 		}
 
