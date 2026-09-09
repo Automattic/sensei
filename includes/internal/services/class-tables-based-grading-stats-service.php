@@ -155,6 +155,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 				"SELECT q.user_id AS user_id, COUNT(*) AS count, COALESCE( SUM( qs.final_grade ), 0 ) AS sum
 				FROM `$table` q
 				INNER JOIN `$submissions_table` qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
+				INNER JOIN `{$wpdb->postmeta}` lesson_quiz ON lesson_quiz.meta_key = '_lesson_quiz' AND lesson_quiz.meta_value = q.post_id
 				WHERE q.type = 'quiz'
 					AND q.status IN " . $this->get_graded_statuses_sql() . "
 					AND qs.final_grade IS NOT NULL
