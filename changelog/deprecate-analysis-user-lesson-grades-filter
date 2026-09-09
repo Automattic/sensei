@@ -1,0 +1,4 @@
+Significance: minor
+Type: deprecated
+
+Deprecate the `sensei_analysis_user_lesson_grades` filter.
