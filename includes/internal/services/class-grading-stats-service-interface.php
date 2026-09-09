@@ -40,6 +40,16 @@ interface Grading_Stats_Service_Interface {
 	public function get_grade_totals( array $args = array() ): array;
 
 	/**
+	 * Get grade count and sum grouped by user.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $user_ids User IDs to include.
+	 * @return array<int, array{count:int, sum:float}> Map of user_id => totals.
+	 */
+	public function get_grade_totals_by_user( array $user_ids ): array;
+
+	/**
 	 * Average grade across courses (AVG of per-course AVGs).
 	 * Only includes student attempts where the quiz was actually submitted.
 	 *
@@ -60,13 +70,4 @@ interface Grading_Stats_Service_Interface {
 	 */
 	public function get_users_average_grade( array $user_ids ): float;
 
-	/**
-	 * Get grade count and sum grouped by user.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param int[] $user_ids User IDs to include.
-	 * @return array<int, array{count:int, sum:float}> Map of user_id => totals.
-	 */
-	public function get_grade_totals_by_user( array $user_ids ): array;
 }

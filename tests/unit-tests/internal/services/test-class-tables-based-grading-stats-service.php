@@ -258,86 +258,6 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetCoursesAverageGrade_WithNoData_ReturnsZero.
-	 */
-	public function testGetCoursesAverageGrade_WithNoData_ReturnsZero(): void {
-		global $wpdb;
-		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-
-		$result = $service->get_courses_average_grade();
-
-		$this->assertSame( 0.0, $result );
-	}
-
-	/**
-	 * Test testGetCoursesAverageGrade_WithGradedLessons_ReturnsAverage.
-	 */
-	public function testGetCoursesAverageGrade_WithGradedLessons_ReturnsAverage(): void {
-		global $wpdb;
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create();
-		$quiz_id   = $this->sensei_factory->quiz->create();
-
-		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_id, $course_id, 'graded', 80 );
-
-		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_courses_average_grade();
-
-		$this->assertSame( 80.0, $result );
-	}
-
-	/**
-	 * Test testGetCoursesAverageGrade_WithCourseIdsFilter_ReturnsFilteredAverage.
-	 */
-	public function testGetCoursesAverageGrade_WithCourseIdsFilter_ReturnsFilteredAverage(): void {
-		global $wpdb;
-		$user_id  = $this->sensei_factory->user->create();
-		$course_1 = $this->sensei_factory->course->create();
-		$course_2 = $this->sensei_factory->course->create();
-		$lesson_1 = $this->sensei_factory->lesson->create();
-		$quiz_1   = $this->sensei_factory->quiz->create();
-		$lesson_2 = $this->sensei_factory->lesson->create();
-		$quiz_2   = $this->sensei_factory->quiz->create();
-
-		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_1, 'graded', 80 );
-		$this->create_graded_lesson( $lesson_2, $quiz_2, $user_id, $course_2, 'graded', 60 );
-
-		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_courses_average_grade( array( $course_1 ) );
-
-		$this->assertSame( 80.0, $result );
-	}
-
-	/**
-	 * Test testGetCoursesAverageGrade_WithMultipleCourses_ReturnsAverageOfAverages.
-	 */
-	public function testGetCoursesAverageGrade_WithMultipleCourses_ReturnsAverageOfAverages(): void {
-		global $wpdb;
-		$user_id  = $this->sensei_factory->user->create();
-		$course_1 = $this->sensei_factory->course->create();
-		$course_2 = $this->sensei_factory->course->create();
-		$lesson_1 = $this->sensei_factory->lesson->create();
-		$quiz_1   = $this->sensei_factory->quiz->create();
-		$lesson_2 = $this->sensei_factory->lesson->create();
-		$quiz_2   = $this->sensei_factory->quiz->create();
-		$lesson_3 = $this->sensei_factory->lesson->create();
-		$quiz_3   = $this->sensei_factory->quiz->create();
-
-		// Course 1: grades 80, 60 -> avg 70.
-		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_1, 'graded', 80 );
-		$this->create_graded_lesson( $lesson_2, $quiz_2, $user_id, $course_1, 'passed', 60 );
-		// Course 2: grade 90 -> avg 90.
-		$this->create_graded_lesson( $lesson_3, $quiz_3, $user_id, $course_2, 'failed', 90 );
-
-		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_courses_average_grade();
-
-		// Average of averages: (70 + 90) / 2 = 80.
-		$this->assertSame( 80.0, $result );
-	}
-
-	/**
 	 * Tests that get_grade_totals only includes graded, passed, and failed statuses.
 	 */
 	public function testGetGradeTotals_WithMixedStatuses_OnlyCountsGradedPassedFailed(): void {
@@ -372,83 +292,6 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 		$this->assertSame( 3, $result['count'], 'Only graded/passed/failed statuses should be counted.' );
 		$this->assertSame( 210.0, $result['sum'], 'Sum should only include graded/passed/failed grades (80 + 90 + 40).' );
-	}
-
-	/**
-	 * Tests that get_courses_average_grade excludes lessons without quizzes.
-	 */
-	public function testGetCoursesAverageGrade_WithLessonWithoutQuiz_ExcludesFromAverage(): void {
-		global $wpdb;
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-
-		// Lesson with quiz.
-		$lesson_1 = $this->sensei_factory->lesson->create();
-		$quiz_1   = $this->sensei_factory->quiz->create();
-		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_id, 'graded', 80 );
-
-		// Lesson without quiz: only lesson progress, no quiz progress or submission.
-		$lesson_2 = $this->sensei_factory->lesson->create();
-		update_post_meta( $lesson_2, '_lesson_course', $course_id );
-		$this->insert_progress( $lesson_2, $user_id, 'lesson', 'complete' );
-
-		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_courses_average_grade();
-
-		// Only the lesson with quiz should be included.
-		$this->assertSame( 80.0, $result );
-	}
-
-	/**
-	 * Test testGetUsersAverageGrade_WithNoUserIds_ReturnsZero.
-	 */
-	public function testGetUsersAverageGrade_WithNoUserIds_ReturnsZero(): void {
-		global $wpdb;
-		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-
-		$result = $service->get_users_average_grade( array() );
-
-		$this->assertSame( 0.0, $result );
-	}
-
-	/**
-	 * Test testGetUsersAverageGrade_WithUserIds_ReturnsAverage.
-	 */
-	public function testGetUsersAverageGrade_WithUserIds_ReturnsAverage(): void {
-		global $wpdb;
-		$user_1    = $this->sensei_factory->user->create();
-		$user_2    = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create();
-		$quiz_id   = $this->sensei_factory->quiz->create();
-
-		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_1, $course_id, 'graded', 80 );
-		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'graded', 60 );
-
-		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_users_average_grade( array( $user_1, $user_2 ) );
-
-		$this->assertSame( 70.0, $result );
-	}
-
-	/**
-	 * Test testGetUsersAverageGrade_FilteredBySpecificUser_ReturnsUserAverage.
-	 */
-	public function testGetUsersAverageGrade_FilteredBySpecificUser_ReturnsUserAverage(): void {
-		global $wpdb;
-		$user_1    = $this->sensei_factory->user->create();
-		$user_2    = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create();
-		$quiz_id   = $this->sensei_factory->quiz->create();
-
-		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_1, $course_id, 'graded', 80 );
-		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'graded', 60 );
-
-		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_users_average_grade( array( $user_1 ) );
-
-		$this->assertSame( 80.0, $result );
 	}
 
 	/**
@@ -542,4 +385,162 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 2, $result[ $user ]['count'], 'Auto-passed lesson without a submission should be excluded.' );
 		$this->assertSame( 140.0, $result[ $user ]['sum'] );
 	}
+
+	/**
+	 * Test testGetCoursesAverageGrade_WithNoData_ReturnsZero.
+	 */
+	public function testGetCoursesAverageGrade_WithNoData_ReturnsZero(): void {
+		global $wpdb;
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+
+		$result = $service->get_courses_average_grade();
+
+		$this->assertSame( 0.0, $result );
+	}
+
+	/**
+	 * Test testGetCoursesAverageGrade_WithGradedLessons_ReturnsAverage.
+	 */
+	public function testGetCoursesAverageGrade_WithGradedLessons_ReturnsAverage(): void {
+		global $wpdb;
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+		$quiz_id   = $this->sensei_factory->quiz->create();
+
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_id, $course_id, 'graded', 80 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_courses_average_grade();
+
+		$this->assertSame( 80.0, $result );
+	}
+
+	/**
+	 * Test testGetCoursesAverageGrade_WithCourseIdsFilter_ReturnsFilteredAverage.
+	 */
+	public function testGetCoursesAverageGrade_WithCourseIdsFilter_ReturnsFilteredAverage(): void {
+		global $wpdb;
+		$user_id  = $this->sensei_factory->user->create();
+		$course_1 = $this->sensei_factory->course->create();
+		$course_2 = $this->sensei_factory->course->create();
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$quiz_1   = $this->sensei_factory->quiz->create();
+		$lesson_2 = $this->sensei_factory->lesson->create();
+		$quiz_2   = $this->sensei_factory->quiz->create();
+
+		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_1, 'graded', 80 );
+		$this->create_graded_lesson( $lesson_2, $quiz_2, $user_id, $course_2, 'graded', 60 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_courses_average_grade( array( $course_1 ) );
+
+		$this->assertSame( 80.0, $result );
+	}
+
+	/**
+	 * Test testGetCoursesAverageGrade_WithMultipleCourses_ReturnsAverageOfAverages.
+	 */
+	public function testGetCoursesAverageGrade_WithMultipleCourses_ReturnsAverageOfAverages(): void {
+		global $wpdb;
+		$user_id  = $this->sensei_factory->user->create();
+		$course_1 = $this->sensei_factory->course->create();
+		$course_2 = $this->sensei_factory->course->create();
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$quiz_1   = $this->sensei_factory->quiz->create();
+		$lesson_2 = $this->sensei_factory->lesson->create();
+		$quiz_2   = $this->sensei_factory->quiz->create();
+		$lesson_3 = $this->sensei_factory->lesson->create();
+		$quiz_3   = $this->sensei_factory->quiz->create();
+
+		// Course 1: grades 80, 60 -> avg 70.
+		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_1, 'graded', 80 );
+		$this->create_graded_lesson( $lesson_2, $quiz_2, $user_id, $course_1, 'passed', 60 );
+		// Course 2: grade 90 -> avg 90.
+		$this->create_graded_lesson( $lesson_3, $quiz_3, $user_id, $course_2, 'failed', 90 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_courses_average_grade();
+
+		// Average of averages: (70 + 90) / 2 = 80.
+		$this->assertSame( 80.0, $result );
+	}
+
+	/**
+	 * Tests that get_courses_average_grade excludes lessons without quizzes.
+	 */
+	public function testGetCoursesAverageGrade_WithLessonWithoutQuiz_ExcludesFromAverage(): void {
+		global $wpdb;
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+
+		// Lesson with quiz.
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$quiz_1   = $this->sensei_factory->quiz->create();
+		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_id, 'graded', 80 );
+
+		// Lesson without quiz: only lesson progress, no quiz progress or submission.
+		$lesson_2 = $this->sensei_factory->lesson->create();
+		update_post_meta( $lesson_2, '_lesson_course', $course_id );
+		$this->insert_progress( $lesson_2, $user_id, 'lesson', 'complete' );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_courses_average_grade();
+
+		// Only the lesson with quiz should be included.
+		$this->assertSame( 80.0, $result );
+	}
+
+	/**
+	 * Test testGetUsersAverageGrade_WithNoUserIds_ReturnsZero.
+	 */
+	public function testGetUsersAverageGrade_WithNoUserIds_ReturnsZero(): void {
+		global $wpdb;
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+
+		$result = $service->get_users_average_grade( array() );
+
+		$this->assertSame( 0.0, $result );
+	}
+
+	/**
+	 * Test testGetUsersAverageGrade_WithUserIds_ReturnsAverage.
+	 */
+	public function testGetUsersAverageGrade_WithUserIds_ReturnsAverage(): void {
+		global $wpdb;
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+		$quiz_id   = $this->sensei_factory->quiz->create();
+
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_1, $course_id, 'graded', 80 );
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'graded', 60 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_users_average_grade( array( $user_1, $user_2 ) );
+
+		$this->assertSame( 70.0, $result );
+	}
+
+	/**
+	 * Test testGetUsersAverageGrade_FilteredBySpecificUser_ReturnsUserAverage.
+	 */
+	public function testGetUsersAverageGrade_FilteredBySpecificUser_ReturnsUserAverage(): void {
+		global $wpdb;
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+		$quiz_id   = $this->sensei_factory->quiz->create();
+
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_1, $course_id, 'graded', 80 );
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'graded', 60 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_users_average_grade( array( $user_1 ) );
+
+		$this->assertSame( 80.0, $result );
+	}
+
 }

@@ -175,6 +175,120 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that get_grade_totals only includes graded, passed, and failed statuses.
+	 */
+	public function testGetGradeTotals_WithMixedStatuses_OnlyCountsGradedPassedFailed(): void {
+		global $wpdb;
+		$user_id = $this->sensei_factory->user->create();
+
+		// These should be included.
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$lesson_2 = $this->sensei_factory->lesson->create();
+		$lesson_3 = $this->sensei_factory->lesson->create();
+		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
+		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'passed', 90 );
+		$this->create_lesson_status_with_grade( $lesson_3, $user_id, 'failed', 40 );
+
+		// This should be excluded: 'complete' status with grade meta.
+		$lesson_4   = $this->sensei_factory->lesson->create();
+		$comment_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_4,
+				'user_id'          => $user_id,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'complete',
+				'comment_content'  => '',
+			)
+		);
+		update_comment_meta( $comment_id, 'grade', 100 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals();
+
+		$this->assertSame( 3, $result['count'], 'Only graded/passed/failed statuses should be counted.' );
+		$this->assertSame( 210.0, $result['sum'], 'Sum should only include graded/passed/failed grades (80 + 90 + 40).' );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByUser_WithNoUserIds_ReturnsEmptyArray.
+	 */
+	public function testGetGradeTotalsByUser_WithNoUserIds_ReturnsEmptyArray(): void {
+		global $wpdb;
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+
+		$result = $service->get_grade_totals_by_user( array() );
+
+		$this->assertSame( array(), $result );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByUser_WithMultipleGrades_GroupsByUser.
+	 */
+	public function testGetGradeTotalsByUser_WithMultipleGrades_GroupsByUser(): void {
+		global $wpdb;
+		$user     = $this->sensei_factory->user->create();
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$lesson_2 = $this->sensei_factory->lesson->create();
+
+		$this->create_lesson_status_with_grade( $lesson_1, $user, 'graded', 80 );
+		$this->create_lesson_status_with_grade( $lesson_2, $user, 'graded', 60 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals_by_user( array( $user ) );
+
+		$this->assertSame( 2, $result[ $user ]['count'] );
+		$this->assertSame( 140.0, $result[ $user ]['sum'] );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByUser_WithMultipleUsers_ReturnsSeparateTotals.
+	 */
+	public function testGetGradeTotalsByUser_WithMultipleUsers_ReturnsSeparateTotals(): void {
+		global $wpdb;
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+
+		$this->create_lesson_status_with_grade( $lesson_id, $user_1, 'graded', 80 );
+		$this->create_lesson_status_with_grade( $lesson_id, $user_2, 'graded', 60 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals_by_user( array( $user_1, $user_2 ) );
+
+		$this->assertSame( 1, $result[ $user_1 ]['count'] );
+		$this->assertSame( 80.0, $result[ $user_1 ]['sum'] );
+		$this->assertSame( 1, $result[ $user_2 ]['count'] );
+		$this->assertSame( 60.0, $result[ $user_2 ]['sum'] );
+	}
+
+	/**
+	 * Test testGetGradeTotalsByUser_WithAutoPassedLesson_ExcludesFromTotals.
+	 *
+	 * Pins parity with the tables-based implementation: an auto-passed lesson
+	 * (graded, but with no quiz_answers meta because the student never took the
+	 * quiz) must not be counted, mirroring how the tables-based implementation
+	 * excludes lessons without a quiz submission row.
+	 */
+	public function testGetGradeTotalsByUser_WithAutoPassedLesson_ExcludesFromTotals(): void {
+		global $wpdb;
+		$user     = $this->sensei_factory->user->create();
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$lesson_2 = $this->sensei_factory->lesson->create();
+		$lesson_3 = $this->sensei_factory->lesson->create();
+
+		$this->create_lesson_status_with_grade( $lesson_1, $user, 'graded', 80 );
+		$this->create_lesson_status_with_grade( $lesson_2, $user, 'graded', 60 );
+		// Auto-passed lesson: graded, but no quiz_answers meta.
+		$this->create_lesson_status_with_grade( $lesson_3, $user, 'graded', 100, false );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals_by_user( array( $user ) );
+
+		$this->assertSame( 2, $result[ $user ]['count'], 'Auto-passed lesson without quiz_answers should be excluded.' );
+		$this->assertSame( 140.0, $result[ $user ]['sum'] );
+	}
+
+	/**
 	 * Test testGetCoursesAverageGrade_WithNoData_ReturnsZero.
 	 */
 	public function testGetCoursesAverageGrade_WithNoData_ReturnsZero(): void {
@@ -242,41 +356,6 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$result  = $service->get_courses_average_grade( array( $course_1 ) );
 
 		$this->assertSame( 80.0, $result );
-	}
-
-	/**
-	 * Tests that get_grade_totals only includes graded, passed, and failed statuses.
-	 */
-	public function testGetGradeTotals_WithMixedStatuses_OnlyCountsGradedPassedFailed(): void {
-		global $wpdb;
-		$user_id = $this->sensei_factory->user->create();
-
-		// These should be included.
-		$lesson_1 = $this->sensei_factory->lesson->create();
-		$lesson_2 = $this->sensei_factory->lesson->create();
-		$lesson_3 = $this->sensei_factory->lesson->create();
-		$this->create_lesson_status_with_grade( $lesson_1, $user_id, 'graded', 80 );
-		$this->create_lesson_status_with_grade( $lesson_2, $user_id, 'passed', 90 );
-		$this->create_lesson_status_with_grade( $lesson_3, $user_id, 'failed', 40 );
-
-		// This should be excluded: 'complete' status with grade meta.
-		$lesson_4   = $this->sensei_factory->lesson->create();
-		$comment_id = wp_insert_comment(
-			array(
-				'comment_post_ID'  => $lesson_4,
-				'user_id'          => $user_id,
-				'comment_type'     => 'sensei_lesson_status',
-				'comment_approved' => 'complete',
-				'comment_content'  => '',
-			)
-		);
-		update_comment_meta( $comment_id, 'grade', 100 );
-
-		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals();
-
-		$this->assertSame( 3, $result['count'], 'Only graded/passed/failed statuses should be counted.' );
-		$this->assertSame( 210.0, $result['sum'], 'Sum should only include graded/passed/failed grades (80 + 90 + 40).' );
 	}
 
 	/**
@@ -408,82 +487,4 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result );
 	}
 
-	/**
-	 * Test testGetGradeTotalsByUser_WithNoUserIds_ReturnsEmptyArray.
-	 */
-	public function testGetGradeTotalsByUser_WithNoUserIds_ReturnsEmptyArray(): void {
-		global $wpdb;
-		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-
-		$result = $service->get_grade_totals_by_user( array() );
-
-		$this->assertSame( array(), $result );
-	}
-
-	/**
-	 * Test testGetGradeTotalsByUser_WithMultipleGrades_GroupsByUser.
-	 */
-	public function testGetGradeTotalsByUser_WithMultipleGrades_GroupsByUser(): void {
-		global $wpdb;
-		$user     = $this->sensei_factory->user->create();
-		$lesson_1 = $this->sensei_factory->lesson->create();
-		$lesson_2 = $this->sensei_factory->lesson->create();
-
-		$this->create_lesson_status_with_grade( $lesson_1, $user, 'graded', 80 );
-		$this->create_lesson_status_with_grade( $lesson_2, $user, 'graded', 60 );
-
-		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals_by_user( array( $user ) );
-
-		$this->assertSame( 2, $result[ $user ]['count'] );
-		$this->assertSame( 140.0, $result[ $user ]['sum'] );
-	}
-
-	/**
-	 * Test testGetGradeTotalsByUser_WithMultipleUsers_ReturnsSeparateTotals.
-	 */
-	public function testGetGradeTotalsByUser_WithMultipleUsers_ReturnsSeparateTotals(): void {
-		global $wpdb;
-		$user_1    = $this->sensei_factory->user->create();
-		$user_2    = $this->sensei_factory->user->create();
-		$lesson_id = $this->sensei_factory->lesson->create();
-
-		$this->create_lesson_status_with_grade( $lesson_id, $user_1, 'graded', 80 );
-		$this->create_lesson_status_with_grade( $lesson_id, $user_2, 'graded', 60 );
-
-		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals_by_user( array( $user_1, $user_2 ) );
-
-		$this->assertSame( 1, $result[ $user_1 ]['count'] );
-		$this->assertSame( 80.0, $result[ $user_1 ]['sum'] );
-		$this->assertSame( 1, $result[ $user_2 ]['count'] );
-		$this->assertSame( 60.0, $result[ $user_2 ]['sum'] );
-	}
-
-	/**
-	 * Test testGetGradeTotalsByUser_WithAutoPassedLesson_ExcludesFromTotals.
-	 *
-	 * Pins parity with the tables-based implementation: an auto-passed lesson
-	 * (graded, but with no quiz_answers meta because the student never took the
-	 * quiz) must not be counted, mirroring how the tables-based implementation
-	 * excludes lessons without a quiz submission row.
-	 */
-	public function testGetGradeTotalsByUser_WithAutoPassedLesson_ExcludesFromTotals(): void {
-		global $wpdb;
-		$user     = $this->sensei_factory->user->create();
-		$lesson_1 = $this->sensei_factory->lesson->create();
-		$lesson_2 = $this->sensei_factory->lesson->create();
-		$lesson_3 = $this->sensei_factory->lesson->create();
-
-		$this->create_lesson_status_with_grade( $lesson_1, $user, 'graded', 80 );
-		$this->create_lesson_status_with_grade( $lesson_2, $user, 'graded', 60 );
-		// Auto-passed lesson: graded, but no quiz_answers meta.
-		$this->create_lesson_status_with_grade( $lesson_3, $user, 'graded', 100, false );
-
-		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals_by_user( array( $user ) );
-
-		$this->assertSame( 2, $result[ $user ]['count'], 'Auto-passed lesson without quiz_answers should be excluded.' );
-		$this->assertSame( 140.0, $result[ $user ]['sum'] );
-	}
 }
