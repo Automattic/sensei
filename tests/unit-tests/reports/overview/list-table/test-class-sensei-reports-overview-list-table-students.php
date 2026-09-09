@@ -150,7 +150,7 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		}
 	}
 
-	public function testGetRowData_WhenCalledAfterPrepareItems_UsesPrimedGradeTotals() {
+	public function testGetRowData_WhenCalledAfterPrepareItems_UsesPrimedAverageGrades() {
 		/* Arrange. */
 		if ( self::is_hpps_tables_mode() ) {
 			$this->enable_hpps_tables_repository();

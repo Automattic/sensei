@@ -60,7 +60,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	}
 
 	/**
-	 * Get the shared FROM and WHERE clauses for grade totals queries.
+	 * Get the shared FROM and WHERE clauses for grade statistics queries.
 	 *
 	 * The quiz_answers check restricts results to attempts where the student
 	 * submitted answers, excluding students auto-passed without taking the quiz.
@@ -69,7 +69,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	 *
 	 * @return string SQL fragment containing the FROM and WHERE clauses.
 	 */
-	private function get_grade_totals_from_where_sql(): string {
+	private function get_grade_stats_from_where_sql(): string {
 		$wpdb = $this->wpdb;
 
 		return "FROM `{$wpdb->comments}` c
@@ -104,7 +104,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		// Table names are trusted $wpdb properties; statuses are from constants, not user input.
 		$query =
 			'SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum
-			' . $this->get_grade_totals_from_where_sql();
+			' . $this->get_grade_stats_from_where_sql();
 
 		$query .= $this->build_user_filter( $args );
 		$query .= $this->build_post_filter( $args );
@@ -128,14 +128,14 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	}
 
 	/**
-	 * Get grade count and sum grouped by user.
+	 * Get average grade grouped by user.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @param int[] $user_ids User IDs to include.
-	 * @return array<int, array{count:int, sum:float}> Map of user_id => totals.
+	 * @return array<int, float> Map of user ID to average grade.
 	 */
-	public function get_grade_totals_by_user( array $user_ids ): array {
+	public function get_average_grades_by_user( array $user_ids ): array {
 		if ( empty( $user_ids ) ) {
 			return array();
 		}
@@ -146,25 +146,22 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants; placeholders dynamic; caching by callers.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT c.user_id AS user_id, COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum
-				' . $this->get_grade_totals_from_where_sql() . "
+				'SELECT c.user_id AS user_id, AVG( cm.meta_value ) AS average_grade
+				' . $this->get_grade_stats_from_where_sql() . "
 					AND c.user_id IN ( $placeholders )
 				GROUP BY c.user_id",
 				$user_ids
 			)
 		);
 		// phpcs:enable
-		Utils::log_query_error( $wpdb, 'Comments-based grade totals by user' );
+		Utils::log_query_error( $wpdb, 'Comments-based average grades by user' );
 
-		$totals = array();
+		$average_grades = array();
 		foreach ( (array) $rows as $row ) {
-			$totals[ (int) $row->user_id ] = array(
-				'count' => (int) $row->count,
-				'sum'   => (float) $row->sum,
-			);
+			$average_grades[ (int) $row->user_id ] = (float) $row->average_grade;
 		}
 
-		return $totals;
+		return $average_grades;
 	}
 
 	/**

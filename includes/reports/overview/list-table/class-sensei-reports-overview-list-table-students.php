@@ -34,11 +34,11 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	private $course_counts_by_user = array();
 
 	/**
-	 * Per-user grade totals cache for the current page.
+	 * Per-user average-grade cache for the current page.
 	 *
-	 * @var array<int, array{count:int, sum:float}>
+	 * @var array<int, float>
 	 */
-	private $grade_totals_by_user = array();
+	private $average_grades_by_user = array();
 
 	/**
 	 * Constructor
@@ -93,8 +93,8 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			$items
 		);
 
-		$this->course_counts_by_user = $this->reports_overview_service_students->get_course_counts_by_user( $user_ids );
-		$this->grade_totals_by_user  = $this->reports_overview_service_students->get_grade_totals_by_user( $user_ids );
+		$this->course_counts_by_user  = $this->reports_overview_service_students->get_course_counts_by_user( $user_ids );
+		$this->average_grades_by_user = $this->reports_overview_service_students->get_average_grades_by_user( $user_ids );
 	}
 
 	/**
@@ -220,18 +220,8 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$active_courses    = $counts['active'];
 		$completed_courses = $counts['completed'];
 
-		// Get Quiz Grades from the primed per-page cache.
-		$grade_totals       = $this->grade_totals_by_user[ (int) $item->ID ] ?? array(
-			'count' => 0,
-			'sum'   => 0,
-		);
-		$grade_count        = $grade_totals['count'];
-		$grade_total        = $grade_totals['sum'];
-		$user_average_grade = 0;
-
-		if ( $grade_total > 0 && $grade_count > 0 ) {
-			$user_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
-		}
+		// Get the average grade from the primed per-page cache.
+		$user_average_grade = $this->average_grades_by_user[ (int) $item->ID ] ?? 0.0;
 
 		$user_email = $item->user_email;
 

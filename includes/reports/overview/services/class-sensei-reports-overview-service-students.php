@@ -68,19 +68,26 @@ class Sensei_Reports_Overview_Service_Students {
 	}
 
 	/**
-	 * Get grade count and sum for each of the given students.
+	 * Get the average grade for each of the given students.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @param int[] $user_ids Student user IDs.
-	 * @return array<int, array{count:int, sum:float}> Map of user ID to grade totals.
+	 * @return array<int, float> Map of user ID to average grade.
 	 */
-	public function get_grade_totals_by_user( array $user_ids ): array {
+	public function get_average_grades_by_user( array $user_ids ): array {
 		if ( empty( $user_ids ) ) {
 			return array();
 		}
 
-		return $this->grading_stats_service->get_grade_totals_by_user( $user_ids );
+		$average_grades         = $this->grading_stats_service->get_average_grades_by_user( $user_ids );
+		$average_grades_by_user = array();
+
+		foreach ( $user_ids as $user_id ) {
+			$average_grades_by_user[ $user_id ] = Sensei_Utils::as_absolute_rounded_number( $average_grades[ $user_id ] ?? 0.0, 2 );
+		}
+
+		return $average_grades_by_user;
 	}
 
 	/**

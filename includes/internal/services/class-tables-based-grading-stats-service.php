@@ -132,14 +132,14 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	}
 
 	/**
-	 * Get grade count and sum grouped by user.
+	 * Get average grade grouped by user.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @param int[] $user_ids User IDs to include.
-	 * @return array<int, array{count:int, sum:float}> Map of user_id => totals.
+	 * @return array<int, float> Map of user ID to average grade.
 	 */
-	public function get_grade_totals_by_user( array $user_ids ): array {
+	public function get_average_grades_by_user( array $user_ids ): array {
 		if ( empty( $user_ids ) ) {
 			return array();
 		}
@@ -152,7 +152,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants; placeholders dynamic; caching by callers.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT q.user_id AS user_id, COUNT(*) AS count, COALESCE( SUM( qs.final_grade ), 0 ) AS sum
+				"SELECT q.user_id AS user_id, AVG( qs.final_grade ) AS average_grade
 				FROM `$table` q
 				INNER JOIN `$submissions_table` qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
 				INNER JOIN `{$wpdb->postmeta}` lesson_quiz ON lesson_quiz.meta_key = '_lesson_quiz' AND lesson_quiz.meta_value = q.post_id
@@ -165,17 +165,14 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 			)
 		);
 		// phpcs:enable
-		Utils::log_query_error( $wpdb, 'Tables-based grade totals by user' );
+		Utils::log_query_error( $wpdb, 'Tables-based average grades by user' );
 
-		$totals = array();
+		$average_grades = array();
 		foreach ( (array) $rows as $row ) {
-			$totals[ (int) $row->user_id ] = array(
-				'count' => (int) $row->count,
-				'sum'   => (float) $row->sum,
-			);
+			$average_grades[ (int) $row->user_id ] = (float) $row->average_grade;
 		}
 
-		return $totals;
+		return $average_grades;
 	}
 
 	/**

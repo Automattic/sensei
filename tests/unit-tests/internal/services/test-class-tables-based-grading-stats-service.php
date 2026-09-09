@@ -295,21 +295,21 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetGradeTotalsByUser_WithNoUserIds_ReturnsEmptyArray.
+	 * Test testGetAverageGradesByUser_NoUserIdsGiven_ReturnsEmptyArray.
 	 */
-	public function testGetGradeTotalsByUser_WithNoUserIds_ReturnsEmptyArray(): void {
+	public function testGetAverageGradesByUser_NoUserIdsGiven_ReturnsEmptyArray(): void {
 		global $wpdb;
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
 
-		$result = $service->get_grade_totals_by_user( array() );
+		$result = $service->get_average_grades_by_user( array() );
 
 		$this->assertSame( array(), $result );
 	}
 
 	/**
-	 * Test testGetGradeTotalsByUser_WithMultipleGrades_GroupsByUser.
+	 * Test testGetAverageGradesByUser_MultipleGradesGiven_ReturnsAverage.
 	 */
-	public function testGetGradeTotalsByUser_WithMultipleGrades_GroupsByUser(): void {
+	public function testGetAverageGradesByUser_MultipleGradesGiven_ReturnsAverage(): void {
 		global $wpdb;
 		$user      = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -322,16 +322,15 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->create_graded_lesson( $lesson_2, $quiz_2, $user, $course_id, 'graded', 60 );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals_by_user( array( $user ) );
+		$result  = $service->get_average_grades_by_user( array( $user ) );
 
-		$this->assertSame( 2, $result[ $user ]['count'] );
-		$this->assertSame( 140.0, $result[ $user ]['sum'] );
+		$this->assertSame( 70.0, $result[ $user ] );
 	}
 
 	/**
-	 * Test testGetGradeTotalsByUser_WithMultipleUsers_ReturnsSeparateTotals.
+	 * Test testGetAverageGradesByUser_MultipleUsersGiven_ReturnsSeparateAverages.
 	 */
-	public function testGetGradeTotalsByUser_WithMultipleUsers_ReturnsSeparateTotals(): void {
+	public function testGetAverageGradesByUser_MultipleUsersGiven_ReturnsSeparateAverages(): void {
 		global $wpdb;
 		$user_1    = $this->sensei_factory->user->create();
 		$user_2    = $this->sensei_factory->user->create();
@@ -343,22 +342,25 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'graded', 60 );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals_by_user( array( $user_1, $user_2 ) );
+		$result  = $service->get_average_grades_by_user( array( $user_1, $user_2 ) );
 
-		$this->assertSame( 1, $result[ $user_1 ]['count'] );
-		$this->assertSame( 80.0, $result[ $user_1 ]['sum'] );
-		$this->assertSame( 1, $result[ $user_2 ]['count'] );
-		$this->assertSame( 60.0, $result[ $user_2 ]['sum'] );
+		$this->assertSame(
+			array(
+				$user_1 => 80.0,
+				$user_2 => 60.0,
+			),
+			$result
+		);
 	}
 
 	/**
-	 * Test testGetGradeTotalsByUser_WithLessonWithoutSubmission_ExcludesFromTotals.
+	 * Test testGetAverageGradesByUser_LessonWithoutSubmissionGiven_ExcludesItFromAverage.
 	 *
 	 * Pins parity with the comments-based implementation: a lesson that was
 	 * auto-passed (no quiz submission) must not be counted, mirroring how the
 	 * comments-based implementation excludes lessons without quiz_answers.
 	 */
-	public function testGetGradeTotalsByUser_WithLessonWithoutSubmission_ExcludesFromTotals(): void {
+	public function testGetAverageGradesByUser_LessonWithoutSubmissionGiven_ExcludesItFromAverage(): void {
 		global $wpdb;
 		$user      = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -380,10 +382,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->insert_progress( $quiz_3, $user, 'quiz', 'graded' );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals_by_user( array( $user ) );
+		$result  = $service->get_average_grades_by_user( array( $user ) );
 
-		$this->assertSame( 2, $result[ $user ]['count'], 'Auto-passed lesson without a submission should be excluded.' );
-		$this->assertSame( 140.0, $result[ $user ]['sum'] );
+		$this->assertSame( 70.0, $result[ $user ] );
 	}
 
 	/**
@@ -542,5 +543,4 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 		$this->assertSame( 80.0, $result );
 	}
-
 }
