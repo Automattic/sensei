@@ -112,10 +112,6 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 
 	public function testGetRowData_WhenCalledAfterPrepareItems_UsesPrimedCourseCounts() {
 		/* Arrange. */
-		if ( self::is_hpps_tables_mode() ) {
-			$this->enable_hpps_tables_repository();
-		}
-
 		$user_id               = $this->factory->user->create();
 		$completed_course_id   = $this->factory->course->create();
 		$in_progress_course_id = $this->factory->course->create();
@@ -144,18 +140,10 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( '1', (string) $row['completed_courses'] );
 		self::assertSame( '1', (string) $row['active_courses'] );
-
-		if ( self::is_hpps_tables_mode() ) {
-			$this->reset_hpps_repository();
-		}
 	}
 
 	public function testGetRowData_WhenCalledAfterPrepareItems_UsesPrimedAverageGrades() {
 		/* Arrange. */
-		if ( self::is_hpps_tables_mode() ) {
-			$this->enable_hpps_tables_repository();
-		}
-
 		$user_id = $this->factory->user->create();
 
 		$this->grade_lesson_for_user( $user_id, 80 );
@@ -178,10 +166,6 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( '70%', $row['average_grade'] );
-
-		if ( self::is_hpps_tables_mode() ) {
-			$this->reset_hpps_repository();
-		}
 	}
 
 	/**
