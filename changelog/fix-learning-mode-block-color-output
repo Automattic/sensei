@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Ensure Learning Mode applies colour values without changing block markup
