@@ -39,6 +39,10 @@ interface Grading_Stats_Service_Interface {
 	 */
 	public function get_grade_totals( array $args = array() ): array;
 
+	// TODO: In a separate PR, rename the scalar methods to get_average_grade_for_courses()
+	// and get_average_grade_for_users() so "by" identifies grouped results and "for"
+	// identifies a single filtered aggregate.
+
 	/**
 	 * Get average grade grouped by user.
 	 *
