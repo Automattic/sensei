@@ -149,8 +149,13 @@ class Course_Translation {
 
 		// WPML swaps term IDs for their translation in the current language,
 		// which during a translation job is not the lesson's language, so the
-		// lesson's own module terms are read and cleared with that off.
-		add_filter( 'wpml_disable_term_adjust_id', '__return_true' );
+		// lesson's own module terms are read and cleared with that off. The
+		// callback is our own so that removing it leaves any other in place.
+		$disable_term_adjustment = static function (): bool {
+			return true;
+		};
+
+		add_filter( 'wpml_disable_term_adjust_id', $disable_term_adjustment );
 
 		$modules = get_the_terms( $lesson_id, 'module' );
 		if ( is_array( $modules ) ) {
@@ -161,7 +166,7 @@ class Course_Translation {
 
 		wp_set_object_terms( $lesson_id, array(), 'module' );
 
-		remove_filter( 'wpml_disable_term_adjust_id', '__return_true' );
+		remove_filter( 'wpml_disable_term_adjust_id', $disable_term_adjustment );
 	}
 
 	/**
