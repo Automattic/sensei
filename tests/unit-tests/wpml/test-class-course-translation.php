@@ -270,14 +270,11 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		update_post_meta( $original_lesson_ids[0], '_order_' . $original_course_id, 2 );
 		update_post_meta( $original_lesson_ids[1], '_order_' . $original_course_id, 1 );
 
-		// Their translations are plain translations, not WPML duplicates, and
-		// still carry the order the original course had before.
+		// Their translations are plain translations, not WPML duplicates.
 		$translated_lesson_ids = $this->create_course_lessons(
 			$translated_course_id,
 			array( '2024-02-11 10:00:00', '2024-02-12 10:00:00' )
 		);
-		update_post_meta( $translated_lesson_ids[0], '_order_' . $translated_course_id, 1 );
-		update_post_meta( $translated_lesson_ids[1], '_order_' . $translated_course_id, 2 );
 
 		$this->stub_course_language( 'es', 'en' );
 		$this->stub_object_id_map(

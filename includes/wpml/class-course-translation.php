@@ -80,8 +80,7 @@ class Course_Translation {
 				$this->copy_post_to_language( $lesson_id, $details['language_code'], true );
 			}
 
-			// The translation in the language being completed, which is not a
-			// duplicate when it was not created here, so it is looked up by ID.
+			// Cover the language being completed, duplicate or not.
 			$translations  = $this->get_post_duplicates( $lesson_id );
 			$job_lesson_id = $this->get_object_id( $lesson_id, 'lesson', false, $details['language_code'] );
 			if ( $job_lesson_id && $job_lesson_id !== $lesson_id ) {
