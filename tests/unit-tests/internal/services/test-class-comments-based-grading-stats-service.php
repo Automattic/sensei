@@ -37,10 +37,10 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	 * @param int    $lesson_id Lesson post ID.
 	 * @param int    $user_id   User ID.
 	 * @param string $status    Comment status (e.g. 'graded', 'passed', 'failed').
-	 * @param int    $grade            The grade value.
+	 * @param float  $grade            The grade value.
 	 * @param bool   $has_quiz_answers Whether to add quiz_answers meta.
 	 */
-	private function create_lesson_status_with_grade( int $lesson_id, int $user_id, string $status, int $grade, bool $has_quiz_answers = true ): void {
+	private function create_lesson_status_with_grade( int $lesson_id, int $user_id, string $status, float $grade, bool $has_quiz_answers = true ): void {
 		$comment_id = wp_insert_comment(
 			array(
 				'comment_post_ID'  => $lesson_id,
@@ -210,7 +210,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetAverageGradesByUser_NoUserIdsGiven_ReturnsEmptyArray.
+	 * Tests that an empty user ID list returns an empty result.
 	 */
 	public function testGetAverageGradesByUser_NoUserIdsGiven_ReturnsEmptyArray(): void {
 		global $wpdb;
@@ -222,25 +222,25 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetAverageGradesByUser_MultipleGradesGiven_ReturnsAverage.
+	 * Tests that fractional grades retain their precision in the calculated average.
 	 */
-	public function testGetAverageGradesByUser_MultipleGradesGiven_ReturnsAverage(): void {
+	public function testGetAverageGradesByUser_FractionalGradesGiven_ReturnsPreciseAverage(): void {
 		global $wpdb;
 		$user     = $this->sensei_factory->user->create();
 		$lesson_1 = $this->sensei_factory->lesson->create();
 		$lesson_2 = $this->sensei_factory->lesson->create();
 
-		$this->create_lesson_status_with_grade( $lesson_1, $user, 'graded', 80 );
-		$this->create_lesson_status_with_grade( $lesson_2, $user, 'graded', 60 );
+		$this->create_lesson_status_with_grade( $lesson_1, $user, 'graded', 80.25 );
+		$this->create_lesson_status_with_grade( $lesson_2, $user, 'graded', 60.50 );
 
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
 		$result  = $service->get_average_grades_by_user( array( $user ) );
 
-		$this->assertSame( 70.0, $result[ $user ] );
+		$this->assertSame( 70.375, $result[ $user ] );
 	}
 
 	/**
-	 * Test testGetAverageGradesByUser_MultipleUsersGiven_ReturnsSeparateAverages.
+	 * Tests that each user receives a separately calculated average.
 	 */
 	public function testGetAverageGradesByUser_MultipleUsersGiven_ReturnsSeparateAverages(): void {
 		global $wpdb;
@@ -264,7 +264,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetAverageGradesByUser_AutoPassedLessonGiven_ExcludesItFromAverage.
+	 * Tests that an auto-passed lesson without quiz answers is excluded.
 	 *
 	 * Pins parity with the tables-based implementation: an auto-passed lesson
 	 * (graded, but with no quiz_answers meta because the student never took the

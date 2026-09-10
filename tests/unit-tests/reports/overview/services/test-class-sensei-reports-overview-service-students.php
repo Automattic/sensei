@@ -62,7 +62,7 @@ class Sensei_Reports_Overview_Service_Students_Test extends WP_UnitTestCase {
 		$grading_stats_service = $this->createMock( Grading_Stats_Service_Interface::class );
 		$grading_stats_service->method( 'get_average_grades_by_user' )->with( array( $user_one, $user_two ) )->willReturn(
 			array(
-				$user_one => 70.556,
+				$user_one => 70.375,
 			)
 		);
 		$service = new Sensei_Reports_Overview_Service_Students(
@@ -75,7 +75,7 @@ class Sensei_Reports_Overview_Service_Students_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = array(
-			$user_one => 70.56,
+			$user_one => 70.38,
 			$user_two => 0.0,
 		);
 		self::assertSame( $expected, $actual );

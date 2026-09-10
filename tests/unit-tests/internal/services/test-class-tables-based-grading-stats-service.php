@@ -60,11 +60,11 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Insert a quiz submission row.
 	 *
-	 * @param int      $quiz_id     The quiz post ID.
-	 * @param int      $user_id     The user ID.
-	 * @param int|null $final_grade The final grade.
+	 * @param int        $quiz_id     The quiz post ID.
+	 * @param int        $user_id     The user ID.
+	 * @param float|null $final_grade The final grade.
 	 */
-	private function insert_quiz_submission( int $quiz_id, int $user_id, ?int $final_grade = null ): void {
+	private function insert_quiz_submission( int $quiz_id, int $user_id, ?float $final_grade = null ): void {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 		$now    = current_time( 'mysql' );
@@ -77,7 +77,7 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$format = array( '%d', '%d', '%s', '%s' );
 		if ( null !== $final_grade ) {
 			$data['final_grade'] = $final_grade;
-			$format[]            = '%d';
+			$format[]            = '%f';
 		}
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
 		$wpdb->insert( $table, $data, $format );
@@ -91,9 +91,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	 * @param int    $user_id    The user ID.
 	 * @param int    $course_id  The course ID.
 	 * @param string $status     The quiz status.
-	 * @param int    $grade      The grade value.
+	 * @param float  $grade      The grade value.
 	 */
-	private function create_graded_lesson( int $lesson_id, int $quiz_id, int $user_id, int $course_id, string $status, int $grade ): void {
+	private function create_graded_lesson( int $lesson_id, int $quiz_id, int $user_id, int $course_id, string $status, float $grade ): void {
 		update_post_meta( $lesson_id, '_lesson_course', $course_id );
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
@@ -295,7 +295,7 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetAverageGradesByUser_NoUserIdsGiven_ReturnsEmptyArray.
+	 * Tests that an empty user ID list returns an empty result.
 	 */
 	public function testGetAverageGradesByUser_NoUserIdsGiven_ReturnsEmptyArray(): void {
 		global $wpdb;
@@ -307,9 +307,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetAverageGradesByUser_MultipleGradesGiven_ReturnsAverage.
+	 * Tests that fractional grades retain their precision in the calculated average.
 	 */
-	public function testGetAverageGradesByUser_MultipleGradesGiven_ReturnsAverage(): void {
+	public function testGetAverageGradesByUser_FractionalGradesGiven_ReturnsPreciseAverage(): void {
 		global $wpdb;
 		$user      = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -318,17 +318,17 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$lesson_2  = $this->sensei_factory->lesson->create();
 		$quiz_2    = $this->sensei_factory->quiz->create();
 
-		$this->create_graded_lesson( $lesson_1, $quiz_1, $user, $course_id, 'graded', 80 );
-		$this->create_graded_lesson( $lesson_2, $quiz_2, $user, $course_id, 'graded', 60 );
+		$this->create_graded_lesson( $lesson_1, $quiz_1, $user, $course_id, 'graded', 80.25 );
+		$this->create_graded_lesson( $lesson_2, $quiz_2, $user, $course_id, 'graded', 60.50 );
 
 		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
 		$result  = $service->get_average_grades_by_user( array( $user ) );
 
-		$this->assertSame( 70.0, $result[ $user ] );
+		$this->assertSame( 70.375, $result[ $user ] );
 	}
 
 	/**
-	 * Test testGetAverageGradesByUser_MultipleUsersGiven_ReturnsSeparateAverages.
+	 * Tests that each user receives a separately calculated average.
 	 */
 	public function testGetAverageGradesByUser_MultipleUsersGiven_ReturnsSeparateAverages(): void {
 		global $wpdb;
@@ -354,7 +354,7 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test testGetAverageGradesByUser_LessonWithoutSubmissionGiven_ExcludesItFromAverage.
+	 * Tests that a lesson without a quiz submission is excluded.
 	 *
 	 * Pins parity with the comments-based implementation: a lesson that was
 	 * auto-passed (no quiz submission) must not be counted, mirroring how the
