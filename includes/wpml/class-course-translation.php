@@ -147,6 +147,11 @@ class Course_Translation {
 		delete_post_meta( $lesson_id, '_lesson_course' );
 		delete_post_meta( $lesson_id, '_order_' . $course_id );
 
+		// WPML swaps term IDs for their translation in the current language,
+		// which during a translation job is not the lesson's language, so the
+		// lesson's own module terms are read and cleared with that off.
+		add_filter( 'wpml_disable_term_adjust_id', '__return_true' );
+
 		$modules = get_the_terms( $lesson_id, 'module' );
 		if ( is_array( $modules ) ) {
 			foreach ( $modules as $module ) {
@@ -155,6 +160,8 @@ class Course_Translation {
 		}
 
 		wp_set_object_terms( $lesson_id, array(), 'module' );
+
+		remove_filter( 'wpml_disable_term_adjust_id', '__return_true' );
 	}
 
 	/**
