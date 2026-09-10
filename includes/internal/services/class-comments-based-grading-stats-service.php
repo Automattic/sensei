@@ -244,24 +244,12 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		$wpdb         = $this->wpdb;
 		$placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
 
-		// The quiz_answers EXISTS check restricts results to attempts where the
-		// student actually submitted answers. This excludes auto-passed students
-		// whose lesson was marked passed without ever taking the quiz.
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants. Placeholders created dynamically. Caching handled by callers.
 		/** Query result row. @var object|null $row */
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT SUM( cm.meta_value ) AS grade_sum, COUNT( * ) AS grade_count
-				FROM `{$wpdb->comments}` c
-				INNER JOIN `{$wpdb->commentmeta}` cm ON c.comment_ID = cm.comment_id
-				WHERE c.comment_type = 'sensei_lesson_status'
-					AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
-					AND cm.meta_key = 'grade'
-					AND EXISTS (
-						SELECT 1 FROM `{$wpdb->commentmeta}` cm2
-						WHERE cm2.comment_id = c.comment_ID
-							AND cm2.meta_key = 'quiz_answers'
-					)
+				'SELECT COUNT( * ) AS count, SUM( cm.meta_value ) AS sum
+				' . $this->get_grade_stats_from_where_sql() . "
 					AND c.user_id IN ( $placeholders )",
 				$user_ids
 			)
@@ -269,11 +257,11 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		// phpcs:enable
 		Utils::log_query_error( $wpdb, 'Comments-based users average grade' );
 
-		if ( ! $row || ! $row->grade_count ) {
+		if ( ! $row || ! $row->count ) {
 			return 0.0;
 		}
 
-		return (float) ( $row->grade_sum / $row->grade_count );
+		return (float) ( $row->sum / $row->count );
 	}
 
 	/**
