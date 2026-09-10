@@ -139,8 +139,7 @@ class Course_Translation {
 	 * Get the IDs of the lessons attached to a course, whatever their language.
 	 *
 	 * WPML filters queries by the current language, which during a translation
-	 * job is not the language of the course, so the query runs without filters
-	 * (the default of get_posts()).
+	 * job is not the language of the course, so the query runs without filters.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -150,12 +149,13 @@ class Course_Translation {
 	private function get_course_lesson_ids( $course_id ) {
 		$lesson_ids = get_posts(
 			array(
-				'post_type'   => 'lesson',
-				'post_status' => 'any',
-				'numberposts' => -1,
-				'fields'      => 'ids',
-				'meta_key'    => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Lessons are attached to their course by meta.
-				'meta_value'  => (int) $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+				'post_type'        => 'lesson',
+				'post_status'      => 'any',
+				'numberposts'      => -1,
+				'fields'           => 'ids',
+				'suppress_filters' => true,
+				'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Lessons are attached to their course by meta.
+				'meta_value'       => (int) $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
 			)
 		);
 
