@@ -136,6 +136,28 @@ class Course_Translation {
 	}
 
 	/**
+	 * Detach a lesson from a course, the same way the course outline does when a lesson is removed.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 */
+	private function detach_lesson_from_course( $lesson_id, $course_id ) {
+		delete_post_meta( $lesson_id, '_lesson_course' );
+		delete_post_meta( $lesson_id, '_order_' . $course_id );
+
+		$modules = get_the_terms( $lesson_id, 'module' );
+		if ( is_array( $modules ) ) {
+			foreach ( $modules as $module ) {
+				delete_post_meta( $lesson_id, '_order_module_' . $module->term_id );
+			}
+		}
+
+		wp_set_object_terms( $lesson_id, array(), 'module' );
+	}
+
+	/**
 	 * Get the IDs of the lessons attached to a course, whatever their language.
 	 *
 	 * WPML filters queries by the current language, which during a translation
@@ -160,28 +182,6 @@ class Course_Translation {
 		);
 
 		return array_map( 'intval', $lesson_ids );
-	}
-
-	/**
-	 * Detach a lesson from a course, the same way the course outline does when a lesson is removed.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param int $lesson_id Lesson ID.
-	 * @param int $course_id Course ID.
-	 */
-	private function detach_lesson_from_course( $lesson_id, $course_id ) {
-		delete_post_meta( $lesson_id, '_lesson_course' );
-		delete_post_meta( $lesson_id, '_order_' . $course_id );
-
-		$modules = get_the_terms( $lesson_id, 'module' );
-		if ( is_array( $modules ) ) {
-			foreach ( $modules as $module ) {
-				delete_post_meta( $lesson_id, '_order_module_' . $module->term_id );
-			}
-		}
-
-		wp_set_object_terms( $lesson_id, array(), 'module' );
 	}
 
 	/**
