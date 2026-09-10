@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix lessons removed from a course staying in its WPML translations after the translation is updated.

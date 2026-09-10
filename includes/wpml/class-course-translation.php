@@ -97,6 +97,8 @@ class Course_Translation {
 			$this->sync_custom_field( $lesson_id, '_lesson_course' );
 		}
 
+		$this->detach_lessons_removed_from_original_course( $master_id, $new_course_id, $details['source_language_code'] );
+
 		// One order sync per language instead of one per lesson.
 		foreach ( array_keys( $duplicate_languages ) as $language_code ) {
 			$translated_course_id = $this->get_object_id( $master_id, 'course', false, $language_code );
@@ -104,6 +106,98 @@ class Course_Translation {
 				$this->sync_course_lesson_order( $master_id, $translated_course_id, $language_code );
 			}
 		}
+	}
+
+	/**
+	 * Detach from a translated course the lessons whose original was removed from the original course.
+	 *
+	 * Removing a lesson from a course only detaches it, so the same is done
+	 * to its translation. Lessons of the translated course with no original
+	 * are left alone.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int    $original_course_id   Original course ID.
+	 * @param int    $translated_course_id Translated course ID.
+	 * @param string $source_language_code Language code of the original course.
+	 */
+	private function detach_lessons_removed_from_original_course( $original_course_id, $translated_course_id, $source_language_code ) {
+		$original_lesson_ids = $this->get_course_lesson_ids( $original_course_id );
+
+		foreach ( $this->get_course_lesson_ids( $translated_course_id ) as $translated_lesson_id ) {
+			$original_lesson_id = $this->get_object_id( $translated_lesson_id, 'lesson', false, $source_language_code );
+
+			if ( ! $original_lesson_id || $original_lesson_id === $translated_lesson_id || in_array( $original_lesson_id, $original_lesson_ids, true ) ) {
+				continue;
+			}
+
+			$this->detach_lesson_from_course( $translated_lesson_id, $translated_course_id );
+		}
+	}
+
+	/**
+	 * Detach a lesson from a course.
+	 *
+	 * Clears the associations the course outline clears when a lesson is
+	 * removed from it, plus the lesson's order in the course, which the
+	 * outline leaves behind.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 */
+	private function detach_lesson_from_course( $lesson_id, $course_id ) {
+		delete_post_meta( $lesson_id, '_lesson_course' );
+		delete_post_meta( $lesson_id, '_order_' . $course_id );
+
+		// WPML swaps term IDs for their translation in the current language,
+		// which during a translation job is not the lesson's language, so the
+		// lesson's own module terms are read and cleared with that off. The
+		// callback is our own so that removing it leaves any other in place.
+		$disable_term_adjustment = static function (): bool {
+			return true;
+		};
+
+		add_filter( 'wpml_disable_term_adjust_id', $disable_term_adjustment );
+
+		$modules = get_the_terms( $lesson_id, 'module' );
+		if ( is_array( $modules ) ) {
+			foreach ( $modules as $module ) {
+				delete_post_meta( $lesson_id, '_order_module_' . $module->term_id );
+			}
+		}
+
+		wp_set_object_terms( $lesson_id, array(), 'module' );
+
+		remove_filter( 'wpml_disable_term_adjust_id', $disable_term_adjustment );
+	}
+
+	/**
+	 * Get the IDs of the lessons attached to a course, whatever their language.
+	 *
+	 * WPML filters queries by the current language, which during a translation
+	 * job is not the language of the course, so the query runs without filters.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $course_id Course ID.
+	 * @return int[]
+	 */
+	private function get_course_lesson_ids( $course_id ) {
+		$lesson_ids = get_posts(
+			array(
+				'post_type'        => 'lesson',
+				'post_status'      => 'any',
+				'numberposts'      => -1,
+				'fields'           => 'ids',
+				'suppress_filters' => true,
+				'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Lessons are attached to their course by meta.
+				'meta_value'       => (int) $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+			)
+		);
+
+		return array_map( 'intval', $lesson_ids );
 	}
 
 	/**
