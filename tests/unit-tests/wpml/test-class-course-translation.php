@@ -175,6 +175,86 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( $master_lesson_ids, array_map( fn( $id ) => $id_map[ $id ], Sensei()->course->course_lessons( $translated_course_id, 'any', 'ids' ) ) );
 	}
 
+	public function testUpdateLessonPropertiesOnCourseTranslationCreated_LessonRemovedFromTheOriginalCourseGiven_DetachesItsTranslationFromTheTranslatedCourse() {
+		/* Arrange. */
+		$original_course_id   = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+
+		// The original lesson was removed from its course; its translation still points at the translated course.
+		$original_lesson_id   = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $translated_course_id ) ) );
+
+		// WPML: the translated course is in Spanish, translated from English.
+		add_filter(
+			'wpml_element_language_details',
+			fn() => array(
+				'language_code'        => 'es',
+				'source_language_code' => 'en',
+			),
+			10,
+			0
+		);
+		// WPML: which post is the counterpart of which.
+		add_filter(
+			'wpml_object_id',
+			fn( $post_id ) => array(
+				$translated_course_id => $original_course_id,
+				$translated_lesson_id => $original_lesson_id,
+			)[ $post_id ] ?? 0,
+			10,
+			1
+		);
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->update_lesson_properties_on_course_translation_created( $translated_course_id );
+
+		/* Clean up & Assert. */
+		remove_all_filters( 'wpml_element_language_details' );
+		remove_all_filters( 'wpml_object_id' );
+
+		$this->assertSame( '', get_post_meta( $translated_lesson_id, '_lesson_course', true ) );
+	}
+
+	public function testUpdateLessonPropertiesOnCourseTranslationCreated_LessonWithoutAnOriginalGiven_LeavesItInTheTranslatedCourse() {
+		/* Arrange. */
+		$original_course_id   = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+
+		// A lesson that only exists in the translated course.
+		$untranslated_lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $translated_course_id ) ) );
+
+		// WPML: the translated course is in Spanish, translated from English.
+		add_filter(
+			'wpml_element_language_details',
+			fn() => array(
+				'language_code'        => 'es',
+				'source_language_code' => 'en',
+			),
+			10,
+			0
+		);
+		// WPML: only the course has a counterpart.
+		add_filter(
+			'wpml_object_id',
+			fn( $post_id ) => $post_id === $translated_course_id ? $original_course_id : 0,
+			10,
+			1
+		);
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->update_lesson_properties_on_course_translation_created( $translated_course_id );
+
+		/* Clean up & Assert. */
+		remove_all_filters( 'wpml_element_language_details' );
+		remove_all_filters( 'wpml_object_id' );
+
+		$this->assertSame( (string) $translated_course_id, get_post_meta( $untranslated_lesson_id, '_lesson_course', true ) );
+	}
+
 	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_OutlineWithSourceLessonIdsGiven_RewritesThemToTheCourseLanguage() {
 		/* Arrange. */
 		$source_lesson_id     = $this->factory->lesson->create();
