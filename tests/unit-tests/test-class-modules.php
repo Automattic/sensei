@@ -492,4 +492,27 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 			'A teacher should be able to detach a module from a course they own.'
 		);
 	}
+
+	public function testFilterModuleTerms_TeacherOwnedModuleHierarchyRebuilt_ReturnsTheFullChildrenMap() {
+		/* Arrange: build the terms before entering the teacher/admin context, so the filter only runs in Act. */
+		$teacher   = $this->get_user_by_role( 'teacher' );
+		$teacher_b = $this->get_user_by_role( 'teacher', '_b' );
+
+		$parent = wp_insert_term( 'Parent Module', 'module' );
+		$child  = wp_insert_term( 'Child Module', 'module', array( 'parent' => $parent['term_id'] ) );
+		$owned  = wp_insert_term( 'Owned Module', 'module' );
+		update_term_meta( $parent['term_id'], 'module_author', $teacher_b );
+		update_term_meta( $child['term_id'], 'module_author', $teacher_b );
+		update_term_meta( $owned['term_id'], 'module_author', $teacher );
+
+		$this->login_as_teacher();
+		set_current_screen( 'edit-course' );
+		delete_option( 'module_children' );
+
+		/* Act */
+		$hierarchy = _get_term_hierarchy( 'module' );
+
+		/* Assert: the whole hierarchy, not only the teacher's terms — core caches this map site-wide. */
+		self::assertSame( array( $parent['term_id'] => array( $child['term_id'] ) ), $hierarchy );
+	}
 }
