@@ -19,13 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overview_List_Table_Abstract {
 	/**
-	 * Maximum number of students included in a row-aggregate query.
-	 *
-	 * @since $$next-version$$
-	 */
-	private const ROW_AGGREGATE_BATCH_SIZE = 1000;
-
-	/**
 	 * Sensei reports courses service.
 	 *
 	 * @var Sensei_Reports_Overview_Service_Students
@@ -99,16 +92,8 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			$items
 		);
 
-		$this->course_counts_by_user  = array();
-		$this->average_grades_by_user = array();
-
-		foreach ( array_chunk( $user_ids, self::ROW_AGGREGATE_BATCH_SIZE ) as $user_ids_batch ) {
-			$course_counts  = $this->reports_overview_service_students->get_course_counts_by_user( $user_ids_batch );
-			$average_grades = $this->reports_overview_service_students->get_average_grades_by_user( $user_ids_batch );
-
-			$this->course_counts_by_user  += $course_counts;
-			$this->average_grades_by_user += $average_grades;
-		}
+		$this->course_counts_by_user  = $this->reports_overview_service_students->get_course_counts_by_user( $user_ids );
+		$this->average_grades_by_user = $this->reports_overview_service_students->get_average_grades_by_user( $user_ids );
 	}
 
 	/**

@@ -22,6 +22,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.4.1
  */
 class Sensei_Reports_Overview_Service_Students {
+	/**
+	 * Maximum number of students included in a per-user aggregate request.
+	 *
+	 * @since $$next-version$$
+	 */
+	private const PER_USER_AGGREGATE_BATCH_SIZE = 1000;
 
 	/**
 	 * The progress aggregation service.
@@ -80,7 +86,11 @@ class Sensei_Reports_Overview_Service_Students {
 			return array();
 		}
 
-		$average_grades         = $this->grading_stats_service->get_average_grades_by_user( $user_ids );
+		$average_grades = array();
+		foreach ( array_chunk( $user_ids, self::PER_USER_AGGREGATE_BATCH_SIZE ) as $user_ids_batch ) {
+			$average_grades += $this->grading_stats_service->get_average_grades_by_user( $user_ids_batch );
+		}
+
 		$average_grades_by_user = array();
 
 		foreach ( $user_ids as $user_id ) {
@@ -103,12 +113,15 @@ class Sensei_Reports_Overview_Service_Students {
 			return array();
 		}
 
-		$counts = $this->aggregation_service->count_statuses_by_user(
-			array(
-				'type'    => 'course',
-				'user_id' => $user_ids,
-			)
-		);
+		$counts = array();
+		foreach ( array_chunk( $user_ids, self::PER_USER_AGGREGATE_BATCH_SIZE ) as $user_ids_batch ) {
+			$counts += $this->aggregation_service->count_statuses_by_user(
+				array(
+					'type'    => 'course',
+					'user_id' => $user_ids_batch,
+				)
+			);
+		}
 
 		$result = array();
 		foreach ( $user_ids as $user_id ) {
