@@ -81,7 +81,7 @@ class Course_Translation {
 			}
 
 			// Cover the language being completed, duplicate or not.
-			$translations  = $this->get_post_duplicates( $lesson_id );
+			$translations  = (array) $this->get_post_duplicates( $lesson_id );
 			$job_lesson_id = $this->get_object_id( $lesson_id, 'lesson', false, $details['language_code'] );
 			if ( $job_lesson_id && $job_lesson_id !== $lesson_id ) {
 				$translations[ $details['language_code'] ] = $job_lesson_id;
