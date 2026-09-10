@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix lesson order not reaching WPML translations when the translated lessons are not duplicates.
