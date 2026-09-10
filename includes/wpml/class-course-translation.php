@@ -67,8 +67,8 @@ class Course_Translation {
 			return;
 		}
 
-		$lesson_ids          = Sensei()->course->course_lessons( $master_id, 'any', 'ids' );
-		$duplicate_languages = array();
+		$lesson_ids           = Sensei()->course->course_lessons( $master_id, 'any', 'ids' );
+		$translated_languages = array();
 		foreach ( $lesson_ids as $lesson_id ) {
 			if ( ! is_int( $lesson_id ) ) {
 				$lesson_id = (int) $lesson_id;
@@ -80,7 +80,13 @@ class Course_Translation {
 				$this->copy_post_to_language( $lesson_id, $details['language_code'], true );
 			}
 
-			$translations = $this->get_post_duplicates( $lesson_id );
+			// Cover the language being completed, duplicate or not.
+			$translations  = (array) $this->get_post_duplicates( $lesson_id );
+			$job_lesson_id = $this->get_object_id( $lesson_id, 'lesson', false, $details['language_code'] );
+			if ( $job_lesson_id && $job_lesson_id !== $lesson_id ) {
+				$translations[ $details['language_code'] ] = $job_lesson_id;
+			}
+
 			foreach ( $translations as $language_code => $translated_lesson_id ) {
 				if ( empty( $this->get_element_language_details( (int) $translated_lesson_id, 'lesson' ) ) ) {
 					continue;
@@ -88,7 +94,7 @@ class Course_Translation {
 
 				$this->update_lesson_course( (int) $translated_lesson_id, $new_course_id );
 				$this->set_module_taxonomies( (int) $translated_lesson_id, $lesson_id, array( 'language_code' => $language_code ) );
-				$duplicate_languages[ $language_code ] = true;
+				$translated_languages[ $language_code ] = true;
 			}
 
 			$this->update_quiz_translations( $lesson_id, $details['language_code'] );
@@ -100,7 +106,7 @@ class Course_Translation {
 		$this->detach_lessons_removed_from_original_course( $master_id, $new_course_id, $details['source_language_code'] );
 
 		// One order sync per language instead of one per lesson.
-		foreach ( array_keys( $duplicate_languages ) as $language_code ) {
+		foreach ( array_keys( $translated_languages ) as $language_code ) {
 			$translated_course_id = $this->get_object_id( $master_id, 'course', false, $language_code );
 			if ( $translated_course_id && $translated_course_id !== $master_id ) {
 				$this->sync_course_lesson_order( $master_id, $translated_course_id, $language_code );
