@@ -60,11 +60,11 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	/**
 	 * Insert a quiz submission row.
 	 *
-	 * @param int      $quiz_id     The quiz post ID.
-	 * @param int      $user_id     The user ID.
-	 * @param int|null $final_grade The final grade.
+	 * @param int        $quiz_id     The quiz post ID.
+	 * @param int        $user_id     The user ID.
+	 * @param float|null $final_grade The final grade.
 	 */
-	private function insert_quiz_submission( int $quiz_id, int $user_id, ?int $final_grade = null ): void {
+	private function insert_quiz_submission( int $quiz_id, int $user_id, ?float $final_grade = null ): void {
 		$wpdb   = $GLOBALS['wpdb'];
 		$table  = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 		$now    = current_time( 'mysql' );
@@ -77,7 +77,7 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$format = array( '%d', '%d', '%s', '%s' );
 		if ( null !== $final_grade ) {
 			$data['final_grade'] = $final_grade;
-			$format[]            = '%d';
+			$format[]            = '%f';
 		}
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
 		$wpdb->insert( $table, $data, $format );
@@ -91,9 +91,9 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	 * @param int    $user_id    The user ID.
 	 * @param int    $course_id  The course ID.
 	 * @param string $status     The quiz status.
-	 * @param int    $grade      The grade value.
+	 * @param float  $grade      The grade value.
 	 */
-	private function create_graded_lesson( int $lesson_id, int $quiz_id, int $user_id, int $course_id, string $status, int $grade ): void {
+	private function create_graded_lesson( int $lesson_id, int $quiz_id, int $user_id, int $course_id, string $status, float $grade ): void {
 		update_post_meta( $lesson_id, '_lesson_course', $course_id );
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
@@ -258,6 +258,136 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that get_grade_totals only includes graded, passed, and failed statuses.
+	 */
+	public function testGetGradeTotals_WithMixedStatuses_OnlyCountsGradedPassedFailed(): void {
+		global $wpdb;
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+
+		// These should be included.
+		$lesson_1 = $this->sensei_factory->lesson->create();
+		$quiz_1   = $this->sensei_factory->quiz->create();
+		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_id, 'graded', 80 );
+
+		$lesson_2 = $this->sensei_factory->lesson->create();
+		$quiz_2   = $this->sensei_factory->quiz->create();
+		$this->create_graded_lesson( $lesson_2, $quiz_2, $user_id, $course_id, 'passed', 90 );
+
+		$lesson_3 = $this->sensei_factory->lesson->create();
+		$quiz_3   = $this->sensei_factory->quiz->create();
+		$this->create_graded_lesson( $lesson_3, $quiz_3, $user_id, $course_id, 'failed', 40 );
+
+		// This should be excluded: 'in-progress' status with a grade.
+		$lesson_4 = $this->sensei_factory->lesson->create();
+		$quiz_4   = $this->sensei_factory->quiz->create();
+		update_post_meta( $lesson_4, '_lesson_course', $course_id );
+		update_post_meta( $lesson_4, '_lesson_quiz', $quiz_4 );
+		$this->insert_progress( $lesson_4, $user_id, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_4, $user_id, 'quiz', 'in-progress' );
+		$this->insert_quiz_submission( $quiz_4, $user_id, 100 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_grade_totals();
+
+		$this->assertSame( 3, $result['count'], 'Only graded/passed/failed statuses should be counted.' );
+		$this->assertSame( 210.0, $result['sum'], 'Sum should only include graded/passed/failed grades (80 + 90 + 40).' );
+	}
+
+	/**
+	 * Tests that an empty user ID list returns an empty result.
+	 */
+	public function testGetAverageGradesByUser_NoUserIdsGiven_ReturnsEmptyArray(): void {
+		global $wpdb;
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+
+		$result = $service->get_average_grades_by_user( array() );
+
+		$this->assertSame( array(), $result );
+	}
+
+	/**
+	 * Tests that fractional grades retain their precision in the calculated average.
+	 */
+	public function testGetAverageGradesByUser_FractionalGradesGiven_ReturnsPreciseAverage(): void {
+		global $wpdb;
+		$user      = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_1  = $this->sensei_factory->lesson->create();
+		$quiz_1    = $this->sensei_factory->quiz->create();
+		$lesson_2  = $this->sensei_factory->lesson->create();
+		$quiz_2    = $this->sensei_factory->quiz->create();
+
+		$this->create_graded_lesson( $lesson_1, $quiz_1, $user, $course_id, 'graded', 80.25 );
+		$this->create_graded_lesson( $lesson_2, $quiz_2, $user, $course_id, 'graded', 60.50 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_average_grades_by_user( array( $user ) );
+
+		$this->assertSame( 70.375, $result[ $user ] );
+	}
+
+	/**
+	 * Tests that each user receives a separately calculated average.
+	 */
+	public function testGetAverageGradesByUser_MultipleUsersGiven_ReturnsSeparateAverages(): void {
+		global $wpdb;
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+		$quiz_id   = $this->sensei_factory->quiz->create();
+
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_1, $course_id, 'graded', 80 );
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'graded', 60 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_average_grades_by_user( array( $user_1, $user_2 ) );
+
+		$this->assertSame(
+			array(
+				$user_1 => 80.0,
+				$user_2 => 60.0,
+			),
+			$result
+		);
+	}
+
+	/**
+	 * Tests that a lesson without a quiz submission is excluded.
+	 *
+	 * Pins parity with the comments-based implementation: a lesson that was
+	 * auto-passed (no quiz submission) must not be counted, mirroring how the
+	 * comments-based implementation excludes lessons without quiz_answers.
+	 */
+	public function testGetAverageGradesByUser_LessonWithoutSubmissionGiven_ExcludesItFromAverage(): void {
+		global $wpdb;
+		$user      = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_1  = $this->sensei_factory->lesson->create();
+		$quiz_1    = $this->sensei_factory->quiz->create();
+		$lesson_2  = $this->sensei_factory->lesson->create();
+		$quiz_2    = $this->sensei_factory->quiz->create();
+
+		// Graded lesson with a quiz submission.
+		$this->create_graded_lesson( $lesson_1, $quiz_1, $user, $course_id, 'graded', 80 );
+		$this->create_graded_lesson( $lesson_2, $quiz_2, $user, $course_id, 'graded', 60 );
+
+		// Auto-passed lesson: progress marked graded, but no quiz submission row.
+		$lesson_3 = $this->sensei_factory->lesson->create();
+		$quiz_3   = $this->sensei_factory->quiz->create();
+		update_post_meta( $lesson_3, '_lesson_course', $course_id );
+		update_post_meta( $lesson_3, '_lesson_quiz', $quiz_3 );
+		$this->insert_progress( $lesson_3, $user, 'lesson', 'graded' );
+		$this->insert_progress( $quiz_3, $user, 'quiz', 'graded' );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+		$result  = $service->get_average_grades_by_user( array( $user ) );
+
+		$this->assertSame( 70.0, $result[ $user ] );
+	}
+
+	/**
 	 * Test testGetCoursesAverageGrade_WithNoData_ReturnsZero.
 	 */
 	public function testGetCoursesAverageGrade_WithNoData_ReturnsZero(): void {
@@ -335,43 +465,6 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 
 		// Average of averages: (70 + 90) / 2 = 80.
 		$this->assertSame( 80.0, $result );
-	}
-
-	/**
-	 * Tests that get_grade_totals only includes graded, passed, and failed statuses.
-	 */
-	public function testGetGradeTotals_WithMixedStatuses_OnlyCountsGradedPassedFailed(): void {
-		global $wpdb;
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-
-		// These should be included.
-		$lesson_1 = $this->sensei_factory->lesson->create();
-		$quiz_1   = $this->sensei_factory->quiz->create();
-		$this->create_graded_lesson( $lesson_1, $quiz_1, $user_id, $course_id, 'graded', 80 );
-
-		$lesson_2 = $this->sensei_factory->lesson->create();
-		$quiz_2   = $this->sensei_factory->quiz->create();
-		$this->create_graded_lesson( $lesson_2, $quiz_2, $user_id, $course_id, 'passed', 90 );
-
-		$lesson_3 = $this->sensei_factory->lesson->create();
-		$quiz_3   = $this->sensei_factory->quiz->create();
-		$this->create_graded_lesson( $lesson_3, $quiz_3, $user_id, $course_id, 'failed', 40 );
-
-		// This should be excluded: 'in-progress' status with a grade.
-		$lesson_4 = $this->sensei_factory->lesson->create();
-		$quiz_4   = $this->sensei_factory->quiz->create();
-		update_post_meta( $lesson_4, '_lesson_course', $course_id );
-		update_post_meta( $lesson_4, '_lesson_quiz', $quiz_4 );
-		$this->insert_progress( $lesson_4, $user_id, 'lesson', 'in-progress' );
-		$this->insert_progress( $quiz_4, $user_id, 'quiz', 'in-progress' );
-		$this->insert_quiz_submission( $quiz_4, $user_id, 100 );
-
-		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
-		$result  = $service->get_grade_totals();
-
-		$this->assertSame( 3, $result['count'], 'Only graded/passed/failed statuses should be counted.' );
-		$this->assertSame( 210.0, $result['sum'], 'Sum should only include graded/passed/failed grades (80 + 90 + 40).' );
 	}
 
 	/**

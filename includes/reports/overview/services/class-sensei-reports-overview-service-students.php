@@ -22,6 +22,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.4.1
  */
 class Sensei_Reports_Overview_Service_Students {
+	/**
+	 * Maximum number of students included in a per-user aggregate request.
+	 *
+	 * @since $$next-version$$
+	 */
+	private const PER_USER_AGGREGATE_BATCH_SIZE = 1000;
 
 	/**
 	 * The progress aggregation service.
@@ -68,6 +74,33 @@ class Sensei_Reports_Overview_Service_Students {
 	}
 
 	/**
+	 * Get the average grade for each of the given students.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $user_ids Student user IDs.
+	 * @return array<int, float> Map of user ID to average grade.
+	 */
+	public function get_average_grades_by_user( array $user_ids ): array {
+		if ( empty( $user_ids ) ) {
+			return array();
+		}
+
+		$average_grades = array();
+		foreach ( array_chunk( $user_ids, self::PER_USER_AGGREGATE_BATCH_SIZE ) as $user_ids_batch ) {
+			$average_grades += $this->grading_stats_service->get_average_grades_by_user( $user_ids_batch );
+		}
+
+		$average_grades_by_user = array();
+
+		foreach ( $user_ids as $user_id ) {
+			$average_grades_by_user[ $user_id ] = Sensei_Utils::as_absolute_rounded_number( $average_grades[ $user_id ] ?? 0.0, 2 );
+		}
+
+		return $average_grades_by_user;
+	}
+
+	/**
 	 * Get the active and completed course counts for each of the given students.
 	 *
 	 * @since $$next-version$$
@@ -80,12 +113,15 @@ class Sensei_Reports_Overview_Service_Students {
 			return array();
 		}
 
-		$counts = $this->aggregation_service->count_statuses_by_user(
-			array(
-				'type'    => 'course',
-				'user_id' => $user_ids,
-			)
-		);
+		$counts = array();
+		foreach ( array_chunk( $user_ids, self::PER_USER_AGGREGATE_BATCH_SIZE ) as $user_ids_batch ) {
+			$counts += $this->aggregation_service->count_statuses_by_user(
+				array(
+					'type'    => 'course',
+					'user_id' => $user_ids_batch,
+				)
+			);
+		}
 
 		$result = array();
 		foreach ( $user_ids as $user_id ) {
