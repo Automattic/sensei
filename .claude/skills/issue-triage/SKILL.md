@@ -361,55 +361,47 @@ Apply labels with `gh issue edit <number> --repo Automattic/sensei --add-label "
 
 ### Bug comment template
 
-```markdown
-## Triage Results: <✅ Reproduced | ❓ Could Not Reproduce | ⚠️ Inconclusive | 🚫 Out of Scope | 🔁 Needs More Info | ♻️ Duplicate>
+Plain language up top, for the reporter. Everything for whoever fixes it goes in one collapsed section underneath — GitHub collapses `<details>` by default, so the comment reads short.
 
-<One- or two-sentence summary of the verdict.>
+```markdown
+## <✅ Confirmed | ❓ Couldn't Reproduce This | ⚠️ Not Sure Yet | 🚫 Not a Sensei Bug | 🔁 Need More Info | ♻️ Already Reported>
+
+<1–2 plain sentences: what's wrong, in words a non-developer would understand. No jargon, no file paths, no version numbers here.>
+
+<If eligible: **See it yourself:** <Playground link>>
 
 <details>
-<summary>Reproduction Workflow</summary>
+<summary>Technical details</summary>
 
-**Environment:** WP <ver>, PHP <ver>, theme <name>, Sensei <ver> (browser repro via the e2e-testing skill)
+**Environment:** WP <ver>, PHP <ver>, theme <name>, Sensei <ver>
 
 <Numbered steps taken and what was observed at each.>
 
-</details>
-
-### ▶️ Verification
-<Best available, per [Playground link](#playground-link--required-when-eligible): a query-parameter Playground link when eligible; otherwise name the method used — browser reproduction via Chrome DevTools, PHPUnit, or a code-only trace labelled as such — plus one line on why a link wasn't possible.>
-
-### 📸 Screenshots
-<Interactive runs only: attach the images yourself. In CI, omit this section — no screenshots exist to reference.>
-
-### Scope assessment
-<In scope for Sensei core | Likely theme/plugin conflict | Customization — with one line of reasoning.>
-
-### Duplicates / related
-<`#<N>` with a word on the relationship (duplicate / related / already fixed in <release>), or "None found.">
-
-### Evidence
-<What confirms the bug: the failing path, console error, or failing test output.>
-
-### Likely affected code
-- `includes/.../file.php:NN` — <what this line does and why it's implicated>
-
-### Suggested fix
+**Duplicates/related:** <#N with a word on the relationship, or "None found.">
+**Affected code:** `includes/.../file.php:NN` — <what this line does and why it's implicated>
 **Priority:** `[Pri] <Critical|High|Normal|Low>` — <impact: reach × severity>
-**Estimated effort:** <High|Mid|Low> — <one-line rationale>
+**Effort:** <High|Mid|Low> — <one-line rationale>
+**Fix:** <the minimal root-cause fix, referencing the lines above>
 
-<The minimal root-cause fix. Reference the lines above.>
+</details>
 
 _Triage assisted by Claude._
 ```
 
-For **Needs More Info**, drop Evidence/Affected-code/Suggested-fix and instead list exactly which of the [B2 completeness items](#b2-reproducible-steps-completeness) are missing. For **Duplicate**, keep only the verdict and the Duplicates / related line.
+**Could Not Reproduce / Not Sure Yet:** drop the collapsed section unless there's a real trace to share; just the plain-language summary plus what you tried.
+
+**Need More Info:** no collapsed section. List exactly which of the [B2 completeness items](#b2-reproducible-steps-completeness) are missing, in plain language (e.g. "Can you tell us: does this happen for every user, or just you?").
+
+**Already Reported (duplicate):** verdict line plus a link to the other issue. Nothing else.
+
+**Not a Sensei Bug (out of scope):** verdict line plus one plain sentence why (e.g. "This looks like it's caused by your theme, not Sensei.").
 
 ### Sensei Pro hand-off template
 
 Use this — and nothing more — when the issue can only be handled in Sensei Pro. Do not add reproduction, evidence, affected code, or a suggested fix, and do not name the private repository.
 
 ```markdown
-## Triage Results: 📦 Handled in Sensei Pro
+## 📦 Handled in Sensei Pro
 
 This concerns Sensei Pro functionality, which is maintained separately and isn't part of Sensei LMS (core), so it can't be addressed here. **We've submitted an internal Sensei Pro request on your behalf** so the Sensei Pro team can pick it up — no further action needed from you. 🙏
 
