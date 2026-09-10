@@ -136,7 +136,11 @@ class Course_Translation {
 	}
 
 	/**
-	 * Detach a lesson from a course, the same way the course outline does when a lesson is removed.
+	 * Detach a lesson from a course.
+	 *
+	 * Clears the associations the course outline clears when a lesson is
+	 * removed from it, plus the lesson's order in the course, which the
+	 * outline leaves behind.
 	 *
 	 * @since $$next-version$$
 	 *
