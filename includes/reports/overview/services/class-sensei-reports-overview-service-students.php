@@ -52,8 +52,9 @@ class Sensei_Reports_Overview_Service_Students {
 	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service Grading stats service.
 	 */
 	public function __construct( ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
-		$this->aggregation_service   = $aggregation_service ?? ( new Progress_Query_Service_Factory() )->create_aggregation_service();
-		$this->grading_stats_service = $grading_stats_service ?? ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+		$query_service_factory       = new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+		$this->aggregation_service   = $aggregation_service ?? $query_service_factory->create_aggregation_service();
+		$this->grading_stats_service = $grading_stats_service ?? $query_service_factory->create_grading_stats_service();
 	}
 
 	/**

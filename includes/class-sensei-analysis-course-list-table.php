@@ -81,7 +81,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$this->course_id               = (int) $course_id;
 		$this->user_id                 = (int) $user_id;
 		$this->page_slug               = Sensei_Analysis::PAGE_SLUG;
-		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
+		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_reports_listing_service();
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'user', 'lesson' ) ) ) {
 			$this->view = sensei_request_text( $_GET['view'] );

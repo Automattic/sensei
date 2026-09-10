@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
+use Sensei\Internal\Services\Progress_Storage_Configuration;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -21,28 +23,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Course_Progress_Repository_Factory {
 
 	/**
-	 * Is tables based progress feature flag enabled.
+	 * Resolved progress storage configuration.
 	 *
-	 * @var bool
+	 * @var Progress_Storage_Configuration
 	 */
-	private $tables_enabled;
-
-	/**
-	 * Read from tables.
-	 *
-	 * @var bool
-	 */
-	private $read_tables;
+	private $storage_configuration;
 
 	/**
 	 * Course_Progress_Repository_Factory constructor.
 	 *
-	 * @param bool $tables_enabled Is tables based progress feature flag enabled.
-	 * @param bool $read_tables    Read from tables.
+	 * @param Progress_Storage_Configuration $storage_configuration Resolved progress storage configuration.
 	 */
-	public function __construct( bool $tables_enabled, bool $read_tables ) {
-		$this->tables_enabled = $tables_enabled;
-		$this->read_tables    = $read_tables;
+	public function __construct( Progress_Storage_Configuration $storage_configuration ) {
+		$this->storage_configuration = $storage_configuration;
 	}
 
 	/**
@@ -58,11 +51,11 @@ class Course_Progress_Repository_Factory {
 		$comments_based = $this->create_comments_based_repository();
 		$tables_based   = new Tables_Based_Course_Progress_Repository( $wpdb );
 
-		if ( ! $this->tables_enabled ) {
+		if ( ! $this->storage_configuration->is_dual_write_enabled() ) {
 			return $comments_based;
 		}
 
-		if ( ! $this->read_tables ) {
+		if ( ! $this->storage_configuration->is_reading_from_tables() ) {
 			return new Comment_Reading_Aggregate_Course_Progress_Repository( $comments_based, $tables_based );
 		}
 

@@ -14,14 +14,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Progress_Query_Service_Factory.
  *
- * Factory that returns the correct progress service implementations (clauses and aggregation)
- * based on the current progress storage settings.
+ * Factory that returns the correct progress query service implementations
+ * based on the resolved progress storage configuration.
  *
  * @internal
  *
  * @since 4.26.0
  */
 class Progress_Query_Service_Factory {
+	/**
+	 * Resolved progress storage configuration.
+	 *
+	 * @var Progress_Storage_Configuration
+	 */
+	private $storage_configuration;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Progress_Storage_Configuration $storage_configuration Resolved progress storage configuration.
+	 */
+	public function __construct( Progress_Storage_Configuration $storage_configuration ) {
+		$this->storage_configuration = $storage_configuration;
+	}
 
 	/**
 	 * Create a Progress_Clauses_Service_Interface instance.
@@ -36,7 +51,7 @@ class Progress_Query_Service_Factory {
 	public function create_clauses_service(): Progress_Clauses_Service_Interface {
 		global $wpdb;
 
-		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
+		if ( $this->storage_configuration->is_reading_from_tables() ) {
 			return new Tables_Based_Progress_Clauses_Service( $wpdb );
 		}
 
@@ -53,7 +68,7 @@ class Progress_Query_Service_Factory {
 	public function create_grading_listing_service(): Grading_Listing_Service_Interface {
 		global $wpdb;
 
-		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
+		if ( $this->storage_configuration->is_reading_from_tables() ) {
 			return new Tables_Based_Grading_Listing_Service( $wpdb );
 		}
 
@@ -73,7 +88,7 @@ class Progress_Query_Service_Factory {
 	public function create_grading_stats_service(): Grading_Stats_Service_Interface {
 		global $wpdb;
 
-		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
+		if ( $this->storage_configuration->is_reading_from_tables() ) {
 			return new Tables_Based_Grading_Stats_Service( $wpdb );
 		}
 
@@ -90,7 +105,7 @@ class Progress_Query_Service_Factory {
 	public function create_reports_listing_service(): Reports_Listing_Service_Interface {
 		global $wpdb;
 
-		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
+		if ( $this->storage_configuration->is_reading_from_tables() ) {
 			return new Tables_Based_Reports_Listing_Service( $wpdb );
 		}
 
@@ -110,7 +125,7 @@ class Progress_Query_Service_Factory {
 	public function create_aggregation_service(): Progress_Aggregation_Service_Interface {
 		global $wpdb;
 
-		if ( Progress_Storage_Settings::is_hpps_enabled() && Progress_Storage_Settings::is_tables_repository() ) {
+		if ( $this->storage_configuration->is_reading_from_tables() ) {
 			return new Tables_Based_Progress_Aggregation_Service( $wpdb );
 		}
 

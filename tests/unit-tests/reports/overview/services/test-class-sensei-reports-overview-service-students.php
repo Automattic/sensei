@@ -46,7 +46,7 @@ class Sensei_Reports_Overview_Service_Students_Test extends WP_UnitTestCase {
 	 * @return Sensei_Reports_Overview_Service_Students
 	 */
 	private function create_service(): Sensei_Reports_Overview_Service_Students {
-		$query_service_factory = new Progress_Query_Service_Factory();
+		$query_service_factory = new Progress_Query_Service_Factory( \Sensei()->progress_storage_configuration );
 
 		return new Sensei_Reports_Overview_Service_Students(
 			$query_service_factory->create_aggregation_service(),

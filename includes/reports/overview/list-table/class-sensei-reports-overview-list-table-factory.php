@@ -28,7 +28,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	 * @throws InvalidArgumentException If the report type is not supported.
 	 */
 	public function create( string $type ) {
-		$query_service_factory = new Progress_Query_Service_Factory();
+		$query_service_factory = new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
 
 		switch ( $type ) {
 			case 'users':
