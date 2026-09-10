@@ -428,7 +428,7 @@ class Sensei_Utils {
 				'post_mime_type' => $file_return['type'],
 				'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $filename ) ),
 				'post_content'   => '',
-				'post_status'    => 'inherit',
+				'post_status'    => 'private',
 				'guid'           => $file_return['url'],
 			);
 
