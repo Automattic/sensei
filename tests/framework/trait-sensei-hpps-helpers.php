@@ -69,7 +69,15 @@ trait Sensei_HPPS_Helpers {
 	 */
 	private $_quiz_grade_repository;
 
+	/**
+	 * Original raw progress storage repository setting, captured before enable_hpps_tables_repository() switches it.
+	 *
+	 * @var string
+	 */
+	private $_original_progress_storage_repository = Progress_Storage_Settings::COMMENTS_STORAGE;
+
 	private function enable_hpps_tables_repository() {
+		$this->_original_progress_storage_repository = Sensei()->settings->settings['experimental_progress_storage_repository'] ?? Progress_Storage_Settings::COMMENTS_STORAGE;
 		Sensei()->settings->settings['experimental_progress_storage_repository'] = Progress_Storage_Settings::TABLES_STORAGE;
 		$storage_configuration                   = Progress_Storage_Configuration::resolve(
 			array(
@@ -96,7 +104,7 @@ trait Sensei_HPPS_Helpers {
 	}
 
 	private function reset_hpps_repository() {
-		Sensei()->settings->settings['experimental_progress_storage_repository'] = Progress_Storage_Settings::COMMENTS_STORAGE;
+		Sensei()->settings->settings['experimental_progress_storage_repository'] = $this->_original_progress_storage_repository;
 		Sensei()->progress_storage_configuration                                 = Progress_Storage_Configuration::resolve( Sensei()->settings->settings );
 
 		Sensei()->course_progress_repository = $this->_course_progress_repository;

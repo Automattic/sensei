@@ -23,7 +23,7 @@ class Sensei_HPPS_Helpers_Test extends WP_UnitTestCase {
 		self::assertTrue( $actual );
 	}
 
-	public function testResetHppsRepository_TablesConfigurationGiven_SetsResolvedConfigurationToComments() {
+	public function testResetHppsRepository_TablesConfigurationGiven_RestoresOriginalConfiguration() {
 		/* Arrange. */
 		$original_storage_configuration          = Sensei()->progress_storage_configuration;
 		Sensei()->progress_storage_configuration = Progress_Storage_Configuration::resolve(
@@ -41,6 +41,6 @@ class Sensei_HPPS_Helpers_Test extends WP_UnitTestCase {
 		Sensei()->progress_storage_configuration = $original_storage_configuration;
 
 		/* Assert. */
-		self::assertFalse( $actual );
+		self::assertSame( $original_storage_configuration->is_reading_from_tables(), $actual );
 	}
 }
