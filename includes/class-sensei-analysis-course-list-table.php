@@ -633,7 +633,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$filtered_lesson_args = apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item );
 		$lesson_students      = $filtered_lesson_args === $lesson_args
 			? $this->sum_status_counts( $this->lesson_status_counts[ $item->ID ] ?? array(), 'any' )
-			: $this->get_filtered_lesson_status_count( $filtered_lesson_args );
+			: $this->get_filtered_lesson_status_count( $filtered_lesson_args, false );
 
 		$completion_args = array(
 			'post_id' => $item->ID,
@@ -834,9 +834,26 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	private function prime_lesson_overview_metrics( array $lessons ): void {
-		$lesson_ids = wp_list_pluck( $lessons, 'ID' );
+		$lesson_ids                     = wp_list_pluck( $lessons, 'ID' );
+		$progress_lesson_ids_by_display = array();
+		foreach ( $lesson_ids as $lesson_id ) {
+			$activity_args = array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			);
+			$filtered_args = $this->filter_activity_args( $activity_args );
 
-		$this->lesson_status_counts  = $this->aggregation_service->count_statuses_by_lesson( $lesson_ids );
+			$progress_lesson_ids_by_display[ $lesson_id ] = (int) ( $filtered_args['post_id'] ?? $lesson_id );
+		}
+
+		$progress_lesson_ids = array_values( array_unique( $progress_lesson_ids_by_display ) );
+		$progress_counts     = $this->aggregation_service->count_statuses_by_lesson( $progress_lesson_ids );
+
+		$this->lesson_status_counts = array();
+		foreach ( $progress_lesson_ids_by_display as $lesson_id => $progress_lesson_id ) {
+			$this->lesson_status_counts[ $lesson_id ] = $progress_counts[ $progress_lesson_id ] ?? array();
+		}
 		$this->lesson_average_grades = $this->grading_stats_service->get_average_grades_by_lesson( $lesson_ids );
 	}
 
@@ -845,16 +862,34 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Filtered comments-API-shaped activity arguments.
+	 * @param array $args            Filtered comments-API-shaped activity arguments.
+	 * @param bool  $use_quiz_status Whether quiz status takes precedence over lesson status.
 	 * @return int
 	 */
-	private function get_filtered_lesson_status_count( array $args ): int {
-		$statuses        = $args['status'] ?? 'any';
-		$args['type']    = 'lesson';
-		$args['post_id'] = (int) ( $args['post_id'] ?? 0 );
-		$status_counts   = $this->aggregation_service->count_statuses( $args );
+	private function get_filtered_lesson_status_count( array $args, bool $use_quiz_status = true ): int {
+		$args                    = $this->filter_activity_args( $args );
+		$statuses                = $args['status'] ?? 'any';
+		$args['type']            = 'lesson';
+		$args['post_id']         = (int) ( $args['post_id'] ?? 0 );
+		$args['use_quiz_status'] = $use_quiz_status;
+		$status_counts           = $this->aggregation_service->count_statuses( $args );
 
 		return $this->sum_status_counts( $status_counts, $statuses );
+	}
+
+	/**
+	 * Apply legacy activity query filters.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Comments-API-shaped activity arguments.
+	 * @return array Filtered arguments, or the original arguments for a non-array filter result.
+	 */
+	private function filter_activity_args( array $args ): array {
+		/** This filter is documented in Sensei_Utils::sensei_check_for_activity(). */
+		$filtered_args = apply_filters( 'sensei_check_for_activity_args', $args );
+
+		return is_array( $filtered_args ) ? $filtered_args : $args;
 	}
 
 	/**
@@ -866,17 +901,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * @return float|null
 	 */
 	private function get_filtered_lesson_average_grade( array $args ): ?float {
-		$grade_args = array(
-			'lesson_id' => (int) ( $args['post_id'] ?? 0 ),
-		);
-
-		if ( isset( $args['user_id'] ) ) {
-			$grade_args['user_id'] = $args['user_id'];
-		}
-
-		$totals = $this->grading_stats_service->get_grade_totals( $grade_args );
-
-		return $totals['count'] > 0 ? $totals['sum'] / $totals['count'] : null;
+		return $this->grading_stats_service->get_average_grade_for_lesson( $args );
 	}
 
 	/**

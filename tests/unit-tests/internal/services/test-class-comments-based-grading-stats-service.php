@@ -291,6 +291,48 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	public function testGetAverageGradeForLesson_FilteredStatusAndMetaKeyGiven_ReturnsMatchingAverage(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$lesson_id = $this->sensei_factory->lesson->create();
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+		$graded_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'user_id'          => $user_1,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'graded',
+			)
+		);
+		$passed_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'user_id'          => $user_2,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'passed',
+			)
+		);
+		update_comment_meta( $graded_id, 'custom_grade', 10 );
+		update_comment_meta( $passed_id, 'custom_grade', 20 );
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_average_grade_for_lesson(
+			array(
+				'post_id'  => $lesson_id,
+				'type'     => 'sensei_lesson_status',
+				'status'   => array( 'passed' ),
+				'meta_key' => 'custom_grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Test data matching production filter usage.
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 20.0, $result );
+	}
+
 	/**
 	 * Tests that an auto-passed lesson without quiz answers is excluded.
 	 *

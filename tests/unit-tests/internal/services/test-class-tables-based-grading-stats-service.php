@@ -337,6 +337,33 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	public function testGetAverageGradeForLesson_FilteredStatusGiven_ReturnsMatchingAverage(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+		$quiz_id   = $this->sensei_factory->quiz->create();
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_1, $course_id, 'passed', 80 );
+		$this->create_graded_lesson( $lesson_id, $quiz_id, $user_2, $course_id, 'failed', 40 );
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_average_grade_for_lesson(
+			array(
+				'post_id' => $lesson_id,
+				'status'  => array( 'passed' ),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 80.0, $result );
+	}
+
 	/**
 	 * Tests that fractional grades retain their precision in the calculated average.
 	 */

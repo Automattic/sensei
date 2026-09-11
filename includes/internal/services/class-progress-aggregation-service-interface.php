@@ -37,6 +37,7 @@ interface Progress_Aggregation_Service_Interface {
 	 *     @type int|array $user_id                      Restrict to specific user IDs.
 	 *     @type string[]  $exclude_user_login_prefixes           User login prefixes to exclude.
 	 *     @type string[]  $include_statuses_override             Statuses that bypass user exclusion.
+	 *     @type bool      $use_quiz_status              Whether quiz status takes precedence for lesson progress. Default true.
 	 * }
 	 * @return array Associative array of status => count.
 	 */

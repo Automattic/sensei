@@ -252,6 +252,34 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	public function testCountStatuses_LessonStatusRequestedWithoutQuizStatus_ReturnsLessonStatusCounts(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$quiz_id   = $this->sensei_factory->quiz->create();
+
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', 'passed' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses(
+			array(
+				'type'            => 'lesson',
+				'post_id'         => $lesson_id,
+				'use_quiz_status' => false,
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( array( 'in-progress' => 1 ), $result );
+	}
+
 	public function testCountStatuses_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
 		/* Arrange. */
 		global $wpdb;

@@ -150,8 +150,8 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 				'_quiz_has_questions' => '1',
 			),
 		);
-		$lesson_1    = $this->factory->lesson->create( $lesson_args );
-		$lesson_2    = $this->factory->lesson->create( $lesson_args );
+		$lesson_1    = $this->factory->lesson->create( array_merge( $lesson_args, array( 'post_title' => 'Lesson Alpha' ) ) );
+		$lesson_2    = $this->factory->lesson->create( array_merge( $lesson_args, array( 'post_title' => 'Lesson Beta' ) ) );
 
 		$reports_listing_service = $this->createMock( Reports_Listing_Service_Interface::class );
 		$aggregation_service     = $this->createMock( Progress_Aggregation_Service_Interface::class );
@@ -161,12 +161,25 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 			->expects( $this->once() )
 			->method( 'count_statuses_by_lesson' )
 			->with( $this->callback( fn( $lesson_ids ) => array() === array_diff( array( $lesson_1, $lesson_2 ), $lesson_ids ) ) )
-			->willReturn( array() );
+			->willReturn(
+				array(
+					$lesson_1 => array(
+						'complete'    => 2,
+						'in-progress' => 1,
+					),
+					$lesson_2 => array( 'passed' => 4 ),
+				)
+			);
 		$grading_stats_service
 			->expects( $this->once() )
 			->method( 'get_average_grades_by_lesson' )
 			->with( $this->callback( fn( $lesson_ids ) => array() === array_diff( array( $lesson_1, $lesson_2 ), $lesson_ids ) ) )
-			->willReturn( array() );
+			->willReturn(
+				array(
+					$lesson_1 => 75.5,
+					$lesson_2 => 50.0,
+				)
+			);
 
 		$_GET['view'] = 'lesson';
 		$table        = new Sensei_Analysis_Course_List_Table(
@@ -178,10 +191,159 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		);
 
 		/* Act. */
-		$table->generate_report( 'course-name-lessons-overview' );
+		$export_data = $table->generate_report( 'course-name-lessons-overview' );
 
 		/* Assert. */
-		// Expectations assert that all displayed lessons use one call per bulk service.
+		$metrics_by_title = array();
+		foreach ( array_slice( $export_data, 1 ) as $row ) {
+			$metrics_by_title[ $row['title'] ] = array_intersect_key( $row, array_flip( array( 'num_learners', 'completions', 'average_grade' ) ) );
+		}
+		self::assertSame(
+			array(
+				'Lesson Alpha' => array(
+					'num_learners'  => '3',
+					'completions'   => '2',
+					'average_grade' => '75.5',
+				),
+				'Lesson Beta'  => array(
+					'num_learners'  => '4',
+					'completions'   => '4',
+					'average_grade' => '50',
+				),
+			),
+			$metrics_by_title
+		);
+	}
+
+	public function testGenerateReport_CanonicalProgressLessonIdFiltered_MapsCountsToDisplayedLesson(): void {
+		/* Arrange. */
+		$course_id          = $this->factory->course->create();
+		$displayed_lesson   = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$progress_lesson_id = $this->factory->lesson->create();
+
+		$reports_listing_service = $this->createMock( Reports_Listing_Service_Interface::class );
+		$aggregation_service     = $this->createMock( Progress_Aggregation_Service_Interface::class );
+		$grading_stats_service   = $this->createMock( Grading_Stats_Service_Interface::class );
+
+		$aggregation_service
+			->expects( $this->once() )
+			->method( 'count_statuses_by_lesson' )
+			->with( array( $progress_lesson_id ) )
+			->willReturn( array( $progress_lesson_id => array( 'complete' => 2 ) ) );
+		$grading_stats_service->method( 'get_average_grades_by_lesson' )->willReturn( array() );
+
+		$translate_lesson = static function ( $args ) use ( $displayed_lesson, $progress_lesson_id ) {
+			if ( isset( $args['post_id'] ) && $displayed_lesson === (int) $args['post_id'] ) {
+				$args['post_id'] = $progress_lesson_id;
+			}
+			return $args;
+		};
+		add_filter( 'sensei_check_for_activity_args', $translate_lesson );
+		$_GET['view'] = 'lesson';
+
+		try {
+			$table = new Sensei_Analysis_Course_List_Table( $course_id, 0, $reports_listing_service, $aggregation_service, $grading_stats_service );
+
+			/* Act. */
+			$export_data = $table->generate_report( 'course-name-lessons-overview' );
+		} finally {
+			remove_filter( 'sensei_check_for_activity_args', $translate_lesson );
+		}
+
+		/* Assert. */
+		self::assertSame( '2', $export_data[1]['num_learners'] );
+	}
+
+	public function testGenerateReport_LessonGradeFilterChanged_ForwardsFilteredArgumentsToGradingStats(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'      => $course_id,
+					'_quiz_has_questions' => '1',
+				),
+			)
+		);
+
+		$reports_listing_service = $this->createMock( Reports_Listing_Service_Interface::class );
+		$aggregation_service     = $this->createMock( Progress_Aggregation_Service_Interface::class );
+		$grading_stats_service   = $this->createMock( Grading_Stats_Service_Interface::class );
+		$aggregation_service->method( 'count_statuses_by_lesson' )->willReturn( array() );
+		$grading_stats_service->method( 'get_average_grades_by_lesson' )->willReturn( array() );
+
+		$filtered_args = array(
+			'post_id'  => $lesson_id,
+			'type'     => 'custom_lesson_status',
+			'status'   => array( 'custom-graded' ),
+			'meta_key' => 'custom_grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Filter compatibility fixture.
+		);
+		$grading_stats_service
+			->expects( $this->once() )
+			->method( 'get_average_grade_for_lesson' )
+			->with( $filtered_args )
+			->willReturn( 90.0 );
+
+		$filter = static function () use ( $filtered_args ) {
+			return $filtered_args;
+		};
+		add_filter( 'sensei_analysis_lesson_grades', $filter );
+		$_GET['view'] = 'lesson';
+
+		try {
+			$table = new Sensei_Analysis_Course_List_Table( $course_id, 0, $reports_listing_service, $aggregation_service, $grading_stats_service );
+
+			/* Act. */
+			$table->generate_report( 'course-name-lessons-overview' );
+		} finally {
+			remove_filter( 'sensei_analysis_lesson_grades', $filter );
+		}
+
+		/* Assert. */
+		// Mock expectation verifies that all filtered arguments reach Grading Stats.
+	}
+
+	public function testGenerateReport_LessonStudentFilterChanged_RequestsRawLessonStatuses(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+
+		$reports_listing_service = $this->createMock( Reports_Listing_Service_Interface::class );
+		$aggregation_service     = $this->createMock( Progress_Aggregation_Service_Interface::class );
+		$grading_stats_service   = $this->createMock( Grading_Stats_Service_Interface::class );
+		$aggregation_service->method( 'count_statuses_by_lesson' )->willReturn( array() );
+		$aggregation_service
+			->expects( $this->once() )
+			->method( 'count_statuses' )
+			->with(
+				array(
+					'post_id'         => $lesson_id,
+					'type'            => 'lesson',
+					'status'          => array( 'in-progress' ),
+					'use_quiz_status' => false,
+				)
+			)
+			->willReturn( array( 'in-progress' => 1 ) );
+		$grading_stats_service->method( 'get_average_grades_by_lesson' )->willReturn( array() );
+
+		$filter = static function ( $args ) {
+			$args['status'] = array( 'in-progress' );
+			return $args;
+		};
+		add_filter( 'sensei_analysis_lesson_learners', $filter );
+		$_GET['view'] = 'lesson';
+
+		try {
+			$table = new Sensei_Analysis_Course_List_Table( $course_id, 0, $reports_listing_service, $aggregation_service, $grading_stats_service );
+
+			/* Act. */
+			$table->generate_report( 'course-name-lessons-overview' );
+		} finally {
+			remove_filter( 'sensei_analysis_lesson_learners', $filter );
+		}
+
+		/* Assert. */
+		// Mock expectation verifies that the filtered learner count uses raw lesson status.
 	}
 
 	public function testGenerateReport_LessonViewWithGradedStudents_ReturnsCorrectAverageGrade() {

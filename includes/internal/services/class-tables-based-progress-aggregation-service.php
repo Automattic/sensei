@@ -66,6 +66,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 *     @type int|array $user_id                      Restrict to specific user IDs.
 	 *     @type string[]  $exclude_user_login_prefixes  User login prefixes to exclude.
 	 *     @type string[]  $include_statuses_override    Statuses that bypass user exclusion.
+	 *     @type bool      $use_quiz_status              Whether quiz status takes precedence for lesson progress. Default true.
 	 * }
 	 * @return array Associative array of status => count.
 	 */
@@ -87,12 +88,16 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			return array();
 		}
 
-		// Delegate to a quiz-aware method; see its docblock for rationale.
 		if ( 'lesson' === $args['type'] ) {
+			if ( isset( $args['use_quiz_status'] ) && false === $args['use_quiz_status'] ) {
+				return $this->count_progress_statuses( $args );
+			}
+
+			// Delegate to a quiz-aware method; see its docblock for rationale.
 			return $this->count_lesson_statuses_with_quiz( $args );
 		}
 
-		return $this->count_course_statuses( $args );
+		return $this->count_progress_statuses( $args );
 	}
 
 	/**
@@ -340,14 +345,14 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
-	 * Count course statuses.
+	 * Count progress statuses without substituting quiz status.
 	 *
 	 * @since 4.26.0
 	 *
 	 * @param array $args Query arguments (see count_statuses).
 	 * @return array Associative array of status => count.
 	 */
-	private function count_course_statuses( array $args ): array {
+	private function count_progress_statuses( array $args ): array {
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
@@ -366,7 +371,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
-		Utils::log_query_error( $wpdb, 'Tables-based course status counts' );
+		Utils::log_query_error( $wpdb, 'Tables-based progress status counts' );
 
 		$counts = array();
 		foreach ( $results as $row ) {

@@ -206,6 +206,46 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	}
 
 	/**
+	 * Get an average grade for a lesson using report activity arguments.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Arguments for the query (see interface).
+	 * @return float|null Average grade, or null when no matching grades exist.
+	 */
+	public function get_average_grade_for_lesson( array $args ): ?float {
+		$wpdb     = $this->wpdb;
+		$post_id  = (int) ( $args['post_id'] ?? 0 );
+		$type     = (string) ( $args['type'] ?? 'sensei_lesson_status' );
+		$meta_key = (string) ( $args['meta_key'] ?? 'grade' );
+		$statuses = isset( $args['status'] ) ? (array) $args['status'] : array();
+
+		if ( $post_id <= 0 || empty( $statuses ) ) {
+			return null;
+		}
+
+		$status_placeholders = implode( ',', array_fill( 0, count( $statuses ), '%s' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $status_placeholders is a list of %s; WP 6.4 changed WP_Comment_Query to use get_col(), so a comments_clauses-based aggregate is unreliable.
+		$average = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT AVG(cm.meta_value)
+				 FROM {$wpdb->comments} c
+				 INNER JOIN {$wpdb->commentmeta} cm
+				   ON cm.comment_id = c.comment_ID AND cm.meta_key = %s
+				 WHERE c.comment_post_ID = %d
+				   AND c.comment_type = %s
+				   AND c.comment_approved IN ( {$status_placeholders} )",
+				array_merge( array( $meta_key, $post_id, $type ), $statuses )
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Comments-based lesson average grade' );
+
+		return null !== $average ? round( (float) $average, 2 ) : null;
+	}
+
+	/**
 	 * Average grade across courses (AVG of per-course AVGs).
 	 * Only includes student attempts where the quiz was actually submitted
 	 * (enforced via the quiz_answers EXISTS check).
