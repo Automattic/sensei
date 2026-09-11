@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 
+use Sensei\Internal\Services\Progress_Storage_Configuration;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -21,28 +23,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Submission_Repository_Factory {
 
 	/**
-	 * Is tables based progress feature flag enabled.
+	 * Resolved progress storage configuration.
 	 *
-	 * @var bool
+	 * @var Progress_Storage_Configuration
 	 */
-	private $tables_enabled;
-
-	/**
-	 * Read from tables.
-	 *
-	 * @var bool
-	 */
-	private $read_tables;
+	private $storage_configuration;
 
 	/**
 	 * Submission_Repository_Factory constructor.
 	 *
-	 * @param bool $tables_enabled Is tables based progress feature flag enabled.
-	 * @param bool $read_tables    Read from tables.
+	 * @param Progress_Storage_Configuration $storage_configuration Resolved progress storage configuration.
 	 */
-	public function __construct( bool $tables_enabled, bool $read_tables ) {
-		$this->tables_enabled = $tables_enabled;
-		$this->read_tables    = $read_tables;
+	public function __construct( Progress_Storage_Configuration $storage_configuration ) {
+		$this->storage_configuration = $storage_configuration;
 	}
 
 	/**
@@ -55,11 +48,11 @@ class Submission_Repository_Factory {
 	public function create(): Submission_Repository_Interface {
 		global $wpdb;
 
-		if ( ! $this->tables_enabled ) {
+		if ( ! $this->storage_configuration->is_dual_write_enabled() ) {
 			return new Comments_Based_Submission_Repository();
 		}
 
-		if ( ! $this->read_tables ) {
+		if ( ! $this->storage_configuration->is_reading_from_tables() ) {
 			return new Comment_Reading_Aggregate_Submission_Repository(
 				new Comments_Based_Submission_Repository(),
 				new Tables_Based_Submission_Repository( $wpdb )

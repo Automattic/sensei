@@ -56,7 +56,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 */
 	public function __construct( ?Progress_Clauses_Service_Interface $progress_clauses_service = null ) {
 		$this->progress_clauses_service = $progress_clauses_service
-			?? ( new Progress_Query_Service_Factory() )->create_clauses_service();
+			?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_clauses_service();
 	}
 
 	/**

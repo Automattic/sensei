@@ -40,7 +40,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$this->lesson_id               = intval( $lesson_id );
 		$this->course_id               = intval( get_post_meta( $this->lesson_id, '_lesson_course', true ) );
 		$this->page_slug               = Sensei_Analysis::PAGE_SLUG;
-		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
+		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_reports_listing_service();
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_lesson' );

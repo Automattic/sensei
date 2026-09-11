@@ -2,6 +2,8 @@
 
 namespace SenseiTest\Internal\Student_Progress\Course_Progress\Repositories;
 
+use Sensei\Internal\Services\Progress_Storage_Configuration;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Aggregate_Course_Progress_Repository;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comment_Reading_Aggregate_Course_Progress_Repository;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
@@ -19,9 +21,16 @@ class Course_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider providerCreate_WhenCalled_ReturnsCourseProgressRepository
 	 */
-	public function testCreate_WhenCalled_ReturnsCourseProgressRepository( bool $tables_enabled, bool $read_tables, string $expected ): void {
+	public function testCreate_WhenCalled_ReturnsCourseProgressRepository( bool $hpps_enabled, string $read_backend, bool $dual_write_enabled, string $expected ): void {
 		/* Arrange. */
-		$factory = new Course_Progress_Repository_Factory( $tables_enabled, $read_tables );
+		$configuration = Progress_Storage_Configuration::resolve(
+			array(
+				'experimental_progress_storage'            => $hpps_enabled,
+				'experimental_progress_storage_repository' => $read_backend,
+				'experimental_progress_storage_synchronization' => $dual_write_enabled,
+			)
+		);
+		$factory       = new Course_Progress_Repository_Factory( $configuration );
 
 		/* Act. */
 		$actual = $factory->create();
@@ -32,24 +41,28 @@ class Course_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 
 	public function providerCreate_WhenCalled_ReturnsCourseProgressRepository(): array {
 		return array(
-			'tables enabled, reading disabled'  => array(
+			'hpps enabled, comments reads, dual writes enabled' => array(
 				true,
-				false,
+				Progress_Storage_Settings::COMMENTS_STORAGE,
+				true,
 				Comment_Reading_Aggregate_Course_Progress_Repository::class,
 			),
-			'tables enabled, reading enabled'   => array(
+			'hpps enabled, tables reads, dual writes enabled'   => array(
 				true,
+				Progress_Storage_Settings::TABLES_STORAGE,
 				true,
 				Table_Reading_Aggregate_Course_Progress_Repository::class,
 			),
-			'tables disabled, reading disabled' => array(
+			'hpps disabled, tables selected, synchronization enabled' => array(
 				false,
-				false,
+				Progress_Storage_Settings::TABLES_STORAGE,
+				true,
 				Comments_Based_Course_Progress_Repository::class,
 			),
-			'tables disabled, reading enabled'  => array(
-				false,
+			'hpps enabled, tables selected, synchronization disabled' => array(
 				true,
+				Progress_Storage_Settings::TABLES_STORAGE,
+				false,
 				Comments_Based_Course_Progress_Repository::class,
 			),
 		);

@@ -69,7 +69,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			$course,
 			$data_provider,
 			$service,
-			( new Progress_Query_Service_Factory() )->create_aggregation_service()
+			( new Progress_Query_Service_Factory( \Sensei()->progress_storage_configuration ) )->create_aggregation_service()
 		);
 
 		$list_table->total_items = 1;
@@ -116,7 +116,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			$course,
 			$data_provider,
 			$service,
-			( new Progress_Query_Service_Factory() )->create_aggregation_service()
+			( new Progress_Query_Service_Factory( \Sensei()->progress_storage_configuration ) )->create_aggregation_service()
 		);
 
 		/* Act. */
