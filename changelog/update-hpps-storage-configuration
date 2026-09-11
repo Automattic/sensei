@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Resolve HPPS storage configuration consistently across progress query services and repositories.
