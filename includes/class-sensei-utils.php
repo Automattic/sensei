@@ -1842,7 +1842,7 @@ class Sensei_Utils {
 			// In the comments-based progress we use one entry to store both the lesson progress and the quiz progress.
 			// In the tables-based progress we split them. Here is important to use the quiz proress if the quiz pass is required.
 			$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-			if ( $lesson_quiz_id ) {
+			if ( $lesson_quiz_id && Sensei_Lesson::lesson_quiz_has_questions( $lesson_id ) ) {
 				$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
 				if ( $pass_required ) {
 					$quiz_progress = Sensei()->quiz_progress_repository->get( $lesson_quiz_id, $user_id );
