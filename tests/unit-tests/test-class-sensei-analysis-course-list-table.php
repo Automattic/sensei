@@ -1,5 +1,9 @@
 <?php
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Reports_Listing_Service_Interface;
+
 /**
  * Sensei Analysis Course List Table Unit Test.
  *
@@ -135,6 +139,49 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 4, count( $export_data ) ); // Header row + 3 lessons.
+	}
+
+	public function testGenerateReport_MultipleLessonRowsGiven_BulkLoadsMetricsOnce(): void {
+		/* Arrange. */
+		$course_id   = $this->factory->course->create();
+		$lesson_args = array(
+			'meta_input' => array(
+				'_lesson_course'      => $course_id,
+				'_quiz_has_questions' => '1',
+			),
+		);
+		$lesson_1    = $this->factory->lesson->create( $lesson_args );
+		$lesson_2    = $this->factory->lesson->create( $lesson_args );
+
+		$reports_listing_service = $this->createMock( Reports_Listing_Service_Interface::class );
+		$aggregation_service     = $this->createMock( Progress_Aggregation_Service_Interface::class );
+		$grading_stats_service   = $this->createMock( Grading_Stats_Service_Interface::class );
+
+		$aggregation_service
+			->expects( $this->once() )
+			->method( 'count_statuses_by_lesson' )
+			->with( $this->callback( fn( $lesson_ids ) => array() === array_diff( array( $lesson_1, $lesson_2 ), $lesson_ids ) ) )
+			->willReturn( array() );
+		$grading_stats_service
+			->expects( $this->once() )
+			->method( 'get_average_grades_by_lesson' )
+			->with( $this->callback( fn( $lesson_ids ) => array() === array_diff( array( $lesson_1, $lesson_2 ), $lesson_ids ) ) )
+			->willReturn( array() );
+
+		$_GET['view'] = 'lesson';
+		$table        = new Sensei_Analysis_Course_List_Table(
+			$course_id,
+			0,
+			$reports_listing_service,
+			$aggregation_service,
+			$grading_stats_service
+		);
+
+		/* Act. */
+		$table->generate_report( 'course-name-lessons-overview' );
+
+		/* Assert. */
+		// Expectations assert that all displayed lessons use one call per bulk service.
 	}
 
 	public function testGenerateReport_LessonViewWithGradedStudents_ReturnsCorrectAverageGrade() {
