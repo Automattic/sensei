@@ -175,6 +175,51 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	}
 
 	/**
+	 * Get average grade grouped by lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs to include.
+	 * @return array<int, float> Map of lesson ID to average grade.
+	 */
+	public function get_average_grades_by_lesson( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		$wpdb              = $this->wpdb;
+		$table             = $this->get_progress_table_name();
+		$submissions_table = $this->get_submissions_table_name();
+		$placeholders      = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants; placeholders dynamic; caching by callers.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT p.post_id AS lesson_id, AVG( qs.final_grade ) AS average_grade
+				FROM {$table} p
+				INNER JOIN {$wpdb->postmeta} lesson_quiz ON lesson_quiz.post_id = p.post_id AND lesson_quiz.meta_key = '_lesson_quiz' AND lesson_quiz.meta_value > 0
+				LEFT JOIN {$table} q ON q.post_id = lesson_quiz.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
+				LEFT JOIN {$submissions_table} qs ON qs.quiz_id = lesson_quiz.meta_value AND qs.user_id = p.user_id
+				WHERE p.type = 'lesson'
+					AND ( q.status IN " . $this->get_graded_statuses_sql() . ' OR ( q.post_id IS NULL AND p.status IN ' . $this->get_graded_statuses_sql() . " ) )
+					AND qs.final_grade IS NOT NULL
+					AND p.post_id IN ( $placeholders )
+				GROUP BY p.post_id",
+				$lesson_ids
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Tables-based average grades by lesson' );
+
+		$average_grades = array();
+		foreach ( (array) $rows as $row ) {
+			$average_grades[ (int) $row->lesson_id ] = (float) $row->average_grade;
+		}
+
+		return $average_grades;
+	}
+
+	/**
 	 * Average grade across courses (AVG of per-course AVGs).
 	 * Only includes student attempts where the quiz was actually submitted
 	 * (enforced via INNER JOIN on the quiz submissions table and final_grade IS NOT NULL).

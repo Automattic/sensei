@@ -54,6 +54,16 @@ interface Grading_Stats_Service_Interface {
 	public function get_average_grades_by_user( array $user_ids ): array;
 
 	/**
+	 * Get average grade grouped by lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs to include.
+	 * @return array<int, float> Map of lesson ID to average grade.
+	 */
+	public function get_average_grades_by_lesson( array $lesson_ids ): array;
+
+	/**
 	 * Average grade across courses (AVG of per-course AVGs).
 	 * Only includes student attempts where the quiz was actually submitted.
 	 *

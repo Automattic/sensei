@@ -165,6 +165,47 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	}
 
 	/**
+	 * Get average grade grouped by lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs to include.
+	 * @return array<int, float> Map of lesson ID to average grade.
+	 */
+	public function get_average_grades_by_lesson( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$placeholders = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants; placeholders dynamic; caching by callers.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT c.comment_post_ID AS lesson_id, AVG( cm.meta_value ) AS average_grade
+				FROM {$wpdb->comments} c
+				INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
+				WHERE c.comment_type = 'sensei_lesson_status'
+					AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
+					AND cm.meta_key = 'grade'
+					AND c.comment_post_ID IN ( $placeholders )
+				GROUP BY c.comment_post_ID",
+				$lesson_ids
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Comments-based average grades by lesson' );
+
+		$average_grades = array();
+		foreach ( (array) $rows as $row ) {
+			$average_grades[ (int) $row->lesson_id ] = (float) $row->average_grade;
+		}
+
+		return $average_grades;
+	}
+
+	/**
 	 * Average grade across courses (AVG of per-course AVGs).
 	 * Only includes student attempts where the quiz was actually submitted
 	 * (enforced via the quiz_answers EXISTS check).
