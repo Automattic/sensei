@@ -37,6 +37,7 @@ interface Progress_Aggregation_Service_Interface {
 	 *     @type int|array $user_id                      Restrict to specific user IDs.
 	 *     @type string[]  $exclude_user_login_prefixes           User login prefixes to exclude.
 	 *     @type string[]  $include_statuses_override             Statuses that bypass user exclusion.
+	 *     @type bool      $use_quiz_status              Whether quiz status takes precedence for lesson progress. Default true.
 	 * }
 	 * @return array Associative array of status => count.
 	 */
@@ -56,6 +57,16 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return array<int, array<string, int>> Map of user_id => [ status => count ].
 	 */
 	public function count_statuses_by_user( array $args ): array;
+
+	/**
+	 * Count student progress statuses grouped by lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs to include.
+	 * @return array<int, array<string, int>> Map of lesson ID to [ status => student count ].
+	 */
+	public function count_statuses_by_lesson( array $lesson_ids ): array;
 
 	/**
 	 * Get aggregate totals for a set of lessons.

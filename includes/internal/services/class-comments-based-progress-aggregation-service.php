@@ -141,6 +141,48 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	}
 
 	/**
+	 * Count student progress statuses grouped by lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs to include.
+	 * @return array<int, array<string, int>> Map of lesson ID to [ status => student count ].
+	 */
+	public function count_statuses_by_lesson( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$placeholders = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		$reports_statuses = Utils::get_reports_post_status_sql();
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names from wpdb. Placeholders created dynamically. Caching handled by callers.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT c.comment_post_ID AS lesson_id, c.comment_approved AS status, COUNT( DISTINCT c.user_id ) AS total
+				FROM {$wpdb->comments} c
+				INNER JOIN {$wpdb->posts} post ON post.ID = c.comment_post_ID AND post.post_status IN ( {$reports_statuses} )
+				WHERE c.comment_type = 'sensei_lesson_status'
+					AND c.comment_post_ID IN ( $placeholders )
+				GROUP BY c.comment_post_ID, c.comment_approved",
+				$lesson_ids
+			),
+			ARRAY_A
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Comments-based status counts by lesson' );
+
+		$counts = array();
+		foreach ( (array) $rows as $row ) {
+			$counts[ (int) $row['lesson_id'] ][ $row['status'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
 	 * @since 4.26.0

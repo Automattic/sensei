@@ -1,7 +1,9 @@
 <?php
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Services\Reports_Item;
 use Sensei\Internal\Services\Reports_Listing_Service_Interface;
-use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,19 +71,59 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	private Reports_Listing_Service_Interface $reports_listing_service;
 
 	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface
+	 */
+	private Progress_Aggregation_Service_Interface $aggregation_service;
+
+	/**
+	 * The grading statistics service.
+	 *
+	 * @var Grading_Stats_Service_Interface
+	 */
+	private Grading_Stats_Service_Interface $grading_stats_service;
+
+	/**
+	 * Status counts keyed by lesson ID and status.
+	 *
+	 * @var array<int, array<string, int>>
+	 */
+	private array $lesson_status_counts = array();
+
+	/**
+	 * Average grades keyed by lesson ID.
+	 *
+	 * @var array<int, float>
+	 */
+	private array $lesson_average_grades = array();
+
+	/**
 	 * Constructor
 	 *
-	 * @param int                                    $course_id               Course ID.
-	 * @param int                                    $user_id                 User ID.
-	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Reports listing service.
+	 * @param int                                         $course_id               Course ID.
+	 * @param int                                         $user_id                 User ID.
+	 * @param Reports_Listing_Service_Interface|null      $reports_listing_service Reports listing service.
+	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service     Progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service   Grading statistics service.
 	 *
 	 * @since  1.2.0
 	 */
-	public function __construct( $course_id = 0, $user_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
+	public function __construct( $course_id = 0, $user_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
+		if ( null === $reports_listing_service || null === $aggregation_service || null === $grading_stats_service ) {
+			$query_service_factory = new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+
+			$reports_listing_service = $reports_listing_service ?? $query_service_factory->create_reports_listing_service();
+			$aggregation_service     = $aggregation_service ?? $query_service_factory->create_aggregation_service();
+			$grading_stats_service   = $grading_stats_service ?? $query_service_factory->create_grading_stats_service();
+		}
+
 		$this->course_id               = (int) $course_id;
 		$this->user_id                 = (int) $user_id;
 		$this->page_slug               = Sensei_Analysis::PAGE_SLUG;
-		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_reports_listing_service();
+		$this->reports_listing_service = $reports_listing_service;
+		$this->aggregation_service     = $aggregation_service;
+		$this->grading_stats_service   = $grading_stats_service;
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'user', 'lesson' ) ) ) {
 			$this->view = sensei_request_text( $_GET['view'] );
@@ -588,9 +630,10 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		 * @param {object} $item The current item.
 		 * @return {array} The lesson learners activity arguments.
 		 */
-		$lesson_students = $this->reports_listing_service->get_lesson_student_count(
-			apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item )
-		);
+		$filtered_lesson_args = apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item );
+		$lesson_students      = $filtered_lesson_args === $lesson_args
+			? $this->sum_status_counts( $this->lesson_status_counts[ $item->ID ] ?? array(), 'any' )
+			: $this->get_filtered_lesson_status_count( $filtered_lesson_args, false );
 
 		$completion_args = array(
 			'post_id' => $item->ID,
@@ -607,9 +650,10 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		 * @param {object} $item The current item.
 		 * @return {array} The lesson completions activity arguments.
 		 */
-		$lesson_completions = $this->reports_listing_service->get_lesson_completion_count(
-			apply_filters( 'sensei_analysis_lesson_completions', $completion_args, $item )
-		);
+		$filtered_completion_args = apply_filters( 'sensei_analysis_lesson_completions', $completion_args, $item );
+		$lesson_completions       = $filtered_completion_args === $completion_args
+			? $this->sum_status_counts( $this->lesson_status_counts[ $item->ID ] ?? array(), Reports_Item::COMPLETED_STATUSES )
+			: $this->get_filtered_lesson_status_count( $filtered_completion_args );
 
 		$lesson_average_grade = __( 'N/A', 'sensei-lms' );
 		if ( false !== Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
@@ -632,11 +676,12 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			 * @param {object} $item The current item.
 			 * @return {array} The lesson grades activity arguments.
 			 */
-			$avg = $this->reports_listing_service->get_lesson_average_grade(
-				apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item )
-			);
+			$filtered_grade_args = apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item );
+			$avg                 = $filtered_grade_args === $grade_args
+				? ( $this->lesson_average_grades[ $item->ID ] ?? null )
+				: $this->get_filtered_lesson_average_grade( $filtered_grade_args );
 			if ( null !== $avg ) {
-				$lesson_average_grade = $avg;
+				$lesson_average_grade = round( $avg, 2 );
 			}
 		}
 
@@ -767,7 +812,118 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$lessons_query     = new WP_Query( apply_filters( 'sensei_analysis_course_filter_lessons', $lessons_args ) );
 		$this->total_items = $lessons_query->found_posts;
 
+		if ( ! $this->user_id ) {
+			/**
+			 * Lessons returned as post objects.
+			 *
+			 * @var WP_Post[] $lessons
+			 */
+			$lessons = $lessons_query->posts;
+			$this->prime_lesson_overview_metrics( $lessons );
+		}
+
 		return $lessons_query->posts;
+	}
+
+	/**
+	 * Bulk load the metrics displayed for lesson overview rows.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_Post[] $lessons Lessons displayed by the current report page.
+	 * @return void
+	 */
+	private function prime_lesson_overview_metrics( array $lessons ): void {
+		$lesson_ids                     = wp_list_pluck( $lessons, 'ID' );
+		$progress_lesson_ids_by_display = array();
+		foreach ( $lesson_ids as $lesson_id ) {
+			$activity_args = array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			);
+			$filtered_args = $this->filter_activity_args( $activity_args );
+
+			$progress_lesson_ids_by_display[ $lesson_id ] = (int) ( $filtered_args['post_id'] ?? $lesson_id );
+		}
+
+		$progress_lesson_ids = array_values( array_unique( $progress_lesson_ids_by_display ) );
+		$progress_counts     = $this->aggregation_service->count_statuses_by_lesson( $progress_lesson_ids );
+
+		$this->lesson_status_counts = array();
+		foreach ( $progress_lesson_ids_by_display as $lesson_id => $progress_lesson_id ) {
+			$this->lesson_status_counts[ $lesson_id ] = $progress_counts[ $progress_lesson_id ] ?? array();
+		}
+		$this->lesson_average_grades = $this->grading_stats_service->get_average_grades_by_lesson( $lesson_ids );
+	}
+
+	/**
+	 * Count statuses after a legacy lesson metric filter changes its arguments.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args            Filtered comments-API-shaped activity arguments.
+	 * @param bool  $use_quiz_status Whether quiz status takes precedence over lesson status.
+	 * @return int
+	 */
+	private function get_filtered_lesson_status_count( array $args, bool $use_quiz_status = true ): int {
+		$args                    = $this->filter_activity_args( $args );
+		$statuses                = $args['status'] ?? 'any';
+		$args['type']            = 'lesson';
+		$args['post_id']         = (int) ( $args['post_id'] ?? 0 );
+		$args['use_quiz_status'] = $use_quiz_status;
+		$status_counts           = $this->aggregation_service->count_statuses( $args );
+
+		return $this->sum_status_counts( $status_counts, $statuses );
+	}
+
+	/**
+	 * Apply legacy activity query filters.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Comments-API-shaped activity arguments.
+	 * @return array Filtered arguments, or the original arguments for a non-array filter result.
+	 */
+	private function filter_activity_args( array $args ): array {
+		/** This filter is documented in Sensei_Utils::sensei_check_for_activity(). */
+		$filtered_args = apply_filters( 'sensei_check_for_activity_args', $args );
+
+		return is_array( $filtered_args ) ? $filtered_args : $args;
+	}
+
+	/**
+	 * Calculate a lesson average grade after the legacy filter changes its arguments.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Filtered comments-API-shaped activity arguments.
+	 * @return float|null
+	 */
+	private function get_filtered_lesson_average_grade( array $args ): ?float {
+		return $this->grading_stats_service->get_average_grade_for_lesson( $args );
+	}
+
+	/**
+	 * Sum selected status counts.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array<string, int> $counts   Status counts.
+	 * @param string|string[]    $statuses Statuses to include, or 'any'.
+	 * @return int
+	 */
+	private function sum_status_counts( array $counts, $statuses ): int {
+		if ( 'any' === $statuses ) {
+			return array_sum( $counts );
+		}
+
+		$total = 0;
+		foreach ( (array) $statuses as $status ) {
+			$total += $counts[ $status ] ?? 0;
+		}
+
+		return $total;
 	}
 
 	/**

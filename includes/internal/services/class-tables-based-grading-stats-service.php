@@ -82,6 +82,30 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	}
 
 	/**
+	 * Build a SQL-safe quoted status list.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string[] $statuses Statuses to include.
+	 * @return string Comma-separated quoted status values.
+	 */
+	private function get_statuses_sql( array $statuses ): string {
+		if ( empty( $statuses ) ) {
+			return "'__none__'";
+		}
+
+		return implode(
+			',',
+			array_map(
+				function ( $status ): string {
+					return $this->wpdb->prepare( '%s', (string) $status );
+				},
+				$statuses
+			)
+		);
+	}
+
+	/**
 	 * Get grade count and sum, with optional filters.
 	 *
 	 * @since 4.26.0
@@ -172,6 +196,88 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		}
 
 		return $average_grades;
+	}
+
+	/**
+	 * Get average grade grouped by lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs to include.
+	 * @return array<int, float> Map of lesson ID to average grade.
+	 */
+	public function get_average_grades_by_lesson( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		$wpdb              = $this->wpdb;
+		$table             = $this->get_progress_table_name();
+		$submissions_table = $this->get_submissions_table_name();
+		$placeholders      = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants; placeholders dynamic; caching by callers.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT p.post_id AS lesson_id, AVG( qs.final_grade ) AS average_grade
+				FROM {$table} p
+				INNER JOIN {$wpdb->postmeta} lesson_quiz ON lesson_quiz.post_id = p.post_id AND lesson_quiz.meta_key = '_lesson_quiz' AND lesson_quiz.meta_value > 0
+				LEFT JOIN {$table} q ON q.post_id = lesson_quiz.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
+				LEFT JOIN {$submissions_table} qs ON qs.quiz_id = lesson_quiz.meta_value AND qs.user_id = p.user_id
+				WHERE p.type = 'lesson'
+					AND ( q.status IN " . $this->get_graded_statuses_sql() . ' OR ( q.post_id IS NULL AND p.status IN ' . $this->get_graded_statuses_sql() . " ) )
+					AND qs.final_grade IS NOT NULL
+					AND p.post_id IN ( $placeholders )
+				GROUP BY p.post_id",
+				$lesson_ids
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Tables-based average grades by lesson' );
+
+		$average_grades = array();
+		foreach ( (array) $rows as $row ) {
+			$average_grades[ (int) $row->lesson_id ] = (float) $row->average_grade;
+		}
+
+		return $average_grades;
+	}
+
+	/**
+	 * Get an average grade for a lesson using report activity arguments.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Arguments for the query (see interface).
+	 * @return float|null Average grade, or null when no matching grades exist.
+	 */
+	public function get_average_grade_for_lesson( array $args ): ?float {
+		$wpdb              = $this->wpdb;
+		$table             = $this->get_progress_table_name();
+		$submissions_table = $this->get_submissions_table_name();
+		$post_id           = (int) ( $args['post_id'] ?? 0 );
+		$status_sql        = $this->get_statuses_sql( (array) ( $args['status'] ?? array() ) );
+
+		// Filter by the caller-provided statuses on the effective quiz status,
+		// then average the grade from quiz_submissions. Table names are trusted $wpdb
+		// properties and $status_sql is built from escaped args; the post_id uses a placeholder.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$average = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT AVG( qs.final_grade )'
+				. " FROM `$table` p"
+				. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
+				. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
+				. " LEFT JOIN `$submissions_table` qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id"
+				. " WHERE p.post_id = %d AND p.type = 'lesson' AND qs.final_grade IS NOT NULL"
+				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
+				$post_id
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Tables-based lesson average grade' );
+
+		return null !== $average ? round( (float) $average, 2 ) : null;
 	}
 
 	/**
