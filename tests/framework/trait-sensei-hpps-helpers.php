@@ -71,13 +71,14 @@ trait Sensei_HPPS_Helpers {
 
 	private function enable_hpps_tables_repository() {
 		Sensei()->settings->settings['experimental_progress_storage_repository'] = Progress_Storage_Settings::TABLES_STORAGE;
-		$storage_configuration = Progress_Storage_Configuration::resolve(
+		$storage_configuration                   = Progress_Storage_Configuration::resolve(
 			array(
 				'experimental_progress_storage'            => true,
 				'experimental_progress_storage_repository' => Progress_Storage_Settings::TABLES_STORAGE,
 				'experimental_progress_storage_synchronization' => true,
 			)
 		);
+		Sensei()->progress_storage_configuration = $storage_configuration;
 
 		$this->_course_progress_repository = Sensei()->course_progress_repository;
 		$this->_lesson_progress_repository = Sensei()->lesson_progress_repository;
@@ -96,6 +97,7 @@ trait Sensei_HPPS_Helpers {
 
 	private function reset_hpps_repository() {
 		Sensei()->settings->settings['experimental_progress_storage_repository'] = Progress_Storage_Settings::COMMENTS_STORAGE;
+		Sensei()->progress_storage_configuration                                 = Progress_Storage_Configuration::resolve( Sensei()->settings->settings );
 
 		Sensei()->course_progress_repository = $this->_course_progress_repository;
 		Sensei()->lesson_progress_repository = $this->_lesson_progress_repository;
