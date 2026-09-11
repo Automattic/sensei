@@ -195,6 +195,38 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->assertArrayNotHasKey( 'in-progress', $result, 'Excluded user status should not appear.' );
 	}
 
+	public function testCountStatusesByLesson_MultipleLessonsGiven_ReturnsStatusCountsForEachLesson(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_1    = $this->sensei_factory->user->create();
+		$user_2    = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_1  = $this->sensei_factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$lesson_2  = $this->sensei_factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+
+		\Sensei_Utils::update_lesson_status( $user_1, $lesson_1, 'complete' );
+		\Sensei_Utils::update_lesson_status( $user_2, $lesson_1, 'in-progress' );
+		\Sensei_Utils::update_lesson_status( $user_1, $lesson_2, 'passed' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->count_statuses_by_lesson( array( $lesson_1, $lesson_2 ) );
+
+		/* Assert. */
+		$this->assertSame(
+			array(
+				$lesson_1 => array(
+					'complete'    => 1,
+					'in-progress' => 1,
+				),
+				$lesson_2 => array( 'passed' => 1 ),
+			),
+			$result
+		);
+	}
+
 	/**
 	 * Verifies totals across all aggregate fields for lessons with an "included" post_status.
 	 *

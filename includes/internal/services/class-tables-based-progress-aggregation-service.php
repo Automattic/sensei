@@ -139,6 +139,54 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Count student progress statuses grouped by lesson.
+	 *
+	 * Quiz progress status takes precedence over lesson progress status to match
+	 * the comments-based representation.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs to include.
+	 * @return array<int, array<string, int>> Map of lesson ID to [ status => student count ].
+	 */
+	public function count_statuses_by_lesson( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$table        = $this->get_progress_table_name();
+		$placeholders = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		$reports_statuses = Utils::get_reports_post_status_sql();
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names from wpdb prefix. Placeholders created dynamically. Caching handled by callers.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT p.post_id AS lesson_id, COALESCE( q.status, p.status ) AS effective_status, COUNT( DISTINCT p.user_id ) AS total
+				FROM {$table} p
+				INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$reports_statuses} )
+				LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0
+				LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
+				WHERE p.type = 'lesson'
+					AND p.post_id IN ( $placeholders )
+				GROUP BY p.post_id, effective_status",
+				$lesson_ids
+			),
+			ARRAY_A
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Tables-based status counts by lesson' );
+
+		$counts = array();
+		foreach ( (array) $rows as $row ) {
+			$counts[ (int) $row['lesson_id'] ][ $row['effective_status'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
 	 * @since 4.26.0

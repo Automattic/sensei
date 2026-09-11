@@ -58,6 +58,16 @@ interface Progress_Aggregation_Service_Interface {
 	public function count_statuses_by_user( array $args ): array;
 
 	/**
+	 * Count student progress statuses grouped by lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs to include.
+	 * @return array<int, array<string, int>> Map of lesson ID to [ status => student count ].
+	 */
+	public function count_statuses_by_lesson( array $lesson_ids ): array;
+
+	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
 	 * @since 4.26.0
