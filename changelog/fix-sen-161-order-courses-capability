@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Require the Order Courses capability to save the course order.

@@ -1102,6 +1102,10 @@ class Sensei_Admin {
 	public function handle_order_courses() {
 		check_admin_referer( 'order_courses' );
 
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
+		}
+
 		$ordered = null;
 		if ( isset( $_POST['course-order'] ) && 0 < strlen( sensei_request_text( $_POST['course-order'] ) ) ) {
 			$ordered = $this->save_course_order( sensei_request_text( $_POST['course-order'] ) );
