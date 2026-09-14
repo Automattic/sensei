@@ -306,7 +306,7 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( array(), $result );
 	}
 
-	public function testGetLessonAverageGrade_FilteredStatusGiven_ReturnsMatchingAverage(): void {
+	public function testGetLessonAverageGrade_MatchingStatusGiven_ReturnsMatchingAverage(): void {
 		/* Arrange. */
 		global $wpdb;
 
@@ -324,13 +324,43 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		/* Act. */
 		$result = $service->get_lesson_average_grade(
 			array(
-				'post_id' => $lesson_id,
-				'status'  => array( 'passed' ),
+				'post_id'  => $lesson_id,
+				'type'     => 'sensei_lesson_status',
+				'status'   => array( 'passed' ),
+				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Test data matching production usage.
 			)
 		);
 
 		/* Assert. */
 		$this->assertSame( 80.0, $result );
+	}
+
+	/**
+	 * Tests that get_lesson_average_grade returns null when no graded submissions exist.
+	 */
+	public function testGetLessonAverageGrade_WithNoGradedStudents_ReturnsNull(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create(
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_average_grade(
+			array(
+				'post_id'  => $lesson_id,
+				'type'     => 'sensei_lesson_status',
+				'status'   => array( 'graded', 'passed', 'failed' ),
+				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Test data matching production usage.
+			)
+		);
+
+		/* Assert. */
+		$this->assertNull( $result, 'Should return null when no graded submissions exist.' );
 	}
 
 	/**
