@@ -1,5 +1,9 @@
 <?php
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Reports_Listing_Service_Interface;
+
 /**
  * Sensei Analysis Course List Table Unit Test.
  *
@@ -135,6 +139,72 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 4, count( $export_data ) ); // Header row + 3 lessons.
+	}
+
+	public function testGenerateReport_MultipleLessonRowsGiven_RequestsMetricsForEachLesson(): void {
+		/* Arrange. */
+		$course_id   = $this->factory->course->create();
+		$lesson_args = array(
+			'meta_input' => array(
+				'_lesson_course'      => $course_id,
+				'_quiz_has_questions' => '1',
+			),
+		);
+		$lesson_1    = $this->factory->lesson->create( array_merge( $lesson_args, array( 'post_title' => 'Lesson Alpha' ) ) );
+		$lesson_2    = $this->factory->lesson->create( array_merge( $lesson_args, array( 'post_title' => 'Lesson Beta' ) ) );
+
+		$reports_listing_service = $this->createMock( Reports_Listing_Service_Interface::class );
+		$aggregation_service     = $this->createMock( Progress_Aggregation_Service_Interface::class );
+		$grading_stats_service   = $this->createMock( Grading_Stats_Service_Interface::class );
+
+		$aggregation_service
+			->expects( $this->exactly( 2 ) )
+			->method( 'get_lesson_student_count' )
+			->with( $this->callback( fn( $args ) => in_array( $args['post_id'], array( $lesson_1, $lesson_2 ), true ) ) )
+			->willReturnOnConsecutiveCalls( 3, 4 );
+		$aggregation_service
+			->expects( $this->exactly( 2 ) )
+			->method( 'get_lesson_completion_count' )
+			->with( $this->callback( fn( $args ) => in_array( $args['post_id'], array( $lesson_1, $lesson_2 ), true ) ) )
+			->willReturnOnConsecutiveCalls( 2, 4 );
+		$grading_stats_service
+			->expects( $this->exactly( 2 ) )
+			->method( 'get_lesson_average_grade' )
+			->with( $this->callback( fn( $args ) => in_array( $args['post_id'], array( $lesson_1, $lesson_2 ), true ) ) )
+			->willReturnOnConsecutiveCalls( 75.5, 50.0 );
+
+		$_GET['view'] = 'lesson';
+		$table        = new Sensei_Analysis_Course_List_Table(
+			$course_id,
+			0,
+			$reports_listing_service,
+			$aggregation_service,
+			$grading_stats_service
+		);
+
+		/* Act. */
+		$export_data = $table->generate_report( 'course-name-lessons-overview' );
+
+		/* Assert. */
+		$metrics_by_title = array();
+		foreach ( array_slice( $export_data, 1 ) as $row ) {
+			$metrics_by_title[ $row['title'] ] = array_intersect_key( $row, array_flip( array( 'num_learners', 'completions', 'average_grade' ) ) );
+		}
+		self::assertSame(
+			array(
+				'Lesson Alpha' => array(
+					'num_learners'  => '3',
+					'completions'   => '2',
+					'average_grade' => '75.5',
+				),
+				'Lesson Beta'  => array(
+					'num_learners'  => '4',
+					'completions'   => '4',
+					'average_grade' => '50',
+				),
+			),
+			$metrics_by_title
+		);
 	}
 
 	public function testGenerateReport_LessonViewWithGradedStudents_ReturnsCorrectAverageGrade() {
