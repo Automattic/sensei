@@ -53,7 +53,7 @@
 		"react-dom": "18.3.1",
 		"rememo": "4.0.2",
 		"terser-webpack-plugin": "5.6.1",
-		"uuid": "14.0.1",
+		"uuid": "14.0.2",
 		"whatwg-fetch": "3.6.20"
 	},
 	"devDependencies": {
