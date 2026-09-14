@@ -4,3 +4,8 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+
+// Allow the left header flex item to shrink so the hamburger toggle stays visible.
+.sensei-course-theme-header-content > .wp-block-group:first-child {
+	min-width: 0;
+}
