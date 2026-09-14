@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "425af7fc8aaae31a6910e9e7e22036da",
+    "content-hash": "c3acedaf8f470869f7ae7f037a58ab2e",
     "packages": [
         {
             "name": "woocommerce/action-scheduler",
@@ -212,26 +212,26 @@
         },
         {
             "name": "automattic/jetpack-changelogger",
-            "version": "v6.0.17",
+            "version": "v7.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Automattic/jetpack-changelogger.git",
-                "reference": "61e1f2af86527a3c9b8f078f2b27a8bad6ae8386"
+                "reference": "a4c010727f623da93d89d92430c27cfc70e47206"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Automattic/jetpack-changelogger/zipball/61e1f2af86527a3c9b8f078f2b27a8bad6ae8386",
-                "reference": "61e1f2af86527a3c9b8f078f2b27a8bad6ae8386",
+                "url": "https://api.github.com/repos/Automattic/jetpack-changelogger/zipball/a4c010727f623da93d89d92430c27cfc70e47206",
+                "reference": "a4c010727f623da93d89d92430c27cfc70e47206",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.2.0",
-                "php": ">=7.2.5",
+                "php": ">=7.4",
                 "symfony/console": "^5.4 || ^6.4 || ^7.1",
                 "symfony/process": "^5.4 || ^6.4 || ^7.1"
             },
             "require-dev": {
-                "wikimedia/testing-access-wrapper": "^1.0 || ^2.0 || ^3.0 || ^4.0",
+                "wikimedia/testing-access-wrapper": "^3.0 || ^4.0",
                 "yoast/phpunit-polyfills": "^4.0.0"
             },
             "bin": [
@@ -242,7 +242,7 @@
                 "autotagger": true,
                 "mirror-repo": "Automattic/jetpack-changelogger",
                 "branch-alias": {
-                    "dev-trunk": "6.0.x-dev"
+                    "dev-trunk": "7.0.x-dev"
                 },
                 "changelogger": {
                     "link-template": "https://github.com/Automattic/jetpack-changelogger/compare/${old}...${new}"
@@ -274,9 +274,9 @@
                 "keepachangelog"
             ],
             "support": {
-                "source": "https://github.com/Automattic/jetpack-changelogger/tree/v6.0.17"
+                "source": "https://github.com/Automattic/jetpack-changelogger/tree/v7.0.1"
             },
-            "time": "2026-06-15T12:14:58+00:00"
+            "time": "2026-09-01T15:47:48+00:00"
         },
         {
             "name": "bamarni/composer-bin-plugin",
@@ -4799,16 +4799,16 @@
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "v1.38.0",
+            "version": "v1.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
-                "reference": "2d446c214bdbe5b71bde5011b060a05fece3ae6b"
+                "reference": "aa20edea75bd9c48cfecc8360922e5a6e5c44502"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/2d446c214bdbe5b71bde5011b060a05fece3ae6b",
-                "reference": "2d446c214bdbe5b71bde5011b060a05fece3ae6b",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/aa20edea75bd9c48cfecc8360922e5a6e5c44502",
+                "reference": "aa20edea75bd9c48cfecc8360922e5a6e5c44502",
                 "shasum": ""
             },
             "require": {
@@ -4860,7 +4860,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.38.0"
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.42.0"
             },
             "funding": [
                 {
@@ -4880,7 +4880,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-25T13:48:31+00:00"
+            "time": "2026-08-07T06:33:24+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
