@@ -141,6 +141,30 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	}
 
 	/**
+	 * Count students with activity on a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Comments-API-shaped activity arguments.
+	 * @return int Number of students with matching lesson activity.
+	 */
+	public function get_lesson_student_count( array $args ): int {
+		return (int) \Sensei_Utils::sensei_check_for_activity( $args );
+	}
+
+	/**
+	 * Count students who completed a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Comments-API-shaped activity arguments.
+	 * @return int Number of students with matching completed lesson activity.
+	 */
+	public function get_lesson_completion_count( array $args ): int {
+		return (int) \Sensei_Utils::sensei_check_for_activity( $args );
+	}
+
+	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
 	 * @since 4.26.0

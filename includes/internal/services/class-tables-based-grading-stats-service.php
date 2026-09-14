@@ -175,6 +175,47 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	}
 
 	/**
+	 * Get the average quiz grade for a lesson.
+	 *
+	 * Only `post_id` and `status` from $args are honored; `type` and `meta_key` are ignored
+	 * because the tables schema queries `sensei_lms_progress` + `sensei_lms_quiz_submissions`
+	 * directly rather than commentmeta.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Arguments for the query (see interface).
+	 * @return float|null Average grade, or null when no matching grades exist.
+	 */
+	public function get_lesson_average_grade( array $args ): ?float {
+		$wpdb              = $this->wpdb;
+		$table             = $this->get_progress_table_name();
+		$submissions_table = $this->get_submissions_table_name();
+		$post_id           = (int) ( $args['post_id'] ?? 0 );
+		$status_sql        = Utils::get_statuses_sql( $wpdb, $args );
+
+		// Filter by the caller-provided statuses on the effective quiz status,
+		// then average the grade from quiz_submissions. Table names are trusted $wpdb
+		// properties and $status_sql is built from escaped args; the post_id uses a placeholder.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$avg = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT AVG( qs.final_grade )'
+				. " FROM `$table` p"
+				. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
+				. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
+				. " LEFT JOIN `$submissions_table` qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id"
+				. " WHERE p.post_id = %d AND p.type = 'lesson' AND qs.final_grade IS NOT NULL"
+				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
+				$post_id
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Tables-based lesson average grade' );
+
+		return null !== $avg ? round( (float) $avg, 2 ) : null;
+	}
+
+	/**
 	 * Average grade across courses (AVG of per-course AVGs).
 	 * Only includes student attempts where the quiz was actually submitted
 	 * (enforced via INNER JOIN on the quiz submissions table and final_grade IS NOT NULL).

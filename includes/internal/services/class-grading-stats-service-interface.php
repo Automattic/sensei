@@ -54,6 +54,23 @@ interface Grading_Stats_Service_Interface {
 	public function get_average_grades_by_user( array $user_ids ): array;
 
 	/**
+	 * Get the average quiz grade for a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args {
+	 *     Comments-API-shaped activity arguments.
+	 *
+	 *     @type int             $post_id  Lesson post ID.
+	 *     @type string          $type     Activity type.
+	 *     @type string|string[] $status   Progress statuses to include.
+	 *     @type string          $meta_key Grade meta key.
+	 * }
+	 * @return float|null Average grade, or null when no matching grades exist.
+	 */
+	public function get_lesson_average_grade( array $args ): ?float;
+
+	/**
 	 * Average grade across courses (AVG of per-course AVGs).
 	 * Only includes student attempts where the quiz was actually submitted.
 	 *
