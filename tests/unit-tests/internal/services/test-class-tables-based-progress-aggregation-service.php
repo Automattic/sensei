@@ -222,8 +222,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		$user1     = $this->sensei_factory->user->create();
 		$user2     = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$lesson_id = $this->sensei_factory->lesson->create();
 
 		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete' );
 		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress' );
@@ -249,8 +248,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		$user1     = $this->sensei_factory->user->create();
 		$user2     = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$lesson_id = $this->sensei_factory->lesson->create();
 
 		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete' );
 		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress' );

@@ -296,10 +296,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		global $wpdb;
 
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
-		);
+		$lesson_id = $this->sensei_factory->lesson->create();
 
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
 
