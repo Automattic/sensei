@@ -369,8 +369,10 @@ class Sensei_Messages {
 		$post         = get_post( absint( $_POST['post_id'] ) );
 		$current_user = wp_get_current_user();
 
-		if ( is_wp_error( $post ) ) {
-			return false;
+		// Only a user enrolled in the related course may message the teacher.
+		// This also rejects a post_id that does not resolve to a post at all.
+		if ( ! $this->can_current_user_send_message_about( $post ) ) {
+			return;
 		}
 
 		$message = empty( $_POST['contact_message'] )
@@ -378,6 +380,41 @@ class Sensei_Messages {
 			: sensei_request_text( $_POST['contact_message'] );
 
 		$this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
+	}
+
+	/**
+	 * Check whether the current user may send a private message about the given post.
+	 *
+	 * Mirrors the enrolment check the REST endpoint enforces: the user must be enrolled
+	 * in the course the message is about, resolving quiz and lesson posts to their course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_Post|null $post The post the message is about.
+	 * @return bool Whether the current user is allowed to send the message.
+	 */
+	private function can_current_user_send_message_about( $post ) {
+		if ( ! ( $post instanceof WP_Post ) || ! is_user_logged_in() ) {
+			return false;
+		}
+
+		$course = $post;
+
+		if ( 'quiz' === $course->post_type ) {
+			$lesson_id = (int) Sensei()->quiz->get_lesson_id( $course->ID );
+			$course    = $lesson_id ? get_post( $lesson_id ) : null;
+		}
+
+		if ( $course instanceof WP_Post && 'lesson' === $course->post_type ) {
+			$course_id = (int) Sensei()->lesson->get_course_id( $course->ID );
+			$course    = $course_id ? get_post( $course_id ) : null;
+		}
+
+		if ( ! ( $course instanceof WP_Post ) || 'course' !== $course->post_type ) {
+			return false;
+		}
+
+		return Sensei()->course->is_user_enrolled( $course->ID, get_current_user_id() );
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {
