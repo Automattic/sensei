@@ -82,31 +82,6 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	}
 
 	/**
-	 * Build a SQL-safe quoted status list from activity arguments.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Activity arguments containing a status key.
-	 * @return string Comma-separated quoted status values.
-	 */
-	private function statuses_sql( array $args ): string {
-		$statuses = (array) ( $args['status'] ?? array() );
-		if ( empty( $statuses ) ) {
-			return "'__none__'";
-		}
-
-		return implode(
-			',',
-			array_map(
-				function ( $status ): string {
-					return $this->wpdb->prepare( '%s', (string) $status );
-				},
-				$statuses
-			)
-		);
-	}
-
-	/**
 	 * Get grade count and sum, with optional filters.
 	 *
 	 * @since 4.26.0
@@ -216,7 +191,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_submissions_table_name();
 		$post_id           = (int) ( $args['post_id'] ?? 0 );
-		$status_sql        = $this->statuses_sql( $args );
+		$status_sql        = Utils::get_statuses_sql( $wpdb, $args );
 
 		// Filter by the caller-provided statuses on the effective quiz status,
 		// then average the grade from quiz_submissions. Table names are trusted $wpdb

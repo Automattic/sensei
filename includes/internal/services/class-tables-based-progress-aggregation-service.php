@@ -154,7 +154,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		$where = $wpdb->prepare( ' WHERE p.post_id = %d AND p.type = \'lesson\'', $post_id );
 		if ( 'any' !== $status ) {
-			$status_sql = $this->statuses_sql( $args );
+			$status_sql = Utils::get_statuses_sql( $wpdb, $args );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
 			$where .= " AND p.status IN ( {$status_sql} )";
 		}
@@ -178,7 +178,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$wpdb       = $this->wpdb;
 		$table      = $this->get_progress_table_name();
 		$post_id    = (int) ( $args['post_id'] ?? 0 );
-		$status_sql = $this->statuses_sql( $args );
+		$status_sql = Utils::get_statuses_sql( $wpdb, $args );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names are trusted wpdb-derived names; status values and post ID are prepared.
 		$count = $wpdb->get_var(
@@ -449,30 +449,5 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 */
 	private function build_user_exclusion_clause( array $args, string $status_column = 'p.status' ): string {
 		return Utils::build_user_exclusion_clause( $this->wpdb, $args, $status_column );
-	}
-
-	/**
-	 * Build a SQL-safe quoted status list from activity arguments.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Activity arguments containing a status key.
-	 * @return string Comma-separated quoted status values.
-	 */
-	private function statuses_sql( array $args ): string {
-		$statuses = (array) ( $args['status'] ?? array() );
-		if ( empty( $statuses ) ) {
-			return "'__none__'";
-		}
-
-		return implode(
-			',',
-			array_map(
-				function ( $status ): string {
-					return $this->wpdb->prepare( '%s', (string) $status );
-				},
-				$statuses
-			)
-		);
 	}
 }

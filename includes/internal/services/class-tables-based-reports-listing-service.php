@@ -433,26 +433,6 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	}
 
 	/**
-	 * Build a SQL-safe quoted status list from $args['status'].
-	 *
-	 * @param array $args Activity args containing a 'status' key.
-	 * @return string Comma-separated, single-quoted values, e.g. "'complete','graded','passed','failed'".
-	 */
-	private function statuses_sql( array $args ): string {
-		$raw = (array) ( $args['status'] ?? array() );
-		if ( empty( $raw ) ) {
-			return "'__none__'";
-		}
-		// Values originate from class constants or caller-provided filter args,
-		// not raw user input.
-		$escaped = array();
-		foreach ( $raw as $s ) {
-			$escaped[] = $this->wpdb->prepare( '%s', (string) $s );
-		}
-		return implode( ',', $escaped );
-	}
-
-	/**
 	 * Build ORDER BY clause.
 	 *
 	 * @param array $args Query arguments.

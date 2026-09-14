@@ -62,6 +62,31 @@ class Utils {
 	}
 
 	/**
+	 * Build a SQL-safe quoted status list from activity arguments.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \wpdb $wpdb WordPress database object.
+	 * @param array $args Activity arguments containing a status key.
+	 * @return string Comma-separated quoted status values.
+	 */
+	public static function get_statuses_sql( \wpdb $wpdb, array $args ): string {
+		$raw = (array) ( $args['status'] ?? array() );
+		if ( empty( $raw ) ) {
+			return "'__none__'";
+		}
+
+		// Values originate from class constants or caller-provided filter args,
+		// not raw user input.
+		$escaped = array();
+		foreach ( $raw as $status ) {
+			$escaped[] = $wpdb->prepare( '%s', (string) $status );
+		}
+
+		return implode( ',', $escaped );
+	}
+
+	/**
 	 * Get the site's UTC offset in '+HH:MM' / '-HH:MM' format for CONVERT_TZ.
 	 *
 	 * Uses a numeric offset so that MySQL timezone tables are not required.
