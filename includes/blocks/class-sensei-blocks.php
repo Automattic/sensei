@@ -84,7 +84,7 @@ class Sensei_Blocks {
 		Sensei()->assets->register( 'sensei-theme-blocks', 'css/sensei-theme-blocks.css' );
 		Sensei()->assets->register( 'sensei-learning-mode-compat', 'css/learning-mode-compat.css' );
 
-		if ( ! current_theme_supports( 'sensei-learning-mode' ) ) {
+		if ( Sensei_Course_Theme_Option::should_load_learning_mode_compat() ) {
 			Sensei()->assets->register( 'sensei-learning-mode', 'css/learning-mode.css', [ 'sensei-theme-blocks', 'sensei-learning-mode-compat' ] );
 		} else {
 			Sensei()->assets->register( 'sensei-learning-mode', 'css/learning-mode.css', [ 'sensei-theme-blocks' ] );

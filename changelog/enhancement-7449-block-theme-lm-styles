@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Block themes now inherit their own styles in Learning Mode instead of receiving Sensei's opinionated compatibility styles. Classic themes (Divi, Astra, and others) are unchanged.
