@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix the MailPoet daily sync job not being scheduled on some hosting setups, which could prevent existing courses/groups and their already-enrolled students from being synced to MailPoet.
