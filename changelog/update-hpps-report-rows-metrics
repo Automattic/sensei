@@ -1,4 +1,4 @@
 Significance: patch
-Type: changed
+Type: development
 
-Changed course reports to retrieve lesson metrics from the active progress storage backend.
+Refactored course report lesson metrics into dedicated progress aggregation and grading statistics services.
