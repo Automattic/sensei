@@ -45,7 +45,7 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 	 * @dataProvider providerLoadDataObject_ParamsGiven_ReturnsExpectedInstance
 	 */
 	public function testLoadDataObject_ParamsGiven_ReturnsExpectedInstance( $name, $data, $expected_class ) {
-		$analysis    = new Sensei_Analysis( 'a' );
+		$analysis    = $this->create_analysis();
 		$data_object = $analysis->load_data_object( $name, $data );
 		$this->assertInstanceOf( $expected_class, $data_object );
 	}
@@ -79,7 +79,7 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 	public function testAnalysisUserCourseNav_WhenCalled_GeneratesProperHtml() {
 		/* Arrange */
 		$this->login_as_admin();
-		$analysis        = new Sensei_Analysis( 'a' );
+		$analysis        = $this->create_analysis();
 		$_GET['user_id'] = 1;
 
 		/* Act */
@@ -307,6 +307,31 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 		return $this->createPartialMock(
 			$class_name,
 			array_diff( $class_methods, [ $method ] )
+		);
+	}
+
+	/**
+	 * Create the analysis controller with composed query services.
+	 *
+	 * @return Sensei_Analysis
+	 */
+	private function create_analysis(): Sensei_Analysis {
+		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+		$aggregation_service   = $query_service_factory->create_aggregation_service();
+		$grading_stats_service = $query_service_factory->create_grading_stats_service();
+		$overview_factory      = new Sensei_Reports_Overview_List_Table_Factory(
+			Sensei()->course,
+			$query_service_factory->create_clauses_service(),
+			$aggregation_service,
+			$grading_stats_service
+		);
+
+		return new Sensei_Analysis(
+			'a',
+			$overview_factory,
+			$query_service_factory->create_reports_listing_service(),
+			$aggregation_service,
+			$grading_stats_service
 		);
 	}
 

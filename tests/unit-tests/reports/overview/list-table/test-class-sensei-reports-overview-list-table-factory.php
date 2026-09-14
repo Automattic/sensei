@@ -29,7 +29,7 @@ class Sensei_Reports_Overview_List_Table_Factory_Test extends WP_UnitTestCase {
 	 */
 	public function testCreate_TypeGiven_ReturnsExpectedInstance( string $type, string $expected_class ) {
 		/* Arrange. */
-		$factory = new Sensei_Reports_Overview_List_Table_Factory();
+		$factory = $this->create_factory();
 
 		/* Act. */
 		$actual_instance = $factory->create( $type );
@@ -49,11 +49,25 @@ class Sensei_Reports_Overview_List_Table_Factory_Test extends WP_UnitTestCase {
 
 	public function testCreate_UnknownTypeGiven_ThrowsException() {
 		/* Arrange. */
-		$factory = new Sensei_Reports_Overview_List_Table_Factory();
+		$factory = $this->create_factory();
 
 		/* Expect & Act. */
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'Unknown list table type' );
 		$factory->create( 'unknown' );
+	}
+
+	/**
+	 * Create a factory with injected query services.
+	 *
+	 * @return Sensei_Reports_Overview_List_Table_Factory
+	 */
+	private function create_factory(): Sensei_Reports_Overview_List_Table_Factory {
+		return new Sensei_Reports_Overview_List_Table_Factory(
+			Sensei()->course,
+			$this->createMock( \Sensei\Internal\Services\Progress_Clauses_Service_Interface::class ),
+			$this->createMock( \Sensei\Internal\Services\Progress_Aggregation_Service_Interface::class ),
+			$this->createMock( \Sensei\Internal\Services\Grading_Stats_Service_Interface::class )
+		);
 	}
 }

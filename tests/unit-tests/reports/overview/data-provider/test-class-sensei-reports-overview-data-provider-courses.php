@@ -48,7 +48,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		$unfinished_course_id  = $this->factory->course->create();
 		$unfinished_comment_id = Sensei_Utils::update_course_status( $user_id, $unfinished_course_id, 'in-progress' );
 
-		$data_provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+		$data_provider = $this->create_data_provider();
 
 		/* Act. */
 		$filters = array(
@@ -118,7 +118,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 			]
 		);
 
-		$data_provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+		$data_provider = $this->create_data_provider();
 
 		/* Act. */
 		$filters = array(
@@ -155,5 +155,16 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Create the data provider with the active storage implementation.
+	 *
+	 * @return Sensei_Reports_Overview_Data_Provider_Courses
+	 */
+	private function create_data_provider(): Sensei_Reports_Overview_Data_Provider_Courses {
+		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+
+		return new Sensei_Reports_Overview_Data_Provider_Courses( $query_service_factory->create_clauses_service() );
 	}
 }

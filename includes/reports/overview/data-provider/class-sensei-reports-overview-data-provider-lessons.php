@@ -5,7 +5,6 @@
  * @package sensei
  */
 
-use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Services\Progress_Clauses_Service_Interface;
 use Sensei\Internal\Services\Utils;
 
@@ -42,13 +41,12 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	/**
 	 * Constructor.
 	 *
-	 * @param Sensei_Course                           $course                   Sensei course related services.
-	 * @param Progress_Clauses_Service_Interface|null $progress_clauses_service The progress clauses service.
+	 * @param Sensei_Course                      $course                   Sensei course related services.
+	 * @param Progress_Clauses_Service_Interface $progress_clauses_service The progress clauses service.
 	 */
-	public function __construct( Sensei_Course $course, ?Progress_Clauses_Service_Interface $progress_clauses_service = null ) {
+	public function __construct( Sensei_Course $course, Progress_Clauses_Service_Interface $progress_clauses_service ) {
 		$this->course                   = $course;
-		$this->progress_clauses_service = $progress_clauses_service
-			?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_clauses_service();
+		$this->progress_clauses_service = $progress_clauses_service;
 	}
 
 	/**

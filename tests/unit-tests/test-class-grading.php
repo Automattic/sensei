@@ -14,8 +14,16 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		Sensei()->grading = new WooThemes_Sensei_Grading( '' );
-		$this->factory    = new Sensei_Factory();
+		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+
+		Sensei()->grading = new WooThemes_Sensei_Grading(
+			'',
+			$query_service_factory->create_grading_listing_service(),
+			$query_service_factory->create_aggregation_service(),
+			$query_service_factory->create_grading_stats_service()
+		);
+
+		$this->factory = new Sensei_Factory();
 	}
 
 	public function tearDown(): void {
@@ -55,8 +63,9 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		};
 		add_filter( 'posts_where', $language_filter, 10, 2 );
 
-		$grading_main = new Sensei_Grading_Main( array( 'view' => 'ungraded' ) );
-		$item         = new \Sensei\Internal\Services\Grading_Item( 'ungraded', $user_id, $lesson_id, current_time( 'mysql' ), null );
+		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+		$grading_main          = new Sensei_Grading_Main( array( 'view' => 'ungraded' ), $query_service_factory->create_grading_listing_service() );
+		$item                  = new \Sensei\Internal\Services\Grading_Item( 'ungraded', $user_id, $lesson_id, current_time( 'mysql' ), null );
 
 		/* Act. */
 		$method = new ReflectionMethod( Sensei_Grading_Main::class, 'get_row_data' );

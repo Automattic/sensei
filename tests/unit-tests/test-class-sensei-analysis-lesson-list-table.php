@@ -46,8 +46,9 @@ class Sensei_Analysis_Lesson_List_Table_Test extends WP_UnitTestCase {
 		Sensei_Utils::user_start_lesson( $user3_id, $lesson_id );
 
 		/* Act. */
-		$table       = new Sensei_Analysis_Lesson_List_Table( $lesson_id );
-		$export_data = $table->generate_report( 'lesson-name-learners-overview' );
+		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+		$table                 = new Sensei_Analysis_Lesson_List_Table( $lesson_id, $query_service_factory->create_reports_listing_service() );
+		$export_data           = $table->generate_report( 'lesson-name-learners-overview' );
 
 		/* Assert. */
 		self::assertSame( 4, count( $export_data ) ); // Header row + 3 students.
