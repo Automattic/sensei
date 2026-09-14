@@ -92,7 +92,7 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 
-		return ( new Progress_Query_Service_Factory() )->create_grading_stats_service()->get_courses_average_grade( $course_ids );
+		return ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service()->get_courses_average_grade( $course_ids );
 	}
 
 	/**

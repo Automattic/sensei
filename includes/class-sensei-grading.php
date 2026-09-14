@@ -89,7 +89,7 @@ class Sensei_Grading {
 	 * @return Progress_Aggregation_Service_Interface
 	 */
 	private static function get_aggregation_service(): Progress_Aggregation_Service_Interface {
-		return ( new Progress_Query_Service_Factory() )->create_aggregation_service();
+		return ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service();
 	}
 
 	/**
@@ -100,7 +100,7 @@ class Sensei_Grading {
 	 * @return Grading_Stats_Service_Interface
 	 */
 	private static function get_grading_stats_service(): Grading_Stats_Service_Interface {
-		return ( new Progress_Query_Service_Factory() )->create_grading_stats_service();
+		return ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service();
 	}
 
 	/**

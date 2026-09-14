@@ -59,7 +59,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		}
 
 		$this->grading_listing_service = $grading_listing_service
-			?? ( new Progress_Query_Service_Factory() )->create_grading_listing_service();
+			?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_listing_service();
 
 		// Load Parent token into constructor
 		parent::__construct( 'grading_main' );

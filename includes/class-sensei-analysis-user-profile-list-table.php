@@ -38,7 +38,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	public function __construct( $user_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
 		$this->user_id                 = intval( $user_id );
 		$this->page_slug               = Sensei_Analysis::PAGE_SLUG;
-		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
+		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_reports_listing_service();
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_user_profile' );

@@ -21,7 +21,7 @@ use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
-use Sensei\Internal\Services\Progress_Storage_Settings;
+use Sensei\Internal\Services\Progress_Storage_Configuration;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
@@ -125,6 +125,15 @@ class Sensei_Main {
 	 * @var Sensei_Settings
 	 */
 	public $settings;
+
+	/**
+	 * Resolved progress storage configuration.
+	 *
+	 * @since $$next-version$$
+	 * @psalm-suppress PropertyNotSetInConstructor
+	 * @var Progress_Storage_Configuration
+	 */
+	public $progress_storage_configuration;
 
 	/**
 	 * Script and stylesheet loading.
@@ -634,7 +643,13 @@ class Sensei_Main {
 	 */
 	public function initialize_global_objects() {
 		// Setup settings.
-		$this->settings = new Sensei_Settings();
+		$this->settings                       = new Sensei_Settings();
+		$this->progress_storage_configuration = Progress_Storage_Configuration::resolve( $this->settings->settings );
+
+		if ( $this->progress_storage_configuration->is_hpps_enabled() ) {
+			// Enable tables based progress feature flag.
+			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+		}
 
 		// Asset loading.
 		$this->assets = new Sensei_Assets( $this->plugin_url, $this->plugin_path, $this->version );
@@ -765,45 +780,20 @@ class Sensei_Main {
 		Sensei_Abilities::init();
 
 		// Student progress repositories.
-		$tables_feature_enabled = isset( $this->settings->settings['experimental_progress_storage'] )
-			&& ( true === $this->settings->settings['experimental_progress_storage'] );
-
-		if ( $tables_feature_enabled ) {
-			// Enable tables based progress feature flag.
-			add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
-		}
-
-		$tables_sync_enabled = $tables_feature_enabled
-			&& ( true === $this->settings->settings['experimental_progress_storage_synchronization'] );
-
-		$read_from_tables_setting = isset( $this->settings->settings['experimental_progress_storage_repository'] )
-			&& ( Progress_Storage_Settings::TABLES_STORAGE === $this->settings->settings['experimental_progress_storage_repository'] );
-
-		/**
-		 * Filter whether to read student progress from tables.
-		 *
-		 * @since 4.17.0
-		 *
-		 * @hook  sensei_student_progress_read_from_tables
-		 *
-		 * @param {bool} $read_from_tables Whether to read student progress from tables.
-		 * @return {bool} Whether to read student progress from tables.
-		 */
-		$read_from_tables                         = apply_filters( 'sensei_student_progress_read_from_tables', $read_from_tables_setting );
-		$this->course_progress_repository_factory = new Course_Progress_Repository_Factory( $tables_sync_enabled, $read_from_tables );
+		$this->course_progress_repository_factory = new Course_Progress_Repository_Factory( $this->progress_storage_configuration );
 		$this->course_progress_repository         = $this->course_progress_repository_factory->create();
-		$this->lesson_progress_repository_factory = new Lesson_Progress_Repository_Factory( $tables_sync_enabled, $read_from_tables );
+		$this->lesson_progress_repository_factory = new Lesson_Progress_Repository_Factory( $this->progress_storage_configuration );
 		$this->lesson_progress_repository         = $this->lesson_progress_repository_factory->create();
-		$this->quiz_progress_repository_factory   = new Quiz_Progress_Repository_Factory( $tables_sync_enabled, $read_from_tables );
+		$this->quiz_progress_repository_factory   = new Quiz_Progress_Repository_Factory( $this->progress_storage_configuration );
 		$this->quiz_progress_repository           = $this->quiz_progress_repository_factory->create();
 
 		// Quiz submission repositories.
-		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
-		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
-		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $tables_sync_enabled, $read_from_tables ) )->create();
+		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $this->progress_storage_configuration ) )->create();
+		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $this->progress_storage_configuration ) )->create();
+		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $this->progress_storage_configuration ) )->create();
 
 		// Progress tables eraser.
-		if ( $tables_feature_enabled ) {
+		if ( $this->progress_storage_configuration->is_hpps_enabled() ) {
 			( new Progress_Tables_Eraser() )->init();
 		}
 
@@ -812,7 +802,7 @@ class Sensei_Main {
 		}
 
 		// Student progress migration.
-		if ( $tables_feature_enabled && $this->action_scheduler ) {
+		if ( $this->progress_storage_configuration->is_hpps_enabled() && $this->action_scheduler ) {
 			$this->init_migration_scheduler();
 		}
 
