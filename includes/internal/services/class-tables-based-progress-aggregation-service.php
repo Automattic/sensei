@@ -139,6 +139,66 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Count students with activity on a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Comments-API-shaped activity arguments.
+	 * @return int Number of students with matching lesson activity.
+	 */
+	public function get_lesson_student_count( array $args ): int {
+		$wpdb    = $this->wpdb;
+		$table   = $this->get_progress_table_name();
+		$post_id = (int) ( $args['post_id'] ?? 0 );
+		$status  = $args['status'] ?? 'any';
+
+		$where = $wpdb->prepare( ' WHERE p.post_id = %d AND p.type = \'lesson\'', $post_id );
+		if ( 'any' !== $status ) {
+			$status_sql = $this->statuses_sql( $args );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
+			$where .= " AND p.status IN ( {$status_sql} )";
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is a trusted wpdb-derived name; $where is built from wpdb::prepare() calls.
+		$count = $wpdb->get_var( "SELECT COUNT( DISTINCT p.user_id ) FROM `$table` p" . $where );
+		Utils::log_query_error( $wpdb, 'Progress aggregation lesson student count' );
+
+		return (int) $count;
+	}
+
+	/**
+	 * Count students who completed a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Comments-API-shaped activity arguments.
+	 * @return int Number of students with matching completed lesson activity.
+	 */
+	public function get_lesson_completion_count( array $args ): int {
+		$wpdb       = $this->wpdb;
+		$table      = $this->get_progress_table_name();
+		$post_id    = (int) ( $args['post_id'] ?? 0 );
+		$status_sql = $this->statuses_sql( $args );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names are trusted wpdb-derived names; status values and post ID are prepared.
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT( DISTINCT p.user_id )'
+				. " FROM `$table` p"
+				. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
+				. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
+				. " WHERE p.post_id = %d AND p.type = 'lesson'"
+				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
+				$post_id
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Progress aggregation lesson completion count' );
+
+		return (int) $count;
+	}
+
+	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
 	 * @since 4.26.0
@@ -389,5 +449,30 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 */
 	private function build_user_exclusion_clause( array $args, string $status_column = 'p.status' ): string {
 		return Utils::build_user_exclusion_clause( $this->wpdb, $args, $status_column );
+	}
+
+	/**
+	 * Build a SQL-safe quoted status list from activity arguments.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Activity arguments containing a status key.
+	 * @return string Comma-separated quoted status values.
+	 */
+	private function statuses_sql( array $args ): string {
+		$statuses = (array) ( $args['status'] ?? array() );
+		if ( empty( $statuses ) ) {
+			return "'__none__'";
+		}
+
+		return implode(
+			',',
+			array_map(
+				function ( $status ): string {
+					return $this->wpdb->prepare( '%s', (string) $status );
+				},
+				$statuses
+			)
+		);
 	}
 }

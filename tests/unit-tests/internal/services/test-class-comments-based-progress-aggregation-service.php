@@ -195,6 +195,95 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase 
 		$this->assertArrayNotHasKey( 'in-progress', $result, 'Excluded user status should not appear.' );
 	}
 
+	public function testGetLessonStudentCount_WithStudentProgress_ReturnsCount(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+
+		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete' );
+		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'in-progress' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_student_count(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 2, $result );
+	}
+
+	public function testGetLessonStudentCount_ActivityFilterAdded_PassesScalarCountThroughFilter(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'complete' );
+
+		$filtered_value = null;
+		$filter         = static function ( $activity ) use ( &$filtered_value ) {
+			$filtered_value = $activity;
+			return $activity;
+		};
+		add_filter( 'sensei_check_for_activity', $filter );
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		try {
+			/* Act. */
+			$service->get_lesson_student_count(
+				array(
+					'post_id' => $lesson_id,
+					'type'    => 'sensei_lesson_status',
+					'status'  => 'any',
+				)
+			);
+		} finally {
+			remove_filter( 'sensei_check_for_activity', $filter );
+		}
+
+		/* Assert. */
+		$this->assertSame( 1, $filtered_value );
+	}
+
+	public function testGetLessonCompletionCount_WithStudentProgress_ReturnsCompletedOnly(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$lesson_id = $this->sensei_factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+
+		\Sensei_Utils::update_lesson_status( $user1, $lesson_id, 'complete' );
+		\Sensei_Utils::update_lesson_status( $user2, $lesson_id, 'in-progress' );
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_completion_count(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => array( 'complete', 'graded', 'passed', 'failed' ),
+				'count'   => true,
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result );
+	}
+
 	/**
 	 * Verifies totals across all aggregate fields for lessons with an "included" post_status.
 	 *
