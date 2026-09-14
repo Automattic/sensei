@@ -59,14 +59,14 @@ class Sensei_Class_Feature_Flags_Test extends WP_UnitTestCase {
 
 		wp_deregister_script( 'sensei-feature-flags' );
 		add_filter( 'sensei_default_feature_flag_settings', array( $this, 'add_mock_flags' ) );
+		$expected = 'window.sensei = window.sensei || {}; window.sensei.featureFlags = {"foo_feature":false};';
 
 		/* Act. */
 		$flags->register_scripts();
-		$inline_script = wp_scripts()->get_data( 'sensei-feature-flags', 'after' )[1];
+		$inline_scripts = wp_scripts()->get_data( 'sensei-feature-flags', 'after' );
 
 		/* Assert. */
-		$expected = 'window.sensei = window.sensei || {}; window.sensei.featureFlags = {"foo_feature":false};';
-		$this->assertSame( $expected, $inline_script );
+		$this->assertContains( $expected, $inline_scripts );
 	}
 
 	public function testIsEnabled_WhenEmailFeatureGivenAndFlagEnabled_ReturnsTrue(): void {
