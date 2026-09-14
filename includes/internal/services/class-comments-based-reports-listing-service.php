@@ -7,8 +7,6 @@
 
 namespace Sensei\Internal\Services;
 
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -76,71 +74,6 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 */
 	public function get_user_courses( array $args ): array {
 		return $this->query_activity( $args, 'percent' );
-	}
-
-	/**
-	 * Count students with activity on a lesson.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @param array $args Arguments for the query (see interface).
-	 * @return int
-	 */
-	public function get_lesson_student_count( array $args ): int {
-		return (int) \Sensei_Utils::sensei_check_for_activity( $args );
-	}
-
-	/**
-	 * Count students who completed a lesson.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @param array $args Arguments for the query (see interface).
-	 * @return int
-	 */
-	public function get_lesson_completion_count( array $args ): int {
-		return (int) \Sensei_Utils::sensei_check_for_activity( $args );
-	}
-
-	/**
-	 * Get the average quiz grade for a lesson.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @param array $args Arguments for the query (see interface).
-	 * @return float|null
-	 */
-	public function get_lesson_average_grade( array $args ): ?float {
-		global $wpdb;
-
-		$post_id  = (int) ( $args['post_id'] ?? 0 );
-		$type     = (string) ( $args['type'] ?? 'sensei_lesson_status' );
-		$meta_key = (string) ( $args['meta_key'] ?? 'grade' );
-		$statuses = isset( $args['status'] ) ? (array) $args['status'] : array();
-
-		if ( $post_id <= 0 || empty( $statuses ) ) {
-			return null;
-		}
-
-		$status_placeholders = implode( ',', array_fill( 0, count( $statuses ), '%s' ) );
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $status_placeholders is a list of %s; WP 6.4 changed WP_Comment_Query to use get_col(), so a comments_clauses-based aggregate is unreliable.
-		$avg = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT AVG(cm.meta_value)
-				 FROM {$wpdb->comments} c
-				 INNER JOIN {$wpdb->commentmeta} cm
-				   ON cm.comment_id = c.comment_ID AND cm.meta_key = %s
-				 WHERE c.comment_post_ID = %d
-				   AND c.comment_type = %s
-				   AND c.comment_approved IN ( {$status_placeholders} )",
-				array_merge( array( $meta_key, $post_id, $type ), $statuses )
-			)
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		Utils::log_query_error( $wpdb, 'Comments-based lesson average grade' );
-
-		return null !== $avg ? round( (float) $avg, 2 ) : null;
 	}
 
 	/**
