@@ -55,7 +55,7 @@ class Course_Progress_Repository_Factory {
 			return $comments_based;
 		}
 
-		if ( ! $this->storage_configuration->is_reading_from_tables() ) {
+		if ( ! $this->storage_configuration->is_table_reading_enabled() ) {
 			return new Comment_Reading_Aggregate_Course_Progress_Repository( $comments_based, $tables_based );
 		}
 

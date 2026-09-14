@@ -16,7 +16,7 @@ class Sensei_HPPS_Helpers_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		$this->enable_hpps_tables_repository();
-		$actual = Sensei()->progress_storage_configuration->is_reading_from_tables();
+		$actual = Sensei()->progress_storage_configuration->is_table_reading_enabled();
 		$this->reset_hpps_repository();
 		Sensei()->settings->settings['experimental_progress_storage_repository'] = $original_repository;
 		Sensei()->progress_storage_configuration                                 = $original_storage_configuration;
@@ -40,7 +40,7 @@ class Sensei_HPPS_Helpers_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		$this->reset_hpps_repository();
-		$actual = Sensei()->progress_storage_configuration->is_reading_from_tables();
+		$actual = Sensei()->progress_storage_configuration->is_table_reading_enabled();
 
 		Sensei()->settings->settings['experimental_progress_storage_repository'] = $original_repository;
 		Sensei()->progress_storage_configuration                                 = $original_storage_configuration;

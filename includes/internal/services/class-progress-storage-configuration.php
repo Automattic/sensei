@@ -122,7 +122,7 @@ final class Progress_Storage_Configuration {
 	 *
 	 * @return bool
 	 */
-	public function is_reading_from_tables(): bool {
+	public function is_table_reading_enabled(): bool {
 		return self::TABLES_BACKEND === $this->read_backend;
 	}
 

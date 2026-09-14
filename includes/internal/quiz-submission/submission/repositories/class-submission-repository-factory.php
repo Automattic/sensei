@@ -52,7 +52,7 @@ class Submission_Repository_Factory {
 			return new Comments_Based_Submission_Repository();
 		}
 
-		if ( ! $this->storage_configuration->is_reading_from_tables() ) {
+		if ( ! $this->storage_configuration->is_table_reading_enabled() ) {
 			return new Comment_Reading_Aggregate_Submission_Repository(
 				new Comments_Based_Submission_Repository(),
 				new Tables_Based_Submission_Repository( $wpdb )

@@ -51,7 +51,7 @@ class Progress_Query_Service_Factory {
 	public function create_clauses_service(): Progress_Clauses_Service_Interface {
 		global $wpdb;
 
-		if ( $this->storage_configuration->is_reading_from_tables() ) {
+		if ( $this->storage_configuration->is_table_reading_enabled() ) {
 			return new Tables_Based_Progress_Clauses_Service( $wpdb );
 		}
 
@@ -68,7 +68,7 @@ class Progress_Query_Service_Factory {
 	public function create_grading_listing_service(): Grading_Listing_Service_Interface {
 		global $wpdb;
 
-		if ( $this->storage_configuration->is_reading_from_tables() ) {
+		if ( $this->storage_configuration->is_table_reading_enabled() ) {
 			return new Tables_Based_Grading_Listing_Service( $wpdb );
 		}
 
@@ -88,7 +88,7 @@ class Progress_Query_Service_Factory {
 	public function create_grading_stats_service(): Grading_Stats_Service_Interface {
 		global $wpdb;
 
-		if ( $this->storage_configuration->is_reading_from_tables() ) {
+		if ( $this->storage_configuration->is_table_reading_enabled() ) {
 			return new Tables_Based_Grading_Stats_Service( $wpdb );
 		}
 
@@ -105,7 +105,7 @@ class Progress_Query_Service_Factory {
 	public function create_reports_listing_service(): Reports_Listing_Service_Interface {
 		global $wpdb;
 
-		if ( $this->storage_configuration->is_reading_from_tables() ) {
+		if ( $this->storage_configuration->is_table_reading_enabled() ) {
 			return new Tables_Based_Reports_Listing_Service( $wpdb );
 		}
 
@@ -125,7 +125,7 @@ class Progress_Query_Service_Factory {
 	public function create_aggregation_service(): Progress_Aggregation_Service_Interface {
 		global $wpdb;
 
-		if ( $this->storage_configuration->is_reading_from_tables() ) {
+		if ( $this->storage_configuration->is_table_reading_enabled() ) {
 			return new Tables_Based_Progress_Aggregation_Service( $wpdb );
 		}
 

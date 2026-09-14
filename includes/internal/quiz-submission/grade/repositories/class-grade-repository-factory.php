@@ -58,7 +58,7 @@ class Grade_Repository_Factory {
 			return new Comments_Based_Grade_Repository();
 		}
 
-		if ( ! $this->storage_configuration->is_reading_from_tables() ) {
+		if ( ! $this->storage_configuration->is_table_reading_enabled() ) {
 			return new Comment_Reading_Aggregate_Grade_Repository(
 				new Comments_Based_Grade_Repository(),
 				new Tables_Based_Grade_Repository( $wpdb ),
