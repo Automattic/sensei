@@ -709,6 +709,16 @@ class Sensei_Frontend {
 			return;
 		}
 
+		$course_id = (int) Sensei()->lesson->get_course_id( $lesson_id );
+
+		if (
+			! Sensei_Course::is_user_enrolled( $course_id, $current_user->ID )
+			|| ! sensei_can_user_view_lesson( $lesson_id, $current_user->ID )
+			|| ! Sensei_Lesson::should_show_lesson_actions( $lesson_id, $current_user->ID )
+		) {
+			return;
+		}
+
 		// Handle Quiz Completion.
 		$sanitized_submit = sensei_request_text( $_POST['quiz_action'] );
 
