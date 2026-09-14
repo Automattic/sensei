@@ -8,9 +8,14 @@ body.sensei-course-theme {
 }
 
 /* All notices */
-.sensei-course-theme .sensei-lms-notice {
+.sensei-course-theme .wp-block-sensei-lms-course-theme-notices {
 	background-color: var(--wp--preset--color--foreground, #f6f7f7);
 	color: var(--wp--preset--color--background, #1e1e1e);
+}
+
+.sensei-course-theme .sensei-lms-notice {
+	background-color: inherit;
+	color: inherit;
 	padding: 24px;
 
 	@media (min-width: $break-medium) {

@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix Notices block color settings not applying in Learning Mode, in the editor or on the frontend.
