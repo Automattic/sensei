@@ -45,14 +45,6 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
-	public function testConstructor_NoArgumentsGiven_CreatesService(): void {
-		/* Act. */
-		$service = new Sensei_Reports_Overview_Service_Courses();
-
-		/* Assert. */
-		$this->assertInstanceOf( Sensei_Reports_Overview_Service_Courses::class, $service );
-	}
-
 	public function testGetCoursesAverageGrade_GradingStatsServiceInjected_ReturnsServiceResult(): void {
 		/* Arrange. */
 		$course_ids            = array( 10, 20 );

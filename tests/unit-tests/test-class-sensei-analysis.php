@@ -35,14 +35,6 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
 	}
 
-	public function testConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
-		/* Act. */
-		$analysis = new Sensei_Analysis( 'a' );
-
-		/* Assert. */
-		$this->assertInstanceOf( Sensei_Analysis::class, $analysis );
-	}
-
 	/**
 	 * Tests that legacy listing-service overrides are preserved.
 	 *

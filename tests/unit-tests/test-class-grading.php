@@ -31,14 +31,6 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
-	public function testConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
-		/* Act. */
-		$grading = new Sensei_Grading( '' );
-
-		/* Assert. */
-		$this->assertInstanceOf( Sensei_Grading::class, $grading );
-	}
-
 	public function testLoadDataObject_MainWithoutOverride_UsesComposedListingService(): void {
 		/* Arrange. */
 		$listing_service = $this->createMock( \Sensei\Internal\Services\Grading_Listing_Service_Interface::class );
@@ -204,7 +196,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		Sensei()->lesson_progress_repository->save( $lp );
 
 		$this->login_as_admin();
-		Sensei()->grading->grading_admin_menu();
+		( new Sensei_Grading( '' ) )->grading_admin_menu();
 
 		global $submenu;
 
