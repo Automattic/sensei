@@ -175,7 +175,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		Sensei()->lesson_progress_repository->save( $lp );
 
 		$this->login_as_admin();
-		( new Sensei_Grading( '' ) )->grading_admin_menu();
+		Sensei()->grading->grading_admin_menu();
 
 		global $submenu;
 
