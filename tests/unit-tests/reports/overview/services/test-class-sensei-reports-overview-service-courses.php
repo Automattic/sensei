@@ -53,6 +53,24 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( Sensei_Reports_Overview_Service_Courses::class, $service );
 	}
 
+	public function testGetCoursesAverageGrade_GradingStatsServiceInjected_ReturnsServiceResult(): void {
+		/* Arrange. */
+		$course_ids            = array( 10, 20 );
+		$grading_stats_service = $this->createMock( \Sensei\Internal\Services\Grading_Stats_Service_Interface::class );
+		$service               = new Sensei_Reports_Overview_Service_Courses( $grading_stats_service );
+		$grading_stats_service
+			->expects( self::once() )
+			->method( 'get_courses_average_grade' )
+			->with( $course_ids )
+			->willReturn( 75.5 );
+
+		/* Act. */
+		$actual = $service->get_courses_average_grade( $course_ids );
+
+		/* Assert. */
+		self::assertSame( 75.5, $actual );
+	}
+
 	/**
 	 * Tests getting total average progress value for the course based on the lessons completion for single course.
 	 *
@@ -74,7 +92,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$service = $this->create_service();
+		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		// Complete lesson 1 and lesson 2 with user_1.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
@@ -122,7 +140,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$lesson_4 = $this->factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course_id_2 ] ]
 		);
-		$service  = $this->create_service();
+		$service  = new Sensei_Reports_Overview_Service_Courses();
 		// Complete lesson 1 and lesson 2 with user_1.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
 		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_1, true );
@@ -167,7 +185,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$lesson_2 = $this->factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
 		);
-		$service  = $this->create_service();
+		$service  = new Sensei_Reports_Overview_Service_Courses();
 
 		// Enroll student 2 to the course and lessons, but don't complete the lessons.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
@@ -191,7 +209,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		// Create a course 1
 		$this->factory->course->create();
 
-		$service = $this->create_service();
+		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Assert. */
 		$this->assertEquals(
@@ -230,7 +248,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$lesson_3 = $this->factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course_id_2 ] ]
 		);
-		$service  = $this->create_service();
+		$service  = new Sensei_Reports_Overview_Service_Courses();
 
 		// Complete lesson 1 and lesson 2 with user_1.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
@@ -285,7 +303,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		);
 		update_comment_meta( $comment3_id, 'start', '2022-01-01 00:00:01' );
 
-		$instance = $this->create_service();
+		$instance = new Sensei_Reports_Overview_Service_Courses();
 		$actual   = $instance->get_average_days_to_completion( [ $course_id ] );
 
 		// 2022-01-07 00:00:00 - 2022-01-01 00:00:01 + 1 = 7 days.
@@ -329,7 +347,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		);
 		update_comment_meta( $comment3_id, 'start', '2022-03-09 00:22:34' );
 
-		$instance = $this->create_service();
+		$instance = new Sensei_Reports_Overview_Service_Courses();
 		$actual   = $instance->get_average_days_to_completion( [ $course1_id, $course2_id ] );
 
 		// Average for the first course: (1 + 1) / 2 = 1.
@@ -341,7 +359,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	public function testGetTotalTotalEnrollments_WhenThereWereNoEnrolledStudents_ReturnsZero() {
 
 		/* Arrange. */
-		$instance = $this->create_service();
+		$instance = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
 		$actual = $instance->get_total_enrollments( [] );
@@ -368,7 +386,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		Sensei_Utils::sensei_start_lesson( $lesson_course_1, $user1_id );
 		Sensei_Utils::sensei_start_lesson( $lesson_course_2, $user1_id );
 
-		$instance = $this->create_service();
+		$instance = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
 		$actual = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
@@ -399,7 +417,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		Sensei_Utils::sensei_start_lesson( $lesson_course_1, $user1_id );
 		Sensei_Utils::sensei_start_lesson( $lesson_course_2, $user2_id );
 
-		$instance = $this->create_service();
+		$instance = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
 		$actual = $instance->get_total_enrollments( [ $course1_id, $course2_id ] );
@@ -416,7 +434,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	public function testGetCoursesAverageGrade_WhenNoGradedQuizzes_ReturnsZero() {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
-		$instance  = $this->create_service();
+		$instance  = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
 		$actual = $instance->get_courses_average_grade( [ $course_id ] );
@@ -425,39 +443,10 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 0.0, $actual, 'Average grade should be zero when there are no graded quizzes.' );
 	}
 
-	public function testGetCoursesAverageGrade_GradingStatsServiceInjected_ReturnsServiceResult() {
-		/* Arrange. */
-		$course_ids            = array( 10, 20 );
-		$grading_stats_service = $this->createMock( \Sensei\Internal\Services\Grading_Stats_Service_Interface::class );
-		$instance              = new Sensei_Reports_Overview_Service_Courses( $grading_stats_service );
-		$grading_stats_service
-			->expects( self::once() )
-			->method( 'get_courses_average_grade' )
-			->with( $course_ids )
-			->willReturn( 75.5 );
-
-		/* Act. */
-		$actual = $instance->get_courses_average_grade( $course_ids );
-
-		/* Assert. */
-		self::assertSame( 75.5, $actual );
-	}
-
 	public function testGetAverageDaysToCompletionTotalWithoutCompletionsReturnsZero() {
-		$instance = $this->create_service();
+		$instance = new Sensei_Reports_Overview_Service_Courses();
 		$actual   = $instance->get_average_days_to_completion( [] );
 
 		self::assertSame( 0.0, $actual );
-	}
-
-	/**
-	 * Create the service with the active storage implementation.
-	 *
-	 * @return Sensei_Reports_Overview_Service_Courses
-	 */
-	private function create_service(): Sensei_Reports_Overview_Service_Courses {
-		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
-
-		return new Sensei_Reports_Overview_Service_Courses( $query_service_factory->create_grading_stats_service() );
 	}
 }

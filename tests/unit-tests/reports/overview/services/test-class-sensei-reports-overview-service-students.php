@@ -40,14 +40,6 @@ class Sensei_Reports_Overview_Service_Students_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
-	public function testConstructor_NoArgumentsGiven_CreatesService(): void {
-		/* Act. */
-		$service = new Sensei_Reports_Overview_Service_Students();
-
-		/* Assert. */
-		$this->assertInstanceOf( Sensei_Reports_Overview_Service_Students::class, $service );
-	}
-
 	/**
 	 * Build the service with real progress services from the factory.
 	 *

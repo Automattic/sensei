@@ -35,11 +35,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 *
 	 * @since  1.3.0
 	 *
-	 * @param array|null                        $args                    Constructor arguments.
+	 * @param array|null                             $args                    Constructor arguments.
 	 * @param Grading_Listing_Service_Interface|null $grading_listing_service The grading listing service.
 	 */
 	public function __construct( $args = null, ?Grading_Listing_Service_Interface $grading_listing_service = null ) {
-		$grading_listing_service = $grading_listing_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_listing_service();
 
 		$defaults = array(
 			'course_id' => 0,
@@ -59,7 +58,8 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			$this->view = $args['view'];
 		}
 
-		$this->grading_listing_service = $grading_listing_service;
+		$this->grading_listing_service = $grading_listing_service
+			?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_listing_service();
 
 		// Load Parent token into constructor
 		parent::__construct( 'grading_main' );

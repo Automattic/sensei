@@ -22,14 +22,6 @@ class Sensei_Analysis_Lesson_List_Table_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 	}
 
-	public function testConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
-		/* Act. */
-		$table = new Sensei_Analysis_Lesson_List_Table();
-
-		/* Assert. */
-		$this->assertInstanceOf( Sensei_Analysis_Lesson_List_Table::class, $table );
-	}
-
 	public function testGenerateReport_StudentsByLesson_ReturnsCorrectNumberOfRows() {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
@@ -54,9 +46,8 @@ class Sensei_Analysis_Lesson_List_Table_Test extends WP_UnitTestCase {
 		Sensei_Utils::user_start_lesson( $user3_id, $lesson_id );
 
 		/* Act. */
-		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
-		$table                 = new Sensei_Analysis_Lesson_List_Table( $lesson_id, $query_service_factory->create_reports_listing_service() );
-		$export_data           = $table->generate_report( 'lesson-name-learners-overview' );
+		$table       = new Sensei_Analysis_Lesson_List_Table( $lesson_id );
+		$export_data = $table->generate_report( 'lesson-name-learners-overview' );
 
 		/* Assert. */
 		self::assertSame( 4, count( $export_data ) ); // Header row + 3 students.

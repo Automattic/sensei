@@ -25,7 +25,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	private $grading;
 
 	/**
-	 * Course-related functionality.
+	 * Sensei course related services.
 	 *
 	 * @var Sensei_Course
 	 */
@@ -49,7 +49,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 * Constructor
 	 *
 	 * @param Sensei_Grading                                  $grading Sensei grading related services.
-	 * @param Sensei_Course                                   $course Course-related functionality.
+	 * @param Sensei_Course                                   $course Sensei course related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
 	 * @param Sensei_Reports_Overview_Service_Courses         $reports_overview_service_courses reports courses service.
 	 * @param Progress_Aggregation_Service_Interface          $aggregation_service The progress aggregation service.

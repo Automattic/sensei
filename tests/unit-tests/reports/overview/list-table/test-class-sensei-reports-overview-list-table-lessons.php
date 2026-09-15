@@ -6,17 +6,6 @@
  * @covers Sensei_Reports_Overview_List_Table_Lessons
  */
 class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
-	public function testConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
-		/* Arrange. */
-		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-
-		/* Act. */
-		$list_table = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, $data_provider );
-
-		/* Assert. */
-		$this->assertInstanceOf( Sensei_Reports_Overview_List_Table_Lessons::class, $list_table );
-	}
-
 	/**
 	 * Factory for setting up testing data.
 	 *
@@ -51,14 +40,15 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	 */
 	public function testGenerateReport_StudentEnrollmentsFound_ReturnsRowsWithMatchingCompletionRate( $enrolled_student_count, $completed_student_count, $expected_output ) {
 		/* Arrange */
-		$lesson_table_instance = $this->create_list_table();
-		$user_ids              = $this->factory->user->create_many( $enrolled_student_count );
-		$course_lessons        = $this->factory->get_course_with_lessons(
+		$data_provider_instance = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
+		$lesson_table_instance  = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, $data_provider_instance );
+		$user_ids               = $this->factory->user->create_many( $enrolled_student_count );
+		$course_lessons         = $this->factory->get_course_with_lessons(
 			array(
 				'lesson_count' => 1,
 			)
 		);
-		$lesson_id             = array_pop( $course_lessons['lesson_ids'] );
+		$lesson_id              = array_pop( $course_lessons['lesson_ids'] );
 		foreach ( $user_ids as $key => $user_id ) {
 			Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $key < $completed_student_count );
 		}
@@ -99,7 +89,8 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 		);
 		$days_count = 7;
 
-		$lesson_table_instance = $this->create_list_table();
+		$data_provider_instance = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
+		$lesson_table_instance  = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, $data_provider_instance );
 
 		$_GET['course_filter'] = $course_id;
 		// Complete a lesson for each student on a different date.
@@ -127,17 +118,5 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 			'days_to_completion' => 'Days to Completion (9)',
 		];
 		self::assertSame( $expected, $actual, 'The expected column headers for lessons table in overview report does not match the actual output' );
-	}
-
-	/**
-	 * Create the list table with the active storage implementations.
-	 *
-	 * @return Sensei_Reports_Overview_List_Table_Lessons
-	 */
-	private function create_list_table(): Sensei_Reports_Overview_List_Table_Lessons {
-		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
-		$data_provider         = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course, $query_service_factory->create_clauses_service() );
-
-		return new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, $data_provider, $query_service_factory->create_aggregation_service() );
 	}
 }

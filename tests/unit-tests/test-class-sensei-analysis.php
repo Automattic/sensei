@@ -71,14 +71,6 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 		);
 	}
 
-	public function testUserProfileConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
-		/* Act. */
-		$table = new Sensei_Analysis_User_Profile_List_Table();
-
-		/* Assert. */
-		$this->assertInstanceOf( Sensei_Analysis_User_Profile_List_Table::class, $table );
-	}
-
 	/**
 	 * Test load_data_object returns an expected list table instance
 	 *

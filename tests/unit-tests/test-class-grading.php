@@ -39,14 +39,6 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( Sensei_Grading::class, $grading );
 	}
 
-	public function testMainConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
-		/* Act. */
-		$grading_main = new Sensei_Grading_Main();
-
-		/* Assert. */
-		$this->assertInstanceOf( Sensei_Grading_Main::class, $grading_main );
-	}
-
 	public function testLoadDataObject_MainWithoutOverride_UsesComposedListingService(): void {
 		/* Arrange. */
 		$listing_service = $this->createMock( \Sensei\Internal\Services\Grading_Listing_Service_Interface::class );
@@ -100,9 +92,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		};
 		add_filter( 'posts_where', $language_filter, 10, 2 );
 
-		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
-		$grading_main          = new Sensei_Grading_Main( array( 'view' => 'ungraded' ), $query_service_factory->create_grading_listing_service() );
-		$item                  = new \Sensei\Internal\Services\Grading_Item( 'ungraded', $user_id, $lesson_id, current_time( 'mysql' ), null );
+		$grading_main = new Sensei_Grading_Main( array( 'view' => 'ungraded' ) );
+		$item         = new \Sensei\Internal\Services\Grading_Item( 'ungraded', $user_id, $lesson_id, current_time( 'mysql' ), null );
 
 		/* Act. */
 		$method = new ReflectionMethod( Sensei_Grading_Main::class, 'get_row_data' );

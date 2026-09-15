@@ -31,14 +31,6 @@ class Sensei_Reports_Overview_Data_Provider_Lessons_Test extends WP_UnitTestCase
 		$this->factory->tearDown();
 	}
 
-	public function testConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
-		/* Act. */
-		$data_provider = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
-
-		/* Assert. */
-		$this->assertInstanceOf( Sensei_Reports_Overview_Data_Provider_Lessons::class, $data_provider );
-	}
-
 	/**
 	 * Tests that when getting the lessons they are filtered by course.
 	 *
@@ -52,7 +44,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons_Test extends WP_UnitTestCase
 		// Fill the database with other lessons from other courses.
 		$this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $this->factory->course->create() ] ] );
 
-		$instance = $this->create_data_provider();
+		$instance = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
 
 		/* Act. */
 		$query_args = [
@@ -89,7 +81,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons_Test extends WP_UnitTestCase
 		// Fill the database with other lessons from other courses.
 		$this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $this->factory->course->create() ] ] );
 
-		$instance = $this->create_data_provider();
+		$instance = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
 
 		// Get items for first course.
 		$query_args = [
@@ -108,16 +100,5 @@ class Sensei_Reports_Overview_Data_Provider_Lessons_Test extends WP_UnitTestCase
 			$course_lesson_posts,
 			'No lesson was returned from get items.'
 		);
-	}
-
-	/**
-	 * Create the data provider with the active storage implementation.
-	 *
-	 * @return Sensei_Reports_Overview_Data_Provider_Lessons
-	 */
-	private function create_data_provider(): Sensei_Reports_Overview_Data_Provider_Lessons {
-		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
-
-		return new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course, $query_service_factory->create_clauses_service() );
 	}
 }

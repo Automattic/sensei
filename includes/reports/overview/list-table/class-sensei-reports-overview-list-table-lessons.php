@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview_List_Table_Abstract {
 	/**
-	 * Course-related functionality.
+	 * Sensei course related services.
 	 *
 	 * @var Sensei_Course
 	 */
@@ -37,16 +37,16 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	/**
 	 * Constructor.
 	 *
-	 * @param Sensei_Course                                   $course              Course-related functionality.
+	 * @param Sensei_Course                                   $course              Sensei course related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider       Report data provider.
 	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service The progress aggregation service.
 	 */
 	public function __construct( Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, ?Progress_Aggregation_Service_Interface $aggregation_service = null ) {
-		$aggregation_service = $aggregation_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service();
 		// Load Parent token into constructor.
 		parent::__construct( 'lessons', $data_provider );
 		$this->course              = $course;
-		$this->aggregation_service = $aggregation_service;
+		$this->aggregation_service = $aggregation_service
+			?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service();
 
 		add_filter( 'sensei_analysis_overview_columns', array( $this, 'add_totals_to_report_column_headers' ) );
 	}

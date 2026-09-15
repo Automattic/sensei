@@ -37,14 +37,6 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 	}
 
-	public function testConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
-		/* Act. */
-		$table = new Sensei_Analysis_Course_List_Table();
-
-		/* Assert. */
-		$this->assertInstanceOf( Sensei_Analysis_Course_List_Table::class, $table );
-	}
-
 	public function testPrepareItems_DateStartedFilterSet_SetsMatchingItems() {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
@@ -69,7 +61,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		$_GET['view']       = 'user';
 
 		/* Act. */
-		$table = $this->create_list_table( $course_id );
+		$table = new Sensei_Analysis_Course_List_Table( $course_id );
 		$table->prepare_items();
 
 		/* Assert. */
@@ -108,7 +100,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		$_GET['view'] = 'user';
 
 		/* Act. */
-		$table = $this->create_list_table( $course_id );
+		$table = new Sensei_Analysis_Course_List_Table( $course_id );
 		$table->prepare_items();
 
 		/* Assert. */
@@ -138,7 +130,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		$_GET['view'] = 'lesson';
 
 		/* Act. */
-		$table       = $this->create_list_table( $course_id );
+		$table       = new Sensei_Analysis_Course_List_Table( $course_id );
 		$export_data = $table->generate_report( 'course-name-lessons-overview' );
 
 		/* Assert. */
@@ -176,7 +168,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		$_GET['view'] = 'lesson';
 
 		/* Act. */
-		$table       = $this->create_list_table( $course_id );
+		$table       = new Sensei_Analysis_Course_List_Table( $course_id );
 		$export_data = $table->generate_report( 'course-name-lessons-overview' );
 
 		/* Assert. */
@@ -201,7 +193,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		$_GET['view'] = 'lesson';
 
 		/* Act. */
-		$table       = $this->create_list_table( $course_id );
+		$table       = new Sensei_Analysis_Course_List_Table( $course_id );
 		$export_data = $table->generate_report( 'course-name-lessons-overview' );
 
 		/* Assert. */
@@ -224,7 +216,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		$_GET['view'] = 'user';
 
 		/* Act. */
-		$table       = $this->create_list_table( $course_id );
+		$table       = new Sensei_Analysis_Course_List_Table( $course_id );
 		$export_data = $table->generate_report( 'course-name-users-overview' );
 
 		/* Assert. */
@@ -233,7 +225,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 
 	public function testTableFooter_WhenCalledWithNoData_NotDisplayTheExportButton() {
 		/* Arrange. */
-		$list_table = $this->create_list_table();
+		$list_table = new Sensei_Analysis_Course_List_Table();
 
 		/* Act. */
 		ob_start();
@@ -258,7 +250,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 			'_wpnonce'   => $nonce,
 		];
 
-		$list_table = $this->create_list_table( $course->ID, $user->ID );
+		$list_table = new Sensei_Analysis_Course_List_Table( $course->ID, $user->ID );
 
 		$list_table->total_items = 1;
 
@@ -287,24 +279,5 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		}
 		sort( $ret );
 		return $ret;
-	}
-
-	/**
-	 * Create the list table with the active storage implementations.
-	 *
-	 * @param int $course_id Course ID.
-	 * @param int $user_id   User ID.
-	 * @return Sensei_Analysis_Course_List_Table
-	 */
-	private function create_list_table( int $course_id = 0, int $user_id = 0 ): Sensei_Analysis_Course_List_Table {
-		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
-
-		return new Sensei_Analysis_Course_List_Table(
-			$course_id,
-			$user_id,
-			$query_service_factory->create_reports_listing_service(),
-			$query_service_factory->create_aggregation_service(),
-			$query_service_factory->create_grading_stats_service()
-		);
 	}
 }
