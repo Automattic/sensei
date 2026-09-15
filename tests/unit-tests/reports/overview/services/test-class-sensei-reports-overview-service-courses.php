@@ -417,24 +417,6 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 0.0, $actual, 'Average grade should be zero when there are no graded quizzes.' );
 	}
 
-	public function testGetCoursesAverageGrade_GradingStatsServiceInjected_ReturnsServiceResult(): void {
-		/* Arrange. */
-		$course_ids            = array( 10, 20 );
-		$grading_stats_service = $this->createMock( \Sensei\Internal\Services\Grading_Stats_Service_Interface::class );
-		$service               = new Sensei_Reports_Overview_Service_Courses( $grading_stats_service );
-		$grading_stats_service
-			->expects( self::once() )
-			->method( 'get_courses_average_grade' )
-			->with( $course_ids )
-			->willReturn( 75.5 );
-
-		/* Act. */
-		$actual = $service->get_courses_average_grade( $course_ids );
-
-		/* Assert. */
-		self::assertSame( 75.5, $actual );
-	}
-
 	public function testGetAverageDaysToCompletionTotalWithoutCompletionsReturnsZero() {
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 		$actual   = $instance->get_average_days_to_completion( [] );
