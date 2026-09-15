@@ -224,10 +224,6 @@ class Sensei_Grading {
 
 		// Load Analysis data
 		$object_name = 'Sensei_Grading_' . $name;
-		if ( 'Main' === $name && is_null( $optional_data ) ) {
-			$optional_data = $this->grading_listing_service;
-		}
-
 		if ( is_null( $optional_data ) ) {
 			$sensei_grading_object = new $object_name( $data );
 		} else {

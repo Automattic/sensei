@@ -31,27 +31,6 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
-	public function testLoadDataObject_MainWithoutOverride_UsesComposedListingService(): void {
-		/* Arrange. */
-		$listing_service = $this->createMock( \Sensei\Internal\Services\Grading_Listing_Service_Interface::class );
-		$listing_service->method( 'get_lesson_progress_items' )->willReturn(
-			array(
-				'items'       => array(),
-				'total_count' => 0,
-			)
-		);
-		$grading = new Sensei_Grading( '', $listing_service );
-		$this->setExpectedDeprecated( 'Sensei_Grading::load_data_object' );
-
-		/* Act. */
-		$grading_main = $grading->load_data_object( 'Main' );
-
-		/* Assert. */
-		$property = new ReflectionProperty( $grading_main, 'grading_listing_service' );
-		$property->setAccessible( true );
-		$this->assertSame( $listing_service, $property->getValue( $grading_main ) );
-	}
-
 	/**
 	 * Testing the quiz class to make sure it is loaded
 	 */
@@ -347,21 +326,12 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that courses average grade is calculated correctly when there are no grades.
+	 * Test that graded lessons average grade is calculated correctly when there are no grades.
 	 *
-	 * @covers Sensei_Grading::get_courses_average_grade
+	 * @covers Sensei_Grading::get_graded_lessons_average_grade
 	 */
 	public function testGetGradedLessonsAverageGradeNoGrades() {
 		$this->assertEquals( 0, Sensei()->grading->get_graded_lessons_average_grade() );
-	}
-
-	/**
-	 * Test that courses average grade returns zero when there are no courses with graded quizzes.
-	 *
-	 * @covers Sensei_Grading::get_courses_average_grade
-	 */
-	public function testGetCoursesAverageGrade_WhenNoCourses_ReturnsZero() {
-		$this->assertSame( 0.0, Sensei()->grading->get_courses_average_grade(), 'Average grade should be zero when there are no courses with graded quizzes.' );
 	}
 
 	/**
@@ -379,6 +349,15 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$graded_lessons_average_grade = Sensei()->grading->get_graded_lessons_average_grade();
 
 		$this->assertEquals( 30, $graded_lessons_average_grade );
+	}
+
+	/**
+	 * Test that courses average grade returns zero when there are no courses with graded quizzes.
+	 *
+	 * @covers Sensei_Grading::get_courses_average_grade
+	 */
+	public function testGetCoursesAverageGrade_WhenNoCourses_ReturnsZero() {
+		$this->assertSame( 0.0, Sensei()->grading->get_courses_average_grade(), 'Average grade should be zero when there are no courses with graded quizzes.' );
 	}
 
 	/**

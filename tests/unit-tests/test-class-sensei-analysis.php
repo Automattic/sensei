@@ -36,34 +36,6 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that legacy listing-service overrides are preserved.
-	 *
-	 * @dataProvider providerLoadReportObject_LegacyListingServiceGiven_PreservesOverride
-	 *
-	 * @param string $name List table name.
-	 */
-	public function testLoadReportObject_LegacyListingServiceGiven_PreservesOverride( string $name ): void {
-		/* Arrange. */
-		$analysis        = new Sensei_Analysis( 'a' );
-		$listing_service = $this->createMock( \Sensei\Internal\Services\Reports_Listing_Service_Interface::class );
-
-		/* Act. */
-		$list_table = $analysis->load_report_object( $name, 1, $listing_service );
-
-		/* Assert. */
-		$property = new ReflectionProperty( $list_table, 'reports_listing_service' );
-		$property->setAccessible( true );
-		$this->assertSame( $listing_service, $property->getValue( $list_table ) );
-	}
-
-	public function providerLoadReportObject_LegacyListingServiceGiven_PreservesOverride(): array {
-		return array(
-			'lesson'       => array( 'Lesson' ),
-			'user profile' => array( 'User_Profile' ),
-		);
-	}
-
-	/**
 	 * Test load_data_object returns an expected list table instance
 	 *
 	 * @param string $name
@@ -318,6 +290,34 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$this->expectNotToPerformAssertions();
+	}
+
+	/**
+	 * Tests that legacy listing-service overrides are preserved.
+	 *
+	 * @dataProvider providerLoadReportObject_LegacyListingServiceGiven_PreservesOverride
+	 *
+	 * @param string $name List table name.
+	 */
+	public function testLoadReportObject_LegacyListingServiceGiven_PreservesOverride( string $name ): void {
+		/* Arrange. */
+		$analysis        = new Sensei_Analysis( 'a' );
+		$listing_service = $this->createMock( \Sensei\Internal\Services\Reports_Listing_Service_Interface::class );
+
+		/* Act. */
+		$list_table = $analysis->load_report_object( $name, 1, $listing_service );
+
+		/* Assert. */
+		$property = new ReflectionProperty( $list_table, 'reports_listing_service' );
+		$property->setAccessible( true );
+		$this->assertSame( $listing_service, $property->getValue( $list_table ) );
+	}
+
+	public function providerLoadReportObject_LegacyListingServiceGiven_PreservesOverride(): array {
+		return array(
+			'lesson'       => array( 'Lesson' ),
+			'user profile' => array( 'User_Profile' ),
+		);
 	}
 
 	/**

@@ -330,6 +330,13 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 2.5, $actual );
 	}
 
+	public function testGetAverageDaysToCompletionTotalWithoutCompletionsReturnsZero() {
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+		$actual   = $instance->get_average_days_to_completion( [] );
+
+		self::assertSame( 0.0, $actual );
+	}
+
 	public function testGetTotalTotalEnrollments_WhenThereWereNoEnrolledStudents_ReturnsZero() {
 
 		/* Arrange. */
@@ -417,10 +424,4 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 0.0, $actual, 'Average grade should be zero when there are no graded quizzes.' );
 	}
 
-	public function testGetAverageDaysToCompletionTotalWithoutCompletionsReturnsZero() {
-		$instance = new Sensei_Reports_Overview_Service_Courses();
-		$actual   = $instance->get_average_days_to_completion( [] );
-
-		self::assertSame( 0.0, $actual );
-	}
 }
