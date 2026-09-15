@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix a deleted or trashed lesson blocking the course outline from being saved and lingering in the editor.

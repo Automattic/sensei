@@ -43,10 +43,18 @@ registerStructureStore( {
 		const courseId = yield select( 'core/editor' ).getCurrentPostId();
 		return `course-structure/${ courseId }?context=edit`;
 	},
-	*updateBlock( structure ) {
+	*updateBlock( structure, isAuthoritative = false ) {
 		const { clientId = null } = getEditorOutlineBlock();
 
-		if ( ! clientId || ! structure || 0 === structure.length ) {
+		if ( ! clientId || ! structure ) {
+			return;
+		}
+
+		// An empty structure from a load is not authoritative, it may just mean the
+		// outline has not been persisted yet, so existing blocks are kept. An empty
+		// structure from a save means every lesson was removed, so stale blocks
+		// are dropped.
+		if ( 0 === structure.length && ! isAuthoritative ) {
 			return;
 		}
 
@@ -62,6 +70,19 @@ registerStructureStore( {
 		return !! getEditorOutlineBlock();
 	},
 	readBlock: getEditorOutlineStructure,
+	*fetchError( error ) {
+		const errorMessage = sprintf(
+			/* translators: Placeholder is the underlying error message. */
+			__(
+				'Course modules and lessons could not be loaded. %s',
+				'sensei-lms'
+			),
+			error.message
+		);
+		yield dispatch( 'core/notices' ).createErrorNotice( errorMessage, {
+			id: 'course-outline-save-error',
+		} );
+	},
 	*saveError( error ) {
 		const errorMessage = sprintf(
 			/* translators: Error message. */
