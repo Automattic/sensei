@@ -148,4 +148,22 @@ class Main_Test extends WP_UnitTestCase {
 		$subscribers = $mailpoet_api->getSubscribers( array( 'listId' => $list_id ) );
 		$this->assertGreaterThan( 2, $subscribers );
 	}
+
+	/**
+	 * Guards against reverting to the `init` hook, which some hosting/cron setups
+	 * (e.g. WordPress.com/Atomic) never actually run in this context.
+	 */
+	public function testConstructor_SetupComplete_SchedulesSyncJobCheckOnWpLoadedNotInit() {
+		$mailpoet_api = Sensei_MailPoet_API_Factory::MP();
+		$instance     = new Sensei\Emails\MailPoet\Main( $mailpoet_api );
+
+		$this->assertNotFalse(
+			has_action( 'wp_loaded', array( $instance, 'maybe_schedule_sync_job' ) ),
+			'Main should schedule the sync job check on wp_loaded.'
+		);
+		$this->assertFalse(
+			has_action( 'init', array( $instance, 'maybe_schedule_sync_job' ) ),
+			'Main should not schedule the sync job check on init.'
+		);
+	}
 }

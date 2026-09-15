@@ -62,7 +62,13 @@ class Main {
 	public function __construct( $mailpoet_api ) {
 		$this->mailpoet_api = $mailpoet_api;
 		if ( $this->mailpoet_api->isSetupComplete() ) {
-			add_action( 'init', array( $this, 'maybe_schedule_sync_job' ), 10 );
+			// `wp_loaded` (not `init`): this class is constructed from the `mailpoet_initialized`
+			// hook, which MailPoet fires from inside its own `init` callback, so hooking `init`
+			// here re-registers a callback on the hook WordPress is already dispatching. On some
+			// hosting/cron setups (confirmed on WordPress.com/Atomic) that callback silently never
+			// runs, so the daily sync job never gets scheduled. `wp_loaded` always fires after
+			// `init` has fully completed, which avoids the issue everywhere.
+			add_action( 'wp_loaded', array( $this, 'maybe_schedule_sync_job' ) );
 			/**
 			 * Schedule job to synchronise students in courses and groups with MailPoet subscribers list.
 			 *
