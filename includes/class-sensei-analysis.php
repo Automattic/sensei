@@ -1,4 +1,8 @@
 <?php
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Reports_Listing_Service_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -11,6 +15,34 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Analysis {
+	/**
+	 * Reports overview list table factory.
+	 *
+	 * @var Sensei_Reports_Overview_List_Table_Factory|null
+	 */
+	private ?Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory;
+
+	/**
+	 * Reports listing service.
+	 *
+	 * @var Reports_Listing_Service_Interface|null
+	 */
+	private ?Reports_Listing_Service_Interface $reports_listing_service;
+
+	/**
+	 * Progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface|null
+	 */
+	private ?Progress_Aggregation_Service_Interface $aggregation_service;
+
+	/**
+	 * Grading statistics service.
+	 *
+	 * @var Grading_Stats_Service_Interface|null
+	 */
+	private ?Grading_Stats_Service_Interface $grading_stats_service;
+
 	/**
 	 * The reports' page slug.
 	 */
@@ -27,10 +59,18 @@ class Sensei_Analysis {
 	 * Constructor
 	 *
 	 * @since  1.0.0
-	 * @param string $file
+	 * @param string                                          $file                                Main plugin file path.
+	 * @param Sensei_Reports_Overview_List_Table_Factory|null $reports_overview_list_table_factory Reports overview list table factory.
+	 * @param Reports_Listing_Service_Interface|null          $reports_listing_service             Reports listing service.
+	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service                 Progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null            $grading_stats_service               Grading statistics service.
 	 */
-	public function __construct( $file ) {
-		$this->file = $file;
+	public function __construct( $file, ?Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory = null, ?Reports_Listing_Service_Interface $reports_listing_service = null, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
+		$this->file                                = $file;
+		$this->reports_overview_list_table_factory = $reports_overview_list_table_factory;
+		$this->reports_listing_service             = $reports_listing_service;
+		$this->aggregation_service                 = $aggregation_service;
+		$this->grading_stats_service               = $grading_stats_service;
 
 		// Admin functions.
 		if ( is_admin() ) {
@@ -249,17 +289,7 @@ class Sensei_Analysis {
 	 * @return Sensei_List_Table     Class instance object
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
-		if ( 'Overview' === $name ) {
-			$factory                = new Sensei_Reports_Overview_List_Table_Factory();
-			$sensei_analysis_object = $factory->create( $data );
-		} else {
-			$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
-			if ( is_null( $optional_data ) ) {
-				$sensei_analysis_object = new $object_name( $data );
-			} else {
-				$sensei_analysis_object = new $object_name( $data, $optional_data );
-			}
-		}
+		$sensei_analysis_object = $this->load_report_object( $name, $data, $optional_data );
 
 		$sensei_analysis_object->prepare_items();
 
@@ -998,19 +1028,31 @@ class Sensei_Analysis {
 	 * @return object                 class instance object
 	 */
 	public function load_report_object( $name = '', $data = 0, $optional_data = null ) {
-		if ( 'Overview' === $name ) {
-			$factory                       = new Sensei_Reports_Overview_List_Table_Factory();
-			$sensei_analysis_report_object = $factory->create( $data );
-		} else {
-			$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
-			if ( is_null( $optional_data ) ) {
-				$sensei_analysis_report_object = new $object_name( $data );
-			} else {
-				$sensei_analysis_report_object = new $object_name( $data, $optional_data );
-			}
+		switch ( $name ) {
+			case 'Overview':
+				$factory = $this->reports_overview_list_table_factory ?? new Sensei_Reports_Overview_List_Table_Factory();
+				return $factory->create( $data );
+			case 'Course':
+				return new Sensei_Analysis_Course_List_Table(
+					$data,
+					$optional_data ?? 0,
+					$this->reports_listing_service,
+					$this->aggregation_service,
+					$this->grading_stats_service
+				);
+			case 'Lesson':
+				return new Sensei_Analysis_Lesson_List_Table( $data, $optional_data ?? $this->reports_listing_service );
+			case 'User_Profile':
+				return new Sensei_Analysis_User_Profile_List_Table( $data, $optional_data ?? $this->reports_listing_service );
 		}
 
-		return $sensei_analysis_report_object;
+		$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
+
+		if ( is_null( $optional_data ) ) {
+			return new $object_name( $data );
+		}
+
+		return new $object_name( $data, $optional_data );
 	}
 
 	/**

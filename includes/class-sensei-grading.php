@@ -1,4 +1,5 @@
 <?php
+use Sensei\Internal\Services\Grading_Listing_Service_Interface;
 use Sensei\Internal\Services\Grading_Stats_Service_Interface;
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
@@ -20,6 +21,26 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.3.0
  */
 class Sensei_Grading {
+	/**
+	 * The grading listing service.
+	 *
+	 * @var Grading_Listing_Service_Interface|null
+	 */
+	private ?Grading_Listing_Service_Interface $grading_listing_service;
+
+	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface|null
+	 */
+	private ?Progress_Aggregation_Service_Interface $aggregation_service;
+
+	/**
+	 * The grading statistics service used by legacy static methods.
+	 *
+	 * @var Grading_Stats_Service_Interface|null
+	 */
+	private static ?Grading_Stats_Service_Interface $grading_stats_service = null;
 
 	public $file;
 	public $page_slug;
@@ -29,11 +50,17 @@ class Sensei_Grading {
 	 *
 	 * @since  1.3.0
 	 *
-	 * @param string $file The main plugin file path.
+	 * @param string                                      $file                    The main plugin file path.
+	 * @param Grading_Listing_Service_Interface|null      $grading_listing_service The grading listing service.
+	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service     The progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service   The grading statistics service.
 	 */
-	public function __construct( $file ) {
-		$this->file      = $file;
-		$this->page_slug = 'sensei_grading';
+	public function __construct( $file, ?Grading_Listing_Service_Interface $grading_listing_service = null, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
+		$this->file                    = $file;
+		$this->page_slug               = 'sensei_grading';
+		$this->grading_listing_service = $grading_listing_service;
+		$this->aggregation_service     = $aggregation_service;
+		self::$grading_stats_service   = $grading_stats_service;
 
 		// Admin functions
 		if ( is_admin() ) {
@@ -82,25 +109,25 @@ class Sensei_Grading {
 	}
 
 	/**
-	 * Get the progress aggregation service instance.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @return Progress_Aggregation_Service_Interface
-	 */
-	private static function get_aggregation_service(): Progress_Aggregation_Service_Interface {
-		return ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service();
-	}
-
-	/**
-	 * Get the grading stats service instance.
+	 * Get the grading statistics service instance.
 	 *
 	 * @since 4.26.0
 	 *
 	 * @return Grading_Stats_Service_Interface
 	 */
 	private static function get_grading_stats_service(): Grading_Stats_Service_Interface {
-		return ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service();
+		return self::$grading_stats_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service();
+	}
+
+	/**
+	 * Get the progress aggregation service instance.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @return Progress_Aggregation_Service_Interface
+	 */
+	private function get_aggregation_service(): Progress_Aggregation_Service_Interface {
+		return $this->aggregation_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service();
 	}
 
 	/**
@@ -114,7 +141,7 @@ class Sensei_Grading {
 
 		/** This filter is documented in includes/class-sensei-grading.php */
 		$args           = apply_filters( 'sensei_count_statuses_args', array( 'type' => 'lesson' ) );
-		$ungraded_count = self::get_aggregation_service()->count_ungraded_quizzes( $args );
+		$ungraded_count = $this->get_aggregation_service()->count_ungraded_quizzes( $args );
 
 		if ( $ungraded_count > 0 ) {
 			$indicator_html = ' <span class="awaiting-mod">' . esc_html( (string) $ungraded_count ) . '</span>';
@@ -260,7 +287,7 @@ class Sensei_Grading {
 			$view = sensei_request_text( $_GET['view'] );
 		}
 
-		$sensei_grading_overview = new Sensei_Grading_Main( compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
+		$sensei_grading_overview = new Sensei_Grading_Main( compact( 'course_id', 'lesson_id', 'user_id', 'view' ), $this->grading_listing_service );
 		$sensei_grading_overview->prepare_items();
 
 		// Wrappers
@@ -592,7 +619,7 @@ class Sensei_Grading {
 		$counts    = wp_cache_get( $cache_key, 'counts' );
 
 		if ( false === $counts ) {
-			$counts = self::get_aggregation_service()->count_statuses( $args );
+			$counts = $this->get_aggregation_service()->count_statuses( $args );
 			wp_cache_set( $cache_key, $counts, 'counts' );
 		}
 
