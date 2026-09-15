@@ -127,6 +127,12 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 			}
 
 			if ( 'lesson' === $type ) {
+				// A lesson that no longer exists is pruned by the save instead of
+				// blocking the whole request, so it is not a permission failure.
+				if ( ! Sensei_Course_Structure::lesson_exists( intval( $id ) ) ) {
+					continue;
+				}
+
 				if ( ! current_user_can( 'edit_post', $id ) ) {
 					return false;
 				}

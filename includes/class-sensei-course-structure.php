@@ -482,6 +482,27 @@ class Sensei_Course_Structure {
 	}
 
 	/**
+	 * Check whether the given ID belongs to a lesson that can still be part of
+	 * a course structure.
+	 *
+	 * A lesson that was deleted or trashed no longer exists as far as the
+	 * structure is concerned, so it should be pruned instead of blocking a save.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson post ID.
+	 *
+	 * @return bool Whether the lesson exists and is not trashed.
+	 */
+	public static function lesson_exists( int $lesson_id ): bool {
+		$lesson = get_post( $lesson_id );
+
+		return $lesson
+			&& 'lesson' === $lesson->post_type
+			&& ! in_array( $lesson->post_status, array( 'trash', 'auto-draft' ), true );
+	}
+
+	/**
 	 * Save a lesson item.
 	 *
 	 * @see Sensei_Course_Structure::prepare_lesson()
@@ -765,6 +786,10 @@ class Sensei_Course_Structure {
 				return $item;
 			}
 
+			if ( null === $item ) {
+				continue;
+			}
+
 			$structure[] = $item;
 		}
 
@@ -779,7 +804,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @param array $raw_item Module or lesson as returned by prepare_lesson or prepare_module.
 	 *
-	 * @return array|WP_Error
+	 * @return array|WP_Error|null Sanitized item, error, or null when a lesson no longer exists.
 	 */
 	private function sanitize_item( array $raw_item ) {
 		$validate = $this->validate_item_structure( $raw_item );
@@ -857,6 +882,10 @@ class Sensei_Course_Structure {
 					return $lesson;
 				}
 
+				if ( null === $lesson ) {
+					continue;
+				}
+
 				if ( 'lesson' !== $lesson['type'] ) {
 					return new WP_Error(
 						'sensei_course_structure_invalid_module_lesson',
@@ -867,15 +896,10 @@ class Sensei_Course_Structure {
 				$item['lessons'][] = $lesson;
 			}
 		} elseif ( 'lesson' === $raw_item['type'] ) {
-			if ( $item['id'] ) {
-				$lesson = get_post( $item['id'] );
-				if ( ! $lesson || in_array( $lesson->post_status, [ 'trash', 'auto-draft' ], true ) || 'lesson' !== $lesson->post_type ) {
-					return new WP_Error(
-						'sensei_course_structure_missing_lesson',
-						// translators: Placeholder is ID for lesson.
-						sprintf( __( 'Lesson with id "%d" was not found', 'sensei-lms' ), $item['id'] )
-					);
-				}
+			if ( $item['id'] && ! self::lesson_exists( $item['id'] ) ) {
+				// The lesson was deleted or trashed while it was still in the outline.
+				// Skip it so the rest of the structure can be saved.
+				return null;
 			}
 			$item['initialContent'] = ! empty( $raw_item['initialContent'] ) ? trim( wp_kses_post( $raw_item['initialContent'] ) ) : null;
 		}

@@ -61,7 +61,16 @@ describe( 'Structure store', () => {
 			method: 'GET',
 			path: '/sensei-internal/v1/test-api/1',
 		} );
-		expect( store.updateBlock ).toHaveBeenCalledWith( 'server' );
+		expect( store.updateBlock ).toHaveBeenCalledWith( 'server', false );
+	} );
+
+	it( 'Updates block with the save result as authoritative', () => {
+		apiFetch.mockReturnValue( 'new' );
+		store.readBlock.mockReturnValue( 'new' );
+
+		registry.dispatch( STORE ).startPostSave();
+
+		expect( store.updateBlock ).toHaveBeenCalledWith( 'new', true );
 	} );
 
 	it( 'Reads structure from block', () => {
