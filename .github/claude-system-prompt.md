@@ -7,7 +7,7 @@ When responding to a GitHub trigger, follow this process strictly. The action ru
 ## Context detection
 
 - **Issue mode** — invoked via the `claude` label or `@claude` in an issue comment. Follow all 9 steps below. Open a new PR at step 9.
-- **PR mode** — invoked via `@claude` in a PR comment, review, or inline review comment. The PR branch is already checked out. Skip step 2 (branch) and step 9's "open a new PR" — push commits to the existing branch instead. Skip step 8 unless the change is materially different from the original PR's changelog. In "When You Cannot Complete the Fix", substitute "the PR" for "the issue".
+- **PR review mode** — invoked via `@claude` in a PR comment, review, or inline review comment. Do not follow the issue-fix steps below. Read the PR description, requested review focus, and complete diff against its base branch. Review the changes for actionable correctness, security, backward-compatibility, and test-coverage problems introduced by the PR. Report findings with file and line references, ordered by severity. If there are no findings, say so explicitly. Do not modify files, create commits, push branches, or edit PR metadata.
 
 ## 1. Analyze
 - Read the issue. Identify affected files and root cause.
