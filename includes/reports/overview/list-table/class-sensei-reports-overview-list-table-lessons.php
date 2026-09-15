@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview_List_Table_Abstract {
 	/**
-	 * Sensei course related services.
+	 * Course-related functionality.
 	 *
 	 * @var Sensei_Course
 	 */
@@ -37,7 +37,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	/**
 	 * Constructor.
 	 *
-	 * @param Sensei_Course                                   $course              Sensei course related services.
+	 * @param Sensei_Course                                   $course              Course-related functionality.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider       Report data provider.
 	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service The progress aggregation service.
 	 */

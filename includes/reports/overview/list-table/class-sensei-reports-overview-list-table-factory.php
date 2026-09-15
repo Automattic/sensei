@@ -21,7 +21,7 @@ use Sensei\Internal\Services\Progress_Query_Service_Factory;
  */
 class Sensei_Reports_Overview_List_Table_Factory {
 	/**
-	 * Sensei course services.
+	 * Course-related functionality.
 	 *
 	 * @var Sensei_Course
 	 */
@@ -51,7 +51,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	/**
 	 * Constructor.
 	 *
-	 * @param Sensei_Course|null                          $course                   Sensei course services.
+	 * @param Sensei_Course|null                          $course                   Course-related functionality.
 	 * @param Progress_Clauses_Service_Interface|null     $progress_clauses_service Progress clauses service.
 	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service      Progress aggregation service.
 	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service    Grading statistics service.
