@@ -59,7 +59,7 @@ class Sensei_Analysis {
 	 * Constructor
 	 *
 	 * @since  1.0.0
-	 * @param string                                     $file                                Main plugin file path.
+	 * @param string                                          $file                                Main plugin file path.
 	 * @param Sensei_Reports_Overview_List_Table_Factory|null $reports_overview_list_table_factory Reports overview list table factory.
 	 * @param Reports_Listing_Service_Interface|null          $reports_listing_service             Reports listing service.
 	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service                 Progress aggregation service.

@@ -50,7 +50,7 @@ class Sensei_Grading {
 	 *
 	 * @since  1.3.0
 	 *
-	 * @param string                                 $file                    The main plugin file path.
+	 * @param string                                      $file                    The main plugin file path.
 	 * @param Grading_Listing_Service_Interface|null      $grading_listing_service The grading listing service.
 	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service     The progress aggregation service.
 	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service   The grading statistics service.
