@@ -6,6 +6,7 @@
  */
 
 use Sensei\Internal\Services\Progress_Clauses_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Services\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,9 +52,10 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 *
 	 * @since 4.26.0
 	 *
-	 * @param Progress_Clauses_Service_Interface $progress_clauses_service The progress clauses service.
+	 * @param Progress_Clauses_Service_Interface|null $progress_clauses_service The progress clauses service.
 	 */
-	public function __construct( Progress_Clauses_Service_Interface $progress_clauses_service ) {
+	public function __construct( ?Progress_Clauses_Service_Interface $progress_clauses_service = null ) {
+		$progress_clauses_service       = $progress_clauses_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_clauses_service();
 		$this->progress_clauses_service = $progress_clauses_service;
 	}
 

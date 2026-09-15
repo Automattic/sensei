@@ -31,6 +31,14 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		$this->factory->tearDown();
 	}
 
+	public function testConstructor_NoArgumentsGiven_CreatesInstance(): void {
+		/* Act. */
+		$data_provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+
+		/* Assert. */
+		$this->assertInstanceOf( Sensei_Reports_Overview_Data_Provider_Courses::class, $data_provider );
+	}
+
 	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsMatchingCourses() {
 		/* Arrange. */
 		$user_id = $this->factory->user->create();

@@ -1,4 +1,5 @@
 <?php
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Services\Reports_Item;
 use Sensei\Internal\Services\Reports_Listing_Service_Interface;
 
@@ -32,9 +33,11 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @since  1.2.0
 	 *
 	 * @param int                               $user_id                 User ID.
-	 * @param Reports_Listing_Service_Interface $reports_listing_service Reports listing service.
+	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Reports listing service.
 	 */
-	public function __construct( $user_id, Reports_Listing_Service_Interface $reports_listing_service ) {
+	public function __construct( $user_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
+		$reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_reports_listing_service();
+
 		$this->user_id                 = intval( $user_id );
 		$this->page_slug               = Sensei_Analysis::PAGE_SLUG;
 		$this->reports_listing_service = $reports_listing_service;

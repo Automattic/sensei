@@ -31,6 +31,14 @@ class Sensei_Reports_Overview_Data_Provider_Lessons_Test extends WP_UnitTestCase
 		$this->factory->tearDown();
 	}
 
+	public function testConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
+		/* Act. */
+		$data_provider = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
+
+		/* Assert. */
+		$this->assertInstanceOf( Sensei_Reports_Overview_Data_Provider_Lessons::class, $data_provider );
+	}
+
 	/**
 	 * Tests that when getting the lessons they are filtered by course.
 	 *

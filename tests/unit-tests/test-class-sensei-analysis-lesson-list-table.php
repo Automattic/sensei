@@ -22,6 +22,14 @@ class Sensei_Analysis_Lesson_List_Table_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 	}
 
+	public function testConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
+		/* Act. */
+		$table = new Sensei_Analysis_Lesson_List_Table();
+
+		/* Assert. */
+		$this->assertInstanceOf( Sensei_Analysis_Lesson_List_Table::class, $table );
+	}
+
 	public function testGenerateReport_StudentsByLesson_ReturnsCorrectNumberOfRows() {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();

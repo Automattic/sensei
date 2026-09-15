@@ -6,6 +6,7 @@
  */
 
 use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Services\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,9 +29,10 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Constructor.
 	 *
-	 * @param Grading_Stats_Service_Interface $grading_stats_service Grading statistics service.
+	 * @param Grading_Stats_Service_Interface|null $grading_stats_service Grading statistics service.
 	 */
-	public function __construct( Grading_Stats_Service_Interface $grading_stats_service ) {
+	public function __construct( ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
+		$grading_stats_service       = $grading_stats_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service();
 		$this->grading_stats_service = $grading_stats_service;
 	}
 

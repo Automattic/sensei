@@ -45,6 +45,14 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
+	public function testConstructor_NoArgumentsGiven_CreatesService(): void {
+		/* Act. */
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Assert. */
+		$this->assertInstanceOf( Sensei_Reports_Overview_Service_Courses::class, $service );
+	}
+
 	/**
 	 * Tests getting total average progress value for the course based on the lessons completion for single course.
 	 *

@@ -7,6 +7,7 @@
 
 use Sensei\Internal\Services\Grading_Item;
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Services\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -38,9 +39,10 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	 *
 	 * @param Sensei_Course                                   $course              Sensei course related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider       Report data provider.
-	 * @param Progress_Aggregation_Service_Interface          $aggregation_service The progress aggregation service.
+	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service The progress aggregation service.
 	 */
-	public function __construct( Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Progress_Aggregation_Service_Interface $aggregation_service ) {
+	public function __construct( Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, ?Progress_Aggregation_Service_Interface $aggregation_service = null ) {
+		$aggregation_service = $aggregation_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service();
 		// Load Parent token into constructor.
 		parent::__construct( 'lessons', $data_provider );
 		$this->course              = $course;

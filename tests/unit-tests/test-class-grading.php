@@ -31,6 +31,43 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
+	public function testConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
+		/* Act. */
+		$grading = new Sensei_Grading( '' );
+
+		/* Assert. */
+		$this->assertInstanceOf( Sensei_Grading::class, $grading );
+	}
+
+	public function testMainConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
+		/* Act. */
+		$grading_main = new Sensei_Grading_Main();
+
+		/* Assert. */
+		$this->assertInstanceOf( Sensei_Grading_Main::class, $grading_main );
+	}
+
+	public function testLoadDataObject_MainWithoutOverride_UsesComposedListingService(): void {
+		/* Arrange. */
+		$listing_service = $this->createMock( \Sensei\Internal\Services\Grading_Listing_Service_Interface::class );
+		$listing_service->method( 'get_lesson_progress_items' )->willReturn(
+			array(
+				'items'       => array(),
+				'total_count' => 0,
+			)
+		);
+		$grading = new Sensei_Grading( '', $listing_service );
+		$this->setExpectedDeprecated( 'Sensei_Grading::load_data_object' );
+
+		/* Act. */
+		$grading_main = $grading->load_data_object( 'Main' );
+
+		/* Assert. */
+		$property = new ReflectionProperty( $grading_main, 'grading_listing_service' );
+		$property->setAccessible( true );
+		$this->assertSame( $listing_service, $property->getValue( $grading_main ) );
+	}
+
 	/**
 	 * Testing the quiz class to make sure it is loaded
 	 */

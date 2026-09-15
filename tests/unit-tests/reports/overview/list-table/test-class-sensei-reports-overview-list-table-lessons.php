@@ -6,6 +6,17 @@
  * @covers Sensei_Reports_Overview_List_Table_Lessons
  */
 class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
+	public function testConstructor_LegacyArgumentsGiven_CreatesInstance(): void {
+		/* Arrange. */
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+
+		/* Act. */
+		$list_table = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, $data_provider );
+
+		/* Assert. */
+		$this->assertInstanceOf( Sensei_Reports_Overview_List_Table_Lessons::class, $list_table );
+	}
+
 	/**
 	 * Factory for setting up testing data.
 	 *

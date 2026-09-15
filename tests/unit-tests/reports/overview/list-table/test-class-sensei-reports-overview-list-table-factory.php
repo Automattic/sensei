@@ -19,6 +19,14 @@ class Sensei_Reports_Overview_List_Table_Factory_Test extends WP_UnitTestCase {
 		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
 	}
 
+	public function testConstructor_NoArgumentsGiven_CreatesFactory(): void {
+		/* Act. */
+		$factory = new Sensei_Reports_Overview_List_Table_Factory();
+
+		/* Assert. */
+		$this->assertInstanceOf( Sensei_Reports_Overview_List_Table_Factory::class, $factory );
+	}
+
 	/**
 	 * Test create method success path
 	 *

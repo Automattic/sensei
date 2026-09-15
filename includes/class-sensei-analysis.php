@@ -18,30 +18,30 @@ class Sensei_Analysis {
 	/**
 	 * Reports overview list table factory.
 	 *
-	 * @var Sensei_Reports_Overview_List_Table_Factory
+	 * @var Sensei_Reports_Overview_List_Table_Factory|null
 	 */
-	private Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory;
+	private ?Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory;
 
 	/**
 	 * Reports listing service.
 	 *
-	 * @var Reports_Listing_Service_Interface
+	 * @var Reports_Listing_Service_Interface|null
 	 */
-	private Reports_Listing_Service_Interface $reports_listing_service;
+	private ?Reports_Listing_Service_Interface $reports_listing_service;
 
 	/**
 	 * Progress aggregation service.
 	 *
-	 * @var Progress_Aggregation_Service_Interface
+	 * @var Progress_Aggregation_Service_Interface|null
 	 */
-	private Progress_Aggregation_Service_Interface $aggregation_service;
+	private ?Progress_Aggregation_Service_Interface $aggregation_service;
 
 	/**
 	 * Grading statistics service.
 	 *
-	 * @var Grading_Stats_Service_Interface
+	 * @var Grading_Stats_Service_Interface|null
 	 */
-	private Grading_Stats_Service_Interface $grading_stats_service;
+	private ?Grading_Stats_Service_Interface $grading_stats_service;
 
 	/**
 	 * The reports' page slug.
@@ -60,12 +60,12 @@ class Sensei_Analysis {
 	 *
 	 * @since  1.0.0
 	 * @param string                                     $file                                Main plugin file path.
-	 * @param Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory Reports overview list table factory.
-	 * @param Reports_Listing_Service_Interface          $reports_listing_service             Reports listing service.
-	 * @param Progress_Aggregation_Service_Interface     $aggregation_service                 Progress aggregation service.
-	 * @param Grading_Stats_Service_Interface            $grading_stats_service               Grading statistics service.
+	 * @param Sensei_Reports_Overview_List_Table_Factory|null $reports_overview_list_table_factory Reports overview list table factory.
+	 * @param Reports_Listing_Service_Interface|null          $reports_listing_service             Reports listing service.
+	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service                 Progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null            $grading_stats_service               Grading statistics service.
 	 */
-	public function __construct( $file, Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory, Reports_Listing_Service_Interface $reports_listing_service, Progress_Aggregation_Service_Interface $aggregation_service, Grading_Stats_Service_Interface $grading_stats_service ) {
+	public function __construct( $file, ?Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory = null, ?Reports_Listing_Service_Interface $reports_listing_service = null, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
 		$this->file                                = $file;
 		$this->reports_overview_list_table_factory = $reports_overview_list_table_factory;
 		$this->reports_listing_service             = $reports_listing_service;
@@ -1030,7 +1030,8 @@ class Sensei_Analysis {
 	public function load_report_object( $name = '', $data = 0, $optional_data = null ) {
 		switch ( $name ) {
 			case 'Overview':
-				return $this->reports_overview_list_table_factory->create( $data );
+				$factory = $this->reports_overview_list_table_factory ?? new Sensei_Reports_Overview_List_Table_Factory();
+				return $factory->create( $data );
 			case 'Course':
 				return new Sensei_Analysis_Course_List_Table(
 					$data,
@@ -1040,9 +1041,9 @@ class Sensei_Analysis {
 					$this->grading_stats_service
 				);
 			case 'Lesson':
-				return new Sensei_Analysis_Lesson_List_Table( $data, $this->reports_listing_service );
+				return new Sensei_Analysis_Lesson_List_Table( $data, $optional_data ?? $this->reports_listing_service );
 			case 'User_Profile':
-				return new Sensei_Analysis_User_Profile_List_Table( $data, $this->reports_listing_service );
+				return new Sensei_Analysis_User_Profile_List_Table( $data, $optional_data ?? $this->reports_listing_service );
 		}
 
 		$object_name = 'Sensei_Analysis_' . $name . '_List_Table';

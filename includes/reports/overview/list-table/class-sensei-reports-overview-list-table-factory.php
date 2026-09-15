@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Sensei\Internal\Services\Grading_Stats_Service_Interface;
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 use Sensei\Internal\Services\Progress_Clauses_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
 
 /**
  * Overview list table factory.
@@ -50,12 +51,21 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	/**
 	 * Constructor.
 	 *
-	 * @param Sensei_Course                          $course                   Sensei course services.
-	 * @param Progress_Clauses_Service_Interface     $progress_clauses_service Progress clauses service.
-	 * @param Progress_Aggregation_Service_Interface $aggregation_service      Progress aggregation service.
-	 * @param Grading_Stats_Service_Interface        $grading_stats_service    Grading statistics service.
+	 * @param Sensei_Course|null                          $course                   Sensei course services.
+	 * @param Progress_Clauses_Service_Interface|null     $progress_clauses_service Progress clauses service.
+	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service      Progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service    Grading statistics service.
 	 */
-	public function __construct( Sensei_Course $course, Progress_Clauses_Service_Interface $progress_clauses_service, Progress_Aggregation_Service_Interface $aggregation_service, Grading_Stats_Service_Interface $grading_stats_service ) {
+	public function __construct( ?Sensei_Course $course = null, ?Progress_Clauses_Service_Interface $progress_clauses_service = null, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
+		if ( null === $progress_clauses_service || null === $aggregation_service || null === $grading_stats_service ) {
+			$query_service_factory    = new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+			$progress_clauses_service = $progress_clauses_service ?? $query_service_factory->create_clauses_service();
+			$aggregation_service      = $aggregation_service ?? $query_service_factory->create_aggregation_service();
+			$grading_stats_service    = $grading_stats_service ?? $query_service_factory->create_grading_stats_service();
+		}
+
+		$course = $course ?? Sensei()->course;
+
 		$this->course                   = $course;
 		$this->progress_clauses_service = $progress_clauses_service;
 		$this->aggregation_service      = $aggregation_service;
