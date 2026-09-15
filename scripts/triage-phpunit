@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# Fixed PHPUnit wrapper for the issue-triage skill.
+#
+# Same reasoning as scripts/triage-wp: the Makefile interpolates its arguments
+# into a shell recipe, so the filter is validated here instead.
+#
+# Usage: scripts/triage-phpunit <TestClass|TestClass::method>
+
+set -euo pipefail
+
+die() {
+	echo "triage-phpunit: $*" >&2
+	exit 64
+}
+
+[ "$#" -eq 1 ] || die "expected exactly one filter argument"
+
+filter="$1"
+
+# A PHPUnit filter here is a class name, optionally ::method. Nothing else is
+# accepted — no wildcards, no regex, no shell metacharacters.
+case $filter in
+	*[!A-Za-z0-9_:]*) die "filter may only contain letters, digits, underscore and ':' — got: $filter" ;;
+esac
+case $filter in
+	*::*::*) die "filter may contain at most one '::' — got: $filter" ;;
+	:*|*:) die "filter must not start or end with ':' — got: $filter" ;;
+esac
+
+exec env COMPOSE_PROJECT_NAME=sensei-lms npx @wordpress/env run tests-cli \
+	--env-cwd='wp-content/plugins/sensei' vendor/bin/phpunit -c phpunit.xml --filter "$filter"
