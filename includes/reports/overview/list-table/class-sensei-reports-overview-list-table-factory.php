@@ -23,30 +23,30 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	/**
 	 * Course-related functionality.
 	 *
-	 * @var Sensei_Course
+	 * @var Sensei_Course|null
 	 */
-	private Sensei_Course $course;
+	private ?Sensei_Course $course;
 
 	/**
 	 * Progress clauses service.
 	 *
-	 * @var Progress_Clauses_Service_Interface
+	 * @var Progress_Clauses_Service_Interface|null
 	 */
-	private Progress_Clauses_Service_Interface $progress_clauses_service;
+	private ?Progress_Clauses_Service_Interface $progress_clauses_service;
 
 	/**
 	 * Progress aggregation service.
 	 *
-	 * @var Progress_Aggregation_Service_Interface
+	 * @var Progress_Aggregation_Service_Interface|null
 	 */
-	private Progress_Aggregation_Service_Interface $aggregation_service;
+	private ?Progress_Aggregation_Service_Interface $aggregation_service;
 
 	/**
 	 * Grading statistics service.
 	 *
-	 * @var Grading_Stats_Service_Interface
+	 * @var Grading_Stats_Service_Interface|null
 	 */
-	private Grading_Stats_Service_Interface $grading_stats_service;
+	private ?Grading_Stats_Service_Interface $grading_stats_service;
 
 	/**
 	 * Constructor.
@@ -57,15 +57,6 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service    Grading statistics service.
 	 */
 	public function __construct( ?Sensei_Course $course = null, ?Progress_Clauses_Service_Interface $progress_clauses_service = null, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
-		if ( null === $progress_clauses_service || null === $aggregation_service || null === $grading_stats_service ) {
-			$query_service_factory    = new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
-			$progress_clauses_service = $progress_clauses_service ?? $query_service_factory->create_clauses_service();
-			$aggregation_service      = $aggregation_service ?? $query_service_factory->create_aggregation_service();
-			$grading_stats_service    = $grading_stats_service ?? $query_service_factory->create_grading_stats_service();
-		}
-
-		$course = $course ?? Sensei()->course;
-
 		$this->course                   = $course;
 		$this->progress_clauses_service = $progress_clauses_service;
 		$this->aggregation_service      = $aggregation_service;
@@ -82,32 +73,56 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	 * @throws InvalidArgumentException If the report type is not supported.
 	 */
 	public function create( string $type ) {
+		$progress_clauses_service = $this->progress_clauses_service;
+		$aggregation_service      = $this->aggregation_service;
+		$grading_stats_service    = $this->grading_stats_service;
+
+		if ( null === $progress_clauses_service || null === $aggregation_service || null === $grading_stats_service ) {
+			$query_service_factory    = new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+			$progress_clauses_service = $progress_clauses_service ?? $query_service_factory->create_clauses_service();
+			$aggregation_service      = $aggregation_service ?? $query_service_factory->create_aggregation_service();
+			$grading_stats_service    = $grading_stats_service ?? $query_service_factory->create_grading_stats_service();
+
+			$this->progress_clauses_service = $progress_clauses_service;
+			$this->aggregation_service      = $aggregation_service;
+			$this->grading_stats_service    = $grading_stats_service;
+		}
+
 		switch ( $type ) {
 			case 'users':
 			case 'students':
 				return new Sensei_Reports_Overview_List_Table_Students(
 					new Sensei_Reports_Overview_Data_Provider_Students(),
 					new Sensei_Reports_Overview_Service_Students(
-						$this->aggregation_service,
-						$this->grading_stats_service
+						$aggregation_service,
+						$grading_stats_service
 					)
 				);
 			case 'courses':
 				return new Sensei_Reports_Overview_List_Table_Courses(
 					Sensei()->grading,
-					$this->course,
-					new Sensei_Reports_Overview_Data_Provider_Courses( $this->progress_clauses_service ),
-					new Sensei_Reports_Overview_Service_Courses( $this->grading_stats_service ),
-					$this->aggregation_service
+					$this->get_course(),
+					new Sensei_Reports_Overview_Data_Provider_Courses( $progress_clauses_service ),
+					new Sensei_Reports_Overview_Service_Courses( $grading_stats_service ),
+					$aggregation_service
 				);
 			case 'lessons':
 				return new Sensei_Reports_Overview_List_Table_Lessons(
-					$this->course,
-					new Sensei_Reports_Overview_Data_Provider_Lessons( $this->course, $this->progress_clauses_service ),
-					$this->aggregation_service
+					$this->get_course(),
+					new Sensei_Reports_Overview_Data_Provider_Lessons( $this->get_course(), $progress_clauses_service ),
+					$aggregation_service
 				);
 			default:
 				throw new InvalidArgumentException( 'Unknown list table type' );
 		}
+	}
+
+	/**
+	 * Get the injected course functionality or the legacy default when needed.
+	 *
+	 * @return Sensei_Course
+	 */
+	private function get_course(): Sensei_Course {
+		return $this->course ??= Sensei()->course;
 	}
 }

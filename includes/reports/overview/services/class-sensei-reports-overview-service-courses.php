@@ -22,9 +22,9 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Grading statistics service.
 	 *
-	 * @var Grading_Stats_Service_Interface
+	 * @var Grading_Stats_Service_Interface|null
 	 */
-	private Grading_Stats_Service_Interface $grading_stats_service;
+	private ?Grading_Stats_Service_Interface $grading_stats_service;
 
 	/**
 	 * Constructor.
@@ -32,7 +32,6 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @param Grading_Stats_Service_Interface|null $grading_stats_service Grading statistics service.
 	 */
 	public function __construct( ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
-		$grading_stats_service       = $grading_stats_service ?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service();
 		$this->grading_stats_service = $grading_stats_service;
 	}
 
@@ -109,7 +108,20 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 
-		return $this->grading_stats_service->get_courses_average_grade( $course_ids );
+		return $this->get_grading_stats_service()->get_courses_average_grade( $course_ids );
+	}
+
+	/**
+	 * Get the injected grading statistics service or create and retain the default.
+	 *
+	 * @return Grading_Stats_Service_Interface
+	 */
+	private function get_grading_stats_service(): Grading_Stats_Service_Interface {
+		if ( null === $this->grading_stats_service ) {
+			$this->grading_stats_service = ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service();
+		}
+
+		return $this->grading_stats_service;
 	}
 
 	/**

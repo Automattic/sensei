@@ -60,7 +60,10 @@ class Sensei_Grading {
 		$this->page_slug               = 'sensei_grading';
 		$this->grading_listing_service = $grading_listing_service;
 		$this->aggregation_service     = $aggregation_service;
-		self::$grading_stats_service   = $grading_stats_service;
+
+		if ( null !== $grading_stats_service ) {
+			self::$grading_stats_service = $grading_stats_service;
+		}
 
 		// Admin functions
 		if ( is_admin() ) {
