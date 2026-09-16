@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Render question inputs in a disabled state on quizzes the visitor cannot take, instead of hiding them, and avoid PHP 8.1+ deprecation notices from empty answers.
