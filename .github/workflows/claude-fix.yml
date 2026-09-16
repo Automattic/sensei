@@ -75,7 +75,6 @@ jobs:
       - uses: anthropics/claude-code-action@1f291e1cfe0f5fc21db2aef19af844591600ade7  # v1.0.206
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          label_trigger: claude
           branch_prefix: fix/
           additional_permissions: |
             actions: read
