@@ -1,5 +1,7 @@
 <?php
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 
 /**
@@ -44,12 +46,39 @@ class Sensei_Reports_Overview_Service_Students_Test extends WP_UnitTestCase {
 	 * @return Sensei_Reports_Overview_Service_Students
 	 */
 	private function create_service(): Sensei_Reports_Overview_Service_Students {
-		$query_service_factory = new Progress_Query_Service_Factory();
+		$query_service_factory = new Progress_Query_Service_Factory( \Sensei()->progress_storage_configuration );
 
 		return new Sensei_Reports_Overview_Service_Students(
 			$query_service_factory->create_aggregation_service(),
 			$query_service_factory->create_grading_stats_service()
 		);
+	}
+
+	public function testGetAverageGradesByUser_UsersWithAndWithoutGradesGiven_ReturnsRoundedAverageGrades() {
+		/* Arrange. */
+		$user_one = $this->factory->user->create();
+		$user_two = $this->factory->user->create();
+
+		$grading_stats_service = $this->createMock( Grading_Stats_Service_Interface::class );
+		$grading_stats_service->method( 'get_average_grades_by_user' )->with( array( $user_one, $user_two ) )->willReturn(
+			array(
+				$user_one => 70.375,
+			)
+		);
+		$service = new Sensei_Reports_Overview_Service_Students(
+			$this->createMock( Progress_Aggregation_Service_Interface::class ),
+			$grading_stats_service
+		);
+
+		/* Act. */
+		$actual = $service->get_average_grades_by_user( array( $user_one, $user_two ) );
+
+		/* Assert. */
+		$expected = array(
+			$user_one => 70.38,
+			$user_two => 0.0,
+		);
+		self::assertSame( $expected, $actual );
 	}
 
 	public function testGetCourseCountsByUser_UserWithActiveAndCompletedCourses_ReturnsActiveAndCompletedCounts() {

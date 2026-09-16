@@ -97,34 +97,4 @@ interface Reports_Listing_Service_Interface {
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_user_courses( array $args ): array;
-
-	/**
-	 * Count students with activity on a lesson.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @param array $args Comments-API-shaped activity arguments.
-	 * @return int
-	 */
-	public function get_lesson_student_count( array $args ): int;
-
-	/**
-	 * Count students who completed a lesson.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @param array $args Comments-API-shaped activity arguments.
-	 * @return int
-	 */
-	public function get_lesson_completion_count( array $args ): int;
-
-	/**
-	 * Get the average quiz grade for a lesson.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @param array $args Comments-API-shaped activity arguments (post_id, type, status, meta_key).
-	 * @return float|null Null when no graded submissions exist.
-	 */
-	public function get_lesson_average_grade( array $args ): ?float;
 }

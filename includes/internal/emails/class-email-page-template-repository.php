@@ -93,13 +93,14 @@ class Email_Page_Template_Repository {
 		$template->content        = $post->post_content;
 		$template->slug           = $post->post_name;
 		$template->source         = 'custom';
-		$template->origin         = 'theme';
+		$template->origin         = 'plugin';
+		$template->plugin         = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
 		$template->type           = $post->post_type;
 		$template->description    = $post->post_excerpt;
 		$template->title          = $post->post_title;
 		$template->status         = $post->post_status;
 		$template->has_theme_file = true;
-		$template->is_custom      = true;
+		$template->is_custom      = false;
 		$template->author         = $post->post_author;
 
 		return $template;
@@ -121,7 +122,8 @@ class Email_Page_Template_Repository {
 		$template                 = new WP_Block_Template();
 		$template->wp_id          = null;
 		$template->id             = $identifier;
-		$template->origin         = null;
+		$template->origin         = 'plugin';
+		$template->plugin         = basename( dirname( SENSEI_LMS_PLUGIN_FILE ) );
 		$template->source         = 'theme';
 		$template->title          = __( 'Sensei Email', 'sensei-lms' );
 		$template->slug           = $slug;
@@ -131,10 +133,9 @@ class Email_Page_Template_Repository {
 		$template->description    = __( 'Displays a Sensei email.', 'sensei-lms' );
 		$template->content        = $content;
 		$template->author         = 0;
-		$template->is_custom      = true;
+		$template->is_custom      = false;
 		$template->has_theme_file = true;
 
 		return $template;
 	}
 }
-

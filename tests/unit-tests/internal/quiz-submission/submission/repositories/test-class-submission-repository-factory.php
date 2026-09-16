@@ -2,6 +2,8 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
+use Sensei\Internal\Services\Progress_Storage_Configuration;
+use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comment_Reading_Aggregate_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
@@ -19,9 +21,16 @@ class Submission_Repository_Factory_Test extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider providerCreate_WhenCalled_ReturnsSubmissionRepository
 	 */
-	public function testCreate_WhenCalled_ReturnsSubmissionRepository( bool $tables_enabled, bool $read_tables, string $expected ): void {
+	public function testCreate_WhenCalled_ReturnsSubmissionRepository( bool $hpps_enabled, string $read_backend, bool $dual_write_enabled, string $expected ): void {
 		/* Arrange. */
-		$factory = new Submission_Repository_Factory( $tables_enabled, $read_tables );
+		$configuration = Progress_Storage_Configuration::resolve(
+			array(
+				'experimental_progress_storage'            => $hpps_enabled,
+				'experimental_progress_storage_repository' => $read_backend,
+				'experimental_progress_storage_synchronization' => $dual_write_enabled,
+			)
+		);
+		$factory       = new Submission_Repository_Factory( $configuration );
 
 		/* Act. */
 		$actual = $factory->create();
@@ -31,11 +40,11 @@ class Submission_Repository_Factory_Test extends \WP_UnitTestCase {
 	}
 
 	public function providerCreate_WhenCalled_ReturnsSubmissionRepository(): array {
-		return [
-			'tables disabled, don\'t read tables' => [ false, false, Comments_Based_Submission_Repository::class ],
-			'tables disabled, read tables'        => [ false, true, Comments_Based_Submission_Repository::class ],
-			'tables enabled, don\'t read tables'  => [ true, false, Comment_Reading_Aggregate_Submission_Repository::class ],
-			'tables enabled, read tables'         => [ true, true, Table_Reading_Aggregate_Submission_Repository::class ],
-		];
+		return array(
+			'hpps disabled, tables selected, synchronization enabled' => array( false, Progress_Storage_Settings::TABLES_STORAGE, true, Comments_Based_Submission_Repository::class ),
+			'hpps enabled, tables selected, synchronization disabled' => array( true, Progress_Storage_Settings::TABLES_STORAGE, false, Comments_Based_Submission_Repository::class ),
+			'hpps enabled, comments reads, dual writes enabled'       => array( true, Progress_Storage_Settings::COMMENTS_STORAGE, true, Comment_Reading_Aggregate_Submission_Repository::class ),
+			'hpps enabled, tables reads, dual writes enabled'         => array( true, Progress_Storage_Settings::TABLES_STORAGE, true, Table_Reading_Aggregate_Submission_Repository::class ),
+		);
 	}
 }

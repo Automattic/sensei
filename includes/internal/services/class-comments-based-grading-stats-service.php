@@ -60,6 +60,31 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	}
 
 	/**
+	 * Get the shared FROM and WHERE clauses for grade statistics queries.
+	 *
+	 * The quiz_answers check restricts results to attempts where the student
+	 * submitted answers, excluding students auto-passed without taking the quiz.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string SQL fragment containing the FROM and WHERE clauses.
+	 */
+	private function get_grade_stats_from_where_sql(): string {
+		$wpdb = $this->wpdb;
+
+		return "FROM `{$wpdb->comments}` c
+			INNER JOIN `{$wpdb->commentmeta}` cm ON c.comment_ID = cm.comment_id
+			WHERE c.comment_type = 'sensei_lesson_status'
+				AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
+				AND cm.meta_key = 'grade'
+				AND EXISTS (
+					SELECT 1 FROM `{$wpdb->commentmeta}` cm2
+					WHERE cm2.comment_id = c.comment_ID
+						AND cm2.meta_key = 'quiz_answers'
+				)";
+	}
+
+	/**
 	 * Get grade count and sum, with optional filters.
 	 *
 	 * @since 4.26.0
@@ -76,22 +101,10 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	public function get_grade_totals( array $args = array() ): array {
 		$wpdb = $this->wpdb;
 
-		// The quiz_answers EXISTS check restricts results to attempts where the
-		// student actually submitted answers. This excludes auto-passed students
-		// whose lesson was marked passed without ever taking the quiz.
 		// Table names are trusted $wpdb properties; statuses are from constants, not user input.
 		$query =
-			"SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum
-			FROM `{$wpdb->comments}` c
-			INNER JOIN `{$wpdb->commentmeta}` cm ON c.comment_ID = cm.comment_id
-			WHERE c.comment_type = 'sensei_lesson_status'
-				AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
-				AND cm.meta_key = 'grade'
-				AND EXISTS (
-					SELECT 1 FROM `{$wpdb->commentmeta}` cm2
-					WHERE cm2.comment_id = c.comment_ID
-						AND cm2.meta_key = 'quiz_answers'
-				)";
+			'SELECT COUNT(*) AS count, COALESCE( SUM( cm.meta_value ), 0 ) AS sum
+			' . $this->get_grade_stats_from_where_sql();
 
 		$query .= $this->build_user_filter( $args );
 		$query .= $this->build_post_filter( $args );
@@ -112,6 +125,83 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 			'count' => (int) $row->count,
 			'sum'   => (float) $row->sum,
 		);
+	}
+
+	/**
+	 * Get average grade grouped by user.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $user_ids User IDs to include.
+	 * @return array<int, float> Map of user ID to average grade.
+	 */
+	public function get_average_grades_by_user( array $user_ids ): array {
+		if ( empty( $user_ids ) ) {
+			return array();
+		}
+
+		$wpdb         = $this->wpdb;
+		$placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants; placeholders dynamic; caching by callers.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT c.user_id AS user_id, AVG( cm.meta_value ) AS average_grade
+				' . $this->get_grade_stats_from_where_sql() . "
+					AND c.user_id IN ( $placeholders )
+				GROUP BY c.user_id",
+				$user_ids
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Comments-based average grades by user' );
+
+		$average_grades = array();
+		foreach ( (array) $rows as $row ) {
+			$average_grades[ (int) $row->user_id ] = (float) $row->average_grade;
+		}
+
+		return $average_grades;
+	}
+
+	/**
+	 * Get the average quiz grade for a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Arguments for the query (see interface).
+	 * @return float|null Average grade, or null when no matching grades exist.
+	 */
+	public function get_lesson_average_grade( array $args ): ?float {
+		$wpdb     = $this->wpdb;
+		$post_id  = (int) ( $args['post_id'] ?? 0 );
+		$type     = (string) ( $args['type'] ?? 'sensei_lesson_status' );
+		$meta_key = (string) ( $args['meta_key'] ?? 'grade' );
+		$statuses = isset( $args['status'] ) ? (array) $args['status'] : array();
+
+		if ( $post_id <= 0 || empty( $statuses ) ) {
+			return null;
+		}
+
+		$status_placeholders = implode( ',', array_fill( 0, count( $statuses ), '%s' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $status_placeholders is a list of %s; WP 6.4 changed WP_Comment_Query to use get_col(), so a comments_clauses-based aggregate is unreliable.
+		$avg = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT AVG(cm.meta_value)
+				 FROM {$wpdb->comments} c
+				 INNER JOIN {$wpdb->commentmeta} cm
+				   ON cm.comment_id = c.comment_ID AND cm.meta_key = %s
+				 WHERE c.comment_post_ID = %d
+				   AND c.comment_type = %s
+				   AND c.comment_approved IN ( {$status_placeholders} )",
+				array_merge( array( $meta_key, $post_id, $type ), $statuses )
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Comments-based lesson average grade' );
+
+		return null !== $avg ? round( (float) $avg, 2 ) : null;
 	}
 
 	/**
@@ -194,24 +284,12 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		$wpdb         = $this->wpdb;
 		$placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
 
-		// The quiz_answers EXISTS check restricts results to attempts where the
-		// student actually submitted answers. This excludes auto-passed students
-		// whose lesson was marked passed without ever taking the quiz.
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants. Placeholders created dynamically. Caching handled by callers.
 		/** Query result row. @var object|null $row */
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT SUM( cm.meta_value ) AS grade_sum, COUNT( * ) AS grade_count
-				FROM `{$wpdb->comments}` c
-				INNER JOIN `{$wpdb->commentmeta}` cm ON c.comment_ID = cm.comment_id
-				WHERE c.comment_type = 'sensei_lesson_status'
-					AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
-					AND cm.meta_key = 'grade'
-					AND EXISTS (
-						SELECT 1 FROM `{$wpdb->commentmeta}` cm2
-						WHERE cm2.comment_id = c.comment_ID
-							AND cm2.meta_key = 'quiz_answers'
-					)
+				'SELECT COUNT( * ) AS count, SUM( cm.meta_value ) AS sum
+				' . $this->get_grade_stats_from_where_sql() . "
 					AND c.user_id IN ( $placeholders )",
 				$user_ids
 			)
@@ -219,11 +297,11 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		// phpcs:enable
 		Utils::log_query_error( $wpdb, 'Comments-based users average grade' );
 
-		if ( ! $row || ! $row->grade_count ) {
+		if ( ! $row || ! $row->count ) {
 			return 0.0;
 		}
 
-		return (float) ( $row->grade_sum / $row->grade_count );
+		return (float) ( $row->sum / $row->count );
 	}
 
 	/**

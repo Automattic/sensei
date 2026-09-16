@@ -46,7 +46,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 		parent::__construct( 'lessons', $data_provider );
 		$this->course              = $course;
 		$this->aggregation_service = $aggregation_service
-			?? ( new Progress_Query_Service_Factory() )->create_aggregation_service();
+			?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service();
 
 		add_filter( 'sensei_analysis_overview_columns', array( $this, 'add_totals_to_report_column_headers' ) );
 	}

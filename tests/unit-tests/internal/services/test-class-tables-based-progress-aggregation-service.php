@@ -216,6 +216,59 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertArrayNotHasKey( 'in-progress', $result, 'Excluded user status should not appear.' );
 	}
 
+	public function testGetLessonStudentCount_WithStudentProgress_ReturnsCount(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete' );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_student_count(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 2, $result );
+	}
+
+	public function testGetLessonCompletionCount_WithStudentProgress_ReturnsCompletedOnly(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$user1     = $this->sensei_factory->user->create();
+		$user2     = $this->sensei_factory->user->create();
+		$lesson_id = $this->sensei_factory->lesson->create();
+
+		$this->insert_progress( $lesson_id, $user1, 'lesson', 'complete' );
+		$this->insert_progress( $lesson_id, $user2, 'lesson', 'in-progress' );
+
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_lesson_completion_count(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => array( 'complete', 'graded', 'passed', 'failed' ),
+				'count'   => true,
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result );
+	}
+
 	public function testCountStatuses_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
 		/* Arrange. */
 		global $wpdb;

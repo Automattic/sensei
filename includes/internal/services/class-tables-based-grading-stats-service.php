@@ -132,6 +132,90 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	}
 
 	/**
+	 * Get average grade grouped by user.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $user_ids User IDs to include.
+	 * @return array<int, float> Map of user ID to average grade.
+	 */
+	public function get_average_grades_by_user( array $user_ids ): array {
+		if ( empty( $user_ids ) ) {
+			return array();
+		}
+
+		$wpdb              = $this->wpdb;
+		$table             = $this->get_progress_table_name();
+		$submissions_table = $this->get_submissions_table_name();
+		$placeholders      = implode( ', ', array_fill( 0, count( $user_ids ), '%d' ) );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Statuses from constants; placeholders dynamic; caching by callers.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT q.user_id AS user_id, AVG( qs.final_grade ) AS average_grade
+				FROM `$table` q
+				INNER JOIN `$submissions_table` qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
+				WHERE q.type = 'quiz'
+					AND q.status IN " . $this->get_graded_statuses_sql() . "
+					AND qs.final_grade IS NOT NULL
+					AND q.user_id IN ( $placeholders )
+				GROUP BY q.user_id",
+				$user_ids
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Tables-based average grades by user' );
+
+		$average_grades = array();
+		foreach ( (array) $rows as $row ) {
+			$average_grades[ (int) $row->user_id ] = (float) $row->average_grade;
+		}
+
+		return $average_grades;
+	}
+
+	/**
+	 * Get the average quiz grade for a lesson.
+	 *
+	 * Only `post_id` and `status` from $args are honored; `type` and `meta_key` are ignored
+	 * because the tables schema queries `sensei_lms_progress` + `sensei_lms_quiz_submissions`
+	 * directly rather than commentmeta.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Arguments for the query (see interface).
+	 * @return float|null Average grade, or null when no matching grades exist.
+	 */
+	public function get_lesson_average_grade( array $args ): ?float {
+		$wpdb              = $this->wpdb;
+		$table             = $this->get_progress_table_name();
+		$submissions_table = $this->get_submissions_table_name();
+		$post_id           = (int) ( $args['post_id'] ?? 0 );
+		$status_sql        = Utils::get_statuses_sql( $wpdb, $args );
+
+		// Filter by the caller-provided statuses on the effective quiz status,
+		// then average the grade from quiz_submissions. Table names are trusted $wpdb
+		// properties and $status_sql is built from escaped args; the post_id uses a placeholder.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$avg = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT AVG( qs.final_grade )'
+				. " FROM `$table` p"
+				. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
+				. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
+				. " LEFT JOIN `$submissions_table` qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id"
+				. " WHERE p.post_id = %d AND p.type = 'lesson' AND qs.final_grade IS NOT NULL"
+				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
+				$post_id
+			)
+		);
+		// phpcs:enable
+		Utils::log_query_error( $wpdb, 'Tables-based lesson average grade' );
+
+		return null !== $avg ? round( (float) $avg, 2 ) : null;
+	}
+
+	/**
 	 * Average grade across courses (AVG of per-course AVGs).
 	 * Only includes student attempts where the quiz was actually submitted
 	 * (enforced via INNER JOIN on the quiz submissions table and final_grade IS NOT NULL).
@@ -208,7 +292,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		/** Query result row. @var object|null $row */
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT SUM( qs.final_grade ) AS grade_sum, COUNT( * ) AS grade_count
+				"SELECT COUNT( * ) AS count, SUM( qs.final_grade ) AS sum
 				FROM `$table` q
 				INNER JOIN `$submissions_table` qs ON qs.quiz_id = q.post_id AND qs.user_id = q.user_id
 				WHERE q.type = 'quiz'
@@ -221,11 +305,11 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		// phpcs:enable
 		Utils::log_query_error( $wpdb, 'Tables-based users average grade' );
 
-		if ( ! $row || ! $row->grade_count ) {
+		if ( ! $row || ! $row->count ) {
 			return 0.0;
 		}
 
-		return (float) ( $row->grade_sum / $row->grade_count );
+		return (float) ( $row->sum / $row->count );
 	}
 
 	/**

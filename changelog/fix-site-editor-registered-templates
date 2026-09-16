@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix Sensei templates in the Site Editor when Gutenberg's Template activation experiment is enabled.
