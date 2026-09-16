@@ -46,7 +46,9 @@ const SingleQuestion = ( props ) => {
 		[ toggleValidationErrors ]
 	);
 
-	if ( ! validationErrors?.length ) return null;
+	if ( ! validationErrors?.length ) {
+		return null;
+	}
 
 	const notice = (
 		<Notice

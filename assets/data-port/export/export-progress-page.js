@@ -37,7 +37,9 @@ export const ExportProgressPage = ( { job, reset, cancel } ) => {
 	const inProgress = 'completed' !== status;
 
 	useEffect( () => {
-		if ( inProgress || ! files ) return;
+		if ( inProgress || ! files ) {
+			return;
+		}
 		files.forEach( downloadFile );
 	}, [ files, inProgress ] );
 

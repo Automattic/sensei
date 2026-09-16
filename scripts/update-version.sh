@@ -52,8 +52,8 @@ else
     echo "Unsupported operating system"
 fi
 
-# Update package.json.
-jq ".version = \"$VERSION\"" "$CURRENT_DIR/package.json" > "$CURRENT_DIR/package.json.tmp" && \
+# Update package.json. Use --tab to match the prettier-formatted indentation.
+jq --tab ".version = \"$VERSION\"" "$CURRENT_DIR/package.json" > "$CURRENT_DIR/package.json.tmp" && \
 	mv "$CURRENT_DIR/package.json.tmp" "$CURRENT_DIR/package.json"
 
 # Update package-lock.json: the first occurrence of version in the root object.

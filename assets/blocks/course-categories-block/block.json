@@ -6,21 +6,17 @@
 	"description": "Show the course categories",
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
-	"keywords": [
-		"course",
-		"lessons",
-		"categories"
-	],
+	"keywords": [ "course", "lessons", "categories" ],
 	"attributes": {
 		"previewCategories": {
-		    "type": "array"
+			"type": "array"
 		},
 		"textAlign": {
 			"type": "string"
 		},
-        "options": {
-            "type": "object"
-        }
+		"options": {
+			"type": "object"
+		}
 	},
 	"usesContext": [ "postId", "postType", "queryId" ],
 	"supports": {

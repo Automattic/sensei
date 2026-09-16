@@ -49,7 +49,7 @@ describe( '<NumberControl />', () => {
 			target: { value: '20' },
 		} );
 
-		expect( onChangeMock ).toBeCalledWith( 20 );
+		expect( onChangeMock ).toHaveBeenCalledWith( 20 );
 	} );
 
 	it( 'Should call the change event with null when resetting', () => {
@@ -60,6 +60,6 @@ describe( '<NumberControl />', () => {
 
 		fireEvent.click( queryByText( 'Reset' ) );
 
-		expect( onChangeMock ).toBeCalledWith( null );
+		expect( onChangeMock ).toHaveBeenCalledWith( null );
 	} );
 } );

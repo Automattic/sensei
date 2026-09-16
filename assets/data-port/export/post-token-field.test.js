@@ -57,7 +57,7 @@ describe( '<PostTokenField />', () => {
 	beforeAll( () => {
 		// FormTokenField calls scrollIntoView on the auto-selected suggestion;
 		// jsdom doesn't implement it.
-		// eslint-disable-next-line no-undef
+
 		Element.prototype.scrollIntoView = jest.fn();
 	} );
 

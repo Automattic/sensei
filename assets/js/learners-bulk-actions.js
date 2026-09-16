@@ -1,14 +1,14 @@
 jQuery( document ).ready( function () {
-	var $ = jQuery.noConflict(),
+	const $ = jQuery.noConflict(),
 		_map = function ( arr, fn ) {
-			var result = [];
+			const result = [];
 			$.each( arr, function ( i, v ) {
 				result.push( fn( v ) );
 			} );
 			return result;
 		},
 		_filter = function ( arr, pred ) {
-			var result = [];
+			const result = [];
 			$.each( arr, function ( i, v ) {
 				if ( pred( v ) ) {
 					result.push( v );
@@ -17,58 +17,56 @@ jQuery( document ).ready( function () {
 			return result;
 		};
 
-	var bulkUserActions = ( function () {
-		var selectedUserIds = [];
-		var courseIds = [];
-		var bulkAction = '';
-		var validTemplate = {
+	const bulkUserActions = ( function () {
+		let selectedUserIds = [];
+		let courseIds = [];
+		let bulkAction = '';
+		const validTemplate = {
 			isValid: true,
 			reason: '',
 		};
 
 		return {
-			updateSelectedUserIdsFromCheckbox: function ( $checkbox ) {
-				var val = parseInt( $checkbox.val(), 10 ),
+			updateSelectedUserIdsFromCheckbox( $checkbox ) {
+				const val = parseInt( $checkbox.val(), 10 ),
 					arrayIndex = selectedUserIds.indexOf( val );
 				if ( $checkbox.is( ':checked' ) ) {
 					if ( arrayIndex < 0 ) {
 						selectedUserIds.push( val );
 					}
-				} else {
-					if ( arrayIndex > -1 ) {
-						selectedUserIds.splice( arrayIndex, 1 );
-					}
+				} else if ( arrayIndex > -1 ) {
+					selectedUserIds.splice( arrayIndex, 1 );
 				}
 
 				return this;
 			},
-			getUserIds: function () {
+			getUserIds() {
 				return selectedUserIds;
 			},
-			setAction: function ( ac ) {
+			setAction( ac ) {
 				bulkAction = ac;
 				return this;
 			},
-			setCourseIds: function ( newCourseIds ) {
+			setCourseIds( newCourseIds ) {
 				courseIds = _map( newCourseIds, function ( v ) {
 					return parseInt( v, 10 );
 				} );
 				return this;
 			},
-			resetSelectedUserIds: function () {
+			resetSelectedUserIds() {
 				selectedUserIds = [];
 				return this;
 			},
-			resetAll: function () {
+			resetAll() {
 				this.resetSelectedUserIds();
 				courseIds = [];
 				bulkAction = '';
 				return this;
 			},
-			validator: function () {
+			validator() {
 				return {
-					validateBulkAction: function () {
-						if ( bulkAction == '' || bulkAction == 0 ) {
+					validateBulkAction() {
+						if ( bulkAction === '' || bulkAction === '0' ) {
 							return {
 								isValid: false,
 								reason: 'Select an action',
@@ -76,7 +74,7 @@ jQuery( document ).ready( function () {
 						}
 						return validTemplate;
 					},
-					validateCourseIds: function () {
+					validateCourseIds() {
 						if (
 							_filter( courseIds, function ( v ) {
 								return ! isNaN( v );
@@ -89,7 +87,7 @@ jQuery( document ).ready( function () {
 						}
 						return validTemplate;
 					},
-					validateSelectedUserIds: function () {
+					validateSelectedUserIds() {
 						if ( selectedUserIds.length === 0 ) {
 							return {
 								isValid: false,
@@ -98,13 +96,13 @@ jQuery( document ).ready( function () {
 						}
 						return validTemplate;
 					},
-					validate: function () {
-						var validations = [
-								this.validateSelectedUserIds,
-								this.validateBulkAction,
-								this.validateCourseIds,
-							],
-							currentValidatorResult;
+					validate() {
+						const validations = [
+							this.validateSelectedUserIds,
+							this.validateBulkAction,
+							this.validateCourseIds,
+						];
+						let currentValidatorResult;
 
 						while ( validations.length > 0 ) {
 							currentValidatorResult = validations
@@ -118,15 +116,15 @@ jQuery( document ).ready( function () {
 					},
 				};
 			},
-			validate: function () {
+			validate() {
 				return this.validator().validate();
 			},
 		};
 	} )();
 
-	( function ( bulkUserActions ) {
+	( function () {
 		const { __ } = wp.i18n;
-		var $hiddenSelectedUserIdsField = $( '#bulk-action-user-ids' ),
+		const $hiddenSelectedUserIdsField = $( '#bulk-action-user-ids' ),
 			$actionSelector = $( '#bulk-action-selector-top' ),
 			$courseSelect = $( '.sensei-course-select' ),
 			$bulkActionSelect = $( '.sensei-bulk-action-select' ),
@@ -136,7 +134,7 @@ jQuery( document ).ready( function () {
 			$cbSelectAllTwo = $( '#cb-select-all-2' ),
 			$modalToggle = $( '#sensei-bulk-learner-actions-modal-toggle' );
 
-		var hookSelectAll = function ( $selectAll, $otherSelectAll ) {
+		const hookSelectAll = function ( $selectAll, $otherSelectAll ) {
 			$selectAll.on( 'click', function () {
 				bulkUserActions.resetSelectedUserIds();
 				if ( $selectAll.is( ':checked' ) ) {
@@ -155,8 +153,8 @@ jQuery( document ).ready( function () {
 			} );
 		};
 
-		var toggleSelectCoursesIfUsersAndBulkActionValid = function () {
-			var validator = bulkUserActions.validator(),
+		const toggleSelectCoursesIfUsersAndBulkActionValid = function () {
+			const validator = bulkUserActions.validator(),
 				bulkActionValidationResult = validator.validateBulkAction(),
 				selectedUserIdsValidationResult =
 					validator.validateSelectedUserIds();
@@ -186,7 +184,7 @@ jQuery( document ).ready( function () {
 		} );
 
 		$selectUserCheckboxes.on( 'change', function ( evt ) {
-			var $checkbox = $( this );
+			const $checkbox = $( this );
 			evt.preventDefault();
 			evt.stopPropagation();
 			bulkUserActions.updateSelectedUserIdsFromCheckbox( $checkbox );
@@ -206,11 +204,11 @@ jQuery( document ).ready( function () {
 				.prev()
 				.removeClass( 'hidden' );
 
-			let $userId = $( event.target ).attr( 'data-user-id' );
-			let $dataNonce = $( event.target ).attr( 'data-nonce' );
-			let $hiddenPosts = $( event.target ).prev();
+			const $userId = $( event.target ).attr( 'data-user-id' );
+			const $dataNonce = $( event.target ).attr( 'data-nonce' );
+			const $hiddenPosts = $( event.target ).prev();
 
-			let data = {
+			const data = {
 				action: 'get_course_list',
 				user_id: $userId,
 				nonce: $dataNonce,
@@ -219,11 +217,11 @@ jQuery( document ).ready( function () {
 			$.ajax( {
 				type: 'POST',
 				url: ajax_object.ajax_url,
-				data: data,
-				success: function ( data ) {
-					$hiddenPosts.append( data.data );
+				data,
+				success( response ) {
+					$hiddenPosts.append( response.data );
 				},
-				error: function ( errorThrown ) {
+				error( errorThrown ) {
 					$hiddenPosts.append(
 						'<p>' +
 							__(

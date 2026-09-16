@@ -175,6 +175,609 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( $master_lesson_ids, array_map( fn( $id ) => $id_map[ $id ], Sensei()->course->course_lessons( $translated_course_id, 'any', 'ids' ) ) );
 	}
 
+	public function testUpdateLessonPropertiesOnCourseTranslationCreated_LessonRemovedFromTheOriginalCourseGiven_DetachesItsTranslationFromTheTranslatedCourse() {
+		/* Arrange. */
+		list( $translated_course_id, $translated_lesson_id ) = $this->create_translation_with_a_removed_lesson();
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->update_lesson_properties_on_course_translation_created( $translated_course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+
+		$this->assertSame( '', get_post_meta( $translated_lesson_id, '_lesson_course', true ) );
+	}
+
+	public function testUpdateLessonPropertiesOnCourseTranslationCreated_LessonRemovedFromTheOriginalCourseGiven_ClearsItsOrderInTheTranslatedCourse() {
+		/* Arrange. */
+		list( $translated_course_id, $translated_lesson_id ) = $this->create_translation_with_a_removed_lesson();
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->update_lesson_properties_on_course_translation_created( $translated_course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+
+		$this->assertSame( '', get_post_meta( $translated_lesson_id, '_order_' . $translated_course_id, true ) );
+	}
+
+	public function testUpdateLessonPropertiesOnCourseTranslationCreated_LessonRemovedFromTheOriginalCourseGiven_ClearsItsOrderInTheModule() {
+		/* Arrange. */
+		list( $translated_course_id, $translated_lesson_id, $module_id ) = $this->create_translation_with_a_removed_lesson();
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->update_lesson_properties_on_course_translation_created( $translated_course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+
+		$this->assertSame( '', get_post_meta( $translated_lesson_id, '_order_module_' . $module_id, true ) );
+	}
+
+	public function testUpdateLessonPropertiesOnCourseTranslationCreated_LessonRemovedFromTheOriginalCourseGiven_RemovesItsTranslationFromTheModule() {
+		/* Arrange. */
+		list( $translated_course_id, $translated_lesson_id ) = $this->create_translation_with_a_removed_lesson();
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->update_lesson_properties_on_course_translation_created( $translated_course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+
+		$this->assertSame( array(), wp_get_object_terms( $translated_lesson_id, 'module', array( 'fields' => 'ids' ) ) );
+	}
+
+	public function testUpdateLessonPropertiesOnCourseTranslationCreated_LessonWithoutAnOriginalGiven_LeavesItInTheTranslatedCourse() {
+		/* Arrange. */
+		$original_course_id   = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+
+		// A lesson that only exists in the translated course.
+		$untranslated_lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $translated_course_id ) ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $translated_course_id => $original_course_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->update_lesson_properties_on_course_translation_created( $translated_course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+
+		$this->assertSame( (string) $translated_course_id, get_post_meta( $untranslated_lesson_id, '_lesson_course', true ) );
+	}
+
+	public function testUpdateLessonPropertiesOnCourseTranslationCreated_LessonTranslationsThatAreNotDuplicatesGiven_MirrorsTheOriginalLessonOrder() {
+		/* Arrange. */
+		$original_course_id   = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+
+		// The original course lists its second lesson first.
+		$original_lesson_ids = $this->create_course_lessons(
+			$original_course_id,
+			array( '2024-01-11 10:00:00', '2024-01-12 10:00:00' )
+		);
+		update_post_meta( $original_lesson_ids[0], '_order_' . $original_course_id, 2 );
+		update_post_meta( $original_lesson_ids[1], '_order_' . $original_course_id, 1 );
+
+		// Their translations are plain translations, not WPML duplicates.
+		$translated_lesson_ids = $this->create_course_lessons(
+			$translated_course_id,
+			array( '2024-02-11 10:00:00', '2024-02-12 10:00:00' )
+		);
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map(
+			array(
+				$original_course_id       => $translated_course_id,
+				$translated_course_id     => $original_course_id,
+				$original_lesson_ids[0]   => $translated_lesson_ids[0],
+				$original_lesson_ids[1]   => $translated_lesson_ids[1],
+				$translated_lesson_ids[0] => $original_lesson_ids[0],
+				$translated_lesson_ids[1] => $original_lesson_ids[1],
+			)
+		);
+		// WPML: every original lesson is already translated, so none is duplicated.
+		add_filter( 'wpml_element_trid', fn() => 1 );
+		add_filter( 'wpml_get_element_translations', fn() => array( 'es' => true ), 10, 0 );
+		add_filter( 'wpml_post_duplicates', fn() => array(), 10, 0 );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->update_lesson_properties_on_course_translation_created( $translated_course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		remove_all_filters( 'wpml_element_trid' );
+		remove_all_filters( 'wpml_get_element_translations' );
+		remove_all_filters( 'wpml_post_duplicates' );
+
+		$this->assertSame(
+			array( 2, 1 ),
+			array(
+				(int) get_post_meta( $translated_lesson_ids[0], '_order_' . $translated_course_id, true ),
+				(int) get_post_meta( $translated_lesson_ids[1], '_order_' . $translated_course_id, true ),
+			)
+		);
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_OutlineWithSourceLessonIdsGiven_RewritesThemToTheCourseLanguage() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$course_id            = $this->factory->course->create(
+			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Titulo ES' ) ) ) )
+		);
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$content = get_post( $course_id )->post_content;
+		$this->assertStringContainsString( '"id":' . $translated_lesson_id, $content, 'The outline should reference the lesson translation in the course language.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_OutlineWithSourceLessonIdsGiven_KeepsTheSubmittedTitle() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$course_id            = $this->factory->course->create(
+			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Titulo ES' ) ) ) )
+		);
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertStringContainsString( 'Titulo ES', get_post( $course_id )->post_content, 'The delivered title should stay with the remapped outline item.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_LessonWithoutTranslationGiven_DropsTheOutlineItem() {
+		/* Arrange. */
+		$source_lesson_id = $this->factory->lesson->create();
+		$course_id        = $this->factory->course->create(
+			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Sin traduccion' ) ) ) )
+		);
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array() );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertStringNotContainsString( '"id":' . $source_lesson_id, get_post( $course_id )->post_content, 'An outline item without a translation in the course language should be dropped.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_LessonAlreadyInCourseLanguageGiven_LeavesTheContentUntouched() {
+		/* Arrange. */
+		$own_lesson_id = $this->factory->lesson->create();
+		$content       = $this->outline_content( array( array( $own_lesson_id, 'Propia' ) ) );
+		$course_id     = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $own_lesson_id => $own_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertSame( $content, get_post( $course_id )->post_content, 'A lesson already in the course language should leave the content untouched.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ContentWithoutAnOutlineGiven_LeavesTheContentUntouched() {
+		/* Arrange. */
+		$content   = '<!-- wp:paragraph --><p>Course description.</p><!-- /wp:paragraph -->';
+		$course_id = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array() );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertSame( $content, get_post( $course_id )->post_content, 'Content without an outline should not be touched.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ModuleWithNestedSourceLessonGiven_RewritesTheNestedLessonId() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$content              = '<!-- wp:sensei-lms/course-outline --><!-- wp:sensei-lms/course-outline-module {"id":7,"title":"Modulo"} --><!-- wp:sensei-lms/course-outline-lesson {"id":' . $source_lesson_id . ',"title":"Anidada"} /--><!-- /wp:sensei-lms/course-outline-module --><!-- /wp:sensei-lms/course-outline -->';
+		$course_id            = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertStringContainsString( '"id":' . $translated_lesson_id, get_post( $course_id )->post_content, 'A lesson nested in a module should be remapped too.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_TitleWithEscapedHtmlGiven_KeepsTheAttributeEncoding() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$title                = 'Lección <br/>escapada';
+		$content              = '<!-- wp:sensei-lms/course-outline --><!-- wp:sensei-lms/course-outline-lesson ' . serialize_block_attributes(
+			array(
+				'id'    => $source_lesson_id,
+				'title' => $title,
+			)
+		) . ' /--><!-- /wp:sensei-lms/course-outline -->';
+		$course_id            = $this->factory->course->create( array( 'post_content' => wp_slash( $content ) ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertStringContainsString( '\u003cbr', get_post( $course_id )->post_content, 'The escaped attribute encoding should survive the remap round trip.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_DeliveredTitleGiven_RenamesTheLessonTranslation() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create( array( 'post_title' => 'Source title' ) );
+		$course_id            = $this->factory->course->create(
+			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Titulo entregado' ) ) ) )
+		);
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertSame( 'Titulo entregado', get_post( $translated_lesson_id )->post_title, 'The delivered outline title should land on the lesson translation.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_DeliveredTitleAlreadyApplied_DoesNotRewriteTheLessonAgain() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$course_id            = $this->factory->course->create(
+			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Titulo especial' ) ) ) )
+		);
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map(
+			array(
+				$source_lesson_id     => $translated_lesson_id,
+				$translated_lesson_id => $translated_lesson_id,
+			)
+		);
+
+		$course_translation = new Course_Translation();
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		// Display filters (wptexturize, plugins) must not defeat the comparison.
+		$title_filter = function ( $title ) {
+			return $title . ' [filtered]';
+		};
+		add_filter( 'the_title', $title_filter );
+
+		$lesson_updates = 0;
+		$count_updates  = function ( $post_id ) use ( $translated_lesson_id, &$lesson_updates ) {
+			if ( $post_id === $translated_lesson_id ) {
+				++$lesson_updates;
+			}
+		};
+		add_action( 'post_updated', $count_updates );
+
+		/* Act: a re-delivery runs the handler again with the same titles. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		remove_action( 'post_updated', $count_updates );
+		remove_filter( 'the_title', $title_filter );
+		$this->remove_wpml_stubs();
+		$this->assertSame( 0, $lesson_updates, 'A re-delivery with an unchanged title should not rewrite the lesson.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_OutlineNestedInAWrapperBlockGiven_RewritesItsLessonIds() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$content              = '<!-- wp:group --><div class="wp-block-group">' . $this->outline_content( array( array( $source_lesson_id, 'Anidado' ) ) ) . '</div><!-- /wp:group -->';
+		$course_id            = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertStringContainsString( '"id":' . $translated_lesson_id, get_post( $course_id )->post_content, 'An outline nested inside a wrapper block should be remapped too.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ModuleWithATranslationGiven_RewritesTheModuleId() {
+		/* Arrange. */
+		$content   = '<!-- wp:sensei-lms/course-outline --><!-- wp:sensei-lms/course-outline-module {"id":91,"title":"Modulo"} --><!-- /wp:sensei-lms/course-outline-module --><!-- /wp:sensei-lms/course-outline -->';
+		$course_id = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( 91 => 95 ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertStringContainsString( '"id":95', get_post( $course_id )->post_content, 'A module with a translation in the course language should be remapped to it.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ModuleTranslationMissingItsTermGiven_DropsTheSourceSlug() {
+		/* Arrange. */
+		$content   = '<!-- wp:sensei-lms/course-outline --><!-- wp:sensei-lms/course-outline-module {"id":91,"slug":"the-module","title":"Modulo"} --><!-- /wp:sensei-lms/course-outline-module --><!-- /wp:sensei-lms/course-outline -->';
+		$course_id = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		// WPML maps the module to a term that no longer exists.
+		$this->stub_object_id_map( array( 91 => 99999 ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$module_attrs = parse_blocks( get_post( $course_id )->post_content )[0]['innerBlocks'][0]['attrs'];
+		$this->assertArrayNotHasKey( 'slug', $module_attrs, 'A slug that cannot be confirmed for the course language would send a later save back to the source term.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ModuleWithoutATranslationGiven_DropsItsIdAndSlug() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$content              = '<!-- wp:sensei-lms/course-outline --><!-- wp:sensei-lms/course-outline-module {"id":91,"slug":"modulo","title":"Modulo"} --><!-- wp:sensei-lms/course-outline-lesson {"id":' . $source_lesson_id . ',"title":"Anidada"} /--><!-- /wp:sensei-lms/course-outline-module --><!-- /wp:sensei-lms/course-outline -->';
+		$course_id            = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$module_attrs = parse_blocks( get_post( $course_id )->post_content )[0]['innerBlocks'][0]['attrs'];
+		$this->assertSame( array( 'title' => 'Modulo' ), $module_attrs, 'A module without a translation should keep its title but lose its source term id and slug.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_ModuleWithATranslationGiven_SyncsTheModuleSlug() {
+		/* Arrange. */
+		$translated_term = wp_insert_term( 'El modulo', 'module' );
+		$content         = '<!-- wp:sensei-lms/course-outline --><!-- wp:sensei-lms/course-outline-module {"id":91,"slug":"the-module","title":"El modulo"} --><!-- /wp:sensei-lms/course-outline-module --><!-- /wp:sensei-lms/course-outline -->';
+		$course_id       = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map( array( 91 => $translated_term['term_id'] ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$module_attrs = parse_blocks( get_post( $course_id )->post_content )[0]['innerBlocks'][0]['attrs'];
+		$this->assertSame( 'el-modulo', $module_attrs['slug'], 'The remapped module should carry the translated term slug, not the source one.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseTranslationCreated_CourseWithoutASourceLanguageGiven_LeavesTheContentUntouched() {
+		/* Arrange. */
+		$source_lesson_id = $this->factory->lesson->create();
+		$content          = $this->outline_content( array( array( $source_lesson_id, 'Original' ) ) );
+		$course_id        = $this->factory->course->create( array( 'post_content' => $content ) );
+
+		$this->stub_course_language( 'en', '' );
+		$this->stub_object_id_map( array() );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_translation_created( $course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertSame( $content, get_post( $course_id )->post_content, 'A course that is not a translation should not have its outline touched.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseDuplicated_DuplicateWithSourceTitlesGiven_LeavesTheLessonTitleAlone() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create( array( 'post_title' => 'Titulo traducido' ) );
+		$duplicate_course_id  = $this->factory->course->create(
+			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Source title' ) ) ) )
+		);
+
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_duplicated( 123, 'es', array(), $duplicate_course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertSame( 'Titulo traducido', get_post( $translated_lesson_id )->post_title, 'A duplicate carries source-language titles, so it must not rename the lesson translation.' );
+	}
+
+	public function testTranslateOutlineLessonIdsOnCourseDuplicated_DuplicateWithSourceLessonIdsGiven_RewritesThemToTheDuplicateLanguage() {
+		/* Arrange. */
+		$source_lesson_id     = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create();
+		$duplicate_course_id  = $this->factory->course->create(
+			array( 'post_content' => $this->outline_content( array( array( $source_lesson_id, 'Duplicada' ) ) ) )
+		);
+
+		$this->stub_object_id_map( array( $source_lesson_id => $translated_lesson_id ) );
+
+		$course_translation = new Course_Translation();
+
+		/* Act. */
+		$course_translation->translate_outline_lesson_ids_on_course_duplicated( 123, 'es', array(), $duplicate_course_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_stubs();
+		$this->assertStringContainsString( '"id":' . $translated_lesson_id, get_post( $duplicate_course_id )->post_content, 'The duplicated outline should reference the lessons of the duplicate language.' );
+	}
+
+	/**
+	 * Build course content with an outline block holding the given lessons.
+	 *
+	 * @param array[] $lessons Pairs of lesson ID and title.
+	 *
+	 * @return string
+	 */
+	private function outline_content( array $lessons ) {
+		$items = '';
+		foreach ( $lessons as list( $lesson_id, $title ) ) {
+			$items .= '<!-- wp:sensei-lms/course-outline-lesson {"id":' . $lesson_id . ',"title":"' . $title . '"} /-->';
+		}
+
+		return '<!-- wp:sensei-lms/course-outline -->' . $items . '<!-- /wp:sensei-lms/course-outline -->';
+	}
+
+	/**
+	 * Stub the WPML language details for any element.
+	 *
+	 * @param string $language_code        Language of the translated course.
+	 * @param string $source_language_code Language it was translated from.
+	 */
+	private function stub_course_language( $language_code, $source_language_code ) {
+		add_filter(
+			'wpml_element_language_details',
+			function () use ( $language_code, $source_language_code ) {
+				return array(
+					'language_code'        => $language_code,
+					'source_language_code' => $source_language_code,
+				);
+			},
+			10,
+			0
+		);
+	}
+
+	/**
+	 * Stub wpml_object_id with a fixed map; unmapped IDs resolve to nothing.
+	 *
+	 * @param array $map Object ID to translated object ID.
+	 */
+	private function stub_object_id_map( array $map ) {
+		add_filter(
+			'wpml_object_id',
+			function ( $object_id ) use ( $map ) {
+				return $map[ $object_id ] ?? null;
+			},
+			10,
+			1
+		);
+	}
+
+	/**
+	 * Remove the WPML stubs added by the helpers above.
+	 */
+	private function remove_wpml_stubs() {
+		remove_all_filters( 'wpml_element_language_details' );
+		remove_all_filters( 'wpml_object_id' );
+	}
+
+	/**
+	 * Create a translated course keeping a lesson whose original was removed
+	 * from the original course. The translation is ordered in the course and
+	 * placed in a module, so the whole detach can be checked.
+	 *
+	 * @return array Translated course ID, translated lesson ID and module term ID.
+	 */
+	private function create_translation_with_a_removed_lesson() {
+		$original_course_id   = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+
+		// The original lesson is no longer in the original course, while its
+		// translation is still in the translated course.
+		$original_lesson_id   = $this->factory->lesson->create();
+		$translated_lesson_id = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'                  => $translated_course_id,
+					'_order_' . $translated_course_id => 1,
+				),
+			)
+		);
+
+		$module_id = $this->factory->term->create( array( 'taxonomy' => 'module' ) );
+		wp_set_object_terms( $translated_lesson_id, array( $module_id ), 'module' );
+		update_post_meta( $translated_lesson_id, '_order_module_' . $module_id, 1 );
+
+		$this->stub_course_language( 'es', 'en' );
+		$this->stub_object_id_map(
+			array(
+				$translated_course_id => $original_course_id,
+				$translated_lesson_id => $original_lesson_id,
+			)
+		);
+
+		return array( $translated_course_id, $translated_lesson_id, $module_id );
+	}
+
 	/**
 	 * Create lessons attached to a course, one per post date, in the given
 	 * order, without `_order_{course_id}` metas.

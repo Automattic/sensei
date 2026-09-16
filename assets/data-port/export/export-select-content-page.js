@@ -31,9 +31,15 @@ const summaryFor = ( { row, included, count, total } ) => {
 	// No filter applied: describe the full set. `total === null` means the
 	// count fetch failed or hasn't returned yet — fall back to the bare label.
 	if ( count === 0 ) {
-		if ( total === null ) return i18n.unknownTotal;
-		if ( total === 0 ) return i18n.none;
-		if ( total === 1 ) return i18n.one;
+		if ( total === null ) {
+			return i18n.unknownTotal;
+		}
+		if ( total === 0 ) {
+			return i18n.none;
+		}
+		if ( total === 1 ) {
+			return i18n.one;
+		}
 		return i18n.all( total );
 	}
 	// Filter applied: show "N selected" or "N of M" when the total is known.

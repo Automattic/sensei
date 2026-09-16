@@ -1,3 +1,9 @@
 assets/dist
 vendor
+package-lock.json
 *.min.js
+
+/tests/
+
+*.yml
+*.yaml

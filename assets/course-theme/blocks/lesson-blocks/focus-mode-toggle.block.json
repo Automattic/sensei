@@ -1,9 +1,9 @@
 {
-  "apiVersion": 3,
-  "name": "sensei-lms/focus-mode-toggle",
-  "category": "theme",
-  "supports": {
-    "align": true,
-    "color": true
-  }
+	"apiVersion": 3,
+	"name": "sensei-lms/focus-mode-toggle",
+	"category": "theme",
+	"supports": {
+		"align": true,
+		"color": true
+	}
 }

@@ -3,11 +3,9 @@
 	"title": "Question",
 	"apiVersion": 3,
 	"description": "The building block of all quizzes.",
-	"parent": [
-		"sensei-lms/quiz"
-	],
+	"parent": [ "sensei-lms/quiz" ],
 	"category": "sensei-lms",
-    "textdomain": "sensei-lms",
+	"textdomain": "sensei-lms",
 	"supports": {
 		"html": false
 	},

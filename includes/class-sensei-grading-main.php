@@ -59,7 +59,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		}
 
 		$this->grading_listing_service = $grading_listing_service
-			?? ( new Progress_Query_Service_Factory() )->create_grading_listing_service();
+			?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_listing_service();
 
 		// Load Parent token into constructor
 		parent::__construct( 'grading_main' );
@@ -343,7 +343,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		$title = Sensei_Learner::get_full_name( $user_id );
 
-		$quiz_id = Sensei()->lesson->get_quiz_id( $lesson_id );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$quiz_link = add_query_arg(
 			array(

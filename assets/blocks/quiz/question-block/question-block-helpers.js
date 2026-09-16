@@ -43,7 +43,9 @@ export const QuestionValidationNotice = ( {
 	meta: { validationErrors, showValidationErrors },
 	getErrorMessages,
 } ) => {
-	if ( ! showValidationErrors || ! validationErrors?.length ) return null;
+	if ( ! showValidationErrors || ! validationErrors?.length ) {
+		return null;
+	}
 
 	const validationMessages = getErrorMessages( validationErrors, type );
 
@@ -56,7 +58,9 @@ export const QuestionValidationNotice = ( {
  * @param {string[]} errors Error messages.
  */
 export const BlockValidationNotice = ( { errors = [] } ) => {
-	if ( ! errors || ! errors.length ) return null;
+	if ( ! errors || ! errors.length ) {
+		return null;
+	}
 	const error = errors[ 0 ];
 	return (
 		<Notice

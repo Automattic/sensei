@@ -26,8 +26,8 @@ import {
 } from '../../blocks/course-outline/data';
 
 const CourseGeneralSidebar = () => {
-	const course = useSelect( ( select ) => {
-		return select( 'core/editor' ).getCurrentPost();
+	const course = useSelect( ( editorSelect ) => {
+		return editorSelect( 'core/editor' ).getCurrentPost();
 	} );
 	const [ author, setAuthor ] = useState(
 		window.sensei.courseSettingsSidebar.author
@@ -35,8 +35,8 @@ const CourseGeneralSidebar = () => {
 
 	let courses = window.sensei.courseSettingsSidebar.courses;
 	if ( courses && courses.length ) {
-		courses = courses.map( ( course ) => {
-			return { label: course.post_title, value: course.ID };
+		courses = courses.map( ( courseItem ) => {
+			return { label: courseItem.post_title, value: courseItem.ID };
 		} );
 		courses.push( { label: __( 'None', 'sensei-lms' ), value: 0 } );
 	}
@@ -125,14 +125,14 @@ const CourseGeneralSidebar = () => {
 				<SelectControl
 					value={ author }
 					options={ teachers }
-					onChange={ ( new_author ) => {
-						new_author = parseInt( new_author );
-						setAuthor( new_author );
+					onChange={ ( newAuthor ) => {
+						newAuthor = parseInt( newAuthor );
+						setAuthor( newAuthor );
 						dispatch( 'core' ).editEntityRecord(
 							'postType',
 							'course',
 							course.id,
-							{ author: new_author }
+							{ author: newAuthor }
 						);
 					} }
 				/>
@@ -217,7 +217,7 @@ const CourseGeneralSidebar = () => {
 			<h3>{ __( 'Featured Course', 'sensei-lms' ) }</h3>
 			<CheckboxControl
 				label={ __( 'Feature this course', 'sensei-lms' ) }
-				checked={ featured == 'featured' }
+				checked={ featured === 'featured' }
 				onChange={ ( checked ) =>
 					setMeta( {
 						...meta,

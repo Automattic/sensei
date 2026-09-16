@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix a PHP 8 TypeError when `post_updated` fires with a null post object during autosave.

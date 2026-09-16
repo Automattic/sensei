@@ -1,15 +1,16 @@
 name: Claude Triage
 
-# Triage-only companion to claude-code.yml: confirms the report is a bug,
-# checks for duplicates and scope, reproduces it in a real browser, and posts
-# one comment plus labels. Never edits source, pushes, or opens a PR — that's
-# claude-code.yml (`claude` label / `@claude`).
+# Triage-only companion to claude-fix.yml/claude-review.yml: confirms the
+# report is a bug, checks for duplicates and scope, reproduces it in a real
+# browser, and posts one comment plus labels. Never edits source, pushes, or
+# opens a PR — that's claude-fix.yml (`claude` label / `@claude` on an issue).
 #
 # Triggers:
 #   - Autonomous: a new issue opened with `[Type] Bug` or native type `Bug`.
 #     Open to anyone — community reports get triaged as they land.
 #   - Manual: an `@claude-triage` comment, gated to Automattic org members
-#     (author_association MEMBER/OWNER), same as claude-code.yml gates `@claude`.
+#     (author_association MEMBER/OWNER), same as claude-fix.yml/claude-review.yml
+#     gate `@claude`.
 #
 # No label or `typed` trigger: both events carry the issue author's
 # author_association, not the labeler's/typer's, so neither could be gated to
@@ -18,8 +19,9 @@ name: Claude Triage
 # Non-bugs (enhancement/proposal/question) are skipped silently — no comment,
 # no label change — by the job `if` and the skill's own bug gate.
 #
-# Boots the full wp-env stack and Chrome DevTools MCP, unlike claude-code.yml,
-# because reproduction here is a real browser run, not a code trace.
+# Boots the full wp-env stack and Chrome DevTools MCP, unlike claude-fix.yml/
+# claude-review.yml, because reproduction here is a real browser run, not a
+# code trace.
 
 on:
   issues:
@@ -172,7 +174,7 @@ jobs:
           }
           JSON
 
-      # No `label_trigger` here, unlike claude-code.yml: this workflow has no
+      # No `label_trigger` here, unlike claude-fix.yml: this workflow has no
       # label trigger at all, and a label_trigger the event can never match
       # risks making the action no-op. The job `if` above is the only gate.
       - uses: anthropics/claude-code-action@d40ddef4c030e508327d6e35a9c45f3368482c50  # v1.0.195
@@ -196,7 +198,7 @@ jobs:
 
             For a bug: post exactly one triage comment and apply the appropriate labels.
             Never edit plugin source, push branches, or open a PR. Writes are limited to scratch files under /tmp and .claude/tmp/.
-            Never apply the `claude` label and never write `@claude` in a comment: both trigger claude-code.yml, which opens PRs. Escalating a triage to a code change is a human's decision.
+            Never apply the `claude` label and never write `@claude` in a comment: both trigger claude-fix.yml, which opens PRs. Escalating a triage to a code change is a human's decision.
           # Tool allowlist notes — keep this list as narrow as the skill needs:
           #
           # * No `gh issue create`. In CI the GITHUB_TOKEN is scoped to this repo,

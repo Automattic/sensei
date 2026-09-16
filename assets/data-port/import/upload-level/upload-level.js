@@ -102,7 +102,6 @@ export const UploadLevels = ( {
 					);
 				}
 
-				/* eslint-disable jsx-a11y/label-has-for */
 				return (
 					<li
 						key={ level.key }
@@ -145,7 +144,6 @@ export const UploadLevels = ( {
 						) }
 					</li>
 				);
-				/* eslint-enable */
 			} ) }
 		</ol>
 	);

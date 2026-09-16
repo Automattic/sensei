@@ -32,6 +32,8 @@ class Custom_Fields {
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_quiz_id_before_copied' ), 10, 4 );
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_course_woocommerce_product_before_copied' ), 10, 4 );
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_lesson_prerequisite_before_copied' ), 10, 4 );
+		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_lesson_quiz_before_copied' ), 10, 4 );
+		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_quiz_lesson_before_copied' ), 10, 4 );
 	}
 
 	/**
@@ -198,5 +200,72 @@ class Custom_Fields {
 		}
 
 		return $this->get_object_id( $lesson_id, 'lesson', false, $target_language_code );
+	}
+
+	/**
+	 * Update the lesson quiz before copied.
+	 *
+	 * When the quiz is not translated, the meta keeps pointing at the original
+	 * quiz. Emptying it would leave the translated lesson without a quiz.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param mixed  $copied_value Copied value.
+	 * @param int    $post_id_from Post ID from.
+	 * @param int    $post_id_to   Post ID to.
+	 * @param string $meta_key     Meta key.
+	 * @return mixed
+	 */
+	public function update_lesson_quiz_before_copied( $copied_value, $post_id_from, $post_id_to, $meta_key ) {
+		if ( '_lesson_quiz' !== $meta_key ) {
+			return $copied_value;
+		}
+
+		if ( empty( $copied_value ) ) {
+			return $copied_value;
+		}
+
+		$quiz_id = (int) $copied_value;
+
+		$target_language_code = $this->get_element_language_code( $post_id_to, 'lesson' );
+		if ( ! $target_language_code ) {
+			$target_language_code = $this->get_current_language();
+		}
+
+		return $this->get_object_id( $quiz_id, 'quiz', true, $target_language_code );
+	}
+
+	/**
+	 * Update the quiz lesson before copied.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param mixed  $copied_value Copied value.
+	 * @param int    $post_id_from Post ID from.
+	 * @param int    $post_id_to   Post ID to.
+	 * @param string $meta_key     Meta key.
+	 * @return mixed
+	 */
+	public function update_quiz_lesson_before_copied( $copied_value, $post_id_from, $post_id_to, $meta_key ) {
+		if ( '_quiz_lesson' !== $meta_key ) {
+			return $copied_value;
+		}
+
+		if ( empty( $copied_value ) ) {
+			return $copied_value;
+		}
+
+		$lesson_id = (int) $copied_value;
+
+		$target_language_code = $this->get_element_language_code( $post_id_to, 'quiz' );
+		if ( ! $target_language_code ) {
+			$target_language_code = $this->get_current_language();
+		}
+
+		return $this->get_object_id( $lesson_id, 'lesson', true, $target_language_code );
 	}
 }

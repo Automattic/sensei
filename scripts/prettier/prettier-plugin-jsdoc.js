@@ -62,6 +62,7 @@ const getParserWithJSDoc = ( parser ) => ( {
 					indent,
 					tags: [ 'param', 'arg', 'argument', 'property', 'prop' ],
 					preserveMainDescriptionPostDelimiter: true,
+					wrapIndent: '',
 				} )
 			);
 

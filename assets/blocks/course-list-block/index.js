@@ -73,7 +73,6 @@ const unsubscribe = subscribe( () => {
 } );
 
 const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
-	// eslint-disable-next-line no-undef
 	const observer = new MutationObserver( () => {
 		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
 

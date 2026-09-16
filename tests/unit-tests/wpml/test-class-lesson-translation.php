@@ -351,6 +351,30 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		$this->assertSame( $translated_course_id, (int) get_post_meta( $duplicated_lesson_id, '_lesson_course', true ) );
 	}
 
+	public function testUpdateQuizOnLessonDuplicated_DuplicatedLessonGiven_GivesItItsOwnQuiz() {
+		/* Arrange. */
+		$master_lesson_id     = $this->factory->get_lesson_with_quiz_and_questions();
+		$master_quiz_id       = Sensei()->lesson->lesson_quizzes( $master_lesson_id );
+		$duplicated_lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_quiz' => $master_quiz_id ) ) );
+
+		$this->simulate_wpml_language_pair( array( $master_lesson_id => $duplicated_lesson_id ) );
+		$copied_quiz_id   = $this->factory->quiz->create();
+		$copy_to_language = function () use ( $copied_quiz_id ) {
+			return $copied_quiz_id;
+		};
+		add_filter( 'wpml_copy_post_to_language', $copy_to_language );
+
+		$lesson_translation = new Lesson_Translation();
+
+		/* Act. */
+		$lesson_translation->update_quiz_on_lesson_duplicated( $master_lesson_id, 'es', array(), $duplicated_lesson_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'wpml_copy_post_to_language', $copy_to_language );
+		$this->remove_wpml_language_pair_filters();
+		$this->assertSame( $copied_quiz_id, (int) get_post_meta( $duplicated_lesson_id, '_lesson_quiz', true ), 'The duplicated lesson should own the quiz copied for its language, not the master one.' );
+	}
+
 	public function testUpdateLessonPropertiesOnLessonDuplicated_TranslatedLessonsWithoutOrderMetaGiven_PlacesDuplicateLast() {
 		/* Arrange. */
 		$master_course_id     = $this->factory->course->create();

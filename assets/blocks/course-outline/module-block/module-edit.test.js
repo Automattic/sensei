@@ -72,7 +72,7 @@ describe( '<ModuleEdit />', () => {
 			target: { value: 'Test' },
 		} );
 
-		expect( setAttributesMock ).toBeCalledWith( { title: 'Test' } );
+		expect( setAttributesMock ).toHaveBeenCalledWith( { title: 'Test' } );
 	} );
 
 	it( 'Should set the description attribute on changing the description input value', () => {
@@ -89,7 +89,9 @@ describe( '<ModuleEdit />', () => {
 			target: { value: 'Test' },
 		} );
 
-		expect( setAttributesMock ).toBeCalledWith( { description: 'Test' } );
+		expect( setAttributesMock ).toHaveBeenCalledWith( {
+			description: 'Test',
+		} );
 	} );
 
 	it( 'Should not display the teacher name section if no or empty name is provided', () => {

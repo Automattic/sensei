@@ -127,7 +127,6 @@ const PatternsList = ( { patternsToExclude = [], onChoose } ) => {
 						viewportWidth,
 						template,
 					} ) => (
-						// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 						<div
 							key={ name }
 							className="sensei-patterns-list__item"

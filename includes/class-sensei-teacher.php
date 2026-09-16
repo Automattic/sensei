@@ -385,6 +385,9 @@ class Sensei_Teacher {
 		// If a custom slug is of a module that belongs to another teacher from another course, don't process farther.
 		if ( isset( $_POST['course_module_custom_slugs'] ) ) {
 			$module_custom_slugs = json_decode( sensei_request_text( $_POST['course_module_custom_slugs'] ) );
+			if ( ! is_array( $module_custom_slugs ) ) {
+				$module_custom_slugs = array();
+			}
 			foreach ( $module_custom_slugs as $module_custom_slug ) {
 				$course_name = self::is_module_in_use_by_different_course_and_teacher( $module_custom_slug, $course_id, absint( $_POST['sensei-course-teacher-author'] ) );
 				if ( $course_name ) {

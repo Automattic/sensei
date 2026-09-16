@@ -9,16 +9,6 @@ import { ToggleControl, PanelBody } from '@wordpress/components';
  */
 import useCourseMeta from '../../../react-hooks/use-course-meta';
 import { SENSEI_THEME, WORDPRESS_THEME } from './constants';
-import courseOutlineBlock from '../../../blocks/course-outline/outline-block/block.json';
-import courseModuleBlock from '../../../blocks/course-outline/module-block/block.json';
-import courseLessonBlock from '../../../blocks/course-outline/lesson-block/block.json';
-
-const courseOutlineBlockName = courseOutlineBlock.name;
-const courseModuleBlockName = courseModuleBlock.name;
-const courseLessonBlockName = courseLessonBlock.name;
-
-const canPreview = ( block ) =>
-	block.name === courseLessonBlockName && block.attributes.id;
 
 /**
  * Course Theme Sidebar component.

@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Add placeholder to tinymce editor
  *
- * @param editor tinymce editor.
+ * @param {Object} editor The tinymce editor.
  */
 window.addPlaceholderInTinymceEditor = ( editor ) => {
 	// Remove placeholder on submit.
@@ -17,7 +17,7 @@ window.addPlaceholderInTinymceEditor = ( editor ) => {
 
 	// Add placeholder on init and blur.
 	editor.on( 'blur init', function () {
-		if ( editor.getContent() == '' ) {
+		if ( editor.getContent() === '' ) {
 			editor.setContent(
 				"<p id='multi-line-placeholder'>" +
 					__( 'Your answer', 'sensei-lms' ) +

@@ -73,7 +73,7 @@ describe( '<CourseUpgradeStep.Actions />', () => {
 		render(
 			<CourseUpgradeStep.Actions goToNextStep={ goToNextStepMock } />
 		);
-		expect( goToNextStepMock ).toBeCalledTimes( 0 );
+		expect( goToNextStepMock ).toHaveBeenCalledTimes( 0 );
 	} );
 
 	it( 'Calls `goToNextStep` on click.', () => {
@@ -83,6 +83,6 @@ describe( '<CourseUpgradeStep.Actions />', () => {
 			<CourseUpgradeStep.Actions goToNextStep={ goToNextStepMock } />
 		);
 		fireEvent.click( queryByText( 'Continue with Sensei Free' ) );
-		expect( goToNextStepMock ).toBeCalledTimes( 1 );
+		expect( goToNextStepMock ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

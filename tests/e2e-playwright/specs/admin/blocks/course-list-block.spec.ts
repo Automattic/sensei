@@ -9,7 +9,6 @@ import { test, expect } from '@playwright/test';
 import { asAdmin, createCourse, createCourseCategory } from '@e2e/helpers/api';
 import PostType from '@e2e/pages/admin/post-type';
 import { editorRole } from '@e2e/helpers/context';
-import { faker } from '@faker-js/faker';
 
 const { describe, use, beforeAll } = test;
 
@@ -18,19 +17,19 @@ describe( 'Courses List Block', () => {
 
 	const courses = [
 		{
-			title: faker.lorem.sentence( 2 ),
-			excerpt: faker.lorem.sentence( 3 ),
-			category: faker.lorem.slug( 2 ),
+			title: 'Intro to Astronomy',
+			excerpt: 'Learn the basics of stargazing.',
+			category: 'Science',
 		},
 		{
-			title: faker.lorem.sentence( 2 ),
-			excerpt: faker.lorem.sentence( 3 ),
-			category: faker.lorem.slug( 2 ),
+			title: 'Creative Writing Workshop',
+			excerpt: 'Craft compelling short stories.',
+			category: 'Arts',
 		},
 		{
-			title: faker.lorem.sentence( 2 ),
-			excerpt: faker.lorem.sentence( 3 ),
-			category: faker.lorem.slug( 2 ),
+			title: 'Home Gardening Essentials',
+			excerpt: 'Grow vegetables year round.',
+			category: 'Lifestyle',
 		},
 	];
 

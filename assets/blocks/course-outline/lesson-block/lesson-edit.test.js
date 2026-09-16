@@ -114,7 +114,7 @@ describe( '<LessonEdit />', () => {
 		fireEvent.change( getByPlaceholderText( 'Add Lesson' ), {
 			target: { value: 'Test' },
 		} );
-		expect( setAttributesMock ).toBeCalledWith( { title: 'Test' } );
+		expect( setAttributesMock ).toHaveBeenCalledWith( { title: 'Test' } );
 	} );
 
 	it( 'Should create new block when pressing enter', async () => {
@@ -133,9 +133,11 @@ describe( '<LessonEdit />', () => {
 		} );
 
 		await waitFor( () =>
-			expect( createBlockMock ).toBeCalledWith( 'block-name' )
+			expect( createBlockMock ).toHaveBeenCalledWith( 'block-name' )
 		);
-		await waitFor( () => expect( insertBlocksAfterMock ).toBeCalled() );
+		await waitFor( () =>
+			expect( insertBlocksAfterMock ).toHaveBeenCalled()
+		);
 	} );
 
 	it( 'Should not create new block when there is already one after it', async () => {
@@ -156,8 +158,10 @@ describe( '<LessonEdit />', () => {
 			keyCode: 13,
 		} );
 
-		await waitFor( () => expect( createBlockMock ).not.toBeCalled() );
-		await waitFor( () => expect( insertBlocksAfterMock ).not.toBeCalled() );
+		await waitFor( () => expect( createBlockMock ).not.toHaveBeenCalled() );
+		await waitFor( () =>
+			expect( insertBlocksAfterMock ).not.toHaveBeenCalled()
+		);
 	} );
 
 	it( 'Should focus on the next block when pressing enter and there is a next empty block', async () => {
@@ -181,9 +185,11 @@ describe( '<LessonEdit />', () => {
 			keyCode: 13,
 		} );
 
-		await waitFor( () => expect( selectNextBlockMock ).toBeCalled() );
-		await waitFor( () => expect( createBlockMock ).not.toBeCalled() );
-		await waitFor( () => expect( insertBlocksAfterMock ).not.toBeCalled() );
+		await waitFor( () => expect( selectNextBlockMock ).toHaveBeenCalled() );
+		await waitFor( () => expect( createBlockMock ).not.toHaveBeenCalled() );
+		await waitFor( () =>
+			expect( insertBlocksAfterMock ).not.toHaveBeenCalled()
+		);
 	} );
 
 	it( 'Should remove the block when pressing backspace in an empty input', () => {
@@ -195,7 +201,7 @@ describe( '<LessonEdit />', () => {
 			keyCode: 8,
 		} );
 
-		expect( removeBlockMock ).toBeCalled();
+		expect( removeBlockMock ).toHaveBeenCalled();
 	} );
 
 	it( 'Should not remove the block when pressing backspace in a filled input', () => {
@@ -207,6 +213,6 @@ describe( '<LessonEdit />', () => {
 			keyCode: 8,
 		} );
 
-		expect( removeBlockMock ).not.toBeCalled();
+		expect( removeBlockMock ).not.toHaveBeenCalled();
 	} );
 } );

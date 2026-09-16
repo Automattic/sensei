@@ -1,6 +1,6 @@
 {
-  "name": "sensei-lms/spacer-flex",
-  "category": "theme",
-  "apiVersion": 3,
-  "supports": {}
+	"name": "sensei-lms/spacer-flex",
+	"category": "theme",
+	"apiVersion": 3,
+	"supports": {}
 }

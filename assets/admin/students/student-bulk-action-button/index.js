@@ -89,7 +89,7 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 							.getAttribute( 'data-user-display-name' )
 					);
 				}
-			} catch ( e ) {}
+			} catch {}
 		}
 
 		setIsModalOpen( true );

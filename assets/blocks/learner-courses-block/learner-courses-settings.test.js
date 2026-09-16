@@ -96,32 +96,32 @@ describe( '<LearnerCoursesSettings />', () => {
 		);
 
 		fireEvent.click( queryByLabelText( 'Description' ) );
-		expect( setOptionsMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toHaveBeenCalledWith( {
 			courseDescriptionEnabled: true,
 		} );
 
 		fireEvent.click( queryByLabelText( 'Featured image' ) );
-		expect( setOptionsMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toHaveBeenCalledWith( {
 			featuredImageEnabled: true,
 		} );
 
 		fireEvent.click( queryByLabelText( 'Category' ) );
-		expect( setOptionsMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toHaveBeenCalledWith( {
 			courseCategoryEnabled: false,
 		} );
 
 		fireEvent.click( queryByLabelText( 'Progress bar' ) );
-		expect( setOptionsMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toHaveBeenCalledWith( {
 			progressBarEnabled: false,
 		} );
 
 		fireEvent.click( queryByTestId( 'list' ) );
-		expect( setOptionsMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toHaveBeenCalledWith( {
 			layoutView: 'list',
 		} );
 
 		fireEvent.click( queryByTestId( 'grid' ) );
-		expect( setOptionsMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toHaveBeenCalledWith( {
 			layoutView: 'grid',
 		} );
 
@@ -131,14 +131,14 @@ describe( '<LearnerCoursesSettings />', () => {
 		fireEvent.change( queryAllByLabelText( 'Height' )[ 0 ], {
 			target: { value: '10', checkValidity: false },
 		} );
-		expect( setOptionsMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toHaveBeenCalledWith( {
 			progressBarHeight: 10,
 		} );
 
 		fireEvent.change( queryAllByLabelText( 'Border radius' )[ 0 ], {
 			target: { value: '5', checkValidity: false },
 		} );
-		expect( setOptionsMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toHaveBeenCalledWith( {
 			progressBarBorderRadius: 5,
 		} );
 	} );

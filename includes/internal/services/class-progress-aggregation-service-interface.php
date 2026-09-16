@@ -58,6 +58,26 @@ interface Progress_Aggregation_Service_Interface {
 	public function count_statuses_by_user( array $args ): array;
 
 	/**
+	 * Count students with activity on a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Comments-API-shaped activity arguments.
+	 * @return int Number of students with matching lesson activity.
+	 */
+	public function get_lesson_student_count( array $args ): int;
+
+	/**
+	 * Count students who completed a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Comments-API-shaped activity arguments.
+	 * @return int Number of students with matching completed lesson activity.
+	 */
+	public function get_lesson_completion_count( array $args ): int;
+
+	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
 	 * @since 4.26.0

@@ -31,7 +31,7 @@ const withQuestionGeneratorUpsellButton = ( BlockEdit ) => ( props ) => {
 						<Icon icon={ <AiIcon /> } />
 						{ __(
 							'Generate quiz questions with AI',
-							'sensei-pro'
+							'sensei-lms'
 						) }
 					</div>
 					<span className="awaiting-mod sensei-upsell-pro-badge">

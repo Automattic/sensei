@@ -22,7 +22,7 @@ jQuery( document ).ready( function ( $ ) {
 	} );
 
 	// Change the section when the user navigates the session history.
-	addEventListener( 'popstate', ( e ) => {
+	addEventListener( 'popstate', () => {
 		const sectionId = getSectionIdFromUrl( window.location.href );
 
 		if ( sectionExists( sectionId ) ) {
@@ -48,7 +48,8 @@ jQuery( document ).ready( function ( $ ) {
 	function updateReferer( url ) {
 		const urlObject = new URL( url );
 
-		$senseiSettings.find( 'input[name="_wp_http_referer"]' )
+		$senseiSettings
+			.find( 'input[name="_wp_http_referer"]' )
 			.val( urlObject.pathname + urlObject.search );
 	}
 
@@ -56,8 +57,7 @@ jQuery( document ).ready( function ( $ ) {
 	 * Hide all sections.
 	 */
 	function hideAllSections() {
-		$senseiSettings.find( 'section' )
-			.hide();
+		$senseiSettings.find( 'section' ).hide();
 	}
 
 	/**
@@ -69,11 +69,9 @@ jQuery( document ).ready( function ( $ ) {
 		hideAllSections();
 		hideSettingsFormElements( sectionId );
 
-		$senseiSettings.find( `section#${ sectionId }` )
-			.show();
+		$senseiSettings.find( `section#${ sectionId }` ).show();
 
-		$senseiSettings.find( 'a.tab.current' )
-			.removeClass( 'current' )
+		$senseiSettings.find( 'a.tab.current' ).removeClass( 'current' );
 
 		$senseiSettings
 			.find( `a.tab[href*="tab=${ sectionId }"]` )
@@ -86,7 +84,7 @@ jQuery( document ).ready( function ( $ ) {
 	/**
 	 * Get section id from the current URL.
 	 *
-	 * @returns {string}
+	 * @return {string} The current section id.
 	 */
 	function getCurrentSectionId() {
 		return getSectionIdFromUrl( window.location.href );
@@ -96,21 +94,23 @@ jQuery( document ).ready( function ( $ ) {
 	 * Get section id from a URL.
 	 *
 	 * @param {string} url
-	 * @returns {string}
+	 * @return {string} The section id parsed from the URL.
 	 */
 	function getSectionIdFromUrl( url ) {
 		const urlParams = new URLSearchParams( url );
 
-		return urlParams.get( 'tab' )
-			|| url.split( '#' )[1]
-			|| 'default-settings';
+		return (
+			urlParams.get( 'tab' ) ||
+			url.split( '#' )[ 1 ] ||
+			'default-settings'
+		);
 	}
 
 	/**
 	 * Check if a section exists.
 	 *
 	 * @param {string} sectionId
-	 * @returns {boolean}
+	 * @return {boolean} Whether a section with that id exists.
 	 */
 	function sectionExists( sectionId ) {
 		return $( '#' + sectionId ).length > 0;
@@ -185,8 +185,8 @@ jQuery( document ).ready( function ( $ ) {
 
 	jQuery( document ).mousedown( function () {
 		jQuery( '.colorpicker' ).each( function () {
-			var display = jQuery( this ).css( 'display' );
-			if ( display == 'block' ) {
+			const display = jQuery( this ).css( 'display' );
+			if ( display === 'block' ) {
 				jQuery( this ).fadeOut();
 			}
 		} );

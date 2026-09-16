@@ -1,7 +1,9 @@
 <?php
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Services\Reports_Item;
 use Sensei\Internal\Services\Reports_Listing_Service_Interface;
-use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,19 +71,45 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	private Reports_Listing_Service_Interface $reports_listing_service;
 
 	/**
+	 * The progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface
+	 */
+	private Progress_Aggregation_Service_Interface $aggregation_service;
+
+	/**
+	 * The grading statistics service.
+	 *
+	 * @var Grading_Stats_Service_Interface
+	 */
+	private Grading_Stats_Service_Interface $grading_stats_service;
+
+	/**
 	 * Constructor
 	 *
-	 * @param int                                    $course_id               Course ID.
-	 * @param int                                    $user_id                 User ID.
-	 * @param Reports_Listing_Service_Interface|null $reports_listing_service Reports listing service.
+	 * @param int                                         $course_id               Course ID.
+	 * @param int                                         $user_id                 User ID.
+	 * @param Reports_Listing_Service_Interface|null      $reports_listing_service Reports listing service.
+	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service     Progress aggregation service.
+	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service   Grading statistics service.
 	 *
 	 * @since  1.2.0
 	 */
-	public function __construct( $course_id = 0, $user_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null ) {
+	public function __construct( $course_id = 0, $user_id = 0, ?Reports_Listing_Service_Interface $reports_listing_service = null, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
+		if ( null === $reports_listing_service || null === $aggregation_service || null === $grading_stats_service ) {
+			$query_service_factory = new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+
+			$reports_listing_service = $reports_listing_service ?? $query_service_factory->create_reports_listing_service();
+			$aggregation_service     = $aggregation_service ?? $query_service_factory->create_aggregation_service();
+			$grading_stats_service   = $grading_stats_service ?? $query_service_factory->create_grading_stats_service();
+		}
+
 		$this->course_id               = (int) $course_id;
 		$this->user_id                 = (int) $user_id;
 		$this->page_slug               = Sensei_Analysis::PAGE_SLUG;
-		$this->reports_listing_service = $reports_listing_service ?? ( new Progress_Query_Service_Factory() )->create_reports_listing_service();
+		$this->reports_listing_service = $reports_listing_service;
+		$this->aggregation_service     = $aggregation_service;
+		$this->grading_stats_service   = $grading_stats_service;
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'user', 'lesson' ) ) ) {
 			$this->view = sensei_request_text( $_GET['view'] );
@@ -588,7 +616,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		 * @param {object} $item The current item.
 		 * @return {array} The lesson learners activity arguments.
 		 */
-		$lesson_students = $this->reports_listing_service->get_lesson_student_count(
+		$lesson_students = $this->aggregation_service->get_lesson_student_count(
 			apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item )
 		);
 
@@ -607,7 +635,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		 * @param {object} $item The current item.
 		 * @return {array} The lesson completions activity arguments.
 		 */
-		$lesson_completions = $this->reports_listing_service->get_lesson_completion_count(
+		$lesson_completions = $this->aggregation_service->get_lesson_completion_count(
 			apply_filters( 'sensei_analysis_lesson_completions', $completion_args, $item )
 		);
 
@@ -632,7 +660,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			 * @param {object} $item The current item.
 			 * @return {array} The lesson grades activity arguments.
 			 */
-			$avg = $this->reports_listing_service->get_lesson_average_grade(
+			$avg = $this->grading_stats_service->get_lesson_average_grade(
 				apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item )
 			);
 			if ( null !== $avg ) {

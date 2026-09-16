@@ -57,6 +57,7 @@ updates:
           - "patch"
     cooldown:
       default-days: 7
+      semver-patch-days: 30
 
   - package-ecosystem: "composer"
     directory: "/"
@@ -90,6 +91,7 @@ updates:
           - "patch"
     cooldown:
       default-days: 7
+      semver-patch-days: 30
 
   - package-ecosystem: "github-actions"
     # Scan composite actions too — their SHA-pinned `uses:` refs need update
@@ -98,8 +100,7 @@ updates:
       - "/"
       - "/.github/actions/**"
     schedule:
-      interval: "weekly"
-      day: "friday"
+      interval: "monthly"
     open-pull-requests-limit: 10
     labels:
       - "No Changelog"
@@ -117,3 +118,4 @@ updates:
           - "major"
     cooldown:
       default-days: 7
+      semver-patch-days: 30
