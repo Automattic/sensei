@@ -1891,4 +1891,122 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertTrue( $quiz_created_action_fired );
 	}
+
+	public function testSave_WithDeletedLesson_SkipsLessonAndSavesOtherItems() {
+		/* Arrange. */
+		$this->login_as_teacher();
+
+		$course_id       = $this->factory->course->create();
+		$deleted_lesson  = $this->factory->lesson->create();
+		$existing_lesson = $this->factory->lesson->create();
+		wp_delete_post( $deleted_lesson, true );
+
+		$new_structure = array(
+			array(
+				'type'  => 'lesson',
+				'id'    => $deleted_lesson,
+				'title' => 'Deleted lesson',
+			),
+			array(
+				'type'  => 'lesson',
+				'id'    => $existing_lesson,
+				'title' => get_the_title( $existing_lesson ),
+			),
+		);
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		/* Act. */
+		$result = $course_structure->save( $new_structure );
+
+		/* Assert. */
+		$this->assertTrue( $result );
+	}
+
+	public function testSave_WithDeletedLesson_SavesTheRemainingLesson() {
+		/* Arrange. */
+		$this->login_as_teacher();
+
+		$course_id       = $this->factory->course->create();
+		$deleted_lesson  = $this->factory->lesson->create();
+		$existing_lesson = $this->factory->lesson->create();
+		wp_delete_post( $deleted_lesson, true );
+
+		$new_structure = array(
+			array(
+				'type'  => 'lesson',
+				'id'    => $deleted_lesson,
+				'title' => 'Deleted lesson',
+			),
+			array(
+				'type'  => 'lesson',
+				'id'    => $existing_lesson,
+				'title' => get_the_title( $existing_lesson ),
+			),
+		);
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		/* Act. */
+		$course_structure->save( $new_structure );
+
+		/* Assert. */
+		$this->assertEquals( $course_id, get_post_meta( $existing_lesson, '_lesson_course', true ) );
+	}
+
+	public function testSave_WithDeletedLessonInModule_SkipsLessonAndSavesModule() {
+		/* Arrange. */
+		$this->login_as_teacher();
+
+		$course_id      = $this->factory->course->create();
+		$deleted_lesson = $this->factory->lesson->create();
+		wp_delete_post( $deleted_lesson, true );
+
+		$new_structure = array(
+			array(
+				'type'    => 'module',
+				'title'   => 'Module A',
+				'lessons' => array(
+					array(
+						'type'  => 'lesson',
+						'id'    => $deleted_lesson,
+						'title' => 'Deleted lesson',
+					),
+				),
+			),
+		);
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		/* Act. */
+		$result = $course_structure->save( $new_structure );
+
+		/* Assert. */
+		$this->assertTrue( $result );
+	}
+
+	public function testSave_WithTrashedLesson_SkipsLesson() {
+		/* Arrange. */
+		$this->login_as_teacher();
+
+		$course_id      = $this->factory->course->create();
+		$trashed_lesson = $this->factory->lesson->create();
+		wp_trash_post( $trashed_lesson );
+
+		$new_structure = array(
+			array(
+				'type'  => 'lesson',
+				'id'    => $trashed_lesson,
+				'title' => 'Trashed lesson',
+			),
+		);
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		/* Act. */
+		$result = $course_structure->save( $new_structure );
+
+		/* Assert. */
+		$this->assertTrue( $result );
+	}
 }

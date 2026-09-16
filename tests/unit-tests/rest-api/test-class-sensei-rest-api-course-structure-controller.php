@@ -771,4 +771,120 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		$response_status = $response->get_status();
 		$this->assertEquals( 200, $response_status );
 	}
+
+	public function testSaveCourseStructure_WhenLessonWasDeleted_RequestIsAuthorized() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		wp_delete_post( $lesson_id, true );
+		$structure = array(
+			array(
+				'type'  => 'lesson',
+				'title' => 'Lesson',
+				'id'    => $lesson_id,
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		/* Act */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert */
+		$response_status = $response->get_status();
+		$this->assertEquals( 200, $response_status );
+	}
+
+	public function testSaveCourseStructure_WhenLessonWasTrashed_RequestIsAuthorized() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		wp_trash_post( $lesson_id );
+		$structure = array(
+			array(
+				'type'  => 'lesson',
+				'title' => 'Lesson',
+				'id'    => $lesson_id,
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		/* Act */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert */
+		$response_status = $response->get_status();
+		$this->assertEquals( 200, $response_status );
+	}
+
+	public function testSaveCourseStructure_WhenLessonInModuleWasDeleted_RequestIsAuthorized() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		wp_delete_post( $lesson_id, true );
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'title'   => 'Module',
+				'lessons' => array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Lesson',
+						'id'    => $lesson_id,
+					),
+				),
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		/* Act */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert */
+		$response_status = $response->get_status();
+		$this->assertEquals( 200, $response_status );
+	}
+
+	public function testSaveCourseStructure_WhenLessonWasDeleted_LessonIsRemovedFromStructure() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$course_id        = $this->factory->course->create();
+		$lesson_id        = $this->factory->lesson->create();
+		$remaining_lesson = $this->factory->lesson->create();
+		wp_delete_post( $lesson_id, true );
+		$structure = array(
+			array(
+				'type'  => 'lesson',
+				'title' => 'Deleted lesson',
+				'id'    => $lesson_id,
+			),
+			array(
+				'type'  => 'lesson',
+				'title' => 'Remaining lesson',
+				'id'    => $remaining_lesson,
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		/* Act */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert */
+		$response_data = $response->get_data();
+		$this->assertEquals( array( $remaining_lesson ), wp_list_pluck( $response_data, 'id' ) );
+	}
 }
