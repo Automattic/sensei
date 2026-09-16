@@ -9,7 +9,7 @@ on:
 jobs:
   fix:
     if: |
-      (github.event_name == 'issues' && github.event.label.name == 'claude') ||
+      (github.event_name == 'issues' && !github.event.issue.pull_request && github.event.label.name == 'claude') ||
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot' &&
         !github.event.issue.pull_request &&
         (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER'))
@@ -79,10 +79,6 @@ jobs:
           branch_prefix: fix/
           additional_permissions: |
             actions: read
-          prompt: |
-            You were triggered on a ${{ github.event_name }} event in ${{ github.repository }}.
-            Issue number: ${{ github.event.issue.number || github.run_id }}.
-            Read it with `gh issue view` and follow the system prompt instructions.
           claude_args: |
             --model claude-sonnet-4-6
             --max-turns 100
