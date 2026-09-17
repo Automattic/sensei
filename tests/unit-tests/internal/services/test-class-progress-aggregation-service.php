@@ -1,7 +1,5 @@
 <?php
 
-// phpcs:disable WordPress.Files.FileName.InvalidClassFileName -- Test files follow the test-class naming convention.
-
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 
 /**
