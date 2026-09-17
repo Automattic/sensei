@@ -1,6 +1,7 @@
 <?php
 
 use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 
 /**
  * Sensei Reports Overview Service Courses Test Class
@@ -246,6 +247,22 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	}
 
 
+	/**
+	 * Tests that average grade returns zero when courses have no graded quizzes.
+	 *
+	 * @covers Sensei_Reports_Overview_Service_Courses::get_courses_average_grade
+	 */
+	public function testGetCoursesAverageGrade_WhenNoGradedQuizzes_ReturnsZero() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$instance  = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_courses_average_grade( [ $course_id ] );
+
+		/* Assert. */
+		self::assertSame( 0.0, $actual, 'Average grade should be zero when there are no graded quizzes.' );
+	}
 	public function testGetAverageDaysToCompletionWhenOneCourseExistsReturnsMatchingValue() {
 		$user1_id  = $this->factory->user->create();
 		$user2_id  = $this->factory->user->create();
@@ -339,27 +356,11 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 0.0, $actual );
 	}
 
-	/**
-	 * Tests that average grade returns zero when courses have no graded quizzes.
-	 *
-	 * @covers Sensei_Reports_Overview_Service_Courses::get_courses_average_grade
-	 */
-	public function testGetCoursesAverageGrade_WhenNoGradedQuizzes_ReturnsZero() {
-		/* Arrange. */
-		$course_id = $this->factory->course->create();
-		$instance  = new Sensei_Reports_Overview_Service_Courses();
-
-		/* Act. */
-		$actual = $instance->get_courses_average_grade( [ $course_id ] );
-
-		/* Assert. */
-		self::assertSame( 0.0, $actual, 'Average grade should be zero when there are no graded quizzes.' );
-	}
-
 	public function testGetGradeSumForLessons_LessonIdsGiven_ReturnsServiceResult() {
 		/* Arrange. */
-		$lesson_ids            = array( 11, 22 );
-		$grading_stats_service = $this->createMock( Grading_Stats_Service_Interface::class );
+		$lesson_ids                  = array( 11, 22 );
+		$grading_stats_service       = $this->createMock( Grading_Stats_Service_Interface::class );
+		$progress_aggregation_service = $this->createMock( Progress_Aggregation_Service_Interface::class );
 		$grading_stats_service
 			->expects( self::once() )
 			->method( 'get_grade_totals' )
@@ -370,7 +371,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 					'sum'   => 75.0,
 				)
 			);
-		$instance = Sensei_Reports_Overview_Service_Courses::create_with_dependencies( $grading_stats_service );
+		$instance = Sensei_Reports_Overview_Service_Courses::create_with_dependencies( $grading_stats_service, $progress_aggregation_service );
 
 		/* Act. */
 		$actual = $instance->get_grade_sum_for_lessons( $lesson_ids );

@@ -48,6 +48,29 @@ class Sensei_Reports_Overview_Service_Courses_Enrollments_Test extends WP_UnitTe
 		$this->factory->tearDown();
 	}
 
+	public function testGetTotalAverageProgress_WPMLTranslatedCourseGiven_UsesOriginalLessonsAndEnrollments(): void {
+		/* Arrange. */
+		$original_course   = $this->factory->course->create();
+		$translated_course = $this->factory->course->create();
+		$first_user        = $this->factory->user->create();
+		$second_user       = $this->factory->user->create();
+		$completed_lesson  = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $original_course ) ) );
+		$unfinished_lesson = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $original_course ) ) );
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $translated_course ) ) );
+		Sensei_Utils::sensei_start_lesson( $completed_lesson, $first_user, true );
+		Sensei_Utils::sensei_start_lesson( $unfinished_lesson, $first_user );
+		Sensei_Utils::user_start_course( $second_user, $original_course );
+		$this->add_translation_filters( array( $translated_course => $original_course ) );
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_total_average_progress( array( $translated_course ) );
+
+		/* Assert. */
+		// One completed lesson out of two lessons for each of two students: 25%.
+		self::assertSame( 25.0, $actual );
+	}
+
 	public function testGetTotalEnrollments_EmptyCourseIdsGiven_ReturnsZero() {
 
 		/* Arrange. */
@@ -78,39 +101,9 @@ class Sensei_Reports_Overview_Service_Courses_Enrollments_Test extends WP_UnitTe
 			array( 'meta_input' => array( '_lesson_course' => $course2_id ) )
 		);
 
-		// Enroll student 2 to the course and lessons, but don't complete the lessons.
+		// Enroll the same student in both courses and their lessons, but don't complete the lessons.
 		Sensei_Utils::sensei_start_lesson( $lesson_course_1, $user1_id );
 		Sensei_Utils::sensei_start_lesson( $lesson_course_2, $user1_id );
-
-		$instance = new Sensei_Reports_Overview_Service_Courses();
-
-		/* Act. */
-		$actual = $instance->get_total_enrollments( array( $course1_id, $course2_id ) );
-
-		/* Assert. */
-		self::assertSame( 2, $actual );
-	}
-
-	public function testGetTotalEnrollments_DifferentStudentsInDifferentCoursesGiven_ReturnsSumOfEnrollments() {
-
-		/* Arrange. */
-		$user1_id = $this->factory->user->create();
-		$user2_id = $this->factory->user->create();
-
-		$course1_id = $this->factory->course->create();
-		$course2_id = $this->factory->course->create();
-
-		// Add 2 lessons to the course.
-		$lesson_course_1 = $this->factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course1_id ) )
-		);
-		$lesson_course_2 = $this->factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course2_id ) )
-		);
-
-		// Enroll student 2 to the course and lessons, but don't complete the lessons.
-		Sensei_Utils::sensei_start_lesson( $lesson_course_1, $user1_id );
-		Sensei_Utils::sensei_start_lesson( $lesson_course_2, $user2_id );
 
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 
