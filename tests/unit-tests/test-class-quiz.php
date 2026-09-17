@@ -849,6 +849,40 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that SVG files are saved for file upload questions.
+	 */
+	public function testPrepareFormSubmittedAnswers_SvgFileGiven_ReturnsAttachmentId() {
+		$test_lesson_id         = $this->factory->get_random_lesson_id();
+		$test_quiz_id           = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
+		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+		$question_id            = $this->factory->get_random_file_question_index( $test_user_quiz_answers );
+		$svg_path               = dirname( __DIR__ ) . '/images/sensei.svg';
+		$test_svg_path          = dirname( $svg_path ) . '/test-question-' . $question_id . '-sensei.svg';
+		copy( $svg_path, $test_svg_path );
+		$files = array(
+			'file_upload_' . $question_id => array(
+				'name'     => basename( $test_svg_path ),
+				'type'     => 'image/svg+xml',
+				'tmp_name' => $test_svg_path,
+				'error'    => 0,
+				'size'     => filesize( $test_svg_path ),
+			),
+		);
+
+		try {
+			$prepared_answers = Sensei()->quiz->prepare_form_submitted_answers( $test_user_quiz_answers, $files );
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Mirrors the stored answer format.
+			$attachment_id = maybe_unserialize( base64_decode( $prepared_answers[ $question_id ] ) );
+
+			$this->assertGreaterThan( 0, $attachment_id );
+		} finally {
+			if ( file_exists( $test_svg_path ) ) {
+				wp_delete_file( $test_svg_path );
+			}
+		}
+	}
+
+	/**
 	 * This tests Woothemes_Sensei()->quiz->submit_answers_for_grading.
 	 */
 	public function testSubmitAnswersForGrading() {
