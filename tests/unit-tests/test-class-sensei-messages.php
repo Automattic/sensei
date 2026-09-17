@@ -284,6 +284,156 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		$this->assertEquals( 'This is a title with [brackets] [[brackets]] [[[brackets]]].', $title );
 	}
 
+	public function testPreventMessageCanonicalRedirect_AnonymousRequestedMessageGiven_ReturnsFalse() {
+		/* Arrange. */
+		$message_id = $this->create_message();
+		$this->logout();
+		$this->go_to( '/?p=' . $message_id );
+		$instance = new Sensei_Messages();
+
+		/* Act. */
+		$actual = $instance->prevent_message_canonical_redirect( 'https://example.org/messages/secret/' );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	public function testPreventMessageCanonicalRedirect_ParticipantRequestedMessageGiven_ReturnsRedirectUrl() {
+		/* Arrange. */
+		$message_id = $this->create_message();
+		$this->login_as_student();
+		$this->go_to( '/?p=' . $message_id );
+		$instance = new Sensei_Messages();
+
+		/* Act. */
+		$actual = $instance->prevent_message_canonical_redirect( 'https://example.org/messages/secret/' );
+
+		/* Assert. */
+		$this->assertSame( 'https://example.org/messages/secret/', $actual );
+	}
+
+	public function testPreventMessageCanonicalRedirect_AnonymousRequestedMessagePermalinkGiven_ReturnsFalse() {
+		/* Arrange. */
+		$message_id = $this->create_message();
+		$this->logout();
+		$this->go_to( get_permalink( $message_id ) );
+		$instance = new Sensei_Messages();
+
+		/* Act. */
+		$actual = $instance->prevent_message_canonical_redirect( 'https://example.org/messages/secret/' );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	public function testPreventMessageCanonicalRedirect_NonParticipantTeacherRequestedPrivateMessageGiven_ReturnsFalse() {
+		/* Arrange. */
+		$message_id = $this->create_message( array( 'post_status' => 'private' ) );
+		$this->login_as_teacher_b();
+		$this->go_to( '/?p=' . $message_id );
+		$instance = new Sensei_Messages();
+
+		/* Act. */
+		$actual = $instance->prevent_message_canonical_redirect( 'https://example.org/messages/secret/' );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	public function testPreventMessageCanonicalRedirect_AnonymousRequestedRegularPostGiven_ReturnsRedirectUrl() {
+		/* Arrange. */
+		$post_id = $this->factory->post->create();
+		$this->logout();
+		$this->go_to( '/?p=' . $post_id );
+		$instance = new Sensei_Messages();
+
+		/* Act. */
+		$actual = $instance->prevent_message_canonical_redirect( 'https://example.org/hello-world/' );
+
+		/* Assert. */
+		$this->assertSame( 'https://example.org/hello-world/', $actual );
+	}
+
+	public function testMessageLogin_AnonymousRequestedMessageGiven_RedirectsThroughTheMessageId() {
+		/* Arrange. */
+		$my_courses_page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		add_filter( 'sensei_settings_my_course_page_id', fn() => $my_courses_page_id );
+		$message_id = $this->create_message();
+		$this->logout();
+		$this->go_to( get_permalink( $message_id ) );
+		$this->prevent_wp_redirect();
+		$instance = new Sensei_Messages();
+
+		/* Act. */
+		try {
+			$instance->message_login();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert. */
+		$this->assertSame(
+			add_query_arg( 'redirect_to', home_url( '/?p=' . $message_id ), get_permalink( $my_courses_page_id ) ),
+			$redirect_location
+		);
+	}
+
+	public function testMessageLogin_AnonymousRequestedMessageIdGiven_KeepsTheNotFoundResponse() {
+		/* Arrange. */
+		$message_id = $this->create_message();
+		$this->logout();
+		$this->go_to( '/?p=' . $message_id );
+		$this->prevent_wp_redirect();
+		$instance = new Sensei_Messages();
+
+		/* Act. */
+		$instance->message_login();
+
+		/* Assert. */
+		$this->assertTrue( is_404() );
+	}
+
+	public function testOnlyShowMessagesToOwner_NonParticipantTeacherRequestedMessageGiven_ReturnsNotFound() {
+		/* Arrange. */
+		$message_id = $this->create_message();
+		$this->login_as_teacher_b();
+
+		/* Act. */
+		$this->go_to( '/?post_type=sensei_message&p=' . $message_id );
+
+		/* Assert. */
+		$this->assertTrue( is_404() );
+	}
+
+	public function testOnlyShowMessagesToOwner_ParticipantTeacherRequestedMessageGiven_ReturnsTheMessage() {
+		/* Arrange. */
+		$message_id = $this->create_message();
+		$this->login_as_teacher();
+
+		/* Act. */
+		$this->go_to( '/?post_type=sensei_message&p=' . $message_id );
+
+		/* Assert. */
+		$this->assertSame( $message_id, get_queried_object_id() );
+	}
+
+	/**
+	 * Create a private message from the shared student to the shared teacher.
+	 *
+	 * @param array $args Extra post arguments.
+	 * @return int Message ID.
+	 */
+	private function create_message( array $args = array() ): int {
+		return $this->factory->message->create(
+			$args + array(
+				'meta_input' => array(
+					'_receiver' => get_userdata( $this->get_user_by_role( 'teacher' ) )->user_login,
+					'_sender'   => get_userdata( $this->get_user_by_role( 'subscriber' ) )->user_login,
+				),
+			)
+		);
+	}
+
 	/**
 	 * Treat the given student as enrolled in the given course and in no other.
 	 *

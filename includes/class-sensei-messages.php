@@ -65,6 +65,7 @@ class Sensei_Messages {
 
 		// Hide messages and replies from users who do not have access.
 		add_action( 'template_redirect', array( $this, 'message_login' ), 10, 1 );
+		add_filter( 'redirect_canonical', array( $this, 'prevent_message_canonical_redirect' ), 10, 1 );
 		add_action( 'pre_get_posts', array( $this, 'message_list' ), 10, 1 );
 		add_filter( 'the_title', array( $this, 'message_title' ), 10, 2 );
 		add_filter( 'the_content', array( $this, 'message_content' ), 10, 1 );
@@ -94,7 +95,7 @@ class Sensei_Messages {
 			return;
 		}
 
-		if ( current_user_can( 'manage_sensei_grades' ) ) {
+		if ( current_user_can( 'manage_sensei' ) ) {
 			return;
 		}
 
@@ -706,7 +707,11 @@ class Sensei_Messages {
 		if ( is_single() && is_singular( $this->post_type )
 			|| is_post_type_archive( $this->post_type ) ) {
 
-			$permalink = get_permalink();
+			// The message slug is built from the message body, so it must not reach a visitor who
+			// cannot read the message. Send them back through the ID instead of the pretty permalink.
+			$permalink = is_singular( $this->post_type )
+				? add_query_arg( 'p', get_queried_object_id(), home_url( '/' ) )
+				: get_post_type_archive_link( $this->post_type );
 
 			if ( isset( $my_courses_url ) ) {
 				wp_safe_redirect( add_query_arg( 'redirect_to', $permalink, $my_courses_url ), 303 );
@@ -716,6 +721,32 @@ class Sensei_Messages {
 				exit;
 			}
 		}
+	}
+
+	/**
+	 * Stop the canonical redirect from revealing a message slug to users who cannot read the message.
+	 *
+	 * The slug is built from the message body, and core's redirect_canonical() sends `?p=ID` to the
+	 * pretty permalink for any public post type before message_login() runs.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param string|false $redirect_url The redirect URL, or false to skip the redirect.
+	 * @return string|false
+	 */
+	public function prevent_message_canonical_redirect( $redirect_url ) {
+		$post_id = (int) get_query_var( 'p' );
+		if ( ! $post_id && is_singular() ) {
+			$post_id = get_queried_object_id();
+		}
+
+		if ( ! $post_id || get_post_type( $post_id ) !== $this->post_type ) {
+			return $redirect_url;
+		}
+
+		return current_user_can( 'manage_sensei' ) || $this->view_message( $post_id ) ? $redirect_url : false;
 	}
 
 	/**
