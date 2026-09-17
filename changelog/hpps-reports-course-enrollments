@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Read Courses enrollment counts from the selected progress backend.
