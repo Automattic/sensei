@@ -178,7 +178,6 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$query .= $this->build_post_filter_clause( array( 'post__in' => $args['post__in'] ?? array() ) );
 		$query .= ' GROUP BY c.comment_post_ID, c.comment_approved';
-		$query .= ' ORDER BY c.comment_post_ID, c.comment_approved';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
