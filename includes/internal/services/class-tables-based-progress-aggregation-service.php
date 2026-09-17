@@ -128,6 +128,51 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Count progress records grouped by post and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	public function count_statuses_by_post( array $args ): array {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
+			return array();
+		}
+
+		// WPML stores shared progress on the original post, so resolve translated IDs before querying.
+		// If both post_id and post__in are supplied, filter by post_id and ignore post__in.
+		$post_ids    = ! empty( $args['post_id'] ) ? array( $args['post_id'] ) : ( $args['post__in'] ?? array() );
+		$post_id_map = Utils::get_progress_post_id_map( $post_ids, $args['type'] );
+		if ( ! empty( $args['post_id'] ) ) {
+			$args['post_id'] = $post_id_map[ (int) $args['post_id'] ];
+		} elseif ( $post_id_map ) {
+			$args['post__in'] = array_values( $post_id_map );
+		}
+
+		if ( 'lesson' === $args['type'] ) {
+			$counts = $this->count_lesson_statuses_with_quiz_by_post( $args );
+		} else {
+			$counts = $this->count_course_statuses_by_post( $args );
+		}
+
+		if ( empty( $post_id_map ) ) {
+			return $counts;
+		}
+
+		// Reports need results keyed by the requested IDs, including translations.
+		$requested_counts = array();
+		foreach ( $post_id_map as $requested_id => $stored_id ) {
+			if ( isset( $counts[ $stored_id ] ) ) {
+				$requested_counts[ $requested_id ] = $counts[ $stored_id ];
+			}
+		}
+
+		return $requested_counts;
+	}
+
+	/**
 	 * Count students with activity on a lesson.
 	 *
 	 * @since $$next-version$$
@@ -288,51 +333,6 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		Utils::log_query_error( $wpdb, 'Tables-based ungraded quizzes count' );
 
 		return $count;
-	}
-
-	/**
-	 * Count progress records grouped by post and status.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
-	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
-	 */
-	public function count_statuses_by_post( array $args ): array {
-		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
-			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
-			return array();
-		}
-
-		// WPML stores shared progress on the original post, so resolve translated IDs before querying.
-		// If both post_id and post__in are supplied, filter by post_id and ignore post__in.
-		$post_ids    = ! empty( $args['post_id'] ) ? array( $args['post_id'] ) : ( $args['post__in'] ?? array() );
-		$post_id_map = Utils::get_progress_post_id_map( $post_ids, $args['type'] );
-		if ( ! empty( $args['post_id'] ) ) {
-			$args['post_id'] = $post_id_map[ (int) $args['post_id'] ];
-		} elseif ( $post_id_map ) {
-			$args['post__in'] = array_values( $post_id_map );
-		}
-
-		if ( 'lesson' === $args['type'] ) {
-			$counts = $this->count_lesson_statuses_with_quiz_by_post( $args );
-		} else {
-			$counts = $this->count_course_statuses_by_post( $args );
-		}
-
-		if ( empty( $post_id_map ) ) {
-			return $counts;
-		}
-
-		// Reports need results keyed by the requested IDs, including translations.
-		$requested_counts = array();
-		foreach ( $post_id_map as $requested_id => $stored_id ) {
-			if ( isset( $counts[ $stored_id ] ) ) {
-				$requested_counts[ $requested_id ] = $counts[ $stored_id ];
-			}
-		}
-
-		return $requested_counts;
 	}
 
 	/**

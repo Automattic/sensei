@@ -141,6 +141,81 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	}
 
 	/**
+	 * Count progress records grouped by post and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	public function count_statuses_by_post( array $args ): array {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
+			return array();
+		}
+
+		// WPML stores shared progress on the original post, so resolve translated IDs before querying.
+		// If both post_id and post__in are supplied, filter by post_id and ignore post__in.
+		$post_ids    = ! empty( $args['post_id'] ) ? array( $args['post_id'] ) : ( $args['post__in'] ?? array() );
+		$post_id_map = Utils::get_progress_post_id_map( $post_ids, $args['type'] );
+		if ( ! empty( $args['post_id'] ) ) {
+			$args['post_id'] = $post_id_map[ (int) $args['post_id'] ];
+		} elseif ( $post_id_map ) {
+			$args['post__in'] = array_values( $post_id_map );
+		}
+
+		// Reports include published and private content only.
+		$reports_statuses = Utils::get_reports_post_status_sql();
+		$wpdb             = $this->wpdb;
+		$comment_type     = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb; report statuses are SQL literals.
+		$query = $wpdb->prepare(
+			"SELECT c.comment_post_ID, c.comment_approved, COUNT(*) AS total
+			FROM {$wpdb->comments} c
+			WHERE c.comment_type = %s",
+			$comment_type
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$query .= $this->build_post_filter_clause( $args );
+		$query .= $this->build_user_filter_clause( $args );
+		$query .= $this->build_user_exclusion_clause( $args );
+		$query .= ' GROUP BY c.comment_post_ID, c.comment_approved';
+
+		// Read grouped counts first so the database checks post eligibility once per group.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Inner query is prepared above; table and report statuses are trusted SQL.
+		$query = "SELECT status_counts.comment_post_ID, status_counts.comment_approved, status_counts.total
+			FROM ( $query ) status_counts
+			STRAIGHT_JOIN {$wpdb->posts} post ON post.ID = status_counts.comment_post_ID
+			WHERE post.post_status IN ( {$reports_statuses} )
+			ORDER BY status_counts.comment_post_ID, status_counts.comment_approved";
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Comments-based status counts by post' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['comment_post_ID'] ][ $row['comment_approved'] ] = (int) $row['total'];
+		}
+
+		if ( empty( $post_id_map ) ) {
+			return $counts;
+		}
+
+		// Reports need results keyed by the requested IDs, including translations.
+		$requested_counts = array();
+		foreach ( $post_id_map as $requested_id => $stored_id ) {
+			if ( isset( $counts[ $stored_id ] ) ) {
+				$requested_counts[ $requested_id ] = $counts[ $stored_id ];
+			}
+		}
+
+		return $requested_counts;
+	}
+
+	/**
 	 * Count students with activity on a lesson.
 	 *
 	 * @since $$next-version$$
@@ -254,81 +329,6 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		Utils::log_query_error( $wpdb, 'Comments-based ungraded quizzes count' );
 
 		return $count;
-	}
-
-	/**
-	 * Count progress records grouped by post and status.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
-	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
-	 */
-	public function count_statuses_by_post( array $args ): array {
-		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
-			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
-			return array();
-		}
-
-		// WPML stores shared progress on the original post, so resolve translated IDs before querying.
-		// If both post_id and post__in are supplied, filter by post_id and ignore post__in.
-		$post_ids    = ! empty( $args['post_id'] ) ? array( $args['post_id'] ) : ( $args['post__in'] ?? array() );
-		$post_id_map = Utils::get_progress_post_id_map( $post_ids, $args['type'] );
-		if ( ! empty( $args['post_id'] ) ) {
-			$args['post_id'] = $post_id_map[ (int) $args['post_id'] ];
-		} elseif ( $post_id_map ) {
-			$args['post__in'] = array_values( $post_id_map );
-		}
-
-		// Reports include published and private content only.
-		$reports_statuses = Utils::get_reports_post_status_sql();
-		$wpdb             = $this->wpdb;
-		$comment_type     = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb; report statuses are SQL literals.
-		$query = $wpdb->prepare(
-			"SELECT c.comment_post_ID, c.comment_approved, COUNT(*) AS total
-			FROM {$wpdb->comments} c
-			WHERE c.comment_type = %s",
-			$comment_type
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$query .= $this->build_post_filter_clause( $args );
-		$query .= $this->build_user_filter_clause( $args );
-		$query .= $this->build_user_exclusion_clause( $args );
-		$query .= ' GROUP BY c.comment_post_ID, c.comment_approved';
-
-		// Read grouped counts first so the database checks post eligibility once per group.
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Inner query is prepared above; table and report statuses are trusted SQL.
-		$query = "SELECT status_counts.comment_post_ID, status_counts.comment_approved, status_counts.total
-			FROM ( $query ) status_counts
-			STRAIGHT_JOIN {$wpdb->posts} post ON post.ID = status_counts.comment_post_ID
-			WHERE post.post_status IN ( {$reports_statuses} )
-			ORDER BY status_counts.comment_post_ID, status_counts.comment_approved";
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
-		$results = (array) $wpdb->get_results( $query, ARRAY_A );
-		Utils::log_query_error( $wpdb, 'Comments-based status counts by post' );
-
-		$counts = array();
-		foreach ( $results as $row ) {
-			$counts[ (int) $row['comment_post_ID'] ][ $row['comment_approved'] ] = (int) $row['total'];
-		}
-
-		if ( empty( $post_id_map ) ) {
-			return $counts;
-		}
-
-		// Reports need results keyed by the requested IDs, including translations.
-		$requested_counts = array();
-		foreach ( $post_id_map as $requested_id => $stored_id ) {
-			if ( isset( $counts[ $stored_id ] ) ) {
-				$requested_counts[ $requested_id ] = $counts[ $stored_id ];
-			}
-		}
-
-		return $requested_counts;
 	}
 
 	/**
