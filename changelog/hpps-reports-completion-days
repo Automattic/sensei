@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Read Courses completion averages from the selected progress backend.
