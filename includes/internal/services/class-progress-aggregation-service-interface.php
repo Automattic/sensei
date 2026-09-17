@@ -121,4 +121,19 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
 	 */
 	public function count_ungraded_quizzes( array $args = array() ): int;
+
+	/**
+	 * Count completed lesson progress per lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs.
+	 * @param array $args {
+	 *     Optional query filters.
+	 *
+	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
+	 * }
+	 * @return array<int, int> Map of lesson_id => completion count.
+	 */
+	public function get_lesson_completion_counts( array $lesson_ids, array $args = array() ): array;
 }

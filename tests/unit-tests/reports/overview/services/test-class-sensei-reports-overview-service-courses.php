@@ -276,6 +276,30 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 25.0, $actual );
 	}
 
+	public function testGetTotalAverageProgress_TemporaryUsersGiven_ExcludesTheirCompletionsAndEnrollments(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$users     = array(
+			'registered_complete' => $this->factory->user->create( array( 'user_login' => 'registered_complete' ) ),
+			'registered_started'  => $this->factory->user->create( array( 'user_login' => 'registered_started' ) ),
+			'guest_complete'      => $this->factory->user->create( array( 'user_login' => 'sensei_guest_complete' ) ),
+			'preview_complete'    => $this->factory->user->create( array( 'user_login' => 'sensei_preview_complete' ) ),
+		);
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $users['registered_complete'], true );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $users['registered_started'] );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $users['guest_complete'], true );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $users['preview_complete'], true );
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_total_average_progress( array( $course_id ) );
+
+		/* Assert. */
+		self::assertSame( 50.0, $actual );
+	}
+
 	/**
 	 * Tests that average grade returns zero when courses have no graded quizzes.
 	 *
@@ -316,7 +340,6 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( 75, $actual );
 	}
-
 	public function testGetAverageDaysToCompletionWhenOneCourseExistsReturnsMatchingValue() {
 		$user1_id  = $this->factory->user->create();
 		$user2_id  = $this->factory->user->create();
