@@ -116,4 +116,13 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
 	public function count_statuses_by_post( array $args ): array;
+	/**
+	 * Average days-to-completion across the given courses (AVG of per-course averages).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @return float
+	 */
+	public function get_courses_average_days_to_completion( array $course_ids ): float;
 }

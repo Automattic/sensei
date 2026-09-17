@@ -24,6 +24,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_Service_Interface {
 
 	/**
+	 * Maximum progress records read per completion-day calculation batch.
+	 *
+	 * @since $$next-version$$
+	 * @var int
+	 */
+	private const COMPLETION_DAYS_BATCH_SIZE = 5000;
+
+	/**
 	 * WordPress database object.
 	 *
 	 * @var \wpdb
@@ -333,6 +341,103 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		}
 
 		return $requested_counts;
+	}
+
+	/**
+	 * Average days-to-completion across the given courses (AVG of per-course averages).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @return float
+	 */
+	public function get_courses_average_days_to_completion( array $course_ids ): float {
+		if ( empty( $course_ids ) ) {
+			return 0.0;
+		}
+
+		// WPML translations share progress; count each original course only once.
+		$post_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
+		$course_ids  = array_values( array_unique( $post_id_map ) );
+
+		$wpdb         = $this->wpdb;
+		$table        = $this->get_progress_table_name();
+		$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
+
+		// Use the timezone offset at each event date, since daylight saving can change the local day.
+		// PHP knows these timezone rules even when MySQL timezone tables are unavailable.
+		$timezone        = wp_timezone();
+		$utc             = new \DateTimeZone( 'UTC' );
+		$start_counts    = array();
+		$completion_days = array();
+		$last_id         = 0;
+
+		do {
+			// Read a fixed number of records so even unique timestamps cannot fill PHP memory.
+			// Reuse calculations for repeated dates within a batch without sorting records in SQL.
+			// Missing starts may be NULL or migrated zero dates; neither counts toward the average.
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Dynamic course placeholders plus cursor and batch size. Table name from wpdb prefix. Placeholders created dynamically.
+			$query = $wpdb->prepare(
+				"SELECT p.id, p.post_id, p.started_at, p.completed_at
+				FROM {$table} p
+				WHERE p.type = 'course'
+					AND p.status = 'complete'
+					AND p.post_id IN ( $placeholders )
+					AND p.started_at > '0000-00-00 00:00:00'
+					AND p.id > %d
+				ORDER BY p.id
+				LIMIT %d",
+				array_merge( $course_ids, array( $last_id, self::COMPLETION_DAYS_BATCH_SIZE ) )
+			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+			$results = $wpdb->get_results( $query, ARRAY_A );
+			Utils::log_query_error( $wpdb, 'Tables-based courses average days to completion' );
+			if ( null === $results ) {
+				return 0.0;
+			}
+
+			$batch_count = count( $results );
+			$date_cache  = array();
+			foreach ( $results as $row ) {
+				$course_id = (int) $row['post_id'];
+				$last_id   = (int) $row['id'];
+
+				// Match comments: starts still count when the completion date is missing.
+				$start_counts[ $course_id ] = ( $start_counts[ $course_id ] ?? 0 ) + 1;
+				if ( empty( $row['completed_at'] ) || '0000-00-00 00:00:00' === $row['completed_at'] ) {
+					continue;
+				}
+
+				// Count local calendar days, including both the start and completion day.
+				$started_at   = $date_cache[ $row['started_at'] ] ?? ( new \DateTimeImmutable( $row['started_at'], $utc ) )->setTimezone( $timezone )->setTime( 0, 0 );
+				$completed_at = $date_cache[ $row['completed_at'] ] ?? ( new \DateTimeImmutable( $row['completed_at'], $utc ) )->setTimezone( $timezone )->setTime( 0, 0 );
+
+				// Keep a small cache: repeated dates are cheap, and unique dates cannot grow it indefinitely.
+				if ( count( $date_cache ) < 128 ) {
+					$date_cache[ $row['started_at'] ]   = $started_at;
+					$date_cache[ $row['completed_at'] ] = $completed_at;
+				}
+				$days = (int) $started_at->diff( $completed_at )->days + 1;
+
+				// Accumulate each course across all batches before rounding its average.
+				$completion_days[ $course_id ] = ( $completion_days[ $course_id ] ?? 0 ) + $days;
+			}
+		} while ( self::COMPLETION_DAYS_BATCH_SIZE === $batch_count );
+
+		// A failed later batch must not return an average from only part of the records.
+		if ( $wpdb->last_error ) {
+			return 0.0;
+		}
+
+		// Round each course average up before averaging courses, giving each course equal weight.
+		$total = 0.0;
+		foreach ( $completion_days as $course_id => $days ) {
+			$total += ceil( $days / $start_counts[ $course_id ] );
+		}
+
+		return $completion_days ? $total / count( $completion_days ) : 0.0;
 	}
 
 	/**
