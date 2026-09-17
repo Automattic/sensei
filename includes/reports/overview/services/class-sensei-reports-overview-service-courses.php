@@ -134,26 +134,10 @@ class Sensei_Reports_Overview_Service_Courses {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
-		global $wpdb;
 
-		$query = "
-		SELECT AVG( aggregated.days_to_completion )
-		FROM (
-			SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
-			FROM {$wpdb->comments}
-			LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
-				AND {$wpdb->commentmeta}.meta_key = 'start'
-			WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
-				AND {$wpdb->comments}.comment_approved = 'complete'
-				AND {$wpdb->comments}.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		. " GROUP BY {$wpdb->comments}.comment_post_ID
-		) AS aggregated
-		";
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		return (float) $wpdb->get_var( $query );
+		return $this->get_aggregation_service()
+			->get_courses_average_days_to_completion( $course_ids );
 	}
-
 
 	/**
 	 * Get total of enrollments
