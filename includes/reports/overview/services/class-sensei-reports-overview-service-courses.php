@@ -6,6 +6,7 @@
  */
 
 use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Services\Utils;
 
@@ -27,17 +28,26 @@ class Sensei_Reports_Overview_Service_Courses {
 	private ?Grading_Stats_Service_Interface $grading_stats_service = null;
 
 	/**
+	 * Progress aggregation service.
+	 *
+	 * @var Progress_Aggregation_Service_Interface|null
+	 */
+	private ?Progress_Aggregation_Service_Interface $aggregation_service = null;
+
+	/**
 	 * Create a courses overview service with its dependencies.
 	 *
 	 * @internal
 	 * @since $$next-version$$
 	 *
-	 * @param Grading_Stats_Service_Interface $grading_stats_service Grading statistics service.
+	 * @param Grading_Stats_Service_Interface        $grading_stats_service Grading statistics service.
+	 * @param Progress_Aggregation_Service_Interface $aggregation_service   Progress aggregation service.
 	 * @return self
 	 */
-	public static function create_with_dependencies( Grading_Stats_Service_Interface $grading_stats_service ): self {
+	public static function create_with_dependencies( Grading_Stats_Service_Interface $grading_stats_service, Progress_Aggregation_Service_Interface $aggregation_service ): self {
 		$instance                        = new self();
 		$instance->grading_stats_service = $grading_stats_service;
+		$instance->aggregation_service   = $aggregation_service;
 
 		return $instance;
 	}
@@ -244,9 +254,12 @@ class Sensei_Reports_Overview_Service_Courses {
 	 */
 	private function get_lessons_in_courses( $course_ids ): array {
 		global $wpdb;
+		// Use the original course's lessons so WPML translations match their shared progress.
+		$course_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
+		$course_ids    = array_values( $course_id_map );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		return $wpdb->get_results(
+		$results = $wpdb->get_results(
 			"SELECT pm.meta_value as course_id, GROUP_CONCAT(pm.post_id) as lessons
 			FROM {$wpdb->postmeta} pm
 			WHERE pm.meta_value IN ( " . implode( ',', $course_ids ) . ' )'  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -254,6 +267,16 @@ class Sensei_Reports_Overview_Service_Courses {
 			GROUP BY pm.meta_value",
 			'OBJECT_K'
 		);
+
+		// Keep the requested course IDs as keys for the report calculations.
+		$requested_results = array();
+		foreach ( $course_id_map as $requested_id => $stored_id ) {
+			if ( isset( $results[ $stored_id ] ) ) {
+				$requested_results[ $requested_id ] = $results[ $stored_id ];
+			}
+		}
+
+		return $requested_results;
 	}
 
 	/**
@@ -265,17 +288,40 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @return array students in courses.
 	 */
 	private function get_students_count_in_courses( array $course_ids ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
 
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		return $wpdb->get_results(
-			"SELECT c.comment_post_ID as course_id, count(c.comment_post_ID) as students_count
-				FROM {$wpdb->comments} c
-				WHERE c.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )'  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			. " AND c.comment_type = 'sensei_course_status'
-				AND c.comment_approved IN ( 'in-progress', 'complete' )
-				GROUP BY c.comment_post_ID",
-			'OBJECT_K'
-		);
+		$by_post = $this->get_aggregation_service()
+			->count_statuses_by_post(
+				array(
+					'type'     => 'course',
+					'post__in' => $course_ids,
+				)
+			);
+
+		// Enrollment totals count only started or completed courses, as before.
+		$result = array();
+		foreach ( $by_post as $course_id => $statuses ) {
+			$result[ $course_id ] = (object) array(
+				'course_id'      => $course_id,
+				'students_count' => ( $statuses['in-progress'] ?? 0 ) + ( $statuses['complete'] ?? 0 ),
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Keep older constructor calls working when no aggregation service was supplied.
+	 *
+	 * @return Progress_Aggregation_Service_Interface
+	 */
+	private function get_aggregation_service(): Progress_Aggregation_Service_Interface {
+		if ( null === $this->aggregation_service ) {
+			$this->aggregation_service = ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service();
+		}
+
+		return $this->aggregation_service;
 	}
 }

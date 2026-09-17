@@ -107,4 +107,13 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
 	 */
 	public function count_ungraded_quizzes( array $args = array() ): int;
+	/**
+	 * Count progress records grouped by post and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	public function count_statuses_by_post( array $args ): array;
 }

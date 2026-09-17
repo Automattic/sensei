@@ -42,17 +42,6 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
-	 * Get the progress table name.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @return string The progress table name.
-	 */
-	private function get_progress_table_name(): string {
-		return $this->wpdb->prefix . 'sensei_lms_progress';
-	}
-
-	/**
 	 * Count progress records grouped by status.
 	 *
 	 * @since 4.26.0
@@ -302,6 +291,62 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Count progress records grouped by post and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	public function count_statuses_by_post( array $args ): array {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
+			return array();
+		}
+
+		// WPML stores shared progress on the original post, so resolve translated IDs before querying.
+		// If both post_id and post__in are supplied, filter by post_id and ignore post__in.
+		$post_ids    = ! empty( $args['post_id'] ) ? array( $args['post_id'] ) : ( $args['post__in'] ?? array() );
+		$post_id_map = Utils::get_progress_post_id_map( $post_ids, $args['type'] );
+		if ( ! empty( $args['post_id'] ) ) {
+			$args['post_id'] = $post_id_map[ (int) $args['post_id'] ];
+		} elseif ( $post_id_map ) {
+			$args['post__in'] = array_values( $post_id_map );
+		}
+
+		if ( 'lesson' === $args['type'] ) {
+			$counts = $this->count_lesson_statuses_with_quiz_by_post( $args );
+		} else {
+			$counts = $this->count_course_statuses_by_post( $args );
+		}
+
+		if ( empty( $post_id_map ) ) {
+			return $counts;
+		}
+
+		// Reports need results keyed by the requested IDs, including translations.
+		$requested_counts = array();
+		foreach ( $post_id_map as $requested_id => $stored_id ) {
+			if ( isset( $counts[ $stored_id ] ) ) {
+				$requested_counts[ $requested_id ] = $counts[ $stored_id ];
+			}
+		}
+
+		return $requested_counts;
+	}
+
+	/**
+	 * Get the progress table name.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @return string The progress table name.
+	 */
+	private function get_progress_table_name(): string {
+		return $this->wpdb->prefix . 'sensei_lms_progress';
+	}
+
+	/**
 	 * Count lesson statuses using quiz status when a quiz exists.
 	 *
 	 * In HPPS, lesson progress rows only store 'in-progress' and 'complete',
@@ -383,6 +428,86 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$counts = array();
 		foreach ( $results as $row ) {
 			$counts[ $row['status'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Count course progress grouped by post and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Query arguments (see count_statuses).
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	private function count_course_statuses_by_post( array $args ): array {
+		$reports_statuses = Utils::get_reports_post_status_sql();
+		$wpdb             = $this->wpdb;
+		$table            = $this->get_progress_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query  = "SELECT p.post_id, p.status, COUNT(*) AS total FROM {$table} p";
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$reports_statuses} )";
+
+		$query .= $wpdb->prepare( ' WHERE p.type = %s', $args['type'] );
+		$query .= $this->build_post_filter_clause( $args );
+		$query .= $this->build_user_filter_clause( $args );
+		$query .= $this->build_user_exclusion_clause( $args );
+
+		$query .= ' GROUP BY p.post_id, p.status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based course status counts by post' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['post_id'] ][ $row['status'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Count lesson statuses grouped by post, using quiz status when a quiz exists.
+	 *
+	 * See count_lesson_statuses_with_quiz() for the rationale behind using
+	 * COALESCE(q.status, p.status).
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $args Query arguments (see count_statuses).
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	private function count_lesson_statuses_with_quiz_by_post( array $args ): array {
+		$reports_statuses = Utils::get_reports_post_status_sql();
+		$wpdb             = $this->wpdb;
+		$table            = $this->get_progress_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$query = "SELECT p.post_id, COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$reports_statuses} )";
+		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
+		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
+
+		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'lesson' );
+
+		$query .= $this->build_post_filter_clause( $args );
+		$query .= $this->build_user_filter_clause( $args );
+		$query .= $this->build_user_exclusion_clause( $args, 'COALESCE( q.status, p.status )' );
+
+		$query .= ' GROUP BY p.post_id, effective_status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based lesson status counts by post' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['post_id'] ][ $row['effective_status'] ] = (int) $row['total'];
 		}
 
 		return $counts;
