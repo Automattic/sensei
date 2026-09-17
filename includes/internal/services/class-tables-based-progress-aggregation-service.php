@@ -145,7 +145,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
 		$query = "SELECT p.post_id, p.status, COUNT(*) AS total FROM {$table} p";
 
-		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'course' );
+		$query .= " WHERE p.type = 'course'";
 		$query .= $this->build_post_filter_clause( array( 'post__in' => array_values( $post_id_map ) ) );
 
 		$query .= ' GROUP BY p.post_id, p.status';
