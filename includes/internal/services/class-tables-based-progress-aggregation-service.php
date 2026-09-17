@@ -130,9 +130,16 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Count progress records grouped by post and status.
 	 *
+	 * Callers select report posts; this method does not filter by post visibility.
+	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
+	 * @param array $args {
+	 *     Query arguments.
+	 *
+	 *     @type string $type     'course' or 'lesson'.
+	 *     @type int[]  $post__in Restrict to specific post IDs.
+	 * }
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
 	public function count_statuses_by_post( array $args ): array {
@@ -141,15 +148,9 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			return array();
 		}
 
-		// WPML stores shared progress on the original post, so resolve translated IDs before querying.
-		// If both post_id and post__in are supplied, filter by post_id and ignore post__in.
-		$post_ids    = ! empty( $args['post_id'] ) ? array( $args['post_id'] ) : ( $args['post__in'] ?? array() );
-		$post_id_map = Utils::get_progress_post_id_map( $post_ids, $args['type'] );
-		if ( ! empty( $args['post_id'] ) ) {
-			$args['post_id'] = $post_id_map[ (int) $args['post_id'] ];
-		} elseif ( $post_id_map ) {
-			$args['post__in'] = array_values( $post_id_map );
-		}
+		// Apply the same progress-ID filters as the repositories so Reports reads the same stored progress.
+		$post_id_map      = Utils::get_progress_post_id_map( $args['post__in'] ?? array(), $args['type'] );
+		$args['post__in'] = array_values( $post_id_map );
 
 		if ( 'lesson' === $args['type'] ) {
 			$counts = $this->count_lesson_statuses_with_quiz_by_post( $args );
@@ -438,22 +439,18 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Query arguments (see count_statuses).
+	 * @param array $args Query arguments (see count_statuses_by_post).
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
 	private function count_course_statuses_by_post( array $args ): array {
-		$reports_statuses = Utils::get_reports_post_status_sql();
-		$wpdb             = $this->wpdb;
-		$table            = $this->get_progress_table_name();
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
-		$query  = "SELECT p.post_id, p.status, COUNT(*) AS total FROM {$table} p";
-		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$reports_statuses} )";
+		$query = "SELECT p.post_id, p.status, COUNT(*) AS total FROM {$table} p";
 
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', $args['type'] );
-		$query .= $this->build_post_filter_clause( $args );
-		$query .= $this->build_user_filter_clause( $args );
-		$query .= $this->build_user_exclusion_clause( $args );
+		$query .= $this->build_post_filter_clause( array( 'post__in' => $args['post__in'] ?? array() ) );
 
 		$query .= ' GROUP BY p.post_id, p.status';
 
@@ -477,27 +474,23 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Query arguments (see count_statuses).
+	 * @param array $args Query arguments (see count_statuses_by_post).
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
 	private function count_lesson_statuses_with_quiz_by_post( array $args ): array {
-		$reports_statuses = Utils::get_reports_post_status_sql();
-		$wpdb             = $this->wpdb;
-		$table            = $this->get_progress_table_name();
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query = "SELECT p.post_id, COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
-		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$reports_statuses} )";
 		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
 
 		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'lesson' );
 
-		$query .= $this->build_post_filter_clause( $args );
-		$query .= $this->build_user_filter_clause( $args );
-		$query .= $this->build_user_exclusion_clause( $args, 'COALESCE( q.status, p.status )' );
+		$query .= $this->build_post_filter_clause( array( 'post__in' => $args['post__in'] ?? array() ) );
 
 		$query .= ' GROUP BY p.post_id, effective_status';
 

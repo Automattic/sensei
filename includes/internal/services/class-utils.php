@@ -53,8 +53,9 @@ class Utils {
 	/**
 	 * Resolve progress IDs while retaining the IDs used by report rows.
 	 *
-	 * WPML shares progress across translations and stores it against the original post.
-	 * Callers query the values and key their results by the requested IDs.
+	 * Use the same progress-ID filters as the repositories to locate stored progress.
+	 * For example, WPML uses these filters to share progress with the original-language post.
+	 * Callers query the mapped IDs and key their results by the requested IDs.
 	 *
 	 * @since $$next-version$$
 	 *
