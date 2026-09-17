@@ -75,11 +75,15 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 		/* Arrange. */
 		$user1      = $this->sensei_factory->user->create();
 		$user2      = $this->sensei_factory->user->create();
+		$user3      = $this->sensei_factory->user->create();
 		$course_id1 = $this->sensei_factory->course->create();
 		$course_id2 = $this->sensei_factory->course->create();
 		$this->seed_progress( $course_id1, $user1, 'course', 'complete' );
 		$this->seed_progress( $course_id1, $user2, 'course', 'in-progress' );
+		$this->seed_progress( $course_id1, $user3, 'course', 'in-progress' );
 		$this->seed_progress( $course_id2, $user1, 'course', 'in-progress' );
+		$this->seed_progress( $course_id2, $user2, 'course', 'in-progress' );
+		$this->seed_progress( $course_id2, $user3, 'course', 'in-progress' );
 		$service = $this->get_service();
 
 		/* Act. */
@@ -90,9 +94,9 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 			array(
 				$course_id1 => array(
 					'complete'    => 1,
-					'in-progress' => 1,
+					'in-progress' => 2,
 				),
-				$course_id2 => array( 'in-progress' => 1 ),
+				$course_id2 => array( 'in-progress' => 3 ),
 			),
 			$this->sort_counts( $actual )
 		);
