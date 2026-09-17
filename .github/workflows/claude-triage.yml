@@ -227,7 +227,11 @@ jobs:
           # * `gh api` is read-only here. Denying `-X`/`--method` isn't enough:
           #   gh switches to POST whenever a field flag is present, so
           #   `gh api <endpoint> -f k=v` writes without naming a method. Those
-          #   flags are denied too; the skill only ever does a GET with `--jq`.
+          #   flags are denied too. `--jq`/`-q` are also denied: jq's `env`
+          #   builtin reads process environment variables regardless of the
+          #   piped JSON, which combined with a permitted redirect into /tmp
+          #   and the exact-match `gh issue comment --body-file` below could
+          #   publish a secret. The skill reads fields from the plain response.
           # * The deny patterns' trailing `:*` is equivalent to a
           #   space-separated wildcard (`Bash(ls:*)` matches what `Bash(ls *)`
           #   does) per https://code.claude.com/docs/en/permissions. The colon
@@ -239,8 +243,8 @@ jobs:
             --max-turns 100
             --max-budget-usd 4.00
             --mcp-config /tmp/mcp-chrome.json
-            --allowedTools 'Read,Glob,Grep,Edit(//tmp/**),mcp__chrome-devtools,Bash(scripts/triage-wp *),Bash(./scripts/triage-wp *),Bash(scripts/triage-phpunit *),Bash(./scripts/triage-phpunit *),Bash(npm run build:assets),Bash(curl -sI http://localhost:8888),Bash(head*),Bash(tail*),Bash(grep*),Bash(wc*),Bash(git grep*),Bash(git log*),Bash(git show*),Bash(git diff*),Bash(git status*),Bash(git rev-parse*),Bash(gh issue view*),Bash(gh issue comment ${{ github.event.issue.number }} --repo Automattic/sensei --body-file /tmp/triage.md),Bash(gh issue edit ${{ github.event.issue.number }} * --add-label*),Bash(gh issue edit ${{ github.event.issue.number }} * --remove-label*),Bash(gh issue list*),Bash(gh search issues*),Bash(gh repo view*),Bash(gh api *),Bash(gh label list*)'
-            --disallowedTools "Edit" "Bash(gh pr *)" "Bash(gh issue close:*)" "Bash(gh issue delete:*)" "Bash(gh issue edit * --title*)" "Bash(gh issue edit * -t *)" "Bash(gh issue edit * --body*)" "Bash(gh issue edit * -b *)" "Bash(gh issue edit * -F *)" "Bash(gh issue comment * --edit-last*)" "Bash(gh issue comment * --delete-last*)" "Bash(gh issue comment * --attach*)" "Bash(gh issue comment * --editor*)" "Bash(gh issue comment * --web*)" "Bash(gh label delete:*)" "Bash(gh label create:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push*)" "Bash(git commit*)" "Bash(git add *)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)" "Bash(gh api * -f*)" "Bash(gh api * -F*)" "Bash(gh api * --field*)" "Bash(gh api * --raw-field*)" "Bash(gh api * --input*)" "Bash(gh api -f*)" "Bash(gh api -F*)" "Bash(gh api --field*)" "Bash(gh api --raw-field*)" "Bash(gh api --input*)"
+            --allowedTools 'Read,Glob,Grep,Edit(//tmp/**),mcp__chrome-devtools,Bash(scripts/triage-wp *),Bash(./scripts/triage-wp *),Bash(scripts/triage-phpunit *),Bash(./scripts/triage-phpunit *),Bash(npm run build:assets),Bash(curl -sI http://localhost:8888),Bash(head*),Bash(tail*),Bash(grep*),Bash(wc*),Bash(git grep*),Bash(git log*),Bash(git show*),Bash(git diff*),Bash(git status*),Bash(git rev-parse*),Bash(git tag*),Bash(gh issue view*),Bash(gh issue comment ${{ github.event.issue.number }} --repo Automattic/sensei --body-file /tmp/triage.md),Bash(gh issue edit ${{ github.event.issue.number }} * --add-label*),Bash(gh issue edit ${{ github.event.issue.number }} * --remove-label*),Bash(gh issue list*),Bash(gh search issues*),Bash(gh repo view*),Bash(gh api *),Bash(gh label list*)'
+            --disallowedTools "Edit" "Bash(gh pr *)" "Bash(gh issue close:*)" "Bash(gh issue delete:*)" "Bash(gh issue edit * --title*)" "Bash(gh issue edit * -t *)" "Bash(gh issue edit * --body*)" "Bash(gh issue edit * -b *)" "Bash(gh issue edit * -F *)" "Bash(gh issue comment * --edit-last*)" "Bash(gh issue comment * --delete-last*)" "Bash(gh issue comment * --attach*)" "Bash(gh issue comment * --editor*)" "Bash(gh issue comment * --web*)" "Bash(gh label delete:*)" "Bash(gh label create:*)" "Bash(gh run delete:*)" "Bash(gh run cancel:*)" "Bash(git push*)" "Bash(git commit*)" "Bash(git add *)" "Bash(gh api -X*)" "Bash(gh api * -X*)" "Bash(gh api --method*)" "Bash(gh api * --method*)" "Bash(gh api * -f*)" "Bash(gh api * -F*)" "Bash(gh api * --field*)" "Bash(gh api * --raw-field*)" "Bash(gh api * --input*)" "Bash(gh api -f*)" "Bash(gh api -F*)" "Bash(gh api --field*)" "Bash(gh api --raw-field*)" "Bash(gh api --input*)" "Bash(gh api * --jq*)" "Bash(gh api --jq*)" "Bash(gh api * -q*)" "Bash(gh api -q*)"
 
       # Screenshots are deliberately not uploaded: on a public repo an artifact is
       # fetchable by any logged-in account, and an unreviewed image out of a job

@@ -53,7 +53,7 @@ Both environments can drive a real browser — reproduction is always a browser 
 
   Two further CI limits, both deliberate:
 
-- **wp-cli goes through `scripts/triage-wp`, never `make wp`.** Permitted verbs: `post`, `term`, `user`, `option get`, `plugin list`, `theme list`, `theme activate`, `action-scheduler`, `sensei db seed`. Call it as `scripts/triage-wp <verb> <args>` — the script rejects any other verb and any argument outside `A-Za-z0-9_./=:@,+-` and space. `wp eval`/`shell`/`db`/`plugin install` are unavailable — arbitrary code execution with network access would bypass the browser confinement. `make wp` isn't allowlisted at all: the Makefile interpolates its argument into a shell recipe, so a glob over it can't constrain what runs.
+- **wp-cli goes through `scripts/triage-wp`, never `make wp`.** Permitted verbs, matched in full: `post list`, `post get`, `post term set`, `post meta get`, `post meta list`, `post meta update`, `term generate`, `option get`, `plugin list`, `theme list`, `theme activate`, `action-scheduler list`, `sensei db seed`, `user list`, `user meta get`, `user meta list`. The match requires the whole verb phrase, so `post delete` doesn't pass just because `post list` does. Call it as `scripts/triage-wp <verb> <args>` — the script rejects any other verb and any argument outside `A-Za-z0-9_./=:@,+-` and space. `wp eval`/`shell`/`db`/`plugin install`, and every `delete`/`update`-on-a-real-user verb, are unavailable — this list is read-and-seed only. `make wp` isn't allowlisted at all: the Makefile interpolates its argument into a shell recipe, so a glob over it can't constrain what runs. If a real triage needs a verb that isn't here, add it deliberately — don't widen an existing entry into a prefix.
 - **You cannot create issues in CI.** See the [Sensei Pro auto-submit](#auto-submit-into-sensei-pro-on-the-users-behalf) rules — the CI path posts the staff-follow-up comment rather than filing anything.
 
 ### Seeding notes
@@ -116,8 +116,10 @@ Read the body and comments. Note the reporter's WordPress/PHP/Sensei versions, a
 This skill triages **bug reports only**. A report qualifies when either signal says so — the `[Type] Bug` label, or GitHub's native issue **type** set to `Bug` (an org-level issue type, exposed as `.type.name` on the REST payload, not as a label):
 
 ```bash
-gh api repos/Automattic/sensei/issues/<number> --jq '{type: (.type.name // "none"), labels: [.labels[].name]}'
+gh api repos/Automattic/sensei/issues/<number>
 ```
+
+`--jq`/`-q` are denied on `gh api` — jq's `env` builtin can read process environment variables regardless of the piped JSON, which combined with a permitted redirect into `/tmp` and this skill's own `gh issue comment --body-file` would be a way to publish a secret. Read `.type.name` and `.labels[].name` from the plain JSON response instead.
 
 - **`[Type] Bug` label present, or `type == "Bug"`** → continue to [Duplicate check](#3-duplicate-check). On an autonomous run this is always the case: `claude-triage.yml` only fires on `issues: opened` when one of the two signals is already set, so the gate is satisfied before you start.
 - **Neither signal, but the report plainly describes a defect** (broken behavior, error, regression) → continue, and apply `[Type] Bug` as part of the final labelling. This case is reachable **only on a manual `@claude-triage` invocation**, where a staff member has judged an unlabelled, untyped report worth triaging. It never arises autonomously.

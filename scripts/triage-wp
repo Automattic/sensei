@@ -12,17 +12,26 @@
 
 set -euo pipefail
 
-# wp-cli verbs the skill needs, matched against the first 1-3 words.
+# wp-cli verbs the skill needs, matched exactly against the leading words —
+# never a bare entity name alone, or its subcommands (e.g. `post delete`)
+# would pass too.
 ALLOWED_VERBS=(
-	"post"
-	"term"
-	"user"
+	"post list"
+	"post get"
+	"post term set"
+	"post meta get"
+	"post meta list"
+	"post meta update"
+	"term generate"
 	"option get"
 	"plugin list"
 	"theme list"
 	"theme activate"
-	"action-scheduler"
+	"action-scheduler list"
 	"sensei db seed"
+	"user list"
+	"user meta get"
+	"user meta list"
 )
 
 die() {
@@ -33,13 +42,13 @@ die() {
 [ "$#" -gt 0 ] || die "no wp-cli command given"
 
 # Character allowlist, not a metacharacter blocklist: anything outside this set
-# is refused. wp-env may re-join argv into a shell inside the container, so this
-# holds even though we exec with an argument array. Outer-shell quoting is
-# already stripped by the time we see argv, so legitimate values don't need
-# quote characters.
+# is refused. This guards wp-cli's own global flags, not shell re-interpretation
+# — `--exec` needs parentheses, excluded here; `--require=<file>` needs none,
+# so it's denied explicitly.
 for arg in "$@"; do
 	case $arg in
 		*[!A-Za-z0-9_./=:@,\ +-]*) die "refusing argument with unexpected characters: $arg" ;;
+		--require=*|--require) die "refusing wp-cli's --require: arbitrary PHP inclusion" ;;
 	esac
 done
 
