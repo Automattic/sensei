@@ -136,4 +136,13 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return array<int, int> Map of lesson_id => completion count.
 	 */
 	public function get_lesson_completion_counts( array $lesson_ids, array $args = array() ): array;
+	/**
+	 * Average of rounded per-course completion days for the requested courses.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @return float Average days to completion.
+	 */
+	public function get_courses_average_days_to_completion( array $course_ids ): float;
 }

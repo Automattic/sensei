@@ -1,0 +1,188 @@
+<?php
+
+/**
+ * Sensei Reports Overview Service Courses Test Class
+ *
+ * @covers Sensei_Reports_Overview_Service_Courses
+ */
+class Sensei_Reports_Overview_Service_Courses_Completion_Days_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
+
+	private static $initial_hook_suffix;
+
+	/**
+	 * Factory for setting up testing data.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
+
+	public static function setUpBeforeClass(): void {
+		parent::setUpBeforeClass();
+		self::$initial_hook_suffix = $GLOBALS['hook_suffix'] ?? null;
+		$GLOBALS['hook_suffix']    = null;
+	}
+
+	public static function tearDownAfterClass(): void {
+		parent::tearDownAfterClass();
+		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
+	}
+
+	/**
+	 * Set up before each test.
+	 */
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->factory = new Sensei_Factory();
+		$this->maybe_enable_hpps_tables_repository();
+	}
+
+	/**
+	 * Tear down after each test.
+	 */
+	public function tearDown(): void {
+		$this->maybe_reset_hpps_repository();
+		parent::tearDown();
+
+		$this->factory->tearDown();
+	}
+
+	public function testGetAverageDaysToCompletion_EmptyCourseIdsGiven_ReturnsZero() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+		$this->seed_course_completion_with_dates( $course_id, $user_id, '2022-01-01 00:00:00', '2022-01-04 00:00:00' );
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_average_days_to_completion( array() );
+
+		/* Assert. */
+		self::assertSame( 0.0, $actual );
+	}
+
+	public function testGetAverageDaysToCompletion_SingleCourseWithCompletionsGiven_ReturnsRoundedCourseAverage() {
+		/* Arrange. */
+		$user1_id  = $this->factory->user->create();
+		$user2_id  = $this->factory->user->create();
+		$user3_id  = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$this->seed_course_completion_with_dates( $course_id, $user1_id, '2022-01-01 00:00:01', '2022-01-07 00:00:00' );
+		$this->seed_course_completion_with_dates( $course_id, $user2_id, '2022-01-01 00:00:01', '2022-01-10 00:00:00' );
+		$this->seed_course_completion_with_dates( $course_id, $user3_id, '2022-01-01 00:00:01', '2022-01-30 00:00:00' );
+
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_average_days_to_completion( array( $course_id ) );
+
+		// 2022-01-07 00:00:00 - 2022-01-01 00:00:01 + 1 = 7 days.
+		// 2022-01-10 00:00:00 - 2022-01-01 00:00:01 + 1 = 10 days.
+		// 2022-01-30 00:00:00 - 2022-01-01 00:00:01 + 1 = 30 days.
+		// As these completions are for the single course:
+		// ceil(7 + 10 + 30/ 3)  = 16 days.
+
+		/* Assert. */
+		self::assertSame( 16.0, $actual );
+	}
+
+	public function testGetAverageDaysToCompletion_MultipleCoursesWithCompletionsGiven_ReturnsAverageOfRoundedCourseAverages() {
+		/* Arrange. */
+		$user1_id   = $this->factory->user->create();
+		$user2_id   = $this->factory->user->create();
+		$course1_id = $this->factory->course->create();
+		$course2_id = $this->factory->course->create();
+
+		$this->seed_course_completion_with_dates( $course1_id, $user1_id, '2022-03-11 23:27:51', '2022-03-11 23:29:06' );
+		$this->seed_course_completion_with_dates( $course1_id, $user2_id, '2022-03-14 21:34:27', '2022-03-14 21:34:37' );
+		$this->seed_course_completion_with_dates( $course2_id, $user1_id, '2022-03-09 00:22:34', '2022-03-12 00:22:37' );
+
+		$instance = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $instance->get_average_days_to_completion( array( $course1_id, $course2_id ) );
+
+		// Average for the first course: (1 + 1) / 2 = 1.
+		// Average for the second course: 4 / 1 = 4.
+		// Total: (1 + 4) / 2 = 2.5.
+
+		/* Assert. */
+		self::assertSame( 2.5, $actual );
+	}
+
+	public function testGetAverageDaysToCompletion_WPMLTranslatedCourseGiven_ReturnsOriginalCompletionDays() {
+		/* Arrange. */
+		$original_course   = $this->factory->course->create();
+		$translated_course = $this->factory->course->create();
+		$original_lesson   = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $original_course ) ) );
+		$user_id           = $this->factory->user->create();
+		Sensei_Utils::sensei_start_lesson( $original_lesson, $user_id, true );
+		$this->seed_course_completion_with_dates( $original_course, $user_id, '2022-01-01 00:00:00', '2022-01-02 00:00:00' );
+		$this->add_translation_filters( array( $translated_course => $original_course ) );
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_average_days_to_completion( array( $translated_course ) );
+
+		/* Assert. */
+		self::assertSame( 2.0, $actual );
+	}
+
+	/**
+	 * Seed a completed course status with fixed start/completion dates, using
+	 * whichever storage backend is active for the current test run so that the
+	 * seeded fixture is readable by the aggregation service under test.
+	 *
+	 * @param int    $course_id    Course ID.
+	 * @param int    $user_id      User ID.
+	 * @param string $started_at   Start date/time string (site-local).
+	 * @param string $completed_at Completion date/time string (site-local).
+	 */
+	private function seed_course_completion_with_dates( int $course_id, int $user_id, string $started_at, string $completed_at ): void {
+		if ( self::is_hpps_tables_mode() ) {
+			$timezone        = wp_timezone();
+			$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id )
+				?? Sensei()->course_progress_repository->create( $course_id, $user_id );
+			$course_progress->start( new DateTimeImmutable( $started_at, $timezone ) );
+			$course_progress->complete( new DateTimeImmutable( $completed_at, $timezone ) );
+			Sensei()->course_progress_repository->save( $course_progress );
+			return;
+		}
+
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		wp_update_comment(
+			array(
+				'comment_ID'   => $comment_id,
+				'comment_date' => $completed_at,
+			)
+		);
+		update_comment_meta( $comment_id, 'start', $started_at );
+	}
+
+	/**
+	 * Simulate WPML resolving translated posts to the original language.
+	 *
+	 * @param array $map Translated IDs mapped to original IDs.
+	 */
+	private function add_translation_filters( array $map ): void {
+		add_filter(
+			'wpml_element_language_details',
+			static function () {
+				return array(
+					'source_language_code' => 'en',
+					'language_code'        => 'es',
+				);
+			}
+		);
+		add_filter(
+			'wpml_object_id',
+			static function ( $post_id ) use ( $map ) {
+				return $map[ $post_id ] ?? $post_id;
+			}
+		);
+		add_filter( 'sensei_course_progress_get_course_id', array( new \Sensei\WPML\Course_Progress(), 'translate_course_id' ) );
+		add_filter( 'sensei_lesson_progress_get_lesson_id', array( new \Sensei\WPML\Lesson_Progress(), 'translate_lesson_id' ) );
+	}
+}
