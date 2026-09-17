@@ -51,6 +51,32 @@ class Utils {
 	}
 
 	/**
+	 * Resolve progress IDs while retaining the IDs used by report rows.
+	 *
+	 * WPML shares progress across translations and stores it against the original post.
+	 * Callers query the values and key their results by the requested IDs.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[]  $post_ids Requested post IDs.
+	 * @param string $type     Course or lesson progress type.
+	 * @return array<int, int> Requested ID => stored progress ID.
+	 */
+	public static function get_progress_post_id_map( array $post_ids, string $type ): array {
+		$map = array();
+		foreach ( $post_ids as $post_id ) {
+			$post_id = (int) $post_id;
+			if ( 'course' === $type ) {
+				$map[ $post_id ] = (int) apply_filters( 'sensei_course_progress_get_course_id', $post_id );
+			} else {
+				$map[ $post_id ] = (int) apply_filters( 'sensei_lesson_progress_get_lesson_id', $post_id );
+			}
+		}
+
+		return $map;
+	}
+
+	/**
 	 * Get the Grading post statuses as a quoted list for a `post_status IN ( ... )` SQL clause.
 	 *
 	 * @since $$next-version$$
