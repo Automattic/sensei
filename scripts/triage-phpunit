@@ -5,7 +5,10 @@
 # Same reasoning as scripts/triage-wp: the Makefile interpolates its arguments
 # into a shell recipe, so the filter is validated here instead.
 #
-# Usage: scripts/triage-phpunit <TestClass|TestClass::method>
+# Usage: scripts/triage-phpunit [--hpps] <TestClass|TestClass::method>
+# --hpps runs with High-Performance Progress Storage enabled, matching
+# `npm run test-php:wp-env:hpps` — required for grading/progress/analytics
+# changes per the e2e-testing skill.
 
 set -euo pipefail
 
@@ -13,6 +16,12 @@ die() {
 	echo "triage-phpunit: $*" >&2
 	exit 64
 }
+
+hpps=""
+if [ "${1:-}" = "--hpps" ]; then
+	hpps="ENABLE_HPPS=1"
+	shift
+fi
 
 [ "$#" -eq 1 ] || die "expected exactly one filter argument"
 
@@ -29,4 +38,4 @@ case $filter in
 esac
 
 exec env COMPOSE_PROJECT_NAME=sensei-lms npx @wordpress/env run tests-cli \
-	--env-cwd='wp-content/plugins/sensei' vendor/bin/phpunit -c phpunit.xml --filter "$filter"
+	--env-cwd='wp-content/plugins/sensei' env $hpps vendor/bin/phpunit -c phpunit.xml --filter "$filter"
