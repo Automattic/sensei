@@ -32,8 +32,4 @@ class Comments_Based_Progress_Aggregation_Service_Contract_Test extends Progress
 			update_comment_meta( $comment_id, 'start', $started_at );
 		}
 	}
-	protected function seed_lesson_with_quiz_status( int $lesson_id, int $quiz_id, int $user_id, string $lesson_status, string $quiz_status ): void {
-		// Comments store the quiz-derived status directly on the lesson's progress comment.
-		$this->seed_progress( $lesson_id, $user_id, 'lesson', $quiz_status );
-	}
 }

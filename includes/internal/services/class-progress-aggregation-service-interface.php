@@ -58,21 +58,14 @@ interface Progress_Aggregation_Service_Interface {
 	public function count_statuses_by_user( array $args ): array;
 
 	/**
-	 * Count progress records grouped by post and status.
-	 *
-	 * Callers select report posts; this method does not filter by post visibility.
+	 * Count course progress records grouped by post and status.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args {
-	 *     Query arguments.
-	 *
-	 *     @type string $type     'course' or 'lesson'.
-	 *     @type int[]  $post__in Restrict to specific post IDs.
-	 * }
+	 * @param int[] $course_ids Course IDs to count; an empty list counts all courses.
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
-	public function count_statuses_by_post( array $args ): array;
+	public function count_statuses_by_post( array $course_ids ): array;
 	/**
 	 * Count students with activity on a lesson.
 	 *

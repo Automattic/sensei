@@ -141,42 +141,24 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	}
 
 	/**
-	 * Count progress records grouped by post and status.
-	 *
-	 * Callers select report posts; this method does not filter by post visibility.
+	 * Count course progress records grouped by post and status.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args {
-	 *     Query arguments.
-	 *
-	 *     @type string $type     'course' or 'lesson'.
-	 *     @type int[]  $post__in Restrict to specific post IDs.
-	 * }
+	 * @param int[] $course_ids Course IDs to count; an empty list counts all courses.
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
-	public function count_statuses_by_post( array $args ): array {
-		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
-			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
-			return array();
-		}
-
+	public function count_statuses_by_post( array $course_ids ): array {
 		// Apply the same progress-ID filters as the repositories so Reports reads the same stored progress.
-		$post_id_map      = Utils::get_progress_post_id_map( $args['post__in'] ?? array(), $args['type'] );
-		$args['post__in'] = array_values( $post_id_map );
+		$post_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
 
-		$wpdb         = $this->wpdb;
-		$comment_type = 'course' === $args['type'] ? 'sensei_course_status' : 'sensei_lesson_status';
+		$wpdb = $this->wpdb;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb.
-		$query = $wpdb->prepare(
-			"SELECT c.comment_post_ID, c.comment_approved, COUNT(*) AS total
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb.
+		$query  = "SELECT c.comment_post_ID, c.comment_approved, COUNT(*) AS total
 			FROM {$wpdb->comments} c
-			WHERE c.comment_type = %s",
-			$comment_type
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$query .= $this->build_post_filter_clause( array( 'post__in' => $args['post__in'] ?? array() ) );
+			WHERE c.comment_type = 'sensei_course_status'";
+		$query .= $this->build_post_filter_clause( array( 'post__in' => array_values( $post_id_map ) ) );
 		$query .= ' GROUP BY c.comment_post_ID, c.comment_approved';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.

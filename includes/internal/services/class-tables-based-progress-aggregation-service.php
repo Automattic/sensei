@@ -128,34 +128,35 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
-	 * Count progress records grouped by post and status.
-	 *
-	 * Callers select report posts; this method does not filter by post visibility.
+	 * Count course progress records grouped by post and status.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args {
-	 *     Query arguments.
-	 *
-	 *     @type string $type     'course' or 'lesson'.
-	 *     @type int[]  $post__in Restrict to specific post IDs.
-	 * }
+	 * @param int[] $course_ids Course IDs to count; an empty list counts all courses.
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
-	public function count_statuses_by_post( array $args ): array {
-		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( 'course', 'lesson' ), true ) ) {
-			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course" or "lesson".', '$$next-version$$' );
-			return array();
-		}
-
+	public function count_statuses_by_post( array $course_ids ): array {
 		// Apply the same progress-ID filters as the repositories so Reports reads the same stored progress.
-		$post_id_map      = Utils::get_progress_post_id_map( $args['post__in'] ?? array(), $args['type'] );
-		$args['post__in'] = array_values( $post_id_map );
+		$post_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
 
-		if ( 'lesson' === $args['type'] ) {
-			$counts = $this->count_lesson_statuses_with_quiz_by_post( $args );
-		} else {
-			$counts = $this->count_course_statuses_by_post( $args );
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query = "SELECT p.post_id, p.status, COUNT(*) AS total FROM {$table} p";
+
+		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'course' );
+		$query .= $this->build_post_filter_clause( array( 'post__in' => array_values( $post_id_map ) ) );
+
+		$query .= ' GROUP BY p.post_id, p.status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based course status counts by post' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['post_id'] ][ $row['status'] ] = (int) $row['total'];
 		}
 
 		if ( empty( $post_id_map ) ) {
@@ -429,78 +430,6 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$counts = array();
 		foreach ( $results as $row ) {
 			$counts[ $row['status'] ] = (int) $row['total'];
-		}
-
-		return $counts;
-	}
-
-	/**
-	 * Count course progress grouped by post and status.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Query arguments (see count_statuses_by_post).
-	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
-	 */
-	private function count_course_statuses_by_post( array $args ): array {
-		$wpdb  = $this->wpdb;
-		$table = $this->get_progress_table_name();
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
-		$query = "SELECT p.post_id, p.status, COUNT(*) AS total FROM {$table} p";
-
-		$query .= $wpdb->prepare( ' WHERE p.type = %s', $args['type'] );
-		$query .= $this->build_post_filter_clause( array( 'post__in' => $args['post__in'] ?? array() ) );
-
-		$query .= ' GROUP BY p.post_id, p.status';
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
-		$results = (array) $wpdb->get_results( $query, ARRAY_A );
-		Utils::log_query_error( $wpdb, 'Tables-based course status counts by post' );
-
-		$counts = array();
-		foreach ( $results as $row ) {
-			$counts[ (int) $row['post_id'] ][ $row['status'] ] = (int) $row['total'];
-		}
-
-		return $counts;
-	}
-
-	/**
-	 * Count lesson statuses grouped by post, using quiz status when a quiz exists.
-	 *
-	 * See count_lesson_statuses_with_quiz() for the rationale behind using
-	 * COALESCE(q.status, p.status).
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Query arguments (see count_statuses_by_post).
-	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
-	 */
-	private function count_lesson_statuses_with_quiz_by_post( array $args ): array {
-		$wpdb  = $this->wpdb;
-		$table = $this->get_progress_table_name();
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query = "SELECT p.post_id, COALESCE( q.status, p.status ) AS effective_status, COUNT( * ) AS total FROM {$table} p";
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
-		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
-		$query .= " LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
-
-		$query .= $wpdb->prepare( ' WHERE p.type = %s', 'lesson' );
-
-		$query .= $this->build_post_filter_clause( array( 'post__in' => $args['post__in'] ?? array() ) );
-
-		$query .= ' GROUP BY p.post_id, effective_status';
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
-		$results = (array) $wpdb->get_results( $query, ARRAY_A );
-		Utils::log_query_error( $wpdb, 'Tables-based lesson status counts by post' );
-
-		$counts = array();
-		foreach ( $results as $row ) {
-			$counts[ (int) $row['post_id'] ][ $row['effective_status'] ] = (int) $row['total'];
 		}
 
 		return $counts;
