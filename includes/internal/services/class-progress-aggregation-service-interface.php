@@ -116,4 +116,13 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
 	public function count_statuses_by_post( array $args ): array;
+	/**
+	 * Count completed lesson progress per lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs.
+	 * @return array<int, int> Map of lesson_id => completion count.
+	 */
+	public function get_lesson_completion_counts( array $lesson_ids ): array;
 }

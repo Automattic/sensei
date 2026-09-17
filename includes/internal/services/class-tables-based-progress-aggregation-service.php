@@ -336,6 +336,77 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Count completed lesson progress per lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs.
+	 * @return array<int, int> Map of lesson_id => completion count.
+	 */
+	public function get_lesson_completion_counts( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		// WPML translations share progress; query each original lesson only once.
+		$post_id_map = Utils::get_progress_post_id_map( $lesson_ids, 'lesson' );
+		$lesson_ids  = array_values( array_unique( $post_id_map ) );
+
+		$reports_statuses  = Utils::get_reports_post_status_sql();
+		$wpdb              = $this->wpdb;
+		$table             = $this->get_progress_table_name();
+		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
+		$placeholders      = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		// Check parent-course eligibility once per grouped lesson, not once per student.
+		// A submitted quiz supplies the lesson status; quiz rows without a submission are ignored.
+		// Submitted quizzes count as completions even while awaiting grading, for published/private parent courses.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb prefix. Placeholders created dynamically.
+		$query = $wpdb->prepare(
+			"SELECT completions.lesson_id, completions.completion_count
+			FROM (
+				SELECT p.post_id AS lesson_id, COUNT(*) AS completion_count
+				FROM {$table} p
+				LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0
+				LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
+					AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )
+				WHERE p.type = 'lesson'
+					AND p.post_id IN ( $placeholders )
+					AND COALESCE( q.status, p.status ) IN ('graded', 'ungraded', 'passed', 'failed', 'complete')
+				GROUP BY p.post_id
+			) completions
+			WHERE EXISTS (
+				SELECT 1 FROM {$wpdb->postmeta} course_meta
+				JOIN {$wpdb->posts} course ON course.ID = course_meta.meta_value
+				WHERE course_meta.post_id = completions.lesson_id
+					AND course_meta.meta_key = '_lesson_course'
+					AND course.post_status IN ( {$reports_statuses} )
+			)",
+			$lesson_ids
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based lesson completion counts' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['lesson_id'] ] = (int) $row['completion_count'];
+		}
+
+		// Reports need results keyed by the requested IDs, including translations.
+		$requested_counts = array();
+		foreach ( $post_id_map as $requested_id => $stored_id ) {
+			if ( isset( $counts[ $stored_id ] ) ) {
+				$requested_counts[ $requested_id ] = $counts[ $stored_id ];
+			}
+		}
+
+		return $requested_counts;
+	}
+
+	/**
 	 * Get the progress table name.
 	 *
 	 * @since 4.26.0

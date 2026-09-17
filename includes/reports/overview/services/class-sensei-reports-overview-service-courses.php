@@ -59,7 +59,15 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0.0;
 		}
 		$lessons_count_per_courses = $this->get_lessons_in_courses( $course_ids );
-		$lessons_completions       = $this->get_lessons_completions();
+
+		// Limit completion counts to the lessons belonging to the courses in this report.
+		$all_lesson_ids = array();
+		foreach ( $lessons_count_per_courses as $course_lessons ) {
+			$all_lesson_ids = array_merge( $all_lesson_ids, array_map( 'intval', explode( ',', $course_lessons->lessons ) ) );
+		}
+		$all_lesson_ids = array_unique( $all_lesson_ids );
+
+		$lessons_completions       = $this->get_lessons_completions( $all_lesson_ids );
 		$student_count_per_courses = $this->get_students_count_in_courses( $course_ids );
 		$total_average_progress    = 0;
 
@@ -194,35 +202,31 @@ class Sensei_Reports_Overview_Service_Courses {
 	}
 
 	/**
-	 * Get all lessons completions.
+	 * Get completions for the requested lessons.
 	 *
 	 * @since  4.4.1
 	 *
+	 * @param int[] $lesson_ids Lesson IDs.
 	 * @return array lessons completions.
 	 */
-	private function get_lessons_completions(): array {
+	private function get_lessons_completions( array $lesson_ids ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
 
-		global $wpdb;
-		$reports_statuses = Utils::get_reports_post_status_sql();
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Statuses come from a fixed constant.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		$results = $wpdb->get_results(
-			"SELECT wcom.comment_post_id lesson_id, COUNT(*) completion_count
-						FROM {$wpdb->comments} wcom
-						WHERE wcom.comment_approved IN ('graded', 'ungraded', 'passed', 'failed','complete')
-						AND comment_type IN ('sensei_lesson_status')
-						AND wcom.comment_post_ID IN
-						(
-						SELECT wpm.post_id lesson_id from {$wpdb->posts} wpc
-						JOIN {$wpdb->postmeta} wpm on wpm.meta_value = wpc.id
-						WHERE wpm.meta_key = '_lesson_course'
-						AND wpc.post_status in ( {$reports_statuses} )
-						)
-						GROUP BY wcom.comment_post_id",
-			'OBJECT_K'
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $results;
+		$counts = $this->get_aggregation_service()
+			->get_lesson_completion_counts( $lesson_ids );
+
+		// Keep the object fields used by the existing progress calculation.
+		$result = array();
+		foreach ( $counts as $lesson_id => $completion_count ) {
+			$result[ $lesson_id ] = (object) array(
+				'lesson_id'        => $lesson_id,
+				'completion_count' => $completion_count,
+			);
+		}
+
+		return $result;
 	}
 
 	/**
