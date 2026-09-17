@@ -1,4 +1,4 @@
 Significance: patch
-Type: fixed
+Type: changed
 
 Read lesson completion counts from the selected progress backend.
