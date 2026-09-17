@@ -60,7 +60,7 @@
 		"@es-joy/jsdoccomment": "0.96.0",
 		"@lifeomic/attempt": "3.1.0",
 		"@playwright/test": "1.62.1",
-		"@svgr/webpack": "6.1.2",
+		"@svgr/webpack": "8.1.0",
 		"@testing-library/dom": "10.4.1",
 		"@testing-library/jest-dom": "6.6.3",
 		"@testing-library/react": "16.3.2",
