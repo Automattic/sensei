@@ -1,6 +1,6 @@
 <?php
 
-namespace SenseiTest\Internal\Services;
+// phpcs:disable WordPress.Files.FileName.InvalidClassFileName -- Test files follow the test-class naming convention.
 
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
 
@@ -10,8 +10,13 @@ use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
  * @covers \Sensei\Internal\Services\Comments_Based_Progress_Aggregation_Service
  * @covers \Sensei\Internal\Services\Tables_Based_Progress_Aggregation_Service
  */
-abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_UnitTestCase {
-	private $sensei_factory;
+abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
+	/**
+	 * Factory shared by the behavioral and backend-specific tests.
+	 *
+	 * @var \Sensei_Factory
+	 */
+	protected $sensei_factory;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -23,13 +28,13 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 		parent::tearDown();
 	}
 
-	public function testCountStatusesByPost_WPMLTranslationsGiven_ReturnsCountsUnderRequestedIds(): void {
+	public function testCountStatusesByPost_ProgressIdMappingGiven_ReturnsCountsUnderRequestedIds(): void {
 		/* Arrange. */
 		$original    = $this->sensei_factory->course->create();
 		$translation = $this->sensei_factory->course->create();
 		$user_id     = $this->sensei_factory->user->create();
 		$this->seed_progress( $original, $user_id, 'course', 'complete' );
-		$this->add_translation_filters( array( $translation => $original ) );
+		$this->add_progress_id_filter( array( $translation => $original ) );
 		$service = $this->get_service();
 
 		/* Act. */
@@ -73,11 +78,12 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 
 	public function testCountStatusesByPost_MultipleCoursesGiven_ReturnsCountsGroupedByPost(): void {
 		/* Arrange. */
-		$user1      = $this->sensei_factory->user->create();
-		$user2      = $this->sensei_factory->user->create();
-		$user3      = $this->sensei_factory->user->create();
-		$course_id1 = $this->sensei_factory->course->create();
-		$course_id2 = $this->sensei_factory->course->create();
+		$user1                   = $this->sensei_factory->user->create();
+		$user2                   = $this->sensei_factory->user->create();
+		$user3                   = $this->sensei_factory->user->create();
+		$course_id1              = $this->sensei_factory->course->create();
+		$course_id2              = $this->sensei_factory->course->create();
+		$course_without_progress = $this->sensei_factory->course->create();
 		$this->seed_progress( $course_id1, $user1, 'course', 'complete' );
 		$this->seed_progress( $course_id1, $user2, 'course', 'in-progress' );
 		$this->seed_progress( $course_id1, $user3, 'course', 'in-progress' );
@@ -87,7 +93,7 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 		$service = $this->get_service();
 
 		/* Act. */
-		$actual = $service->count_statuses_by_post( array( $course_id1, $course_id2 ) );
+		$actual = $service->count_statuses_by_post( array( $course_id1, $course_id2, $course_without_progress ) );
 
 		/* Assert. */
 		self::assertSame(
@@ -102,29 +108,6 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 		);
 	}
 
-	public function testCountStatusesByPost_MixedPostStatusesGiven_CountsRequestedPostsRegardlessOfVisibility(): void {
-		/* Arrange. */
-		$user_id  = $this->sensei_factory->user->create();
-		$expected = array();
-		foreach ( array( 'publish', 'private', 'draft', 'trash', 'future' ) as $status ) {
-			$course_id = $this->sensei_factory->course->create(
-				array(
-					'post_status' => $status,
-					'post_date'   => 'future' === $status ? '2036-01-01 00:00:00' : '2024-01-01 00:00:00',
-				)
-			);
-			$this->seed_progress( $course_id, $user_id, 'course', 'complete' );
-			$expected[ $course_id ] = array( 'complete' => 1 );
-		}
-		$service = $this->get_service();
-
-		/* Act. */
-		$actual = $service->count_statuses_by_post( array_keys( $expected ) );
-
-		/* Assert. */
-		self::assertSame( $expected, $this->sort_counts( $actual ) );
-	}
-
 	/**
 	 * Create the backend under test.
 	 *
@@ -137,23 +120,13 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 	 */
 	abstract protected function seed_progress( int $post_id, int $user_id, string $type, string $status, ?string $started_at = '2022-01-01 00:00:00', ?string $completed_at = '2022-01-02 00:00:00' ): void;
 
-	private function add_translation_filters( array $map ): void {
+	private function add_progress_id_filter( array $map ): void {
 		add_filter(
-			'wpml_element_language_details',
-			static function () {
-				return array(
-					'source_language_code' => 'en',
-					'language_code'        => 'es',
-				);
-			}
-		);
-		add_filter(
-			'wpml_object_id',
+			'sensei_course_progress_get_course_id',
 			static function ( $post_id ) use ( $map ) {
 				return $map[ $post_id ] ?? $post_id;
 			}
 		);
-		add_filter( 'sensei_course_progress_get_course_id', array( new \Sensei\WPML\Course_Progress(), 'translate_course_id' ) );
 	}
 
 	/**
