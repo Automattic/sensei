@@ -50,7 +50,7 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 		);
 	}
 
-	public function testCountStatusesByPost_UserAndPostRestrictionsGiven_ReturnsOnlyMatchingProgress(): void {
+	public function testCountStatusesByPost_PostRestrictionsGiven_ReturnsOnlyRequestedPosts(): void {
 		/* Arrange. */
 		$course       = $this->sensei_factory->course->create();
 		$other_course = $this->sensei_factory->course->create();
@@ -65,14 +65,20 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 		$actual = $service->count_statuses_by_post(
 			array(
 				'type'     => 'course',
-				'post_id'  => $course,
-				'post__in' => array( $other_course ),
-				'user_id'  => $user_id,
+				'post__in' => array( $course ),
 			)
 		);
 
 		/* Assert. */
-		self::assertSame( array( $course => array( 'complete' => 1 ) ), $actual );
+		self::assertSame(
+			array(
+				$course => array(
+					'complete'    => 1,
+					'in-progress' => 1,
+				),
+			),
+			$actual
+		);
 	}
 
 	public function testCountStatusesByPost_CourseTypeGiven_ReturnsCountsGroupedByPost(): void {
@@ -161,7 +167,7 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 		self::assertSame( array(), $actual );
 	}
 
-	public function testCountStatusesByPost_MixedPostStatusesGiven_IncludesOnlyPublishedAndPrivatePosts(): void {
+	public function testCountStatusesByPost_MixedPostStatusesGiven_CountsRequestedPostsRegardlessOfVisibility(): void {
 		/* Arrange. */
 		$user_id  = $this->sensei_factory->user->create();
 		$expected = array();
@@ -173,14 +179,17 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 				)
 			);
 			$this->seed_progress( $course_id, $user_id, 'course', 'complete' );
-			if ( in_array( $status, array( 'publish', 'private' ), true ) ) {
-				$expected[ $course_id ] = array( 'complete' => 1 );
-			}
+			$expected[ $course_id ] = array( 'complete' => 1 );
 		}
 		$service = $this->get_service();
 
 		/* Act. */
-		$actual = $service->count_statuses_by_post( array( 'type' => 'course' ) );
+		$actual = $service->count_statuses_by_post(
+			array(
+				'type'     => 'course',
+				'post__in' => array_keys( $expected ),
+			)
+		);
 
 		/* Assert. */
 		self::assertSame( $expected, $actual );

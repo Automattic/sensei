@@ -60,9 +60,16 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count progress records grouped by post and status.
 	 *
+	 * Callers select report posts; this method does not filter by post visibility.
+	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Same shape as count_statuses(); 'type' and 'post__in' honored.
+	 * @param array $args {
+	 *     Query arguments.
+	 *
+	 *     @type string $type     'course' or 'lesson'.
+	 *     @type int[]  $post__in Restrict to specific post IDs.
+	 * }
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
 	public function count_statuses_by_post( array $args ): array;

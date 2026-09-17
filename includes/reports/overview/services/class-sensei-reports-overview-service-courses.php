@@ -235,7 +235,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 */
 	private function get_lessons_in_courses( $course_ids ): array {
 		global $wpdb;
-		// Use the original course's lessons so WPML translations match their shared progress.
+		// Look up lessons on the course resolved by the progress-ID filter so they match its stored progress.
 		$course_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
 		$course_ids    = array_values( $course_id_map );
 
