@@ -107,6 +107,48 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 		);
 	}
 
+	public function testCountStatusesByPost_LessonsWithAndWithoutQuizzesGiven_GroupsQuizStatusesAndLessonStatuses(): void {
+		/* Arrange. */
+		$course_id    = $this->sensei_factory->course->create();
+		$plain_lesson = $this->sensei_factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$quiz_lesson  = $this->sensei_factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$quiz_id      = $this->sensei_factory->quiz->create( array( 'post_parent' => $quiz_lesson ) );
+		$first_user   = $this->sensei_factory->user->create();
+		$second_user  = $this->sensei_factory->user->create();
+		$third_user   = $this->sensei_factory->user->create();
+		update_post_meta( $quiz_lesson, '_lesson_quiz', $quiz_id );
+		$this->seed_progress( $plain_lesson, $first_user, 'lesson', 'complete' );
+		$this->seed_progress( $plain_lesson, $second_user, 'lesson', 'in-progress' );
+		// Quiz status takes precedence even when lesson progress has a different status.
+		$this->seed_lesson_with_quiz_status( $quiz_lesson, $quiz_id, $first_user, 'in-progress', 'passed' );
+		$this->seed_lesson_with_quiz_status( $quiz_lesson, $quiz_id, $second_user, 'in-progress', 'passed' );
+		$this->seed_lesson_with_quiz_status( $quiz_lesson, $quiz_id, $third_user, 'complete', 'failed' );
+		$service = $this->get_service();
+
+		/* Act. */
+		$actual = $service->count_statuses_by_post(
+			array(
+				'type'     => 'lesson',
+				'post__in' => array( $plain_lesson, $quiz_lesson ),
+			)
+		);
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				$plain_lesson => array(
+					'complete'    => 1,
+					'in-progress' => 1,
+				),
+				$quiz_lesson  => array(
+					'failed' => 1,
+					'passed' => 2,
+				),
+			),
+			$actual
+		);
+	}
+
 	public function testCountStatusesByPost_InvalidTypeGiven_ReturnsEmptyArray(): void {
 		/* Arrange. */
 		$service = $this->get_service();
@@ -155,6 +197,11 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 	 * Store progress with local start and completion dates in the selected backend.
 	 */
 	abstract protected function seed_progress( int $post_id, int $user_id, string $type, string $status, ?string $started_at = '2022-01-01 00:00:00', ?string $completed_at = '2022-01-02 00:00:00' ): void;
+
+	/**
+	 * Store the lesson and quiz statuses in the form used by this backend.
+	 */
+	abstract protected function seed_lesson_with_quiz_status( int $lesson_id, int $quiz_id, int $user_id, string $lesson_status, string $quiz_status ): void;
 
 	private function add_translation_filters( array $map ): void {
 		add_filter(
