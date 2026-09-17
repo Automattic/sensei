@@ -293,12 +293,7 @@ class Sensei_Reports_Overview_Service_Courses {
 		}
 
 		$by_post = $this->get_aggregation_service()
-			->count_statuses_by_post(
-				array(
-					'type'     => 'course',
-					'post__in' => $course_ids,
-				)
-			);
+			->count_statuses_by_post( $course_ids );
 
 		// Enrollment totals count only started or completed courses, as before.
 		$result = array();
@@ -310,6 +305,19 @@ class Sensei_Reports_Overview_Service_Courses {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Get the injected grading statistics service or create and retain the default.
+	 *
+	 * @return Grading_Stats_Service_Interface
+	 */
+	private function get_grading_stats_service(): Grading_Stats_Service_Interface {
+		if ( null === $this->grading_stats_service ) {
+			$this->grading_stats_service = ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service();
+		}
+
+		return $this->grading_stats_service;
 	}
 
 	/**
