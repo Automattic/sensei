@@ -46,7 +46,7 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 				$original    => array( 'complete' => 1 ),
 				$translation => array( 'complete' => 1 ),
 			),
-			$actual
+			$this->sort_counts( $actual )
 		);
 	}
 
@@ -77,7 +77,7 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 					'in-progress' => 1,
 				),
 			),
-			$actual
+			$this->sort_counts( $actual )
 		);
 	}
 
@@ -109,7 +109,7 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 				),
 				$course_id2 => array( 'in-progress' => 1 ),
 			),
-			$actual
+			$this->sort_counts( $actual )
 		);
 	}
 
@@ -151,7 +151,7 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 					'passed' => 2,
 				),
 			),
-			$actual
+			$this->sort_counts( $actual )
 		);
 	}
 
@@ -192,7 +192,7 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 		);
 
 		/* Assert. */
-		self::assertSame( $expected, $actual );
+		self::assertSame( $expected, $this->sort_counts( $actual ) );
 	}
 
 	/**
@@ -230,5 +230,21 @@ abstract class Progress_Aggregation_Service_Contract_Test_Abstract extends \WP_U
 		);
 		add_filter( 'sensei_course_progress_get_course_id', array( new \Sensei\WPML\Course_Progress(), 'translate_course_id' ) );
 		add_filter( 'sensei_lesson_progress_get_lesson_id', array( new \Sensei\WPML\Lesson_Progress(), 'translate_lesson_id' ) );
+	}
+
+	/**
+	 * Keep count comparisons strict without depending on database row order.
+	 *
+	 * @param array $counts Counts grouped by post and status.
+	 * @return array Counts sorted by post ID and status.
+	 */
+	private function sort_counts( array $counts ): array {
+		foreach ( $counts as &$statuses ) {
+			ksort( $statuses );
+		}
+		unset( $statuses );
+		ksort( $counts );
+
+		return $counts;
 	}
 }
