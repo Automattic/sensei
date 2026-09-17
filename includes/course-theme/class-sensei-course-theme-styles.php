@@ -61,7 +61,7 @@ class Sensei_Course_Theme_Styles {
 		}
 
 		$styles = wp_get_global_styles();
-		$colors = self::get_colors( $styles );
+		$colors = self::get_colors( $styles, self::get_style_references( $styles ) );
 		$vars   = self::format_css_variables( $colors, '-global' );
 
 		if ( ! empty( $vars ) ) {
@@ -85,11 +85,12 @@ class Sensei_Course_Theme_Styles {
 	/**
 	 * Get relevant colors from global styles or a block's attributes.
 	 *
-	 * @param array $styles Styles object.
+	 * @param array      $styles     Styles object.
+	 * @param array|null $references Optional tree used to resolve theme.json v3 references.
 	 *
 	 * @return array
 	 */
-	private static function get_colors( $styles ) {
+	private static function get_colors( $styles, $references = null ) {
 
 		if ( empty( $styles ) ) {
 			return [];
@@ -99,17 +100,72 @@ class Sensei_Course_Theme_Styles {
 
 		$element_colors = $styles['color'] ?? $styles['elements']['color'] ?? null;
 
-		$vars['--sensei-text-color']             = $element_colors['text'] ?? $styles['textColor'] ?? null;
-		$vars['--sensei-background-color']       = $element_colors['background'] ?? $styles['backgroundColor'] ?? null;
+		$vars['--sensei-text-color']             = self::resolve_reference( $element_colors['text'] ?? $styles['textColor'] ?? null, $references );
+		$vars['--sensei-background-color']       = self::resolve_reference( $element_colors['background'] ?? $styles['backgroundColor'] ?? null, $references );
 		$vars['--sensei-primary-contrast-color'] = $vars['--sensei-background-color'];
 
 		$link = $styles['elements']['link']['color'] ?? null;
 
 		if ( ! empty( $link ) ) {
-			$vars['--sensei-primary-color'] = $link['text'];
+			$vars['--sensei-primary-color'] = self::resolve_reference( $link['text'], $references );
 		}
 
 		return $vars;
+	}
+
+	/**
+	 * Build the tree used to resolve theme.json version 3 references.
+	 *
+	 * References point to absolute paths such as `styles.color.text` or
+	 * `settings.color.palette`, so the merged styles and settings are combined
+	 * under their respective roots.
+	 *
+	 * @param array $styles Global styles.
+	 *
+	 * @return array
+	 */
+	private static function get_style_references( $styles ) {
+		$references = array( 'styles' => $styles );
+
+		if ( function_exists( 'wp_get_global_settings' ) ) {
+			$references['settings'] = wp_get_global_settings();
+		}
+
+		return $references;
+	}
+
+	/**
+	 * Resolve a theme.json version 3 `ref` value to the value it points to.
+	 *
+	 * When the value is not a reference, or the reference cannot be resolved,
+	 * the original value is returned so the existing string guard can safely
+	 * ignore it.
+	 *
+	 * @param mixed      $value      Style value.
+	 * @param array|null $references Tree used to look up the reference path.
+	 *
+	 * @return mixed
+	 */
+	private static function resolve_reference( $value, $references ) {
+		if ( empty( $references ) || ! is_array( $value ) || ! isset( $value['ref'] ) || ! is_string( $value['ref'] ) ) {
+			return $value;
+		}
+
+		$resolved = $references;
+		foreach ( explode( '.', $value['ref'] ) as $path_part ) {
+			if ( ! is_array( $resolved ) || ! array_key_exists( $path_part, $resolved ) ) {
+				return $value;
+			}
+
+			$resolved = $resolved[ $path_part ];
+		}
+
+		// Referenced background images are stored as an array containing a URL.
+		if ( is_array( $resolved ) ) {
+			$resolved = $resolved['url'] ?? null;
+		}
+
+		return is_string( $resolved ) ? $resolved : $value;
 	}
 
 	/**

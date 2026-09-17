@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Resolve theme.json version 3 referenced color values in Learning Mode global styles.
