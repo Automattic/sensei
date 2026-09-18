@@ -419,7 +419,7 @@ class Sensei_Utils {
 
 		// Allow SVG for this upload only. WordPress doesn't include SVG in its default
 		// allowed mime types, which dropped the file upload question answer.
-		$allow_svg_upload = static function ( $mimes ) {
+		$allow_svg_upload = static function ( array $mimes ): array {
 			$mimes['svg'] = 'image/svg+xml';
 			return $mimes;
 		};
