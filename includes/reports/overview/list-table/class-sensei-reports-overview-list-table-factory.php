@@ -103,7 +103,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 					Sensei()->grading,
 					$this->get_course(),
 					new Sensei_Reports_Overview_Data_Provider_Courses( $progress_clauses_service ),
-					new Sensei_Reports_Overview_Service_Courses( $grading_stats_service ),
+					new Sensei_Reports_Overview_Service_Courses( $grading_stats_service, $aggregation_service ),
 					$aggregation_service
 				);
 			case 'lessons':

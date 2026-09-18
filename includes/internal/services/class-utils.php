@@ -31,6 +31,18 @@ class Utils {
 	public const REPORTS_POST_STATUSES = array( 'publish', 'private' );
 
 	/**
+	 * Temporary user accounts excluded from Reports lists and calculations.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string[]
+	 */
+	public const REPORTS_EXCLUDED_USER_LOGIN_PREFIXES = array(
+		\Sensei_Guest_User::LOGIN_PREFIX,
+		\Sensei_Preview_User::LOGIN_PREFIX,
+	);
+
+	/**
 	 * Post statuses that Grading counts as live content.
 	 *
 	 * @since $$next-version$$
@@ -48,6 +60,33 @@ class Utils {
 	 */
 	public static function get_reports_post_status_sql(): string {
 		return "'" . implode( "','", self::REPORTS_POST_STATUSES ) . "'";
+	}
+
+	/**
+	 * Resolve progress IDs while retaining the IDs used by report rows.
+	 *
+	 * Use the same progress-ID filters as the repositories to locate stored progress.
+	 * For example, WPML uses these filters to share progress with the original-language post.
+	 * Callers query the mapped IDs and key their results by the requested IDs.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[]  $post_ids Requested post IDs.
+	 * @param string $type     Course or lesson progress type.
+	 * @return array<int, int> Requested ID => stored progress ID.
+	 */
+	public static function get_progress_post_id_map( array $post_ids, string $type ): array {
+		$map = array();
+		foreach ( $post_ids as $post_id ) {
+			$post_id = (int) $post_id;
+			if ( 'course' === $type ) {
+				$map[ $post_id ] = (int) apply_filters( 'sensei_course_progress_get_course_id', $post_id );
+			} else {
+				$map[ $post_id ] = (int) apply_filters( 'sensei_lesson_progress_get_lesson_id', $post_id );
+			}
+		}
+
+		return $map;
 	}
 
 	/**
