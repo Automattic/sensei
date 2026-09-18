@@ -31,6 +31,18 @@ class Utils {
 	public const REPORTS_POST_STATUSES = array( 'publish', 'private' );
 
 	/**
+	 * Temporary user accounts excluded from Reports lists and calculations.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string[]
+	 */
+	public const REPORTS_EXCLUDED_USER_LOGIN_PREFIXES = array(
+		\Sensei_Guest_User::LOGIN_PREFIX,
+		\Sensei_Preview_User::LOGIN_PREFIX,
+	);
+
+	/**
 	 * Post statuses that Grading counts as live content.
 	 *
 	 * @since $$next-version$$

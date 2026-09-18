@@ -431,6 +431,22 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 2, $actual );
 	}
 
+	public function testGetTotalEnrollments_TemporaryUsersGiven_CountsOnlyRegisteredStudents(): void {
+		/* Arrange. */
+		$course = $this->factory->course->create();
+		foreach ( array( 'registered_student', 'sensei_guest_student', 'sensei_preview_student' ) as $login ) {
+			$user_id = $this->factory->user->create( array( 'user_login' => $login ) );
+			Sensei_Utils::user_start_course( $user_id, $course );
+		}
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_total_enrollments( array( $course ) );
+
+		/* Assert. */
+		self::assertSame( 1, $actual );
+	}
+
 	/**
 	 * Translated courses read enrollments stored against the original course.
 	 */

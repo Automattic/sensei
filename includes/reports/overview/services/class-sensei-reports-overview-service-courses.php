@@ -167,7 +167,11 @@ class Sensei_Reports_Overview_Service_Courses {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
-		$total_grouped_by_course = $this->get_students_count_in_courses( $course_ids );
+
+		$total_grouped_by_course = $this->get_students_count_in_courses(
+			$course_ids,
+			array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
+		);
 
 		if ( empty( $total_grouped_by_course ) ) {
 			return 0;
@@ -252,16 +256,17 @@ class Sensei_Reports_Overview_Service_Courses {
 	 *
 	 * @since  4.4.1
 	 *
-	 * @param array $course_ids The array of courses ids.
+	 * @param int[] $course_ids The array of course IDs.
+	 * @param array $args       Optional query filters for count_statuses_by_post().
 	 * @return array students in courses.
 	 */
-	private function get_students_count_in_courses( array $course_ids ): array {
+	private function get_students_count_in_courses( array $course_ids, array $args = array() ): array {
 		if ( empty( $course_ids ) ) {
 			return array();
 		}
 
 		$by_post = $this->get_aggregation_service()
-			->count_statuses_by_post( $course_ids );
+			->count_statuses_by_post( $course_ids, $args );
 
 		// Enrollment totals count only started or completed courses, as before.
 		$result = array();

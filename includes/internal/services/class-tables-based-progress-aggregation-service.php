@@ -133,9 +133,14 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @since $$next-version$$
 	 *
 	 * @param int[] $course_ids Course IDs to count; an empty list counts all courses.
+	 * @param array $args {
+	 *     Optional query filters.
+	 *
+	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
+	 * }
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
-	public function count_statuses_by_post( array $course_ids ): array {
+	public function count_statuses_by_post( array $course_ids, array $args = array() ): array {
 		// Apply the same progress-ID filters as the repositories so Reports reads the same stored progress.
 		$post_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
 
@@ -147,6 +152,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 
 		$query .= " WHERE p.type = 'course'";
 		$query .= $this->build_post_filter_clause( array( 'post__in' => array_values( $post_id_map ) ) );
+		$query .= $this->build_user_exclusion_clause( $args );
 
 		$query .= ' GROUP BY p.post_id, p.status';
 

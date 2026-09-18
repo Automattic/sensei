@@ -26,6 +26,33 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		parent::tearDown();
 	}
 
+	public function testCountStatusesByPost_ExcludedUserLoginPrefixesGiven_CountsOnlyOtherUsers(): void {
+		/* Arrange. */
+		$course           = $this->sensei_factory->course->create();
+		$completed_course = $this->sensei_factory->course->create();
+		foreach ( array( 'registered_student', 'sensei_guest_student', 'sensei_preview_student', 'senseiXguest_student' ) as $login ) {
+			$user_id = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
+			$this->seed_progress( $course, $user_id, 'course', 'in-progress' );
+			$this->seed_progress( $completed_course, $user_id, 'course', 'complete' );
+		}
+		$service = $this->get_service();
+
+		/* Act. */
+		$actual = $service->count_statuses_by_post(
+			array( $course, $completed_course ),
+			array( 'exclude_user_login_prefixes' => array( 'sensei_guest_', 'sensei_preview_' ) )
+		);
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				$course           => array( 'in-progress' => 2 ),
+				$completed_course => array( 'complete' => 2 ),
+			),
+			$this->sort_counts( $actual )
+		);
+	}
+
 	public function testCountStatusesByPost_ProgressIdMappingGiven_ReturnsCountsUnderRequestedIds(): void {
 		/* Arrange. */
 		$original    = $this->sensei_factory->course->create();

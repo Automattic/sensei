@@ -788,6 +788,7 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \Progress_Aggrega
 		$comment_id = wp_insert_comment(
 			array(
 				'comment_post_ID'  => $post_id,
+				'comment_author'   => get_userdata( $user_id )->user_login,
 				'user_id'          => $user_id,
 				'comment_type'     => 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status',
 				'comment_approved' => $status,
