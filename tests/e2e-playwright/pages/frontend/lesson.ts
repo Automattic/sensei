@@ -16,10 +16,11 @@ export class LessonPage {
 			.first();
 	}
 
-	async clickCompleteLesson(): Promise< unknown > {
+	async clickCompleteLesson(): Promise< void > {
+		const lessonUrl = this.page.url();
+
 		// Workaround on misclicking? in Learning mode.
-		await this.completeLessonButton.focus();
-		await this.page.keyboard.press( 'Enter' );
-		return this.page.waitForNavigation();
+		await this.completeLessonButton.press( 'Enter' );
+		await this.page.waitForURL( ( url ) => url.href !== lessonUrl );
 	}
 }
