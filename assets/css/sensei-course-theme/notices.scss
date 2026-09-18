@@ -102,6 +102,11 @@ body.sensei-course-theme {
 
 	&__text {
 		margin: 0 0 20px;
+
+		// The margin is only needed when buttons follow.
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	&__actions {
