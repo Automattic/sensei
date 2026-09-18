@@ -63,9 +63,14 @@ interface Progress_Aggregation_Service_Interface {
 	 * @since $$next-version$$
 	 *
 	 * @param int[] $course_ids Course IDs to count; an empty list counts all courses.
+	 * @param array $args {
+	 *     Optional query filters.
+	 *
+	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
+	 * }
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
-	public function count_statuses_by_post( array $course_ids ): array;
+	public function count_statuses_by_post( array $course_ids, array $args = array() ): array;
 	/**
 	 * Count students with activity on a lesson.
 	 *
