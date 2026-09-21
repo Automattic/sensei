@@ -329,7 +329,9 @@ class Sensei_Quiz {
 
 		if ( $success ) {
 			// Update the message shown to the user.
-			Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'sensei-lms' ) . '</div>';
+			$message                     = __( 'Quiz Saved Successfully.', 'sensei-lms' );
+			Sensei()->frontend->messages = '<div class="sensei-message note">' . $message . '</div>';
+			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-save', $message );
 		}
 
 		// remove the hook as it should only fire once per click
