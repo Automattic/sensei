@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Improved how private messages are excluded from frontend queries.

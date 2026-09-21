@@ -64,6 +64,7 @@ class Sensei_Messages {
 		add_action( 'sensei_single_quiz_questions_before', array( $this, 'send_message_link' ), 10, 2 );
 
 		// Hide messages and replies from users who do not have access.
+		add_filter( 'request', array( $this, 'remove_sensei_message_from_post_type_array' ) );
 		add_action( 'template_redirect', array( $this, 'message_login' ), 10, 1 );
 		add_filter( 'redirect_canonical', array( $this, 'prevent_message_canonical_redirect' ), 10, 1 );
 		add_action( 'pre_get_posts', array( $this, 'message_list' ), 10, 1 );
@@ -80,6 +81,28 @@ class Sensei_Messages {
 
 		// Redirect and show a success notice.
 		add_action( 'sensei_new_private_message', [ $this, 'show_success_notice' ], 999 );
+	}
+
+	/**
+	 * Remove 'sensei_message' from an array `post_type`.
+	 *
+	 * The checks that keep messages private only run when `post_type` is the string
+	 * `sensei_message`. `?post_type[]=sensei_message` skips them and exposes every
+	 * message, so never let messages be queried through an array.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param array $query_vars The main request's query vars.
+	 * @return array
+	 */
+	public function remove_sensei_message_from_post_type_array( $query_vars ) {
+		if ( is_array( $query_vars['post_type'] ?? null ) ) {
+			$query_vars['post_type'] = array_values( array_diff( $query_vars['post_type'], array( $this->post_type ) ) );
+		}
+
+		return $query_vars;
 	}
 
 	public function only_show_messages_to_owner( $query ) {

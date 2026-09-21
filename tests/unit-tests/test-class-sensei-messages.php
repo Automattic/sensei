@@ -417,6 +417,54 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		$this->assertSame( $message_id, get_queried_object_id() );
 	}
 
+	public function testRemoveSenseiMessageFromPostTypeArray_AnonymousRequestedMessageArchiveAsArray_ReturnsNoMessages() {
+		/* Arrange. */
+		$this->create_message();
+		$this->logout();
+
+		/* Act. */
+		$this->go_to( '/?post_type[]=sensei_message' );
+
+		/* Assert. */
+		$this->assertNotContains( 'sensei_message', wp_list_pluck( $GLOBALS['wp_query']->posts, 'post_type' ) );
+	}
+
+	public function testRemoveSenseiMessageFromPostTypeArray_StringGiven_LeavesItUntouched() {
+		/* Arrange. */
+		$instance   = new Sensei_Messages();
+		$query_vars = array( 'post_type' => 'sensei_message' );
+
+		/* Act. */
+		$actual = $instance->remove_sensei_message_from_post_type_array( $query_vars );
+
+		/* Assert. */
+		$this->assertSame( 'sensei_message', $actual['post_type'] );
+	}
+
+	public function testRemoveSenseiMessageFromPostTypeArray_MixedArrayWithMessagesGiven_DropsTheMessages() {
+		/* Arrange. */
+		$instance   = new Sensei_Messages();
+		$query_vars = array( 'post_type' => array( 'post', 'sensei_message' ) );
+
+		/* Act. */
+		$actual = $instance->remove_sensei_message_from_post_type_array( $query_vars );
+
+		/* Assert. */
+		$this->assertSame( array( 'post' ), $actual['post_type'] );
+	}
+
+	public function testRemoveSenseiMessageFromPostTypeArray_OnlyMessagesGiven_ReturnsAnEmptyArray() {
+		/* Arrange. */
+		$instance   = new Sensei_Messages();
+		$query_vars = array( 'post_type' => array( 'sensei_message' ) );
+
+		/* Act. */
+		$actual = $instance->remove_sensei_message_from_post_type_array( $query_vars );
+
+		/* Assert. */
+		$this->assertSame( array(), $actual['post_type'] );
+	}
+
 	/**
 	 * Create a private message from the shared student to the shared teacher.
 	 *
