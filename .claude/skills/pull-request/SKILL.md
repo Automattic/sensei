@@ -5,8 +5,8 @@ description: >-
   Use this whenever the user wants to create, open, draft, or "put up" a PR, or
   says things like "open a PR", "create a pull request", "make a PR for this
   branch", or "PR this". It fills the repo's PULL_REQUEST_TEMPLATE.md from the
-  actual diff against trunk, sets the changelog details so CI generates the
-  entry, assigns the required milestone, and stops for approval before pushing.
+  actual diff against trunk, makes sure the branch has a changelog entry,
+  assigns the required milestone, and stops for approval before pushing.
   Prefer this skill over a bare `gh pr create` so the PR doesn't fail
   `pr-validation.yml` on a missing milestone or changelog, and so the body
   matches the template reviewers expect.
@@ -21,12 +21,9 @@ milestone) so `pr-validation.yml` passes, and stop for approval before
 ## Who this is for
 
 This skill assumes **write access to `Automattic/sensei`** — it opens the PR on
-that repo, ticks the changelog auto-create box (CI generates the entry, which only
-works for same-repo branches), and assigns the milestone (needs triage/write
-permission). Two steps don't apply to fork / external contributors:
+that repo and assigns the milestone (needs triage/write permission). One step
+doesn't apply to fork / external contributors:
 
-- **Changelog:** CI can't push a generated entry to a forked branch. Run
-  `make changelog` and commit the entry instead of ticking the auto box.
 - **Milestone:** external contributors can't assign one — leave it; a maintainer
   sets the milestone on their side.
 
@@ -105,35 +102,37 @@ Fill each section from the diff. Guidance per section:
 - **`## Deprecated Code`** — fill only if the diff deprecates something; name the
   replacement and plan to add the **Deprecation** label. If nothing is deprecated,
   **remove this whole section** from the body.
-- **`## Changelog entry`** — this is how the changelog gets created (see below).
 
-### 4. Changelog — via the template, not a hand-written file
+### 4. Changelog — a committed `changelog/` entry
 
-For a branch in this repository, CI generates the `changelog/` entry from the
-template when the auto box is ticked. Prefer that over writing the file yourself.
-
-First check whether the branch already has an entry — a dev may have run
-`make changelog` during development and committed it:
+CI (`changelogger.yml`) fails unless the PR adds a file under `changelog/` or
+carries the `No Changelog` label. First check whether the branch already has an
+entry:
 
 ```bash
 git diff --name-only --diff-filter=A trunk...HEAD -- changelog/
 ```
 
-If that lists a file, the entry already exists — **leave the auto box unticked**
-so CI doesn't create a duplicate, and note the existing entry in the summary you
-show the user. Only use the auto box when there is no committed entry.
+If that lists a file, the entry already exists — note it in the summary you show
+the user and move on.
 
-- **User-facing change (no committed entry yet):** in the `## Changelog entry`
-  section, tick the "Automatically create a changelog entry" checkbox, then
-  inside the details block tick exactly one **Significance** and one **Type** — use
-  the definitions printed in the template itself — and write the **Message** as the
-  user-facing outcome (one sentence — the effect, not the implementation). When the
-  significance is ambiguous (e.g. a `fix/` branch that repairs behavior but also
-  adds a small element), lean toward `Patch` / `Fixed` — match how the work is
-  framed rather than over-classifying it as a feature.
+- **User-facing change (no committed entry yet):** create the entry
+  non-interactively and commit it (`make changelog` is the interactive
+  equivalent):
+
+  ```bash
+  ./vendor/bin/changelogger add --no-interaction --significance=<patch|minor|major> --type=<type> --entry="<message>"
+  ```
+
+  Valid types are the keys under `extra.changelogger.types` in `composer.json`.
+  Write the message as the user-facing outcome (one sentence — the effect, not
+  the implementation). When the significance is ambiguous (e.g. a `fix/` branch
+  that repairs behavior but also adds a small element), lean toward `patch` /
+  `fixed` — match how the work is framed rather than over-classifying it as a
+  feature.
 - **Internal-only change** (refactor, test-only, tooling — no user-facing effect):
-  leave the auto box unticked and plan to apply the **`No Changelog`** label to
-  the PR. Say this in the summary you show the user.
+  don't add an entry and plan to apply the **`No Changelog`** label to the PR.
+  Say this in the summary you show the user.
 
 ### 5. Stop and confirm — this is the push gate
 
