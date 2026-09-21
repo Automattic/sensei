@@ -90,7 +90,9 @@ export function registerStructureStore( {
 					method: 'POST',
 					data: editorStructure,
 				} );
-				yield actions.setResult( result );
+				// The save response is authoritative, so the editor can reconcile
+				// against it even when it is empty.
+				yield actions.setResult( result, true );
 			} catch ( error ) {
 				yield saveError?.( error );
 			}
@@ -99,11 +101,12 @@ export function registerStructureStore( {
 		/**
 		 * Set fetched structure.
 		 *
-		 * @param {Array} serverStructure
+		 * @param {Array}   serverStructure
+		 * @param {boolean} isAuthoritative Whether the structure came from a save.
 		 */
-		*setResult( serverStructure ) {
+		*setResult( serverStructure, isAuthoritative = false ) {
 			yield actions.setServerStructure( serverStructure );
-			yield updateBlock( serverStructure );
+			yield updateBlock( serverStructure, isAuthoritative );
 		},
 
 		/**
