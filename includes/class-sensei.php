@@ -21,6 +21,7 @@ use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Services\Progress_Storage_Configuration;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
@@ -728,8 +729,28 @@ class Sensei_Main {
 		// Editor Wizard.
 		Sensei_Editor_Wizard::instance()->init();
 
+		// Progress query services.
+		$query_service_factory    = new Progress_Query_Service_Factory( $this->progress_storage_configuration );
+		$aggregation_service      = $query_service_factory->create_aggregation_service();
+		$grading_listing_service  = $query_service_factory->create_grading_listing_service();
+		$grading_stats_service    = $query_service_factory->create_grading_stats_service();
+		$reports_listing_service  = $query_service_factory->create_reports_listing_service();
+		$progress_clauses_service = $query_service_factory->create_clauses_service();
+
 		// Load Analysis Reports.
-		$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+		$reports_overview_list_table_factory = new Sensei_Reports_Overview_List_Table_Factory(
+			$this->course,
+			$progress_clauses_service,
+			$aggregation_service,
+			$grading_stats_service
+		);
+		$this->analysis                      = new Sensei_Analysis(
+			$this->main_plugin_file_name,
+			$reports_overview_list_table_factory,
+			$reports_listing_service,
+			$aggregation_service,
+			$grading_stats_service
+		);
 
 		// Admin notices.
 		$this->admin_notices = Sensei_Admin_Notices::instance()->init();
@@ -763,7 +784,12 @@ class Sensei_Main {
 		$this->notices = new Sensei_Notices();
 
 		// Load Grading Functionality.
-		$this->grading = new Sensei_Grading( $this->main_plugin_file_name );
+		$this->grading = new Sensei_Grading(
+			$this->main_plugin_file_name,
+			$grading_listing_service,
+			$aggregation_service,
+			$grading_stats_service
+		);
 
 		// Load Email Class.
 		$this->emails = new Sensei_Emails( $this->main_plugin_file_name );
