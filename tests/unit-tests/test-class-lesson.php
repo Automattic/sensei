@@ -2150,4 +2150,17 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		/* Assert */
 		self::assertSame( '', get_post_meta( $lesson_id, '_lesson_quiz', true ) );
 	}
+
+	public function testLimitArchiveContent_LockedLessonGivenToAnonymous_ReturnsTheFirst30Words() {
+		/* Arrange */
+		$course          = $this->factory->get_course_with_lessons();
+		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
+		wp_set_current_user( 0 );
+
+		/* Act */
+		$actual = Sensei_Lesson::limit_archive_content( implode( ' ', range( 1, 40 ) ) );
+
+		/* Assert */
+		self::assertSame( implode( ' ', range( 1, 30 ) ) . '…', $actual );
+	}
 }

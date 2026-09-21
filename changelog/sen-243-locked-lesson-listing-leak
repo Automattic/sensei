@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Improved how locked lesson content is excluded from frontend listings.

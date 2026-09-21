@@ -5234,15 +5234,16 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * On the lesson archive limit the number of words the show up if the access settings are enabled
+	 * Limit the content of a lesson the current user cannot view to a 30-word teaser.
 	 *
 	 * @since 1.9.0
-	 * @param $content
+	 * @since $$next-version$$ Applies wherever the lesson is rendered, not only on an archive.
+	 *
+	 * @param string $content The lesson content.
 	 * @return string
 	 */
 	public static function limit_archive_content( $content ) {
-
-		if ( is_post_type_archive( 'lesson' ) && Sensei()->settings->get( 'access_permission' ) ) {
+		if ( 'lesson' === get_post_type() && ! sensei_can_user_view_lesson() ) {
 			return wp_trim_words( $content, 30, '…' );
 		}
 
