@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed SVG files not being saved on quiz file upload questions.
