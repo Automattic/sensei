@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix the Learning Mode admin editor stylesheet path for the Divi theme, which pointed at a non-existent "div" directory instead of "divi".
