@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix Tables_Based_Lesson_Progress to return 'complete' when Pass Required is disabled and a quiz is failed.
