@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Improved how the admin lesson and course fields are initialised so that post content cannot influence them.
