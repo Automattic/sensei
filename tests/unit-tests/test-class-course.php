@@ -989,4 +989,35 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		self::assertNotFalse( $query->get( 'update_post_term_cache' ), 'Non-course queries should keep term cache priming enabled.' );
 		self::assertNotFalse( wp_cache_get( $post_id, 'category_relationships' ), 'Non-course queries should still prime the term cache.' );
 	}
+
+	public function testGetUnfilteredCourseLessonIds_LessonsHiddenByQueryFilters_ReturnsThePublishedLessonIds() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$this->factory->lesson->create(
+			array(
+				'post_status' => 'draft',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $this->factory->course->create() ) ) );
+
+		add_filter(
+			'posts_where',
+			function ( $where, $query ) {
+				if ( 'lesson' === $query->get( 'post_type' ) ) {
+					$where .= ' AND 1=0';
+				}
+				return $where;
+			},
+			10,
+			2
+		);
+
+		/* Act. */
+		$actual = Sensei()->course->get_unfiltered_course_lesson_ids( $course_id );
+
+		/* Assert. */
+		self::assertSame( array( $lesson_id ), $actual );
+	}
 }
