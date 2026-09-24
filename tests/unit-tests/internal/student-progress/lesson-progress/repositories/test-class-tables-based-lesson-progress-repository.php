@@ -616,7 +616,7 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function testCount_ParamsGiven_ReturnsMatchingValue(): void {
 		/* Arrange. */
 		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'course_lessons' )->with( 1, 'publish', 'ids' )->willReturn( [ 2, 3, 4 ] );
+		$course->method( 'get_unfiltered_course_lesson_ids' )->with( 1 )->willReturn( [ 2, 3, 4 ] );
 
 		$initial_course  = Sensei()->course;
 		Sensei()->course = $course;
@@ -644,6 +644,34 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( 5, $actual );
 
 		Sensei()->course = $initial_course;
+	}
+
+	public function testCount_LessonsHiddenByQueryFilters_CountsTheStartedLessons(): void {
+		/* Arrange. */
+		global $wpdb;
+		$course_id  = $this->factory->course->create();
+		$lesson_id  = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$user_id    = $this->factory->user->create();
+		$repository = new Tables_Based_Lesson_Progress_Repository( $wpdb );
+		$repository->create( $lesson_id, $user_id );
+
+		add_filter(
+			'posts_where',
+			function ( $where, $query ) {
+				if ( 'lesson' === $query->get( 'post_type' ) ) {
+					$where .= ' AND 1=0';
+				}
+				return $where;
+			},
+			10,
+			2
+		);
+
+		/* Act. */
+		$count = $repository->count( $course_id, $user_id );
+
+		/* Assert. */
+		self::assertSame( 1, $count );
 	}
 
 	public function testIntegrationFind_ArgumentsGiven_ReturnsMatchingProgress(): void {
