@@ -295,7 +295,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$meta_input['_random_question_order'] = true === $quiz_options['random_question_order'] ? 'yes' : 'no';
 		}
 
-		foreach ( array( 'failed_indicate_incorrect', 'failed_show_correct_answers', 'failed_show_answer_feedback' ) as $option ) {
+		foreach ( array( 'failed_indicate_incorrect', 'failed_show_correct_answers', 'failed_show_answer_feedback', 'passed_show_correct_answers' ) as $option ) {
 			if ( isset( $quiz_options[ $option ] ) ) {
 				$meta_input[ '_' . $option ] = $quiz_options[ $option ] ? 'yes' : 'no';
 			} else {
@@ -399,6 +399,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'failed_indicate_incorrect'   => empty( $post_meta['_failed_indicate_incorrect'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_indicate_incorrect'][0],
 				'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_correct_answers'][0],
 				'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
+				'passed_show_correct_answers' => empty( $post_meta['_passed_show_correct_answers'][0] ) ? true : 'yes' === $post_meta['_passed_show_correct_answers'][0],
 				'button_text_color'           => ! empty( $post_meta['_button_text_color'][0] ) ? $post_meta['_button_text_color'][0] : null,
 				'button_background_color'     => ! empty( $post_meta['_button_background_color'][0] ) ? $post_meta['_button_background_color'][0] : null,
 				'pagination'                  => $pagination,
@@ -502,6 +503,11 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 						'failed_show_answer_feedback' => array(
 							'type'        => array( 'boolean', 'null' ),
 							'description' => 'Show answer feedback text',
+							'default'     => null,
+						),
+						'passed_show_correct_answers' => array(
+							'type'        => array( 'boolean', 'null' ),
+							'description' => 'Show correct answers when the student passes',
 							'default'     => null,
 						),
 						'button_text_color'           => array(
