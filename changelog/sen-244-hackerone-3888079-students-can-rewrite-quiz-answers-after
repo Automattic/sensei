@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Prevent students from changing their quiz answers after the quiz has been submitted.
