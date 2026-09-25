@@ -19,7 +19,7 @@ class Sensei_Course_List_Block {
 	 */
 	public function __construct() {
 		add_filter( 'render_block', [ $this, 'maybe_render_login_form' ], 10, 2 );
-		add_filter( 'render_block_data', [ $this, 'maybe_change_inherited_to_true' ], 1 );
+		add_filter( 'render_block_data', array( $this, 'set_query_inheritance_from_context' ), 1 );
 		add_filter( 'render_block_data', [ $this, 'maybe_add_attributes_to_inner_blocks' ], 10, 3 );
 	}
 
@@ -58,20 +58,53 @@ class Sensei_Course_List_Block {
 	/**
 	 * If course list block is being rendered in Archive page, set inherited to true.
 	 *
+	 * @deprecated $$next-version$$ Use set_query_inheritance_from_context() instead.
+	 *
 	 * @param array $parsed_block The block to be rendered.
 	 *
 	 * @return array
 	 */
 	public function maybe_change_inherited_to_true( $parsed_block ) {
+		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Course_List_Block::set_query_inheritance_from_context' );
+
+		return $this->set_query_inheritance_from_context( $parsed_block );
+	}
+
+	/**
+	 * Decide whether a Course List block inherits the main query from where it is rendered.
+	 *
+	 * The saved `inherit` attribute is not reliable for this block: the Courses page is
+	 * saved with it on because its URL doubles as the course archive, while a user
+	 * inserting the pattern gets it off. So the context decides: on the course archive
+	 * or a course category archive the block follows that query; on a singular page
+	 * (for example a WPML translation of the Courses page, served under its own slug)
+	 * inheriting would only yield the page itself, so the block runs its own query.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $parsed_block The block to be rendered.
+	 *
+	 * @access private
+	 * @return array
+	 */
+	public function set_query_inheritance_from_context( $parsed_block ) {
 		if (
-			'core/query' === $parsed_block['blockName'] &&
-			'course' === ( $parsed_block['attrs']['query']['postType'] ?? '' ) &&
-			false !== strpos( ( $parsed_block['attrs']['className'] ?? '' ), 'wp-block-sensei-lms-course-list' ) &&
+			'core/query' !== $parsed_block['blockName'] ||
+			'course' !== ( $parsed_block['attrs']['query']['postType'] ?? '' ) ||
+			false === strpos( ( $parsed_block['attrs']['className'] ?? '' ), 'wp-block-sensei-lms-course-list' )
+		) {
+			return $parsed_block;
+		}
+
+		if (
 			Sensei()->course->course_archive_page_has_query_block() &&
 			( is_post_type_archive( 'course' ) || is_tax( 'course-category' ) )
 		) {
 			$parsed_block['attrs']['query']['inherit'] = true;
+		} elseif ( is_singular() ) {
+			$parsed_block['attrs']['query']['inherit'] = false;
 		}
+
 		return $parsed_block;
 	}
 
