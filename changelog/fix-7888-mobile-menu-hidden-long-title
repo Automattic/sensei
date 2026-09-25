@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix: Long course title on mobile Learning Mode no longer pushes hamburger menu toggle off-screen.

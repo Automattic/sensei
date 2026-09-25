@@ -18,6 +18,17 @@ $breakpoint: 783px;
 		.sensei-course-theme-header-content {
 			gap: 0;
 			transition: all 300ms;
+
+			// Let the title group shrink so a long course title
+			// ellipses instead of pushing the menu toggle off-screen.
+			> .wp-block-group:first-child {
+				flex: 1 1 auto;
+				min-width: 0;
+			}
+
+			> .wp-block-group:last-child {
+				flex: 0 0 auto;
+			}
 		}
 
 		&__focus-mode-toggle {
