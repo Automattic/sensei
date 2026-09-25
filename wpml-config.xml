@@ -73,6 +73,11 @@
 		</key>
 	</admin-texts>
 	<gutenberg-blocks>
+		<!-- Blocks whose attributes are settings, not text: without an entry WPML registers every string attribute for translation. -->
+		<gutenberg-block type="sensei-lms/course-list-filter" translate="0" />
+		<gutenberg-block type="sensei-lms/course-categories" translate="0" />
+		<gutenberg-block type="sensei-lms/course-progress" translate="0" />
+		<gutenberg-block type="sensei-lms/course-overview" translate="0" />
 		<gutenberg-block type="sensei-lms/course-outline-lesson" translate="1">
 			<key name="id" type="post-ids" sub-type="lesson" />
 			<key name="title" />
