@@ -90,4 +90,35 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 		/* ASSERT */
 		$this->assertArrayNotHasKey( 'isCourseListChild', $this->block_instance->parsed_block['innerBlocks'][1]['innerBlocks'][0]['attrs'] );
 	}
+
+	public function testSetQueryInheritanceFromContext_CourseListBlockOnSingularPage_StopsInheriting() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$this->go_to( get_permalink( $page_id ) );
+		$modified_content = str_replace( '"sticky":""', '"sticky":"","inherit":true', $this->content );
+
+		/* ACT */
+		do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertFalse( $this->block_instance->context['query']['inherit'] );
+	}
+
+	public function testSetQueryInheritanceFromContext_CourseListBlockOnCourseArchive_KeepsInheriting() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$this->go_to( '/?post_type=course' );
+		$modified_content = str_replace( '"sticky":""', '"sticky":"","inherit":true', $this->content );
+
+		/* ACT */
+		do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertTrue( $this->block_instance->context['query']['inherit'] );
+	}
 }
