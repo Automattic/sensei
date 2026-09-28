@@ -49,7 +49,7 @@ class Lesson_Translation {
 	 * would point at the master lesson's quiz and any edit made from the duplicate
 	 * would land on the master's quiz and questions.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *

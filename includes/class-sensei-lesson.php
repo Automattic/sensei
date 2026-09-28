@@ -3637,7 +3637,7 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 *
-	 * @since $$next-version$$ Falls back to the `_lesson_quiz` lesson meta when the post query returns nothing.
+	 * @since 4.26.4 Falls back to the `_lesson_quiz` lesson meta when the post query returns nothing.
 	 *
 	 * @param int    $lesson_id   The lesson id (default: 0).
 	 * @param string $post_status The post status (default: 'any').
@@ -3673,7 +3673,7 @@ class Sensei_Lesson {
 	/**
 	 * Get a lesson's quiz from the lesson meta, matching what the post query returns.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int             $lesson_id   The lesson id.
 	 * @param string|string[] $post_status The post status.
@@ -5237,7 +5237,7 @@ class Sensei_Lesson {
 	 * Limit the content of a lesson the current user cannot view to a 30-word teaser.
 	 *
 	 * @since 1.9.0
-	 * @since $$next-version$$ Applies wherever the lesson is rendered, not only on an archive.
+	 * @since 4.26.4 Applies wherever the lesson is rendered, not only on an archive.
 	 *
 	 * @param string $content The lesson content.
 	 * @return string

@@ -52,7 +52,7 @@ class Lesson_Progress {
 	 * so the query would find nothing. Translating the ID first makes the same
 	 * query hit the stored progress whatever the admin language is.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *

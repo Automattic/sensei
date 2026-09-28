@@ -90,7 +90,7 @@ class Sensei_Messages {
 	 * `sensei_message`. `?post_type[]=sensei_message` skips them and exposes every
 	 * message, so never let messages be queried through an array.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *
@@ -412,7 +412,7 @@ class Sensei_Messages {
 	 * Mirrors the enrolment check the REST endpoint enforces: the user must be enrolled
 	 * in the course the message is about, resolving quiz and lesson posts to their course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param WP_Post|null $post The post the message is about.
 	 * @return bool Whether the current user is allowed to send the message.
@@ -752,7 +752,7 @@ class Sensei_Messages {
 	 * The slug is built from the message body, and core's redirect_canonical() sends `?p=ID` to the
 	 * pretty permalink for any public post type before message_login() runs.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *

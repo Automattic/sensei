@@ -144,7 +144,7 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 	 *
 	 * Items without an ID stand for lessons that do not exist yet, so they are always allowed.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param mixed $item Course structure lesson item.
 	 *
@@ -167,7 +167,7 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 	 * same data. Reading the raw body (rather than get_param()) means the content type cannot change what
 	 * is authorized versus what is saved.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param WP_REST_Request $request WordPress request object.
 	 *

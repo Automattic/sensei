@@ -1810,7 +1810,7 @@ class Sensei_Admin {
 	 * Non-string scalar values (int, float, bool, null) are returned untouched so the
 	 * logged event keeps the types produced by json_decode().
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $properties Decoded event properties.
 	 * @return array The properties with their string values sanitized.

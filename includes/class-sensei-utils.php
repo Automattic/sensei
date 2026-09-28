@@ -144,7 +144,7 @@ class Sensei_Utils {
 		 *
 		 * @hook sensei_check_for_activity_args
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.4
 		 *
 		 * @param {array} $args Search arguments.
 		 * @return {array} Filtered search arguments.
