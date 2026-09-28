@@ -112,7 +112,12 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
 		}
 		/* ARRANGE */
-		$courses_page_id = $this->factory->post->create( array( 'post_type' => 'page', 'post_content' => $this->content ) );
+		$courses_page_id = $this->factory->post->create(
+			array(
+				'post_type'    => 'page',
+				'post_content' => $this->content,
+			)
+		);
 		Sensei()->settings->set( 'course_page', $courses_page_id );
 		$this->go_to( '/?post_type=course' );
 
