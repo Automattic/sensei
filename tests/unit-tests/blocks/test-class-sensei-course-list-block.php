@@ -91,7 +91,7 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 		$this->assertArrayNotHasKey( 'isCourseListChild', $this->block_instance->parsed_block['innerBlocks'][1]['innerBlocks'][0]['attrs'] );
 	}
 
-	public function testSetQueryInheritanceFromContext_CourseListBlockOnSingularPage_StopsInheriting() {
+	public function testMaybeChangeInheritedToTrue_CourseListBlockOnSingularPage_StopsInheriting() {
 		if ( $this->skip_tests ) {
 			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
 		}
@@ -107,7 +107,7 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 		$this->assertFalse( $this->block_instance->context['query']['inherit'] );
 	}
 
-	public function testSetQueryInheritanceFromContext_CourseListBlockOnCourseArchive_KeepsInheriting() {
+	public function testMaybeChangeInheritedToTrue_CourseListBlockOnCourseArchive_KeepsInheriting() {
 		if ( $this->skip_tests ) {
 			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
 		}
