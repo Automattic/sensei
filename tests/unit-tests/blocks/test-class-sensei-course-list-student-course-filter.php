@@ -7,8 +7,6 @@
  */
 class Sensei_Course_List_Student_Course_Filter_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
-	use Sensei_Course_Enrolment_Manual_Test_Helpers;
-	use Sensei_Test_Login_Helpers;
 
 	/**
 	 * Factory for setting up testing data.
@@ -35,13 +33,10 @@ class Sensei_Course_List_Student_Course_Filter_Test extends WP_UnitTestCase {
 
 	public function testGetCourseIdsToBeExcluded_CourseHiddenFromFilteredQueries_LeavesItOut() {
 		/* Arrange. */
-		$student            = $this->factory->user->create();
 		$hidden_course_id   = $this->factory->course->create();
-		$active_course_id   = $this->factory->course->create();
 		$inactive_course_id = $this->factory->course->create();
 
-		$this->login_as( $student );
-		$this->manuallyEnrolStudentInCourse( $student, $active_course_id );
+		wp_set_current_user( $this->factory->user->create() );
 		$this->hide_course_from_filtered_queries( $hidden_course_id );
 		$_GET['course-list-student-course-filter-13'] = 'active';
 

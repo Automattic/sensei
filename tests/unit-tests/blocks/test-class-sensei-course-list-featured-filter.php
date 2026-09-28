@@ -26,10 +26,8 @@ class Sensei_Course_List_Featured_Filter_Test extends WP_UnitTestCase {
 	public function testGetCourseIdsToBeExcluded_CourseHiddenFromFilteredQueries_LeavesItOut() {
 		/* Arrange. */
 		$hidden_course_id       = $this->factory->course->create();
-		$featured_course_id     = $this->factory->course->create();
 		$not_featured_course_id = $this->factory->course->create();
 
-		update_post_meta( $featured_course_id, '_course_featured', 'featured' );
 		$this->hide_course_from_filtered_queries( $hidden_course_id );
 		$_GET['course-list-featured-filter-13'] = 'featured';
 
