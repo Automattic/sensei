@@ -272,4 +272,15 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals( [ 'lesson' ], $args['post_type'] );
 	}
+
+	public function testSetupSenseiMessagePostType_MessageGiven_IsNotEmbeddable() {
+		/* Arrange. */
+		$message_id = $this->factory->post->create( array( 'post_type' => 'sensei_message' ) );
+
+		/* Act. */
+		$actual = is_post_embeddable( $message_id );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
 }

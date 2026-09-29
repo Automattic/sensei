@@ -117,23 +117,70 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 			return false;
 		}
 
-		$structure = (array) $request->get_param( 'structure' );
+		// A malformed body has nothing to authorize; save_course_structure() rejects it with a 400.
+		$structure = $this->get_request_structure( $request ) ?? array();
+
 		foreach ( $structure as $item ) {
 			$type = $item['type'] ?? null;
-			$id   = $item['id'] ?? null;
 
-			if ( ! $type || ! $id ) {
-				continue;
+			if ( 'lesson' === $type && ! $this->can_current_user_edit_structure_lesson( $item ) ) {
+				return false;
 			}
 
-			if ( 'lesson' === $type ) {
-				if ( ! current_user_can( 'edit_post', $id ) ) {
-					return false;
+			if ( 'module' === $type ) {
+				foreach ( (array) ( $item['lessons'] ?? array() ) as $lesson_item ) {
+					if ( ! $this->can_current_user_edit_structure_lesson( $lesson_item ) ) {
+						return false;
+					}
 				}
 			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check user permission for editing the lesson a course structure item refers to.
+	 *
+	 * Items without an ID stand for lessons that do not exist yet, so they are always allowed.
+	 *
+	 * @since 4.26.4
+	 *
+	 * @param mixed $item Course structure lesson item.
+	 *
+	 * @return bool Whether the user can edit the lesson.
+	 */
+	private function can_current_user_edit_structure_lesson( $item ) {
+		$id = is_array( $item ) ? ( $item['id'] ?? null ) : null;
+
+		if ( ! $id ) {
+			return true;
+		}
+
+		return current_user_can( 'edit_post', $id );
+	}
+
+	/**
+	 * Get the structure from the request body.
+	 *
+	 * Both the permission check and the save read the structure through here so they always act on the
+	 * same data. Reading the raw body (rather than get_param()) means the content type cannot change what
+	 * is authorized versus what is saved.
+	 *
+	 * @since 4.26.4
+	 *
+	 * @param WP_REST_Request $request WordPress request object.
+	 *
+	 * @return array[]|null The structure, or null when the body is missing or malformed.
+	 */
+	private function get_request_structure( WP_REST_Request $request ) {
+		$input = json_decode( $request->get_body(), true );
+
+		if ( ! is_array( $input ) || ! isset( $input['structure'] ) || ! is_array( $input['structure'] ) ) {
+			return null;
+		}
+
+		return $input['structure'];
 	}
 
 	/**
@@ -181,16 +228,14 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 		$course           = $this->get_course( intval( $request->get_param( 'course_id' ) ) );
 		$course_structure = Sensei_Course_Structure::instance( $course->ID );
 
-		$input = json_decode( $request->get_body(), true );
-		if ( ! is_array( $input ) || ! isset( $input['structure'] ) || ! is_array( $input['structure'] ) ) {
+		$raw_structure = $this->get_request_structure( $request );
+		if ( null === $raw_structure ) {
 			return new WP_Error(
 				'sensei_course_structure_invalid_input',
 				__( 'Input for course structure was invalid.', 'sensei-lms' ),
 				[ 'status' => 400 ]
 			);
 		}
-
-		$raw_structure = $input['structure'];
 
 		$result = $course_structure->save( $raw_structure );
 		if ( is_wp_error( $result ) ) {

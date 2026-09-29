@@ -135,13 +135,14 @@ class Sensei_Temporary_User_Test extends WP_UnitTestCase {
 		];
 		$result1   = ( new WP_User_Query( $user_args ) )->get_results();
 
-		$this->factory->user->create_many(
-			2,
-			[
-				'user_login' => $prefix . 'user',
-				'role'       => $role,
-			]
-		);
+		for ( $i = 1; $i <= 2; $i++ ) {
+			$this->factory->user->create(
+				array(
+					'user_login' => $prefix . 'user_' . $i,
+					'role'       => $role,
+				)
+			);
+		}
 		Sensei_Temporary_User::init();
 
 		/* Act */

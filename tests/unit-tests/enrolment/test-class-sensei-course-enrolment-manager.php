@@ -350,10 +350,10 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 			->getMock();
 
 		$property = new ReflectionProperty( 'Sensei_Course_Enrolment', 'instances' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$instances            = $property->getValue();
 		$instances[ $course ] = $mock;
-		$property->setValue( $instances );
+		$property->setValue( null, $instances );
 
 		return $mock;
 	}
@@ -366,7 +366,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 */
 	private function assertEnrolmentCheckDeferred( $user_id, $course_id, $message = '' ) {
 		$property = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'deferred_enrolment_checks' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$deferred = $property->getValue( Sensei_Course_Enrolment_Manager::instance() );
 
 		$this->assertTrue( isset( $deferred[ $user_id ][ $course_id ] ), $message );
@@ -380,7 +380,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 */
 	private function assertEnrolmentCheckNotDeferred( $user_id, $course_id, $message = '' ) {
 		$property = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'deferred_enrolment_checks' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$deferred = $property->getValue( Sensei_Course_Enrolment_Manager::instance() );
 
 		$this->assertFalse( isset( $deferred[ $user_id ][ $course_id ] ), $message );
@@ -391,7 +391,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 */
 	private function clearEnrolmentCheckDeferred() {
 		$property = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'deferred_enrolment_checks' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$property->setValue( Sensei_Course_Enrolment_Manager::instance(), [] );
 	}
 }
