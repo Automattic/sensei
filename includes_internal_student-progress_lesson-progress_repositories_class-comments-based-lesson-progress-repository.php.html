@@ -42,7 +42,6 @@ namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTime;
 use InvalidArgumentException;
-use ReflectionClass;
 use RuntimeException;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
@@ -193,12 +192,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
 
-		// We need to use internal value for status, not the one returned by the getter.
-		// Comments_Based_Lesson_Progress::get_status() returns a normalized status, but we need the internal one.
-		$reflection_class = new ReflectionClass( Comments_Based_Lesson_Progress::class );
-		$status_property  = $reflection_class->getProperty( 'status' );
-		$status_property->setAccessible( true );
-		$status = (string) $status_property->getValue( $lesson_progress );
+		$status = (string) $lesson_progress->get_raw_status();
 
 		$comment_id = (int) Sensei_Utils::update_lesson_status(
 			$lesson_progress->get_user_id(),
@@ -357,6 +351,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * Asserts that the lesson progress is a Comments_Based_Lesson_Progress.
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @psalm-assert Comments_Based_Lesson_Progress $lesson_progress
 	 * @throws InvalidArgumentException When the lesson progress is not a Comments_Based_Lesson_Progress.
 	 */
 	private function assert_comments_based_lesson_progress( Lesson_Progress_Interface $lesson_progress ): void {

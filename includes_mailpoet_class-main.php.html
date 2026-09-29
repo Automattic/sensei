@@ -95,7 +95,7 @@ class Main {
 	public function __construct( $mailpoet_api ) {
 		$this->mailpoet_api = $mailpoet_api;
 		if ( $this->mailpoet_api->isSetupComplete() ) {
-			add_action( 'init', array( $this, 'maybe_schedule_sync_job' ), 10 );
+			add_action( 'wp_loaded', array( $this, 'maybe_schedule_sync_job' ) );
 			/**
 			 * Schedule job to synchronise students in courses and groups with MailPoet subscribers list.
 			 *
