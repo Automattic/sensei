@@ -2,13 +2,17 @@
  * External dependencies
  */
 import { pick, mapValues } from 'lodash';
-import createSelector from 'rememo';
 
 /**
  * WordPress dependencies
  */
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { dispatch, useDispatch, useSelect } from '@wordpress/data';
+import {
+	createSelector,
+	dispatch,
+	useDispatch,
+	useSelect,
+} from '@wordpress/data';
 import {
 	createContext,
 	useCallback,
