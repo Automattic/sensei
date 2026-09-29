@@ -314,7 +314,7 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 		$admin  = new Sensei_Admin();
 		$method = new ReflectionMethod( $admin, 'sync_lesson_order' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		return [
 			'course_id'         => $course_id,

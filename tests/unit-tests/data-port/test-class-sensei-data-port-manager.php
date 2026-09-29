@@ -214,7 +214,7 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 
 	private function set_data_port_jobs( $jobs ) {
 		$property = new ReflectionProperty( 'Sensei_Data_Port_Manager', 'data_port_jobs' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$property->setValue( Sensei_Data_Port_Manager::instance(), $jobs );
 	}
 
@@ -268,8 +268,8 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 			);
 
 		$instance_property = new ReflectionProperty( Sensei_Data_Port_Manager::class, 'instance' );
-		$instance_property->setAccessible( true );
-		$instance_property->setValue( $job_manager_mock );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $instance_property );
+		$instance_property->setValue( null, $job_manager_mock );
 
 		$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
 

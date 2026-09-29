@@ -130,8 +130,8 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	 */
 	private static function resetCourseEnrolmentProviders() {
 		$course_enrolment_instances = new ReflectionProperty( Sensei_Course_Enrolment::class, 'instances' );
-		$course_enrolment_instances->setAccessible( true );
-		$course_enrolment_instances->setValue( [] );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $course_enrolment_instances );
+		$course_enrolment_instances->setValue( null, [] );
 	}
 
 	/**
@@ -139,7 +139,7 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	 */
 	private static function resetCourseEnrolmentManager() {
 		$enrolment_providers = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'enrolment_providers' );
-		$enrolment_providers->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $enrolment_providers );
 		$enrolment_providers->setValue( Sensei_Course_Enrolment_Manager::instance(), null );
 
 		Sensei_Course_Enrolment_Manager::instance()->collect_enrolment_providers();
@@ -150,7 +150,7 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	 */
 	private static function resetLearnerTerms(): void {
 		$learner_instance = new ReflectionProperty( Sensei_Learner::class, 'learner_terms' );
-		$learner_instance->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $learner_instance );
 		$learner_instance->setValue( Sensei_Course_Enrolment_Manager::instance(), [] );
 	}
 }

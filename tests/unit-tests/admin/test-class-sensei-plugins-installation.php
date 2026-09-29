@@ -129,7 +129,7 @@ class Sensei_Plugins_Installation_Test extends WP_Test_REST_TestCase {
 		);
 
 		$method = new ReflectionMethod( Sensei_Plugins_Installation::class, 'save_error' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$method->invoke( Sensei_Plugins_Installation::instance(), 'receive-error', 'Error message' );
 		$method->invoke( Sensei_Plugins_Installation::instance(), 'invalid-slug', 'Error message' );
@@ -166,7 +166,7 @@ class Sensei_Plugins_Installation_Test extends WP_Test_REST_TestCase {
 		);
 
 		$method = new ReflectionMethod( Sensei_Plugins_Installation::class, 'complete_installation' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$method->invoke( Sensei_Plugins_Installation::instance(), 'completed' );
 		$method->invoke( Sensei_Plugins_Installation::instance(), 'invalid' );

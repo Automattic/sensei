@@ -16,7 +16,7 @@ class Sensei_Clock_Stub implements Clock_Interface {
 	 *
 	 * @return \DateTimeImmutable
 	 */
-	public function now( \DateTimeZone $timezone = null ) {
+	public function now( ?\DateTimeZone $timezone = null ) {
 		return ( new \DateTimeImmutable( '@0' ) )->setTimezone( $timezone ?? new \DateTimeZone( 'UTC' ) );
 	}
 }
