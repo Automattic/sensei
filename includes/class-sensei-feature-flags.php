@@ -82,7 +82,7 @@ class Sensei_Feature_Flags {
 	 * @return array Default feature settings.
 	 */
 	private function get_default_feature_flags() {
-		$env = wp_get_environment_type();
+		$env = $this->get_environment_type();
 
 		/**
 		 * Filters the default feature flag settings.
@@ -98,6 +98,17 @@ class Sensei_Feature_Flags {
 			'sensei_default_feature_flag_settings',
 			static::DEFAULT_FEATURE_FLAGS[ $env ] ?? static::DEFAULT_FEATURE_FLAGS['production']
 		);
+	}
+
+	/**
+	 * Get the current WordPress environment type.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string The current environment type.
+	 */
+	protected function get_environment_type(): string {
+		return wp_get_environment_type();
 	}
 
 	/**

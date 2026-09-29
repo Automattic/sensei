@@ -112,10 +112,11 @@ class Sensei_Class_Feature_Flags_Test extends WP_UnitTestCase {
 					'foo' => true,
 				],
 			];
-		};
 
-		define( 'WP_RUN_CORE_TESTS', true );
-		define( 'WP_ENVIRONMENT_TYPE', 'development' );
+			protected function get_environment_type(): string {
+				return 'development';
+			}
+		};
 
 		/* Act. */
 		$actual = $flags->is_enabled( 'foo' );
@@ -141,10 +142,11 @@ class Sensei_Class_Feature_Flags_Test extends WP_UnitTestCase {
 					'foo' => true,
 				],
 			];
-		};
 
-		define( 'WP_RUN_CORE_TESTS', true );
-		define( 'WP_ENVIRONMENT_TYPE', 'production' );
+			protected function get_environment_type(): string {
+				return 'production';
+			}
+		};
 
 		/* Act. */
 		$actual = $flags->is_enabled( 'foo' );
@@ -164,6 +166,10 @@ class Sensei_Class_Feature_Flags_Test extends WP_UnitTestCase {
 					'foo' => false,
 				],
 			];
+
+			protected function get_environment_type(): string {
+				return '';
+			}
 		};
 
 		/* Act. */

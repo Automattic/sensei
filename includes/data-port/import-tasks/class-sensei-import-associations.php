@@ -48,7 +48,7 @@ class Sensei_Import_Associations
 	 *
 	 * @var int
 	 */
-	private $batch_remaining;
+	private $batch_remaining = self::BATCH_SIZE;
 
 	/**
 	 * Sensei_Import_Associations constructor.

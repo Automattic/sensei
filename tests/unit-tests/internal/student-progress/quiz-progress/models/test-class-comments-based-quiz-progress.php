@@ -55,6 +55,17 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( 'in-progress', $actual );
 	}
 
+	public function testGetRawStatus_ConstructedWithLegacyLessonStatus_ReturnsUnnormalizedStatus(): void {
+		/* Arrange. */
+		$quiz_progress = $this->create_progress( 'complete' );
+
+		/* Act. */
+		$actual = $quiz_progress->get_raw_status();
+
+		/* Assert. */
+		self::assertSame( 'complete', $actual );
+	}
+
 	/**
 	 * Test that the quiz is considered submitted based on the quiz progress status.
 	 *
@@ -213,7 +224,7 @@ class Comments_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( 'ungraded', $actual );
 	}
 
-	private function create_progress( string $status = null ): Comments_Based_Quiz_Progress {
+	private function create_progress( ?string $status = null ): Comments_Based_Quiz_Progress {
 		return new Comments_Based_Quiz_Progress(
 			1,
 			2,
