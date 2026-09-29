@@ -114,7 +114,7 @@ class Course_Progress {
 	 * so the query would find nothing. Translating the ID first makes the same
 	 * query hit the stored progress whatever the admin language is.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *
@@ -132,7 +132,7 @@ class Course_Progress {
 	 * secondary language is a translation, while the progress it lists is
 	 * stored against the original language's ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *

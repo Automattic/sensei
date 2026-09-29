@@ -35,6 +35,7 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 
 		$this->factory      = new Sensei_Factory();
 		$this->preview_user = new Sensei_Preview_User();
+		remove_action( 'wp', array( $this->preview_user, 'init' ), 1 );
 		add_filter( 'wp_redirect', [ $this, 'go_to' ] );
 	}
 
@@ -42,8 +43,9 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 	 * Clean up after the test.
 	 */
 	public function tearDown(): void {
-		parent::tearDown();
 		remove_filter( 'wp_redirect', [ $this, 'go_to' ] );
+
+		parent::tearDown();
 	}
 
 	/**
@@ -169,7 +171,7 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 
 		$this->login_as_admin();
 		$this->go_to( add_query_arg( [ 'sensei-preview-as-student' => wp_create_nonce( 'sensei-preview-as-student' ) ], $lesson_link ) );
-		parent::go_to( $lesson_link );
+		$this->go_to( $lesson_link );
 
 		$this->assertEquals( $lesson_content, get_the_content(), 'Preview user should see unpublished lesson content.' );
 	}

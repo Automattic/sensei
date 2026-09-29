@@ -31,8 +31,8 @@ trait Sensei_Scheduler_Test_Helpers {
 	 */
 	private static function resetScheduler() {
 		$scheduler_instance = new ReflectionProperty( Sensei_Scheduler::class, 'instance' );
-		$scheduler_instance->setAccessible( true );
-		$scheduler_instance->setValue( null );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $scheduler_instance );
+		$scheduler_instance->setValue( null, null );
 
 		remove_all_filters( 'sensei_scheduler_class' );
 	}

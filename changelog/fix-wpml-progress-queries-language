@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fixed the student management and grading screens showing no students when the WPML admin language is not the original one.

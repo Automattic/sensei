@@ -25,7 +25,7 @@ class Sensei_Reports_Overview_Service_Students {
 	/**
 	 * Maximum number of students included in a per-user aggregate request.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 */
 	private const PER_USER_AGGREGATE_BATCH_SIZE = 1000;
 
@@ -46,7 +46,7 @@ class Sensei_Reports_Overview_Service_Students {
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service   Progress aggregation service.
 	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service Grading stats service.
@@ -82,7 +82,7 @@ class Sensei_Reports_Overview_Service_Students {
 	/**
 	 * Get the average grade for each of the given students.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int[] $user_ids Student user IDs.
 	 * @return array<int, float> Map of user ID to average grade.
@@ -109,7 +109,7 @@ class Sensei_Reports_Overview_Service_Students {
 	/**
 	 * Get the active and completed course counts for each of the given students.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int[] $user_ids Student user IDs.
 	 * @return array<int, array{active:int, completed:int}> Map of user_id => [ active, completed ].
@@ -147,7 +147,7 @@ class Sensei_Reports_Overview_Service_Students {
 	 *
 	 * Powers the Active/Completed Courses column headers.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int[] $user_ids Student user IDs.
 	 * @return array{active:int, completed:int} Totals for active and completed courses.

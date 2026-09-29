@@ -154,6 +154,17 @@ class Comments_Based_Lesson_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( 'in-progress', $actual );
 	}
 
+	public function testGetRawStatus_ConstructedWithQuizStatus_ReturnsUnnormalizedStatus(): void {
+		/* Arrange. */
+		$lesson_progress = $this->create_progress( 'passed' );
+
+		/* Act. */
+		$actual = $lesson_progress->get_raw_status();
+
+		/* Assert. */
+		self::assertSame( 'passed', $actual );
+	}
+
 	public function testGetStartedAt_ConstructedWithStartedAt_ReturnsSameStartedAt(): void {
 		/* Arrange. */
 		$lesson_progress = $this->create_progress();
@@ -348,7 +359,7 @@ class Comments_Based_Lesson_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( $completed_at, $progress->get_completed_at() );
 	}
 
-	private function create_progress( string $status = null ): Comments_Based_Lesson_Progress {
+	private function create_progress( ?string $status = null ): Comments_Based_Lesson_Progress {
 		return new Comments_Based_Lesson_Progress(
 			1,
 			2,

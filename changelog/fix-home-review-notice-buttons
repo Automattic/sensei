@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix Sensei Home review notice buttons not responding when clicking their labels.

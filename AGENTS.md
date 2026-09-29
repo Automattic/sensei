@@ -12,7 +12,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - `tests/unit-tests/` — PHPUnit suite.
 - `tests/e2e-playwright/` — Playwright end-to-end suite (see "End-to-end" below).
 - `docs/conventions/` — the naming and unit test conventions this repo is reviewed against.
-- `changelog/` — per-PR changelog entries (created from the PR description's changelog checkbox, or via `make changelog`; see Conventions).
+- `changelog/` — per-PR changelog entries (created via `make changelog`; see Conventions).
 - `config/scoper.inc.php` — php-scoper config used during the build.
 - `scripts/linter-ci` — the diff-based PHPCS runner used by `make lint` and CI.
 - `.github/workflows/` — CI definitions; PR previews are built by `playground-preview.yml`.
@@ -45,7 +45,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - **Before pushing**: The pre-commit hook only lints PHP files added after 2020-01-01. CI lints all changed lines. Always run PHPCS and the full Psalm matrix on modified files before pushing to avoid CI failures.
 
 ## Conventions
-- **Changelogs**: Every user-facing change MUST have a changelog entry. Prefer ticking **"Automatically create a changelog entry"** in the PR description (fill Significance/Type/Message; CI writes the `changelog/` file). Fall back to `make changelog` only when the checkbox can't be used — forks (CI can't push to a forked branch), or if you'd rather commit the entry yourself; don't do both. For purely internal changes (refactors, test-only), apply the `No Changelog` label instead.
+- **Changelogs**: Every user-facing change MUST have a changelog entry. Run `make changelog` and commit the generated `changelog/` file with the PR. For purely internal changes (refactors, test-only), apply the `No Changelog` label instead.
 - **PR milestones**: Every PR MUST have a milestone or CI (`pr-validation.yml`) fails. The `pull-request` skill assigns the next shipping milestone when it opens a PR.
 - **Version placeholders in docblocks**: Never hardcode a release number in `@since` tags for new code. Use `@since $$next-version$$` — release tooling replaces the placeholder on version bump.
 - **Coding standards**: Follow the WordPress coding standards for the language you're touching — [PHP](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/), [JavaScript](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/), [CSS](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/css/), [HTML](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/html/). See **Linting** above for the enforcing commands; HTML has no linter, so apply that standard by hand.

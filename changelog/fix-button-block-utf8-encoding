@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix garbled text in button blocks whose text uses non-Latin characters when the button URL is set at render time.

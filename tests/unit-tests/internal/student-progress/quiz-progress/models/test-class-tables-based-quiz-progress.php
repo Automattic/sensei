@@ -186,7 +186,7 @@ class Tables_Based_Quiz_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( 'ungraded', $actual );
 	}
 
-	private function create_progress( string $status = null ): Tables_Based_Quiz_Progress {
+	private function create_progress( ?string $status = null ): Tables_Based_Quiz_Progress {
 		return new Tables_Based_Quiz_Progress(
 			1,
 			2,

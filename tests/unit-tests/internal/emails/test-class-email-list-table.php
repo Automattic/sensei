@@ -275,7 +275,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$post       = $this->factory->email->create_and_get();
 		$list_table = new Email_List_Table( new Email_Repository() );
 		$method     = new ReflectionMethod( $list_table, 'get_row_class' );
-		$method->setAccessible( true );
+		\Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		/* Act. */
 		$result = $method->invokeArgs( $list_table, [ $post ] );
@@ -289,7 +289,7 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$post       = $this->factory->email->create_and_get( [ 'post_status' => 'draft' ] );
 		$list_table = new Email_List_Table( new Email_Repository() );
 		$method     = new ReflectionMethod( $list_table, 'get_row_class' );
-		$method->setAccessible( true );
+		\Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		/* Act. */
 		$result = $method->invokeArgs( $list_table, [ $post ] );
