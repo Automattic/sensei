@@ -60,10 +60,10 @@ class Courses_Csv_Tests extends WP_UnitTestCase {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen -- Just a test.
 		$file    = fopen( $file_path, 'r' );
 		$data    = [];
-		$headers = array_map( 'strtolower', fgetcsv( $file ) );
+		$headers = array_map( 'strtolower', fgetcsv( $file, 0, ',', '"', '' ) );
 
 		while ( ! feof( $file ) ) {
-			$row = fgetcsv( $file );
+			$row = fgetcsv( $file, 0, ',', '"', '' );
 			if ( empty( $row ) ) {
 				continue;
 			}

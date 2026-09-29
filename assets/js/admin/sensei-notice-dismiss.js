@@ -13,10 +13,11 @@ domReady( () => {
 	 */
 	const handleTasks = ( event ) => {
 		const { target } = event;
-		if ( ! target.dataset.senseiNoticeTasks ) {
+		const taskElement = target.closest( '[data-sensei-notice-tasks]' );
+		if ( ! taskElement ) {
 			return;
 		}
-		const tasks = JSON.parse( target.dataset.senseiNoticeTasks );
+		const tasks = JSON.parse( taskElement.dataset.senseiNoticeTasks );
 		if ( ! tasks ) {
 			return;
 		}

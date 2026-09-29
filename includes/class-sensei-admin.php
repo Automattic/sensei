@@ -450,7 +450,14 @@ class Sensei_Admin {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
-		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
+		wp_localize_script(
+			'sensei-event-logging',
+			'sensei_event_logging',
+			array(
+				'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled(),
+				'nonce'   => wp_create_nonce( 'sensei_log_event' ),
+			)
+		);
 	}
 
 	/**
@@ -1101,6 +1108,10 @@ class Sensei_Admin {
 	 */
 	public function handle_order_courses() {
 		check_admin_referer( 'order_courses' );
+
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
+		}
 
 		$ordered = null;
 		if ( isset( $_POST['course-order'] ) && 0 < strlen( sensei_request_text( $_POST['course-order'] ) ) ) {
@@ -1759,7 +1770,12 @@ class Sensei_Admin {
 	 * @access private
 	 */
 	public function ajax_log_event() {
-		// phpcs:disable WordPress.Security.NonceVerification
+		check_ajax_referer( 'sensei_log_event', 'nonce' );
+
+		if ( ! current_user_can( 'edit_courses' ) ) {
+			wp_die( '-1', 403 );
+		}
+
 		if ( ! isset( $_REQUEST['event_name'] ) ) {
 			wp_die();
 		}
@@ -1786,7 +1802,6 @@ class Sensei_Admin {
 		);
 
 		sensei_log_event( $event_name, $properties );
-		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 	/**
@@ -1795,7 +1810,7 @@ class Sensei_Admin {
 	 * Non-string scalar values (int, float, bool, null) are returned untouched so the
 	 * logged event keeps the types produced by json_decode().
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $properties Decoded event properties.
 	 * @return array The properties with their string values sanitized.

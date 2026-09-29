@@ -12,22 +12,28 @@ domReady( () => {
 	startBlocksTogglingControl( 'lesson' );
 
 	// Lessons Write Panel.
-	const complexityOptionElements = jQuery( '#lesson-complexity-options' );
+	const complexityOptionElements = jQuery(
+		'select#lesson-complexity-options'
+	);
 	if ( complexityOptionElements.length > 0 ) {
 		complexityOptionElements.select2( { width: 'resolve' } );
 	}
 
-	const prerequisiteOptionElements = jQuery( '#lesson-prerequisite-options' );
+	const prerequisiteOptionElements = jQuery(
+		'select#lesson-prerequisite-options'
+	);
 	if ( prerequisiteOptionElements.length > 0 ) {
 		prerequisiteOptionElements.select2( { width: 'resolve' } );
 	}
 
-	const courseOptionElements = jQuery( '#lesson-course-options' );
+	const courseOptionElements = jQuery( 'select#lesson-course-options' );
 	if ( courseOptionElements.length > 0 ) {
 		courseOptionElements.select2( { width: 'resolve' } );
 	}
 
-	const moduleOptionElements = jQuery( '#lesson-module-options' );
+	const moduleOptionElements = jQuery(
+		'#lesson-module-metabox-select select#lesson-module-options'
+	);
 	if ( moduleOptionElements.length > 0 ) {
 		moduleOptionElements.select2( { width: 'resolve' } );
 	}
@@ -56,7 +62,7 @@ domReady( () => {
 					jQuery( '> .inside', '#lesson-prerequisite' ).html(
 						response
 					);
-					jQuery( '#lesson-prerequisite-options' ).select2( {
+					jQuery( 'select#lesson-prerequisite-options' ).select2( {
 						width: 'resolve',
 					} );
 				}

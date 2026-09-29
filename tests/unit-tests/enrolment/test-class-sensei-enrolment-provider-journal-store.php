@@ -346,7 +346,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		$this->enableJournal();
 
 		$method = new ReflectionMethod( Sensei_Enrolment_Provider_Journal_Store::class, 'get' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 		$journal_store = $method->invoke( null, $user, $course );
 
 		$journal_json = <<<EOT
@@ -383,12 +383,12 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 EOT;
 
 		$method = new ReflectionMethod( $journal_store, 'restore_from_json' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 		$method->invoke( $journal_store, $journal_json );
 
 		$state_store_instances = new ReflectionProperty( Sensei_Enrolment_Provider_Journal_Store::class, 'instances' );
-		$state_store_instances->setAccessible( true );
-		$state_store_instances->setValue( [ $user => $journal_store ] );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $state_store_instances );
+		$state_store_instances->setValue( null, [ $user => $journal_store ] );
 
 		$current_snapshot = Sensei_Enrolment_Provider_Journal_Store::get_enrolment_snanpshot( $user, $course, 1586530073.434586 );
 		$this->assertCount( 1, $current_snapshot, 'There should be 1 provider in the snapshot.' );
@@ -409,7 +409,7 @@ EOT;
 		$this->enableJournal();
 
 		$method = new ReflectionMethod( Sensei_Enrolment_Provider_Journal_Store::class, 'get' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 		$journal_store = $method->invoke( null, $user );
 
 		$journal_json = <<<EOT
@@ -440,12 +440,12 @@ EOT;
 EOT;
 
 		$method = new ReflectionMethod( $journal_store, 'restore_from_json' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 		$method->invoke( $journal_store, $journal_json );
 
 		$state_store_instances = new ReflectionProperty( Sensei_Enrolment_Provider_Journal_Store::class, 'instances' );
-		$state_store_instances->setAccessible( true );
-		$state_store_instances->setValue( [ $user => $journal_store ] );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $state_store_instances );
+		$state_store_instances->setValue( null, [ $user => $journal_store ] );
 
 		$current_snapshot = Sensei_Enrolment_Provider_Journal_Store::get_enrolment_snanpshot( $user, $courses[0] );
 		$this->assertCount( 1, $current_snapshot, 'There should be 1 provider in the snapshot.' );

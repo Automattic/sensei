@@ -279,7 +279,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	 */
 	private function registerMockProvider( $mock_provider ) {
 		$property = new ReflectionProperty( 'Sensei_Course_Enrolment_Manager', 'enrolment_providers' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$property->setValue( Sensei_Course_Enrolment_Manager::instance(), [ $mock_provider->get_id() => $mock_provider ] );
 	}
 
@@ -300,14 +300,14 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 		$mock->method( 'is_enrolled' )->willReturn( $is_enrolled );
 
 		$instances_property = new ReflectionProperty( 'Sensei_Course_Enrolment', 'instances' );
-		$instances_property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $instances_property );
 
 		$instances               = $instances_property->getValue();
 		$instances[ $course_id ] = $mock;
-		$instances_property->setValue( $instances );
+		$instances_property->setValue( null, $instances );
 
 		$course_id_property = new ReflectionProperty( 'Sensei_Course_Enrolment', 'course_id' );
-		$course_id_property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $course_id_property );
 		$course_id_property->setValue( $mock, $course_id );
 	}
 }

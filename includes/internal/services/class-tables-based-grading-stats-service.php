@@ -134,7 +134,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	/**
 	 * Get average grade grouped by user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int[] $user_ids User IDs to include.
 	 * @return array<int, float> Map of user ID to average grade.
@@ -181,7 +181,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	 * because the tables schema queries `sensei_lms_progress` + `sensei_lms_quiz_submissions`
 	 * directly rather than commentmeta.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return float|null Average grade, or null when no matching grades exist.

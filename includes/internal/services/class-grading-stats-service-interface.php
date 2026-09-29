@@ -46,7 +46,7 @@ interface Grading_Stats_Service_Interface {
 	/**
 	 * Get average grade grouped by user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int[] $user_ids User IDs to include.
 	 * @return array<int, float> Map of user ID to average grade.
@@ -56,7 +56,7 @@ interface Grading_Stats_Service_Interface {
 	/**
 	 * Get the average quiz grade for a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $args {
 	 *     Comments-API-shaped activity arguments.

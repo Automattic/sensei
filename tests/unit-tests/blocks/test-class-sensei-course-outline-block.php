@@ -351,8 +351,8 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$mock->method( 'get' )->willReturn( $structure );
 
 		$instances = new ReflectionProperty( Sensei_Course_Structure::class, 'instances' );
-		$instances->setAccessible( true );
-		$instances->setValue( [ 0 => $mock ] );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $instances );
+		$instances->setValue( null, [ 0 => $mock ] );
 	}
 
 	/**
@@ -360,11 +360,11 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 	 */
 	private function mock_sensei_notices() {
 		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$property->setValue( Sensei()->notices, false );
 
 		$property = new ReflectionProperty( 'Sensei_Notices', 'printed_keys' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$property->setValue( Sensei()->notices, array() );
 	}
 

@@ -1,4 +1,0 @@
-Significance: patch
-Type: development
-
-Refactored course report lesson metrics into dedicated progress aggregation and grading statistics services.

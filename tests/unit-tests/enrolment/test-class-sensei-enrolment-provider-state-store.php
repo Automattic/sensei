@@ -129,7 +129,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	private function getStateStoreFromJSON( $json_str, $user_id = 0, $course_id = 0 ) {
 		$store  = Sensei_Enrolment_Provider_State_Store::get( $user_id, $course_id );
 		$method = new ReflectionMethod( Sensei_Enrolment_Provider_State_Store::class, 'restore_from_json' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 		$method->invoke( $store, $json_str );
 
 		return $store;
@@ -196,8 +196,8 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	public function testReset_WhenHasInstances_ResetsInstances() {
 		/* Arrange */
 		$state_store_instances = new ReflectionProperty( Sensei_Enrolment_Provider_State_Store::class, 'instances' );
-		$state_store_instances->setAccessible( true );
-		$state_store_instances->setValue( [ 'something' ] );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $state_store_instances );
+		$state_store_instances->setValue( null, [ 'something' ] );
 
 		/* Act */
 		Sensei_Enrolment_Provider_State_Store::reset();

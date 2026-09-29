@@ -2,10 +2,12 @@
  * WordPress dependencies
  */
 const baseConfig = require( '@wordpress/scripts/config/jest-unit.config.js' );
+const defaultPreset = require( '@wordpress/jest-preset-default' );
 
 module.exports = {
 	...baseConfig,
 	preset: null,
+	setupFiles: defaultPreset.setupFiles,
 	setupFilesAfterEnv: [ './jest.setup.js' ],
 	testPathIgnorePatterns: [
 		'/node_modules/',

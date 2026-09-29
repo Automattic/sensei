@@ -56,7 +56,7 @@ class Exit_Course {
 			$wrapper_attributes = get_block_wrapper_attributes();
 		}
 
-		$label = $attributes['label'] ?? __( 'Exit Course', 'sensei-lms' );
+		$label = isset( $attributes['label'] ) ? esc_html( $attributes['label'] ) : esc_html__( 'Exit Course', 'sensei-lms' );
 
 		return sprintf(
 			'<div %1$s>
@@ -65,7 +65,7 @@ class Exit_Course {
 				</a>
 			</div>',
 			$wrapper_attributes,
-			get_the_permalink( $course_id ),
+			esc_url( get_the_permalink( $course_id ) ),
 			$label
 		);
 	}

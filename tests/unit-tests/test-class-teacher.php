@@ -35,6 +35,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+		unset( $GLOBALS['wp_rest_server'] );
 
 		// remove all courses
 		$lessons = get_posts( 'post_type=course' );
@@ -689,5 +690,114 @@ AND comments.comment_type = 'sensei_course_status'";
 		}
 
 		$this->assertSame( array( $own_learner ), $learner_ids, 'Only learners from the teacher-owned course should be exported.' );
+	}
+
+	public function testRestrictCommentModerationCapability_TeacherOutsideTheAdminGiven_DeniesModerateComments() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		set_current_screen( 'front' );
+
+		/* Act. */
+		$actual = current_user_can( 'moderate_comments' );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	public function testRestrictCommentModerationCapability_TeacherOnTheCommentsScreenGiven_AllowsModerateComments() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		set_current_screen( 'edit-comments' );
+		$GLOBALS['pagenow'] = 'edit-comments.php';
+
+		/* Act. */
+		$actual = current_user_can( 'moderate_comments' );
+
+		/* Clean up & Assert. */
+		unset( $GLOBALS['pagenow'] );
+		$this->assertTrue( $actual );
+	}
+
+	public function testRestrictCommentModerationCapability_TeacherOnAnotherAdminScreenGiven_DeniesModerateComments() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		set_current_screen( 'edit-post' );
+		$GLOBALS['pagenow'] = 'edit.php';
+
+		/* Act. */
+		$actual = current_user_can( 'moderate_comments' );
+
+		/* Clean up & Assert. */
+		unset( $GLOBALS['pagenow'] );
+		$this->assertFalse( $actual );
+	}
+
+	public function testRestrictCommentModerationCapability_TeacherWhoIsAlsoAnEditorGiven_KeepsModerateComments() {
+		/* Arrange. */
+		$this->login_as_editor();
+		wp_get_current_user()->add_role( 'teacher' );
+		set_current_screen( 'edit-post' );
+		$GLOBALS['pagenow'] = 'edit.php';
+
+		/* Act. */
+		$actual = current_user_can( 'moderate_comments' );
+
+		/* Clean up & Assert. */
+		unset( $GLOBALS['pagenow'] );
+		wp_get_current_user()->remove_role( 'teacher' );
+		$this->assertTrue( $actual );
+	}
+
+	public function testRestrictCommentModerationCapability_TeacherWithDirectlyGrantedCapabilityGiven_KeepsModerateComments() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		wp_get_current_user()->add_cap( 'moderate_comments' );
+
+		/* Act. */
+		$actual = current_user_can( 'moderate_comments' );
+
+		/* Clean up & Assert. */
+		wp_get_current_user()->remove_cap( 'moderate_comments' );
+		$this->assertTrue( $actual );
+	}
+
+	public function testRestrictCommentModerationCapability_TeacherRequestedForeignCommentInEditContextGiven_ReturnsForbidden() {
+		/* Arrange. */
+		$post_id    = $this->factory->post->create();
+		$comment_id = $this->factory->comment->create( array( 'comment_post_ID' => $post_id ) );
+		$this->login_as_teacher();
+		$request = new WP_REST_Request( 'GET', '/wp/v2/comments/' . $comment_id );
+		$request->set_param( 'context', 'edit' );
+
+		/* Act. */
+		$response = rest_do_request( $request );
+
+		/* Assert. */
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	public function testRestrictCommentModerationCapability_TeacherApprovedCommentOnOwnLessonGiven_ReturnsOk() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		$lesson_id  = $this->factory->post->create(
+			array(
+				'post_type'   => 'lesson',
+				'post_author' => get_current_user_id(),
+			)
+		);
+		$comment_id = $this->factory->comment->create(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'comment_approved' => 0,
+			)
+		);
+		$request    = new WP_REST_Request( 'POST', '/wp/v2/comments/' . $comment_id );
+		$request->set_param( 'status', 'approved' );
+
+		/* Act. */
+		$response = rest_do_request( $request );
+
+		/* Assert. */
+		$this->assertSame( 200, $response->get_status() );
 	}
 }

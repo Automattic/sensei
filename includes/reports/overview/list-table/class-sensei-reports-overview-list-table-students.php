@@ -52,13 +52,13 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$this->reports_overview_service_students = $reports_overview_service_students;
 
 		if ( has_filter( 'sensei_analysis_user_courses_started' ) ) {
-			_deprecated_hook( 'sensei_analysis_user_courses_started', '$$next-version$$' );
+			_deprecated_hook( 'sensei_analysis_user_courses_started', '4.26.4' );
 		}
 		if ( has_filter( 'sensei_analysis_user_courses_ended' ) ) {
-			_deprecated_hook( 'sensei_analysis_user_courses_ended', '$$next-version$$' );
+			_deprecated_hook( 'sensei_analysis_user_courses_ended', '4.26.4' );
 		}
 		if ( has_filter( 'sensei_analysis_user_lesson_grades' ) ) {
-			_deprecated_hook( 'sensei_analysis_user_lesson_grades', '$$next-version$$' );
+			_deprecated_hook( 'sensei_analysis_user_lesson_grades', '4.26.4' );
 		}
 	}
 

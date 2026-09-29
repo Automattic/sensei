@@ -163,12 +163,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
 
-		// We need to use internal value for status, not the one returned by the getter.
-		// Commets-based `get_status` method excludes lesson-progress `complete` status, that we still need while saving.
-		$reflection_class = new \ReflectionClass( Comments_Based_Quiz_Progress::class );
-		$status_property  = $reflection_class->getProperty( 'status' );
-		$status_property->setAccessible( true );
-		$status = (string) $status_property->getValue( $quiz_progress );
+		$status = (string) $quiz_progress->get_raw_status();
 
 		Sensei_Utils::update_lesson_status( $quiz_progress->get_user_id(), $lesson_id, $status, $metadata );
 	}
@@ -256,6 +251,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * Assert that the quiz progress is a Comments_Based_Quiz_Progress.
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
+	 * @psalm-assert Comments_Based_Quiz_Progress $quiz_progress
 	 * @throws \InvalidArgumentException When the quiz progress is not a Comments_Based_Quiz_Progress.
 	 */
 	private function assert_comments_based_quiz_progress( Quiz_Progress_Interface $quiz_progress ): void {

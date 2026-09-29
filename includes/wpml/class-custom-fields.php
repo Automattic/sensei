@@ -208,7 +208,7 @@ class Custom_Fields {
 	 * When the quiz is not translated, the meta keeps pointing at the original
 	 * quiz. Emptying it would leave the translated lesson without a quiz.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *
@@ -240,7 +240,7 @@ class Custom_Fields {
 	/**
 	 * Update the quiz lesson before copied.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *

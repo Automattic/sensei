@@ -19,7 +19,7 @@ class Sensei_Grading_User_Quiz_Test extends WP_UnitTestCase {
 	 */
 	public function test_get_question_graded_class( $quiz_grade_type, $user_question_grade, $expected ) {
 		$method = new ReflectionMethod( Sensei_Grading_User_Quiz::class, 'get_question_graded_class' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$actual = $method->invoke( null, $quiz_grade_type, $user_question_grade );
 

@@ -70,7 +70,7 @@ import {
 domReady( () => {
 	startBlocksTogglingControl( 'course' );
 
-	jQuery( '#course-prerequisite-options' ).select2( { width: '100%' } );
+	jQuery( 'select#course-prerequisite-options' ).select2( { width: '100%' } );
 
 	const trackLinkClickCallback = ( eventName ) => ( e ) => {
 		const properties = {

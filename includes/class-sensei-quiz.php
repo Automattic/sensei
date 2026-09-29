@@ -309,7 +309,9 @@ class Sensei_Quiz {
 			|| empty( $_POST['questions_asked'] )
 			|| ! isset( $_POST['woothemes_sensei_save_quiz_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
-			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_save_quiz_nonce'] ), 'woothemes_sensei_save_quiz_nonce' ) ) {
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_save_quiz_nonce'] ), 'woothemes_sensei_save_quiz_nonce' )
+			|| ! self::is_quiz_available()
+			|| self::is_quiz_completed() ) {
 			return;
 		}
 
@@ -329,7 +331,9 @@ class Sensei_Quiz {
 
 		if ( $success ) {
 			// Update the message shown to the user.
-			Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'sensei-lms' ) . '</div>';
+			$message                     = __( 'Quiz Saved Successfully.', 'sensei-lms' );
+			Sensei()->frontend->messages = '<div class="sensei-message note">' . $message . '</div>';
+			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-save', $message );
 		}
 
 		// remove the hook as it should only fire once per click

@@ -45,7 +45,7 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count course progress records grouped by user and status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $args {
 	 *     Query arguments.
@@ -60,7 +60,7 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count students with activity on a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $args Comments-API-shaped activity arguments.
 	 * @return int Number of students with matching lesson activity.
@@ -70,7 +70,7 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count students who completed a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $args Comments-API-shaped activity arguments.
 	 * @return int Number of students with matching completed lesson activity.

@@ -89,7 +89,7 @@ class Sensei_Db_Query_Learners {
 		 *
 		 * @hook sensei_learners_query_args
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.4
 		 *
 		 * @param {array} $args Query arguments.
 		 * @return {array} Filtered query arguments.
