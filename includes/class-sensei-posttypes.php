@@ -629,6 +629,7 @@ class Sensei_PostTypes {
 				'labels'                => $this->get_all_post_type_labels( 'sensei_message' ),
 				'public'                => true,
 				'publicly_queryable'    => true,
+				'embeddable'            => false,
 				'show_ui'               => true,
 				'show_in_menu'          => false,
 				'show_in_nav_menus'     => true,

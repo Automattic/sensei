@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Made request-input handling consistent across the admin and frontend.

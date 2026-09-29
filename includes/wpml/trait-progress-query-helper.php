@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Translates the IDs of progress queries to the original language.
  *
- * @since $$next-version$$
+ * @since 4.26.4
  */
 trait Progress_Query_Helper {
 	/**

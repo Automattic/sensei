@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fixed saving a translated course overwriting and stealing the original course's lessons on WPML sites.
