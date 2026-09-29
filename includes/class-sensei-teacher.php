@@ -1838,7 +1838,7 @@ AND comments.comment_type = 'sensei_course_status'";
 	 * Super admins and users who also get the capability from another role or from a
 	 * direct grant keep it everywhere.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *
