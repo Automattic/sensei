@@ -23,7 +23,7 @@ module.exports = {
 	},
 	coverageReporters: [ 'clover' ],
 	transformIgnorePatterns: [
-		'node_modules/(?!(client-zip|parsel-js|@wordpress)/)',
+		'node_modules/(?!(client-zip|parsel-js|rememo|@wordpress)/)',
 	],
 	transform: {
 		'^.+\\.m?jsx?$': 'babel-jest',
