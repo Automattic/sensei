@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix lesson/module hamburger menu being hidden on mobile when the course title is too long.

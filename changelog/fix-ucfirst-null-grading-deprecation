@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fixed a PHP deprecation notice when reviewing a grade for an unanswered True/False question.
