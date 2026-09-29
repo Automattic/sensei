@@ -43,4 +43,17 @@ class Comments_Based_Quiz_Progress extends Quiz_Progress_Abstract {
 				return self::STATUS_IN_PROGRESS;
 		}
 	}
+
+	/**
+	 * Returns the unnormalized status stored by the comments-based repository.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string|null
+	 */
+	public function get_raw_status(): ?string {
+		return $this->status;
+	}
 }

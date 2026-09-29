@@ -759,7 +759,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$lesson_id       = $course_with_lessons['lesson_ids'][0];
 		$lesson_instance = new Sensei_Lesson();
 		$method          = new ReflectionMethod( $lesson_instance, 'get_prerequisites' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		/* Act */
 		$prerequisites = $method->invoke( $lesson_instance, $lesson_id, $course_with_lessons['course_id'] );

@@ -11,7 +11,7 @@ class Usage_Tracking_Test_Subclass extends Sensei_Usage_Tracking_Base {
 	const TRACKING_ENABLED_OPTION_NAME = 'testing-usage-tracking-enabled';
 
 	public static function get_instance() {
-		return self::get_instance_for_subclass( get_class() );
+		return self::get_instance_for_subclass( self::class );
 	}
 
 	public function get_prefix() {
