@@ -120,17 +120,20 @@ export default [
 				default: {},
 			},
 		},
-		edit() {
+		edit: function EditLessonActions() {
+			const blockProps = useBlockProps();
 			return (
-				<div className="sensei-course-theme-lesson-actions">
-					<div className="wp-block-button is-style-outline">
-						<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-secondary">
-							{ __( 'Complete Lesson', 'sensei-lms' ) }
+				<div { ...blockProps }>
+					<div className="sensei-course-theme-lesson-actions">
+						<div className="wp-block-button is-style-outline">
+							<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-secondary">
+								{ __( 'Complete Lesson', 'sensei-lms' ) }
+							</div>
 						</div>
-					</div>
-					<div className="wp-block-button">
-						<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-primary">
-							{ __( 'Take Quiz', 'sensei-lms' ) }
+						<div className="wp-block-button">
+							<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-primary">
+								{ __( 'Take Quiz', 'sensei-lms' ) }
+							</div>
 						</div>
 					</div>
 				</div>
