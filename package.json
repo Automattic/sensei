@@ -95,7 +95,7 @@
 		"postcss-color-function": "4.1.0",
 		"resolve-url-loader": "5.0.0",
 		"svg-spritemap-webpack-plugin": "4.7.0",
-		"taffydb": "2.6.2",
+		"taffydb": "2.7.3",
 		"typescript": "5.3.3",
 		"typescript-eslint": "8.67.0",
 		"wp-hookdoc": "0.2.0"
