@@ -186,8 +186,13 @@ export default [
 			'Display title of the current lesson or quiz.',
 			'sensei-lms'
 		),
-		edit() {
-			return <h1>{ __( 'Lesson Title', 'sensei-lms' ) }</h1>;
+		edit: function EditPostTitle() {
+			const blockProps = useBlockProps();
+			return (
+				<div { ...blockProps }>
+					<h1>{ __( 'Lesson Title', 'sensei-lms' ) }</h1>
+				</div>
+			);
 		},
 	},
 	{
