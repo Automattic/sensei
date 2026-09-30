@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed auto-graded quizzes showing an inflated total on the admin Review Grade screen when a student answered questions incorrectly.
