@@ -94,10 +94,13 @@ export default [
 			'Turn the Sidebar block into an overlay menu on mobile screens.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function EditSidebarToggleButton() {
+			const blockProps = useBlockProps();
 			return (
-				<div className="sensei-course-theme__sidebar-toggle">
-					<MenuIcon />
+				<div { ...blockProps }>
+					<div className="sensei-course-theme__sidebar-toggle">
+						<MenuIcon />
+					</div>
 				</div>
 			);
 		},
