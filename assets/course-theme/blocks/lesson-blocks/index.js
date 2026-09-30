@@ -70,14 +70,17 @@ export default [
 			'Link to the previous and next lessons.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function EditPrevNextLesson() {
+			const blockProps = useBlockProps();
 			return (
-				<div className="sensei-course-theme-prev-next-lesson-container">
-					<div className="sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__prev">
-						<ChevronLeft />
-					</div>
-					<div className="sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next">
-						<ChevronRight />
+				<div { ...blockProps }>
+					<div className="sensei-course-theme-prev-next-lesson-container">
+						<div className="sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__prev">
+							<ChevronLeft />
+						</div>
+						<div className="sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next">
+							<ChevronRight />
+						</div>
 					</div>
 				</div>
 			);
