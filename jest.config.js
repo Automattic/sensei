@@ -1,12 +1,11 @@
 /**
  * WordPress dependencies
  */
-const baseConfig = require( '@wordpress/scripts/config/jest-unit.config.js' );
 const defaultPreset = require( '@wordpress/jest-preset-default' );
 
 module.exports = {
-	...baseConfig,
 	preset: null,
+	reporters: [ 'default', [ 'github-actions', { silent: false } ] ],
 	setupFiles: defaultPreset.setupFiles,
 	setupFilesAfterEnv: [ './jest.setup.js' ],
 	testPathIgnorePatterns: [
@@ -18,14 +17,13 @@ module.exports = {
 	],
 	testEnvironment: 'jsdom',
 	moduleNameMapper: {
+		'^@wordpress/hooks$': '<rootDir>/node_modules/@wordpress/hooks',
 		'\\.svg$': '<rootDir>/tests/__mocks__/svg.js',
 		'\\.(gif|jpg|jpeg|png)$': '<rootDir>/tests/__mocks__/image.js',
 	},
 	coverageReporters: [ 'clover' ],
 	transformIgnorePatterns: [
-		'node_modules/(?!(client-zip|parsel-js|@wordpress)/)',
+		'node_modules/(?!(client-zip|marked|parsel-js|@wordpress)/)',
 	],
-	transform: {
-		'^.+\\.m?jsx?$': 'babel-jest',
-	},
+	transform: defaultPreset.transform,
 };
