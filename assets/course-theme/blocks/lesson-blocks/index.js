@@ -167,10 +167,13 @@ export default [
 			'Toggle a minimalized view of Learning Mode.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function EditFocusModeToggle() {
+			const blockProps = useBlockProps();
 			return (
-				<div className="sensei-course-theme__focus-mode-toggle">
-					<DoubleChevronRight className="sensei-course-theme__focus-mode-toggle-icon" />
+				<div { ...blockProps }>
+					<div className="sensei-course-theme__focus-mode-toggle">
+						<DoubleChevronRight className="sensei-course-theme__focus-mode-toggle-icon" />
+					</div>
 				</div>
 			);
 		},
