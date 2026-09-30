@@ -203,8 +203,13 @@ export default [
 			'Display lesson or quiz content, if the learner has access to it.',
 			'sensei-lms'
 		),
-		edit() {
-			return <p>{ __( 'Course Content.', 'sensei-lms' ) }</p>;
+		edit: function EditCourseContent() {
+			const blockProps = useBlockProps();
+			return (
+				<div { ...blockProps }>
+					<p>{ __( 'Course Content.', 'sensei-lms' ) }</p>
+				</div>
+			);
 		},
 	},
 	{
