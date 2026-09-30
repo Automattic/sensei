@@ -309,7 +309,9 @@ class Sensei_Quiz {
 			|| empty( $_POST['questions_asked'] )
 			|| ! isset( $_POST['woothemes_sensei_save_quiz_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
-			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_save_quiz_nonce'] ), 'woothemes_sensei_save_quiz_nonce' ) ) {
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_save_quiz_nonce'] ), 'woothemes_sensei_save_quiz_nonce' )
+			|| ! self::is_quiz_available()
+			|| self::is_quiz_completed() ) {
 			return;
 		}
 

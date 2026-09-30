@@ -6,6 +6,7 @@
  * @covers Sensei_Admin
  */
 class Sensei_Class_Admin_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
 
 	/**
 	 * Setup function.
@@ -22,6 +23,8 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		remove_filter( 'wp_redirect', '__return_false' );
+
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -311,7 +314,7 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 		$admin  = new Sensei_Admin();
 		$method = new ReflectionMethod( $admin, 'sync_lesson_order' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		return [
 			'course_id'         => $course_id,
@@ -404,5 +407,34 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 			'per_page'    => 1,
 		);
 		return get_posts( $duplicated_lesson_args )[0];
+	}
+
+	public function testHandleOrderCourses_TeacherGiven_DoesNotSaveOrder() {
+		/* Arrange. */
+		// Teachers hold edit_courses but not manage_sensei.
+		$this->login_as_teacher();
+		$_REQUEST['_wpnonce']  = wp_create_nonce( 'order_courses' );
+		$_POST['course-order'] = implode( ',', $this->factory->course->create_many( 2 ) );
+
+		/* Assert. */
+		$this->expectException( WPDieException::class );
+
+		/* Act. */
+		( new Sensei_Admin() )->handle_order_courses();
+	}
+
+	public function testHandleOrderCourses_AdminGiven_SavesOrder() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$course_order          = implode( ',', $this->factory->course->create_many( 2 ) );
+		$_REQUEST['_wpnonce']  = wp_create_nonce( 'order_courses' );
+		$_POST['course-order'] = $course_order;
+		add_filter( 'wp_redirect', '__return_false' );
+
+		/* Act. */
+		( new Sensei_Admin() )->handle_order_courses();
+
+		/* Assert. */
+		$this->assertSame( $course_order, get_option( 'sensei_course_order' ) );
 	}
 }

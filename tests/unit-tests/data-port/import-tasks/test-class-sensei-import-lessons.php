@@ -39,7 +39,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 		$job    = Sensei_Import_Job::create( 'test', 0 );
 		$task   = new Sensei_Import_Lessons( $job );
 		$method = new ReflectionMethod( $task, 'handle_prerequisite' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$task_args = [
 			$lesson_id,
@@ -67,7 +67,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 		$job    = Sensei_Import_Job::create( 'test', 0 );
 		$task   = new Sensei_Import_Lessons( $job );
 		$method = new ReflectionMethod( $task, 'handle_prerequisite' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$task_args = [
 			$lesson_id,
@@ -94,7 +94,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 		$job    = Sensei_Import_Job::create( 'test', 0 );
 		$task   = new Sensei_Import_Lessons( $job );
 		$method = new ReflectionMethod( $task, 'handle_prerequisite' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$task_args = [
 			$lesson_id,
@@ -122,7 +122,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 		$job    = Sensei_Import_Job::create( 'test', 0 );
 		$task   = new Sensei_Import_Lessons( $job );
 		$method = new ReflectionMethod( $task, 'handle_attachment' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$method->invoke(
 			$task,
@@ -148,7 +148,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 		$job    = Sensei_Import_Job::create( 'test', 0 );
 		$task   = new Sensei_Import_Lessons( $job );
 		$method = new ReflectionMethod( $task, 'handle_attachment' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$method->invoke(
 			$task,
@@ -182,7 +182,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 		$task->add_post_process_task( 'attachment', array( 'post_id' => 2 ) );
 
 		$run = new ReflectionMethod( $task, 'run_post_process_tasks' );
-		$run->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $run );
 
 		try {
 			$run->invoke( $task );

@@ -42,7 +42,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 	 */
 	public function testSuccessMessageDisplayed() {
 		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$property->setValue( Sensei()->notices, false );
 
 		$_GET['send'] = 'complete';

@@ -649,23 +649,25 @@ jQuery( document ).ready( function () {
 	 ***************************************************************************************************/
 
 	// Quiz edit panel
-	if ( jQuery( '#add-question-type-options' ).exists() ) {
-		jQuery( '#add-question-type-options' ).select2( { width: 'resolve' } );
-	}
-	if ( jQuery( '#add-question-category-options' ).exists() ) {
-		jQuery( '#add-question-category-options' ).select2( {
+	if ( jQuery( 'select#add-question-type-options' ).exists() ) {
+		jQuery( 'select#add-question-type-options' ).select2( {
 			width: 'resolve',
 		} );
 	}
-	if ( jQuery( '#add-multiple-question-options' ).exists() ) {
-		jQuery( '#add-multiple-question-options' ).select2( {
+	if ( jQuery( 'select#add-question-category-options' ).exists() ) {
+		jQuery( 'select#add-question-category-options' ).select2( {
+			width: 'resolve',
+		} );
+	}
+	if ( jQuery( 'select#add-multiple-question-options' ).exists() ) {
+		jQuery( 'select#add-multiple-question-options' ).select2( {
 			width: 'resolve',
 		} );
 	}
 
 	// Courses Write Panel
-	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) {
-		jQuery( '#add-multiple-question-category-options' ).select2( {
+	if ( jQuery( 'select#add-multiple-question-category-options' ).exists() ) {
+		jQuery( 'select#add-multiple-question-category-options' ).select2( {
 			width: 'resolve',
 		} );
 	}

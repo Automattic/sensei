@@ -65,7 +65,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	 * The quiz_answers check restricts results to attempts where the student
 	 * submitted answers, excluding students auto-passed without taking the quiz.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @return string SQL fragment containing the FROM and WHERE clauses.
 	 */
@@ -130,7 +130,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	/**
 	 * Get average grade grouped by user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int[] $user_ids User IDs to include.
 	 * @return array<int, float> Map of user ID to average grade.
@@ -167,7 +167,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	/**
 	 * Get the average quiz grade for a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return float|null Average grade, or null when no matching grades exist.

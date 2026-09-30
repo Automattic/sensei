@@ -35,16 +35,16 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 		remove_all_filters( 'sensei_course_enrolment_providers' );
 
 		$enrolment_providers = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'enrolment_providers' );
-		$enrolment_providers->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $enrolment_providers );
 		$enrolment_providers->setValue( Sensei_Course_Enrolment_Manager::instance(), null );
 
 		$enrolment_providers = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'enrolment_providers_versions_hash' );
-		$enrolment_providers->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $enrolment_providers );
 		$enrolment_providers->setValue( Sensei_Course_Enrolment_Manager::instance(), null );
 
 		$course_enrolment_instances = new ReflectionProperty( Sensei_Course_Enrolment::class, 'instances' );
-		$course_enrolment_instances->setAccessible( true );
-		$course_enrolment_instances->setValue( [] );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $course_enrolment_instances );
+		$course_enrolment_instances->setValue( null, [] );
 
 		remove_all_filters( 'sensei_course_enrolment_store_results' );
 	}
@@ -61,8 +61,8 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 	 */
 	private static function resetEnrolmentJournalStores() {
 		$state_store_instances = new ReflectionProperty( Sensei_Enrolment_Provider_Journal_Store::class, 'instances' );
-		$state_store_instances->setAccessible( true );
-		$state_store_instances->setValue( [] );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $state_store_instances );
+		$state_store_instances->setValue( null, [] );
 	}
 
 	/**

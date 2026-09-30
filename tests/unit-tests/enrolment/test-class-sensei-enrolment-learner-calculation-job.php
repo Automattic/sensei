@@ -50,8 +50,8 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 			->getMock();
 
 		$property = new ReflectionProperty( 'Sensei_Course_Enrolment_Manager', 'instance' );
-		$property->setAccessible( true );
-		$property->setValue( $mock );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
+		$property->setValue( null, $mock );
 
 		$this->prepareEnrolmentManager();
 
@@ -95,8 +95,8 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 			->getMock();
 
 		$property = new ReflectionProperty( 'Sensei_Course_Enrolment_Manager', 'instance' );
-		$property->setAccessible( true );
-		$property->setValue( $mock );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
+		$property->setValue( null, $mock );
 
 		$this->prepareEnrolmentManager();
 

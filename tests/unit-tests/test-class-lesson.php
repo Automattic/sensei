@@ -92,6 +92,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		parent::tearDown();
 		$this->factory->tearDown();
 
+		$_POST = array();
+
 		global $current_screen, $taxnow, $typenow;
 		$current_screen = $this->initial_screen;
 		$taxnow         = $this->initial_taxnow;
@@ -757,7 +759,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$lesson_id       = $course_with_lessons['lesson_ids'][0];
 		$lesson_instance = new Sensei_Lesson();
 		$method          = new ReflectionMethod( $lesson_instance, 'get_prerequisites' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		/* Act */
 		$prerequisites = $method->invoke( $lesson_instance, $lesson_id, $course_with_lessons['course_id'] );
@@ -1751,6 +1753,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testSaveAllLessonsEditFields_WhenCalled_UpdatesPostMeta(): void {
 		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+
 		$lesson_id = $this->factory->lesson->create();
 		$course_id = $this->factory->course->create();
 		$data      = array(
@@ -1777,6 +1781,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testBulkEditSavePost_WhenCalled_UpdatesPostMeta(): void {
 		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+
 		$lesson_id = $this->factory->lesson->create();
 		$course_id = $this->factory->course->create();
 		$_REQUEST  = array(
@@ -2001,5 +2007,160 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		add_filter( 'posts_where', $language_filter, 10, 2 );
 
 		return array( $lesson_id, $quiz_id, $language_filter );
+	}
+
+	public function testSaveAllLessonsEditFields_CourseTheUserCannotEditGiven_KeepsTheCourseAndUpdatesTheOtherFields(): void {
+		/* Arrange */
+		$other_teacher = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$other_course  = $this->factory->course->create( array( 'post_author' => $other_teacher ) );
+
+		$teacher = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher );
+
+		$own_course = $this->factory->course->create( array( 'post_author' => $teacher ) );
+		$lesson_id  = $this->factory->lesson->create( array( 'post_author' => $teacher ) );
+		update_post_meta( $lesson_id, '_lesson_course', $own_course );
+
+		$data   = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => $other_course,
+			'lesson_complexity'   => 'hard',
+		);
+		$lesson = new Sensei_Lesson();
+
+		/* Act */
+		$lesson->save_all_lessons_edit_fields( array( $lesson_id ), $data );
+
+		/* Assert */
+		$expected = array(
+			'_lesson_course'     => $own_course,
+			'_lesson_complexity' => 'hard',
+		);
+		$actual   = array(
+			'_lesson_course'     => (int) get_post_meta( $lesson_id, '_lesson_course', true ),
+			'_lesson_complexity' => get_post_meta( $lesson_id, '_lesson_complexity', true ),
+		);
+		self::assertSame( $expected, $actual );
+	}
+
+	public function testSaveAllLessonsEditFields_OwnCourseGiven_UpdatesTheLessonCourse(): void {
+		/* Arrange */
+		$teacher = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher );
+
+		$own_course = $this->factory->course->create( array( 'post_author' => $teacher ) );
+		$lesson_id  = $this->factory->lesson->create( array( 'post_author' => $teacher ) );
+
+		$data   = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => $own_course,
+		);
+		$lesson = new Sensei_Lesson();
+
+		/* Act */
+		$lesson->save_all_lessons_edit_fields( array( $lesson_id ), $data );
+
+		/* Assert */
+		self::assertSame( $own_course, (int) get_post_meta( $lesson_id, '_lesson_course', true ) );
+	}
+
+	/**
+	 * A quiz ID coming from the request must never become the write target: the handler only
+	 * ever writes to the quiz that belongs to the lesson the save_post hook fired for.
+	 *
+	 * @covers Sensei_Lesson::quiz_update
+	 */
+	public function testQuizUpdate_UnrelatedPostIdSubmittedAsQuizId_LeavesThatPostUntouched(): void {
+		/* Arrange */
+		add_filter( 'sensei_quiz_enable_block_based_editor', '__return_false' );
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+		$victim_id = $this->factory->post->create(
+			array(
+				'post_type'    => 'page',
+				'post_title'   => 'Victim page',
+				'post_content' => 'Victim content',
+				'post_status'  => 'publish',
+				'post_author'  => $admin_id,
+			)
+		);
+		// The lesson differs from the victim in author and status, so those are load-bearing too.
+		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$lesson_id  = $this->factory->lesson->create(
+			array(
+				'post_author' => $teacher_id,
+				'post_status' => 'draft',
+			)
+		);
+		$_POST      = array(
+			'post_type'        => 'lesson',
+			'woo_lesson_nonce' => wp_create_nonce( 'sensei-save-post-meta' ),
+			'quiz_id'          => $victim_id,
+		);
+
+		/* Act */
+		Sensei()->lesson->quiz_update( $lesson_id );
+
+		/* Assert */
+		$victim   = get_post( $victim_id );
+		$expected = array(
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_title'   => 'Victim page',
+			'post_content' => 'Victim content',
+			'post_author'  => (string) $admin_id,
+		);
+		$actual   = array(
+			'post_type'    => $victim->post_type,
+			'post_status'  => $victim->post_status,
+			'post_title'   => $victim->post_title,
+			'post_content' => $victim->post_content,
+			'post_author'  => $victim->post_author,
+		);
+		self::assertSame( $expected, $actual );
+	}
+
+	/**
+	 * The listener must not act on a lesson the current user is not allowed to edit, even when a
+	 * valid nonce for their own session is supplied.
+	 *
+	 * @covers Sensei_Lesson::quiz_update
+	 */
+	public function testQuizUpdate_LessonTheUserCannotEditGiven_DoesNotCreateAQuiz(): void {
+		/* Arrange */
+		add_filter( 'sensei_quiz_enable_block_based_editor', '__return_false' );
+		$admin_id  = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$lesson_id = $this->factory->post->create(
+			array(
+				'post_type'   => 'lesson',
+				'post_author' => $admin_id,
+			)
+		);
+
+		$subscriber_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		wp_set_current_user( $subscriber_id );
+		$_POST = array(
+			'post_type'        => 'lesson',
+			'woo_lesson_nonce' => wp_create_nonce( 'sensei-save-post-meta' ),
+		);
+
+		/* Act */
+		Sensei()->lesson->quiz_update( $lesson_id );
+
+		/* Assert */
+		self::assertSame( '', get_post_meta( $lesson_id, '_lesson_quiz', true ) );
+	}
+
+	public function testLimitArchiveContent_LockedLessonGivenToAnonymous_ReturnsTheFirst30Words() {
+		/* Arrange */
+		$course          = $this->factory->get_course_with_lessons();
+		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
+		wp_set_current_user( 0 );
+
+		/* Act */
+		$actual = Sensei_Lesson::limit_archive_content( implode( ' ', range( 1, 40 ) ) );
+
+		/* Assert */
+		self::assertSame( implode( ' ', range( 1, 30 ) ) . '…', $actual );
 	}
 }

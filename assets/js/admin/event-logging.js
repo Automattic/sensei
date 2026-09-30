@@ -59,6 +59,7 @@ window.sensei_log_event = function ( eventName, properties ) {
 		const formData = new FormData();
 
 		formData.append( 'action', actionName );
+		formData.append( 'nonce', sensei_event_logging.nonce );
 		formData.append( 'event_name', eventName );
 
 		if ( properties ) {
@@ -71,6 +72,7 @@ window.sensei_log_event = function ( eventName, properties ) {
 
 	const data = {
 		action: actionName,
+		nonce: sensei_event_logging.nonce,
 		event_name: eventName,
 	};
 

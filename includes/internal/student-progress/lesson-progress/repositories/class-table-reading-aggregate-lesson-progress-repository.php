@@ -109,14 +109,12 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 			}
 		}
 
-		// Use reflection to get underlying status value.
-		// Comments-based lesson progress uses a different set of statuses than tables-based lesson progress,
-		// because is used for both lessons and quizzes.
-		// `get_status` method returns the normalized status, but we need the underlying status here.
-		$reflection_class    = new \ReflectionClass( Comments_Based_Lesson_Progress::class );
-		$reflection_property = $reflection_class->getProperty( 'status' );
-		$reflection_property->setAccessible( true );
-		$status = $reflection_property->getValue( $comments_based_progress );
+		/**
+		 * Comments-based lesson progress.
+		 *
+		 * @var Comments_Based_Lesson_Progress $comments_based_progress
+		 */
+		$status = $comments_based_progress->get_raw_status();
 
 		$updated_comments_based_progress = new Comments_Based_Lesson_Progress(
 			$comments_based_progress->get_id(),

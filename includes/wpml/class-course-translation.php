@@ -121,7 +121,7 @@ class Course_Translation {
 	 * to its translation. Lessons of the translated course with no original
 	 * are left alone.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int    $original_course_id   Original course ID.
 	 * @param int    $translated_course_id Translated course ID.
@@ -148,7 +148,7 @@ class Course_Translation {
 	 * removed from it, plus the lesson's order in the course, which the
 	 * outline leaves behind.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
@@ -185,7 +185,7 @@ class Course_Translation {
 	 * WPML filters queries by the current language, which during a translation
 	 * job is not the language of the course, so the query runs without filters.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int $course_id Course ID.
 	 * @return int[]
@@ -214,7 +214,7 @@ class Course_Translation {
 	 * at another language's content and a later editor save adopts it. Remapping the
 	 * stored outline right after delivery keeps every consumer of the content safe.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *
@@ -238,7 +238,7 @@ class Course_Translation {
 	/**
 	 * Rewrite a duplicated course outline to the lesson and module IDs of the duplicate's language.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *

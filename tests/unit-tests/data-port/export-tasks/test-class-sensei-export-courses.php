@@ -337,7 +337,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 
 		// Force error.
 		$property = new ReflectionProperty( 'Sensei_Export_Task', 'file' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$property->setValue( $task, '' );
 
 		$task->run();

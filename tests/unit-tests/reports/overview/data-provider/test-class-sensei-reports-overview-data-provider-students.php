@@ -334,7 +334,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	 *
 	 * @return int The user ID.
 	 */
-	private function createUserWithCourseEnrollment( array $user_args = [], int $course_id = null ): int {
+	private function createUserWithCourseEnrollment( array $user_args = [], ?int $course_id = null ): int {
 		$user_id   = $this->factory->user->create( $user_args );
 		$course_id = $course_id ?? $this->factory->course->create();
 
