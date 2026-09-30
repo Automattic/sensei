@@ -44,7 +44,7 @@ const AnswerFeedback = ( { type } ) => {
 	const blockProps = useBlockProps();
 
 	if ( hideAnswerFeedback ) {
-		return '';
+		return <div { ...blockProps } />;
 	}
 	return (
 		<div { ...blockProps }>
