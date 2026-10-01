@@ -1782,8 +1782,8 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param array  $columns Table column data.
-	 * @param object $lesson  Current row item.
+	 * @param array                                              $columns Table column data.
+	 * @param WP_Post|\Sensei\Internal\Services\Reports_Item $lesson Current row item.
 	 * @return array Updated columns data.
 	 */
 	public function analysis_course_column_data( $columns, $lesson ) {
