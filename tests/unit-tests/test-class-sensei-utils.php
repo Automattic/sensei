@@ -728,6 +728,29 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertSame( 80.0, (float) $course_grade, 'The course grade should count the quiz when it is hidden from post queries.' );
 	}
 
+	public function testSenseiRemoveUserFromCourse_LessonsHiddenByQueryFilters_DeletesTheLessonProgress(): void {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+
+		$language_filter = function ( $where, $query ) {
+			if ( 'lesson' === $query->get( 'post_type' ) ) {
+				$where .= ' AND 1=0';
+			}
+			return $where;
+		};
+		add_filter( 'posts_where', $language_filter, 10, 2 );
+
+		/* Act. */
+		Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertFalse( Sensei()->lesson_progress_repository->has( $lesson_id, $user_id ) );
+	}
+
 	public function testUploadFile_FileGiven_CreatesPrivateAttachment(): void {
 		/* Arrange. */
 		$file = $this->create_upload_file_array();
