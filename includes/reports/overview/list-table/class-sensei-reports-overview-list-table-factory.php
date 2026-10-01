@@ -61,12 +61,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	 * @return self
 	 */
 	public static function create_with_dependencies( Sensei_Course $course, Progress_Clauses_Service_Interface $progress_clauses_service, Progress_Aggregation_Service_Interface $aggregation_service, Grading_Stats_Service_Interface $grading_stats_service ): self {
-		/**
-		 * Preserve subclasses when this inherited internal method is called.
-		 *
-		 * @psalm-suppress UnsafeInstantiation
-		 */
-		$instance                           = new static();
+		$instance                           = new self();
 		$instance->course                   = $course;
 		$instance->progress_clauses_service = $progress_clauses_service;
 		$instance->aggregation_service      = $aggregation_service;
