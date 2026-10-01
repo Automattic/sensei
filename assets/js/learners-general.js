@@ -224,10 +224,15 @@ jQuery( document ).ready( function ( $ ) {
 						switch ( currentAction ) {
 							case 'reset_progress':
 								tableRow
-									.find( '.graded' )
-									.html( window.slgL10n.inprogress )
-									.removeClass( 'graded' )
-									.addClass( 'in-progress' );
+									.find( '.column-user_status' )
+									.text(
+										'course' === postType
+											? window.slgL10n.notstarted
+											: window.slgL10n.inprogress
+									);
+								tableRow
+									.find( '.column-date_completed' )
+									.text( '-' );
 								break;
 						}
 					}
