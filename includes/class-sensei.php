@@ -738,13 +738,13 @@ class Sensei_Main {
 		$progress_clauses_service = $query_service_factory->create_clauses_service();
 
 		// Load Analysis Reports.
-		$reports_overview_list_table_factory = new Sensei_Reports_Overview_List_Table_Factory(
+		$reports_overview_list_table_factory = Sensei_Reports_Overview_List_Table_Factory::create_with_dependencies(
 			$this->course,
 			$progress_clauses_service,
 			$aggregation_service,
 			$grading_stats_service
 		);
-		$this->analysis                      = new Sensei_Analysis(
+		$this->analysis                      = Sensei_Analysis::create_with_dependencies(
 			$this->main_plugin_file_name,
 			$reports_overview_list_table_factory,
 			$reports_listing_service,
@@ -784,7 +784,7 @@ class Sensei_Main {
 		$this->notices = new Sensei_Notices();
 
 		// Load Grading Functionality.
-		$this->grading = new Sensei_Grading(
+		$this->grading = Sensei_Grading::create_with_dependencies(
 			$this->main_plugin_file_name,
 			$grading_listing_service,
 			$aggregation_service,

@@ -319,14 +319,14 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
 		$aggregation_service   = $query_service_factory->create_aggregation_service();
 		$grading_stats_service = $query_service_factory->create_grading_stats_service();
-		$overview_factory      = new Sensei_Reports_Overview_List_Table_Factory(
+		$overview_factory      = Sensei_Reports_Overview_List_Table_Factory::create_with_dependencies(
 			Sensei()->course,
 			$query_service_factory->create_clauses_service(),
 			$aggregation_service,
 			$grading_stats_service
 		);
 
-		return new Sensei_Analysis(
+		return Sensei_Analysis::create_with_dependencies(
 			'a',
 			$overview_factory,
 			$query_service_factory->create_reports_listing_service(),

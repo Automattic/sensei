@@ -440,7 +440,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 					'sum'   => 75.0,
 				)
 			);
-		$instance = new Sensei_Reports_Overview_Service_Courses( $grading_stats_service );
+		$instance = Sensei_Reports_Overview_Service_Courses::create_with_dependencies( $grading_stats_service );
 
 		/* Act. */
 		$actual = $instance->get_grade_sum_for_lessons( $lesson_ids );

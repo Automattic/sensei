@@ -26,14 +26,14 @@ class Sensei_Grading {
 	 *
 	 * @var Grading_Listing_Service_Interface|null
 	 */
-	private ?Grading_Listing_Service_Interface $grading_listing_service;
+	private ?Grading_Listing_Service_Interface $grading_listing_service = null;
 
 	/**
 	 * The progress aggregation service.
 	 *
 	 * @var Progress_Aggregation_Service_Interface|null
 	 */
-	private ?Progress_Aggregation_Service_Interface $aggregation_service;
+	private ?Progress_Aggregation_Service_Interface $aggregation_service = null;
 
 	/**
 	 * The grading statistics service used by legacy static methods.
@@ -50,20 +50,11 @@ class Sensei_Grading {
 	 *
 	 * @since  1.3.0
 	 *
-	 * @param string                                      $file                    The main plugin file path.
-	 * @param Grading_Listing_Service_Interface|null      $grading_listing_service The grading listing service.
-	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service     The progress aggregation service.
-	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service   The grading statistics service.
+	 * @param string $file The main plugin file path.
 	 */
-	public function __construct( $file, ?Grading_Listing_Service_Interface $grading_listing_service = null, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
-		$this->file                    = $file;
-		$this->page_slug               = 'sensei_grading';
-		$this->grading_listing_service = $grading_listing_service;
-		$this->aggregation_service     = $aggregation_service;
-
-		if ( null !== $grading_stats_service ) {
-			self::$grading_stats_service = $grading_stats_service;
-		}
+	public function __construct( $file ) {
+		$this->file      = $file;
+		$this->page_slug = 'sensei_grading';
 
 		// Admin functions
 		if ( is_admin() ) {
@@ -83,6 +74,27 @@ class Sensei_Grading {
 			add_action( 'wp_ajax_get_lessons_dropdown', array( $this, 'get_lessons_dropdown' ) );
 			add_action( 'wp_ajax_get_redirect_url', array( $this, 'get_redirect_url' ) );
 		}
+	}
+
+	/**
+	 * Create a grading controller with its query-service dependencies.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param string                                 $file                    The main plugin file path.
+	 * @param Grading_Listing_Service_Interface      $grading_listing_service The grading listing service.
+	 * @param Progress_Aggregation_Service_Interface $aggregation_service     The progress aggregation service.
+	 * @param Grading_Stats_Service_Interface        $grading_stats_service   The grading statistics service.
+	 * @return self
+	 */
+	public static function create_with_dependencies( $file, Grading_Listing_Service_Interface $grading_listing_service, Progress_Aggregation_Service_Interface $aggregation_service, Grading_Stats_Service_Interface $grading_stats_service ): self {
+		$instance                           = new static( $file );
+		$instance->grading_listing_service  = $grading_listing_service;
+		$instance->aggregation_service      = $aggregation_service;
+		self::$grading_stats_service        = $grading_stats_service;
+
+		return $instance;
 	}
 
 	/**

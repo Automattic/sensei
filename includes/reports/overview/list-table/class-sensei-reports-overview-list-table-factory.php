@@ -25,42 +25,49 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	 *
 	 * @var Sensei_Course|null
 	 */
-	private ?Sensei_Course $course;
+	private ?Sensei_Course $course = null;
 
 	/**
 	 * Progress clauses service.
 	 *
 	 * @var Progress_Clauses_Service_Interface|null
 	 */
-	private ?Progress_Clauses_Service_Interface $progress_clauses_service;
+	private ?Progress_Clauses_Service_Interface $progress_clauses_service = null;
 
 	/**
 	 * Progress aggregation service.
 	 *
 	 * @var Progress_Aggregation_Service_Interface|null
 	 */
-	private ?Progress_Aggregation_Service_Interface $aggregation_service;
+	private ?Progress_Aggregation_Service_Interface $aggregation_service = null;
 
 	/**
 	 * Grading statistics service.
 	 *
 	 * @var Grading_Stats_Service_Interface|null
 	 */
-	private ?Grading_Stats_Service_Interface $grading_stats_service;
+	private ?Grading_Stats_Service_Interface $grading_stats_service = null;
 
 	/**
-	 * Constructor.
+	 * Create a factory with its dependencies.
 	 *
-	 * @param Sensei_Course|null                          $course                   Course-related functionality.
-	 * @param Progress_Clauses_Service_Interface|null     $progress_clauses_service Progress clauses service.
-	 * @param Progress_Aggregation_Service_Interface|null $aggregation_service      Progress aggregation service.
-	 * @param Grading_Stats_Service_Interface|null        $grading_stats_service    Grading statistics service.
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param Sensei_Course                          $course                   Course-related functionality.
+	 * @param Progress_Clauses_Service_Interface     $progress_clauses_service Progress clauses service.
+	 * @param Progress_Aggregation_Service_Interface $aggregation_service      Progress aggregation service.
+	 * @param Grading_Stats_Service_Interface        $grading_stats_service    Grading statistics service.
+	 * @return self
 	 */
-	public function __construct( ?Sensei_Course $course = null, ?Progress_Clauses_Service_Interface $progress_clauses_service = null, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
-		$this->course                   = $course;
-		$this->progress_clauses_service = $progress_clauses_service;
-		$this->aggregation_service      = $aggregation_service;
-		$this->grading_stats_service    = $grading_stats_service;
+	public static function create_with_dependencies( Sensei_Course $course, Progress_Clauses_Service_Interface $progress_clauses_service, Progress_Aggregation_Service_Interface $aggregation_service, Grading_Stats_Service_Interface $grading_stats_service ): self {
+		$instance                           = new static();
+		$instance->course                   = $course;
+		$instance->progress_clauses_service = $progress_clauses_service;
+		$instance->aggregation_service      = $aggregation_service;
+		$instance->grading_stats_service    = $grading_stats_service;
+
+		return $instance;
 	}
 
 	/**
@@ -103,7 +110,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 					Sensei()->grading,
 					$this->get_course(),
 					new Sensei_Reports_Overview_Data_Provider_Courses( $progress_clauses_service ),
-					new Sensei_Reports_Overview_Service_Courses( $grading_stats_service ),
+					Sensei_Reports_Overview_Service_Courses::create_with_dependencies( $grading_stats_service ),
 					$aggregation_service
 				);
 			case 'lessons':

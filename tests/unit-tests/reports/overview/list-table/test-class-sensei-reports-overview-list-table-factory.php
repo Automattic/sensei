@@ -63,7 +63,7 @@ class Sensei_Reports_Overview_List_Table_Factory_Test extends WP_UnitTestCase {
 	 * @return Sensei_Reports_Overview_List_Table_Factory
 	 */
 	private function create_factory(): Sensei_Reports_Overview_List_Table_Factory {
-		return new Sensei_Reports_Overview_List_Table_Factory(
+		return Sensei_Reports_Overview_List_Table_Factory::create_with_dependencies(
 			Sensei()->course,
 			$this->createMock( \Sensei\Internal\Services\Progress_Clauses_Service_Interface::class ),
 			$this->createMock( \Sensei\Internal\Services\Progress_Aggregation_Service_Interface::class ),

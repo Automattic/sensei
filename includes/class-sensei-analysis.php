@@ -20,28 +20,28 @@ class Sensei_Analysis {
 	 *
 	 * @var Sensei_Reports_Overview_List_Table_Factory|null
 	 */
-	private ?Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory;
+	private ?Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory = null;
 
 	/**
 	 * Reports listing service.
 	 *
 	 * @var Reports_Listing_Service_Interface|null
 	 */
-	private ?Reports_Listing_Service_Interface $reports_listing_service;
+	private ?Reports_Listing_Service_Interface $reports_listing_service = null;
 
 	/**
 	 * Progress aggregation service.
 	 *
 	 * @var Progress_Aggregation_Service_Interface|null
 	 */
-	private ?Progress_Aggregation_Service_Interface $aggregation_service;
+	private ?Progress_Aggregation_Service_Interface $aggregation_service = null;
 
 	/**
 	 * Grading statistics service.
 	 *
 	 * @var Grading_Stats_Service_Interface|null
 	 */
-	private ?Grading_Stats_Service_Interface $grading_stats_service;
+	private ?Grading_Stats_Service_Interface $grading_stats_service = null;
 
 	/**
 	 * The reports' page slug.
@@ -59,18 +59,10 @@ class Sensei_Analysis {
 	 * Constructor
 	 *
 	 * @since  1.0.0
-	 * @param string                                          $file                                Main plugin file path.
-	 * @param Sensei_Reports_Overview_List_Table_Factory|null $reports_overview_list_table_factory Reports overview list table factory.
-	 * @param Reports_Listing_Service_Interface|null          $reports_listing_service             Reports listing service.
-	 * @param Progress_Aggregation_Service_Interface|null     $aggregation_service                 Progress aggregation service.
-	 * @param Grading_Stats_Service_Interface|null            $grading_stats_service               Grading statistics service.
+	 * @param string $file Main plugin file path.
 	 */
-	public function __construct( $file, ?Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory = null, ?Reports_Listing_Service_Interface $reports_listing_service = null, ?Progress_Aggregation_Service_Interface $aggregation_service = null, ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
-		$this->file                                = $file;
-		$this->reports_overview_list_table_factory = $reports_overview_list_table_factory;
-		$this->reports_listing_service             = $reports_listing_service;
-		$this->aggregation_service                 = $aggregation_service;
-		$this->grading_stats_service               = $grading_stats_service;
+	public function __construct( $file ) {
+		$this->file = $file;
 
 		// Admin functions.
 		if ( is_admin() ) {
@@ -89,6 +81,29 @@ class Sensei_Analysis {
 			// Add custom navigation.
 			add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 		}
+	}
+
+	/**
+	 * Create an analysis controller with its query-service dependencies.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param string                                     $file                                Main plugin file path.
+	 * @param Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory Reports overview list table factory.
+	 * @param Reports_Listing_Service_Interface          $reports_listing_service             Reports listing service.
+	 * @param Progress_Aggregation_Service_Interface     $aggregation_service                 Progress aggregation service.
+	 * @param Grading_Stats_Service_Interface            $grading_stats_service               Grading statistics service.
+	 * @return self
+	 */
+	public static function create_with_dependencies( $file, Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory, Reports_Listing_Service_Interface $reports_listing_service, Progress_Aggregation_Service_Interface $aggregation_service, Grading_Stats_Service_Interface $grading_stats_service ): self {
+		$instance                                      = new static( $file );
+		$instance->reports_overview_list_table_factory = $reports_overview_list_table_factory;
+		$instance->reports_listing_service             = $reports_listing_service;
+		$instance->aggregation_service                 = $aggregation_service;
+		$instance->grading_stats_service               = $grading_stats_service;
+
+		return $instance;
 	}
 
 	/**

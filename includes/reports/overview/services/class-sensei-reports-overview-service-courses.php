@@ -24,15 +24,22 @@ class Sensei_Reports_Overview_Service_Courses {
 	 *
 	 * @var Grading_Stats_Service_Interface|null
 	 */
-	private ?Grading_Stats_Service_Interface $grading_stats_service;
+	private ?Grading_Stats_Service_Interface $grading_stats_service = null;
 
 	/**
-	 * Constructor.
+	 * Create a courses overview service with its dependencies.
 	 *
-	 * @param Grading_Stats_Service_Interface|null $grading_stats_service Grading statistics service.
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param Grading_Stats_Service_Interface $grading_stats_service Grading statistics service.
+	 * @return self
 	 */
-	public function __construct( ?Grading_Stats_Service_Interface $grading_stats_service = null ) {
-		$this->grading_stats_service = $grading_stats_service;
+	public static function create_with_dependencies( Grading_Stats_Service_Interface $grading_stats_service ): self {
+		$instance                        = new static();
+		$instance->grading_stats_service = $grading_stats_service;
+
+		return $instance;
 	}
 
 	/**

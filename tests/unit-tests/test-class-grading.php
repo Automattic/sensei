@@ -16,7 +16,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
 
-		Sensei()->grading = new WooThemes_Sensei_Grading(
+		Sensei()->grading = WooThemes_Sensei_Grading::create_with_dependencies(
 			'',
 			$query_service_factory->create_grading_listing_service(),
 			$query_service_factory->create_aggregation_service(),
