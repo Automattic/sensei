@@ -354,12 +354,16 @@ class Sensei_Quiz {
 			$user_id
 		);
 
-		$success = self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id );
+		$success = null !== $answers && self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id );
 
 		if ( $success ) {
 			// Update the message shown to the user.
 			$message                     = __( 'Quiz Saved Successfully.', 'sensei-lms' );
 			Sensei()->frontend->messages = '<div class="sensei-message note">' . $message . '</div>';
+			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-save', $message );
+		} elseif ( null === $answers ) {
+			$message                     = __( 'The quiz could not be saved. Please reload the page and try again.', 'sensei-lms' );
+			Sensei()->frontend->messages = '<div class="sensei-message alert">' . $message . '</div>';
 			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-save', $message );
 		} else {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
@@ -384,9 +388,16 @@ class Sensei_Quiz {
 	 * @param int   $lesson_id       The lesson ID.
 	 * @param int   $user_id         The user ID.
 	 *
-	 * @return array
+	 * @return array|null The answers keyed by question, or null when the question set is not the one the quiz asked.
 	 */
-	private function parse_form_answers( array $answers, array $questions_asked, int $lesson_id, int $user_id ): array {
+	private function parse_form_answers( array $answers, array $questions_asked, int $lesson_id, int $user_id ): ?array {
+		// The question set is client input: it must carry the signature the quiz gave it.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Nonce verified by the form listeners, and the value is only compared.
+		$signature = $_POST['questions_asked_signature'] ?? '';
+
+		if ( ! is_string( $signature ) || ! hash_equals( self::get_questions_asked_signature( (int) get_the_ID(), $questions_asked ), $signature ) ) {
+			return null;
+		}
 
 		// If we have a fraction of the answers (e.g. pagination), include the previously saved answers.
 		if ( count( $answers ) !== count( $questions_asked ) ) {
@@ -619,6 +630,14 @@ class Sensei_Quiz {
 			$user_id
 		);
 
+		if ( null === $answers ) {
+			$message                     = __( 'The quiz could not be submitted. Please reload the page and try again.', 'sensei-lms' );
+			Sensei()->frontend->messages = '<div class="sensei-message alert">' . $message . '</div>';
+			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-submit', $message );
+
+			return;
+		}
+
 		if ( false === self::submit_answers_for_grading( $answers, $_FILES, $lesson_id, $user_id ) ) {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 			$this->add_progress_failure_notice(
@@ -690,7 +709,7 @@ class Sensei_Quiz {
 				$user_id
 			);
 
-			if ( false === self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id ) ) {
+			if ( null !== $answers && false === self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id ) ) {
 				$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 				$this->add_progress_failure_notice(
 					__( 'Unable to change quiz pages', 'sensei-lms' ),
@@ -1938,6 +1957,25 @@ class Sensei_Quiz {
 			<?php
 		}
 
+		?>
+		<input type="hidden" name="questions_asked_signature" form="sensei-quiz-form" value="<?php echo esc_attr( self::get_questions_asked_signature( (int) get_the_ID(), $sensei_question_loop['questions_asked'] ?? array() ) ); ?>">
+		<?php
+	}
+
+	/**
+	 * Sign the set of questions a quiz asks, so the form cannot come back with another set.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int   $quiz_id      Quiz ID.
+	 * @param int[] $question_ids IDs of the questions asked.
+	 * @return string
+	 */
+	private static function get_questions_asked_signature( int $quiz_id, array $question_ids ): string {
+		$question_ids = array_unique( array_map( 'intval', $question_ids ) );
+		sort( $question_ids );
+
+		return wp_hash( $quiz_id . '-' . implode( ',', $question_ids ), 'nonce' );
 	}
 
 	/**
