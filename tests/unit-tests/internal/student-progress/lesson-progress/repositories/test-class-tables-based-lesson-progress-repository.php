@@ -616,7 +616,7 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function testCount_ParamsGiven_ReturnsMatchingValue(): void {
 		/* Arrange. */
 		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'get_unfiltered_course_lesson_ids' )->with( 1 )->willReturn( [ 2, 3, 4 ] );
+		$course->method( 'get_course_lesson_ids' )->with( 1 )->willReturn( [ 2, 3, 4 ] );
 
 		$initial_course  = Sensei()->course;
 		Sensei()->course = $course;

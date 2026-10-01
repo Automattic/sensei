@@ -1631,7 +1631,7 @@ class Sensei_Course {
 
 
 	/**
-	 * Get the IDs of the published lessons of a course, without query filters.
+	 * Get the IDs of the lessons of a course, without query filters.
 	 *
 	 * Unlike course_lessons(), the query runs without filters, so multilingual
 	 * plugins cannot limit it to the current language. Use it where the lessons
@@ -1639,21 +1639,24 @@ class Sensei_Course {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int $course_id The course ID.
-	 * @return int[] Lesson IDs in ascending order.
+	 * @param int   $course_id  The course ID.
+	 * @param array $query_args Optional. Query arguments that override the defaults, like `post_status`. Default published lessons.
+	 * @return int[] Lesson IDs, in no particular order.
 	 */
-	public function get_unfiltered_course_lesson_ids( $course_id ) {
+	public function get_course_lesson_ids( $course_id, $query_args = array() ) {
 		$lesson_ids = get_posts(
-			array(
-				'post_type'        => 'lesson',
-				'post_status'      => 'publish',
-				'numberposts'      => -1,
-				'fields'           => 'ids',
-				'orderby'          => 'ID',
-				'order'            => 'ASC',
-				'suppress_filters' => true,
-				'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Lessons are attached to their course by meta.
-				'meta_value'       => (int) $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+			array_merge(
+				array(
+					'post_type'        => 'lesson',
+					'post_status'      => 'publish',
+					'numberposts'      => -1,
+					'fields'           => 'ids',
+					'orderby'          => 'none',
+					'suppress_filters' => true,
+					'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Lessons are attached to their course by meta.
+					'meta_value'       => (int) $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+				),
+				$query_args
 			)
 		);
 

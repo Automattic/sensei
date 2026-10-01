@@ -393,7 +393,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 
 		// Progress is stored against the lessons of the original course, so the
 		// lookup must not depend on the current language.
-		$lesson_ids = Sensei()->course->get_unfiltered_course_lesson_ids( $course_id );
+		$lesson_ids = Sensei()->course->get_course_lesson_ids( $course_id );
 
 		if ( empty( $lesson_ids ) ) {
 			return 0;

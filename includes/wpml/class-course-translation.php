@@ -128,9 +128,12 @@ class Course_Translation {
 	 * @param string $source_language_code Language code of the original course.
 	 */
 	private function detach_lessons_removed_from_original_course( $original_course_id, $translated_course_id, $source_language_code ) {
-		$original_lesson_ids = $this->get_course_lesson_ids( $original_course_id );
+		// The current language during a translation job is not the language of
+		// the course, so the lessons are read without query filters.
+		$original_lesson_ids   = Sensei()->course->get_course_lesson_ids( $original_course_id, array( 'post_status' => 'any' ) );
+		$translated_lesson_ids = Sensei()->course->get_course_lesson_ids( $translated_course_id, array( 'post_status' => 'any' ) );
 
-		foreach ( $this->get_course_lesson_ids( $translated_course_id ) as $translated_lesson_id ) {
+		foreach ( $translated_lesson_ids as $translated_lesson_id ) {
 			$original_lesson_id = $this->get_object_id( $translated_lesson_id, 'lesson', false, $source_language_code );
 
 			if ( ! $original_lesson_id || $original_lesson_id === $translated_lesson_id || in_array( $original_lesson_id, $original_lesson_ids, true ) ) {
@@ -177,33 +180,6 @@ class Course_Translation {
 		wp_set_object_terms( $lesson_id, array(), 'module' );
 
 		remove_filter( 'wpml_disable_term_adjust_id', $disable_term_adjustment );
-	}
-
-	/**
-	 * Get the IDs of the lessons attached to a course, whatever their language.
-	 *
-	 * WPML filters queries by the current language, which during a translation
-	 * job is not the language of the course, so the query runs without filters.
-	 *
-	 * @since 4.26.4
-	 *
-	 * @param int $course_id Course ID.
-	 * @return int[]
-	 */
-	private function get_course_lesson_ids( $course_id ) {
-		$lesson_ids = get_posts(
-			array(
-				'post_type'        => 'lesson',
-				'post_status'      => 'any',
-				'numberposts'      => -1,
-				'fields'           => 'ids',
-				'suppress_filters' => true,
-				'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Lessons are attached to their course by meta.
-				'meta_value'       => (int) $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
-			)
-		);
-
-		return array_map( 'intval', $lesson_ids );
 	}
 
 	/**

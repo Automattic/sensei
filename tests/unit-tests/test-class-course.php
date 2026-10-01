@@ -990,7 +990,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		self::assertNotFalse( wp_cache_get( $post_id, 'category_relationships' ), 'Non-course queries should still prime the term cache.' );
 	}
 
-	public function testGetUnfilteredCourseLessonIds_LessonsHiddenByQueryFilters_ReturnsThePublishedLessonIds() {
+	public function testGetCourseLessonIds_LessonsHiddenByQueryFilters_ReturnsThePublishedLessonIds() {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
@@ -1015,7 +1015,24 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		);
 
 		/* Act. */
-		$actual = Sensei()->course->get_unfiltered_course_lesson_ids( $course_id );
+		$actual = Sensei()->course->get_course_lesson_ids( $course_id );
+
+		/* Assert. */
+		self::assertSame( array( $lesson_id ), $actual );
+	}
+
+	public function testGetCourseLessonIds_AnyPostStatusGiven_ReturnsTheDraftLessonIds() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'post_status' => 'draft',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+
+		/* Act. */
+		$actual = Sensei()->course->get_course_lesson_ids( $course_id, array( 'post_status' => 'any' ) );
 
 		/* Assert. */
 		self::assertSame( array( $lesson_id ), $actual );
