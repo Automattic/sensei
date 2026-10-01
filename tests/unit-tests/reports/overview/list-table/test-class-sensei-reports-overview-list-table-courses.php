@@ -158,6 +158,71 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
+	public function testGetRowData_CourseWithGradedQuizGiven_ReturnsMatchingArray() {
+		/* Arrange. */
+		$course_id        = $this->factory->course->create();
+		$lesson_id        = $this->factory->lesson->create();
+		$user_id          = $this->factory->user->create();
+		$lesson_status_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'graded',
+				'user_id'          => $user_id,
+			)
+		);
+		update_comment_meta( $lesson_status_id, 'grade', 50 );
+		$item = (object) array(
+			'ID'                   => $course_id,
+			'post_title'           => 'Course',
+			'last_activity_date'   => null,
+			'count_of_completions' => 0,
+			'days_to_completion'   => 0,
+		);
+
+		$course = $this->createMock( Sensei_Course::class );
+		$course->method( 'course_lessons' )->willReturn( array( $lesson_id ) );
+		$course->method( 'course_quizzes' )->willReturn( true );
+
+		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
+		$service->method( 'get_grade_sum_for_lessons' )->willReturn( 50 );
+
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
+			$this->createMock( Sensei_Grading::class ),
+			$course,
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
+			$service,
+			$this->createMock( Progress_Aggregation_Service_Interface::class )
+		);
+		$method     = new ReflectionMethod( $list_table, 'get_row_data' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$actual = $method->invoke( $list_table, $item );
+
+		/* Assert. */
+		$course_url = esc_url(
+			add_query_arg(
+				array(
+					'page'      => Sensei_Analysis::PAGE_SLUG,
+					'course_id' => $course_id,
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		$expected   = array(
+			'title'              => wp_kses_post( '<strong><a class="row-title" href="' . $course_url . '">Course</a></strong>' ),
+			'last_activity'      => 'N/A',
+			'enrolled'           => '0',
+			'completions'        => '0',
+			'completion_rate'    => 'N/A',
+			'average_progress'   => 'N/A',
+			'average_percent'    => '50%',
+			'days_to_completion' => 'N/A',
+		);
+		self::assertSame( $expected, $actual );
+	}
+
 	public function testSearchButton_WhenCalled_ReturnsMatchingString() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(

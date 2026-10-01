@@ -1,5 +1,7 @@
 <?php
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
+
 /**
  * Sensei Reports Overview Service Courses Test Class
  *
@@ -422,5 +424,28 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 0.0, $actual, 'Average grade should be zero when there are no graded quizzes.' );
+	}
+
+	public function testGetGradeSumForLessons_LessonIdsGiven_ReturnsServiceResult() {
+		/* Arrange. */
+		$lesson_ids            = array( 11, 22 );
+		$grading_stats_service = $this->createMock( Grading_Stats_Service_Interface::class );
+		$grading_stats_service
+			->expects( self::once() )
+			->method( 'get_grade_totals' )
+			->with( array( 'post__in' => $lesson_ids ) )
+			->willReturn(
+				array(
+					'count' => 2,
+					'sum'   => 75.0,
+				)
+			);
+		$instance = new Sensei_Reports_Overview_Service_Courses( $grading_stats_service );
+
+		/* Act. */
+		$actual = $instance->get_grade_sum_for_lessons( $lesson_ids );
+
+		/* Assert. */
+		self::assertSame( 75, $actual );
 	}
 }
