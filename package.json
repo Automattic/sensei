@@ -80,7 +80,7 @@
 		"eslint": "9.39.5",
 		"eslint-import-resolver-typescript": "4.4.5",
 		"eslint-plugin-jest": "29.16.6",
-		"eslint-plugin-jsdoc": "46.10.1",
+		"eslint-plugin-jsdoc": "64.3.3",
 		"eslint-plugin-playwright": "2.11.0",
 		"gettext-parser": "4.0.4",
 		"globals": "13.24.0",
