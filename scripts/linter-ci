@@ -28,8 +28,8 @@ function do_phpcs() {
 			touch diffs/$directory/with-line-num-`get_diff_filename $file`
 		fi
 
-		cat diffs/$directory/with-line-num-`get_diff_filename $file` \
-			| sed 's/:[0-9:]\+:/:_:/g' \
+		awk '{ sub( /:[[:digit:]]+:[[:digit:]]+:/, ":_:" ); print }' \
+			diffs/$directory/with-line-num-`get_diff_filename $file` \
 			> diffs/$directory/no-line-num-`get_diff_filename $file`
 	done
 }
@@ -81,7 +81,21 @@ do
 	branch_filename_with_lines=diffs/branch/with-line-num-`get_diff_filename $file`
 
 	# Get the line numbers of the issues that have been added.
-	line_numbers=`diff --unchanged-line-format="" --new-line-format="%dn " --old-line-format="" $trunk_filename $branch_filename || true`
+	line_numbers=`awk '
+		FILENAME == ARGV[1] {
+			existing[$0]++
+			next
+		}
+
+		existing[$0] > 0 {
+			existing[$0]--
+			next
+		}
+
+		{
+			print FNR
+		}
+	' "$trunk_filename" "$branch_filename"`
 
 	# Print the lines from the report with the line numbers in it.
 	if [ -n "$line_numbers" ]
