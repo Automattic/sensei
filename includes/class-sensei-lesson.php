@@ -933,6 +933,13 @@ class Sensei_Lesson {
 			}
 		}
 
+		// Check if the current user has permission to edit the lesson being saved.
+		$post_type_name = get_post_type( $post_id );
+		$post_type      = $post_type_name ? get_post_type_object( $post_type_name ) : null;
+		if ( ! $post_type || ! current_user_can( $post_type->cap->edit_post, $post_id ) ) {
+			return false;
+		}
+
 		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
 			return false;
 		}
@@ -948,9 +955,6 @@ class Sensei_Lesson {
 		// Retrieve the update lesson.
 		$lesson = get_post( $post_id );
 
-		if ( isset( $_POST['quiz_id'] ) && ( 0 < absint( $_POST['quiz_id'] ) ) ) {
-			$quiz_id = absint( $_POST['quiz_id'] );
-		}
 		$post_title   = esc_html( $lesson->post_title );
 		$post_status  = esc_html( $lesson->post_status );
 		$post_content = '';
@@ -3633,7 +3637,7 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 *
-	 * @since $$next-version$$ Falls back to the `_lesson_quiz` lesson meta when the post query returns nothing.
+	 * @since 4.26.4 Falls back to the `_lesson_quiz` lesson meta when the post query returns nothing.
 	 *
 	 * @param int    $lesson_id   The lesson id (default: 0).
 	 * @param string $post_status The post status (default: 'any').
@@ -3669,7 +3673,7 @@ class Sensei_Lesson {
 	/**
 	 * Get a lesson's quiz from the lesson meta, matching what the post query returns.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int             $lesson_id   The lesson id.
 	 * @param string|string[] $post_status The post status.
@@ -4461,6 +4465,11 @@ class Sensei_Lesson {
 		$random_question_order = isset( $data['random_question_order'] ) ? sanitize_text_field( (string) wp_unslash( $data['random_question_order'] ) ) : '';
 		$quiz_grade_type       = isset( $data['quiz_grade_type'] ) ? sanitize_text_field( (string) wp_unslash( $data['quiz_grade_type'] ) ) : '';
 
+		// Only move lessons into a course the current user can edit. Otherwise treat it as "no change".
+		if ( '' !== $new_course && '-1' !== $new_course && ! Sensei_Course::can_current_user_edit_course( (int) $new_course ) ) {
+			$new_course = '-1';
+		}
+
 		$new_quiz_settings = array(
 			'pass_required'         => $new_pass_required,
 			'pass_percentage'       => $new_pass_percentage,
@@ -5225,15 +5234,16 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * On the lesson archive limit the number of words the show up if the access settings are enabled
+	 * Limit the content of a lesson the current user cannot view to a 30-word teaser.
 	 *
 	 * @since 1.9.0
-	 * @param $content
+	 * @since 4.26.4 Applies wherever the lesson is rendered, not only on an archive.
+	 *
+	 * @param string $content The lesson content.
 	 * @return string
 	 */
 	public static function limit_archive_content( $content ) {
-
-		if ( is_post_type_archive( 'lesson' ) && Sensei()->settings->get( 'access_permission' ) ) {
+		if ( 'lesson' === get_post_type() && ! sensei_can_user_view_lesson() ) {
 			return wp_trim_words( $content, 30, '…' );
 		}
 

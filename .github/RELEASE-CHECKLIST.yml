@@ -1,9 +1,7 @@
 paths:
   "**":
     - Check that the installed version is correct on the Plugins page.
-    - Create and publish a course, a module, and a lesson to the course.
-    - Enable the learning mode in the course.
-    - Log in with a user and complete the course.
-    - Visit Students in admin and observe that the user is displayed with the course completed.
-    - Disable learning mode in the course.
-    - Visit the course again to make sure that it displayed correctly.
+    - Create and publish a course containing a module, lesson, and quiz with Learning Mode enabled.
+    - Enrol as a student, complete the lesson and quiz, and finish the course.
+    - Confirm the student's completion and quiz result appear correctly in Students and Grading.
+    - Disable Learning Mode and confirm the course and lesson pages still display correctly.

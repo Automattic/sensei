@@ -227,20 +227,17 @@ class Sensei_Course_Theme_Styles {
 			return $block_content;
 		}
 
-		$first_element = $html_element_matches[0][0];
+		$first_element        = $html_element_matches[0][0];
+		$first_element_offset = $html_element_matches[0][1];
+		$style_position       = strpos( $first_element, 'style="' );
 
 		// Add new styles if there is already a style attribute.
-		if ( strpos( $first_element, 'style="' ) !== false ) {
-			$content = preg_replace(
-				'/' . preg_quote( 'style="', '/' ) . '/',
-				'style="' . $style . ' ',
-				$block_content,
-				1
-			);
+		if ( false !== $style_position ) {
+			$style_value_offset = $first_element_offset + $style_position + strlen( 'style="' );
+			$content            = substr_replace( $block_content, $style . ' ', $style_value_offset, 0 );
 		} else {
 			// Add as new style attribute to the element.
-			$first_element_offset = $html_element_matches[0][1];
-			$content              = substr_replace( $block_content, ' style="' . $style . '"', $first_element_offset + strlen( $first_element ) - 1, 0 );
+			$content = substr_replace( $block_content, ' style="' . $style . '"', $first_element_offset + strlen( $first_element ) - 1, 0 );
 		}
 
 		return $content;

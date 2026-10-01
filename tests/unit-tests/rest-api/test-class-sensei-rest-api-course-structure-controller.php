@@ -771,4 +771,136 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		$response_status = $response->get_status();
 		$this->assertEquals( 200, $response_status );
 	}
+
+	public function testSaveCourseStructure_WhenCantEditLessonInsideModule_RequestIsUnauthorized() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'post_author' => 123, // Simulate that the lesson is owned by another user and we can't edit it.
+			)
+		);
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'title'   => 'Module',
+				'lessons' => array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Lesson',
+						'id'    => $lesson_id,
+					),
+				),
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		/* Act */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert */
+		$response_status = $response->get_status();
+		$this->assertEquals( 403, $response_status );
+	}
+
+	public function testSaveCourseStructure_WhenCanEditLessonInsideModule_RequestIsAuthorized() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'title'   => 'Module',
+				'lessons' => array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Lesson',
+						'id'    => $lesson_id,
+					),
+				),
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		/* Act */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert */
+		$response_status = $response->get_status();
+		$this->assertEquals( 200, $response_status );
+	}
+
+	public function testSaveCourseStructure_WhenContentTypeIsNotJsonAndCantEditNestedLesson_RequestIsUnauthorized() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'post_author' => 123, // Simulate that the lesson is owned by another user and we can't edit it.
+			)
+		);
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'title'   => 'Module',
+				'lessons' => array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Lesson',
+						'id'    => $lesson_id,
+					),
+				),
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		// Non-JSON content type: get_param() does not see the structure, but the save still decodes the body.
+		$request->set_header( 'content-type', 'text/plain' );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		/* Act */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert */
+		$response_status = $response->get_status();
+		$this->assertEquals( 403, $response_status );
+	}
+
+	public function testSaveCourseStructure_WhenContentTypeIsNotJsonAndCantEditLesson_RequestIsUnauthorized() {
+		/* Arrange */
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'post_author' => 123, // Simulate that the lesson is owned by another user and we can't edit it.
+			)
+		);
+		$structure = array(
+			array(
+				'type'  => 'lesson',
+				'title' => 'Lesson',
+				'id'    => $lesson_id,
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		// Non-JSON content type: get_param() does not see the structure, but the save still decodes the body.
+		$request->set_header( 'content-type', 'text/plain' );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		/* Act */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert */
+		$response_status = $response->get_status();
+		$this->assertEquals( 403, $response_status );
+	}
 }

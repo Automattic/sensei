@@ -1693,8 +1693,8 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	 */
 	private function resetInstances() {
 		$instances_property = new ReflectionProperty( 'Sensei_Course_Structure', 'instances' );
-		$instances_property->setAccessible( true );
-		$instances_property->setValue( [] );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $instances_property );
+		$instances_property->setValue( null, [] );
 	}
 
 	/**

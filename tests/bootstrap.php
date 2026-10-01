@@ -110,6 +110,19 @@ class Sensei_Unit_Tests_Bootstrap {
 	}
 
 	/**
+	 * Makes a reflected method or property accessible on PHP versions where this is required.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param ReflectionMethod|ReflectionProperty $reflection The reflected method or property.
+	 */
+	public static function make_reflection_accessible( $reflection ) {
+		if ( PHP_VERSION_ID < 80100 ) {
+			$reflection->setAccessible( true );
+		}
+	}
+
+	/**
 	 * Enable HPPS settings for tables-based progress storage.
 	 *
 	 * @param mixed $settings The sensei-settings option value.
@@ -180,4 +193,3 @@ class Sensei_Unit_Tests_Bootstrap {
 }
 
 Sensei_Unit_Tests_Bootstrap::instance();
-

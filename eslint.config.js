@@ -2,14 +2,22 @@
  * External dependencies
  */
 const globals = require( 'globals' );
+const jestPlugin = require( 'eslint-plugin-jest' );
 
 /**
  * WordPress dependencies
  */
-const wpScriptsConfig = require( '@wordpress/scripts/config/eslint.config.cjs' );
+const wpPlugin = require( '@wordpress/eslint-plugin' );
 
 module.exports = [
-	...wpScriptsConfig,
+	...wpPlugin.configs.recommended,
+	{
+		...jestPlugin.configs[ 'flat/recommended' ],
+		files: [
+			'**/@(test|__tests__)/**/*.{js,jsx,ts,tsx,mjs,cjs}',
+			'**/*.@(test|spec).{js,jsx,ts,tsx,mjs,cjs}',
+		],
+	},
 	{
 		ignores: [ 'assets/dist/**', 'assets/vendor/**', 'assets/chosen/**' ],
 	},

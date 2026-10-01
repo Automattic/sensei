@@ -560,7 +560,7 @@ function sensei_has_translation_or_is_english( $text ) {
  * Do not use for data that is not slashed by WordPress (e.g. database or option
  * values), since it runs wp_unslash() on the input.
  *
- * @since $$next-version$$
+ * @since 4.26.4
  *
  * @param mixed $raw Raw request value, e.g. `$_GET['orderby'] ?? ''`.
  * @return string The unslashed, sanitized value, or '' when an array is given.

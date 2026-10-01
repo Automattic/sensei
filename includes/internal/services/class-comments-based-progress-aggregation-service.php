@@ -102,7 +102,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count course progress records grouped by user and status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $args {
 	 *     Query arguments.
@@ -114,7 +114,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 */
 	public function count_statuses_by_user( array $args ): array {
 		if ( empty( $args['type'] ) || 'course' !== $args['type'] ) {
-			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course". Per-user lesson counts are not supported.', '$$next-version$$' );
+			_doing_it_wrong( __METHOD__, 'The "type" argument must be "course". Per-user lesson counts are not supported.', '4.26.4' );
 			return array();
 		}
 
@@ -143,7 +143,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count students with activity on a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $args Comments-API-shaped activity arguments.
 	 * @return int Number of students with matching lesson activity.
@@ -155,7 +155,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count students who completed a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $args Comments-API-shaped activity arguments.
 	 * @return int Number of students with matching completed lesson activity.

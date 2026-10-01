@@ -23,7 +23,7 @@ jQuery( document ).ready( function () {
 	 * Add select to the modules select boxes
 	 */
 	// module order screen
-	jQuery( '#module-order-course' ).select2( { width: 'resolve' } );
+	jQuery( 'select#module-order-course' ).select2( { width: 'resolve' } );
 
 	/**
 	 * Sortable functionality
@@ -219,7 +219,9 @@ jQuery( document ).ready( function () {
 				if ( '' !== response ) {
 					// Replace the meta box and re-initialize select2.
 					jQuery( '> .inside', '#module_select' ).html( response );
-					jQuery( '#lesson-module-options' ).select2( {
+					jQuery(
+						'#lesson-module-metabox-select select#lesson-module-options'
+					).select2( {
 						width: 'resolve',
 					} );
 				}
