@@ -129,7 +129,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 		$GLOBALS['wp_query']->is_single = true;
 
 		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$property->setValue( Sensei()->notices, false );
 
 		$course_pre = $this->factory->course->create_and_get();

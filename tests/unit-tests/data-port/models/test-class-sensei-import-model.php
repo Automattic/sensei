@@ -239,7 +239,7 @@ class Sensei_Import_Model_Test extends WP_UnitTestCase {
 		$model = Sensei_Import_Model_Mock::from_source_array( 1, $data, new Sensei_Data_Port_Schema_Mock() );
 
 		$property = new ReflectionProperty( 'Sensei_Import_Model', 'is_new' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$property->setValue( $model, false );
 
 		$this->assertEquals( null, $model->get_value( 'favorite_int' ), 'Null should be provided when not included in data' );

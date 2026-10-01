@@ -136,7 +136,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 		$updates = new Sensei_Updates( '3.9.0', false, true );
 
 		$method = new ReflectionMethod( $updates, 'get_changelog_release_dates' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$releases = $method->invoke( $updates );
 

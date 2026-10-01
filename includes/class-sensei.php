@@ -130,7 +130,7 @@ class Sensei_Main {
 	/**
 	 * Resolved progress storage configuration.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 * @psalm-suppress PropertyNotSetInConstructor
 	 * @var Progress_Storage_Configuration
 	 */

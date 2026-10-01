@@ -123,7 +123,7 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 			 * @param {WP_User} $user The user object.
 			 * @return {string} Filtered html for the teacher li.
 			 */
-			$users_output .= apply_filters( 'sensei_teachers_shortcode_list_item', '<li class="teacher"><a href="' . get_author_posts_url( $user->ID ) . '">' . $user_display_name . '<a/></li>', $user );
+			$users_output .= apply_filters( 'sensei_teachers_shortcode_list_item', '<li class="teacher"><a href="' . esc_url( get_author_posts_url( $user->ID ) ) . '">' . esc_html( $user_display_name ) . '</a></li>', $user );
 
 		}
 

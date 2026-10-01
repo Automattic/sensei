@@ -125,7 +125,7 @@ class Sensei_Course_Theme_Editor {
 		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 
 		$is_site_editor      = preg_match( '#/wp-admin/site-editor.php#i', $uri ) || preg_match( '#/wp-admin/themes.php\?.*page=gutenberg-edit-site#i', $uri );
-		$is_site_editor_rest = preg_match( '#/wp-json/.*/' . self::THEME_PREFIX . '#i', $uri ) || preg_match( '#/wp-json/wp/v2/templates#i', $uri );
+		$is_site_editor_rest = preg_match( '#/wp-json/.*/' . self::THEME_PREFIX . '#i', $uri ) || preg_match( '#/wp-json/wp/v2/(?:registered-)?templates#i', $uri );
 
 		return $is_site_editor || $is_site_editor_rest;
 	}

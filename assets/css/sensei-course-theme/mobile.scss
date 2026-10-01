@@ -14,10 +14,13 @@ $breakpoint: 783px;
 	}
 
 	body.sensei-course-theme {
-
 		.sensei-course-theme-header-content {
 			gap: 0;
 			transition: all 300ms;
+
+			> .wp-block-group:first-child {
+				min-width: 0;
+			}
 		}
 
 		&__focus-mode-toggle {

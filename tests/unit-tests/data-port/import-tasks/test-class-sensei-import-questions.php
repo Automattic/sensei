@@ -36,7 +36,7 @@ class Sensei_Import_Questions_Tests extends WP_UnitTestCase {
 		$job    = Sensei_Import_Job::create( 'test', 0 );
 		$task   = new Sensei_Import_Questions( $job );
 		$method = new ReflectionMethod( $task, 'handle_attachment' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$method->invoke(
 			$task,

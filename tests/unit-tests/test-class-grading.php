@@ -68,7 +68,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		$method = new ReflectionMethod( Sensei_Grading_Main::class, 'get_row_data' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 		$row = $method->invoke( $grading_main, $item );
 
 		/* Clean up & Assert. */

@@ -3,8 +3,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
     open-pull-requests-limit: 5
     labels:
       - "No Changelog"
@@ -34,6 +33,10 @@ updates:
       - dependency-name: "@wordpress/token-list"
       - dependency-name: "@wordpress/url"
     groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
       wordpress-packages:
         patterns:
           - "@wordpress/*"
@@ -56,14 +59,15 @@ updates:
           - "minor"
           - "patch"
     cooldown:
+      semver-major-days: 30
       default-days: 7
+      semver-minor-days: 30
       semver-patch-days: 30
 
   - package-ecosystem: "composer"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "wednesday"
+      interval: "monthly"
     open-pull-requests-limit: 5
     labels:
       - "No Changelog"
@@ -75,6 +79,10 @@ updates:
         versions:
           - ">=8.0.0"
     groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
       composer-development-minor-patch:
         dependency-type: "development"
         patterns:
@@ -90,7 +98,9 @@ updates:
           - "minor"
           - "patch"
     cooldown:
+      semver-major-days: 30
       default-days: 7
+      semver-minor-days: 30
       semver-patch-days: 30
 
   - package-ecosystem: "github-actions"
@@ -105,6 +115,10 @@ updates:
     labels:
       - "No Changelog"
     groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
       actions-minor-patch:
         patterns:
           - "*"
@@ -117,5 +131,4 @@ updates:
         update-types:
           - "major"
     cooldown:
-      default-days: 7
-      semver-patch-days: 30
+      default-days: 30

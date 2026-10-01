@@ -24,7 +24,7 @@ class Utils {
 	 * Post statuses that Reports counts as live content: a course or lesson that
 	 * exists and is accessible.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @var string[]
 	 */
@@ -33,7 +33,7 @@ class Utils {
 	/**
 	 * Post statuses that Grading counts as live content.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @var string[]
 	 */
@@ -42,7 +42,7 @@ class Utils {
 	/**
 	 * Get the Reports post statuses as a quoted list for a `post_status IN ( ... )` SQL clause.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @return string Quoted, comma-separated statuses, e.g. "'publish','private'".
 	 */
@@ -53,7 +53,7 @@ class Utils {
 	/**
 	 * Get the Grading post statuses as a quoted list for a `post_status IN ( ... )` SQL clause.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @return string Quoted, comma-separated statuses.
 	 */
@@ -64,7 +64,7 @@ class Utils {
 	/**
 	 * Build a SQL-safe quoted status list from activity arguments.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 * @param array $args Activity arguments containing a status key.

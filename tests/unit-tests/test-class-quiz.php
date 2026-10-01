@@ -775,6 +775,74 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Set up an enrolled student on the quiz page with one saved answer, and a "Save Progress" request rewriting it.
+	 *
+	 * @return array {
+	 *     @type int $user_id
+	 *     @type int $lesson_id
+	 *     @type int $quiz_id
+	 *     @type int $question_id
+	 * }
+	 */
+	private function setup_save_quiz_answers_request() {
+		$course_data = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$lesson_id   = $course_data['lesson_ids'][0];
+		$quiz_id     = $course_data['quiz_ids'][0];
+		$question_id = Sensei()->lesson->lesson_quiz_questions( $quiz_id )[0]->ID;
+		$user_id     = $this->factory->user->create();
+
+		Sensei_Course_Enrolment::get_course_instance( $course_data['course_id'] )->enrol( $user_id );
+		Sensei()->quiz->save_user_answers( array( $question_id => 'Original answer' ), array(), $lesson_id, $user_id );
+
+		wp_set_current_user( $user_id );
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		$_POST['quiz_save']                        = '';
+		$_POST['questions_asked']                  = array( $question_id );
+		$_POST['sensei_question']                  = array( $question_id => 'Rewritten answer' );
+		$_POST['woothemes_sensei_save_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' );
+
+		return array(
+			'user_id'     => $user_id,
+			'lesson_id'   => $lesson_id,
+			'quiz_id'     => $quiz_id,
+			'question_id' => $question_id,
+		);
+	}
+
+	public function testUserSaveQuizAnswersListener_QuizNotCompleted_SavesTheSubmittedAnswer() {
+		/* Arrange. */
+		$ids = $this->setup_save_quiz_answers_request();
+
+		/* Act. */
+		Sensei()->quiz->user_save_quiz_answers_listener();
+
+		/* Assert. */
+		$this->assertSame(
+			array( $ids['question_id'] => 'Rewritten answer' ),
+			Sensei()->quiz->get_user_answers( $ids['lesson_id'], $ids['user_id'] )
+		);
+	}
+
+	public function testUserSaveQuizAnswersListener_QuizCompleted_KeepsTheSavedAnswer() {
+		/* Arrange. */
+		$ids = $this->setup_save_quiz_answers_request();
+
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $ids['quiz_id'], $ids['user_id'] );
+		$quiz_progress->ungrade();
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
+
+		/* Act. */
+		Sensei()->quiz->user_save_quiz_answers_listener();
+
+		/* Assert. */
+		$this->assertSame(
+			array( $ids['question_id'] => 'Original answer' ),
+			Sensei()->quiz->get_user_answers( $ids['lesson_id'], $ids['user_id'] )
+		);
+	}
+
+	/**
 	 * This tests Woothemes_Sensei()->quiz->prepare_form_submitted_answers.
 	 */
 	public function testPrepareFormSubmittedAnswers() {
