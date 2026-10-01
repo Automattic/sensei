@@ -195,7 +195,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			$this->createMock( Progress_Aggregation_Service_Interface::class )
 		);
 		$method     = new ReflectionMethod( $list_table, 'get_row_data' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		/* Act. */
 		$actual = $method->invoke( $list_table, $item );

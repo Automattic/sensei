@@ -97,6 +97,11 @@ class Sensei_Analysis {
 	 * @return self
 	 */
 	public static function create_with_dependencies( $file, Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory, Reports_Listing_Service_Interface $reports_listing_service, Progress_Aggregation_Service_Interface $aggregation_service, Grading_Stats_Service_Interface $grading_stats_service ): self {
+		/**
+		 * Preserve legacy subclasses when this inherited internal method is called.
+		 *
+		 * @psalm-suppress UnsafeInstantiation
+		 */
 		$instance                                      = new static( $file );
 		$instance->reports_overview_list_table_factory = $reports_overview_list_table_factory;
 		$instance->reports_listing_service             = $reports_listing_service;

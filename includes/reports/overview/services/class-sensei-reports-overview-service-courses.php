@@ -36,6 +36,11 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @return self
 	 */
 	public static function create_with_dependencies( Grading_Stats_Service_Interface $grading_stats_service ): self {
+		/**
+		 * Preserve subclasses when this inherited internal method is called.
+		 *
+		 * @psalm-suppress UnsafeInstantiation
+		 */
 		$instance                        = new static();
 		$instance->grading_stats_service = $grading_stats_service;
 

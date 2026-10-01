@@ -89,10 +89,15 @@ class Sensei_Grading {
 	 * @return self
 	 */
 	public static function create_with_dependencies( $file, Grading_Listing_Service_Interface $grading_listing_service, Progress_Aggregation_Service_Interface $aggregation_service, Grading_Stats_Service_Interface $grading_stats_service ): self {
-		$instance                           = new static( $file );
-		$instance->grading_listing_service  = $grading_listing_service;
-		$instance->aggregation_service      = $aggregation_service;
-		self::$grading_stats_service        = $grading_stats_service;
+		/**
+		 * Preserve legacy subclasses when this inherited internal method is called.
+		 *
+		 * @psalm-suppress UnsafeInstantiation
+		 */
+		$instance                          = new static( $file );
+		$instance->grading_listing_service = $grading_listing_service;
+		$instance->aggregation_service     = $aggregation_service;
+		self::$grading_stats_service       = $grading_stats_service;
 
 		return $instance;
 	}
