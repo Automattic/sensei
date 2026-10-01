@@ -5,6 +5,7 @@
  * @package sensei
  */
 
+use Sensei\Internal\Services\Grading_Stats_Service_Interface;
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
 use Sensei\Internal\Services\Utils;
 
@@ -18,6 +19,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.4.1
  */
 class Sensei_Reports_Overview_Service_Courses {
+	/**
+	 * Grading statistics service.
+	 *
+	 * @var Grading_Stats_Service_Interface|null
+	 */
+	private ?Grading_Stats_Service_Interface $grading_stats_service = null;
+
+	/**
+	 * Create a courses overview service with its dependencies.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param Grading_Stats_Service_Interface $grading_stats_service Grading statistics service.
+	 * @return self
+	 */
+	public static function create_with_dependencies( Grading_Stats_Service_Interface $grading_stats_service ): self {
+		$instance                        = new self();
+		$instance->grading_stats_service = $grading_stats_service;
+
+		return $instance;
+	}
 
 	/**
 	 * Get total average progress value for courses.
@@ -92,7 +115,32 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 
-		return ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service()->get_courses_average_grade( $course_ids );
+		return $this->get_grading_stats_service()->get_courses_average_grade( $course_ids );
+	}
+
+	/**
+	 * Get the sum of all user grades for the lessons in a course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson IDs in the course.
+	 * @return int Sum of the grades.
+	 */
+	public function get_grade_sum_for_lessons( array $lesson_ids ): int {
+		return (int) $this->get_grading_stats_service()->get_grade_totals( array( 'post__in' => $lesson_ids ) )['sum'];
+	}
+
+	/**
+	 * Get the injected grading statistics service or create and retain the default.
+	 *
+	 * @return Grading_Stats_Service_Interface
+	 */
+	private function get_grading_stats_service(): Grading_Stats_Service_Interface {
+		if ( null === $this->grading_stats_service ) {
+			$this->grading_stats_service = ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service();
+		}
+
+		return $this->grading_stats_service;
 	}
 
 	/**
