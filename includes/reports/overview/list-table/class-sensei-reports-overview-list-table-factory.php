@@ -86,9 +86,9 @@ class Sensei_Reports_Overview_List_Table_Factory {
 
 		if ( null === $progress_clauses_service || null === $aggregation_service || null === $grading_stats_service ) {
 			$query_service_factory    = new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
-			$progress_clauses_service = $progress_clauses_service ?? $query_service_factory->create_clauses_service();
-			$aggregation_service      = $aggregation_service ?? $query_service_factory->create_aggregation_service();
-			$grading_stats_service    = $grading_stats_service ?? $query_service_factory->create_grading_stats_service();
+			$progress_clauses_service = $query_service_factory->create_clauses_service();
+			$aggregation_service      = $query_service_factory->create_aggregation_service();
+			$grading_stats_service    = $query_service_factory->create_grading_stats_service();
 
 			$this->progress_clauses_service = $progress_clauses_service;
 			$this->aggregation_service      = $aggregation_service;
