@@ -233,6 +233,7 @@ class Sensei_Learner_Management {
 			'slgL10n',
 			array(
 				'inprogress' => __( 'In Progress', 'sensei-lms' ),
+				'notstarted' => __( 'Not Started', 'sensei-lms' ),
 			)
 		);
 
