@@ -39,12 +39,23 @@ class Sensei_Reports_Overview_List_Table_Factory_Test extends WP_UnitTestCase {
 	}
 
 	public function providerCreate_TypeGiven_ReturnsExpectedInstance(): array {
-		return [
-			'courses' => [
+		return array(
+			'courses' => array(
 				'courses',
 				'Sensei_Reports_Overview_List_Table_Courses',
-			],
-		];
+			),
+		);
+	}
+
+	public function testCreate_FactoryConstructedWithoutArguments_ReturnsCoursesListTable() {
+		/* Arrange. */
+		$factory = new Sensei_Reports_Overview_List_Table_Factory();
+
+		/* Act. */
+		$actual_instance = $factory->create( 'courses' );
+
+		/* Assert. */
+		$this->assertInstanceOf( Sensei_Reports_Overview_List_Table_Courses::class, $actual_instance );
 	}
 
 	public function testCreate_UnknownTypeGiven_ThrowsException() {
