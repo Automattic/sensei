@@ -68,7 +68,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 			FROM {$wpdb->comments} c
 			WHERE c.comment_approved IN ('{$complete}', '{$passed}', '{$graded}')
 			AND c.comment_type = 'sensei_lesson_status'"
-			. Utils::build_comment_author_exclusion_clause( $wpdb, $args, 'c.comment_author', 'c.comment_approved' ) . '
+			. Utils::build_comment_author_exclusion_clause( $wpdb, $args ) . '
 			GROUP BY c.comment_post_id';
 
 		$course_query = "SELECT pm.meta_value AS course_id, MAX(lq.comment_date_gmt) AS comment_date_gmt

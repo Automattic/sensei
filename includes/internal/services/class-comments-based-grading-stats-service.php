@@ -254,7 +254,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 						WHERE cm2.comment_id = c.comment_ID
 							AND cm2.meta_key = 'quiz_answers'
 					)";
-		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, $args, 'c.comment_author', 'c.comment_approved' );
+		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
 		$query .= $course_filter;
 		$query .= ' GROUP BY course.meta_value ) averages_by_course';
 

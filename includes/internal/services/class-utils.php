@@ -188,13 +188,11 @@ class Utils {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param \wpdb  $wpdb          WordPress database object.
-	 * @param array  $args          Query arguments with 'exclude_user_login_prefixes' and optional 'include_statuses_override'.
-	 * @param string $author_column SQL expression for the comment-author column.
-	 * @param string $status_column SQL expression for the status column.
+	 * @param \wpdb $wpdb WordPress database object.
+	 * @param array $args Query arguments with 'exclude_user_login_prefixes' and optional 'include_statuses_override'.
 	 * @return string SQL clause.
 	 */
-	public static function build_comment_author_exclusion_clause( \wpdb $wpdb, array $args, string $author_column = 'comment_author', string $status_column = 'comment_approved' ): string {
+	public static function build_comment_author_exclusion_clause( \wpdb $wpdb, array $args ): string {
 		if ( empty( $args['exclude_user_login_prefixes'] ) ) {
 			return '';
 		}
@@ -206,17 +204,16 @@ class Utils {
 
 		$not_like_clauses = array();
 		foreach ( $prefixes as $prefix ) {
-			$escaped_prefix = $wpdb->esc_like( $prefix );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Column expression comes from internal callers; the prefix is prepared.
-			$not_like_clauses[] = $wpdb->prepare( "$author_column NOT LIKE %s", $escaped_prefix . '%' );
+			$escaped_prefix     = $wpdb->esc_like( $prefix );
+			$not_like_clauses[] = $wpdb->prepare( 'comment_author NOT LIKE %s', $escaped_prefix . '%' );
 		}
 
 		$exclusion_sql = '( ' . implode( ' AND ', $not_like_clauses ) . ' )';
 
 		if ( ! empty( $args['include_statuses_override'] ) ) {
 			$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders and column expression created dynamically.
-			$override_sql = $wpdb->prepare( "$status_column IN ( $status_placeholders )", $args['include_statuses_override'] );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+			$override_sql = $wpdb->prepare( "comment_approved IN ( $status_placeholders )", $args['include_statuses_override'] );
 			return " AND ( $exclusion_sql OR $override_sql )";
 		}
 
