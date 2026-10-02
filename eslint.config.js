@@ -68,7 +68,7 @@ module.exports = [
 				},
 			],
 			'jsdoc/check-line-alignment': [
-				'warn',
+				'error',
 				'always',
 				{
 					tags: [ 'param', 'arg', 'argument', 'property', 'prop' ],
