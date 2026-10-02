@@ -53,6 +53,7 @@ module.exports = [
 				{
 					devDependencies: [
 						'**/*.test.js',
+						'.prettierrc.js',
 						'scripts/**/*.js',
 						'tests/**/*.js',
 						'webpack.config.js',
