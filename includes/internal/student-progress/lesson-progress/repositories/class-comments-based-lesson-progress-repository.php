@@ -271,8 +271,6 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		 */
 		$course_id = (int) apply_filters( 'sensei_lesson_progress_count_course_id', $course_id );
 
-		// Progress is stored against the lessons of the original course, so the
-		// lookup must not depend on the current language.
 		$lessons = Sensei()->course->get_course_lesson_ids( $course_id );
 
 		if ( empty( $lessons ) ) {

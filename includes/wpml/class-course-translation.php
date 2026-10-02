@@ -128,8 +128,6 @@ class Course_Translation {
 	 * @param string $source_language_code Language code of the original course.
 	 */
 	private function detach_lessons_removed_from_original_course( $original_course_id, $translated_course_id, $source_language_code ) {
-		// The current language during a translation job is not the language of
-		// the course, so the lessons are read without query filters.
 		$original_lesson_ids   = Sensei()->course->get_course_lesson_ids( $original_course_id, array( 'post_status' => 'any' ) );
 		$translated_lesson_ids = Sensei()->course->get_course_lesson_ids( $translated_course_id, array( 'post_status' => 'any' ) );
 
