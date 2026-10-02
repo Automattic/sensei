@@ -32,33 +32,6 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Helper: create a lesson status comment with a grade.
-	 *
-	 * @param int    $lesson_id Lesson post ID.
-	 * @param int    $user_id   User ID.
-	 * @param string $status    Comment status (e.g. 'graded', 'passed', 'failed').
-	 * @param float  $grade            The grade value.
-	 * @param bool   $has_quiz_answers Whether to add quiz_answers meta.
-	 */
-	private function create_lesson_status_with_grade( int $lesson_id, int $user_id, string $status, float $grade, bool $has_quiz_answers = true ): void {
-		$user       = get_userdata( $user_id );
-		$comment_id = wp_insert_comment(
-			array(
-				'comment_post_ID'  => $lesson_id,
-				'user_id'          => $user_id,
-				'comment_author'   => $user->user_login,
-				'comment_type'     => 'sensei_lesson_status',
-				'comment_approved' => $status,
-				'comment_content'  => '',
-			)
-		);
-		update_comment_meta( $comment_id, 'grade', $grade );
-		if ( $has_quiz_answers ) {
-			update_comment_meta( $comment_id, 'quiz_answers', 'a:1:{i:0;s:1:"1";}' );
-		}
-	}
-
-	/**
 	 * Test testGetGradeTotals_WithNoData_ReturnsZeros.
 	 */
 	public function testGetGradeTotals_WithNoData_ReturnsZeros(): void {
@@ -378,7 +351,7 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result );
 	}
 
-	public function testGetCoursesAverageGrade_ExcludedUserLoginPrefixesGiven_ExcludesMatchingUsers(): void {
+	public function testGetCoursesAverageGrade_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
 		/* Arrange. */
 		global $wpdb;
 		$course_id = $this->sensei_factory->course->create();
@@ -569,5 +542,32 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$result  = $service->get_users_average_grade( array( $user_1 ) );
 
 		$this->assertSame( 80.0, $result );
+	}
+
+	/**
+	 * Helper: create a lesson status comment with a grade.
+	 *
+	 * @param int    $lesson_id Lesson post ID.
+	 * @param int    $user_id   User ID.
+	 * @param string $status    Comment status (e.g. 'graded', 'passed', 'failed').
+	 * @param float  $grade            The grade value.
+	 * @param bool   $has_quiz_answers Whether to add quiz_answers meta.
+	 */
+	private function create_lesson_status_with_grade( int $lesson_id, int $user_id, string $status, float $grade, bool $has_quiz_answers = true ): void {
+		$user       = get_userdata( $user_id );
+		$comment_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'user_id'          => $user_id,
+				'comment_author'   => $user->user_login,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => $status,
+				'comment_content'  => '',
+			)
+		);
+		update_comment_meta( $comment_id, 'grade', $grade );
+		if ( $has_quiz_answers ) {
+			update_comment_meta( $comment_id, 'quiz_answers', 'a:1:{i:0;s:1:"1";}' );
+		}
 	}
 }

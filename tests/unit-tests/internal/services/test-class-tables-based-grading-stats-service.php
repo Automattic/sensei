@@ -32,77 +32,6 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Insert a progress row directly into the HPPS progress table.
-	 *
-	 * @param int      $post_id        The post ID.
-	 * @param int      $user_id        The user ID.
-	 * @param string   $type           The progress type.
-	 * @param string   $status         The progress status.
-	 */
-	private function insert_progress( int $post_id, int $user_id, string $type, string $status ): void {
-		$wpdb   = $GLOBALS['wpdb'];
-		$table  = $wpdb->prefix . 'sensei_lms_progress';
-		$now    = current_time( 'mysql' );
-		$data   = array(
-			'post_id'    => $post_id,
-			'user_id'    => $user_id,
-			'type'       => $type,
-			'status'     => $status,
-			'started_at' => $now,
-			'created_at' => $now,
-			'updated_at' => $now,
-		);
-		$format = array( '%d', '%d', '%s', '%s', '%s', '%s', '%s' );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
-		$wpdb->insert( $table, $data, $format );
-	}
-
-	/**
-	 * Insert a quiz submission row.
-	 *
-	 * @param int        $quiz_id     The quiz post ID.
-	 * @param int        $user_id     The user ID.
-	 * @param float|null $final_grade The final grade.
-	 */
-	private function insert_quiz_submission( int $quiz_id, int $user_id, ?float $final_grade = null ): void {
-		$wpdb   = $GLOBALS['wpdb'];
-		$table  = $wpdb->prefix . 'sensei_lms_quiz_submissions';
-		$now    = current_time( 'mysql' );
-		$data   = array(
-			'quiz_id'    => $quiz_id,
-			'user_id'    => $user_id,
-			'created_at' => $now,
-			'updated_at' => $now,
-		);
-		$format = array( '%d', '%d', '%s', '%s' );
-		if ( null !== $final_grade ) {
-			$data['final_grade'] = $final_grade;
-			$format[]            = '%f';
-		}
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
-		$wpdb->insert( $table, $data, $format );
-	}
-
-	/**
-	 * Helper to set up a graded lesson with quiz in HPPS tables.
-	 *
-	 * @param int    $lesson_id  The lesson ID.
-	 * @param int    $quiz_id    The quiz ID.
-	 * @param int    $user_id    The user ID.
-	 * @param int    $course_id  The course ID.
-	 * @param string $status     The quiz status.
-	 * @param float  $grade      The grade value.
-	 */
-	private function create_graded_lesson( int $lesson_id, int $quiz_id, int $user_id, int $course_id, string $status, float $grade ): void {
-		update_post_meta( $lesson_id, '_lesson_course', $course_id );
-		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', $status );
-		$this->insert_progress( $quiz_id, $user_id, 'quiz', $status );
-		$this->insert_quiz_submission( $quiz_id, $user_id, $grade );
-	}
-
-	/**
 	 * Test testGetGradeTotals_WithNoData_ReturnsZeros.
 	 */
 	public function testGetGradeTotals_WithNoData_ReturnsZeros(): void {
@@ -471,7 +400,7 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result );
 	}
 
-	public function testGetCoursesAverageGrade_ExcludedUserLoginPrefixesGiven_ExcludesMatchingUsers(): void {
+	public function testGetCoursesAverageGrade_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
 		/* Arrange. */
 		global $wpdb;
 		$course_id = $this->sensei_factory->course->create();
@@ -625,5 +554,76 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$result  = $service->get_users_average_grade( array( $user_1 ) );
 
 		$this->assertSame( 80.0, $result );
+	}
+
+	/**
+	 * Insert a progress row directly into the HPPS progress table.
+	 *
+	 * @param int      $post_id        The post ID.
+	 * @param int      $user_id        The user ID.
+	 * @param string   $type           The progress type.
+	 * @param string   $status         The progress status.
+	 */
+	private function insert_progress( int $post_id, int $user_id, string $type, string $status ): void {
+		$wpdb   = $GLOBALS['wpdb'];
+		$table  = $wpdb->prefix . 'sensei_lms_progress';
+		$now    = current_time( 'mysql' );
+		$data   = array(
+			'post_id'    => $post_id,
+			'user_id'    => $user_id,
+			'type'       => $type,
+			'status'     => $status,
+			'started_at' => $now,
+			'created_at' => $now,
+			'updated_at' => $now,
+		);
+		$format = array( '%d', '%d', '%s', '%s', '%s', '%s', '%s' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
+		$wpdb->insert( $table, $data, $format );
+	}
+
+	/**
+	 * Insert a quiz submission row.
+	 *
+	 * @param int        $quiz_id     The quiz post ID.
+	 * @param int        $user_id     The user ID.
+	 * @param float|null $final_grade The final grade.
+	 */
+	private function insert_quiz_submission( int $quiz_id, int $user_id, ?float $final_grade = null ): void {
+		$wpdb   = $GLOBALS['wpdb'];
+		$table  = $wpdb->prefix . 'sensei_lms_quiz_submissions';
+		$now    = current_time( 'mysql' );
+		$data   = array(
+			'quiz_id'    => $quiz_id,
+			'user_id'    => $user_id,
+			'created_at' => $now,
+			'updated_at' => $now,
+		);
+		$format = array( '%d', '%d', '%s', '%s' );
+		if ( null !== $final_grade ) {
+			$data['final_grade'] = $final_grade;
+			$format[]            = '%f';
+		}
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper.
+		$wpdb->insert( $table, $data, $format );
+	}
+
+	/**
+	 * Helper to set up a graded lesson with quiz in HPPS tables.
+	 *
+	 * @param int    $lesson_id  The lesson ID.
+	 * @param int    $quiz_id    The quiz ID.
+	 * @param int    $user_id    The user ID.
+	 * @param int    $course_id  The course ID.
+	 * @param string $status     The quiz status.
+	 * @param float  $grade      The grade value.
+	 */
+	private function create_graded_lesson( int $lesson_id, int $quiz_id, int $user_id, int $course_id, string $status, float $grade ): void {
+		update_post_meta( $lesson_id, '_lesson_course', $course_id );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
+		$this->insert_progress( $lesson_id, $user_id, 'lesson', $status );
+		$this->insert_progress( $quiz_id, $user_id, 'quiz', $status );
+		$this->insert_quiz_submission( $quiz_id, $user_id, $grade );
 	}
 }

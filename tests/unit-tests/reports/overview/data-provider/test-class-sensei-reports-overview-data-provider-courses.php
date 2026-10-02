@@ -76,11 +76,13 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		$expected = [
 			[
 				'id'                   => $course_id,
+				'last_activity_date'   => null,
 				'days_to_completion'   => '2',
 				'count_of_completions' => '1',
 			],
 			[
 				'id'                   => $unfinished_course_id,
+				'last_activity_date'   => null,
 				'days_to_completion'   => null,
 				'count_of_completions' => '0',
 			],
@@ -89,7 +91,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
 	}
 
-	public function testGetAll_FiltersWithLastActivity_ReturnsMatchingCourses() {
+	public function testGetItems_FiltersWithLastActivityGiven_ReturnsMatchingCourses() {
 		/* Arrange. */
 		$user_id    = $this->factory->user->create();
 		$course_id  = $this->factory->course->create();
@@ -148,6 +150,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		$expected = [
 			[
 				'id'                   => $course_id,
+				'last_activity_date'   => '2022-01-02 00:00:01',
 				'days_to_completion'   => '2',
 				'count_of_completions' => '1',
 			],
@@ -156,15 +159,15 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
 	}
 
-	public function testGetItems_TemporaryUserProgressCreated_PreservesCompletionCountAndExcludesLastActivity() {
+	public function testGetItems_TemporaryUserProgressCreated_ReturnsMatchingCourse() {
 		/* Arrange. */
 		$this->maybe_enable_hpps_tables_repository();
 		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
 
 		$course_id = $this->factory->course->create();
 		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
-		$started   = new DateTimeImmutable( '2022-01-01 00:00:01', wp_timezone() );
-		$completed = new DateTimeImmutable( '2022-01-02 00:00:01', wp_timezone() );
+		$started   = current_datetime();
+		$completed = $started;
 
 		foreach ( array( 'sensei_guest_student', 'sensei_preview_student' ) as $login ) {
 			$user_id = $this->factory->user->create( array( 'user_login' => $login ) );
@@ -193,16 +196,17 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		);
 
 		/* Assert. */
-		self::assertSame(
+		// Per-course Days to Completion and Completions still count temporary users. A follow-up change will exclude them.
+		$expected = array(
 			array(
+				'id'                   => $course_id,
 				'last_activity_date'   => null,
+				'days_to_completion'   => '2',
 				'count_of_completions' => '2',
 			),
-			array(
-				'last_activity_date'   => $courses[0]->last_activity_date,
-				'count_of_completions' => $courses[0]->count_of_completions,
-			)
 		);
+
+		self::assertSame( $expected, $this->exportCourses( $courses ) );
 	}
 
 	private function exportCourses( array $courses ): array {
@@ -211,6 +215,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		foreach ( $courses as $course ) {
 			$ret[] = [
 				'id'                   => $course->ID,
+				'last_activity_date'   => $course->last_activity_date,
 				'days_to_completion'   => $course->days_to_completion,
 				'count_of_completions' => $course->count_of_completions,
 			];
