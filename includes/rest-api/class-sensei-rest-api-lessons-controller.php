@@ -91,7 +91,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'integer',
-				'auth_callback' => array( $this, 'lesson_course_meta_auth_callback' ),
+				'auth_callback' => array( $this, 'auth_callback' ),
 			)
 		);
 
@@ -208,28 +208,62 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
-	 * Perform permissions check when editing the lesson course meta.
+	 * Checks if a given request has access to create a lesson.
 	 *
-	 * @since  4.25.1
-	 * @access private
+	 * @since $$next-version$$
 	 *
-	 * @param bool   $allowed  True if allowed to view the meta field by default, false otherwise.
-	 * @param string $meta_key Meta key.
-	 * @param int    $post_id  Lesson ID.
-	 * @return bool Whether the user can edit the post meta.
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return true|WP_Error True if the request has access to create the lesson, WP_Error object otherwise.
 	 */
-	public function lesson_course_meta_auth_callback( $allowed, $meta_key, $post_id ) {
-		$data            = json_decode( WP_REST_Server::get_raw_data(), true );
-		$can_edit_lesson = current_user_can( 'edit_post', $post_id );
+	public function create_item_permissions_check( $request ) {
+		$can_create = parent::create_item_permissions_check( $request );
 
-		if ( $data && isset( $data['meta'] ) && ! empty( $data['meta'][ $meta_key ] ) ) {
-			$course_id       = (int) $data['meta'][ $meta_key ];
-			$can_edit_course = current_user_can( 'edit_course', $course_id );
+		return true === $can_create ? $this->check_lesson_course_permission( $request ) : $can_create;
+	}
 
-			return $can_edit_course && $can_edit_lesson;
+	/**
+	 * Checks if a given request has access to update a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return true|WP_Error True if the request has access to update the lesson, WP_Error object otherwise.
+	 */
+	public function update_item_permissions_check( $request ) {
+		$can_update = parent::update_item_permissions_check( $request );
+
+		return true === $can_update ? $this->check_lesson_course_permission( $request ) : $can_update;
+	}
+
+	/**
+	 * Checks that the user can edit the course the request moves the lesson into.
+	 *
+	 * The course is read from the parsed request, so the check does not depend on how it was sent.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return true|WP_Error True if the lesson course is unchanged or editable by the user, WP_Error object otherwise.
+	 */
+	private function check_lesson_course_permission( $request ) {
+		$meta      = $request['meta'];
+		$course_id = is_array( $meta ) ? (int) ( $meta['_lesson_course'] ?? 0 ) : 0;
+
+		if ( ! $course_id ) {
+			return true;
 		}
 
-		return $can_edit_lesson;
+		$current_course_id = isset( $request['id'] ) ? (int) get_post_meta( (int) $request['id'], '_lesson_course', true ) : 0;
+
+		$can_edit_course = 'course' === get_post_type( $course_id ) && Sensei_Course::can_current_user_edit_course( $course_id );
+
+		if ( $course_id === $current_course_id || $can_edit_course ) {
+			return true;
+		}
+
+		return new WP_Error(
+			'rest_cannot_edit',
+			__( 'Sorry, you are not allowed to add lessons to this course.', 'sensei-lms' ),
+			array( 'status' => rest_authorization_required_code() )
+		);
 	}
 
 	/**
