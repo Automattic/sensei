@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix quiz answer feedback blocks always showing expanded in the editor, and several Learning Mode blocks that could not be selected in the editor.

@@ -35,27 +35,30 @@ export default [
 			'Display progress of questions answered in a quiz.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function EditQuizProgress() {
+			const blockProps = useBlockProps();
 			return (
-				<div className="sensei-progress-bar">
-					<div className="sensei-progress-bar__label">
-						{ __(
-							'2 of 10 questions complete (20%)',
-							'sensei-lms'
-						) }
-					</div>
-					<div
-						role="progressbar"
-						className="sensei-progress-bar__bar"
-					>
+				<div { ...blockProps }>
+					<div className="sensei-progress-bar">
+						<div className="sensei-progress-bar__label">
+							{ __(
+								'2 of 10 questions complete (20%)',
+								'sensei-lms'
+							) }
+						</div>
 						<div
-							className="sensei-progress-bar__progress"
-							style={ {
-								width: '20%',
-								backgroundColor:
-									'var(--wp--preset--color--primary)',
-							} }
-						></div>
+							role="progressbar"
+							className="sensei-progress-bar__bar"
+						>
+							<div
+								className="sensei-progress-bar__progress"
+								style={ {
+									width: '20%',
+									backgroundColor:
+										'var(--wp--preset--color--primary)',
+								} }
+							></div>
+						</div>
 					</div>
 				</div>
 			);

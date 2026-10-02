@@ -70,14 +70,17 @@ export default [
 			'Link to the previous and next lessons.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function EditPrevNextLesson() {
+			const blockProps = useBlockProps();
 			return (
-				<div className="sensei-course-theme-prev-next-lesson-container">
-					<div className="sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__prev">
-						<ChevronLeft />
-					</div>
-					<div className="sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next">
-						<ChevronRight />
+				<div { ...blockProps }>
+					<div className="sensei-course-theme-prev-next-lesson-container">
+						<div className="sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__prev">
+							<ChevronLeft />
+						</div>
+						<div className="sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next">
+							<ChevronRight />
+						</div>
 					</div>
 				</div>
 			);
@@ -91,10 +94,13 @@ export default [
 			'Turn the Sidebar block into an overlay menu on mobile screens.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function EditSidebarToggleButton() {
+			const blockProps = useBlockProps();
 			return (
-				<div className="sensei-course-theme__sidebar-toggle">
-					<MenuIcon />
+				<div { ...blockProps }>
+					<div className="sensei-course-theme__sidebar-toggle">
+						<MenuIcon />
+					</div>
 				</div>
 			);
 		},
@@ -114,17 +120,20 @@ export default [
 				default: {},
 			},
 		},
-		edit() {
+		edit: function EditLessonActions() {
+			const blockProps = useBlockProps();
 			return (
-				<div className="sensei-course-theme-lesson-actions">
-					<div className="wp-block-button is-style-outline">
-						<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-secondary">
-							{ __( 'Complete Lesson', 'sensei-lms' ) }
+				<div { ...blockProps }>
+					<div className="sensei-course-theme-lesson-actions">
+						<div className="wp-block-button is-style-outline">
+							<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-secondary">
+								{ __( 'Complete Lesson', 'sensei-lms' ) }
+							</div>
 						</div>
-					</div>
-					<div className="wp-block-button">
-						<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-primary">
-							{ __( 'Take Quiz', 'sensei-lms' ) }
+						<div className="wp-block-button">
+							<div className="wp-block-button__link wp-element-button sensei-course-theme__button is-primary">
+								{ __( 'Take Quiz', 'sensei-lms' ) }
+							</div>
 						</div>
 					</div>
 				</div>
@@ -158,10 +167,13 @@ export default [
 			'Toggle a minimalized view of Learning Mode.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function EditFocusModeToggle() {
+			const blockProps = useBlockProps();
 			return (
-				<div className="sensei-course-theme__focus-mode-toggle">
-					<DoubleChevronRight className="sensei-course-theme__focus-mode-toggle-icon" />
+				<div { ...blockProps }>
+					<div className="sensei-course-theme__focus-mode-toggle">
+						<DoubleChevronRight className="sensei-course-theme__focus-mode-toggle-icon" />
+					</div>
 				</div>
 			);
 		},
@@ -174,8 +186,13 @@ export default [
 			'Display title of the current lesson or quiz.',
 			'sensei-lms'
 		),
-		edit() {
-			return <h1>{ __( 'Lesson Title', 'sensei-lms' ) }</h1>;
+		edit: function EditPostTitle() {
+			const blockProps = useBlockProps();
+			return (
+				<div { ...blockProps }>
+					<h1>{ __( 'Lesson Title', 'sensei-lms' ) }</h1>
+				</div>
+			);
 		},
 	},
 	{
@@ -186,8 +203,13 @@ export default [
 			'Display lesson or quiz content, if the learner has access to it.',
 			'sensei-lms'
 		),
-		edit() {
-			return <p>{ __( 'Course Content.', 'sensei-lms' ) }</p>;
+		edit: function EditCourseContent() {
+			const blockProps = useBlockProps();
+			return (
+				<div { ...blockProps }>
+					<p>{ __( 'Course Content.', 'sensei-lms' ) }</p>
+				</div>
+			);
 		},
 	},
 	{
@@ -198,11 +220,14 @@ export default [
 			'Display Sensei notices about the current lesson or quiz.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function EditNotices() {
+			const blockProps = useBlockProps();
 			return (
-				<div className="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
-					<div className="sensei-course-theme-lesson-quiz-notice__content">
-						{ __( 'Notice', 'sensei-lms' ) }
+				<div { ...blockProps }>
+					<div className="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
+						<div className="sensei-course-theme-lesson-quiz-notice__content">
+							{ __( 'Notice', 'sensei-lms' ) }
+						</div>
 					</div>
 				</div>
 			);

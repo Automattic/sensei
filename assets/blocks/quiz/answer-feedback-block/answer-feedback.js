@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useContext } from '@wordpress/element';
 
@@ -41,36 +41,41 @@ const AnswerFeedback = ( { type } ) => {
 	const { title, placeholder } = config[ type ];
 	const questionContext = useContext( QuestionContext );
 	const { hideAnswerFeedback } = questionContext.options;
+	const blockProps = useBlockProps();
 
 	if ( hideAnswerFeedback ) {
-		return '';
+		return <div { ...blockProps } />;
 	}
 	return (
-		<div
-			className={ classnames(
-				'sensei-lms-question__answer-feedback',
-				`sensei-lms-question__answer-feedback--${ type }`
-			) }
-		>
-			<div className="sensei-lms-question__answer-feedback__header">
-				<span
-					className={ 'sensei-lms-question__answer-feedback__icon' }
-				/>
-				<span>{ title }</span>
-			</div>
-			<div className="sensei-lms-question__answer-feedback__content">
-				<InnerBlocks
-					template={ [
-						[
-							'core/paragraph',
-							{
-								placeholder,
-							},
-						],
-					] }
-					templateInsertUpdatesSelection={ false }
-					templateLock={ false }
-				/>
+		<div { ...blockProps }>
+			<div
+				className={ classnames(
+					'sensei-lms-question__answer-feedback',
+					`sensei-lms-question__answer-feedback--${ type }`
+				) }
+			>
+				<div className="sensei-lms-question__answer-feedback__header">
+					<span
+						className={
+							'sensei-lms-question__answer-feedback__icon'
+						}
+					/>
+					<span>{ title }</span>
+				</div>
+				<div className="sensei-lms-question__answer-feedback__content">
+					<InnerBlocks
+						template={ [
+							[
+								'core/paragraph',
+								{
+									placeholder,
+								},
+							],
+						] }
+						templateInsertUpdatesSelection={ false }
+						templateLock={ false }
+					/>
+				</div>
 			</div>
 		</div>
 	);
