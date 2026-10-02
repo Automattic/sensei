@@ -720,8 +720,6 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		// The lessons of the course must all be reset, so the lookup must not
-		// depend on the current language.
 		$lesson_ids = Sensei()->course->get_course_lesson_ids( $course_id, array( 'post_status' => 'any' ) );
 
 		foreach ( $lesson_ids as $lesson_id ) {
