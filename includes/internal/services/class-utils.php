@@ -153,10 +153,11 @@ class Utils {
 	 *
 	 * @param \wpdb  $wpdb          WordPress database object.
 	 * @param array  $args          Query arguments with 'exclude_user_login_prefixes' and optional 'include_statuses_override'.
-	 * @param string $status_column SQL expression for the status column (default: 'p.status').
+	 * @param string $status_column  SQL expression for the status column (default: 'p.status').
+	 * @param string $user_id_column SQL expression for the user ID column (default: 'p.user_id').
 	 * @return string SQL clause.
 	 */
-	public static function build_user_exclusion_clause( \wpdb $wpdb, array $args, string $status_column = 'p.status' ): string {
+	public static function build_user_exclusion_clause( \wpdb $wpdb, array $args, string $status_column = 'p.status', string $user_id_column = 'p.user_id' ): string {
 		if ( empty( $args['exclude_user_login_prefixes'] ) ) {
 			return '';
 		}
@@ -172,11 +173,54 @@ class Utils {
 		if ( ! empty( $args['include_statuses_override'] ) ) {
 			$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders and column expression created dynamically.
-			return $wpdb->prepare( " AND ( p.user_id NOT IN ( $id_placeholders ) OR $status_column IN ( $status_placeholders ) )", array_merge( $excluded_user_ids, $args['include_statuses_override'] ) );
+			return $wpdb->prepare( " AND ( $user_id_column NOT IN ( $id_placeholders ) OR $status_column IN ( $status_placeholders ) )", array_merge( $excluded_user_ids, $args['include_statuses_override'] ) );
 		}
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-		return $wpdb->prepare( " AND p.user_id NOT IN ( $id_placeholders )", $excluded_user_ids );
+		return $wpdb->prepare( " AND $user_id_column NOT IN ( $id_placeholders )", $excluded_user_ids );
+	}
+
+	/**
+	 * Build a SQL clause for excluding comments by author login prefix.
+	 *
+	 * When include_statuses_override is set, excluded users are kept if their
+	 * effective status matches one of the override statuses.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \wpdb  $wpdb          WordPress database object.
+	 * @param array  $args          Query arguments with 'exclude_user_login_prefixes' and optional 'include_statuses_override'.
+	 * @param string $author_column SQL expression for the comment-author column.
+	 * @param string $status_column SQL expression for the status column.
+	 * @return string SQL clause.
+	 */
+	public static function build_comment_author_exclusion_clause( \wpdb $wpdb, array $args, string $author_column = 'comment_author', string $status_column = 'comment_approved' ): string {
+		if ( empty( $args['exclude_user_login_prefixes'] ) ) {
+			return '';
+		}
+
+		$prefixes = array_filter( $args['exclude_user_login_prefixes'] );
+		if ( empty( $prefixes ) ) {
+			return '';
+		}
+
+		$not_like_clauses = array();
+		foreach ( $prefixes as $prefix ) {
+			$escaped_prefix = $wpdb->esc_like( $prefix );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Column expression comes from internal callers; the prefix is prepared.
+			$not_like_clauses[] = $wpdb->prepare( "$author_column NOT LIKE %s", $escaped_prefix . '%' );
+		}
+
+		$exclusion_sql = '( ' . implode( ' AND ', $not_like_clauses ) . ' )';
+
+		if ( ! empty( $args['include_statuses_override'] ) ) {
+			$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders and column expression created dynamically.
+			$override_sql = $wpdb->prepare( "$status_column IN ( $status_placeholders )", $args['include_statuses_override'] );
+			return " AND ( $exclusion_sql OR $override_sql )";
+		}
+
+		return " AND $exclusion_sql";
 	}
 
 	/**

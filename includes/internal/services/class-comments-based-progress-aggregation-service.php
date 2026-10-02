@@ -79,7 +79,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 
 		$query .= $this->build_post_filter_clause( $args );
 		$query .= $this->build_user_filter_clause( $args );
-		$query .= $this->build_user_exclusion_clause( $args );
+		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
 
 		if ( isset( $args['query'] ) ) {
 			$query .= $args['query'];
@@ -164,7 +164,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			FROM {$wpdb->comments} c
 			WHERE c.comment_type = 'sensei_course_status'";
 		$query .= $this->build_post_filter_clause( array( 'post__in' => array_values( $post_id_map ) ) );
-		$query .= $this->build_user_exclusion_clause( $args );
+		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
 		$query .= ' GROUP BY c.comment_post_ID, c.comment_approved';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
@@ -298,7 +298,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			$query .= $wpdb->prepare( " AND {$wpdb->comments}.comment_post_ID IN ( $placeholders )", $args['post__in'] );
 		}
 
-		$query .= $this->build_user_exclusion_clause( $args );
+		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL built from literals only.
 		$count = (int) $wpdb->get_var( $query );
@@ -355,42 +355,5 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		}
 
 		return '';
-	}
-
-	/**
-	 * Build SQL clause for excluding users by login prefix.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @param array $args Query arguments.
-	 * @return string SQL clause.
-	 */
-	private function build_user_exclusion_clause( array $args ): string {
-		if ( empty( $args['exclude_user_login_prefixes'] ) ) {
-			return '';
-		}
-
-		$prefixes = array_filter( $args['exclude_user_login_prefixes'] );
-		if ( empty( $prefixes ) ) {
-			return '';
-		}
-
-		$wpdb             = $this->wpdb;
-		$not_like_clauses = array();
-		foreach ( $prefixes as $prefix ) {
-			$escaped_prefix     = $wpdb->esc_like( $prefix );
-			$not_like_clauses[] = $wpdb->prepare( 'comment_author NOT LIKE %s', $escaped_prefix . '%' );
-		}
-
-		$exclusion_sql = '( ' . implode( ' AND ', $not_like_clauses ) . ' )';
-
-		if ( ! empty( $args['include_statuses_override'] ) ) {
-			$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			$override_sql = $wpdb->prepare( "comment_approved IN ( $status_placeholders )", $args['include_statuses_override'] );
-			return " AND ( $exclusion_sql OR $override_sql )";
-		}
-
-		return " AND $exclusion_sql";
 	}
 }
