@@ -64,9 +64,10 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
+	 * @param array $args    Arguments for the query (see interface).
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_last_activity_to_courses_clauses( array $clauses ): array {
+	public function add_last_activity_to_courses_clauses( array $clauses, array $args = array() ): array {
 		$progress_table = $this->get_progress_table_name();
 
 		$wpdb = $this->wpdb;
@@ -83,8 +84,9 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		$lessons_query = "SELECT p.post_id AS lesson_id, MAX(p.updated_at) AS last_activity_date
 			FROM {$progress_table} p
 			WHERE p.type = 'lesson'
-			AND p.status = '{$complete}'
-			GROUP BY p.post_id";
+			AND p.status = '{$complete}'"
+			. Utils::build_user_exclusion_clause( $wpdb, $args ) . '
+			GROUP BY p.post_id';
 
 		// Map lessons to courses via postmeta, then take the most recent activity date across all lessons per course.
 		$course_query = "SELECT pm.meta_value AS course_id, MAX(lq.last_activity_date) AS last_activity_date
