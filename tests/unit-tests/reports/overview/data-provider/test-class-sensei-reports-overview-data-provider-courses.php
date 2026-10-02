@@ -6,12 +6,21 @@
  * @covers Sensei_Reports_Overview_Data_Provider_Courses
  */
 class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
+
 	/**
 	 * Factory for setting up testing data.
 	 *
 	 * @var Sensei_Factory
 	 */
 	protected $factory;
+
+	/**
+	 * Whether this test switched to HPPS table repositories.
+	 *
+	 * @var bool
+	 */
+	private $hpps_repository_enabled = false;
 
 	/**
 	 * Set up before each test.
@@ -26,6 +35,10 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	 * Tear down after each test.
 	 */
 	public function tearDown(): void {
+		if ( $this->hpps_repository_enabled ) {
+			$this->maybe_reset_hpps_repository();
+		}
+
 		parent::tearDown();
 
 		$this->factory->tearDown();
@@ -141,6 +154,57 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		];
 
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
+	}
+
+	public function testGetItems_TemporaryUserProgressCreated_ExcludesProgressMetrics() {
+		/* Arrange. */
+		$this->maybe_enable_hpps_tables_repository();
+		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
+
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$started   = new DateTimeImmutable( '2022-01-01 00:00:01', wp_timezone() );
+		$completed = new DateTimeImmutable( '2022-01-02 00:00:01', wp_timezone() );
+
+		foreach ( array( 'sensei_guest_student', 'sensei_preview_student' ) as $login ) {
+			$user_id = $this->factory->user->create( array( 'user_login' => $login ) );
+
+			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+			$course_progress->start( $started );
+			$course_progress->complete( $completed );
+			Sensei()->course_progress_repository->save( $course_progress );
+
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			$lesson_progress->start( $started );
+			$lesson_progress->complete( $completed );
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
+		}
+
+		$data_provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+
+		/* Act. */
+		$courses = $data_provider->get_items(
+			array(
+				'number'  => 1,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			)
+		);
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				'last_activity_date'   => null,
+				'days_to_completion'   => null,
+				'count_of_completions' => '0',
+			),
+			array(
+				'last_activity_date'   => $courses[0]->last_activity_date,
+				'days_to_completion'   => $courses[0]->days_to_completion,
+				'count_of_completions' => $courses[0]->count_of_completions,
+			)
+		);
 	}
 
 	private function exportCourses( array $courses ): array {

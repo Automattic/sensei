@@ -92,7 +92,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
-	public function testGetColumns_CompletionsFound_ReturnsMatchingArray() {
+	public function testGetColumns_RegisteredAndTemporaryCompletionsCreated_ExcludesTemporaryCompletions() {
 		/* Arrange. */
 		$user_id = $this->factory->user->create();
 
@@ -102,9 +102,16 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$course_progress->complete();
 		Sensei()->course_progress_repository->save( $course_progress );
 
+		foreach ( array( 'sensei_guest_student', 'sensei_preview_student' ) as $login ) {
+			$temporary_user_id = $this->factory->user->create( array( 'user_login' => $login ) );
+			$course_progress   = Sensei()->course_progress_repository->create( $course_id, $temporary_user_id );
+			$course_progress->complete();
+			Sensei()->course_progress_repository->save( $course_progress );
+		}
+
 		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
 		$service->method( 'get_courses_average_grade' )->willReturn( 2 );
-		$service->method( 'get_total_enrollments' )->willReturn( 4 );
+		$service->method( 'get_total_enrollments' )->willReturn( 1 );
 
 		$course = $this->createMock( Sensei_Course::class );
 
@@ -126,9 +133,9 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$expected = array(
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
-			'enrolled'           => 'Enrolled (4)',
+			'enrolled'           => 'Enrolled (1)',
 			'completions'        => 'Completions (1)',
-			'completion_rate'    => 'Completion Rate (25%)',
+			'completion_rate'    => 'Completion Rate (100%)',
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
 			'days_to_completion' => 'Days to Completion (0)',
