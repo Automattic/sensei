@@ -1782,11 +1782,15 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  array   $columns Table column data
-	 * @param  WP_Post $lesson
-	 * @return array              Updated columns data
+	 * @param array                                          $columns Table column data.
+	 * @param WP_Post|\Sensei\Internal\Services\Reports_Item $lesson Current row item.
+	 * @return array Updated columns data.
 	 */
 	public function analysis_course_column_data( $columns, $lesson ) {
+		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
+			return $columns;
+		}
+
 		if ( isset( $_GET['course_id'] ) ) {
 			$lesson_module      = '';
 			$lesson_module_list = wp_get_post_terms( $lesson->ID, $this->taxonomy );
