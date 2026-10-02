@@ -94,7 +94,7 @@
 		"nock": "13.2.4",
 		"postcss-color-function": "4.1.0",
 		"resolve-url-loader": "5.0.0",
-		"svg-spritemap-webpack-plugin": "4.7.0",
+		"svg-spritemap-webpack-plugin": "5.1.4",
 		"taffydb": "2.7.3",
 		"typescript": "5.3.3",
 		"typescript-eslint": "8.67.0",
