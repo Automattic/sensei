@@ -190,6 +190,33 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( 1, $count );
 	}
 
+	public function testCount_LessonsHiddenByQueryFilters_CountsTheStartedLessons(): void {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$lesson_id  = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$user_id    = $this->factory->user->create();
+		$repository = new Comments_Based_Lesson_Progress_Repository();
+		$repository->create( $lesson_id, $user_id );
+
+		add_filter(
+			'posts_where',
+			function ( $where, $query ) {
+				if ( 'lesson' === $query->get( 'post_type' ) ) {
+					$where .= ' AND 1=0';
+				}
+				return $where;
+			},
+			10,
+			2
+		);
+
+		/* Act. */
+		$count = $repository->count( $course_id, $user_id );
+
+		/* Assert. */
+		self::assertSame( 1, $count );
+	}
+
 	public function testDelete_WhenProgressGiven_DeletesProgress(): void {
 		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();
