@@ -1837,7 +1837,12 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$user_id     = $this->factory->user->create();
 		$lesson_id   = $this->factory->get_random_lesson_id();
 		$quiz_id     = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
+		$question_id = $this->factory->question->create(
+			array(
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'single-line',
+			)
+		);
 
 		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
@@ -3478,5 +3483,32 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$this->assertTrue( wp_style_is( 'sensei-single-quiz-style' ) );
+	}
+
+	public function testPrepareFormSubmittedAnswers_OtherUsersAttachmentGiven_DiscardsTheAnswer() {
+		/* Arrange. */
+		$user_id       = $this->factory->user->create();
+		$question_id   = $this->factory->question->create( array( 'question_type' => 'file-upload' ) );
+		$attachment_id = $this->factory->attachment->create( array( 'post_author' => $this->factory->user->create() ) );
+
+		/* Act. */
+		$prepared_answers = Sensei_Quiz::prepare_form_submitted_answers( array( $question_id => (string) $attachment_id ), array(), $user_id );
+
+		/* Assert. */
+		$this->assertSame( '', $prepared_answers[ $question_id ] );
+	}
+
+	public function testPrepareFormSubmittedAnswers_OwnAttachmentGiven_KeepsTheAnswer() {
+		/* Arrange. */
+		$user_id       = $this->factory->user->create();
+		$question_id   = $this->factory->question->create( array( 'question_type' => 'file-upload' ) );
+		$attachment_id = $this->factory->attachment->create( array( 'post_author' => $user_id ) );
+
+		/* Act. */
+		$prepared_answers = Sensei_Quiz::prepare_form_submitted_answers( array( $question_id => (string) $attachment_id ), array(), $user_id );
+
+		/* Assert. */
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding the prepared answer.
+		$this->assertSame( (string) $attachment_id, base64_decode( $prepared_answers[ $question_id ] ) );
 	}
 }

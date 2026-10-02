@@ -455,7 +455,7 @@ class Sensei_Quiz {
 		}
 
 		// prepare the answers
-		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers, $files );
+		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers, $files, $user_id );
 		if ( ! $prepared_answers ) {
 			return false;
 		}
@@ -804,9 +804,10 @@ class Sensei_Quiz {
 	 *
 	 * @param array $unprepared_answers Submitted answers.
 	 * @param array $files Uploaded files.
+	 * @param int   $user_id The user who submitted the answers. Defaults to the current user.
 	 * @return array|false
 	 */
-	public static function prepare_form_submitted_answers( $unprepared_answers, $files ) {
+	public static function prepare_form_submitted_answers( $unprepared_answers, $files, $user_id = 0 ) {
 
 		$prepared_answers = array();
 
@@ -827,15 +828,20 @@ class Sensei_Quiz {
 			if ( 'multi-line' === $question_type ) {
 				$answer = wp_kses( $answer, wp_kses_allowed_html( 'post' ) );
 			} elseif ( 'file-upload' === $question_type ) {
-				$file_key = 'file_upload_' . $question_id;
+				$file_key      = 'file_upload_' . $question_id;
+				$attachment_id = false;
 				if (
 					isset( $files[ $file_key ] )
 					&& self::is_uploaded_file_valid( $files[ $file_key ]['tmp_name'], $files[ $file_key ]['name'], $question_id )
 				) {
 					$attachment_id = Sensei_Utils::upload_file( $files[ $file_key ] );
-					if ( $attachment_id ) {
-						$answer = $attachment_id;
-					}
+				}
+
+				if ( $attachment_id ) {
+					$answer = $attachment_id;
+				} elseif ( ! self::is_file_uploaded_by_user( $answer, $user_id ? $user_id : get_current_user_id() ) ) {
+					// Without a new upload, the answer can only be a file the user uploaded before.
+					$answer = '';
 				}
 			}
 
@@ -844,6 +850,24 @@ class Sensei_Quiz {
 		}
 
 		return $prepared_answers;
+	}
+
+	/**
+	 * Check if the answer to a file upload question is a file the user uploaded.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param mixed $attachment_id The answer to the file upload question.
+	 * @param int   $user_id       The user who gave the answer.
+	 *
+	 * @return bool
+	 */
+	public static function is_file_uploaded_by_user( $attachment_id, $user_id ) {
+		$attachment = is_numeric( $attachment_id ) && 0 < (int) $attachment_id ? get_post( (int) $attachment_id ) : null;
+
+		return $attachment instanceof WP_Post
+			&& 'attachment' === $attachment->post_type
+			&& (int) $attachment->post_author === (int) $user_id;
 	}
 
 	/**

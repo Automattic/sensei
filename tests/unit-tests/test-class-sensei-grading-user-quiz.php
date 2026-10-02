@@ -87,4 +87,42 @@ class Sensei_Grading_User_Quiz_Test extends WP_UnitTestCase {
 			'unknown quiz, wrong'  => array( '', 0, 'ungraded' ),
 		);
 	}
+
+	public function testDisplay_OtherUsersAttachmentGiven_DoesNotLinkTheFile() {
+		/* Arrange. */
+		$factory       = new Sensei_Factory();
+		$user_id       = $factory->user->create();
+		$lesson_id     = $factory->lesson->create();
+		$quiz_id       = $factory->maybe_create_quiz_for_lesson( $lesson_id, array( 'meta_input' => array( '_quiz_lesson' => $lesson_id ) ) );
+		$question_id   = $factory->question->create(
+			array(
+				'question_type' => 'file-upload',
+				'quiz_id'       => $quiz_id,
+			)
+		);
+		$attachment_id = $factory->attachment->create(
+			array(
+				'file'        => 'other-user-answer.pdf',
+				'post_author' => $user_id,
+			)
+		);
+
+		Sensei_Quiz::save_user_answers( array( $question_id => (string) $attachment_id ), array(), $lesson_id, $user_id );
+
+		// An answer stored before the save-time check can point to a file of another user.
+		wp_update_post(
+			array(
+				'ID'          => $attachment_id,
+				'post_author' => $factory->user->create(),
+			)
+		);
+
+		/* Act. */
+		ob_start();
+		( new Sensei_Grading_User_Quiz( $user_id, $quiz_id ) )->display();
+		$output = ob_get_clean();
+
+		/* Assert. */
+		$this->assertStringNotContainsString( 'other-user-answer.pdf', $output );
+	}
 }
