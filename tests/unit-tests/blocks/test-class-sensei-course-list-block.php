@@ -90,4 +90,41 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 		/* ASSERT */
 		$this->assertArrayNotHasKey( 'isCourseListChild', $this->block_instance->parsed_block['innerBlocks'][1]['innerBlocks'][0]['attrs'] );
 	}
+
+	public function testMaybeChangeInheritedToTrue_CourseListBlockOnSingularPage_StopsInheriting() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$this->go_to( get_permalink( $page_id ) );
+		$modified_content = str_replace( '"sticky":""', '"sticky":"","inherit":true', $this->content );
+
+		/* ACT */
+		do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertFalse( $this->block_instance->context['query']['inherit'] );
+	}
+
+	public function testMaybeChangeInheritedToTrue_CourseListBlockOnCourseArchive_Inherits() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$courses_page_id = $this->factory->post->create(
+			array(
+				'post_type'    => 'page',
+				'post_content' => $this->content,
+			)
+		);
+		Sensei()->settings->set( 'course_page', $courses_page_id );
+		$this->go_to( '/?post_type=course' );
+
+		/* ACT */
+		do_blocks( $this->content );
+
+		/* ASSERT */
+		$this->assertTrue( $this->block_instance->context['query']['inherit'] ?? false );
+	}
 }

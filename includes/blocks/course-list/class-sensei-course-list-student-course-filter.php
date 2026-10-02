@@ -96,10 +96,15 @@ class Sensei_Course_List_Student_Course_Filter extends Sensei_Course_List_Filter
 			return [];
 		}
 
+		// Run the query with filters so multilingual plugins scope the candidate
+		// courses to the current language. WPML translates `post__not_in` IDs
+		// to the current language, so excluding a course of another language
+		// would exclude its translation, which is the one the block shows.
 		$args           = array(
-			'post_type'      => 'course',
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
+			'post_type'        => 'course',
+			'posts_per_page'   => -1,
+			'fields'           => 'ids',
+			'suppress_filters' => false,
 		);
 		$all_course_ids = get_posts( $args );
 

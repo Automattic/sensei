@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed the Course List block showing no courses, no filters, or the page itself on pages translated with WPML.
