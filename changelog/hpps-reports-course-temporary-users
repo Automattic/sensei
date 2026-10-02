@@ -1,4 +1,4 @@
 Significance: patch
 Type: changed
 
-Exclude guest and preview students from HPPS-aware Courses report metrics.
+Exclude guest and preview students from Last Activity rows and the Completions, Completion Rate, and Average Grade headers in the Courses report.
