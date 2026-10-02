@@ -156,7 +156,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
 	}
 
-	public function testGetItems_TemporaryUserProgressCreated_ExcludesProgressMetrics() {
+	public function testGetItems_TemporaryUserProgressCreated_PreservesCompletionCountAndExcludesLastActivity() {
 		/* Arrange. */
 		$this->maybe_enable_hpps_tables_repository();
 		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
@@ -196,12 +196,10 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		self::assertSame(
 			array(
 				'last_activity_date'   => null,
-				'days_to_completion'   => null,
-				'count_of_completions' => '0',
+				'count_of_completions' => '2',
 			),
 			array(
 				'last_activity_date'   => $courses[0]->last_activity_date,
-				'days_to_completion'   => $courses[0]->days_to_completion,
 				'count_of_completions' => $courses[0]->count_of_completions,
 			)
 		);
