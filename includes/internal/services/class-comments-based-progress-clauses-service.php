@@ -93,10 +93,9 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
-	 * @param array $args    Optional query filters.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_days_to_completion_to_courses_clauses( array $clauses, array $args = array() ): array {
+	public function add_days_to_completion_to_courses_clauses( array $clauses ): array {
 		$wpdb = $this->wpdb;
 
 		// Get the number of days to complete a course: `days to complete = complete date - start date + 1`.
@@ -107,7 +106,6 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 		$clauses['join']    .= " AND {$wpdb->comments}.comment_type IN ('sensei_course_status')";
 		$complete            = Course_Progress_Interface::STATUS_COMPLETE;
 		$clauses['join']    .= " AND {$wpdb->comments}.comment_approved IN ( '{$complete}' )";
-		$clauses['join']    .= Utils::build_comment_author_exclusion_clause( $wpdb, $args, "{$wpdb->comments}.comment_author", "{$wpdb->comments}.comment_approved" );
 		$clauses['join']    .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
 		$clauses['join']    .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
 		$clauses['groupby'] .= " {$wpdb->posts}.ID";

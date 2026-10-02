@@ -44,14 +44,9 @@ interface Progress_Clauses_Service_Interface {
 	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
-	 * @param array $args {
-	 *     Optional query filters.
-	 *
-	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
-	 * }
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_days_to_completion_to_courses_clauses( array $clauses, array $args = array() ): array;
+	public function add_days_to_completion_to_courses_clauses( array $clauses ): array;
 
 	/**
 	 * Modify WP_Query clauses to filter courses by last activity date range.
