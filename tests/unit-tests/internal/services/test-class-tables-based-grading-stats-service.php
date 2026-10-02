@@ -475,8 +475,13 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		global $wpdb;
 		$course_id = $this->sensei_factory->course->create();
+		$grades    = array(
+			'registered_student'     => 80,
+			'sensei_guest_student'   => 20,
+			'sensei_preview_student' => 40,
+		);
 
-		foreach ( array( 'registered_student' => 80, 'sensei_guest_student' => 20, 'sensei_preview_student' => 40 ) as $login => $grade ) {
+		foreach ( $grades as $login => $grade ) {
 			$user_id   = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
 			$lesson_id = $this->sensei_factory->lesson->create();
 			$quiz_id   = $this->sensei_factory->quiz->create();

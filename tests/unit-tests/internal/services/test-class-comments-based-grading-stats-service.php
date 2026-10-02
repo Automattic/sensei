@@ -41,12 +41,12 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	 * @param bool   $has_quiz_answers Whether to add quiz_answers meta.
 	 */
 	private function create_lesson_status_with_grade( int $lesson_id, int $user_id, string $status, float $grade, bool $has_quiz_answers = true ): void {
-		$user = get_userdata( $user_id );
+		$user       = get_userdata( $user_id );
 		$comment_id = wp_insert_comment(
 			array(
 				'comment_post_ID'  => $lesson_id,
 				'user_id'          => $user_id,
-				'comment_author'    => $user->user_login,
+				'comment_author'   => $user->user_login,
 				'comment_type'     => 'sensei_lesson_status',
 				'comment_approved' => $status,
 				'comment_content'  => '',
@@ -382,8 +382,13 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		global $wpdb;
 		$course_id = $this->sensei_factory->course->create();
+		$grades    = array(
+			'registered_student'     => 80,
+			'sensei_guest_student'   => 20,
+			'sensei_preview_student' => 40,
+		);
 
-		foreach ( array( 'registered_student' => 80, 'sensei_guest_student' => 20, 'sensei_preview_student' => 40 ) as $login => $grade ) {
+		foreach ( $grades as $login => $grade ) {
 			$user_id   = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
 			$lesson_id = $this->sensei_factory->lesson->create(
 				array( 'meta_input' => array( '_lesson_course' => $course_id ) )
