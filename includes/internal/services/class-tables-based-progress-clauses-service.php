@@ -64,7 +64,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
-	 * @param array $args    Optional query filters.
+	 * @param array $args    Arguments for the query (see interface).
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_last_activity_to_courses_clauses( array $clauses, array $args = array() ): array {

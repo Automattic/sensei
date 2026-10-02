@@ -223,7 +223,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	 * @since 4.26.0
 	 *
 	 * @param int[] $course_ids Optional. Filter by courses. Empty = all.
-	 * @param array $args       Optional query filters.
+	 * @param array $args       Arguments for the query (see interface).
 	 * @return float
 	 */
 	public function get_courses_average_grade( array $course_ids = array(), array $args = array() ): float {
