@@ -313,19 +313,6 @@ class Sensei_Reports_Overview_Service_Courses {
 	}
 
 	/**
-	 * Get the injected grading statistics service or create and retain the default.
-	 *
-	 * @return Grading_Stats_Service_Interface
-	 */
-	private function get_grading_stats_service(): Grading_Stats_Service_Interface {
-		if ( null === $this->grading_stats_service ) {
-			$this->grading_stats_service = ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_grading_stats_service();
-		}
-
-		return $this->grading_stats_service;
-	}
-
-	/**
 	 * Keep older constructor calls working when no aggregation service was supplied.
 	 *
 	 * @return Progress_Aggregation_Service_Interface
