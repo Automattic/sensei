@@ -115,7 +115,10 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		}
 
 		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
+		$service->method( 'get_total_average_progress' )->willReturn( 0.0 );
 		$service->method( 'get_total_enrollments' )->willReturn( 2 );
+		$service->method( 'get_courses_average_grade' )->willReturn( 0 );
+		$service->method( 'get_average_days_to_completion' )->willReturn( 0.0 );
 
 		$course = $this->createMock( Sensei_Course::class );
 
