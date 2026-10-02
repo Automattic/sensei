@@ -153,11 +153,10 @@ class Utils {
 	 *
 	 * @param \wpdb  $wpdb          WordPress database object.
 	 * @param array  $args          Query arguments with 'exclude_user_login_prefixes' and optional 'include_statuses_override'.
-	 * @param string $status_column  SQL expression for the status column (default: 'p.status').
-	 * @param string $user_id_column SQL expression for the user ID column (default: 'p.user_id').
+	 * @param string $status_column SQL expression for the status column (default: 'p.status').
 	 * @return string SQL clause.
 	 */
-	public static function build_user_exclusion_clause( \wpdb $wpdb, array $args, string $status_column = 'p.status', string $user_id_column = 'p.user_id' ): string {
+	public static function build_user_exclusion_clause( \wpdb $wpdb, array $args, string $status_column = 'p.status' ): string {
 		if ( empty( $args['exclude_user_login_prefixes'] ) ) {
 			return '';
 		}
@@ -173,11 +172,11 @@ class Utils {
 		if ( ! empty( $args['include_statuses_override'] ) ) {
 			$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders and column expression created dynamically.
-			return $wpdb->prepare( " AND ( $user_id_column NOT IN ( $id_placeholders ) OR $status_column IN ( $status_placeholders ) )", array_merge( $excluded_user_ids, $args['include_statuses_override'] ) );
+			return $wpdb->prepare( " AND ( p.user_id NOT IN ( $id_placeholders ) OR $status_column IN ( $status_placeholders ) )", array_merge( $excluded_user_ids, $args['include_statuses_override'] ) );
 		}
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-		return $wpdb->prepare( " AND $user_id_column NOT IN ( $id_placeholders )", $excluded_user_ids );
+		return $wpdb->prepare( " AND p.user_id NOT IN ( $id_placeholders )", $excluded_user_ids );
 	}
 
 	/**

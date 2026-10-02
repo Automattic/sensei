@@ -256,7 +256,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 				WHERE p.type = 'lesson'
 					AND q.status IN " . $this->get_graded_statuses_sql() . '
 					AND qs.final_grade IS NOT NULL';
-		$query .= Utils::build_user_exclusion_clause( $wpdb, $args, 'q.status', 'p.user_id' );
+		$query .= Utils::build_user_exclusion_clause( $wpdb, $args, 'q.status' );
 		$query .= $course_filter;
 		$query .= ' GROUP BY lesson_course.meta_value ) averages_by_course';
 
