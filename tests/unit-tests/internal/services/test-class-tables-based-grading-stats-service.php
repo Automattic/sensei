@@ -471,6 +471,30 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( 80.0, $result );
 	}
 
+	public function testGetCoursesAverageGrade_ExcludedUserLoginPrefixesGiven_ExcludesMatchingUsers(): void {
+		/* Arrange. */
+		global $wpdb;
+		$course_id = $this->sensei_factory->course->create();
+
+		foreach ( array( 'registered_student' => 80, 'sensei_guest_student' => 20, 'sensei_preview_student' => 40 ) as $login => $grade ) {
+			$user_id   = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
+			$lesson_id = $this->sensei_factory->lesson->create();
+			$quiz_id   = $this->sensei_factory->quiz->create();
+			$this->create_graded_lesson( $lesson_id, $quiz_id, $user_id, $course_id, 'graded', $grade );
+		}
+
+		$service = new Tables_Based_Grading_Stats_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_courses_average_grade(
+			array( $course_id ),
+			array( 'exclude_user_login_prefixes' => array( 'sensei_guest_', 'sensei_preview_' ) )
+		);
+
+		/* Assert. */
+		$this->assertSame( 80.0, $result );
+	}
+
 	/**
 	 * Test testGetCoursesAverageGrade_WithCourseIdsFilter_ReturnsFilteredAverage.
 	 */
