@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+#
+# Fixed wp-cli wrapper for the issue-triage skill.
+#
+# The Makefile interpolates its arguments into a shell recipe, so an allowlist
+# glob over `make wp CMD=…` cannot constrain what actually runs. Validation
+# lives here instead; the triage workflow allowlists only this wrapper.
+#
+# Usage: scripts/triage-wp <wp-cli command and args>
+#   scripts/triage-wp post list --post_type=course --format=csv
+#   scripts/triage-wp sensei db seed --users=3 --courses=1
+
+set -euo pipefail
+
+# wp-cli verbs the skill needs, matched exactly against the leading words —
+# never a bare entity name alone, or its subcommands (e.g. `post delete`)
+# would pass too.
+ALLOWED_VERBS=(
+	"post list"
+	"post get"
+	"post term set"
+	"post meta get"
+	"post meta list"
+	"post meta update"
+	"term generate"
+	"option get"
+	"plugin list"
+	"theme list"
+	"theme activate"
+	"action-scheduler list"
+	"sensei db seed"
+	"user list"
+	"user meta get"
+	"user meta list"
+)
+
+die() {
+	echo "triage-wp: $*" >&2
+	exit 64
+}
+
+[ "$#" -gt 0 ] || die "no wp-cli command given"
+
+# Character allowlist, not a metacharacter blocklist: anything outside this set
+# is refused. This guards wp-cli's own global flags, not shell re-interpretation
+# — `--exec` needs parentheses, excluded here; `--require=<file>` needs none,
+# so it's denied explicitly.
+for arg in "$@"; do
+	case $arg in
+		*[!A-Za-z0-9_./=:@,\ +-]*) die "refusing argument with unexpected characters: $arg" ;;
+		--require=*|--require) die "refusing wp-cli's --require: arbitrary PHP inclusion" ;;
+	esac
+done
+
+one="${1:-}"
+two="${1:-} ${2:-}"
+three="${1:-} ${2:-} ${3:-}"
+
+permitted=""
+for allowed in "${ALLOWED_VERBS[@]}"; do
+	if [ "$one" = "$allowed" ] || [ "$two" = "$allowed" ] || [ "$three" = "$allowed" ]; then
+		permitted="$allowed"
+		break
+	fi
+done
+[ -n "$permitted" ] || die "verb not permitted: $*"
+
+# exec with an argument array — no shell re-parsing at this layer.
+exec env COMPOSE_PROJECT_NAME=sensei-lms npx @wordpress/env run cli wp "$@"
