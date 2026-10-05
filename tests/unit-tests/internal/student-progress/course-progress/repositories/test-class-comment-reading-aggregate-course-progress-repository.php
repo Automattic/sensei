@@ -85,6 +85,40 @@ class Comment_Reading_Aggregate_Course_Progress_Repository_Test extends \WP_Unit
 		$repository->save( $progress );
 	}
 
+	public function testSave_Always_SavesTablesBeforeComments(): void {
+		/* Arrange. */
+		$progress   = $this->create_comments_based_course_progress();
+		$save_order = array();
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$comments_based
+			->method( 'save' )
+			->willReturnCallback(
+				function () use ( &$save_order ) {
+					$save_order[] = 'comments';
+				}
+			);
+
+		$tables_based_progress = $this->create_tables_based_course_progress();
+		$tables_based          = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+		$tables_based->method( 'get' )->willReturn( $tables_based_progress );
+		$tables_based
+			->method( 'save' )
+			->willReturnCallback(
+				function () use ( &$save_order ) {
+					$save_order[] = 'tables';
+				}
+			);
+
+		$repository = new Comment_Reading_Aggregate_Course_Progress_Repository( $comments_based, $tables_based );
+
+		/* Act. */
+		$repository->save( $progress );
+
+		/* Assert. */
+		self::assertSame( array( 'tables', 'comments' ), $save_order );
+	}
+
 	public function testSave_TablesBasedProgressFound_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$progress       = $this->create_comments_based_course_progress();

@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+use Sensei\Internal\Services\Utils;
 
 /**
  * Courses overview list table class.
@@ -17,13 +18,6 @@ use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
  * @since 4.3.0
  */
 class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview_List_Table_Abstract {
-	/**
-	 * Sensei grading related services.
-	 *
-	 * @var Sensei_Grading
-	 */
-	private $grading;
-
 	/**
 	 * Sensei course related services.
 	 *
@@ -48,7 +42,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Constructor
 	 *
-	 * @param Sensei_Grading                                  $grading Sensei grading related services.
+	 * @param Sensei_Grading                                  $grading Unused. Retained for backward compatibility.
 	 * @param Sensei_Course                                   $course Sensei course related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
 	 * @param Sensei_Reports_Overview_Service_Courses         $reports_overview_service_courses reports courses service.
@@ -58,7 +52,6 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		// Load Parent token into constructor.
 		parent::__construct( 'courses', $data_provider );
 
-		$this->grading                          = $grading;
 		$this->course                           = $course;
 		$this->reports_overview_service_courses = $reports_overview_service_courses;
 		$this->aggregation_service              = $aggregation_service;
@@ -79,8 +72,9 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		if ( ! empty( $all_course_ids ) ) {
 			$counts           = $this->aggregation_service->count_statuses(
 				array(
-					'type'     => 'course',
-					'post__in' => $all_course_ids,
+					'type'                        => 'course',
+					'post__in'                    => $all_course_ids,
+					'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES,
 				)
 			);
 			$total_completion = $counts['complete'] ?? 0;
@@ -246,7 +240,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			 * @return {array} Filtered array of query arguments for course percentage.
 			 */
 			$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
-			$percent_total = $this->grading::get_course_users_grades_sum( $item->ID );
+			$percent_total = $this->reports_overview_service_courses->get_grade_sum_for_lessons( array_map( 'intval', $lessons ) );
 
 			if ( $percent_count > 0 && $percent_total >= 0 ) {
 				$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 ) . '%';
