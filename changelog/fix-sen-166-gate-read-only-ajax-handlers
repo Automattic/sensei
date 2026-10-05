@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Tighten the permission checks of the quiz editor, lesson prerequisite and grading admin requests.
