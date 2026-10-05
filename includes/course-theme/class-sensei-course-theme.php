@@ -141,20 +141,14 @@ class Sensei_Course_Theme {
 		wp_load_translations_early();
 
 		/*
-		 * This runs on `setup_theme`, before `init`. Calling wp() would fire the
-		 * `wp` action here. Callbacks on that hook expect `init` to have finished,
-		 * so a URL such as `/tag/learn/` can fatal. Set up the query the same way
-		 * WP::main() does, and leave the `wp` action for the normal request.
+		 * This runs on setup_theme, before init. wp() would fire the wp action and
+		 * run the main query here. Callbacks on those hooks expect init to have
+		 * finished. The learn query var is enough to choose the theme; the normal
+		 * wp() call still runs the query.
 		 */
 		$wp->init();
 
-		if ( $wp->parse_request() ) {
-			$wp->query_posts();
-			$wp->handle_404();
-			$wp->register_globals();
-		}
-
-		if ( get_query_var( self::QUERY_VAR ) ) {
+		if ( $wp->parse_request() && ! empty( $wp->query_vars[ self::QUERY_VAR ] ) ) {
 			$this->override_theme();
 		}
 	}
