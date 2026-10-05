@@ -172,7 +172,10 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_last_activity_to_courses_query( array $clauses ): array {
-		return $this->progress_clauses_service->add_last_activity_to_courses_clauses( $clauses );
+		return $this->progress_clauses_service->add_last_activity_to_courses_clauses(
+			$clauses,
+			array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
+		);
 	}
 
 	/**
