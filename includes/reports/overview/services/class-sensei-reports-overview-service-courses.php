@@ -65,6 +65,25 @@ class Sensei_Reports_Overview_Service_Courses {
 		if ( empty( $course_ids ) ) {
 			return 0.0;
 		}
+
+		$course_average_progress = $this->get_average_progress_per_course( $course_ids );
+
+		return ceil( array_sum( $course_average_progress ) / count( $course_ids ) );
+	}
+
+	/**
+	 * Get the average lesson progress grouped by course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course IDs.
+	 * @return float[] Average progress keyed by course ID.
+	 */
+	public function get_average_progress_per_course( array $course_ids ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
+
 		$lessons_count_per_courses = $this->get_lessons_in_courses( $course_ids );
 
 		// Limit completion counts to the lessons belonging to the courses in this report.
@@ -77,7 +96,7 @@ class Sensei_Reports_Overview_Service_Courses {
 		$progress_args             = array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES );
 		$lessons_completions       = $this->get_lessons_completions( $all_lesson_ids, $progress_args );
 		$student_count_per_courses = $this->get_students_count_in_courses( $course_ids, $progress_args );
-		$total_average_progress    = 0;
+		$course_average_progress   = array();
 
 		foreach ( $course_ids as $course_id ) {
 			if ( ! isset( $lessons_count_per_courses[ $course_id ] ) || ! isset( $student_count_per_courses[ $course_id ] ) ) {
@@ -109,15 +128,10 @@ class Sensei_Reports_Overview_Service_Courses {
 				0
 			);
 
-			// Calculate average progress for a course.
-			$course_average_progress = $completed_count / ( $students_count * count( $lessons ) ) * 100;
-
-			// Add value to the total average progress.
-			$total_average_progress += $course_average_progress;
+			$course_average_progress[ $course_id ] = (float) ( $completed_count / ( $students_count * count( $lessons ) ) * 100 );
 		}
-		// Divide total value to get average total value for average progress for courses.
-		$average_total_average_progress = ceil( $total_average_progress / count( $course_ids ) );
-		return $average_total_average_progress;
+
+		return $course_average_progress;
 	}
 
 	/**
@@ -249,24 +263,26 @@ class Sensei_Reports_Overview_Service_Courses {
 	 *
 	 * @since  4.4.1
 	 *
-	 * @param array $course_ids The list of courses ids.
+	 * @param int[] $course_ids The list of course IDs.
 	 * @return array lessons count in courses.
 	 */
-	private function get_lessons_in_courses( $course_ids ): array {
+	private function get_lessons_in_courses( array $course_ids ): array {
 		global $wpdb;
 		// Look up lessons on the course resolved by the progress-ID filter so they match its stored progress.
-		$course_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
-		$course_ids    = array_values( $course_id_map );
+		$course_id_map   = Utils::get_progress_post_id_map( $course_ids, 'course' );
+		$course_ids      = array_values( $course_id_map );
+		$report_statuses = Utils::get_reports_post_status_sql();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		$results = $wpdb->get_results(
-			"SELECT pm.meta_value as course_id, GROUP_CONCAT(pm.post_id) as lessons
+		$query = "SELECT pm.meta_value as course_id, GROUP_CONCAT(pm.post_id) as lessons
 			FROM {$wpdb->postmeta} pm
-			WHERE pm.meta_value IN ( " . implode( ',', $course_ids ) . ' )'  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			. " AND pm.meta_key = '_lesson_course'
-			GROUP BY pm.meta_value",
-			'OBJECT_K'
-		);
+			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+			WHERE pm.meta_value IN ( " . implode( ',', $course_ids ) . " )
+			AND pm.meta_key = '_lesson_course'
+			AND p.post_type = 'lesson'
+			AND p.post_status IN ( {$report_statuses} )
+			GROUP BY pm.meta_value";
+
+		$results = $wpdb->get_results( $query, 'OBJECT_K' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Safe direct SQL; course IDs are integers from the progress-ID map.
 
 		// Keep the requested course IDs as keys for the report calculations.
 		$requested_results = array();
