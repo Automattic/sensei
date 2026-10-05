@@ -77,9 +77,14 @@ interface Grading_Stats_Service_Interface {
 	 * @since 4.26.0
 	 *
 	 * @param int[] $course_ids Optional. Filter by courses. Empty = all.
+	 * @param array $args {
+	 *     Optional query filters.
+	 *
+	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
+	 * }
 	 * @return float
 	 */
-	public function get_courses_average_grade( array $course_ids = array() ): float;
+	public function get_courses_average_grade( array $course_ids = array(), array $args = array() ): float;
 
 	/**
 	 * Average grade filtered by user IDs.

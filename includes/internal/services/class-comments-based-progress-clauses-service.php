@@ -54,9 +54,10 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	 * @since 4.26.0
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
+	 * @param array $args    Arguments for the query (see interface).
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_last_activity_to_courses_clauses( array $clauses ): array {
+	public function add_last_activity_to_courses_clauses( array $clauses, array $args = array() ): array {
 		$wpdb = $this->wpdb;
 
 		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
@@ -66,8 +67,9 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 		$lessons_query = "SELECT c.comment_post_id lesson_id, MAX(c.comment_date_gmt) as comment_date_gmt
 			FROM {$wpdb->comments} c
 			WHERE c.comment_approved IN ('{$complete}', '{$passed}', '{$graded}')
-			AND c.comment_type = 'sensei_lesson_status'
-			GROUP BY c.comment_post_id";
+			AND c.comment_type = 'sensei_lesson_status'"
+			. Utils::build_comment_author_exclusion_clause( $wpdb, $args ) . '
+			GROUP BY c.comment_post_id';
 
 		$course_query = "SELECT pm.meta_value AS course_id, MAX(lq.comment_date_gmt) AS comment_date_gmt
 		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) lq

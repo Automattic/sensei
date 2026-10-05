@@ -125,7 +125,10 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 
-		return $this->get_grading_stats_service()->get_courses_average_grade( $course_ids );
+		return $this->get_grading_stats_service()->get_courses_average_grade(
+			$course_ids,
+			array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
+		);
 	}
 
 	/**

@@ -180,6 +180,46 @@ class Utils {
 	}
 
 	/**
+	 * Build a SQL clause for excluding comments by author login prefix.
+	 *
+	 * When include_statuses_override is set, excluded users are kept if their
+	 * effective status matches one of the override statuses.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \wpdb $wpdb WordPress database object.
+	 * @param array $args Query arguments with 'exclude_user_login_prefixes' and optional 'include_statuses_override'.
+	 * @return string SQL clause.
+	 */
+	public static function build_comment_author_exclusion_clause( \wpdb $wpdb, array $args ): string {
+		if ( empty( $args['exclude_user_login_prefixes'] ) ) {
+			return '';
+		}
+
+		$prefixes = array_filter( $args['exclude_user_login_prefixes'] );
+		if ( empty( $prefixes ) ) {
+			return '';
+		}
+
+		$not_like_clauses = array();
+		foreach ( $prefixes as $prefix ) {
+			$escaped_prefix     = $wpdb->esc_like( $prefix );
+			$not_like_clauses[] = $wpdb->prepare( 'comment_author NOT LIKE %s', $escaped_prefix . '%' );
+		}
+
+		$exclusion_sql = '( ' . implode( ' AND ', $not_like_clauses ) . ' )';
+
+		if ( ! empty( $args['include_statuses_override'] ) ) {
+			$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+			$override_sql = $wpdb->prepare( "comment_approved IN ( $status_placeholders )", $args['include_statuses_override'] );
+			return " AND ( $exclusion_sql OR $override_sql )";
+		}
+
+		return " AND $exclusion_sql";
+	}
+
+	/**
 	 * Log a database query error if one occurred.
 	 *
 	 * @since 4.26.0
