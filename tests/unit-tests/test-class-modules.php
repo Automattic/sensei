@@ -861,4 +861,46 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		/* Assert: the whole hierarchy, not only the teacher's terms — core caches this map site-wide. */
 		self::assertSame( array( $parent['term_id'] => array( $child['term_id'] ) ), $hierarchy );
 	}
+
+	public function testModuleOrderScreen_CourseOfAnotherTeacherGiven_DiesWithInsufficientPermissions() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_author' => $this->get_user_by_role( 'teacher', '_b' ) ) );
+		$this->login_as_teacher();
+		set_current_screen( 'admin_page_module-order' );
+		$_GET['course_id'] = $course_id;
+
+		/* Act. */
+		$exception = null;
+		ob_start();
+		try {
+			Sensei()->modules->module_order_screen();
+		} catch ( WPDieException $e ) {
+			$exception = $e;
+		} finally {
+			ob_end_clean();
+		}
+
+		/* Assert. */
+		$this->assertSame( 'Insufficient permissions', $exception ? $exception->getMessage() : null );
+	}
+
+	public function testModuleOrderScreen_OwnCourseGiven_RendersItsModules() {
+		/* Arrange. */
+		$teacher_id = $this->get_user_by_role( 'teacher' );
+		$course_id  = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$term       = wp_insert_term( 'Own module', 'module' );
+		update_term_meta( $term['term_id'], 'module_author', $teacher_id );
+		wp_set_object_terms( $course_id, array( $term['term_id'] ), 'module' );
+		$this->login_as_teacher();
+		set_current_screen( 'admin_page_module-order' );
+		$_GET['course_id'] = $course_id;
+
+		/* Act. */
+		ob_start();
+		Sensei()->modules->module_order_screen();
+		$output = ob_get_clean();
+
+		/* Assert. */
+		$this->assertStringContainsString( 'Own module', $output );
+	}
 }
