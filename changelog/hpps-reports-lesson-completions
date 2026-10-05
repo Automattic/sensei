@@ -1,4 +1,4 @@
 Significance: patch
 Type: changed
 
-Read lesson completion counts from the selected progress backend.
+Read lesson completion counts for Average Progress in the Courses report from the selected progress backend.
