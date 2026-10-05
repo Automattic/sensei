@@ -132,21 +132,59 @@ class Sensei_Course_Theme {
 	 * Replace theme for the current request if the '/learn' route is used.
 	 */
 	public function maybe_override_theme() {
-
-		// Do a cheaper preliminary check first.
-		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( ! preg_match( '#' . preg_quote( '/' . self::QUERY_VAR . '/', '#' ) . '#i', $uri ) && ! isset( $_GET[ self::QUERY_VAR ] ) ) {
+		if ( ! $this->is_possible_learning_mode_request() ) {
 			return;
 		}
 
-		// Then parse the request and make sure the query var is correct.
+		global $wp;
+
 		wp_load_translations_early();
-		wp();
+
+		/*
+		 * This runs on `setup_theme`, before `init`. Calling wp() would fire the
+		 * `wp` action here. Callbacks on that hook expect `init` to have finished,
+		 * so a URL such as `/tag/learn/` can fatal. Set up the query the same way
+		 * WP::main() does, and leave the `wp` action for the normal request.
+		 */
+		$wp->init();
+
+		if ( $wp->parse_request() ) {
+			$wp->query_posts();
+			$wp->handle_404();
+			$wp->register_globals();
+		}
 
 		if ( get_query_var( self::QUERY_VAR ) ) {
 			$this->override_theme();
 		}
+	}
+
+	/**
+	 * Whether this request might be a Learning Mode URL.
+	 *
+	 * Matches the site path plus `/learn/`, or the `learn` query arg used when
+	 * permalinks are off. A later occurrence, such as `/tag/learn/`, does not match.
+	 *
+	 * @return bool
+	 */
+	private function is_possible_learning_mode_request() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Routing check, not a form submission.
+		if ( isset( $_GET[ self::QUERY_VAR ] ) ) {
+			return true;
+		}
+
+		$uri  = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$path = wp_parse_url( $uri, PHP_URL_PATH );
+
+		if ( ! is_string( $path ) || '' === $path ) {
+			return false;
+		}
+
+		$home_path  = wp_parse_url( home_url( '/' ), PHP_URL_PATH );
+		$home_path  = is_string( $home_path ) && '' !== $home_path ? trailingslashit( $home_path ) : '/';
+		$learn_base = $home_path . self::QUERY_VAR . '/';
+
+		return 0 === strpos( $path, $learn_base );
 	}
 
 	/**

@@ -156,4 +156,84 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 		$this->assertEquals( 302, $redirect_status );
 		$this->assertEquals( get_permalink( $lesson_id ), $redirect_location );
 	}
+
+	/**
+	 * A tag archive whose slug is "learn" must not be treated as Learning Mode,
+	 * and must not fire the `wp` action while the request is still on setup_theme.
+	 */
+	public function testMaybeOverrideTheme_TagLearnArchive_DoesNotFireWpOrOverrideTheme() {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Restored after the assertion.
+		$request_uri = wp_unslash( $_SERVER['REQUEST_URI'] );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Clears a routing flag for this test.
+		unset( $_GET[ Sensei_Course_Theme::QUERY_VAR ] );
+
+		$_SERVER['REQUEST_URI'] = '/tag/learn/';
+
+		$fired    = false;
+		$callback = static function () use ( &$fired ) {
+			$fired = true;
+		};
+		add_action( 'wp', $callback );
+
+		$this->instance->maybe_override_theme();
+
+		remove_action( 'wp', $callback );
+		$_SERVER['REQUEST_URI'] = $request_uri;
+
+		$this->assertFalse( $fired );
+		$this->assertNotSame( Sensei_Course_Theme::THEME_NAME, get_stylesheet() );
+	}
+
+	/**
+	 * Plain permalinks still switch to the course theme, without firing `wp`.
+	 */
+	public function testMaybeOverrideTheme_LearnQueryArg_OverridesThemeWithoutFiringWp() {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Restored after the assertion.
+		$request_uri = wp_unslash( $_SERVER['REQUEST_URI'] );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Restored after the assertion.
+		$query_args         = $_GET;
+		$canonical_priority = has_action( 'template_redirect', 'redirect_canonical' );
+
+		$this->instance->add_query_var();
+		$_GET[ Sensei_Course_Theme::QUERY_VAR ] = '1';
+		$_SERVER['REQUEST_URI']                 = '/?learn=1';
+
+		$fired    = false;
+		$callback = static function () use ( &$fired ) {
+			$fired = true;
+		};
+		add_action( 'wp', $callback );
+
+		$this->instance->maybe_override_theme();
+
+		$stylesheet = get_stylesheet();
+
+		remove_action( 'wp', $callback );
+		$this->remove_learning_mode_theme_override();
+
+		if ( false !== $canonical_priority ) {
+			add_action( 'template_redirect', 'redirect_canonical', (int) $canonical_priority );
+		}
+
+		$_GET                   = $query_args;
+		$_SERVER['REQUEST_URI'] = $request_uri;
+		$this->go_to( home_url( '/' ) );
+
+		$this->assertFalse( $fired );
+		$this->assertSame( Sensei_Course_Theme::THEME_NAME, $stylesheet );
+	}
+
+	/**
+	 * Remove the filters added by Sensei_Course_Theme::override_theme().
+	 *
+	 * @return void
+	 */
+	private function remove_learning_mode_theme_override() {
+		remove_filter( 'theme_root', [ $this->instance, 'get_plugin_themes_root' ] );
+		remove_filter( 'pre_option_stylesheet_root', [ $this->instance, 'get_plugin_themes_root' ] );
+		remove_filter( 'pre_option_template_root', [ $this->instance, 'get_plugin_themes_root' ] );
+		remove_filter( 'pre_option_template', [ $this->instance, 'theme_template' ] );
+		remove_filter( 'pre_option_stylesheet', [ $this->instance, 'theme_stylesheet' ] );
+		remove_filter( 'theme_root_uri', [ $this->instance, 'theme_root_uri' ] );
+	}
 }
