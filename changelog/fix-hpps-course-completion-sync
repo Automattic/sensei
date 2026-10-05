@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed course completions not synchronizing to HPPS tables when comments storage redirects after completion.
