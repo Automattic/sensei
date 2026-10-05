@@ -100,8 +100,6 @@ class Comment_Reading_Aggregate_Course_Progress_Repository implements Course_Pro
 	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {
-		$this->comments_based_repository->save( $course_progress );
-
 		$tables_based_progress = $this->tables_based_repository->get( $course_progress->get_course_id(), $course_progress->get_user_id() );
 		if ( ! $tables_based_progress ) {
 			$tables_based_progress = $this->tables_based_repository->create(
@@ -131,6 +129,9 @@ class Comment_Reading_Aggregate_Course_Progress_Repository implements Course_Pro
 			$tables_based_progress->get_updated_at()
 		);
 		$this->tables_based_repository->save( $progress_to_save );
+
+		// Saving completed progress to comments can redirect and end the request, so tables must be synchronized first.
+		$this->comments_based_repository->save( $course_progress );
 	}
 
 	/**
