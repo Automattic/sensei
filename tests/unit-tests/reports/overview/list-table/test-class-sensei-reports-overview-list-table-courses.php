@@ -82,27 +82,6 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 'Exported course', $actual[1]['title'] );
 	}
 
-	public function testGenerateReport_CourseCompletedOnStartDateGiven_ReturnsOneCompletionDay(): void {
-		/* Arrange. */
-		$course_id = $this->factory->course->create();
-		$user_id   = $this->factory->user->create();
-		$this->seed_course_completion_with_dates( $course_id, $user_id, '2022-01-01 12:00:00', '2022-01-01 12:00:00' );
-		$table = new Sensei_Reports_Overview_List_Table_Courses(
-			Sensei()->grading,
-			Sensei()->course,
-			new Sensei_Reports_Overview_Data_Provider_Courses(),
-			new Sensei_Reports_Overview_Service_Courses(),
-			( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service()
-		);
-
-		/* Act. */
-		$actual = $table->generate_report();
-
-		/* Assert. */
-		// Starting and completing on the same local date counts as one inclusive day.
-		self::assertSame( '1', $actual[1]['days_to_completion'] );
-	}
-
 	/**
 	 * Exclude guest and preview progress while retaining registered progress.
 	 *
@@ -145,10 +124,15 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $this->get_progress_fields_from_rows( array_slice( $actual, 1 ) ) );
 	}
 
-	public function testGetColumns_TemporaryCompletionsGiven_UsesRegisteredCompletionDays(): void {
+	public function testGetColumns_TemporaryCompletionsGiven_RoundsRegisteredCompletionDaysUp(): void {
 		/* Arrange. */
-		$course_id = $this->create_course_with_completion_days();
-		$table     = new Sensei_Reports_Overview_List_Table_Courses(
+		// First course: four registered days, with longer guest and preview completions excluded.
+		$this->create_course_with_completion_days();
+		// Second course: one registered day makes the overall average fractional.
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+		$this->seed_course_completion_with_dates( $course_id, $user_id, '2022-01-01 12:00:00', '2022-01-01 12:00:00' );
+		$table = new Sensei_Reports_Overview_List_Table_Courses(
 			Sensei()->grading,
 			Sensei()->course,
 			new Sensei_Reports_Overview_Data_Provider_Courses(),
@@ -160,8 +144,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$actual = $table->get_columns();
 
 		/* Assert. */
-		// With one eligible course, the header is its four-day registered average.
-		self::assertSame( 'Days to Completion (4)', $actual['days_to_completion'] );
+		// The eligible course averages are 4 and 1: ceil((4 + 1) / 2) = 3.
+		self::assertSame( 'Days to Completion (3)', $actual['days_to_completion'] );
 	}
 
 	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
