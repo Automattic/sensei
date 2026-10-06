@@ -123,6 +123,8 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		$clauses['join']    .= " AND cp.type = 'course'";
 		$complete            = Course_Progress_Interface::STATUS_COMPLETE;
 		$clauses['join']    .= " AND cp.status = '{$complete}'";
+		$exclusion           = Utils::build_user_exclusion_clause( $this->wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
+		$clauses['join']    .= str_replace( 'p.user_id', 'cp.user_id', $exclusion );
 		$clauses['groupby'] .= " {$this->wpdb->posts}.ID";
 
 		return $clauses;

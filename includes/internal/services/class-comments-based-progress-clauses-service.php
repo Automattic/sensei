@@ -106,6 +106,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 		$clauses['join']    .= " AND {$wpdb->comments}.comment_type IN ('sensei_course_status')";
 		$complete            = Course_Progress_Interface::STATUS_COMPLETE;
 		$clauses['join']    .= " AND {$wpdb->comments}.comment_approved IN ( '{$complete}' )";
+		$clauses['join']    .= Utils::build_comment_author_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 		$clauses['join']    .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
 		$clauses['join']    .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
 		$clauses['groupby'] .= " {$wpdb->posts}.ID";
