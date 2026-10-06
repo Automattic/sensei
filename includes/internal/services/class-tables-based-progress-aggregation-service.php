@@ -363,7 +363,8 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		// A submitted quiz supplies the lesson status; quiz rows without a submission are ignored.
 		// Submitted quizzes count as completions even while awaiting grading, for published/private parent courses.
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb prefix. Placeholders created dynamically.
-		$query  = "SELECT completions.lesson_id, completions.completion_count
+		$query  = $wpdb->prepare(
+			"SELECT completions.lesson_id, completions.completion_count
 			FROM (
 				SELECT p.post_id AS lesson_id, COUNT(*) AS completion_count
 				FROM {$table} p
@@ -372,7 +373,9 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 					AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )
 				WHERE p.type = 'lesson'
 					AND p.post_id IN ( $placeholders )
-					AND COALESCE( q.status, p.status ) IN ('graded', 'ungraded', 'passed', 'failed', 'complete')";
+					AND COALESCE( q.status, p.status ) IN ('graded', 'ungraded', 'passed', 'failed', 'complete')",
+			$lesson_ids
+		);
 		$query .= $this->build_user_exclusion_clause( $args, 'COALESCE( q.status, p.status )' );
 		$query .= "
 				GROUP BY p.post_id
@@ -384,8 +387,6 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 					AND course_meta.meta_key = '_lesson_course'
 					AND course.post_status IN ( {$reports_statuses} )
 			)";
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Query is built from fixed SQL, trusted table names, a prepared exclusion clause, and dynamic placeholders.
-		$query = $wpdb->prepare( $query, $lesson_ids );
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
