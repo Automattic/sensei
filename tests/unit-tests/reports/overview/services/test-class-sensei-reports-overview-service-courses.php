@@ -347,7 +347,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 0.0, $actual );
 	}
 
-	public function testGetAverageDaysToCompletion_MultipleCoursesWithCompletionsGiven_ReturnsAverageOfRoundedCourseAverages() {
+	public function testGetAverageDaysToCompletion_MultipleCoursesWithDifferentCompletionCountsGiven_WeightsCoursesEqually() {
 		/* Arrange. */
 		$user1_id   = $this->factory->user->create();
 		$user2_id   = $this->factory->user->create();
