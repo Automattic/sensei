@@ -51,209 +51,217 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
-	/**
-	 * Tests getting total average progress value for the course based on the lessons completion for single course.
-	 *
-	 * @covers Sensei_Analysis_Overview_List_Table::get_average_progress_for_courses_table
-	 */
-	public function testTotalAverageProgressForCoursesSingleCourse() {
-		// Create a course
+	public function testGetTotalAverageProgress_CoursesGiven_AveragesCourseProgressAndRoundsUp(): void {
+		/* Arrange. */
+		$course_ids = array( 11, 22 );
+		$service    = $this->getMockBuilder( Sensei_Reports_Overview_Service_Courses::class )
+			->onlyMethods( array( 'get_average_progress_by_course' ) )
+			->getMock();
+		$service
+			->expects( self::once() )
+			->method( 'get_average_progress_by_course' )
+			->with( $course_ids )
+			->willReturn(
+				array(
+					11 => 50.0,
+					22 => 25.0,
+				)
+			);
+
+		/* Act. */
+		$actual = $service->get_total_average_progress( $course_ids );
+
+		/* Assert. */
+		// The 37.5 average of 50% and 25% is rounded up to 38%.
+		self::assertSame( 38.0, $actual );
+	}
+
+	public function testGetTotalAverageProgress_CourseWithoutPerCourseResultGiven_ContributesZeroToAverage(): void {
+		/* Arrange. */
+		$course_ids = array( 11, 22 );
+		$service    = $this->getMockBuilder( Sensei_Reports_Overview_Service_Courses::class )
+			->onlyMethods( array( 'get_average_progress_by_course' ) )
+			->getMock();
+		$service
+			->expects( self::once() )
+			->method( 'get_average_progress_by_course' )
+			->with( $course_ids )
+			->willReturn( array( 11 => 50.0 ) );
+
+		/* Act. */
+		$actual = $service->get_total_average_progress( $course_ids );
+
+		/* Assert. */
+		// The missing course contributes 0%, so the average is ( 50 + 0 ) / 2 = 25%.
+		self::assertSame( 25.0, $actual );
+	}
+
+	public function testGetTotalAverageProgress_EmptyCourseIdsGiven_ReturnsZero(): void {
+		/* Arrange. */
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_total_average_progress( array() );
+
+		/* Assert. */
+		self::assertSame( 0.0, $actual );
+	}
+
+	public function testGetAverageProgressByCourse_CoursesGiven_ReturnsAverageProgressByCourse(): void {
+		/* Arrange. */
+		$first_course  = $this->factory->course->create();
+		$second_course = $this->factory->course->create();
+		$first_user    = $this->factory->user->create();
+		$second_user   = $this->factory->user->create();
+		$first_lessons = array(
+			$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $first_course ) ) ),
+			$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $first_course ) ) ),
+		);
+		$second_lesson = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $second_course ) ) );
+
+		foreach ( $first_lessons as $lesson_id ) {
+			Sensei_Utils::sensei_start_lesson( $lesson_id, $first_user, true );
+			Sensei_Utils::sensei_start_lesson( $lesson_id, $second_user );
+		}
+		Sensei_Utils::sensei_start_lesson( $second_lesson, $first_user, true );
+
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_average_progress_by_course( array( $first_course, $second_course ) );
+
+		/* Assert. */
+		// First course: 2 completed student-lesson pairs / ( 2 students * 2 lessons ) = 50%.
+		// Second course: 1 completed student-lesson pair / ( 1 student * 1 lesson ) = 100%.
+		$expected = array(
+			$first_course  => 50.0,
+			$second_course => 100.0,
+		);
+		self::assertSame( $expected, $actual );
+	}
+
+	public function testGetAverageProgressByCourse_NoLessonCompletionsGiven_ReturnsZeroProgress(): void {
+		/* Arrange. */
 		$course_id = $this->factory->course->create();
-
-		// Create 2 users
-		$user_id_1 = $this->factory->user->create();
-		$user_id_2 = $this->factory->user->create();
-
-		//Add 2 lessons to the course
-		$lesson_1 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		$user_id   = $this->factory->user->create();
+		$lessons   = array(
+			$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) ),
+			$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) ),
 		);
-		$lesson_2 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		foreach ( $lessons as $lesson_id ) {
+			Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		}
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_average_progress_by_course( array( $course_id ) );
+
+		/* Assert. */
+		// The student completed none of the two lessons: 0 / 2 = 0%.
+		self::assertSame( array( $course_id => 0.0 ), $actual );
+	}
+
+	public function testGetAverageProgressByCourse_CourseWithoutStudentsGiven_ReturnsNoProgress(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_average_progress_by_course( array( $course_id ) );
+
+		/* Assert. */
+		self::assertSame( array(), $actual );
+	}
+
+	public function testGetAverageProgressByCourse_TemporaryUsersGiven_ExcludesTheirCompletionsAndEnrollments(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$users     = array(
+			'registered_complete' => $this->factory->user->create( array( 'user_login' => 'registered_complete' ) ),
+			'registered_started'  => $this->factory->user->create( array( 'user_login' => 'registered_started' ) ),
+			'guest_complete'      => $this->factory->user->create( array( 'user_login' => 'sensei_guest_complete' ) ),
+			'preview_complete'    => $this->factory->user->create( array( 'user_login' => 'sensei_preview_complete' ) ),
 		);
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $users['registered_complete'], true );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $users['registered_started'] );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $users['guest_complete'], true );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $users['preview_complete'], true );
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_average_progress_by_course( array( $course_id ) );
+
+		/* Assert. */
+		// One of the two registered students completed the only lesson: 1 / 2 = 50%.
+		self::assertSame( array( $course_id => 50.0 ), $actual );
+	}
+
+	public function testGetAverageProgressByCourse_LessonsWithMixedPostStatusesGiven_CountsPublishedAndPrivateLessons(): void {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$user_id    = $this->factory->user->create();
+		$lesson_ids = array(
+			'published' => $this->factory->lesson->create(
+				array(
+					'post_status' => 'publish',
+					'meta_input'  => array( '_lesson_course' => $course_id ),
+				)
+			),
+			'private'   => $this->factory->lesson->create(
+				array(
+					'post_status' => 'private',
+					'meta_input'  => array( '_lesson_course' => $course_id ),
+				)
+			),
+			'draft_one' => $this->factory->lesson->create(
+				array(
+					'post_status' => 'draft',
+					'meta_input'  => array( '_lesson_course' => $course_id ),
+				)
+			),
+			'draft_two' => $this->factory->lesson->create(
+				array(
+					'post_status' => 'draft',
+					'meta_input'  => array( '_lesson_course' => $course_id ),
+				)
+			),
+			'trashed'   => $this->factory->lesson->create(
+				array(
+					'post_status' => 'publish',
+					'meta_input'  => array( '_lesson_course' => $course_id ),
+				)
+			),
+		);
+
+		$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+		$course_progress->start();
+		Sensei()->course_progress_repository->save( $course_progress );
+
+		foreach ( array( 'published', 'draft_one', 'draft_two', 'trashed' ) as $completed_lesson ) {
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_ids[ $completed_lesson ], $user_id );
+			$lesson_progress->complete();
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
+		}
+
+		$private_lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_ids['private'], $user_id );
+		$private_lesson_progress->start();
+		Sensei()->lesson_progress_repository->save( $private_lesson_progress );
+		wp_trash_post( $lesson_ids['trashed'] );
 
 		$service = new Sensei_Reports_Overview_Service_Courses();
 
-		// Complete lesson 1 and lesson 2 with user_1.
-		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
-		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_1, true );
-
-		// Enroll student 2 to the course and lessons, but don't complete the lessons.
-		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
-		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_2 );
+		/* Act. */
+		$actual = $service->get_average_progress_by_course( array( $course_id ) );
 
 		/* Assert. */
-		$this->assertEquals(
-			50,
-			$service->get_total_average_progress( [ $course_id ] ),
-			'Find totals of lessons completed single course.'
-		);
+		// Only publish and private count: one of those two lessons is complete, so progress is 50%.
+		self::assertSame( array( $course_id => 50.0 ), $actual );
 	}
 
-	/**
-	 * Tests getting total average progress value for the course based on the lessons completion for multiple courses.
-	 *
-	 * @covers Sensei_Analysis_Overview_List_Table::get_average_progress_for_courses_table
-	 */
-	public function testTotalAverageProgressForCoursesMultipleCourses() {
-		// Create a course 1
-		$course_id_1 = $this->factory->course->create();
-
-		// Create a course 2
-		$course_id_2 = $this->factory->course->create();
-
-		// Create 2 users
-		$user_id_1 = $this->factory->user->create();
-		$user_id_2 = $this->factory->user->create();
-
-		//Add 2 lessons to the course 1
-		$lesson_1 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
-		);
-		$lesson_2 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
-		);
-		//Add 2 lessons to the course 2
-		$lesson_3 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id_2 ] ]
-		);
-		$lesson_4 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id_2 ] ]
-		);
-		$service  = new Sensei_Reports_Overview_Service_Courses();
-		// Complete lesson 1 and lesson 2 with user_1.
-		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
-		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_1, true );
-
-		// Enroll student 2 to the course and lessons, but don't complete the lessons.
-		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
-		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_2 );
-
-		// Complete lesson 1 and lesson 2 with user_1.
-		Sensei_Utils::sensei_start_lesson( $lesson_3, $user_id_1, true );
-		Sensei_Utils::sensei_start_lesson( $lesson_4, $user_id_1 );
-
-		// Enroll student 2 to the course and lessons, but don't complete the lessons.
-		Sensei_Utils::sensei_start_lesson( $lesson_3, $user_id_2 );
-		Sensei_Utils::sensei_start_lesson( $lesson_4, $user_id_2 );
-		/* Assert. */
-		$this->assertEquals(
-			38,
-			$service->get_total_average_progress( [ $course_id_1, $course_id_2 ] ),
-			'Find totals of lessons completed multiple courses.'
-		);
-	}
-
-
-
-	/**
-	 * Tests getting total average progress value for the course based on the lessons completion to be zero.
-	 *
-	 * @covers Sensei_Analysis_Overview_List_Table::get_average_progress_for_courses_table
-	 */
-	public function testTotalAverageProgressForCoursesProgressZero() {
-		// Create a course 1
-		$course_id_1 = $this->factory->course->create();
-
-		// Create single
-		$user_id_2 = $this->factory->user->create();
-
-		//Add 2 lessons to the course 1
-		$lesson_1 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
-		);
-		$lesson_2 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
-		);
-		$service  = new Sensei_Reports_Overview_Service_Courses();
-
-		// Enroll student 2 to the course and lessons, but don't complete the lessons.
-		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
-		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_2 );
-
-		/* Assert. */
-		$this->assertEquals(
-			0,
-			$service->get_total_average_progress( [ $course_id_1 ] ),
-			'Find average progress total is 0 when no lesson is completed'
-		);
-	}
-
-
-	/**
-	 * Tests getting total average progress value create courses but don't add students returns 0.
-	 *
-	 * @covers Sensei_Analysis_Overview_List_Table::get_average_progress_for_courses_table
-	 */
-	public function testTotalAverageProgressForCoursesProgressZeroNoStudents() {
-		// Create a course 1
-		$this->factory->course->create();
-
-		$service = new Sensei_Reports_Overview_Service_Courses();
-
-		/* Assert. */
-		$this->assertEquals(
-			0,
-			$service->get_total_average_progress( [] ),
-			'Average of progress total is zero when no lessons or students.'
-		);
-	}
-
-	/**
-	 * Tests getting total average progress value for the course based on the lessons completion for multiple students.
-	 *
-	 * @covers Sensei_Analysis_Overview_List_Table::get_average_progress_for_courses_table
-	 */
-	public function testTotalAverageProgressCompletedForMultipleStudents() {
-		// Create first course
-		$course_id_1 = $this->factory->course->create();
-
-		// Create second course
-		$course_id_2 = $this->factory->course->create();
-
-		// Create 3 users
-		$user_id_1 = $this->factory->user->create();
-		$user_id_2 = $this->factory->user->create();
-		$user_id_3 = $this->factory->user->create();
-
-		//Add 2 lessons to the first course
-		$lesson_1 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
-		);
-		$lesson_2 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
-		);
-
-		// Add 1 lesson to the second course
-		$lesson_3 = $this->factory->lesson->create(
-			[ 'meta_input' => [ '_lesson_course' => $course_id_2 ] ]
-		);
-		$service  = new Sensei_Reports_Overview_Service_Courses();
-
-		// Complete lesson 1 and lesson 2 with user_1.
-		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
-		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_1, true );
-
-		// Enroll student 2 to the course and lessons, but don't complete the lessons.
-		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2, true );
-		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_2, true );
-
-		// Enroll 1 student to the second course and complete lesson
-		Sensei_Utils::sensei_start_lesson( $lesson_3, $user_id_3, true );
-
-		/* Assert. */
-		$this->assertEquals(
-			100,
-			$service->get_total_average_progress( [ $course_id_1, $course_id_2 ] ),
-			'Find totals of lessons completed single course.'
-		);
-	}
-
-
-	/**
-	 * Translated courses use the original lessons in the progress calculation.
-	 */
-	public function testGetTotalAverageProgress_TranslatedCourseGiven_UsesOriginalLessonsAndEnrollments(): void {
+	public function testGetAverageProgressByCourse_TranslatedCourseGiven_UsesOriginalLessonsAndEnrollments(): void {
 		/* Arrange. */
 		$original_course   = $this->factory->course->create();
 		$translated_course = $this->factory->course->create();
@@ -269,11 +277,22 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual = $service->get_total_average_progress( array( $translated_course ) );
+		$actual = $service->get_average_progress_by_course( array( $translated_course ) );
 
 		/* Assert. */
 		// One completed lesson out of two lessons for each of two students: 25%.
-		self::assertSame( 25.0, $actual );
+		self::assertSame( array( $translated_course => 25.0 ), $actual );
+	}
+
+	public function testGetAverageProgressByCourse_EmptyCourseIdsGiven_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_average_progress_by_course( array() );
+
+		/* Assert. */
+		self::assertSame( array(), $actual );
 	}
 
 	/**
@@ -316,7 +335,6 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( 75, $actual );
 	}
-
 	public function testGetAverageDaysToCompletionWhenOneCourseExistsReturnsMatchingValue() {
 		$user1_id  = $this->factory->user->create();
 		$user2_id  = $this->factory->user->create();

@@ -180,15 +180,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			return $counts;
 		}
 
-		// Reports need results keyed by the requested IDs, including translations.
-		$requested_counts = array();
-		foreach ( $post_id_map as $requested_id => $stored_id ) {
-			if ( isset( $counts[ $stored_id ] ) ) {
-				$requested_counts[ $requested_id ] = $counts[ $stored_id ];
-			}
-		}
-
-		return $requested_counts;
+		return Utils::map_results_to_requested_post_ids( $counts, $post_id_map );
 	}
 
 	/**
@@ -305,6 +297,60 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		Utils::log_query_error( $wpdb, 'Comments-based ungraded quizzes count' );
 
 		return $count;
+	}
+
+	/**
+	 * Count completed lesson progress per lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs.
+	 * @param array $args       Optional query filters (see interface).
+	 * @return array<int, int> Map of lesson_id => completion count.
+	 */
+	public function get_lesson_completion_counts( array $lesson_ids, array $args = array() ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		// Resolve each requested lesson to the ID where its progress is stored, then remove duplicates.
+		$post_id_map = Utils::get_progress_post_id_map( $lesson_ids, 'lesson' );
+		$lesson_ids  = array_values( array_unique( $post_id_map ) );
+
+		$reports_statuses = Utils::get_reports_post_status_sql();
+		$wpdb             = $this->wpdb;
+		$placeholders     = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		// Submitted quizzes count as lesson completions even while awaiting grading.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb. Placeholders created dynamically.
+		$query  = $wpdb->prepare(
+			"SELECT c.comment_post_id AS lesson_id, COUNT(*) AS completion_count
+			FROM {$wpdb->comments} c
+			WHERE c.comment_approved IN ('graded', 'ungraded', 'passed', 'failed', 'complete')
+			AND c.comment_type IN ('sensei_lesson_status')
+			AND c.comment_post_ID IN ( $placeholders )
+			AND c.comment_post_ID IN (
+				SELECT wpm.post_id FROM {$wpdb->posts} wpc
+				JOIN {$wpdb->postmeta} wpm ON wpm.meta_value = wpc.id
+				WHERE wpm.meta_key = '_lesson_course'
+				AND wpc.post_status IN ( {$reports_statuses} )
+			)",
+			$lesson_ids
+		);
+		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
+		$query .= ' GROUP BY c.comment_post_id';
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Comments-based lesson completion counts' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['lesson_id'] ] = (int) $row['completion_count'];
+		}
+
+		return Utils::map_results_to_requested_post_ids( $counts, $post_id_map );
 	}
 
 	/**

@@ -65,18 +65,45 @@ class Sensei_Reports_Overview_Service_Courses {
 		if ( empty( $course_ids ) ) {
 			return 0.0;
 		}
-		$lessons_count_per_courses = $this->get_lessons_in_courses( $course_ids );
-		$lessons_completions       = $this->get_lessons_completions();
-		$student_count_per_courses = $this->get_students_count_in_courses( $course_ids );
-		$total_average_progress    = 0;
+
+		$course_average_progress = $this->get_average_progress_by_course( $course_ids );
+
+		return ceil( array_sum( $course_average_progress ) / count( $course_ids ) );
+	}
+
+	/**
+	 * Get the average lesson progress grouped by course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course IDs.
+	 * @return float[] Average progress keyed by course ID.
+	 */
+	public function get_average_progress_by_course( array $course_ids ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
+
+		$lessons_by_course = $this->get_lessons_in_courses( $course_ids );
+
+		// Limit completion counts to the lessons belonging to the courses in this report.
+		$all_lesson_ids = array();
+		foreach ( $lessons_by_course as $course_lessons ) {
+			$all_lesson_ids = array_merge( $all_lesson_ids, $course_lessons );
+		}
+		$all_lesson_ids = array_unique( $all_lesson_ids );
+
+		$progress_args             = array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES );
+		$lessons_completions       = $this->get_lessons_completions( $all_lesson_ids, $progress_args );
+		$student_count_per_courses = $this->get_students_count_in_courses( $course_ids, $progress_args );
+		$course_average_progress   = array();
 
 		foreach ( $course_ids as $course_id ) {
-			if ( ! isset( $lessons_count_per_courses[ $course_id ] ) || ! isset( $student_count_per_courses[ $course_id ] ) ) {
+			if ( ! isset( $lessons_by_course[ $course_id ] ) || ! isset( $student_count_per_courses[ $course_id ] ) ) {
 				continue;
 			}
 			// Get lessons in the course.
-			$lessons = $lessons_count_per_courses[ $course_id ]->lessons;
-			$lessons = array_map( 'intval', explode( ',', $lessons ) );
+			$lessons = $lessons_by_course[ $course_id ];
 			if ( empty( $lessons ) ) {
 				continue;
 			}
@@ -100,15 +127,10 @@ class Sensei_Reports_Overview_Service_Courses {
 				0
 			);
 
-			// Calculate average progress for a course.
-			$course_average_progress = $completed_count / ( $students_count * count( $lessons ) ) * 100;
-
-			// Add value to the total average progress.
-			$total_average_progress += $course_average_progress;
+			$course_average_progress[ $course_id ] = (float) ( $completed_count / ( $students_count * count( $lessons ) ) * 100 );
 		}
-		// Divide total value to get average total value for average progress for courses.
-		$average_total_average_progress = ceil( $total_average_progress / count( $course_ids ) );
-		return $average_total_average_progress;
+
+		return $course_average_progress;
 	}
 
 	/**
@@ -207,35 +229,32 @@ class Sensei_Reports_Overview_Service_Courses {
 	}
 
 	/**
-	 * Get all lessons completions.
+	 * Get completions for the requested lessons.
 	 *
 	 * @since  4.4.1
 	 *
+	 * @param int[] $lesson_ids Lesson IDs.
+	 * @param array $args       Optional query filters for get_lesson_completion_counts().
 	 * @return array lessons completions.
 	 */
-	private function get_lessons_completions(): array {
+	private function get_lessons_completions( array $lesson_ids, array $args = array() ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
 
-		global $wpdb;
-		$reports_statuses = Utils::get_reports_post_status_sql();
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Statuses come from a fixed constant.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		$results = $wpdb->get_results(
-			"SELECT wcom.comment_post_id lesson_id, COUNT(*) completion_count
-						FROM {$wpdb->comments} wcom
-						WHERE wcom.comment_approved IN ('graded', 'ungraded', 'passed', 'failed','complete')
-						AND comment_type IN ('sensei_lesson_status')
-						AND wcom.comment_post_ID IN
-						(
-						SELECT wpm.post_id lesson_id from {$wpdb->posts} wpc
-						JOIN {$wpdb->postmeta} wpm on wpm.meta_value = wpc.id
-						WHERE wpm.meta_key = '_lesson_course'
-						AND wpc.post_status in ( {$reports_statuses} )
-						)
-						GROUP BY wcom.comment_post_id",
-			'OBJECT_K'
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $results;
+		$counts = $this->get_aggregation_service()
+			->get_lesson_completion_counts( $lesson_ids, $args );
+
+		// Keep the object fields used by the existing progress calculation.
+		$result = array();
+		foreach ( $counts as $lesson_id => $completion_count ) {
+			$result[ $lesson_id ] = (object) array(
+				'lesson_id'        => $lesson_id,
+				'completion_count' => $completion_count,
+			);
+		}
+
+		return $result;
 	}
 
 	/**
@@ -243,34 +262,32 @@ class Sensei_Reports_Overview_Service_Courses {
 	 *
 	 * @since  4.4.1
 	 *
-	 * @param array $course_ids The list of courses ids.
-	 * @return array lessons count in courses.
+	 * @param int[] $course_ids The list of course IDs.
+	 * @return array<int, int[]> Lesson IDs keyed by requested course ID.
 	 */
-	private function get_lessons_in_courses( $course_ids ): array {
+	private function get_lessons_in_courses( array $course_ids ): array {
 		global $wpdb;
 		// Look up lessons on the course resolved by the progress-ID filter so they match its stored progress.
-		$course_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
-		$course_ids    = array_values( $course_id_map );
+		$course_id_map   = Utils::get_progress_post_id_map( $course_ids, 'course' );
+		$course_ids      = array_values( $course_id_map );
+		$report_statuses = Utils::get_reports_post_status_sql();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
-		$results = $wpdb->get_results(
-			"SELECT pm.meta_value as course_id, GROUP_CONCAT(pm.post_id) as lessons
+		$query = "SELECT pm.meta_value as course_id, pm.post_id as lesson_id
 			FROM {$wpdb->postmeta} pm
-			WHERE pm.meta_value IN ( " . implode( ',', $course_ids ) . ' )'  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			. " AND pm.meta_key = '_lesson_course'
-			GROUP BY pm.meta_value",
-			'OBJECT_K'
-		);
+			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+			WHERE pm.meta_value IN ( " . implode( ',', $course_ids ) . " )
+			AND pm.meta_key = '_lesson_course'
+			AND p.post_type = 'lesson'
+			AND p.post_status IN ( {$report_statuses} )";
 
-		// Keep the requested course IDs as keys for the report calculations.
-		$requested_results = array();
-		foreach ( $course_id_map as $requested_id => $stored_id ) {
-			if ( isset( $results[ $stored_id ] ) ) {
-				$requested_results[ $requested_id ] = $results[ $stored_id ];
-			}
+		$results = $wpdb->get_results( $query ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Safe direct SQL; course IDs are integers from the progress-ID map.
+
+		$lessons_by_course = array();
+		foreach ( $results as $result ) {
+			$lessons_by_course[ (int) $result->course_id ][] = (int) $result->lesson_id;
 		}
 
-		return $requested_results;
+		return Utils::map_results_to_requested_post_ids( $lessons_by_course, $course_id_map );
 	}
 
 	/**

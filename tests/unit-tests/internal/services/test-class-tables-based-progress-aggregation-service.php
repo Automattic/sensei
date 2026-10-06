@@ -1153,6 +1153,13 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \Progress_Aggregati
 			)
 		);
 	}
+
+	protected function seed_ungraded_quiz( int $lesson_id, int $quiz_id, int $user_id ): void {
+		$this->seed_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
+		$this->seed_progress( $quiz_id, $user_id, 'quiz', 'ungraded' );
+		$this->insert_quiz_submission( $quiz_id, $user_id );
+	}
+
 	/**
 	 * Insert a progress row directly into the HPPS progress table.
 	 *

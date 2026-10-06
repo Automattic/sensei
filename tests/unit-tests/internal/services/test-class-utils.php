@@ -11,6 +11,32 @@ use Sensei\Internal\Services\Utils;
  */
 class Utils_Test extends \WP_UnitTestCase {
 
+	public function testMapResultsToRequestedPostIds_SharedAndMissingProgressIdsGiven_ReturnsAvailableResultsUnderRequestedIds(): void {
+		/* Arrange. */
+		$results = array(
+			10 => 2,
+			20 => 0,
+			30 => 5,
+		);
+		$map     = array(
+			10 => 10,
+			11 => 10,
+			21 => 20,
+			41 => 40,
+		);
+
+		/* Act. */
+		$actual = Utils::map_results_to_requested_post_ids( $results, $map );
+
+		/* Assert. */
+		$expected = array(
+			10 => 2,
+			11 => 2,
+			21 => 0,
+		);
+		self::assertSame( $expected, $actual );
+	}
+
 	public function testGetStatusesSql_ScalarStatusGiven_ReturnsQuotedStatus(): void {
 		/* Arrange. */
 		global $wpdb;
