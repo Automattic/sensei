@@ -101,3 +101,14 @@ Use named PHPUnit datasets when scenarios share the same setup, action, and asse
 ## 7. Keep tests repeatable and isolated
 
 Use fixed dates and controlled inputs where possible. Restore any globals, options, filters, or other shared state changed by the test, using the suite's cleanup mechanisms.
+
+## 8. Progress storage: comments and HPPS
+
+For behavior involving progress storage, reuse existing tests across the WordPress comments and High-Performance Progress Storage (HPPS) backends. Assert the same expected behavior in both modes; running a shared scenario against different implementations is meaningful coverage.
+
+- For application and report tests, use `Sensei_HPPS_Helpers` where appropriate to select the active repositories in setup and restore them in teardown. Follow the existing suite's use of `maybe_enable_hpps_tables_repository()` and `maybe_reset_hpps_repository()`.
+- Populate the backend being tested. Prefer repository APIs for ordinary application fixtures; writing only comments does not establish that table-backed reads work.
+- For shared storage-service behavior, extend the existing shared test class where available, such as `Progress_Aggregation_Service_Test`. Keep backend-specific service construction and fixture creation in its comments and tables subclasses.
+- Add separate backend-specific tests only for storage-specific requirements, such as migration data or query behavior. Direct database fixtures are appropriate when needed to exercise those requirements.
+- Do not skip a shared behavior test in HPPS mode merely because its fixture assumes comments storage. Adapt the fixture to the active backend.
+- Verify relevant changes in both comments and HPPS modes using the commands documented in `AGENTS.md`.
