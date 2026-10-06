@@ -23,7 +23,6 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 	 */
 	private $timezone_options;
 
-
 	public function setUp(): void {
 		parent::setUp();
 		$this->sensei_factory   = new \Sensei_Factory();
@@ -261,57 +260,23 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Use the timezone offset at the event date rather than the current offset.
+	 * Completion days use each event's local calendar date.
+	 *
+	 * @dataProvider completion_days_timezone_cases
 	 */
-	public function testGetCoursesAverageDaysToCompletion_WinterDatesAndSummerOffsetGiven_UsesHistoricalTimezoneOffset(): void {
+	public function testGetCoursesAverageDaysToCompletion_LocalDatesGiven_UsesLocalCalendarDays( string $timezone, int $offset, string $start, string $end, float $expected ): void {
 		/* Arrange. */
-		update_option( 'timezone_string', 'America/New_York' );
-		update_option( 'gmt_offset', -4 );
+		update_option( 'timezone_string', $timezone );
+		update_option( 'gmt_offset', $offset );
 		$course  = $this->sensei_factory->course->create();
 		$user_id = $this->sensei_factory->user->create();
-		$this->seed_progress( $course, $user_id, 'course', 'complete', '2024-01-01 23:30:00', '2024-01-02 00:30:00' );
-		$service = $this->get_service();
+		$this->seed_progress( $course, $user_id, 'course', 'complete', $start, $end );
 
 		/* Act. */
-		$actual = $service->get_courses_average_days_to_completion( array( $course ) );
+		$actual = $this->get_service()->get_courses_average_days_to_completion( array( $course ) );
 
 		/* Assert. */
-		self::assertSame( 2.0, $actual );
-	}
-
-	/**
-	 * Resolve start and completion offsets separately across daylight saving.
-	 */
-	public function testGetCoursesAverageDaysToCompletion_DaylightSavingTransitionGiven_UsesEachDatesTimezoneOffset(): void {
-		/* Arrange. */
-		update_option( 'timezone_string', 'America/New_York' );
-		update_option( 'gmt_offset', -4 );
-		$course  = $this->sensei_factory->course->create();
-		$user_id = $this->sensei_factory->user->create();
-		$this->seed_progress( $course, $user_id, 'course', 'complete', '2024-03-09 23:30:00', '2024-03-10 23:30:00' );
-		$service = $this->get_service();
-
-		/* Act. */
-		$actual = $service->get_courses_average_days_to_completion( array( $course ) );
-
-		/* Assert. */
-		self::assertSame( 2.0, $actual );
-	}
-
-	public function testGetCoursesAverageDaysToCompletion_LocalDatesNearMidnightGiven_MatchesLocalDayDifference(): void {
-		/* Arrange. */
-		update_option( 'timezone_string', '' );
-		update_option( 'gmt_offset', -5 );
-		$course  = $this->sensei_factory->course->create();
-		$user_id = $this->sensei_factory->user->create();
-		$this->seed_progress( $course, $user_id, 'course', 'complete', '2024-01-01 00:00:00', '2024-01-01 23:00:00' );
-		$service = $this->get_service();
-
-		/* Act. */
-		$actual = $service->get_courses_average_days_to_completion( array( $course ) );
-
-		/* Assert. */
-		self::assertSame( 1.0, $actual );
+		self::assertSame( $expected, $actual );
 	}
 
 	public function testGetCoursesAverageDaysToCompletion_MultipleCoursesGiven_ReturnsAverageOfRoundedCourseAverages(): void {
@@ -455,6 +420,17 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 				$translated => 4.0,
 			),
 			$actual
+		);
+	}
+
+	public static function completion_days_timezone_cases(): array {
+		return array(
+			// Winter events cross midnight using their historical offset, despite the summer setting.
+			'historical offset' => array( 'America/New_York', -4, '2024-01-01 23:30:00', '2024-01-02 00:30:00', 2.0 ),
+			// Two local calendar dates span a 23-hour daylight-saving interval.
+			'daylight saving'   => array( 'America/New_York', -4, '2024-03-09 23:30:00', '2024-03-10 23:30:00', 2.0 ),
+			// Both events stay on the same local date with a fixed UTC offset.
+			'fixed offset'      => array( '', -5, '2024-01-01 00:00:00', '2024-01-01 23:00:00', 1.0 ),
 		);
 	}
 
