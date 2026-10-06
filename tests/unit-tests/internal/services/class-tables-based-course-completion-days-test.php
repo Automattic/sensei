@@ -23,6 +23,11 @@ class Tables_Based_Course_Completion_Days_Test extends \WP_UnitTestCase {
 		$this->sensei_factory = new \Sensei_Factory();
 	}
 
+	public function tearDown(): void {
+		$this->sensei_factory->tearDown();
+		parent::tearDown();
+	}
+
 	public function testGetCoursesAverageDaysToCompletion_ManyStudentsAndMissingCompletionDatesGiven_PreservesCourseAverages(): void {
 		/* Arrange. */
 		global $wpdb;
@@ -51,6 +56,37 @@ class Tables_Based_Course_Completion_Days_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		// Course 1: ceil((5000 + 4) / 6001) = 1. Course 2: 6. Average: 3.5.
+		self::assertSame( 3.5, $actual );
+	}
+
+	public function testGetCoursesAverageDaysToCompletion_ExactBatchBoundaryGiven_PreservesCourseAverages(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$course_id       = $this->sensei_factory->course->create();
+		$other_course_id = $this->sensei_factory->course->create();
+		$rows            = array();
+		// Exactly one full batch requires an empty final query.
+		for ( $student = 1; $student <= 5000; $student++ ) {
+			$completed_at = '2024-01-01 12:00:00';
+			$rows[]       = $wpdb->prepare(
+				"(%d, %d, 'course', 'complete', '2024-01-01 10:00:00', NULLIF(%s, ''), '2024-01-01 10:00:00', '2024-01-01 10:00:00')",
+				$course_id,
+				$student,
+				$completed_at
+			);
+		}
+		$table = $wpdb->prefix . 'sensei_lms_progress';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Trusted table name. Bulk progress fixture; each row is prepared above.
+		$wpdb->query( "INSERT INTO $table (post_id, user_id, type, status, started_at, completed_at, created_at, updated_at) VALUES " . implode( ',', $rows ) );
+		$this->insert_progress_with_dates( $other_course_id, 1, 'course', 'complete', '2024-01-01 10:00:00', '2024-01-06 12:00:00' );
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$actual = $service->get_courses_average_days_to_completion( array( $course_id, $other_course_id ) );
+
+		/* Assert. */
+		// Course 1: ceil(5000 / 5000) = 1. Course 2: 6. Average: 3.5.
 		self::assertSame( 3.5, $actual );
 	}
 

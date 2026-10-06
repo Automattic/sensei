@@ -16,12 +16,27 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 	 */
 	protected $sensei_factory;
 
+	/**
+	 * Original timezone options restored after date-sensitive tests.
+	 *
+	 * @var array
+	 */
+	private $timezone_options;
+
+
 	public function setUp(): void {
 		parent::setUp();
-		$this->sensei_factory = new \Sensei_Factory();
+		$this->sensei_factory   = new \Sensei_Factory();
+		$this->timezone_options = array(
+			'timezone_string' => get_option( 'timezone_string' ),
+			'gmt_offset'      => get_option( 'gmt_offset' ),
+		);
 	}
 
 	public function tearDown(): void {
+		foreach ( $this->timezone_options as $option => $value ) {
+			update_option( $option, $value );
+		}
 		$this->sensei_factory->tearDown();
 		parent::tearDown();
 	}
@@ -334,6 +349,113 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 0.0, $actual );
+	}
+
+	public function testGetCoursesAverageDaysToCompletion_TemporaryUsersGiven_RetainsRegisteredCompletionDays(): void {
+		/* Arrange. */
+		$course = $this->sensei_factory->course->create();
+		foreach ( array(
+			'registered_student'     => 4,
+			'sensei_guest_student'   => 20,
+			'sensei_preview_student' => 30,
+		) as $login => $days ) {
+			$user_id = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
+			$this->seed_progress( $course, $user_id, 'course', 'complete', '2022-01-01 00:00:00', sprintf( '2022-01-%02d 00:00:00', $days ) );
+		}
+
+		/* Act. */
+		$actual = $this->get_service()->get_courses_average_days_to_completion(
+			array( $course ),
+			array( 'exclude_user_login_prefixes' => \Sensei\Internal\Services\Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
+		);
+
+		/* Assert. */
+		// Only the registered student's four inclusive calendar days contribute.
+		self::assertSame( 4.0, $actual );
+	}
+
+	public function testGetCoursesAverageDaysToCompletion_SharedOriginalProgressGiven_PreservesRequestedCourseWeighting(): void {
+		/* Arrange. */
+		$original   = $this->sensei_factory->course->create();
+		$translated = $this->sensei_factory->course->create();
+		$other      = $this->sensei_factory->course->create();
+		$user       = $this->sensei_factory->user->create();
+		$this->seed_progress( $original, $user, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-02 00:00:00' );
+		$this->seed_progress( $other, $user, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-08 00:00:00' );
+		$this->add_progress_id_filter( array( $translated => $original ) );
+
+		/* Act. */
+		$actual = $this->get_service()->get_courses_average_days_to_completion( array( $original, $translated, $other ) );
+
+		/* Assert. */
+		// Each requested course has equal weight: (2 + 2 + 8) / 3 = 4.
+		self::assertSame( 4.0, $actual );
+	}
+
+	public function testGetCoursesAverageDaysToCompletion_MixedPostStatusesGiven_IncludesPublishedAndPrivateCourses(): void {
+		/* Arrange. */
+		$courses = array();
+		$user    = $this->sensei_factory->user->create();
+		foreach ( array(
+			'publish' => 2,
+			'private' => 4,
+			'draft'   => 20,
+			'trash'   => 20,
+			'future'  => 20,
+		) as $status => $days ) {
+			$course    = $this->sensei_factory->course->create(
+				array(
+					'post_status' => $status,
+					'post_date'   => 'future' === $status ? '2036-01-01 00:00:00' : '2022-01-01 00:00:00',
+				)
+			);
+			$courses[] = $course;
+			$this->seed_progress( $course, $user, 'course', 'complete', '2022-01-01 00:00:00', sprintf( '2022-01-%02d 00:00:00', $days ) );
+		}
+
+		/* Act. */
+		$actual = $this->get_service()->get_courses_average_days_to_completion( $courses );
+
+		/* Assert. */
+		// Only the published and private courses contribute: (2 + 4) / 2 = 3.
+		self::assertSame( 3.0, $actual );
+	}
+
+	public function testGetCoursesAverageDaysToCompletion_StartedCourseAndCourseWithoutProgressGiven_ReturnsZero(): void {
+		/* Arrange. */
+		$started_course = $this->sensei_factory->course->create();
+		$empty_course   = $this->sensei_factory->course->create();
+		$user           = $this->sensei_factory->user->create();
+		$this->seed_progress( $started_course, $user, 'course', 'in-progress' );
+
+		/* Act. */
+		$actual = $this->get_service()->get_courses_average_days_to_completion( array( $started_course, $empty_course ) );
+
+		/* Assert. */
+		// Neither course has a qualifying completion, so neither enters the average.
+		self::assertSame( 0.0, $actual );
+	}
+
+	public function testGetCourseCompletionDayAverages_TranslatedCourseGiven_ReturnsRequestedKeys(): void {
+		/* Arrange. */
+		$original   = $this->sensei_factory->course->create();
+		$translated = $this->sensei_factory->course->create();
+		$user       = $this->sensei_factory->user->create();
+		$this->seed_progress( $original, $user, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-04 00:00:00' );
+		$this->add_progress_id_filter( array( $translated => $original ) );
+
+		/* Act. */
+		$actual = $this->get_service()->get_course_completion_day_averages( array( $original, $translated ) );
+
+		/* Assert. */
+		// Both requested IDs share the same four-day original progress.
+		self::assertSame(
+			array(
+				$original   => 4.0,
+				$translated => 4.0,
+			),
+			$actual
+		);
 	}
 
 	/**

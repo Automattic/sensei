@@ -359,43 +359,67 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 * @since $$next-version$$
 	 *
 	 * @param int[] $course_ids Course post IDs.
+	 * @param array $args       Optional query filters (see interface).
 	 * @return float
 	 */
-	public function get_courses_average_days_to_completion( array $course_ids ): float {
+	public function get_courses_average_days_to_completion( array $course_ids, array $args = array() ): float {
+		$averages = $this->get_course_completion_day_averages( $course_ids, $args );
+
+		return $averages ? array_sum( $averages ) / count( $averages ) : 0.0;
+	}
+
+	/**
+	 * Get rounded completion-day averages keyed by requested course ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @param array $args       Optional query filters (see interface).
+	 * @return array<int, float> Rounded per-course averages.
+	 */
+	public function get_course_completion_day_averages( array $course_ids, array $args = array() ): array {
 		if ( empty( $course_ids ) ) {
-			return 0.0;
+			return array();
 		}
 
-		// WPML translations share progress; count each original course only once.
+		// Query shared progress once, then restore each requested course and its weight.
 		$post_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
 		$course_ids  = array_values( array_unique( $post_id_map ) );
 
 		$wpdb         = $this->wpdb;
+		$statuses     = Utils::get_reports_post_status_sql();
+		$exclusion    = Utils::build_comment_author_exclusion_clause( $wpdb, $args );
 		$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
 
 		// Round each course average up before averaging courses; missing start metadata is not counted.
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb. Placeholders created dynamically. Date format string passed as %s to avoid conflicting with prepare().
 		$query = $wpdb->prepare(
-			"SELECT AVG( aggregated.days_to_completion )
-			FROM (
-				SELECT CEIL( SUM( ABS( DATEDIFF( c.comment_date, STR_TO_DATE( cm.meta_value, %s ) ) ) + 1 ) / COUNT(cm.comment_id) ) AS days_to_completion
+			"SELECT c.comment_post_ID AS course_id, CEIL( SUM( ABS( DATEDIFF( c.comment_date, STR_TO_DATE( cm.meta_value, %s ) ) ) + 1 ) / COUNT(cm.comment_id) ) AS days_to_completion
 				FROM {$wpdb->comments} c
 				LEFT JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
 					AND cm.meta_key = 'start'
+				INNER JOIN {$wpdb->posts} post ON post.ID = c.comment_post_ID AND post.post_status IN ( $statuses )
 				WHERE c.comment_type = 'sensei_course_status'
 					AND c.comment_approved = 'complete'
 					AND c.comment_post_ID IN ( $placeholders )
-				GROUP BY c.comment_post_ID
-			) AS aggregated",
+				$exclusion
+				GROUP BY c.comment_post_ID",
 			array_merge( array( '%Y-%m-%d %H:%i:%s' ), $course_ids )
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
-		$result = $wpdb->get_var( $query );
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
 		Utils::log_query_error( $wpdb, 'Comments-based courses average days to completion' );
 
-		return (float) $result;
+		$averages = array();
+		foreach ( $results as $row ) {
+			if ( null !== $row['days_to_completion'] ) {
+				$averages[ (int) $row['course_id'] ] = (float) $row['days_to_completion'];
+			}
+		}
+
+		return Utils::map_results_to_requested_post_ids( $averages, $post_id_map );
 	}
 
 	/**

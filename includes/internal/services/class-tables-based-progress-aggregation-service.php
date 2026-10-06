@@ -415,19 +415,37 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @since $$next-version$$
 	 *
 	 * @param int[] $course_ids Course post IDs.
+	 * @param array $args       Optional query filters (see interface).
 	 * @return float
 	 */
-	public function get_courses_average_days_to_completion( array $course_ids ): float {
+	public function get_courses_average_days_to_completion( array $course_ids, array $args = array() ): float {
+		$averages = $this->get_course_completion_day_averages( $course_ids, $args );
+
+		return $averages ? array_sum( $averages ) / count( $averages ) : 0.0;
+	}
+
+	/**
+	 * Get rounded completion-day averages keyed by requested course ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @param array $args       Optional query filters (see interface).
+	 * @return array<int, float> Rounded per-course averages.
+	 */
+	public function get_course_completion_day_averages( array $course_ids, array $args = array() ): array {
 		if ( empty( $course_ids ) ) {
-			return 0.0;
+			return array();
 		}
 
-		// WPML translations share progress; count each original course only once.
+		// Query shared progress once, then restore each requested course and its weight.
 		$post_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
 		$course_ids  = array_values( array_unique( $post_id_map ) );
 
 		$wpdb         = $this->wpdb;
 		$table        = $this->get_progress_table_name();
+		$statuses     = Utils::get_reports_post_status_sql();
+		$exclusion    = $this->build_user_exclusion_clause( $args );
 		$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
 
 		// Use the timezone offset at each event date, since daylight saving can change the local day.
@@ -446,11 +464,13 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			$query = $wpdb->prepare(
 				"SELECT p.id, p.post_id, p.started_at, p.completed_at
 				FROM {$table} p
+				INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( $statuses )
 				WHERE p.type = 'course'
 					AND p.status = 'complete'
 					AND p.post_id IN ( $placeholders )
 					AND p.started_at > '0000-00-00 00:00:00'
 					AND p.id > %d
+				$exclusion
 				ORDER BY p.id
 				LIMIT %d",
 				array_merge( $course_ids, array( $last_id, self::COMPLETION_DAYS_BATCH_SIZE ) )
@@ -458,10 +478,15 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
-			$results = $wpdb->get_results( $query, ARRAY_A );
+			$results = (array) $wpdb->get_results( $query, ARRAY_A );
 			Utils::log_query_error( $wpdb, 'Tables-based courses average days to completion' );
-			if ( null === $results ) {
-				return 0.0;
+			/**
+			 * Each batch query can change last_error after the previous iteration.
+			 *
+			 * @psalm-suppress DocblockTypeContradiction -- Psalm retains the previous iteration's narrowing.
+			 */
+			if ( ! empty( $wpdb->last_error ) ) {
+				return array();
 			}
 
 			$batch_count = count( $results );
@@ -492,18 +517,13 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			}
 		} while ( self::COMPLETION_DAYS_BATCH_SIZE === $batch_count );
 
-		// A failed later batch must not return an average from only part of the records.
-		if ( $wpdb->last_error ) {
-			return 0.0;
-		}
-
-		// Round each course average up before averaging courses, giving each course equal weight.
-		$total = 0.0;
+		// Restore requested IDs before averaging so translations retain their course weight.
+		$averages = array();
 		foreach ( $completion_days as $course_id => $days ) {
-			$total += ceil( $days / $start_counts[ $course_id ] );
+			$averages[ $course_id ] = ceil( $days / $start_counts[ $course_id ] );
 		}
 
-		return $completion_days ? $total / count( $completion_days ) : 0.0;
+		return Utils::map_results_to_requested_post_ids( $averages, $post_id_map );
 	}
 
 	/**
