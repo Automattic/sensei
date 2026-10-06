@@ -321,7 +321,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			return array();
 		}
 
-		// WPML translations share progress; query each original lesson only once.
+		// Resolve each requested lesson to the ID where its progress is stored, then remove duplicates.
 		$post_id_map = Utils::get_progress_post_id_map( $lesson_ids, 'lesson' );
 		$lesson_ids  = array_values( array_unique( $post_id_map ) );
 
@@ -330,12 +330,11 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$placeholders     = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
 
 		// Submitted quizzes count as lesson completions even while awaiting grading.
-		// Only count lessons whose parent course is published or private.
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb. Placeholders created dynamically.
 		$query  = $wpdb->prepare(
 			"SELECT c.comment_post_id AS lesson_id, COUNT(*) AS completion_count
 			FROM {$wpdb->comments} c
-			WHERE c.comment_approved IN ('graded', 'ungraded', 'passed', 'failed','complete')
+			WHERE c.comment_approved IN ('graded', 'ungraded', 'passed', 'failed', 'complete')
 			AND c.comment_type IN ('sensei_lesson_status')
 			AND c.comment_post_ID IN ( $placeholders )
 			AND c.comment_post_ID IN (

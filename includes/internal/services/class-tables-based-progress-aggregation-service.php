@@ -357,7 +357,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			return array();
 		}
 
-		// WPML translations share progress; query each original lesson only once.
+		// Resolve each requested lesson to the ID where its progress is stored, then remove duplicates.
 		$post_id_map = Utils::get_progress_post_id_map( $lesson_ids, 'lesson' );
 		$lesson_ids  = array_values( array_unique( $post_id_map ) );
 
