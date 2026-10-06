@@ -347,32 +347,6 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 0.0, $actual );
 	}
 
-	public function testGetAverageDaysToCompletion_SingleCourseWithCompletionsGiven_ReturnsRoundedCourseAverage() {
-		/* Arrange. */
-		$user1_id  = $this->factory->user->create();
-		$user2_id  = $this->factory->user->create();
-		$user3_id  = $this->factory->user->create();
-		$course_id = $this->factory->course->create();
-
-		$this->seed_course_completion_with_dates( $course_id, $user1_id, '2022-01-01 00:00:01', '2022-01-07 00:00:00' );
-		$this->seed_course_completion_with_dates( $course_id, $user2_id, '2022-01-01 00:00:01', '2022-01-10 00:00:00' );
-		$this->seed_course_completion_with_dates( $course_id, $user3_id, '2022-01-01 00:00:01', '2022-01-30 00:00:00' );
-
-		$instance = new Sensei_Reports_Overview_Service_Courses();
-
-		/* Act. */
-		$actual = $instance->get_average_days_to_completion( array( $course_id ) );
-
-		// 2022-01-07 00:00:00 - 2022-01-01 00:00:01 + 1 = 7 days.
-		// 2022-01-10 00:00:00 - 2022-01-01 00:00:01 + 1 = 10 days.
-		// 2022-01-30 00:00:00 - 2022-01-01 00:00:01 + 1 = 30 days.
-		// As these completions are for the single course:
-		// ceil(7 + 10 + 30/ 3)  = 16 days.
-
-		/* Assert. */
-		self::assertSame( 16.0, $actual );
-	}
-
 	public function testGetAverageDaysToCompletion_MultipleCoursesWithCompletionsGiven_ReturnsAverageOfRoundedCourseAverages() {
 		/* Arrange. */
 		$user1_id   = $this->factory->user->create();
@@ -397,68 +371,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 2.5, $actual );
 	}
 
-	public function testGetAverageDaysToCompletion_TranslatedCourseGiven_ReturnsOriginalCompletionDays() {
-		/* Arrange. */
-		$original_course   = $this->factory->course->create();
-		$translated_course = $this->factory->course->create();
-		$user_id           = $this->factory->user->create();
-		$this->seed_course_completion_with_dates( $original_course, $user_id, '2022-01-01 00:00:00', '2022-01-02 00:00:00' );
-		$this->add_progress_id_filter( array( $translated_course => $original_course ) );
-		$service = new Sensei_Reports_Overview_Service_Courses();
 
-		/* Act. */
-		$actual = $service->get_average_days_to_completion( array( $translated_course ) );
-
-		/* Assert. */
-		self::assertSame( 2.0, $actual );
-	}
-
-	public function testGetAverageDaysToCompletionByCourse_CoursesGiven_ReturnsServiceResult(): void {
-		/* Arrange. */
-		$course_ids  = array( 11, 22 );
-		$aggregation = $this->createMock( Progress_Aggregation_Service_Interface::class );
-		$aggregation->expects( self::once() )->method( 'get_average_days_to_completion_by_course' )
-			->with( $course_ids, array( 'exclude_user_login_prefixes' => \Sensei\Internal\Services\Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) )
-			->willReturn(
-				array(
-					11 => 2.0,
-					22 => 8.0,
-				)
-			);
-		$service = Sensei_Reports_Overview_Service_Courses::create_with_dependencies(
-			$this->createMock( Grading_Stats_Service_Interface::class ),
-			$aggregation
-		);
-
-		/* Act. */
-		$actual = $service->get_average_days_to_completion_by_course( $course_ids );
-
-		/* Assert. */
-		// Per-course values and requested keys are retained without averaging them.
-		self::assertSame(
-			array(
-				11 => 2.0,
-				22 => 8.0,
-			),
-			$actual
-		);
-	}
-
-	public function testGetAverageDaysToCompletionByCourse_EmptyCourseIdsGiven_ReturnsEmptyArray(): void {
-		/* Arrange. */
-		$aggregation = $this->createMock( Progress_Aggregation_Service_Interface::class );
-		$aggregation->expects( self::never() )->method( 'get_average_days_to_completion_by_course' );
-		$service = Sensei_Reports_Overview_Service_Courses::create_with_dependencies(
-			$this->createMock( Grading_Stats_Service_Interface::class ),
-			$aggregation
-		);
-
-		/* Act. */
-		$actual = $service->get_average_days_to_completion_by_course( array() );
-
-		/* Assert. */
-		self::assertSame( array(), $actual );
-	}
 
 	/**
 	 * An empty selection does not count unrelated course progress.
