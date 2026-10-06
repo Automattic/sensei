@@ -103,11 +103,16 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( '1', $actual[1]['days_to_completion'] );
 	}
 
-	public function testGenerateReport_TemporaryProgressGiven_UsesRegisteredProgress(): void {
+	/**
+	 * Exclude guest and preview progress while retaining registered progress.
+	 *
+	 * @dataProvider temporary_user_logins
+	 */
+	public function testGenerateReport_TemporaryProgressGiven_UsesRegisteredProgress( string $temporary_user_login ): void {
 		/* Arrange. */
-		// Registered: four completion days and half the lessons; guest: twenty days and all lessons.
-		// A second course has only guest progress and must show no eligible progress.
-		$this->seed_registered_and_guest_progress();
+		// Registered: four completion days and half the lessons; temporary user: twenty days and all lessons.
+		// A second course has only temporary progress and must show no eligible progress.
+		$this->seed_registered_and_temporary_progress( $temporary_user_login );
 		$table = new Sensei_Reports_Overview_List_Table_Courses(
 			Sensei()->grading,
 			Sensei()->course,
@@ -128,7 +133,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 				'average_progress'   => '50%',
 				'days_to_completion' => '4',
 			),
-			// The guest-only course remains visible, with no eligible enrollment or progress.
+			// The temporary-only course remains visible, with no eligible enrollment or progress.
 			array(
 				'last_activity'      => 'N/A',
 				'enrolled'           => '0',
@@ -337,11 +342,16 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
-	public function testGetRowData_TemporaryProgressGiven_UsesRegisteredProgress(): void {
+	/**
+	 * Exclude guest and preview progress while retaining registered progress.
+	 *
+	 * @dataProvider temporary_user_logins
+	 */
+	public function testGetRowData_TemporaryProgressGiven_UsesRegisteredProgress( string $temporary_user_login ): void {
 		/* Arrange. */
-		// Registered: four completion days and half the lessons; guest: twenty days and all lessons.
-		// A second course has only guest progress and must show no eligible progress.
-		$this->seed_registered_and_guest_progress();
+		// Registered: four completion days and half the lessons; temporary user: twenty days and all lessons.
+		// A second course has only temporary progress and must show no eligible progress.
+		$this->seed_registered_and_temporary_progress( $temporary_user_login );
 		$table  = new Sensei_Reports_Overview_List_Table_Courses(
 			Sensei()->grading,
 			Sensei()->course,
@@ -368,7 +378,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 				'average_progress'   => '50%',
 				'days_to_completion' => '4',
 			),
-			// The guest-only course remains visible, with no eligible enrollment or progress.
+			// The temporary-only course remains visible, with no eligible enrollment or progress.
 			array(
 				'last_activity'      => 'N/A',
 				'enrolled'           => '0',
@@ -397,21 +407,30 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 'Search Courses', $actual );
 	}
 
-	/**
-	 * Seed registered and guest progress in one course, and guest-only progress in another.
-	 */
-	private function seed_registered_and_guest_progress(): void {
-		// One course has registered and guest progress; the other has only guest progress.
-		$registered_course_id = $this->factory->course->create();
-		$guest_only_course_id = $this->factory->course->create();
-		$lesson_ids           = $this->factory->lesson->create_many( 2, array( 'meta_input' => array( '_lesson_course' => $registered_course_id ) ) );
-		$registered_user_id   = $this->factory->user->create();
-		$guest_user_id        = $this->factory->user->create( array( 'user_login' => 'sensei_guest_student' ) );
+	public static function temporary_user_logins(): array {
+		return array(
+			'guest'   => array( 'sensei_guest_student' ),
+			'preview' => array( 'sensei_preview_student' ),
+		);
+	}
 
-		// Four registered completion days contrast with twenty excluded guest days.
+	/**
+	 * Seed registered and temporary progress in one course, and temporary-only progress in another.
+	 *
+	 * @param string $temporary_user_login Guest or preview login to exclude.
+	 */
+	private function seed_registered_and_temporary_progress( string $temporary_user_login ): void {
+		// One course has registered and temporary progress; the other has only temporary progress.
+		$registered_course_id     = $this->factory->course->create();
+		$temporary_only_course_id = $this->factory->course->create();
+		$lesson_ids               = $this->factory->lesson->create_many( 2, array( 'meta_input' => array( '_lesson_course' => $registered_course_id ) ) );
+		$registered_user_id       = $this->factory->user->create();
+		$temporary_user_id        = $this->factory->user->create( array( 'user_login' => $temporary_user_login ) );
+
+		// Four registered completion days contrast with twenty excluded temporary-user days.
 		$this->seed_course_completion_with_dates( $registered_course_id, $registered_user_id, '2022-01-01 12:00:00', '2022-01-04 12:00:00' );
-		foreach ( array( $registered_course_id, $guest_only_course_id ) as $course_id ) {
-			$this->seed_course_completion_with_dates( $course_id, $guest_user_id, '2022-01-01 12:00:00', '2022-01-20 12:00:00' );
+		foreach ( array( $registered_course_id, $temporary_only_course_id ) as $course_id ) {
+			$this->seed_course_completion_with_dates( $course_id, $temporary_user_id, '2022-01-01 12:00:00', '2022-01-20 12:00:00' );
 		}
 
 		// The registered student completes one of two lessons on January 4.
@@ -421,13 +440,13 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		Sensei()->lesson_progress_repository->save( $progress );
 		$this->set_lesson_progress_activity_date( $lesson_ids[0], $registered_user_id, $registered_activity );
 
-		// The guest completes both lessons later; these must affect neither progress nor last activity.
-		$guest_activity = new DateTimeImmutable( '2022-01-20 12:00:00', new DateTimeZone( 'UTC' ) );
+		// The temporary user completes both lessons later; these must affect neither progress nor last activity.
+		$temporary_activity = new DateTimeImmutable( '2022-01-20 12:00:00', new DateTimeZone( 'UTC' ) );
 		foreach ( $lesson_ids as $lesson_id ) {
-			$progress = Sensei()->lesson_progress_repository->create( $lesson_id, $guest_user_id );
-			$progress->complete( $guest_activity );
+			$progress = Sensei()->lesson_progress_repository->create( $lesson_id, $temporary_user_id );
+			$progress->complete( $temporary_activity );
 			Sensei()->lesson_progress_repository->save( $progress );
-			$this->set_lesson_progress_activity_date( $lesson_id, $guest_user_id, $guest_activity );
+			$this->set_lesson_progress_activity_date( $lesson_id, $temporary_user_id, $temporary_activity );
 		}
 	}
 	/**
