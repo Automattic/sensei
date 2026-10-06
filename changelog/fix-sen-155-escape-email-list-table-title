@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Escape the email title in the checkbox column of the Emails settings screen.
