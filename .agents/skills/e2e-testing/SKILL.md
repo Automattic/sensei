@@ -1,6 +1,6 @@
 ---
 name: e2e-testing
-description: Use when verifying a Sensei UI or behavior change end-to-end against the running wp-env site. Boots / checks the env, scopes verification from `git diff`, drives the Sensei admin and frontend surfaces via Chrome DevTools MCP, and captures screenshots. Complements `npm run test:e2e` (full Playwright regression).
+description: Use when verifying a Sensei UI or behavior change end-to-end against the running wp-env site. Boots / checks the env, scopes verification from `git diff`, drives the Sensei admin and frontend surfaces using available browser tools, and captures screenshots. Complements `npm run test:e2e` (full Playwright regression).
 ---
 
 # Sensei E2E Verification
@@ -11,7 +11,7 @@ This skill verifies that a change actually behaves correctly from a user's persp
 
 - `make up` is running. The wp-env dev site listens on `http://localhost:8888` (admin: `admin` / `password` — wp-env defaults).
 - The active theme is `course` (`Automattic/themes/course`, pinned in `.wp-env.json`). All frontend verification should run against it.
-- Chrome DevTools MCP tools (`mcp__chrome-devtools__*`) are available.
+- Browser tools are available, such as Chrome DevTools MCP or the harness's browser automation tools. Read their usage instructions before driving the browser. If none are available, report that agent-driven browser verification is unavailable and provide manual steps.
 - For PHP changes that touch built assets, run `npm run build:assets` first. For changes that affect the scoped vendor tree, run `make build`.
 
 ## Sensei surface map
@@ -42,9 +42,11 @@ The most common surfaces ranked by what a Sensei change typically touches:
 
 ```bash
 git diff trunk...HEAD --name-only
+git diff HEAD --name-only
+git ls-files --others --exclude-standard
 ```
 
-Map changed files to surfaces using the table above. Skip surfaces the diff doesn't touch.
+Review the committed branch diff, staged and unstaged changes, and relevant untracked files. Map changed files to surfaces using the table above. Skip surfaces the change doesn't touch.
 
 Heuristics:
 - `includes/admin/` or files under `assets/admin/` → admin surfaces.
@@ -68,8 +70,9 @@ wp-env starts empty. For most flows you'll need at least one published course wi
 ```bash
 make wp CMD="post create --post_type=course --post_title='Sensei E2E' --post_status=publish --porcelain"
 # capture COURSE_ID
-make wp CMD="post create --post_type=lesson --post_title='Lesson 1' --post_status=publish --post_parent=COURSE_ID --porcelain"
+make wp CMD="post create --post_type=lesson --post_title='Lesson 1' --post_status=publish --porcelain"
 # capture LESSON_ID
+make wp CMD="post meta add LESSON_ID _lesson_course COURSE_ID"
 make wp CMD="post create --post_type=quiz --post_title='Quiz 1' --post_status=publish --post_parent=LESSON_ID --porcelain"
 # capture QUIZ_ID, then link the quiz to the lesson
 make wp CMD="post meta add LESSON_ID _lesson_quiz QUIZ_ID"
@@ -84,11 +87,11 @@ The bare question above has no `question-type` taxonomy term or `_question_right
 
 Per in-scope surface:
 
-1. Authenticate once: `mcp__chrome-devtools__new_page` to `http://localhost:8888/wp-login.php`, fill `admin` / `password`, click Log In.
+1. Open `http://localhost:8888/wp-login.php` using the available browser tools, fill `admin` / `password`, and click Log In.
 2. Navigate to the surface URL.
-3. `mcp__chrome-devtools__take_snapshot` for DOM (lets you target by ID/role) and `mcp__chrome-devtools__take_screenshot` for visual.
+3. Inspect the page using the browser tool's DOM or accessibility snapshot and capture a screenshot for visual verification. Target controls using the tool's supported locators.
 4. Drive any specific interaction the change requires (click, fill, navigate). After each interaction, take another screenshot.
-5. Watch `mcp__chrome-devtools__list_console_messages` for new JS errors introduced by the change.
+5. Check for new JS errors using console inspection if the browser tools support it; otherwise state that the console was not checked.
 
 ### 5. HPPS variant where relevant
 
