@@ -400,6 +400,6 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			$items
 		);
 
-		$this->average_progress_by_course = $this->reports_overview_service_courses->get_average_progress_per_course( $course_ids );
+		$this->average_progress_by_course = $this->reports_overview_service_courses->get_average_progress_by_course( $course_ids );
 	}
 }

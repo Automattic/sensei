@@ -66,7 +66,7 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0.0;
 		}
 
-		$course_average_progress = $this->get_average_progress_per_course( $course_ids );
+		$course_average_progress = $this->get_average_progress_by_course( $course_ids );
 
 		return ceil( array_sum( $course_average_progress ) / count( $course_ids ) );
 	}
@@ -79,7 +79,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @param int[] $course_ids Course IDs.
 	 * @return float[] Average progress keyed by course ID.
 	 */
-	public function get_average_progress_per_course( array $course_ids ): array {
+	public function get_average_progress_by_course( array $course_ids ): array {
 		if ( empty( $course_ids ) ) {
 			return array();
 		}

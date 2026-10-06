@@ -55,11 +55,11 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$course_ids = array( 11, 22 );
 		$service    = $this->getMockBuilder( Sensei_Reports_Overview_Service_Courses::class )
-			->onlyMethods( array( 'get_average_progress_per_course' ) )
+			->onlyMethods( array( 'get_average_progress_by_course' ) )
 			->getMock();
 		$service
 			->expects( self::once() )
-			->method( 'get_average_progress_per_course' )
+			->method( 'get_average_progress_by_course' )
 			->with( $course_ids )
 			->willReturn(
 				array(
@@ -80,11 +80,11 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$course_ids = array( 11, 22 );
 		$service    = $this->getMockBuilder( Sensei_Reports_Overview_Service_Courses::class )
-			->onlyMethods( array( 'get_average_progress_per_course' ) )
+			->onlyMethods( array( 'get_average_progress_by_course' ) )
 			->getMock();
 		$service
 			->expects( self::once() )
-			->method( 'get_average_progress_per_course' )
+			->method( 'get_average_progress_by_course' )
 			->with( $course_ids )
 			->willReturn( array( 11 => 50.0 ) );
 
@@ -107,7 +107,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 0.0, $actual );
 	}
 
-	public function testGetAverageProgressPerCourse_CoursesGiven_ReturnsAverageProgressByCourse(): void {
+	public function testGetAverageProgressByCourse_CoursesGiven_ReturnsAverageProgressByCourse(): void {
 		/* Arrange. */
 		$first_course  = $this->factory->course->create();
 		$second_course = $this->factory->course->create();
@@ -128,7 +128,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual = $service->get_average_progress_per_course( array( $first_course, $second_course ) );
+		$actual = $service->get_average_progress_by_course( array( $first_course, $second_course ) );
 
 		/* Assert. */
 		// First course: 2 completed student-lesson pairs / ( 2 students * 2 lessons ) = 50%.
@@ -140,7 +140,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
-	public function testGetAverageProgressPerCourse_NoLessonCompletionsGiven_ReturnsZeroProgress(): void {
+	public function testGetAverageProgressByCourse_NoLessonCompletionsGiven_ReturnsZeroProgress(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$user_id   = $this->factory->user->create();
@@ -154,27 +154,27 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual = $service->get_average_progress_per_course( array( $course_id ) );
+		$actual = $service->get_average_progress_by_course( array( $course_id ) );
 
 		/* Assert. */
 		// The student completed none of the two lessons: 0 / 2 = 0%.
 		self::assertSame( array( $course_id => 0.0 ), $actual );
 	}
 
-	public function testGetAverageProgressPerCourse_CourseWithoutStudentsGiven_ReturnsNoProgress(): void {
+	public function testGetAverageProgressByCourse_CourseWithoutStudentsGiven_ReturnsNoProgress(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
 		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual = $service->get_average_progress_per_course( array( $course_id ) );
+		$actual = $service->get_average_progress_by_course( array( $course_id ) );
 
 		/* Assert. */
 		self::assertSame( array(), $actual );
 	}
 
-	public function testGetAverageProgressPerCourse_TemporaryUsersGiven_ExcludesTheirCompletionsAndEnrollments(): void {
+	public function testGetAverageProgressByCourse_TemporaryUsersGiven_ExcludesTheirCompletionsAndEnrollments(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
@@ -192,14 +192,14 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual = $service->get_average_progress_per_course( array( $course_id ) );
+		$actual = $service->get_average_progress_by_course( array( $course_id ) );
 
 		/* Assert. */
 		// One of the two registered students completed the only lesson: 1 / 2 = 50%.
 		self::assertSame( array( $course_id => 50.0 ), $actual );
 	}
 
-	public function testGetAverageProgressPerCourse_LessonsWithMixedPostStatusesGiven_CountsPublishedAndPrivateLessons(): void {
+	public function testGetAverageProgressByCourse_LessonsWithMixedPostStatusesGiven_CountsPublishedAndPrivateLessons(): void {
 		/* Arrange. */
 		$course_id  = $this->factory->course->create();
 		$user_id    = $this->factory->user->create();
@@ -254,14 +254,14 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual = $service->get_average_progress_per_course( array( $course_id ) );
+		$actual = $service->get_average_progress_by_course( array( $course_id ) );
 
 		/* Assert. */
 		// Only publish and private count: one of those two lessons is complete, so progress is 50%.
 		self::assertSame( array( $course_id => 50.0 ), $actual );
 	}
 
-	public function testGetAverageProgressPerCourse_TranslatedCourseGiven_UsesOriginalLessonsAndEnrollments(): void {
+	public function testGetAverageProgressByCourse_TranslatedCourseGiven_UsesOriginalLessonsAndEnrollments(): void {
 		/* Arrange. */
 		$original_course   = $this->factory->course->create();
 		$translated_course = $this->factory->course->create();
@@ -277,19 +277,19 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual = $service->get_average_progress_per_course( array( $translated_course ) );
+		$actual = $service->get_average_progress_by_course( array( $translated_course ) );
 
 		/* Assert. */
 		// One completed lesson out of two lessons for each of two students: 25%.
 		self::assertSame( array( $translated_course => 25.0 ), $actual );
 	}
 
-	public function testGetAverageProgressPerCourse_EmptyCourseIdsGiven_ReturnsEmptyArray(): void {
+	public function testGetAverageProgressByCourse_EmptyCourseIdsGiven_ReturnsEmptyArray(): void {
 		/* Arrange. */
 		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual = $service->get_average_progress_per_course( array() );
+		$actual = $service->get_average_progress_by_course( array() );
 
 		/* Assert. */
 		self::assertSame( array(), $actual );
