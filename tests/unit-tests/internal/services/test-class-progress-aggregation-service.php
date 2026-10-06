@@ -436,7 +436,7 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		self::assertSame( 0.0, $actual );
 	}
 
-	public function testGetCourseCompletionDayAverages_TranslatedCourseGiven_ReturnsRequestedKeys(): void {
+	public function testGetAverageDaysToCompletionByCourse_TranslatedCourseGiven_ReturnsRequestedKeys(): void {
 		/* Arrange. */
 		$original   = $this->sensei_factory->course->create();
 		$translated = $this->sensei_factory->course->create();
@@ -445,7 +445,7 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->add_progress_id_filter( array( $translated => $original ) );
 
 		/* Act. */
-		$actual = $this->get_service()->get_course_completion_day_averages( array( $original, $translated ) );
+		$actual = $this->get_service()->get_average_days_to_completion_by_course( array( $original, $translated ) );
 
 		/* Assert. */
 		// Both requested IDs share the same four-day original progress.

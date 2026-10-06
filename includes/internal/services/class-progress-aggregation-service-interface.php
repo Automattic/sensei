@@ -143,7 +143,7 @@ interface Progress_Aggregation_Service_Interface {
 	 * @since $$next-version$$
 	 *
 	 * @param int[] $course_ids Course post IDs.
-	 * @param array $args       Optional query filters (see get_course_completion_day_averages()).
+	 * @param array $args       Optional query filters (see get_average_days_to_completion_by_course()).
 	 * @return float Average days to completion.
 	 */
 	public function get_courses_average_days_to_completion( array $course_ids, array $args = array() ): float;
@@ -165,5 +165,5 @@ interface Progress_Aggregation_Service_Interface {
 	 * }
 	 * @return array<int, float> Rounded per-course averages.
 	 */
-	public function get_course_completion_day_averages( array $course_ids, array $args = array() ): array;
+	public function get_average_days_to_completion_by_course( array $course_ids, array $args = array() ): array;
 }

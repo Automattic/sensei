@@ -193,7 +193,7 @@ class Sensei_Reports_Overview_Service_Courses {
 			return array();
 		}
 
-		return $this->get_aggregation_service()->get_course_completion_day_averages(
+		return $this->get_aggregation_service()->get_average_days_to_completion_by_course(
 			$course_ids,
 			array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
 		);

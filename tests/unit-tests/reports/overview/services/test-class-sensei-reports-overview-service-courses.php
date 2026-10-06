@@ -417,7 +417,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Arrange. */
 		$course_ids  = array( 11, 22 );
 		$aggregation = $this->createMock( Progress_Aggregation_Service_Interface::class );
-		$aggregation->expects( self::once() )->method( 'get_course_completion_day_averages' )
+		$aggregation->expects( self::once() )->method( 'get_average_days_to_completion_by_course' )
 			->with( $course_ids, array( 'exclude_user_login_prefixes' => \Sensei\Internal\Services\Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) )
 			->willReturn(
 				array(
@@ -447,7 +447,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	public function testGetAverageDaysToCompletionByCourse_EmptyCourseIdsGiven_ReturnsEmptyArray(): void {
 		/* Arrange. */
 		$aggregation = $this->createMock( Progress_Aggregation_Service_Interface::class );
-		$aggregation->expects( self::never() )->method( 'get_course_completion_day_averages' );
+		$aggregation->expects( self::never() )->method( 'get_average_days_to_completion_by_course' );
 		$service = Sensei_Reports_Overview_Service_Courses::create_with_dependencies(
 			$this->createMock( Grading_Stats_Service_Interface::class ),
 			$aggregation

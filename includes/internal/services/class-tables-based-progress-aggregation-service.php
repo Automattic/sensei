@@ -419,7 +419,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @return float
 	 */
 	public function get_courses_average_days_to_completion( array $course_ids, array $args = array() ): float {
-		$averages = $this->get_course_completion_day_averages( $course_ids, $args );
+		$averages = $this->get_average_days_to_completion_by_course( $course_ids, $args );
 
 		return $averages ? array_sum( $averages ) / count( $averages ) : 0.0;
 	}
@@ -433,7 +433,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 * @param array $args       Optional query filters (see interface).
 	 * @return array<int, float> Rounded per-course averages.
 	 */
-	public function get_course_completion_day_averages( array $course_ids, array $args = array() ): array {
+	public function get_average_days_to_completion_by_course( array $course_ids, array $args = array() ): array {
 		if ( empty( $course_ids ) ) {
 			return array();
 		}
