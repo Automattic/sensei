@@ -799,4 +799,8 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \Progress_Aggrega
 			update_comment_meta( $comment_id, 'start', $started_at );
 		}
 	}
+
+	protected function seed_ungraded_quiz( int $lesson_id, int $quiz_id, int $user_id ): void {
+		$this->seed_progress( $lesson_id, $user_id, 'lesson', 'ungraded' );
+	}
 }

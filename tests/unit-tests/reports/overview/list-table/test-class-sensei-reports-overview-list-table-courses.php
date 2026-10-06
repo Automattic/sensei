@@ -52,6 +52,53 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
+	public function testGenerateReport_CourseWithStudentProgressCreated_ReturnsMatchingRowValues() {
+		/* Arrange. */
+		$course_id     = $this->factory->course->create( array( 'post_title' => 'Exported course' ) );
+		$lesson_ids    = $this->factory->lesson->create_many(
+			2,
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$activity_date = new DateTimeImmutable( '2022-01-01 00:00:00', new DateTimeZone( 'UTC' ) );
+		$user_ids      = $this->factory->user->create_many( 2 );
+
+		foreach ( $user_ids as $user_id ) {
+			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+			$course_progress->start( $activity_date );
+			Sensei()->course_progress_repository->save( $course_progress );
+		}
+
+		$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_ids[0], $user_ids[0] );
+		$lesson_progress->complete( $activity_date );
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
+		$this->set_lesson_progress_activity_date( $lesson_ids[0], $user_ids[0], $activity_date );
+
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
+			Sensei()->grading,
+			Sensei()->course,
+			new Sensei_Reports_Overview_Data_Provider_Courses(),
+			new Sensei_Reports_Overview_Service_Courses(),
+			( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service()
+		);
+
+		/* Act. */
+		$actual = $list_table->generate_report();
+
+		/* Assert. */
+		$expected = array(
+			'title'              => 'Exported course',
+			'last_activity'      => Sensei_Utils::format_last_activity_date( $activity_date->format( 'Y-m-d H:i:s' ) ),
+			'enrolled'           => '2',
+			'completions'        => '0',
+			'completion_rate'    => '0%',
+			// One lesson completion / ( two students * two lessons ) = 25%.
+			'average_progress'   => '25%',
+			'average_percent'    => 'N/A',
+			'days_to_completion' => 'N/A',
+		);
+		self::assertSame( array( $expected ), array_slice( $actual, 1 ) );
+	}
+
 	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
 		$user_id = $this->factory->user->create();
 
@@ -231,6 +278,68 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
+	public function testGetRowData_RegisteredAndTemporaryProgressCreated_ExcludesTemporaryUsersFromRowValues() {
+		/* Arrange. */
+		$course_id           = $this->factory->course->create();
+		$lesson_id           = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$registered_activity = new DateTimeImmutable( '2022-01-01 00:00:00', new DateTimeZone( 'UTC' ) );
+		$temporary_activity  = new DateTimeImmutable( '2022-01-02 00:00:00', new DateTimeZone( 'UTC' ) );
+		$users               = array(
+			'registered_complete' => $this->factory->user->create( array( 'user_login' => 'registered_complete' ) ),
+			'registered_started'  => $this->factory->user->create( array( 'user_login' => 'registered_started' ) ),
+			'guest_complete'      => $this->factory->user->create( array( 'user_login' => 'sensei_guest_complete' ) ),
+			'preview_complete'    => $this->factory->user->create( array( 'user_login' => 'sensei_preview_complete' ) ),
+		);
+
+		foreach ( $users as $user_id ) {
+			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+			$course_progress->start( $registered_activity );
+			Sensei()->course_progress_repository->save( $course_progress );
+		}
+
+		$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $users['registered_complete'] );
+		$lesson_progress->complete( $registered_activity );
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
+		$this->set_lesson_progress_activity_date( $lesson_id, $users['registered_complete'], $registered_activity );
+
+		$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $users['registered_started'] );
+		$lesson_progress->start( $registered_activity );
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
+
+		foreach ( array( 'guest_complete', 'preview_complete' ) as $temporary_user ) {
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $users[ $temporary_user ] );
+			$lesson_progress->complete( $temporary_activity );
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
+			$this->set_lesson_progress_activity_date( $lesson_id, $users[ $temporary_user ], $temporary_activity );
+		}
+
+		$data_provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
+			$this->createMock( Sensei_Grading::class ),
+			Sensei()->course,
+			$data_provider,
+			new Sensei_Reports_Overview_Service_Courses(),
+			( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service()
+		);
+		$method     = new ReflectionMethod( $list_table, 'get_row_data' );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
+
+		/* Act. */
+		$list_table->prepare_items();
+		$item   = $list_table->items[0];
+		$actual = $method->invoke( $list_table, $item );
+
+		/* Assert. */
+		$expected = array(
+			'last_activity'    => Sensei_Utils::format_last_activity_date( $registered_activity->format( 'Y-m-d H:i:s' ) ),
+			'enrolled'         => '2',
+			// One completion / ( two registered students * one lesson ) = 50%.
+			'average_progress' => '50%',
+		);
+		self::assertSame( $expected, array_intersect_key( $actual, $expected ) );
+	}
+
 	public function testSearchButton_WhenCalled_ReturnsMatchingString() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
@@ -246,5 +355,37 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 'Search Courses', $actual );
+	}
+
+	private function set_lesson_progress_activity_date( int $lesson_id, int $user_id, DateTimeInterface $activity_date ): void {
+		global $wpdb;
+
+		if ( self::is_hpps_tables_mode() ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set deterministic fixture data in the backend under test.
+			$wpdb->update(
+				$wpdb->prefix . 'sensei_lms_progress',
+				array( 'updated_at' => $activity_date->format( 'Y-m-d H:i:s' ) ),
+				array(
+					'post_id' => $lesson_id,
+					'user_id' => $user_id,
+					'type'    => 'lesson',
+				)
+			);
+			return;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set deterministic fixture data in the backend under test.
+		$wpdb->update(
+			$wpdb->comments,
+			array(
+				'comment_date'     => $activity_date->format( 'Y-m-d H:i:s' ),
+				'comment_date_gmt' => $activity_date->format( 'Y-m-d H:i:s' ),
+			),
+			array(
+				'comment_post_ID' => $lesson_id,
+				'user_id'         => $user_id,
+				'comment_type'    => 'sensei_lesson_status',
+			)
+		);
 	}
 }
