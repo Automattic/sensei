@@ -172,18 +172,31 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @access public
 	 *
 	 * @param array $course_ids Courses ids to filter by.
-	 * @return float Average days to completion, rounded to the highest integer.
+	 * @return float Average of rounded per-course completion days.
 	 */
 	public function get_average_days_to_completion( array $course_ids ): float {
+		$course_averages = $this->get_average_days_to_completion_by_course( $course_ids );
+
+		return $course_averages ? array_sum( $course_averages ) / count( $course_averages ) : 0.0;
+	}
+
+	/**
+	 * Get rounded completion-day averages grouped by requested course ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course IDs.
+	 * @return array<int, float> Rounded completion days keyed by requested course ID.
+	 */
+	public function get_average_days_to_completion_by_course( array $course_ids ): array {
 		if ( empty( $course_ids ) ) {
-			return 0;
+			return array();
 		}
 
-		return $this->get_aggregation_service()
-			->get_courses_average_days_to_completion(
-				$course_ids,
-				array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
-			);
+		return $this->get_aggregation_service()->get_course_completion_day_averages(
+			$course_ids,
+			array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
+		);
 	}
 
 	/**

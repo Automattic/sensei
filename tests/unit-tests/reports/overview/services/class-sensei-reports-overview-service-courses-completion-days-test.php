@@ -130,6 +130,53 @@ class Sensei_Reports_Overview_Service_Courses_Completion_Days_Test extends WP_Un
 		self::assertSame( 2.0, $actual );
 	}
 
+	public function testGetAverageDaysToCompletionByCourse_CoursesGiven_ReturnsServiceResult(): void {
+		/* Arrange. */
+		$course_ids  = array( 11, 22 );
+		$aggregation = $this->createMock( \Sensei\Internal\Services\Progress_Aggregation_Service_Interface::class );
+		$aggregation->expects( self::once() )->method( 'get_course_completion_day_averages' )
+			->with( $course_ids, array( 'exclude_user_login_prefixes' => \Sensei\Internal\Services\Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) )
+			->willReturn(
+				array(
+					11 => 2.0,
+					22 => 8.0,
+				)
+			);
+		$service = Sensei_Reports_Overview_Service_Courses::create_with_dependencies(
+			$this->createMock( \Sensei\Internal\Services\Grading_Stats_Service_Interface::class ),
+			$aggregation
+		);
+
+		/* Act. */
+		$actual = $service->get_average_days_to_completion_by_course( $course_ids );
+
+		/* Assert. */
+		// Per-course values and requested keys are retained without averaging them.
+		self::assertSame(
+			array(
+				11 => 2.0,
+				22 => 8.0,
+			),
+			$actual
+		);
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_EmptyCourseIdsGiven_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		$aggregation = $this->createMock( \Sensei\Internal\Services\Progress_Aggregation_Service_Interface::class );
+		$aggregation->expects( self::never() )->method( 'get_course_completion_day_averages' );
+		$service = Sensei_Reports_Overview_Service_Courses::create_with_dependencies(
+			$this->createMock( \Sensei\Internal\Services\Grading_Stats_Service_Interface::class ),
+			$aggregation
+		);
+
+		/* Act. */
+		$actual = $service->get_average_days_to_completion_by_course( array() );
+
+		/* Assert. */
+		self::assertSame( array(), $actual );
+	}
+
 	/**
 	 * Seed a completed course status with fixed start/completion dates, using
 	 * whichever storage backend is active for the current test run so that the
