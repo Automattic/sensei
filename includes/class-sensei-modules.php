@@ -781,9 +781,9 @@ class Sensei_Core_Modules {
 			$module = $this->get_lesson_module( $post->ID );
 			if ( $module ) {
 				if ( $this->do_link_to_module( $module ) ) {
-					$html .= ' ' . $separator . ' <a href="' . esc_url( $module->url ) . '" title="' . __( 'Back to the module', 'sensei-lms' ) . '">' . $module->name . '</a>';
+					$html .= ' ' . $separator . ' <a href="' . esc_url( $module->url ) . '" title="' . esc_attr__( 'Back to the module', 'sensei-lms' ) . '">' . esc_html( $module->name ) . '</a>';
 				} else {
-					$html .= ' ' . $separator . ' ' . $module->name;
+					$html .= ' ' . $separator . ' ' . esc_html( $module->name );
 				}
 			}
 		}
