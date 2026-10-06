@@ -1,4 +1,4 @@
 Significance: patch
 Type: changed
 
-Read Courses completion averages from the selected progress backend.
+Read completion-day averages for Days to Completion in the Courses report from the selected progress backend.
