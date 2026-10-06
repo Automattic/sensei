@@ -312,7 +312,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			)
 		);
 		$expected   = array(
-			'title'              => '<strong><a class="row-title" href="' . $course_url . '">Course</a></strong>',
+			'title'              => wp_kses_post( '<strong><a class="row-title" href="' . $course_url . '">Course</a></strong>' ),
 			'last_activity'      => Sensei_Utils::format_last_activity_date( '2022-01-01 00:00:00' ),
 			'enrolled'           => '2',
 			'completions'        => '1',
