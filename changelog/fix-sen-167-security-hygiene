@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Tighten validation in the REST API, private messages and the students list, and escape more frontend output.

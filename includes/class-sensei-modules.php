@@ -791,7 +791,7 @@ class Sensei_Core_Modules {
 		if ( is_tax( $this->taxonomy ) ) {
 			if ( isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
 				$course_id = intval( $_GET['course_id'] );
-				$html     .= '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Back to the course', 'sensei-lms' ) . '">' . get_the_title( $course_id ) . '</a>';
+				$html     .= '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Back to the course', 'sensei-lms' ) . '">' . get_the_title( $course_id ) . '</a>';
 			}
 		}
 		return $html;

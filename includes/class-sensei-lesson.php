@@ -4991,7 +4991,7 @@ class Sensei_Lesson {
 				. esc_url( get_permalink( $lesson_prerequisite ) )
 				. '" title="'
 				// translators: Placeholder is the item title.
-				. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
+				. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), esc_attr( get_the_title( $lesson_prerequisite ) ) )
 				. '">'
 				. get_the_title( $lesson_prerequisite )
 				. '</a>';
