@@ -150,12 +150,14 @@ After publication is authorized, push the branch explicitly, then create the PR:
 
 ```bash
 git push -u origin <branch>
-gh pr create --base trunk --head <branch> --title "<title>" --body-file <body-file>
+gh pr create --base trunk --head <branch> --title "<title>" --body-file <body-file> --assignee "@me"
 ```
 
 Save the filled template body to a temporary file with actual newlines. Using
 `--head` skips `gh`'s implicit pushing or forking prompts. Capture the PR URL it
 prints and its PR number.
+Always assign the PR to the current authenticated GitHub user using
+`--assignee "@me"`.
 Apply any labels you flagged (e.g. `No Changelog`, `Hooks`, `Deprecation`):
 
 ```bash
