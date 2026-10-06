@@ -1,6 +1,40 @@
 # Unit Test Conventions
 
-## 1. Arrange-Act-Assert
+The behavior and scenario-selection principles apply to all Sensei tests. PHP examples, naming conventions, and data-provider instructions apply to the PHPUnit suite.
+
+## 1. Select meaningful scenarios
+
+Before adding or extending a test, read the existing tests for the method or behavior being changed. Identify the requirement or regression the proposed case protects and why existing coverage does not already protect it. If it adds no distinct coverage, omit it.
+
+Choose how to add the coverage:
+
+- Extend a data provider, or convert an existing test to use one, for another scenario of the same behavior that shares its setup, action, and assertion structure.
+- Update an existing test when the requirement it verifies has changed.
+- Add a separate test for a different behavior or substantially different test structure.
+- Preserve coverage for requirements that still apply. Do not replace an existing scenario merely to make room for the new one, or combine independent behaviors into one test.
+
+Choose cases by distinct requirements and regression risks, not by lines of code, coverage percentages, or a fixed number of tests per method or guard clause. Use coverage reports to find potentially missing scenarios, not as proof that behavior is correct.
+
+- **Valid inputs:** cover representative input classes and distinct successful outcomes.
+- **Failures:** cover relevant invalid data, missing required inputs, and insufficient permissions. Assert the required error or rejection, including prevention of side effects where that is part of the requirement.
+- **Boundaries:** test values that distinguish the expected outcomes at a limit. Avoid additional nearby values that exercise the same behavior.
+- **Combinations:** cover interacting conditions when their combination changes the expected behavior.
+
+Keep fixtures limited to the data needed to exercise the scenario, and write expected results explicitly rather than reproducing the production algorithm in the test.
+
+## 2. Test observable behavior
+
+Test Sensei's expected behavior, rather than its internal implementation. A test should identify the scenario and expected behavior, then fail when that behavior is broken.
+
+- Assert observable results: return values, persisted data, or permission enforcement, as appropriate to the requirement.
+- Avoid assertions about local variables, private helpers, internal call order, or a particular algorithm unless the interaction itself is part of the contract. A refactor that preserves behavior should not require rewriting the tests.
+- Do not retest WordPress or third-party APIs themselves. Test Sensei's use of them: for example, the capability assigned to a Sensei menu or the conditions under which Sensei enqueues an asset.
+- Do not invent behavior for unsupported inputs. Only expect a fallback, exception, or rejection when Sensei's contract requires it.
+- For bug fixes that require tests under `AGENTS.md`'s testing rules, first write a regression test that reproduces the bug and fails, then verify that it passes after the fix.
+
+For example, test a formatter's expected output for supported amounts, rather than asserting that it calls a regex or string replacement function.
+
+## 3. Arrange-Act-Assert
 
 Group each test into three sections separated by blank lines:
 
@@ -11,7 +45,7 @@ Group each test into three sections separated by blank lines:
 Allowances:
 
 - Extra blank lines inside Arrange are fine when the setup is long.
-- Mock expectations (`->expects( ... )`) may be set immediately before Act, since there is no way to set them afterwards.
+- Configure mock expectations (`->expects( ... )`) during Arrange.
 
 ```php
 public function testLessonHasQuizWithGradedQuestions_LessonWithNoQuiz_ReturnsFalse() {
@@ -23,14 +57,14 @@ public function testLessonHasQuizWithGradedQuestions_LessonWithNoQuiz_ReturnsFal
 }
 ```
 
-## 2. Naming
+## 4. Naming
 
 ```
 testMethodName_Conditions_Expectation
 ```
 
 - `test` — required prefix.
-- `MethodName` — the method or function under test, in PascalCase. It must be a **real method on the class under test**, not a feature or behaviour name.
+- `MethodName` — the method or function under test, in PascalCase. It must be a **real method or function under test**, not a feature or behaviour name.
 - `Conditions` — the specific input or state being exercised. Verb in past tense.
 - `Expectation` — what the method is expected to return or do. Verb in present tense, third person.
 
@@ -43,12 +77,12 @@ Examples:
 
 Names get long. That is the accepted trade-off: the reader gets the full context (what, under which circumstances, expecting what) without reading the body, and a reviewer can spot an expectation that does not match the assertion.
 
-## 3. One assertion per test
+## 5. One logical behavior per test
 
-A test should fail for exactly one reason. The run stops at the first failed assertion, which obscures what the test was actually for.
+A test should verify one logical behavior. That behavior may require multiple assertions, such as checking that an unauthorized request returns an error and saves no data.
 
-- Prefer splitting into multiple tests over asserting multiple things.
-- When multiple assertions are genuinely unavoidable, pass a message as the third argument so a failure points at the specific check:
+- Split assertions that verify independent behaviors into separate tests.
+- When a test needs multiple assertions to verify one behavior, include a descriptive message with each assertion so failures identify the specific check. The message parameter's position depends on the assertion; it is the third parameter for `assertSame()`:
 
   ```php
   self::assertSame( $expected, $actual, 'Course progress should be updated.' );
@@ -56,4 +90,14 @@ A test should fail for exactly one reason. The run stops at the first failed ass
 
 When splitting, check what each assertion is actually verifying. An assertion that only confirms the fixture was built correctly — `assertEquals( '1', get_post_meta( $lesson_id, '_lesson_preview', true ) )` right after the factory created that lesson — tests the factory, not the class under test. Delete it; do not give it its own test.
 
-Trade-off: more tests and more copy-paste in setup. Accepted — the tests become clearer and fail for one reason.
+## 6. Use data providers for repeated scenarios
+
+Use named PHPUnit datasets when scenarios share the same setup, action, and assertion structure, and only the inputs and expected results vary.
+
+- Name datasets so a failure identifies the scenario, such as `zero amount` or `amount at threshold`.
+- Keep the test method free of conditional logic that selects different actions or assertion structures for different datasets.
+- Keep each dataset focused on one logical behavior and follow the assertion convention above.
+
+## 7. Keep tests repeatable and isolated
+
+Use fixed dates and controlled inputs where possible. Restore any globals, options, filters, or other shared state changed by the test, using the suite's cleanup mechanisms.
