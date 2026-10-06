@@ -279,4 +279,28 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		// Assert
 		$this->assertEquals( get_option( Sensei_Home_Task_Publish_First_Course::PUBLISHED_FIRST_COURSE_OPTION_KEY, false ), 1 );
 	}
+
+	public function testHandleSettingsSectionVisited_SubscriberWithNonceGiven_DoesNotUpdateTheStatuses() {
+		/* Arrange. */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'subscriber' ) ) );
+		$_POST['nonce'] = wp_create_nonce( 'sensei-mark-settings-section-visited' );
+
+		/* Act. */
+		$this->provider->handle_settings_section_visited();
+
+		/* Assert. */
+		$this->assertFalse( get_option( Sensei_Home_Tasks_Provider::CALYPSO_LAUNCHPAD_STATUSES_NAME ) );
+	}
+
+	public function testHandleSettingsSectionVisited_AdministratorWithNonceGiven_UpdatesTheStatuses() {
+		/* Arrange. */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$_POST['nonce'] = wp_create_nonce( 'sensei-mark-settings-section-visited' );
+
+		/* Act. */
+		$this->provider->handle_settings_section_visited();
+
+		/* Assert. */
+		$this->assertArrayHasKey( 'configure_learning_mode', get_option( Sensei_Home_Tasks_Provider::CALYPSO_LAUNCHPAD_STATUSES_NAME ) );
+	}
 }

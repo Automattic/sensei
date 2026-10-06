@@ -92,7 +92,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'install_extension' ],
-					'permission_callback' => [ $this, 'can_user_manage_plugins' ],
+					'permission_callback' => array( $this, 'can_user_install_plugins' ),
 					'args'                => [
 						'plugin' => [
 							'type'              => 'string',
@@ -166,6 +166,33 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'rest_cannot_view_plugins',
 				__( 'Sorry, you are not allowed to manage plugins for this site.', 'sensei-lms' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check user permission for installing plugins.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_REST_Request $request WordPress request object.
+	 *
+	 * @return bool|WP_Error Whether the user can install extensions.
+	 */
+	public function can_user_install_plugins( WP_REST_Request $request ) {
+		$can_manage_plugins = $this->can_user_manage_plugins( $request );
+
+		if ( is_wp_error( $can_manage_plugins ) ) {
+			return $can_manage_plugins;
+		}
+
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return new WP_Error(
+				'rest_cannot_install_plugins',
+				__( 'Sorry, you are not allowed to install plugins for this site.', 'sensei-lms' ),
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
