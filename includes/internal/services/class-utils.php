@@ -90,6 +90,29 @@ class Utils {
 	}
 
 	/**
+	 * Re-key stored progress results using the requested post IDs.
+	 *
+	 * Requested IDs without a stored result are omitted. Result values are preserved.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @template T
+	 * @param array<int, T>   $results     Results keyed by stored progress ID.
+	 * @param array<int, int> $post_id_map Requested ID => stored progress ID.
+	 * @return array<int, T> Results keyed by requested post ID.
+	 */
+	public static function map_results_to_requested_post_ids( array $results, array $post_id_map ): array {
+		$requested_results = array();
+		foreach ( $post_id_map as $requested_id => $stored_id ) {
+			if ( isset( $results[ $stored_id ] ) ) {
+				$requested_results[ $requested_id ] = $results[ $stored_id ];
+			}
+		}
+
+		return $requested_results;
+	}
+
+	/**
 	 * Get the Grading post statuses as a quoted list for a `post_status IN ( ... )` SQL clause.
 	 *
 	 * @since 4.26.4

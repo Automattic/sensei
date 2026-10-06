@@ -169,15 +169,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			return $counts;
 		}
 
-		// Reports need results keyed by the requested IDs, including translations.
-		$requested_counts = array();
-		foreach ( $post_id_map as $requested_id => $stored_id ) {
-			if ( isset( $counts[ $stored_id ] ) ) {
-				$requested_counts[ $requested_id ] = $counts[ $stored_id ];
-			}
-		}
-
-		return $requested_counts;
+		return Utils::map_results_to_requested_post_ids( $counts, $post_id_map );
 	}
 
 	/**
@@ -405,15 +397,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			$counts[ (int) $row['lesson_id'] ] = (int) $row['completion_count'];
 		}
 
-		// Reports need results keyed by the requested IDs, including translations.
-		$requested_counts = array();
-		foreach ( $post_id_map as $requested_id => $stored_id ) {
-			if ( isset( $counts[ $stored_id ] ) ) {
-				$requested_counts[ $requested_id ] = $counts[ $stored_id ];
-			}
-		}
-
-		return $requested_counts;
+		return Utils::map_results_to_requested_post_ids( $counts, $post_id_map );
 	}
 
 	/**

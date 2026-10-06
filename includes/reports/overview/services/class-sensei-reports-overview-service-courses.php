@@ -284,15 +284,7 @@ class Sensei_Reports_Overview_Service_Courses {
 
 		$results = $wpdb->get_results( $query, 'OBJECT_K' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Safe direct SQL; course IDs are integers from the progress-ID map.
 
-		// Keep the requested course IDs as keys for the report calculations.
-		$requested_results = array();
-		foreach ( $course_id_map as $requested_id => $stored_id ) {
-			if ( isset( $results[ $stored_id ] ) ) {
-				$requested_results[ $requested_id ] = $results[ $stored_id ];
-			}
-		}
-
-		return $requested_results;
+		return Utils::map_results_to_requested_post_ids( $results, $course_id_map );
 	}
 
 	/**
