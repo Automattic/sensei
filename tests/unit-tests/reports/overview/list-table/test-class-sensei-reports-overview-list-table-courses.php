@@ -52,6 +52,53 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
+	public function testGenerateReport_CourseWithStudentProgressCreated_ReturnsMatchingRowValues() {
+		/* Arrange. */
+		$course_id     = $this->factory->course->create( array( 'post_title' => 'Exported course' ) );
+		$lesson_ids    = $this->factory->lesson->create_many(
+			2,
+			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+		);
+		$activity_date = new DateTimeImmutable( '2022-01-01 00:00:00', new DateTimeZone( 'UTC' ) );
+		$user_ids      = $this->factory->user->create_many( 2 );
+
+		foreach ( $user_ids as $user_id ) {
+			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+			$course_progress->start( $activity_date );
+			Sensei()->course_progress_repository->save( $course_progress );
+		}
+
+		$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_ids[0], $user_ids[0] );
+		$lesson_progress->complete( $activity_date );
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
+		$this->set_lesson_progress_activity_date( $lesson_ids[0], $user_ids[0], $activity_date );
+
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
+			Sensei()->grading,
+			Sensei()->course,
+			new Sensei_Reports_Overview_Data_Provider_Courses(),
+			new Sensei_Reports_Overview_Service_Courses(),
+			( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service()
+		);
+
+		/* Act. */
+		$actual = $list_table->generate_report();
+
+		/* Assert. */
+		$expected = array(
+			'title'              => 'Exported course',
+			'last_activity'      => Sensei_Utils::format_last_activity_date( $activity_date->format( 'Y-m-d H:i:s' ) ),
+			'enrolled'           => '2',
+			'completions'        => '0',
+			'completion_rate'    => '0%',
+			// One lesson completion / ( two students * two lessons ) = 25%.
+			'average_progress'   => '25%',
+			'average_percent'    => 'N/A',
+			'days_to_completion' => 'N/A',
+		);
+		self::assertSame( array( $expected ), array_slice( $actual, 1 ) );
+	}
+
 	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
 		$user_id = $this->factory->user->create();
 
