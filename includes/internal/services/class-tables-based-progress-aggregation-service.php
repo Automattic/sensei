@@ -24,6 +24,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_Service_Interface {
 
 	/**
+	 * Maximum progress records read per completion-day calculation batch.
+	 *
+	 * @since $$next-version$$
+	 * @var int
+	 */
+	private const COMPLETION_DAYS_BATCH_SIZE = 5000;
+
+	/**
 	 * WordPress database object.
 	 *
 	 * @var \wpdb
@@ -399,6 +407,101 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		}
 
 		return Utils::map_results_to_requested_post_ids( $counts, $post_id_map );
+	}
+
+	/**
+	 * Get rounded completion-day averages keyed by requested course ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @param array $args       Optional query filters (see interface).
+	 * @return array<int, float> Rounded per-course averages.
+	 */
+	public function get_average_days_to_completion_by_course( array $course_ids, array $args = array() ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
+
+		// Query shared progress once, then restore each requested course and its weight.
+		$post_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
+		$course_ids  = array_values( array_unique( $post_id_map ) );
+
+		$wpdb         = $this->wpdb;
+		$table        = $this->get_progress_table_name();
+		$statuses     = Utils::get_reports_post_status_sql();
+		$exclusion    = $this->build_user_exclusion_clause( $args );
+		$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
+
+		// Use the timezone offset at each event date, since daylight saving can change the local day.
+		// PHP knows these timezone rules even when MySQL timezone tables are unavailable.
+		$timezone        = wp_timezone();
+		$utc             = new \DateTimeZone( 'UTC' );
+		$start_counts    = array();
+		$completion_days = array();
+		$last_id         = 0;
+
+		do {
+			// Limit each batch to keep memory use bounded.
+			// Missing starts may be NULL or migrated zero dates; neither counts toward the average.
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Dynamic course placeholders plus cursor and batch size. Table name from wpdb prefix. Placeholders created dynamically.
+			$query = $wpdb->prepare(
+				"SELECT p.id, p.post_id, p.started_at, p.completed_at
+				FROM {$table} p
+				INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( $statuses )
+				WHERE p.type = 'course'
+					AND p.status = 'complete'
+					AND p.post_id IN ( $placeholders )
+					AND p.started_at > '0000-00-00 00:00:00'
+					AND p.id > %d
+				$exclusion
+				ORDER BY p.id
+				LIMIT %d",
+				array_merge( $course_ids, array( $last_id, self::COMPLETION_DAYS_BATCH_SIZE ) )
+			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+			$results = (array) $wpdb->get_results( $query, ARRAY_A );
+			Utils::log_query_error( $wpdb, 'Tables-based courses average days to completion' );
+			/**
+			 * Each batch query can change last_error after the previous iteration.
+			 *
+			 * @psalm-suppress DocblockTypeContradiction -- Psalm retains the previous iteration's narrowing.
+			 */
+			if ( ! empty( $wpdb->last_error ) ) {
+				return array();
+			}
+
+			$batch_count = count( $results );
+			foreach ( $results as $row ) {
+				$course_id = (int) $row['post_id'];
+				$last_id   = (int) $row['id'];
+
+				// A valid start counts toward the average even without a completion date.
+				$start_counts[ $course_id ] = ( $start_counts[ $course_id ] ?? 0 ) + 1;
+				if ( empty( $row['completed_at'] ) || '0000-00-00 00:00:00' === $row['completed_at'] ) {
+					continue;
+				}
+
+				// Count local calendar days, including both the start and completion day.
+				$started_at   = ( new \DateTimeImmutable( $row['started_at'], $utc ) )->setTimezone( $timezone )->setTime( 0, 0 );
+				$completed_at = ( new \DateTimeImmutable( $row['completed_at'], $utc ) )->setTimezone( $timezone )->setTime( 0, 0 );
+
+				$days = (int) $started_at->diff( $completed_at )->days + 1;
+
+				// Accumulate each course across all batches before rounding its average.
+				$completion_days[ $course_id ] = ( $completion_days[ $course_id ] ?? 0 ) + $days;
+			}
+		} while ( self::COMPLETION_DAYS_BATCH_SIZE === $batch_count );
+
+		// Restore requested IDs before averaging so translations retain their course weight.
+		$averages = array();
+		foreach ( $completion_days as $course_id => $days ) {
+			$averages[ $course_id ] = ceil( $days / $start_counts[ $course_id ] );
+		}
+
+		return Utils::map_results_to_requested_post_ids( $averages, $post_id_map );
 	}
 
 	/**

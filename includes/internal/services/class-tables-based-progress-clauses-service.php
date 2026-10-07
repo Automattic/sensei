@@ -117,12 +117,13 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		$progress_table = $this->get_progress_table_name();
 		$utc_offset     = Utils::get_utc_offset_string();
 
-		$clauses['fields']  .= ", SUM( ABS( DATEDIFF( CONVERT_TZ( cp.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( cp.started_at, '+00:00', '$utc_offset' ) ) ) + 1 ) AS days_to_completion";
-		$clauses['fields']  .= ', COUNT(cp.id) AS count_of_completions';
-		$clauses['join']    .= " LEFT JOIN {$progress_table} cp ON cp.post_id = {$this->wpdb->posts}.ID";
-		$clauses['join']    .= " AND cp.type = 'course'";
+		$clauses['fields']  .= ", SUM( ABS( DATEDIFF( CONVERT_TZ( p.completed_at, '+00:00', '$utc_offset' ), CONVERT_TZ( p.started_at, '+00:00', '$utc_offset' ) ) ) + 1 ) AS days_to_completion";
+		$clauses['fields']  .= ', COUNT(p.id) AS count_of_completions';
+		$clauses['join']    .= " LEFT JOIN {$progress_table} p ON p.post_id = {$this->wpdb->posts}.ID";
+		$clauses['join']    .= " AND p.type = 'course'";
 		$complete            = Course_Progress_Interface::STATUS_COMPLETE;
-		$clauses['join']    .= " AND cp.status = '{$complete}'";
+		$clauses['join']    .= " AND p.status = '{$complete}'";
+		$clauses['join']    .= Utils::build_user_exclusion_clause( $this->wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 		$clauses['groupby'] .= " {$this->wpdb->posts}.ID";
 
 		return $clauses;

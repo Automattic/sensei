@@ -1131,6 +1131,42 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \Progress_Aggregati
 		$this->assertSame( 2, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'no_match_' ) ) ), 'Non-matching prefix should leave both users counted.' );
 	}
 
+	public function testGetAverageDaysToCompletionByCourse_MissingCompletionDateGiven_KeepsStartInDenominator(): void {
+		/* Arrange. */
+		$course_id  = $this->sensei_factory->course->create();
+		$user_id    = $this->sensei_factory->user->create();
+		$other_user = $this->sensei_factory->user->create();
+		$this->seed_progress( $course_id, $user_id, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-04 00:00:00' );
+		$this->seed_progress( $course_id, $other_user, 'course', 'complete', '2022-01-01 00:00:00', null );
+		$service = $this->get_service();
+
+		/* Act. */
+		$actual = $service->get_average_days_to_completion_by_course( array( $course_id ) );
+
+		/* Assert. */
+		// Four inclusive days / two starts = two days; a missing completion adds no days.
+		self::assertSame( array( $course_id => 2.0 ), $actual );
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_MigratedMissingStartDateGiven_ExcludesItFromDenominator(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$course_id  = $this->sensei_factory->course->create();
+		$user_id    = $this->sensei_factory->user->create();
+		$other_user = $this->sensei_factory->user->create();
+		$this->insert_progress_with_dates( $course_id, $user_id, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-04 00:00:00' );
+		// The existing migration writes 0 when start metadata is absent.
+		$this->insert_progress_with_dates( $course_id, $other_user, 'course', 'complete', '0000-00-00 00:00:00', '2022-01-04 00:00:00' );
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_average_days_to_completion_by_course( array( $course_id ) );
+
+		/* Assert. */
+		$this->assertSame( array( $course_id => 4.0 ), $result );
+	}
+
 	protected function get_service(): Progress_Aggregation_Service_Interface {
 		global $wpdb;
 		return new Tables_Based_Progress_Aggregation_Service( $wpdb );

@@ -172,32 +172,32 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @access public
 	 *
 	 * @param array $course_ids Courses ids to filter by.
-	 * @return float Average days to completion, rounded to the highest integer.
+	 * @return float Average of rounded per-course completion days.
 	 */
 	public function get_average_days_to_completion( array $course_ids ): float {
-		if ( empty( $course_ids ) ) {
-			return 0;
-		}
-		global $wpdb;
+		$course_averages = $this->get_average_days_to_completion_by_course( $course_ids );
 
-		$query = "
-		SELECT AVG( aggregated.days_to_completion )
-		FROM (
-			SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
-			FROM {$wpdb->comments}
-			LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
-				AND {$wpdb->commentmeta}.meta_key = 'start'
-			WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
-				AND {$wpdb->comments}.comment_approved = 'complete'
-				AND {$wpdb->comments}.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		. " GROUP BY {$wpdb->comments}.comment_post_ID
-		) AS aggregated
-		";
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		return (float) $wpdb->get_var( $query );
+		return $course_averages ? array_sum( $course_averages ) / count( $course_averages ) : 0.0;
 	}
 
+	/**
+	 * Get rounded completion-day averages grouped by requested course ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course IDs.
+	 * @return array<int, float> Rounded completion days keyed by requested course ID.
+	 */
+	public function get_average_days_to_completion_by_course( array $course_ids ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
+
+		return $this->get_aggregation_service()->get_average_days_to_completion_by_course(
+			$course_ids,
+			array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
+		);
+	}
 
 	/**
 	 * Get total of enrollments

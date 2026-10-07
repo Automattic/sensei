@@ -136,4 +136,23 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return array<int, int> Map of lesson_id => completion count.
 	 */
 	public function get_lesson_completion_counts( array $lesson_ids, array $args = array() ): array;
+
+	/**
+	 * Get rounded completion-day averages keyed by requested course ID.
+	 *
+	 * A course is omitted unless at least one completed record has both a valid
+	 * start and completion date. Completed records with a valid start but no
+	 * completion date add zero days while still counting in that course's average.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @param array $args {
+	 *     Optional query filters.
+	 *
+	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
+	 * }
+	 * @return array<int, float> Rounded per-course averages.
+	 */
+	public function get_average_days_to_completion_by_course( array $course_ids, array $args = array() ): array;
 }

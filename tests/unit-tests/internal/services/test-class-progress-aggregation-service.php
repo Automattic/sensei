@@ -16,12 +16,26 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 	 */
 	protected $sensei_factory;
 
+	/**
+	 * Original timezone options restored after date-sensitive tests.
+	 *
+	 * @var array
+	 */
+	private $timezone_options;
+
 	public function setUp(): void {
 		parent::setUp();
-		$this->sensei_factory = new \Sensei_Factory();
+		$this->sensei_factory   = new \Sensei_Factory();
+		$this->timezone_options = array(
+			'timezone_string' => get_option( 'timezone_string' ),
+			'gmt_offset'      => get_option( 'gmt_offset' ),
+		);
 	}
 
 	public function tearDown(): void {
+		foreach ( $this->timezone_options as $option => $value ) {
+			update_option( $option, $value );
+		}
 		$this->sensei_factory->tearDown();
 		parent::tearDown();
 	}
@@ -227,6 +241,191 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( array(), $actual );
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_MissingStartDateGiven_ExcludesItFromDenominator(): void {
+		/* Arrange. */
+		$course     = $this->sensei_factory->course->create();
+		$user_id    = $this->sensei_factory->user->create();
+		$other_user = $this->sensei_factory->user->create();
+		$this->seed_progress( $course, $user_id, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-04 00:00:00' );
+		$this->seed_progress( $course, $other_user, 'course', 'complete', null, '2022-01-04 00:00:00' );
+		$service = $this->get_service();
+
+		/* Act. */
+		$actual = $service->get_average_days_to_completion_by_course( array( $course ) );
+
+		/* Assert. */
+		self::assertSame( array( $course => 4.0 ), $actual );
+	}
+
+	/**
+	 * Completion days use each event's local calendar date.
+	 *
+	 * @dataProvider completion_days_timezone_cases
+	 */
+	public function testGetAverageDaysToCompletionByCourse_LocalDatesGiven_UsesLocalCalendarDays( string $timezone, int $offset, string $start, string $end, float $expected ): void {
+		/* Arrange. */
+		update_option( 'timezone_string', $timezone );
+		update_option( 'gmt_offset', $offset );
+		$course  = $this->sensei_factory->course->create();
+		$user_id = $this->sensei_factory->user->create();
+		$this->seed_progress( $course, $user_id, 'course', 'complete', $start, $end );
+
+		/* Act. */
+		$actual = $this->get_service()->get_average_days_to_completion_by_course( array( $course ) );
+
+		/* Assert. */
+		self::assertSame( array( $course => $expected ), $actual );
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_MultipleCoursesGiven_ReturnsRoundedCourseAverages(): void {
+		/* Arrange. */
+		$user1      = $this->sensei_factory->user->create();
+		$user2      = $this->sensei_factory->user->create();
+		$user3      = $this->sensei_factory->user->create();
+		$user4      = $this->sensei_factory->user->create();
+		$course_id1 = $this->sensei_factory->course->create();
+		$course_id2 = $this->sensei_factory->course->create();
+		$this->seed_progress( $course_id1, $user1, 'course', 'complete', '2022-03-11 23:27:51', '2022-03-11 23:29:06' );
+		$this->seed_progress( $course_id1, $user2, 'course', 'complete', '2022-03-11 23:27:51', '2022-03-11 23:29:06' );
+		$this->seed_progress( $course_id1, $user3, 'course', 'complete', '2022-03-11 23:27:51', '2022-03-11 23:29:06' );
+		$this->seed_progress( $course_id1, $user4, 'course', 'complete', '2022-03-09 00:22:34', '2022-03-12 00:22:37' );
+		$this->seed_progress( $course_id2, $user1, 'course', 'complete', '2022-03-09 00:22:34', '2022-03-12 00:22:37' );
+		$service = $this->get_service();
+
+		/* Act. */
+		$actual = $service->get_average_days_to_completion_by_course( array( $course_id1, $course_id2 ) );
+
+		/* Assert. */
+		// Course 1: ceil((1 + 1 + 1 + 4) / 4) = 2. Course 2: 4.
+		self::assertSame(
+			array(
+				$course_id1 => 2.0,
+				$course_id2 => 4.0,
+			),
+			$actual
+		);
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_EmptyCourseIdsGiven_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		$course_id = $this->sensei_factory->course->create();
+		$user_id   = $this->sensei_factory->user->create();
+		$this->seed_progress( $course_id, $user_id, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-04 00:00:00' );
+		$service = $this->get_service();
+
+		/* Act. */
+		$actual = $service->get_average_days_to_completion_by_course( array() );
+
+		/* Assert. */
+		self::assertSame( array(), $actual );
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_TemporaryUsersGiven_RetainsRegisteredCompletionDays(): void {
+		/* Arrange. */
+		$course = $this->sensei_factory->course->create();
+		foreach ( array(
+			'registered_student'     => 4,
+			'sensei_guest_student'   => 20,
+			'sensei_preview_student' => 30,
+		) as $login => $days ) {
+			$user_id = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
+			$this->seed_progress( $course, $user_id, 'course', 'complete', '2022-01-01 00:00:00', sprintf( '2022-01-%02d 00:00:00', $days ) );
+		}
+
+		/* Act. */
+		$actual = $this->get_service()->get_average_days_to_completion_by_course(
+			array( $course ),
+			array( 'exclude_user_login_prefixes' => \Sensei\Internal\Services\Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
+		);
+
+		/* Assert. */
+		// Only the registered student's four inclusive calendar days contribute.
+		self::assertSame( array( $course => 4.0 ), $actual );
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_MixedPostStatusesGiven_IncludesPublishedAndPrivateCourses(): void {
+		/* Arrange. */
+		$courses = array();
+		$user    = $this->sensei_factory->user->create();
+		foreach ( array(
+			'publish' => 2,
+			'private' => 4,
+			'draft'   => 20,
+			'trash'   => 20,
+			'future'  => 20,
+		) as $status => $days ) {
+			$course    = $this->sensei_factory->course->create(
+				array(
+					'post_status' => $status,
+					'post_date'   => 'future' === $status ? '2036-01-01 00:00:00' : '2022-01-01 00:00:00',
+				)
+			);
+			$courses[] = $course;
+			$this->seed_progress( $course, $user, 'course', 'complete', '2022-01-01 00:00:00', sprintf( '2022-01-%02d 00:00:00', $days ) );
+		}
+
+		/* Act. */
+		$actual = $this->get_service()->get_average_days_to_completion_by_course( $courses );
+
+		/* Assert. */
+		// Only the published and private courses contribute their two- and four-day averages.
+		self::assertSame(
+			array(
+				$courses[0] => 2.0,
+				$courses[1] => 4.0,
+			),
+			$actual
+		);
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_StartedCourseAndCourseWithoutProgressGiven_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		$started_course = $this->sensei_factory->course->create();
+		$empty_course   = $this->sensei_factory->course->create();
+		$user           = $this->sensei_factory->user->create();
+		$this->seed_progress( $started_course, $user, 'course', 'in-progress' );
+
+		/* Act. */
+		$actual = $this->get_service()->get_average_days_to_completion_by_course( array( $started_course, $empty_course ) );
+
+		/* Assert. */
+		// Neither course has a qualifying completion, so neither appears in the result.
+		self::assertSame( array(), $actual );
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_TranslatedCourseGiven_ReturnsRequestedKeys(): void {
+		/* Arrange. */
+		$original   = $this->sensei_factory->course->create();
+		$translated = $this->sensei_factory->course->create();
+		$user       = $this->sensei_factory->user->create();
+		$this->seed_progress( $original, $user, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-04 00:00:00' );
+		$this->add_progress_id_filter( array( $translated => $original ) );
+
+		/* Act. */
+		$actual = $this->get_service()->get_average_days_to_completion_by_course( array( $original, $translated ) );
+
+		/* Assert. */
+		// Both requested IDs share the same four-day original progress.
+		self::assertSame(
+			array(
+				$original   => 4.0,
+				$translated => 4.0,
+			),
+			$actual
+		);
+	}
+
+	public static function completion_days_timezone_cases(): array {
+		return array(
+			// Winter events cross midnight using their historical offset, despite the summer setting.
+			'historical offset' => array( 'America/New_York', -4, '2024-01-01 23:30:00', '2024-01-02 00:30:00', 2.0 ),
+			// Two local calendar dates span a 23-hour daylight-saving interval.
+			'daylight saving'   => array( 'America/New_York', -4, '2024-03-09 23:30:00', '2024-03-10 23:30:00', 2.0 ),
+			// Both events stay on the same local date with a fixed UTC offset.
+			'fixed offset'      => array( '', -5, '2024-01-01 00:00:00', '2024-01-01 23:00:00', 1.0 ),
+		);
 	}
 
 	/**

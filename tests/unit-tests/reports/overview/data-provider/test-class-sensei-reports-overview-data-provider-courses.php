@@ -196,17 +196,51 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		);
 
 		/* Assert. */
-		// Per-course Days to Completion and Completions still count temporary users. A follow-up change will exclude them.
+		// Temporary-only progress contributes no completion days; the course remains in the report.
 		$expected = array(
 			array(
 				'id'                   => $course_id,
 				'last_activity_date'   => null,
-				'days_to_completion'   => '2',
-				'count_of_completions' => '2',
+				'days_to_completion'   => null,
+				'count_of_completions' => '0',
 			),
 		);
 
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
+	}
+
+	public function testGetItems_TemporaryCompletionsGiven_SortsByEligibleCompletionCount(): void {
+		/* Arrange. */
+		$this->maybe_enable_hpps_tables_repository();
+		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
+		$registered_course             = $this->factory->course->create();
+		$temporary_course              = $this->factory->course->create();
+		foreach ( array(
+			'registered_student'     => $registered_course,
+			'sensei_guest_student'   => $temporary_course,
+			'sensei_preview_student' => $temporary_course,
+		) as $login => $course_id ) {
+			$user_id  = $this->factory->user->create( array( 'user_login' => $login ) );
+			$progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
+			$progress->start( current_datetime() );
+			$progress->complete( current_datetime() );
+			Sensei()->course_progress_repository->save( $progress );
+		}
+		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+
+		/* Act. */
+		$actual = $provider->get_items(
+			array(
+				'number'  => 10,
+				'offset'  => 0,
+				'orderby' => 'count_of_completions',
+				'order'   => 'DESC',
+			)
+		);
+
+		/* Assert. */
+		// One registered completion sorts ahead of two excluded temporary completions.
+		self::assertSame( array( $registered_course, $temporary_course ), wp_list_pluck( $actual, 'ID' ) );
 	}
 
 	private function exportCourses( array $courses ): array {
