@@ -354,21 +354,6 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	}
 
 	/**
-	 * Average days-to-completion across the given courses (AVG of per-course averages).
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param int[] $course_ids Course post IDs.
-	 * @param array $args       Optional query filters (see interface).
-	 * @return float
-	 */
-	public function get_courses_average_days_to_completion( array $course_ids, array $args = array() ): float {
-		$averages = $this->get_average_days_to_completion_by_course( $course_ids, $args );
-
-		return $averages ? array_sum( $averages ) / count( $averages ) : 0.0;
-	}
-
-	/**
 	 * Get rounded completion-day averages keyed by requested course ID.
 	 *
 	 * @since $$next-version$$

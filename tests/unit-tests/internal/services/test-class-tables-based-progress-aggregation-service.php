@@ -1131,7 +1131,7 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \Progress_Aggregati
 		$this->assertSame( 2, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'no_match_' ) ) ), 'Non-matching prefix should leave both users counted.' );
 	}
 
-	public function testGetCoursesAverageDaysToCompletion_MissingCompletionDateGiven_KeepsStartInDenominator(): void {
+	public function testGetAverageDaysToCompletionByCourse_MissingCompletionDateGiven_KeepsStartInDenominator(): void {
 		/* Arrange. */
 		$course_id  = $this->sensei_factory->course->create();
 		$user_id    = $this->sensei_factory->user->create();
@@ -1141,14 +1141,14 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \Progress_Aggregati
 		$service = $this->get_service();
 
 		/* Act. */
-		$actual = $service->get_courses_average_days_to_completion( array( $course_id ) );
+		$actual = $service->get_average_days_to_completion_by_course( array( $course_id ) );
 
 		/* Assert. */
 		// Four inclusive days / two starts = two days; a missing completion adds no days.
-		self::assertSame( 2.0, $actual );
+		self::assertSame( array( $course_id => 2.0 ), $actual );
 	}
 
-	public function testGetCoursesAverageDaysToCompletion_MigratedMissingStartDateGiven_ExcludesItFromDenominator(): void {
+	public function testGetAverageDaysToCompletionByCourse_MigratedMissingStartDateGiven_ExcludesItFromDenominator(): void {
 		/* Arrange. */
 		global $wpdb;
 
@@ -1161,10 +1161,10 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \Progress_Aggregati
 		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
 
 		/* Act. */
-		$result = $service->get_courses_average_days_to_completion( array( $course_id ) );
+		$result = $service->get_average_days_to_completion_by_course( array( $course_id ) );
 
 		/* Assert. */
-		$this->assertSame( 4.0, $result );
+		$this->assertSame( array( $course_id => 4.0 ), $result );
 	}
 
 	protected function get_service(): Progress_Aggregation_Service_Interface {

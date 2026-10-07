@@ -243,7 +243,7 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		self::assertSame( array(), $actual );
 	}
 
-	public function testGetCoursesAverageDaysToCompletion_MissingStartDateGiven_ExcludesItFromDenominator(): void {
+	public function testGetAverageDaysToCompletionByCourse_MissingStartDateGiven_ExcludesItFromDenominator(): void {
 		/* Arrange. */
 		$course     = $this->sensei_factory->course->create();
 		$user_id    = $this->sensei_factory->user->create();
@@ -253,10 +253,10 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$service = $this->get_service();
 
 		/* Act. */
-		$actual = $service->get_courses_average_days_to_completion( array( $course ) );
+		$actual = $service->get_average_days_to_completion_by_course( array( $course ) );
 
 		/* Assert. */
-		self::assertSame( 4.0, $actual );
+		self::assertSame( array( $course => 4.0 ), $actual );
 	}
 
 	/**
@@ -264,7 +264,7 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider completion_days_timezone_cases
 	 */
-	public function testGetCoursesAverageDaysToCompletion_LocalDatesGiven_UsesLocalCalendarDays( string $timezone, int $offset, string $start, string $end, float $expected ): void {
+	public function testGetAverageDaysToCompletionByCourse_LocalDatesGiven_UsesLocalCalendarDays( string $timezone, int $offset, string $start, string $end, float $expected ): void {
 		/* Arrange. */
 		update_option( 'timezone_string', $timezone );
 		update_option( 'gmt_offset', $offset );
@@ -273,13 +273,13 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->seed_progress( $course, $user_id, 'course', 'complete', $start, $end );
 
 		/* Act. */
-		$actual = $this->get_service()->get_courses_average_days_to_completion( array( $course ) );
+		$actual = $this->get_service()->get_average_days_to_completion_by_course( array( $course ) );
 
 		/* Assert. */
-		self::assertSame( $expected, $actual );
+		self::assertSame( array( $course => $expected ), $actual );
 	}
 
-	public function testGetCoursesAverageDaysToCompletion_MultipleCoursesGiven_ReturnsAverageOfRoundedCourseAverages(): void {
+	public function testGetAverageDaysToCompletionByCourse_MultipleCoursesGiven_ReturnsRoundedCourseAverages(): void {
 		/* Arrange. */
 		$user1      = $this->sensei_factory->user->create();
 		$user2      = $this->sensei_factory->user->create();
@@ -295,14 +295,20 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$service = $this->get_service();
 
 		/* Act. */
-		$actual = $service->get_courses_average_days_to_completion( array( $course_id1, $course_id2 ) );
+		$actual = $service->get_average_days_to_completion_by_course( array( $course_id1, $course_id2 ) );
 
 		/* Assert. */
-		// Course 1: ceil((1 + 1 + 1 + 4) / 4) = 2. Course 2: 4. Average: 3.
-		self::assertSame( 3.0, $actual );
+		// Course 1: ceil((1 + 1 + 1 + 4) / 4) = 2. Course 2: 4.
+		self::assertSame(
+			array(
+				$course_id1 => 2.0,
+				$course_id2 => 4.0,
+			),
+			$actual
+		);
 	}
 
-	public function testGetCoursesAverageDaysToCompletion_EmptyCourseIdsGiven_ReturnsZero(): void {
+	public function testGetAverageDaysToCompletionByCourse_EmptyCourseIdsGiven_ReturnsEmptyArray(): void {
 		/* Arrange. */
 		$course_id = $this->sensei_factory->course->create();
 		$user_id   = $this->sensei_factory->user->create();
@@ -310,13 +316,13 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$service = $this->get_service();
 
 		/* Act. */
-		$actual = $service->get_courses_average_days_to_completion( array() );
+		$actual = $service->get_average_days_to_completion_by_course( array() );
 
 		/* Assert. */
-		self::assertSame( 0.0, $actual );
+		self::assertSame( array(), $actual );
 	}
 
-	public function testGetCoursesAverageDaysToCompletion_TemporaryUsersGiven_RetainsRegisteredCompletionDays(): void {
+	public function testGetAverageDaysToCompletionByCourse_TemporaryUsersGiven_RetainsRegisteredCompletionDays(): void {
 		/* Arrange. */
 		$course = $this->sensei_factory->course->create();
 		foreach ( array(
@@ -329,35 +335,17 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		}
 
 		/* Act. */
-		$actual = $this->get_service()->get_courses_average_days_to_completion(
+		$actual = $this->get_service()->get_average_days_to_completion_by_course(
 			array( $course ),
 			array( 'exclude_user_login_prefixes' => \Sensei\Internal\Services\Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
 		);
 
 		/* Assert. */
 		// Only the registered student's four inclusive calendar days contribute.
-		self::assertSame( 4.0, $actual );
+		self::assertSame( array( $course => 4.0 ), $actual );
 	}
 
-	public function testGetCoursesAverageDaysToCompletion_SharedOriginalProgressGiven_PreservesRequestedCourseWeighting(): void {
-		/* Arrange. */
-		$original   = $this->sensei_factory->course->create();
-		$translated = $this->sensei_factory->course->create();
-		$other      = $this->sensei_factory->course->create();
-		$user       = $this->sensei_factory->user->create();
-		$this->seed_progress( $original, $user, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-02 00:00:00' );
-		$this->seed_progress( $other, $user, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-08 00:00:00' );
-		$this->add_progress_id_filter( array( $translated => $original ) );
-
-		/* Act. */
-		$actual = $this->get_service()->get_courses_average_days_to_completion( array( $original, $translated, $other ) );
-
-		/* Assert. */
-		// Each requested course has equal weight: (2 + 2 + 8) / 3 = 4.
-		self::assertSame( 4.0, $actual );
-	}
-
-	public function testGetCoursesAverageDaysToCompletion_MixedPostStatusesGiven_IncludesPublishedAndPrivateCourses(): void {
+	public function testGetAverageDaysToCompletionByCourse_MixedPostStatusesGiven_IncludesPublishedAndPrivateCourses(): void {
 		/* Arrange. */
 		$courses = array();
 		$user    = $this->sensei_factory->user->create();
@@ -379,14 +367,20 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		}
 
 		/* Act. */
-		$actual = $this->get_service()->get_courses_average_days_to_completion( $courses );
+		$actual = $this->get_service()->get_average_days_to_completion_by_course( $courses );
 
 		/* Assert. */
-		// Only the published and private courses contribute: (2 + 4) / 2 = 3.
-		self::assertSame( 3.0, $actual );
+		// Only the published and private courses contribute their two- and four-day averages.
+		self::assertSame(
+			array(
+				$courses[0] => 2.0,
+				$courses[1] => 4.0,
+			),
+			$actual
+		);
 	}
 
-	public function testGetCoursesAverageDaysToCompletion_StartedCourseAndCourseWithoutProgressGiven_ReturnsZero(): void {
+	public function testGetAverageDaysToCompletionByCourse_StartedCourseAndCourseWithoutProgressGiven_ReturnsEmptyArray(): void {
 		/* Arrange. */
 		$started_course = $this->sensei_factory->course->create();
 		$empty_course   = $this->sensei_factory->course->create();
@@ -394,11 +388,11 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->seed_progress( $started_course, $user, 'course', 'in-progress' );
 
 		/* Act. */
-		$actual = $this->get_service()->get_courses_average_days_to_completion( array( $started_course, $empty_course ) );
+		$actual = $this->get_service()->get_average_days_to_completion_by_course( array( $started_course, $empty_course ) );
 
 		/* Assert. */
-		// Neither course has a qualifying completion, so neither enters the average.
-		self::assertSame( 0.0, $actual );
+		// Neither course has a qualifying completion, so neither appears in the result.
+		self::assertSame( array(), $actual );
 	}
 
 	public function testGetAverageDaysToCompletionByCourse_TranslatedCourseGiven_ReturnsRequestedKeys(): void {

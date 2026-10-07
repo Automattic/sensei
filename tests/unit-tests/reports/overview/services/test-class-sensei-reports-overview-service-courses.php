@@ -347,7 +347,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 0.0, $actual );
 	}
 
-	public function testGetAverageDaysToCompletion_MultipleCoursesWithDifferentCompletionCountsGiven_WeightsCoursesEqually() {
+	public function testGetAverageDaysToCompletion_SharedOriginalProgressAndDifferentCompletionCountsGiven_WeightsRequestedCoursesEqually() {
 		/* Arrange. */
 		$user1_id   = $this->factory->user->create();
 		$user2_id   = $this->factory->user->create();
@@ -358,17 +358,20 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$this->seed_course_completion_with_dates( $course1_id, $user2_id, '2022-03-14 21:34:27', '2022-03-14 21:34:37' );
 		$this->seed_course_completion_with_dates( $course2_id, $user1_id, '2022-03-09 00:22:34', '2022-03-12 00:22:37' );
 
+		$translated_course = $this->factory->course->create();
+		$this->add_progress_id_filter( array( $translated_course => $course1_id ) );
+
 		$instance = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual = $instance->get_average_days_to_completion( array( $course1_id, $course2_id ) );
+		$actual = $instance->get_average_days_to_completion( array( $course1_id, $translated_course, $course2_id ) );
 
 		// Average for the first course: (1 + 1) / 2 = 1.
 		// Average for the second course: 4 / 1 = 4.
-		// Total: (1 + 4) / 2 = 2.5.
+		// Original and translated courses each retain a weight: (1 + 1 + 4) / 3 = 2.
 
 		/* Assert. */
-		self::assertSame( 2.5, $actual );
+		self::assertSame( 2.0, $actual );
 	}
 
 

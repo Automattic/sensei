@@ -138,17 +138,6 @@ interface Progress_Aggregation_Service_Interface {
 	public function get_lesson_completion_counts( array $lesson_ids, array $args = array() ): array;
 
 	/**
-	 * Average of rounded per-course completion days for the requested courses.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param int[] $course_ids Course post IDs.
-	 * @param array $args       Optional query filters (see get_average_days_to_completion_by_course()).
-	 * @return float Average days to completion.
-	 */
-	public function get_courses_average_days_to_completion( array $course_ids, array $args = array() ): float;
-
-	/**
 	 * Get rounded completion-day averages keyed by requested course ID.
 	 *
 	 * Requested IDs sharing stored progress retain separate entries and equal weight.
