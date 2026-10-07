@@ -140,9 +140,9 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Get rounded completion-day averages keyed by requested course ID.
 	 *
-	 * Requested IDs sharing stored progress retain separate entries and equal weight.
-	 * Courses without qualifying completion dates are omitted. Valid starts with
-	 * missing completion dates still contribute to the course denominator.
+	 * A course is omitted unless at least one completed record has both a valid
+	 * start and completion date. Completed records with a valid start but no
+	 * completion date add zero days while still counting in that course's average.
 	 *
 	 * @since $$next-version$$
 	 *

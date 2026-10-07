@@ -442,8 +442,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$last_id         = 0;
 
 		do {
-			// Read a fixed number of records so even unique timestamps cannot fill PHP memory.
-			// Reuse calculations for repeated dates within a batch without sorting records in SQL.
+			// Limit each batch to keep memory use bounded.
 			// Missing starts may be NULL or migrated zero dates; neither counts toward the average.
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Dynamic course placeholders plus cursor and batch size. Table name from wpdb prefix. Placeholders created dynamically.
 			$query = $wpdb->prepare(
@@ -475,26 +474,20 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 			}
 
 			$batch_count = count( $results );
-			$date_cache  = array();
 			foreach ( $results as $row ) {
 				$course_id = (int) $row['post_id'];
 				$last_id   = (int) $row['id'];
 
-				// Match comments: starts still count when the completion date is missing.
+				// A valid start counts toward the average even without a completion date.
 				$start_counts[ $course_id ] = ( $start_counts[ $course_id ] ?? 0 ) + 1;
 				if ( empty( $row['completed_at'] ) || '0000-00-00 00:00:00' === $row['completed_at'] ) {
 					continue;
 				}
 
 				// Count local calendar days, including both the start and completion day.
-				$started_at   = $date_cache[ $row['started_at'] ] ?? ( new \DateTimeImmutable( $row['started_at'], $utc ) )->setTimezone( $timezone )->setTime( 0, 0 );
-				$completed_at = $date_cache[ $row['completed_at'] ] ?? ( new \DateTimeImmutable( $row['completed_at'], $utc ) )->setTimezone( $timezone )->setTime( 0, 0 );
+				$started_at   = ( new \DateTimeImmutable( $row['started_at'], $utc ) )->setTimezone( $timezone )->setTime( 0, 0 );
+				$completed_at = ( new \DateTimeImmutable( $row['completed_at'], $utc ) )->setTimezone( $timezone )->setTime( 0, 0 );
 
-				// Keep a small cache: repeated dates are cheap, and unique dates cannot grow it indefinitely.
-				if ( count( $date_cache ) < 128 ) {
-					$date_cache[ $row['started_at'] ]   = $started_at;
-					$date_cache[ $row['completed_at'] ] = $completed_at;
-				}
 				$days = (int) $started_at->diff( $completed_at )->days + 1;
 
 				// Accumulate each course across all batches before rounding its average.
