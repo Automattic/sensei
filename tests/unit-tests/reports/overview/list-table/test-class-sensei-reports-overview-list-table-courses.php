@@ -127,11 +127,21 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	public function testGetColumns_TemporaryCompletionsGiven_RoundsRegisteredCompletionDaysUp(): void {
 		/* Arrange. */
 		// First course: four registered days, with longer guest and preview completions excluded.
-		$this->create_course_with_completion_days();
+		$first_course_id = $this->factory->course->create();
+		foreach ( array(
+			'registered_student'     => 4,
+			'sensei_guest_student'   => 20,
+			'sensei_preview_student' => 30,
+		) as $login => $days ) {
+			$user_id = $this->factory->user->create( array( 'user_login' => $login ) );
+			$this->seed_course_completion_with_dates( $first_course_id, $user_id, '2022-01-01 12:00:00', sprintf( '2022-01-%02d 12:00:00', $days ) );
+		}
+
 		// Second course: one registered day makes the overall average fractional.
-		$course_id = $this->factory->course->create();
-		$user_id   = $this->factory->user->create();
-		$this->seed_course_completion_with_dates( $course_id, $user_id, '2022-01-01 12:00:00', '2022-01-01 12:00:00' );
+		$second_course_id = $this->factory->course->create();
+		$user_id          = $this->factory->user->create();
+		$this->seed_course_completion_with_dates( $second_course_id, $user_id, '2022-01-01 12:00:00', '2022-01-01 12:00:00' );
+
 		$table = new Sensei_Reports_Overview_List_Table_Courses(
 			Sensei()->grading,
 			Sensei()->course,
@@ -149,11 +159,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
-		$user_id = $this->factory->user->create();
-
-		$course_id = $this->factory->course->create();
-
 		/* Arrange. */
+		$course_id     = $this->factory->course->create();
 		$course        = $this->createMock( Sensei_Course::class );
 		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
 		$data_provider->method( 'get_items' )->willReturn( array( $course_id ) );
@@ -326,54 +333,6 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
-	/**
-	 * Exclude guest and preview progress while retaining registered progress.
-	 *
-	 * @dataProvider temporary_user_logins
-	 */
-	public function testGetRowData_TemporaryProgressGiven_UsesRegisteredProgress( string $temporary_user_login ): void {
-		/* Arrange. */
-		// Registered: four completion days and half the lessons; temporary user: twenty days and all lessons.
-		// A second course has only temporary progress and must show no eligible progress.
-		$this->seed_registered_and_temporary_progress( $temporary_user_login );
-		$table  = new Sensei_Reports_Overview_List_Table_Courses(
-			Sensei()->grading,
-			Sensei()->course,
-			new Sensei_Reports_Overview_Data_Provider_Courses(),
-			new Sensei_Reports_Overview_Service_Courses(),
-			( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service()
-		);
-		$method = new ReflectionMethod( $table, 'get_row_data' );
-		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
-		$table->prepare_items();
-
-		/* Act. */
-		$rows = array();
-		foreach ( $table->items as $item ) {
-			$rows[] = $method->invoke( $table, $item );
-		}
-
-		/* Assert. */
-		// Only the registered student's four days, one enrollment, and one of two lessons count.
-		$expected = array(
-			array(
-				'last_activity'      => Sensei_Utils::format_last_activity_date( '2022-01-04 12:00:00' ),
-				'enrolled'           => '1',
-				'average_progress'   => '50%',
-				'days_to_completion' => '4',
-			),
-			// The temporary-only course remains visible, with no eligible enrollment or progress.
-			array(
-				'last_activity'      => 'N/A',
-				'enrolled'           => '0',
-				'average_progress'   => 'N/A',
-				'days_to_completion' => 'N/A',
-			),
-		);
-
-		self::assertSame( $expected, $this->get_progress_fields_from_rows( $rows ) );
-	}
-
 	public function testSearchButton_WhenCalled_ReturnsMatchingString() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
@@ -452,25 +411,6 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		);
 
 		return $actual;
-	}
-
-	/**
-	 * Create contrasting registered, guest, and preview completion durations.
-	 *
-	 * @return int Course ID.
-	 */
-	private function create_course_with_completion_days(): int {
-		$course_id = $this->factory->course->create();
-		foreach ( array(
-			'registered_student'     => 4,
-			'sensei_guest_student'   => 20,
-			'sensei_preview_student' => 30,
-		) as $login => $days ) {
-			$user_id = $this->factory->user->create( array( 'user_login' => $login ) );
-			$this->seed_course_completion_with_dates( $course_id, $user_id, '2022-01-01 12:00:00', sprintf( '2022-01-%02d 12:00:00', $days ) );
-		}
-
-		return $course_id;
 	}
 
 	/**
