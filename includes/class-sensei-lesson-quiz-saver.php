@@ -360,8 +360,8 @@ class Sensei_Lesson_Quiz_Saver {
 			}
 		}
 
-		$meta_input['_button_text_color']       = $quiz_options['button_text_color'] ?? null;
-		$meta_input['_button_background_color'] = $quiz_options['button_background_color'] ?? null;
+		$meta_input['_button_text_color']       = $this->sanitize_color( $quiz_options['button_text_color'] ?? null );
+		$meta_input['_button_background_color'] = $this->sanitize_color( $quiz_options['button_background_color'] ?? null );
 
 		if ( isset( $quiz_options['pagination'] ) ) {
 			$meta_input['_pagination'] = wp_json_encode( $quiz_options['pagination'] );
@@ -631,5 +631,17 @@ class Sensei_Lesson_Quiz_Saver {
 				),
 			),
 		);
+	}
+
+	/**
+	 * Keep the color unless it contains `;`, `{` or `}`, which would add CSS of its own
+	 * to the `style` attribute the color is printed in.
+	 *
+	 * @param mixed $color The submitted color.
+	 *
+	 * @return mixed The color, or null.
+	 */
+	private function sanitize_color( $color ) {
+		return is_scalar( $color ) && ! preg_match( '/[;{}]/', (string) $color ) ? $color : null;
 	}
 }

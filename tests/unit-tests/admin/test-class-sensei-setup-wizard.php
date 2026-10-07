@@ -221,6 +221,26 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$this->assertEquals( '0', $option_value, 'Should update option to 0' );
 	}
 
+	public function testUpdateWizardUserData_WhenHtmlVersionAndUnknownKeyGiven_StoresOnlyTheSanitizedKnownData() {
+		// Act.
+		Sensei()->setup_wizard->update_wizard_user_data(
+			array(
+				'purpose'   => array(
+					'selected' => array( 'other' ),
+					'other'    => 'Teaching <script>alert(1)</script>',
+				),
+				'__version' => '0',
+				'steps'     => array( 'x' ),
+			)
+		);
+		$data = get_option( Sensei_Setup_Wizard::USER_DATA_OPTION );
+
+		// Assert.
+		$this->assertSame( 'Teaching', $data['purpose']['other'], 'The purpose text should be sanitized.' );
+		$this->assertSame( '3', $data['__version'], 'The schema version should not be writable.' );
+		$this->assertArrayNotHasKey( 'steps', $data, 'An unknown key should not be stored.' );
+	}
+
 	/**
 	 * Test skip setup wizard.
 	 */

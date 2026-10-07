@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Validate the quiz colors and the setup wizard data saved through the REST API.
