@@ -104,7 +104,8 @@ lint: ## Run PHPCS via the same diff-based check CI uses
 	./scripts/linter-ci
 
 psalm: ## Run Psalm static analysis under each CI PHP version (parsed from .github/workflows/psalm.yml)
-	@VERSIONS=$$(grep -E "^[[:space:]]+php:[[:space:]]*\[" .github/workflows/psalm.yml | sed -E "s/.*\[(.*)\].*/\1/; s/[',]/ /g"); \
+	@# Collect unique versions from literal arrays and every fromJSON array in conditional matrices.
+	@VERSIONS=$$(grep -E "^[[:space:]]+php:" .github/workflows/psalm.yml | grep -oE '\[[^]]*\]' | grep -oE '[0-9]+\.[0-9]+' | sort -u); \
 	if [ -z "$$VERSIONS" ]; then \
 		echo "Error: could not parse PHP matrix from .github/workflows/psalm.yml"; exit 1; \
 	fi; \
