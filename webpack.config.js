@@ -5,7 +5,9 @@ const path = require( 'path' );
 const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
 const CopyPlugin = require( 'copy-webpack-plugin' );
-const SVGSpritemapPlugin = require( 'svg-spritemap-webpack-plugin' );
+const {
+	default: SVGSpritemapPlugin,
+} = require( 'svg-spritemap-webpack-plugin' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 // eslint-disable-next-line import/no-extraneous-dependencies -- Leave this dependency to be managed by @wordpress/scripts
 const { DefinePlugin } = require( 'webpack' );
