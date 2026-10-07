@@ -80,6 +80,13 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	private $average_progress_by_course = array();
 
 	/**
+	 * Per-course completion-day averages for the current result set.
+	 *
+	 * @var array&lt;int, float>
+	 */
+	private $average_days_to_completion_by_course = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param Sensei_Grading                                  $grading Unused. Retained for backward compatibility.
@@ -304,10 +311,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			}
 		}
 
-		// Properties `count_of_completions` and `days_to_completion` where added to items in
-		// `Sensei_Analysis_Overview_List_Table::add_days_to_completion_to_courses_queries`.
-		// We made it due to improve performance of the report. Don't try to access these properties outside.
-		$average_completion_days = $item->count_of_completions > 0 ? ceil( $item->days_to_completion / $item->count_of_completions ) : __( 'N/A', 'sensei-lms' );
+		$average_completion_days = $this->average_days_to_completion_by_course[ (int) $item->ID ] ?? __( 'N/A', 'sensei-lms' );
 
 		// Output course data.
 		$course_title   = apply_filters( 'the_title', $item->post_title, $item->ID ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
@@ -433,7 +437,8 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			$items
 		);
 
-		$this->average_progress_by_course = $this->reports_overview_service_courses->get_average_progress_by_course( $course_ids );
+		$this->average_progress_by_course           = $this->reports_overview_service_courses->get_average_progress_by_course( $course_ids );
+		$this->average_days_to_completion_by_course = $this->reports_overview_service_courses->get_average_days_to_completion_by_course( $course_ids );
 	}
 }
 </code></pre>
