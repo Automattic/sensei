@@ -416,7 +416,20 @@ class Sensei_Utils {
 		$file_prefix = apply_filters( 'sensei_file_upload_file_prefix', substr( md5( uniqid() ), 0, 7 ) . '_', $file );
 
 		$file['name'] = $file_prefix . $file['name'];
-		$file_return  = wp_handle_upload( $file, $file_upload_args );
+
+		// Allow SVG for this upload only. WordPress doesn't include SVG in its default
+		// allowed mime types, which dropped the file upload question answer.
+		$allow_svg_upload = static function ( array $mimes ): array {
+			$mimes['svg'] = 'image/svg+xml';
+			return $mimes;
+		};
+
+		add_filter( 'upload_mimes', $allow_svg_upload );
+		try {
+			$file_return = wp_handle_upload( $file, $file_upload_args );
+		} finally {
+			remove_filter( 'upload_mimes', $allow_svg_upload );
+		}
 
 		if ( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
 			return false;
