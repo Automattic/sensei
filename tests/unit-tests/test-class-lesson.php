@@ -2651,4 +2651,53 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		/* Assert */
 		self::assertSame( implode( ' ', range( 1, 30 ) ) . '…', $actual );
 	}
+
+	public function testLessonSaveQuestion_UnknownQuestionTypeGiven_DoesNotSaveTheQuestion() {
+		/* Arrange. */
+		$quiz_id = $this->factory->quiz->create();
+
+		/* Act. */
+		$result = Sensei()->lesson->lesson_save_question(
+			array(
+				'question_type'  => 'not-a-type',
+				'question'       => 'Question text',
+				'question_media' => '',
+				'question_count' => 0,
+				'quiz_id'        => $quiz_id,
+			)
+		);
+
+		/* Assert. */
+		$this->assertFalse( $result, 'An unknown question type should not be saved.' );
+		$this->assertEmpty(
+			get_posts(
+				array(
+					'post_type' => 'question',
+					'title'     => 'Question text',
+				)
+			),
+			'No question should be created.'
+		);
+	}
+
+	public function testLessonSaveQuestion_UnregisteredTypeTheQuestionAlreadyHasGiven_SavesTheQuestion() {
+		/* Arrange. */
+		$question_id = $this->factory->question->create();
+		wp_set_post_terms( $question_id, array( 'retired-type' ), 'question-type' );
+
+		/* Act. */
+		$result = Sensei()->lesson->lesson_save_question(
+			array(
+				'question_id'    => $question_id,
+				'question_type'  => 'retired-type',
+				'question'       => 'Updated title',
+				'question_media' => '',
+				'question_count' => 0,
+				'quiz_id'        => $this->factory->quiz->create(),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( $question_id, $result );
+	}
 }

@@ -3204,7 +3204,8 @@ class Sensei_Lesson {
 		$question_data = array();
 		parse_str( $data, $question_data );
 
-		if ( ! $this->user_can_edit_quiz( $question_data['quiz_id'] ) ) {
+		$quiz_id = isset( $question_data['quiz_id'] ) ? absint( $question_data['quiz_id'] ) : 0;
+		if ( ! $this->user_can_edit_quiz( $quiz_id ) ) {
 			die( '' );
 		}
 
@@ -3222,7 +3223,6 @@ class Sensei_Lesson {
 					}
 				);
 
-				$quiz_id        = $question_data['quiz_id'];
 				$question_count = intval( $question_data['question_count'] );
 
 				foreach ( $questions as $question_id ) {
@@ -3273,11 +3273,17 @@ class Sensei_Lesson {
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
 
-		if ( ! $this->user_can_edit_quiz( $quiz_data['quiz_id'] ) ) {
+		$quiz_id = isset( $quiz_data['quiz_id'] ) ? absint( $quiz_data['quiz_id'] ) : 0;
+		if ( ! $this->user_can_edit_quiz( $quiz_id ) ) {
 			wp_die( '' );
 		}
 
-		update_post_meta( $quiz_data['quiz_id'], '_quiz_grade_type', $quiz_data['quiz_grade_type'] );
+		$grade_type = isset( $quiz_data['quiz_grade_type'] ) ? $quiz_data['quiz_grade_type'] : '';
+		if ( ! in_array( $grade_type, array( 'auto', 'manual' ), true ) ) {
+			wp_die( '' );
+		}
+
+		update_post_meta( $quiz_id, '_quiz_grade_type', $grade_type );
 		wp_die();
 	}
 
@@ -3335,11 +3341,17 @@ class Sensei_Lesson {
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
 
-		if ( ! $this->user_can_edit_quiz( $quiz_data['quiz_id'] ) ) {
+		$quiz_id = isset( $quiz_data['quiz_id'] ) ? absint( $quiz_data['quiz_id'] ) : 0;
+		if ( ! $this->user_can_edit_quiz( $quiz_id ) ) {
 			wp_die( '' );
 		}
 
-		update_post_meta( $quiz_data['quiz_id'], '_random_question_order', $quiz_data['random_question_order'] );
+		$random_order = isset( $quiz_data['random_question_order'] ) ? $quiz_data['random_question_order'] : '';
+		if ( ! in_array( $random_order, array( 'yes', 'no' ), true ) ) {
+			wp_die( '' );
+		}
+
+		update_post_meta( $quiz_id, '_random_question_order', $random_order );
 		wp_die();
 	}
 
@@ -3374,6 +3386,16 @@ class Sensei_Lesson {
 		if ( isset( $data['question_id'] ) && ( 0 < absint( $data['question_id'] ) ) ) {
 			$question_id = absint( $data['question_id'] );
 		}
+
+		// Only accept a registered question type, or the type the question already has.
+		$allowed_types = array_keys( Sensei()->question->question_types() );
+		if ( $question_id ) {
+			$allowed_types[] = Sensei()->question->get_question_type( $question_id );
+		}
+		if ( ! in_array( $question_type, $allowed_types, true ) ) {
+			return false;
+		}
+
 		if ( isset( $data['question'] ) && ( '' != $data['question'] ) ) {
 			$question_text = $data['question'];
 		}
