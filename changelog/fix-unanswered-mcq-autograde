@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix admin auto grading giving full marks to unanswered multiple-choice questions.
