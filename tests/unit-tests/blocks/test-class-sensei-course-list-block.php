@@ -85,6 +85,20 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 		$this->assertFalse( $this->block_instance->context['query']['inherit'] );
 	}
 
+	public function testMaybeChangeInheritedToTrue_CourseListBlockOnSingularPageWithoutPerPage_UsesPostsPerPageOption() {
+		/* ARRANGE */
+		update_option( 'posts_per_page', 7 );
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$this->go_to( get_permalink( $page_id ) );
+		$modified_content = str_replace( ',"perPage":4', '', $this->content );
+
+		/* ACT */
+		do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertSame( 7, $this->block_instance->context['query']['perPage'] );
+	}
+
 	public function testMaybeChangeInheritedToTrue_CourseListBlockOnCourseArchive_Inherits() {
 		/* ARRANGE */
 		$courses_page_id = $this->factory->post->create(

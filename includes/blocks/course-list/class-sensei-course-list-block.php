@@ -83,6 +83,11 @@ class Sensei_Course_List_Block {
 			$parsed_block['attrs']['query']['inherit'] = true;
 		} elseif ( is_singular() ) {
 			$parsed_block['attrs']['query']['inherit'] = false;
+
+			// Without `perPage` the Query Loop block does not paginate, so fall back to the archive's page size.
+			if ( ! isset( $parsed_block['attrs']['query']['perPage'] ) ) {
+				$parsed_block['attrs']['query']['perPage'] = (int) get_option( 'posts_per_page' );
+			}
 		}
 
 		return $parsed_block;
