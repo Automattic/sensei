@@ -198,11 +198,11 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$where     = $wpdb->prepare( ' WHERE p.post_id = %d AND p.type = \'lesson\'', $post_id ) . $exclusion;
 		if ( 'any' !== $status ) {
 			$status_sql = Utils::get_statuses_sql( $wpdb, $args );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is prepared by its helper.
 			$where .= " AND p.status IN ( {$status_sql} )";
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is a trusted wpdb-derived name; $where is built from wpdb::prepare() calls.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name comes from $wpdb->prefix; $where combines prepared conditions, including $exclusion from its helper.
 		$count = $wpdb->get_var( "SELECT COUNT( DISTINCT p.user_id ) FROM `$table` p" . $where );
 		Utils::log_query_error( $wpdb, 'Progress aggregation lesson student count' );
 
@@ -224,7 +224,8 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$status_sql = Utils::get_statuses_sql( $wpdb, $args );
 		$exclusion  = Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names are trusted wpdb-derived names; status values and post ID are prepared.
+		// Use the quiz status when quiz progress exists; otherwise use the lesson status.
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names come from $wpdb properties or its prefix; $status_sql and $exclusion are prepared by their helpers; post_id uses a placeholder.
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT( DISTINCT p.user_id )'
@@ -237,7 +238,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 				$post_id
 			)
 		);
-		// phpcs:enable
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		Utils::log_query_error( $wpdb, 'Progress aggregation lesson completion count' );
 
 		return (int) $count;
