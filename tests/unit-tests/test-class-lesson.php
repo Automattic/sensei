@@ -1530,7 +1530,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$result = ob_get_clean();
 
 		/* Assert */
-		self::assertStringContainsString( '<img src="test.jpg" />', $result );
+		self::assertMatchesRegularExpression( '|<img\b[^>]*\ssrc="test\.jpg"[^>]*>|', $result );
 	}
 
 	public function testGetSubmittedSettingValue_FieldGiven_ReturnsMatchingValue(): void {
