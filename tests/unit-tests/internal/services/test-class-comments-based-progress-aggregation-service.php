@@ -14,43 +14,6 @@ require_once __DIR__ . '/test-class-progress-aggregation-service.php';
  */
 class Comments_Based_Progress_Aggregation_Service_Test extends \Progress_Aggregation_Service_Test {
 
-	public function testGetLessonStudentCount_ActivityArgumentsFiltered_PreservesTranslationAndNestedQueries(): void {
-		$original    = $this->sensei_factory->lesson->create();
-		$translation = $this->sensei_factory->lesson->create();
-		foreach ( array( 'registered', 'sensei_guest_student' ) as $login ) {
-			$user = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
-			$this->seed_progress( $original, $user, 'lesson', 'complete' );
-		}
-		$nested_count = null;
-		$filter       = static function ( $args ) use ( $original, $translation, &$nested_count ) {
-			if ( ( $args['post_id'] ?? 0 ) === $translation ) {
-				$nested_count    = \Sensei_Utils::sensei_check_for_activity(
-					array(
-						'post_id' => $original,
-						'type'    => 'sensei_lesson_status',
-					)
-				);
-				$args['post_id'] = $original;
-			}
-			return $args;
-		};
-		add_filter( 'sensei_check_for_activity_args', $filter );
-
-		try {
-			$actual = $this->get_service()->get_lesson_student_count(
-				array(
-					'post_id' => $translation,
-					'type'    => 'sensei_lesson_status',
-				)
-			);
-		} finally {
-			remove_filter( 'sensei_check_for_activity_args', $filter );
-		}
-
-		$this->assertSame( 1, $actual, 'Activity argument translation still applies.' );
-		$this->assertSame( 2, $nested_count, 'Nested generic queries retain their own population.' );
-	}
-
 	public function testCountStatuses_LessonType_ReturnsStatusCounts(): void {
 		/* Arrange. */
 		global $wpdb;

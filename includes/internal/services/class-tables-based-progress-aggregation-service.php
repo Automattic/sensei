@@ -185,17 +185,19 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 *
 	 * @since 4.26.4
 	 *
-	 * @param array $args Comments-API-shaped activity arguments.
+	 * @param array $args Lesson query arguments: optional post_id (defaults to 0) and status (defaults to any). The type key is ignored.
 	 * @return int Number of students with matching lesson activity.
 	 */
 	public function get_lesson_student_count( array $args ): int {
-		$wpdb    = $this->wpdb;
-		$table   = $this->get_progress_table_name();
-		$post_id = (int) ( $args['post_id'] ?? 0 );
-		$status  = $args['status'] ?? 'any';
+		$wpdb        = $this->wpdb;
+		$table       = $this->get_progress_table_name();
+		$post_id     = (int) ( $args['post_id'] ?? 0 );
+		$post_id_map = Utils::get_progress_post_id_map( array( $post_id ), 'lesson' );
+		$status      = $args['status'] ?? 'any';
 
 		$exclusion = Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
-		$where     = $wpdb->prepare( ' WHERE p.post_id = %d AND p.type = \'lesson\'', $post_id ) . $exclusion;
+		$where     = $wpdb->prepare( ' WHERE p.post_id = %d AND p.type = \'lesson\'', $post_id_map[ $post_id ] ) . $exclusion;
+
 		if ( 'any' !== $status ) {
 			$status_sql = Utils::get_statuses_sql( $wpdb, $args );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is prepared by its helper.

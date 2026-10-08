@@ -78,7 +78,7 @@ interface Progress_Aggregation_Service_Interface {
 	 *
 	 * @since 4.26.4
 	 *
-	 * @param array $args Comments-API-shaped activity arguments.
+	 * @param array $args Lesson query arguments: optional post_id (defaults to 0) and status (defaults to any). The type key is ignored.
 	 * @return int Number of students with matching lesson activity.
 	 */
 	public function get_lesson_student_count( array $args ): int;

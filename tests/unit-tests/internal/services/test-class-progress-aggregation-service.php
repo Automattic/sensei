@@ -61,12 +61,23 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$actual = $this->get_service()->get_lesson_student_count(
 			array(
 				'post_id' => $lesson,
-				'type'    => 'sensei_lesson_status',
 				'status'  => 'any',
 			)
 		);
 
 		$this->assertSame( $students, $actual );
+	}
+
+	public function testGetLessonStudentCount_TranslatedLessonQueried_CountsOriginalLessonStudents(): void {
+		$original_lesson_id   = $this->sensei_factory->lesson->create();
+		$translated_lesson_id = $this->sensei_factory->lesson->create();
+		$user_id              = $this->sensei_factory->user->create();
+		$this->seed_progress( $original_lesson_id, $user_id, 'lesson', 'complete' );
+		$this->add_lesson_progress_id_filter( array( $translated_lesson_id => $original_lesson_id ) );
+
+		$actual = $this->get_service()->get_lesson_student_count( array( 'post_id' => $translated_lesson_id ) );
+
+		$this->assertSame( 1, $actual );
 	}
 
 	/**
