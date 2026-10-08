@@ -6,6 +6,12 @@ See `make help` for the full list of available dev commands.
 
 Apply them to code you add. Do not rewrite surrounding code to match.
 
+## Code comments
+- Keep comments concise and use plain, concrete terms.
+- Add a comment only when it explains a non-obvious reason, constraint, or behavior. Do not restate what the code clearly does.
+- Write for future readers who have not seen the current PR or discussion. Explain the lasting reason for the code; omit PR narration, review replies, and comparisons with earlier revisions.
+- Keep required docblocks for hooks and public functions, following the conventions below.
+
 ## Repository skills
 - Shared skills live in `.agents/skills/`; `.claude/skills/` contains symlinks to the same directories for Claude Code.
 - When creating, opening, or drafting a PR, read `.agents/skills/pull-request/SKILL.md`.
