@@ -31,7 +31,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_lesson_students( array $args ): array {
-		return $this->query_activity( $args, 'grade' );
+		return $this->query_activity( $args, 'grade', true );
 	}
 
 	/**
@@ -43,7 +43,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_course_students( array $args ): array {
-		return $this->query_activity( $args, 'percent' );
+		return $this->query_activity( $args, 'percent', true );
 	}
 
 	/**
@@ -81,10 +81,12 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 *
 	 * @param array  $args      Activity args (see interface).
 	 * @param string $meta_kind Numeric meta field to read: 'grade' or 'percent'.
+	 * @param bool   $exclude_temporary_users Whether to exclude guest and preview users.
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
-	private function query_activity( array $args, string $meta_kind ): array {
-		$total_count = \Sensei_Utils::sensei_check_for_activity(
+	private function query_activity( array $args, string $meta_kind, bool $exclude_temporary_users = false ): array {
+		$query       = $exclude_temporary_users ? array( Utils::class, 'query_report_activity' ) : array( \Sensei_Utils::class, 'sensei_check_for_activity' );
+		$total_count = $query(
 			array_merge(
 				$args,
 				array(
@@ -102,7 +104,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 			$args['offset'] = $last_page * $number;
 		}
 
-		$statuses = \Sensei_Utils::sensei_check_for_activity( $args, true );
+		$statuses = $query( $args, true );
 		if ( ! is_array( $statuses ) ) {
 			$statuses = array( $statuses );
 		}

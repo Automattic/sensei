@@ -27,6 +27,8 @@ interface Reports_Listing_Service_Interface {
 	/**
 	 * Get paginated users' progress on a specific lesson.
 	 *
+	 * Guest and preview users are excluded regardless of status.
+	 *
 	 * @since 4.26.0
 	 *
 	 * @param array $args {
@@ -47,6 +49,8 @@ interface Reports_Listing_Service_Interface {
 
 	/**
 	 * Get paginated users' progress on a specific course.
+	 *
+	 * Guest and preview users are excluded regardless of status.
 	 *
 	 * @since 4.26.0
 	 *

@@ -10,12 +10,14 @@ namespace SenseiTest\Internal\Services;
 use Sensei\Internal\Services\Tables_Based_Reports_Listing_Service;
 use Sensei\Internal\Services\Reports_Item;
 
+require_once __DIR__ . '/test-class-reports-listing-service.php';
+
 /**
  * Class Tables_Based_Reports_Listing_Service_Test.
  *
  * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service
  */
-class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
+class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service_Test {
 
 	/**
 	 * Sensei factory.
@@ -324,5 +326,24 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( 1, $result['total_count'], 'Total count should still reflect the actual total.' );
 		$this->assertCount( 1, $result['items'], 'Should snap offset to last page and return items.' );
+	}
+	protected function get_report_service(): \Sensei\Internal\Services\Reports_Listing_Service_Interface {
+		return new Tables_Based_Reports_Listing_Service( $GLOBALS['wpdb'] );
+	}
+
+	protected function seed_report_progress( int $post, int $user, string $type, string $status, string $date ): void {
+		$GLOBALS['wpdb']->insert(
+			$GLOBALS['wpdb']->prefix . 'sensei_lms_progress',
+			array(
+				'post_id'      => $post,
+				'user_id'      => $user,
+				'type'         => $type,
+				'status'       => $status,
+				'started_at'   => $date,
+				'completed_at' => $date,
+				'created_at'   => $date,
+				'updated_at'   => $date,
+			)
+		);
 	}
 }

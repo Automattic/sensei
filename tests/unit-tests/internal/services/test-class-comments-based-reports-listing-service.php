@@ -10,12 +10,14 @@ namespace SenseiTest\Internal\Services;
 use Sensei\Internal\Services\Comments_Based_Reports_Listing_Service;
 use Sensei\Internal\Services\Reports_Item;
 
+require_once __DIR__ . '/test-class-reports-listing-service.php';
+
 /**
  * Class Comments_Based_Reports_Listing_Service_Test.
  *
  * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service
  */
-class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
+class Comments_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service_Test {
 
 	/**
 	 * Sensei factory.
@@ -212,5 +214,22 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertNull( $result );
+	}
+	protected function get_report_service(): \Sensei\Internal\Services\Reports_Listing_Service_Interface {
+		return new Comments_Based_Reports_Listing_Service();
+	}
+
+	protected function seed_report_progress( int $post, int $user, string $type, string $status, string $date ): void {
+		$comment = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $post,
+				'user_id'          => $user,
+				'comment_author'   => get_userdata( $user )->user_login,
+				'comment_type'     => 'sensei_' . $type . '_status',
+				'comment_approved' => $status,
+				'comment_date'     => $date,
+			)
+		);
+		update_comment_meta( $comment, 'start', $date );
 	}
 }

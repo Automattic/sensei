@@ -72,7 +72,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$submissions_table = $this->get_quiz_submissions_table_name();
 		$post_id           = (int) ( $args['post_id'] ?? 0 );
 
-		$where      = " WHERE p.type = 'lesson'" . $this->build_filters( $args );
+		$where      = " WHERE p.type = 'lesson'" . $this->build_filters( $args )
+			. Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 		$pagination = $this->build_pagination( $where, $args );
 
 		/** Query result rows. @var object[] $rows */
@@ -127,7 +128,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$table = $this->get_progress_table_name();
 
 		$course_id     = (int) ( $args['post_id'] ?? 0 );
-		$where         = " WHERE p.type = 'course'" . $this->build_filters( $args );
+		$where         = " WHERE p.type = 'course'" . $this->build_filters( $args )
+			. Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 		$pagination    = $this->build_pagination( $where, $args );
 		$total_lessons = count( Sensei()->course->course_lessons( $course_id, 'publish', 'ids' ) );
 
