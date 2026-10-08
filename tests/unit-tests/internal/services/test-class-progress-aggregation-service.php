@@ -40,6 +40,91 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		parent::tearDown();
 	}
 
+	/**
+	 * Temporary completions distinguish report counts from generic progress counts.
+	 *
+	 * @dataProvider report_lesson_population_provider
+	 */
+	public function testGetLessonStudentCount_TemporaryActivityCreated_CountsRegisteredStudents( array $registered_statuses, int $students, int $completed ): void {
+		$lesson = $this->sensei_factory->lesson->create();
+		foreach ( array_merge(
+			$registered_statuses,
+			array(
+				'sensei_guest_student'   => 'complete',
+				'sensei_preview_student' => 'complete',
+			)
+		) as $login => $status ) {
+			$user = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
+			$this->seed_progress( $lesson, $user, 'lesson', $status );
+		}
+
+		$actual = $this->get_service()->get_lesson_student_count(
+			array(
+				'post_id' => $lesson,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+			)
+		);
+
+		$this->assertSame( $students, $actual );
+	}
+
+	/**
+	 * Temporary completions must not mask a registered student's unfinished lesson.
+	 *
+	 * @dataProvider report_lesson_population_provider
+	 */
+	public function testGetLessonCompletionCount_TemporaryActivityCreated_CountsRegisteredCompletions( array $registered_statuses, int $students, int $completed ): void {
+		$lesson = $this->sensei_factory->lesson->create();
+		foreach ( array_merge(
+			$registered_statuses,
+			array(
+				'sensei_guest_student'   => 'complete',
+				'sensei_preview_student' => 'complete',
+			)
+		) as $login => $status ) {
+			$user = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
+			$this->seed_progress( $lesson, $user, 'lesson', $status );
+		}
+
+		$actual = $this->get_service()->get_lesson_completion_count(
+			array(
+				'post_id' => $lesson,
+				'type'    => 'sensei_lesson_status',
+				'status'  => \Sensei\Internal\Services\Reports_Item::COMPLETED_STATUSES,
+			)
+		);
+
+		$this->assertSame( $completed, $actual );
+	}
+
+	public function report_lesson_population_provider(): array {
+		return array(
+			'registered completion'  => array( array( 'registered' => 'complete' ), 1, 1 ),
+			'registered in progress' => array( array( 'registered' => 'in-progress' ), 1, 0 ),
+			'temporary only'         => array( array(), 0, 0 ),
+		);
+	}
+
+	public function testCountStatuses_TemporaryProgressCreated_KeepsExclusionConfigurable(): void {
+		$lesson = $this->sensei_factory->lesson->create();
+		foreach ( array( 'registered', 'sensei_guest_student', 'sensei_preview_student' ) as $login ) {
+			$user = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
+			$this->seed_progress( $lesson, $user, 'lesson', 'complete' );
+		}
+		$service = $this->get_service();
+		$args    = array(
+			'type'    => 'lesson',
+			'post_id' => $lesson,
+		);
+
+		$all      = $service->count_statuses( $args );
+		$eligible = $service->count_statuses( array_merge( $args, array( 'exclude_user_login_prefixes' => \Sensei\Internal\Services\Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) ) );
+
+		$this->assertSame( 3, $all['complete'], 'Generic counts include temporary progress by default.' );
+		$this->assertSame( 1, $eligible['complete'], 'Callers can still explicitly exclude temporary progress.' );
+	}
+
 	public function testCountStatusesByPost_ExcludedUserLoginPrefixesGiven_CountsOnlyOtherUsers(): void {
 		/* Arrange. */
 		$course           = $this->sensei_factory->course->create();

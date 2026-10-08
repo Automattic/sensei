@@ -192,7 +192,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 * @return int Number of students with matching lesson activity.
 	 */
 	public function get_lesson_student_count( array $args ): int {
-		return (int) \Sensei_Utils::sensei_check_for_activity( $args );
+		return (int) Utils::query_report_activity( $args );
 	}
 
 	/**
@@ -204,7 +204,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 * @return int Number of students with matching completed lesson activity.
 	 */
 	public function get_lesson_completion_count( array $args ): int {
-		return (int) \Sensei_Utils::sensei_check_for_activity( $args );
+		return (int) Utils::query_report_activity( $args );
 	}
 
 	/**

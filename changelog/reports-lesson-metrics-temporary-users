@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Exclude guest and preview users from lesson Students, Completed, and Average Grade in course reports.

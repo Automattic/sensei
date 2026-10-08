@@ -37,6 +37,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 	}
 
+
 	public function testPrepareItems_DateStartedFilterSet_SetsMatchingItems() {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
@@ -176,6 +177,46 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		// wp_kses_array converts the float to a string.
 		$lesson_row = $export_data[1]; // First data row after the header.
 		self::assertSame( '60', $lesson_row['average_grade'], 'Average grade should be 60.' );
+	}
+
+	public function testGenerateReport_TemporaryLessonGradesCreated_ExportsRegisteredMetrics(): void {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$created  = $this->factory->get_course_with_lessons(
+				array(
+					'lesson_count'   => 1,
+					'question_count' => 1,
+				)
+			);
+			$lesson   = $created['lesson_ids'][0];
+			$quiz     = $created['quiz_ids'][0];
+			$question = Sensei()->quiz->get_questions( $quiz )[0]->ID;
+			foreach ( array(
+				'registered'             => 40,
+				'sensei_guest_student'   => 80,
+				'sensei_preview_student' => 100,
+			) as $login => $grade ) {
+				$user     = $this->factory->user->create( array( 'user_login' => $login ) );
+				$progress = Sensei()->lesson_progress_repository->create( $lesson, $user );
+				$progress->complete();
+				Sensei()->lesson_progress_repository->save( $progress );
+				$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz, $user );
+				$quiz_progress->grade();
+				Sensei()->quiz_progress_repository->save( $quiz_progress );
+				$submission = Sensei()->quiz_submission_repository->create( $quiz, $user, $grade );
+				Sensei()->quiz_answer_repository->create( $submission, $question, 'Answer' );
+			}
+			$_GET['view'] = 'lesson';
+			$table        = new Sensei_Analysis_Course_List_Table( $created['course_id'] );
+
+			$actual = $table->generate_report( 'course-lessons-overview' )[1];
+
+			$this->assertSame( '1', $actual['num_learners'], 'CSV Students excludes temporary users.' );
+			$this->assertSame( '1', $actual['completions'], 'CSV Completed excludes temporary users.' );
+			$this->assertSame( '40', $actual['average_grade'], 'Only the registered grade contributes.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
 	}
 
 	public function testGenerateReport_LessonViewWithNoGradedStudents_ReturnsNAForAverageGrade() {

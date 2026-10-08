@@ -56,6 +56,8 @@ interface Grading_Stats_Service_Interface {
 	/**
 	 * Get the average quiz grade for a lesson.
 	 *
+	 * Guest and preview users are excluded regardless of status.
+	 *
 	 * @since 4.26.4
 	 *
 	 * @param array $args {

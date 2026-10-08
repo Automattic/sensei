@@ -194,7 +194,8 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$post_id = (int) ( $args['post_id'] ?? 0 );
 		$status  = $args['status'] ?? 'any';
 
-		$where = $wpdb->prepare( ' WHERE p.post_id = %d AND p.type = \'lesson\'', $post_id );
+		$exclusion = Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
+		$where     = $wpdb->prepare( ' WHERE p.post_id = %d AND p.type = \'lesson\'', $post_id ) . $exclusion;
 		if ( 'any' !== $status ) {
 			$status_sql = Utils::get_statuses_sql( $wpdb, $args );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $status_sql is built from escaped args.
@@ -221,8 +222,9 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$table      = $this->get_progress_table_name();
 		$post_id    = (int) ( $args['post_id'] ?? 0 );
 		$status_sql = Utils::get_statuses_sql( $wpdb, $args );
+		$exclusion  = Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names are trusted wpdb-derived names; status values and post ID are prepared.
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names are trusted wpdb-derived names; status values and post ID are prepared.
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT( DISTINCT p.user_id )'
@@ -230,6 +232,7 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 				. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
 				. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
 				. " WHERE p.post_id = %d AND p.type = 'lesson'"
+				. $exclusion
 				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
 				$post_id
 			)

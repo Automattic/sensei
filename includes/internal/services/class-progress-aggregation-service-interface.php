@@ -74,6 +74,8 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count students with activity on a lesson.
 	 *
+	 * Guest and preview users are excluded regardless of status.
+	 *
 	 * @since 4.26.4
 	 *
 	 * @param array $args Comments-API-shaped activity arguments.
@@ -83,6 +85,8 @@ interface Progress_Aggregation_Service_Interface {
 
 	/**
 	 * Count students who completed a lesson.
+	 *
+	 * Guest and preview users are excluded regardless of status.
 	 *
 	 * @since 4.26.4
 	 *

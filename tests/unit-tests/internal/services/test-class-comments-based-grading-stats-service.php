@@ -238,6 +238,47 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Different grades make accidental inclusion of guest and preview users visible.
+	 *
+	 * @dataProvider report_grade_population_provider
+	 */
+	public function testGetLessonAverageGrade_TemporaryGradesCreated_UsesRegisteredGrades( array $registered_grades, ?float $expected ): void {
+		$lesson = $this->sensei_factory->lesson->create();
+		$quiz   = $this->sensei_factory->quiz->create();
+		$course = $this->sensei_factory->course->create();
+		foreach ( array_merge(
+			$registered_grades,
+			array(
+				'sensei_guest_student'   => 80,
+				'sensei_preview_student' => 100,
+			)
+		) as $login => $grade ) {
+			$user = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
+			$this->create_lesson_status_with_grade( $lesson, $user, 'graded', $grade );
+		}
+		$service = new Comments_Based_Grading_Stats_Service( $GLOBALS['wpdb'] );
+
+		$actual = $service->get_lesson_average_grade(
+			array(
+				'post_id'  => $lesson,
+				'type'     => 'sensei_lesson_status',
+				'status'   => array( 'graded' ),
+				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Exercise the supported grade argument.
+			)
+		);
+
+		$this->assertSame( $expected, $actual );
+	}
+
+	public function report_grade_population_provider(): array {
+		return array(
+			'registered grade' => array( array( 'registered' => 40 ), 40.0 ),
+			'zero grade'       => array( array( 'registered' => 0 ), 0.0 ),
+			'temporary only'   => array( array(), null ),
+		);
+	}
+
 	public function testGetLessonAverageGrade_MatchingStatusGiven_ReturnsMatchingAverage(): void {
 		/* Arrange. */
 		global $wpdb;
