@@ -37,6 +37,8 @@ class Sensei_Analysis_Student_Listings_Test extends WP_UnitTestCase {
 	 * @dataProvider student_report_provider
 	 */
 	public function testGenerateReport_TemporaryStudentProgressCreated_ExportsEligiblePopulation( string $view, string $search ): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Preserve the test request state.
+		$original_get = $_GET;
 		$this->maybe_enable_hpps_tables_repository();
 		try {
 			$created = $this->factory->get_course_with_lessons( array( 'lesson_count' => 1 ) );
@@ -62,6 +64,7 @@ class Sensei_Analysis_Student_Listings_Test extends WP_UnitTestCase {
 			$this->assertSame( $expected, $titles, 'CSV contains only matching registered students.' );
 			$this->assertSame( count( $expected ), $table->total_items, 'Report total matches the eligible CSV rows.' );
 		} finally {
+			$_GET = $original_get;
 			$this->maybe_reset_hpps_repository();
 		}
 	}
