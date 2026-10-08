@@ -212,9 +212,10 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	 * @since 4.26.0
 	 *
 	 * @param int[] $course_ids Optional. Filter by courses. Empty = all.
+	 * @param array $args       Arguments for the query (see interface).
 	 * @return float
 	 */
-	public function get_courses_average_grade( array $course_ids = array() ): float {
+	public function get_courses_average_grade( array $course_ids = array(), array $args = array() ): float {
 		$wpdb = $this->wpdb;
 
 		if ( empty( $course_ids ) ) {
@@ -253,6 +254,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 						WHERE cm2.comment_id = c.comment_ID
 							AND cm2.meta_key = 'quiz_answers'
 					)";
+		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
 		$query .= $course_filter;
 		$query .= ' GROUP BY course.meta_value ) averages_by_course';
 

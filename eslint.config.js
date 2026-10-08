@@ -53,6 +53,7 @@ module.exports = [
 				{
 					devDependencies: [
 						'**/*.test.js',
+						'.prettierrc.js',
 						'scripts/**/*.js',
 						'tests/**/*.js',
 						'webpack.config.js',
@@ -68,7 +69,7 @@ module.exports = [
 				},
 			],
 			'jsdoc/check-line-alignment': [
-				'warn',
+				'error',
 				'always',
 				{
 					tags: [ 'param', 'arg', 'argument', 'property', 'prop' ],

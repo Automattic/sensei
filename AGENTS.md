@@ -6,6 +6,11 @@ See `make help` for the full list of available dev commands.
 
 Apply them to code you add. Do not rewrite surrounding code to match.
 
+## Repository skills
+- Shared skills live in `.agents/skills/`; `.claude/skills/` contains symlinks to the same directories for Claude Code.
+- When creating, opening, or drafting a PR, read `.agents/skills/pull-request/SKILL.md`.
+- For agent-driven UI verification, read `.agents/skills/e2e-testing/SKILL.md`.
+
 ## Repository layout
 - `includes/` — main plugin PHP source.
 - `assets/` — JS/CSS source, blocks, and built artifacts under `assets/dist/`.
@@ -18,7 +23,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - `.github/workflows/` — CI definitions; PR previews are built by `playground-preview.yml`.
 
 ## Development environment
-- Run all dev commands inside the `make up` (wp-env) sandbox rather than against any host WordPress install — this keeps mistakes off shared/local state.
+- Run WordPress development commands inside the `make up` (wp-env) sandbox rather than against any host WordPress install — this keeps mistakes off shared/local state. `make psalm` runs static analysis on the host using Homebrew PHP versions (see Linting).
 - Use the Node version pinned in `.nvmrc`.
 - Ensure Docker Desktop is running before `make up`; verify with `docker info`. If it isn't running, start it without asking — this is a routine local action, not a user-facing change. Use `open -a Docker` on macOS or `sudo systemctl start docker` on Linux, then wait until `docker info` succeeds.
 - `make up` boots the wp-env Docker stack; `make down` stops it; `make destroy` wipes containers and data for a clean slate.
@@ -36,11 +41,11 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - **PHPUnit with HPPS enabled**: `npm run test-php:wp-env:hpps`.
 - **JS unit tests**: `npm run test-js`.
 - **End-to-end (Playwright)**: `npm run test:e2e` runs headless against the wp-env stack; `npm run test:e2e:debug` runs headed. Requires `make up` to be running first. The `pretest:e2e` hook runs ESLint + `tsc` before Playwright launches — failures there appear before any test output. See `tests/e2e-playwright/README.md` for details.
-- **Ad-hoc UI verification**: After `make up`, the dev site is at `http://localhost:8888` with admin credentials `admin` / `password` (wp-env defaults). For agent-driven verification, use the `/e2e-testing` skill (`.claude/skills/e2e-testing/SKILL.md`) — it scopes from `git diff`, lists Sensei's admin/frontend surfaces, and walks the Chrome DevTools MCP through the relevant flow.
+- **Ad-hoc UI verification**: After `make up`, the dev site is at `http://localhost:8888` with admin credentials `admin` / `password` (wp-env defaults). For agent-driven verification, use the `e2e-testing` skill (`.agents/skills/e2e-testing/SKILL.md`) — it scopes from `git diff`, lists Sensei's admin/frontend surfaces, and uses the available browser tools to walk through the relevant flow.
 
 ## Linting
 - **PHPCS**: Run `make lint` (the same diff-based check CI uses; requires a clean working tree). Whole-codebase scans: `./vendor/bin/phpcs`.
-- **Psalm**: Run `make psalm`. This runs Psalm against every PHP version in `.github/workflows/psalm.yml`'s matrix (parsed at runtime) since type narrowing differs between versions. Requires the matching `php@<version>` brew formulae installed.
+- **Psalm**: Run `make psalm`. This runs Psalm on the host against every PHP version in `.github/workflows/psalm.yml`'s matrix (parsed at runtime), including all branches of its conditional expression, since type narrowing differs between versions. Requires the matching `php@<version>` brew formulae installed.
 - **JS / CSS / types**: `npm run lint-js` (ESLint on `assets`), `npm run lint-css` (stylelint on SCSS), `npm run lint-types` (tsc). Each JS/CSS one has a `:fix` variant.
 - **Before pushing**: The pre-commit hook only lints PHP files added after 2020-01-01. CI lints all changed lines. Always run PHPCS and the full Psalm matrix on modified files before pushing to avoid CI failures.
 

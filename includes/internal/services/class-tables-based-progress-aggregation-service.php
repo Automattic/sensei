@@ -24,6 +24,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_Service_Interface {
 
 	/**
+	 * Maximum progress records read per completion-day calculation batch.
+	 *
+	 * @since $$next-version$$
+	 * @var int
+	 */
+	private const COMPLETION_DAYS_BATCH_SIZE = 5000;
+
+	/**
 	 * WordPress database object.
 	 *
 	 * @var \wpdb
@@ -39,17 +47,6 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	 */
 	public function __construct( \wpdb $wpdb ) {
 		$this->wpdb = $wpdb;
-	}
-
-	/**
-	 * Get the progress table name.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @return string The progress table name.
-	 */
-	private function get_progress_table_name(): string {
-		return $this->wpdb->prefix . 'sensei_lms_progress';
 	}
 
 	/**
@@ -136,6 +133,51 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		}
 
 		return $counts;
+	}
+
+	/**
+	 * Count course progress records grouped by post and status.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course IDs to count; an empty list counts all courses.
+	 * @param array $args {
+	 *     Optional query filters.
+	 *
+	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
+	 * }
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	public function count_statuses_by_post( array $course_ids, array $args = array() ): array {
+		// Apply the same progress-ID filters as the repositories so Reports reads the same stored progress.
+		$post_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
+
+		$wpdb  = $this->wpdb;
+		$table = $this->get_progress_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix.
+		$query = "SELECT p.post_id, p.status, COUNT(*) AS total FROM {$table} p";
+
+		$query .= " WHERE p.type = 'course'";
+		$query .= $this->build_post_filter_clause( array( 'post__in' => array_values( $post_id_map ) ) );
+		$query .= $this->build_user_exclusion_clause( $args );
+
+		$query .= ' GROUP BY p.post_id, p.status';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based course status counts by post' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['post_id'] ][ $row['status'] ] = (int) $row['total'];
+		}
+
+		if ( empty( $post_id_map ) ) {
+			return $counts;
+		}
+
+		return Utils::map_results_to_requested_post_ids( $counts, $post_id_map );
 	}
 
 	/**
@@ -299,6 +341,178 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		Utils::log_query_error( $wpdb, 'Tables-based ungraded quizzes count' );
 
 		return $count;
+	}
+
+	/**
+	 * Count completed lesson progress per lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs.
+	 * @param array $args       Optional query filters (see interface).
+	 * @return array<int, int> Map of lesson_id => completion count.
+	 */
+	public function get_lesson_completion_counts( array $lesson_ids, array $args = array() ): array {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		// Resolve each requested lesson to the ID where its progress is stored, then remove duplicates.
+		$post_id_map = Utils::get_progress_post_id_map( $lesson_ids, 'lesson' );
+		$lesson_ids  = array_values( array_unique( $post_id_map ) );
+
+		$reports_statuses  = Utils::get_reports_post_status_sql();
+		$wpdb              = $this->wpdb;
+		$table             = $this->get_progress_table_name();
+		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
+		$placeholders      = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+
+		// Check parent-course eligibility once per grouped lesson, not once per student.
+		// A submitted quiz supplies the lesson status; quiz rows without a submission are ignored.
+		// Submitted quizzes count as completions even while awaiting grading, for published/private parent courses.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb prefix. Placeholders created dynamically.
+		$query  = $wpdb->prepare(
+			"SELECT completions.lesson_id, completions.completion_count
+			FROM (
+				SELECT p.post_id AS lesson_id, COUNT(*) AS completion_count
+				FROM {$table} p
+				LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0
+				LEFT JOIN {$table} q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'
+					AND EXISTS ( SELECT 1 FROM {$submissions_table} qs WHERE qs.quiz_id = q.post_id AND qs.user_id = q.user_id )
+				WHERE p.type = 'lesson'
+					AND p.post_id IN ( $placeholders )
+					AND COALESCE( q.status, p.status ) IN ('graded', 'ungraded', 'passed', 'failed', 'complete')",
+			$lesson_ids
+		);
+		$query .= $this->build_user_exclusion_clause( $args, 'COALESCE( q.status, p.status )' );
+		$query .= "
+				GROUP BY p.post_id
+			) completions
+			WHERE EXISTS (
+				SELECT 1 FROM {$wpdb->postmeta} course_meta
+				JOIN {$wpdb->posts} course ON course.ID = course_meta.meta_value
+				WHERE course_meta.post_id = completions.lesson_id
+					AND course_meta.meta_key = '_lesson_course'
+					AND course.post_status IN ( {$reports_statuses} )
+			)";
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+		$results = (array) $wpdb->get_results( $query, ARRAY_A );
+		Utils::log_query_error( $wpdb, 'Tables-based lesson completion counts' );
+
+		$counts = array();
+		foreach ( $results as $row ) {
+			$counts[ (int) $row['lesson_id'] ] = (int) $row['completion_count'];
+		}
+
+		return Utils::map_results_to_requested_post_ids( $counts, $post_id_map );
+	}
+
+	/**
+	 * Get rounded completion-day averages keyed by requested course ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @param array $args       Optional query filters (see interface).
+	 * @return array<int, float> Rounded per-course averages.
+	 */
+	public function get_average_days_to_completion_by_course( array $course_ids, array $args = array() ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
+
+		// Query shared progress once, then restore each requested course and its weight.
+		$post_id_map = Utils::get_progress_post_id_map( $course_ids, 'course' );
+		$course_ids  = array_values( array_unique( $post_id_map ) );
+
+		$wpdb         = $this->wpdb;
+		$table        = $this->get_progress_table_name();
+		$statuses     = Utils::get_reports_post_status_sql();
+		$exclusion    = $this->build_user_exclusion_clause( $args );
+		$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
+
+		// Use the timezone offset at each event date, since daylight saving can change the local day.
+		// PHP knows these timezone rules even when MySQL timezone tables are unavailable.
+		$timezone        = wp_timezone();
+		$utc             = new \DateTimeZone( 'UTC' );
+		$start_counts    = array();
+		$completion_days = array();
+		$last_id         = 0;
+
+		do {
+			// Limit each batch to keep memory use bounded.
+			// Missing starts may be NULL or migrated zero dates; neither counts toward the average.
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Dynamic course placeholders plus cursor and batch size. Table name from wpdb prefix. Placeholders created dynamically.
+			$query = $wpdb->prepare(
+				"SELECT p.id, p.post_id, p.started_at, p.completed_at
+				FROM {$table} p
+				INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( $statuses )
+				WHERE p.type = 'course'
+					AND p.status = 'complete'
+					AND p.post_id IN ( $placeholders )
+					AND p.started_at > '0000-00-00 00:00:00'
+					AND p.id > %d
+				$exclusion
+				ORDER BY p.id
+				LIMIT %d",
+				array_merge( $course_ids, array( $last_id, self::COMPLETION_DAYS_BATCH_SIZE ) )
+			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
+			$results = (array) $wpdb->get_results( $query, ARRAY_A );
+			Utils::log_query_error( $wpdb, 'Tables-based courses average days to completion' );
+			/**
+			 * Each batch query can change last_error after the previous iteration.
+			 *
+			 * @psalm-suppress DocblockTypeContradiction -- Psalm retains the previous iteration's narrowing.
+			 */
+			if ( ! empty( $wpdb->last_error ) ) {
+				return array();
+			}
+
+			$batch_count = count( $results );
+			foreach ( $results as $row ) {
+				$course_id = (int) $row['post_id'];
+				$last_id   = (int) $row['id'];
+
+				// A valid start counts toward the average even without a completion date.
+				$start_counts[ $course_id ] = ( $start_counts[ $course_id ] ?? 0 ) + 1;
+				if ( empty( $row['completed_at'] ) || '0000-00-00 00:00:00' === $row['completed_at'] ) {
+					continue;
+				}
+
+				// Count local calendar days, including both the start and completion day.
+				$started_at   = ( new \DateTimeImmutable( $row['started_at'], $utc ) )->setTimezone( $timezone )->setTime( 0, 0 );
+				$completed_at = ( new \DateTimeImmutable( $row['completed_at'], $utc ) )->setTimezone( $timezone )->setTime( 0, 0 );
+
+				$days = (int) $started_at->diff( $completed_at )->days + 1;
+
+				// Accumulate each course across all batches before rounding its average.
+				$completion_days[ $course_id ] = ( $completion_days[ $course_id ] ?? 0 ) + $days;
+			}
+		} while ( self::COMPLETION_DAYS_BATCH_SIZE === $batch_count );
+
+		// Restore requested IDs before averaging so translations retain their course weight.
+		$averages = array();
+		foreach ( $completion_days as $course_id => $days ) {
+			$averages[ $course_id ] = ceil( $days / $start_counts[ $course_id ] );
+		}
+
+		return Utils::map_results_to_requested_post_ids( $averages, $post_id_map );
+	}
+
+	/**
+	 * Get the progress table name.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @return string The progress table name.
+	 */
+	private function get_progress_table_name(): string {
+		return $this->wpdb->prefix . 'sensei_lms_progress';
 	}
 
 	/**

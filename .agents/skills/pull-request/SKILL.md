@@ -16,7 +16,8 @@ description: >-
 
 Fill the repo's PR template from the diff, do the CI-required chores (changelog,
 milestone) so `pr-validation.yml` passes, and stop for approval before
-`gh pr create` — which pushes the branch.
+publishing the branch and creating the PR, unless the user has already explicitly
+authorized those actions.
 
 ## Who this is for
 
@@ -83,11 +84,12 @@ Fill each section from the diff. Guidance per section:
   Judge that from the diff: it touches front-end/editor surfaces — `assets/`
   (JS/CSS/SCSS), block markup, `render.php`, front-end templates, or editor
   components. If it's not visual (pure PHP logic, REST, data, tooling, tests),
-  **remove this whole section**. When you keep it, leave the template's empty
-  Before/After table for the user to fill (for net-new UI with no "before" state,
-  replace it with a note to paste a single screenshot or short video). You cannot
-  capture the images yourself, so at the approval gate (step 5) remind the user to
-  attach them.
+  **remove this whole section**. When browser tools are available, capture the
+  relevant screenshots and attach them using a supported upload mechanism.
+  For net-new UI with no "before" state, use a single screenshot or short video.
+  If capture or upload is unavailable, leave the Before/After table for the user
+  to fill and identify the missing images. Local file paths are not usable image
+  links in a GitHub PR body.
 - **`## Testing Instructions`** — a checkbox list (`- [ ] step`) of manual steps a
   human follows to verify the change (click paths, expected on-screen results,
   edge cases), so the reviewer can tick each as they test. **Never list running
@@ -134,24 +136,28 @@ the user and move on.
   don't add an entry and plan to apply the **`No Changelog`** label to the PR.
   Say this in the summary you show the user.
 
-### 5. Stop and confirm — this is the push gate
+### 5. Confirm publication authorization
 
 Show the user the proposed **title** and the **filled template body** (call out the
-changelog choice and any labels: Hooks / Deprecation / No Changelog). If you kept a
-**Screenshots** section, remind the user to attach before/after images — you can't
-capture them, and the placeholder ships empty otherwise. Then wait for explicit
-approval. Do not run `gh pr create` until they say go — it pushes the branch and
-opens the PR, which is outward-facing and hard to walk back.
+changelog choice and any labels: Hooks / Deprecation / No Changelog). If screenshots
+are missing, remind the user to attach them. If the user has already explicitly
+authorized pushing and opening the PR, proceed. Otherwise, wait for explicit
+approval before pushing or creating the PR.
 
 ### 6. Create the PR
 
-After approval:
+After publication is authorized, push the branch explicitly, then create the PR:
 
 ```bash
-gh pr create --base trunk --title "<title>" --body "<filled template body>"
+git push -u origin <branch>
+gh pr create --base trunk --head <branch> --title "<title>" --body-file <body-file> --assignee "@me"
 ```
 
-`gh` pushes the current branch as part of this. Capture the PR number it prints.
+Save the filled template body to a temporary file with actual newlines. Using
+`--head` skips `gh`'s implicit pushing or forking prompts. Capture the PR URL it
+prints and its PR number.
+Always assign the PR to the current authenticated GitHub user using
+`--assignee "@me"`.
 Apply any labels you flagged (e.g. `No Changelog`, `Hooks`, `Deprecation`):
 
 ```bash

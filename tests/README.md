@@ -82,4 +82,3 @@ Run all Jest tests:
 * A single method or function can have multiple associated test methods if it's a large or complex method.
 * Prefer `assertSame()` where possible as it tests both type & equality.
 * Remember that only methods prefixed with `test` will be run.
-* Filters persist between test cases so be sure to remove them in your test method or in the `tearDown()` method.

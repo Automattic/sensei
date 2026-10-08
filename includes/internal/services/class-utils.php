@@ -31,6 +31,18 @@ class Utils {
 	public const REPORTS_POST_STATUSES = array( 'publish', 'private' );
 
 	/**
+	 * Temporary user accounts excluded from Reports lists and calculations.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string[]
+	 */
+	public const REPORTS_EXCLUDED_USER_LOGIN_PREFIXES = array(
+		\Sensei_Guest_User::LOGIN_PREFIX,
+		\Sensei_Preview_User::LOGIN_PREFIX,
+	);
+
+	/**
 	 * Post statuses that Grading counts as live content.
 	 *
 	 * @since 4.26.4
@@ -48,6 +60,56 @@ class Utils {
 	 */
 	public static function get_reports_post_status_sql(): string {
 		return "'" . implode( "','", self::REPORTS_POST_STATUSES ) . "'";
+	}
+
+	/**
+	 * Resolve progress IDs while retaining the IDs used by report rows.
+	 *
+	 * Use the same progress-ID filters as the repositories to locate stored progress.
+	 * For example, WPML uses these filters to share progress with the original-language post.
+	 * Callers query the mapped IDs and key their results by the requested IDs.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[]  $post_ids Requested post IDs.
+	 * @param string $type     Course or lesson progress type.
+	 * @return array<int, int> Requested ID => stored progress ID.
+	 */
+	public static function get_progress_post_id_map( array $post_ids, string $type ): array {
+		$map = array();
+		foreach ( $post_ids as $post_id ) {
+			$post_id = (int) $post_id;
+			if ( 'course' === $type ) {
+				$map[ $post_id ] = (int) apply_filters( 'sensei_course_progress_get_course_id', $post_id );
+			} else {
+				$map[ $post_id ] = (int) apply_filters( 'sensei_lesson_progress_get_lesson_id', $post_id );
+			}
+		}
+
+		return $map;
+	}
+
+	/**
+	 * Re-key stored progress results using the requested post IDs.
+	 *
+	 * Requested IDs without a stored result are omitted. Result values are preserved.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @template T
+	 * @param array<int, T>   $results     Results keyed by stored progress ID.
+	 * @param array<int, int> $post_id_map Requested ID => stored progress ID.
+	 * @return array<int, T> Results keyed by requested post ID.
+	 */
+	public static function map_results_to_requested_post_ids( array $results, array $post_id_map ): array {
+		$requested_results = array();
+		foreach ( $post_id_map as $requested_id => $stored_id ) {
+			if ( isset( $results[ $stored_id ] ) ) {
+				$requested_results[ $requested_id ] = $results[ $stored_id ];
+			}
+		}
+
+		return $requested_results;
 	}
 
 	/**
@@ -138,6 +200,46 @@ class Utils {
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
 		return $wpdb->prepare( " AND p.user_id NOT IN ( $id_placeholders )", $excluded_user_ids );
+	}
+
+	/**
+	 * Build a SQL clause for excluding comments by author login prefix.
+	 *
+	 * When include_statuses_override is set, excluded users are kept if their
+	 * effective status matches one of the override statuses.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \wpdb $wpdb WordPress database object.
+	 * @param array $args Query arguments with 'exclude_user_login_prefixes' and optional 'include_statuses_override'.
+	 * @return string SQL clause.
+	 */
+	public static function build_comment_author_exclusion_clause( \wpdb $wpdb, array $args ): string {
+		if ( empty( $args['exclude_user_login_prefixes'] ) ) {
+			return '';
+		}
+
+		$prefixes = array_filter( $args['exclude_user_login_prefixes'] );
+		if ( empty( $prefixes ) ) {
+			return '';
+		}
+
+		$not_like_clauses = array();
+		foreach ( $prefixes as $prefix ) {
+			$escaped_prefix     = $wpdb->esc_like( $prefix );
+			$not_like_clauses[] = $wpdb->prepare( 'comment_author NOT LIKE %s', $escaped_prefix . '%' );
+		}
+
+		$exclusion_sql = '( ' . implode( ' AND ', $not_like_clauses ) . ' )';
+
+		if ( ! empty( $args['include_statuses_override'] ) ) {
+			$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+			$override_sql = $wpdb->prepare( "comment_approved IN ( $status_placeholders )", $args['include_statuses_override'] );
+			return " AND ( $exclusion_sql OR $override_sql )";
+		}
+
+		return " AND $exclusion_sql";
 	}
 
 	/**

@@ -29,7 +29,7 @@ class Sensei_Reports_Overview_List_Table_Factory_Test extends WP_UnitTestCase {
 	 */
 	public function testCreate_TypeGiven_ReturnsExpectedInstance( string $type, string $expected_class ) {
 		/* Arrange. */
-		$factory = new Sensei_Reports_Overview_List_Table_Factory();
+		$factory = $this->create_factory();
 
 		/* Act. */
 		$actual_instance = $factory->create( $type );
@@ -39,21 +39,46 @@ class Sensei_Reports_Overview_List_Table_Factory_Test extends WP_UnitTestCase {
 	}
 
 	public function providerCreate_TypeGiven_ReturnsExpectedInstance(): array {
-		return [
-			'courses' => [
+		return array(
+			'courses' => array(
 				'courses',
 				'Sensei_Reports_Overview_List_Table_Courses',
-			],
-		];
+			),
+		);
+	}
+
+	public function testCreate_FactoryConstructedWithoutArguments_ReturnsCoursesListTable() {
+		/* Arrange. */
+		$factory = new Sensei_Reports_Overview_List_Table_Factory();
+
+		/* Act. */
+		$actual_instance = $factory->create( 'courses' );
+
+		/* Assert. */
+		$this->assertInstanceOf( Sensei_Reports_Overview_List_Table_Courses::class, $actual_instance );
 	}
 
 	public function testCreate_UnknownTypeGiven_ThrowsException() {
 		/* Arrange. */
-		$factory = new Sensei_Reports_Overview_List_Table_Factory();
+		$factory = $this->create_factory();
 
 		/* Expect & Act. */
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'Unknown list table type' );
 		$factory->create( 'unknown' );
+	}
+
+	/**
+	 * Create a factory with injected query services.
+	 *
+	 * @return Sensei_Reports_Overview_List_Table_Factory
+	 */
+	private function create_factory(): Sensei_Reports_Overview_List_Table_Factory {
+		return Sensei_Reports_Overview_List_Table_Factory::create_with_dependencies(
+			Sensei()->course,
+			$this->createMock( \Sensei\Internal\Services\Progress_Clauses_Service_Interface::class ),
+			$this->createMock( \Sensei\Internal\Services\Progress_Aggregation_Service_Interface::class ),
+			$this->createMock( \Sensei\Internal\Services\Grading_Stats_Service_Interface::class )
+		);
 	}
 }
