@@ -85,17 +85,28 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	private function query_activity( array $args, string $meta_kind, bool $exclude_temporary_users = false ): array {
-		$query       = $exclude_temporary_users ? array( Utils::class, 'query_report_activity' ) : array( \Sensei_Utils::class, 'sensei_check_for_activity' );
-		$total_count = $query(
-			array_merge(
-				$args,
-				array(
-					'count'  => true,
-					'offset' => 0,
-					'number' => 0,
-				)
-			)
-		);
+		$requested_post_id = null;
+		if ( $exclude_temporary_users ) {
+			$requested_post_id = (int) ( $args['post_id'] ?? 0 );
+			$type              = 'grade' === $meta_kind ? 'lesson' : 'course';
+			$post_id_map       = Utils::get_progress_post_id_map( array( $requested_post_id ), $type );
+			$args['post_id']   = $post_id_map[ $requested_post_id ];
+
+			$excluded_user_ids      = Utils::get_user_ids_by_login_prefixes( $GLOBALS['wpdb'], Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES );
+			$args['author__not_in'] = array_values( array_unique( array_merge( (array) ( $args['author__not_in'] ?? array() ), $excluded_user_ids ) ) );
+		}
+
+		$count_args           = $args;
+		$count_args['count']  = true;
+		$count_args['offset'] = 0;
+		$count_args['number'] = 0;
+
+		/**
+		 * Report filters may add WP_Comment_Query arguments.
+		 *
+		 * @psalm-suppress InvalidArgument
+		 */
+		$total_count = $exclude_temporary_users ? get_comments( $count_args ) : \Sensei_Utils::sensei_check_for_activity( $count_args );
 
 		$offset = $args['offset'] ?? 0;
 		$number = $args['number'] ?? 0;
@@ -104,7 +115,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 			$args['offset'] = $last_page * $number;
 		}
 
-		$statuses = $query( $args, true );
+		$statuses = $exclude_temporary_users ? get_comments( $args ) : \Sensei_Utils::sensei_check_for_activity( $args, true );
 		if ( ! is_array( $statuses ) ) {
 			$statuses = array( $statuses );
 		}
@@ -114,7 +125,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 			if ( ! $comment instanceof \WP_Comment ) {
 				continue;
 			}
-			$items[] = $this->item_from_comment( $comment, $meta_kind );
+			$items[] = $this->item_from_comment( $comment, $meta_kind, $requested_post_id );
 		}
 
 		return array(
@@ -127,10 +138,11 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * Build a Reports_Item from a WP_Comment row.
 	 *
 	 * @param \WP_Comment $comment   The activity comment.
-	 * @param string      $meta_kind Numeric meta field to read: 'grade' or 'percent'.
+	 * @param string      $meta_kind         Numeric meta field to read: 'grade' or 'percent'.
+	 * @param int|null    $requested_post_id Requested post ID, if progress is stored under another ID.
 	 * @return Reports_Item
 	 */
-	private function item_from_comment( \WP_Comment $comment, string $meta_kind ): Reports_Item {
+	private function item_from_comment( \WP_Comment $comment, string $meta_kind, ?int $requested_post_id = null ): Reports_Item {
 		$start_date = get_comment_meta( (int) $comment->comment_ID, 'start', true );
 		$grade      = null;
 		$percent    = null;
@@ -144,7 +156,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 		}
 
 		return new Reports_Item(
-			(int) $comment->comment_post_ID,
+			$requested_post_id ?? (int) $comment->comment_post_ID,
 			(int) $comment->user_id,
 			$comment->comment_approved,
 			$start_date ? $start_date : null,

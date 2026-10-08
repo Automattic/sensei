@@ -14,9 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface Reports_Listing_Service_Interface.
  *
- * The paginated methods accept comments-API-shaped activity arguments so that
- * existing `sensei_analysis_*` filters can continue to modify the query in the
- * same way they do for the legacy comments-based path.
+ * The paginated methods accept activity arguments from the report list tables,
+ * including arguments modified by the `sensei_analysis_*` filters.
  *
  * @internal
  *
