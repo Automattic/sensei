@@ -115,7 +115,7 @@ class Sensei_Import_Model_Test extends WP_UnitTestCase {
 		];
 
 		$expected = [
-			'test-string-allow-html' => '<em>This is great HTML alert("Bad!");</em>',
+			'test-string-allow-html' => function_exists( 'wp_sanitize_html_kses' ) ? '<em>This is great HTML </em>' : '<em>This is great HTML alert("Bad!");</em>',
 			'test-string-no-html'    => 'Cool',
 			'favorite_int'           => 1000,
 			'favorite_float'         => 1.0003,

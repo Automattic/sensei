@@ -257,7 +257,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$result = ob_get_clean();
 
 		/* Assert. */
-		$this->assertSame( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
+		$this->assertEqualHTML( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
 	}
 
 	public function testOutputQueryParamsAsInputs_WhenUrlIsProvidedAndEchoIsFalse_ReturnsCorrectInputs() {
@@ -268,7 +268,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$result = Sensei_Utils::output_query_params_as_inputs( [], $url, false );
 
 		/* Assert. */
-		$this->assertSame( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
+		$this->assertEqualHTML( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
 	}
 
 	public function testOutputQueryParamsAsInputs_WhenAParamIsExcluded_ReturnsCorrectInputs() {
@@ -279,7 +279,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$result = Sensei_Utils::output_query_params_as_inputs( [ 'param_2' ], $url, false );
 
 		/* Assert. */
-		$this->assertSame( '<input type="hidden" name="param_1" value="value_1">', $result );
+		$this->assertEqualHTML( '<input type="hidden" name="param_1" value="value_1">', $result );
 	}
 
 	/**

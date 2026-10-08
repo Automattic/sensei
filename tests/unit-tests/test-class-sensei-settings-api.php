@@ -81,9 +81,9 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 		$tabs = ob_get_clean();
 
 		/** Assert. */
-		// Normalize ampersand entities for cross-version compatibility.
-		$tabs = str_replace( '&#038;', '&amp;', $tabs );
-		$this->assertStringContainsString( '<a href="' . admin_url( 'admin.php' ) . '?page=sensei-settings&amp;tab=default-settings" class="tab current">Default Settings</a>', $tabs );
+		$processor = new \WP_HTML_Tag_Processor( $tabs );
+		$this->assertTrue( $processor->next_tag( array( 'class_name' => 'current' ) ) );
+		$this->assertSame( admin_url( 'admin.php' ) . '?page=sensei-settings&tab=default-settings', $processor->get_attribute( 'href' ) );
 	}
 
 	public function testSettingsTabs_WhenHasTabParam_AddsTheCurrentClassToTheTabLink() {
@@ -108,9 +108,9 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 		$tabs = ob_get_clean();
 
 		/** Assert. */
-		// Normalize ampersand entities for cross-version compatibility.
-		$tabs = str_replace( '&#038;', '&amp;', $tabs );
-		$this->assertStringContainsString( '<a href="' . admin_url( 'admin.php' ) . '?page=sensei-settings&amp;tab=other-settings" class="tab current">Other Settings</a>', $tabs );
+		$processor = new \WP_HTML_Tag_Processor( $tabs );
+		$this->assertTrue( $processor->next_tag( array( 'class_name' => 'current' ) ) );
+		$this->assertSame( admin_url( 'admin.php' ) . '?page=sensei-settings&tab=other-settings', $processor->get_attribute( 'href' ) );
 	}
 
 	public function testSettingsTabs_WhenTabIsExternal_AddsTheExternalClassToTheTabLink() {
@@ -131,8 +131,8 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 		$tabs = ob_get_clean();
 
 		/** Assert. */
-		// Normalize ampersand entities for cross-version compatibility.
-		$tabs = str_replace( '&#038;', '&amp;', $tabs );
-		$this->assertStringContainsString( '<a href="' . admin_url( 'admin.php' ) . '?page=sensei-settings&amp;tab=other-settings" class="tab external">Other Settings</a>', $tabs );
+		$processor = new \WP_HTML_Tag_Processor( $tabs );
+		$this->assertTrue( $processor->next_tag( array( 'class_name' => 'external' ) ) );
+		$this->assertSame( admin_url( 'admin.php' ) . '?page=sensei-settings&tab=other-settings', $processor->get_attribute( 'href' ) );
 	}
 }

@@ -105,7 +105,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 				],
 				[
 					Sensei_Data_Port_Question_Schema::COLUMN_ID              => '1234',
-					Sensei_Data_Port_Question_Schema::COLUMN_TITLE           => 'Do you like dogs? alert("Uhoh");',
+					Sensei_Data_Port_Question_Schema::COLUMN_TITLE           => function_exists( 'wp_sanitize_html_kses' ) ? 'Do you like dogs?' : 'Do you like dogs? alert("Uhoh");',
 					Sensei_Data_Port_Question_Schema::COLUMN_ANSWER          => 'Wrong:No, Right:Yes, Wrong:"Maybe, it depends"',
 					Sensei_Data_Port_Question_Schema::COLUMN_SLUG            => 'do-you-like-dogs',
 					Sensei_Data_Port_Question_Schema::COLUMN_DESCRIPTION     => 'This is a really great question.',
