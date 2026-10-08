@@ -629,6 +629,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		);
 		/**
 		 * Filter the lesson completions activity arguments for the Course Analysis list table.
+		 * The count uses post_id and status. The type and count keys remain for compatibility.
 		 *
 		 * @hook sensei_analysis_lesson_completions
 		 *

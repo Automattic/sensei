@@ -109,6 +109,23 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( $completed, $actual );
 	}
 
+	public function testGetLessonCompletionCount_TranslatedLessonQueried_CountsOriginalLessonCompletions(): void {
+		$original_lesson_id   = $this->sensei_factory->lesson->create();
+		$translated_lesson_id = $this->sensei_factory->lesson->create();
+		$user_id              = $this->sensei_factory->user->create();
+		$this->seed_progress( $original_lesson_id, $user_id, 'lesson', 'complete' );
+		$this->add_lesson_progress_id_filter( array( $translated_lesson_id => $original_lesson_id ) );
+
+		$actual = $this->get_service()->get_lesson_completion_count(
+			array(
+				'post_id' => $translated_lesson_id,
+				'status'  => \Sensei\Internal\Services\Reports_Item::COMPLETED_STATUSES,
+			)
+		);
+
+		$this->assertSame( 1, $actual );
+	}
+
 	public function report_lesson_population_provider(): array {
 		return array(
 			'registered completion'  => array( array( 'registered' => 'complete' ), 1, 1 ),

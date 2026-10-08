@@ -167,42 +167,6 @@ class Utils {
 	}
 
 	/**
-	 * Query Reports activity without guest and preview users.
-	 *
-	 * Uses the activity helper to retain its filters and WPML translation.
-	 * Scopes the SQL filter to this query so nested reads keep their own exclusions.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Activity query arguments.
-	 * @param bool  $return_comments Whether to return comments instead of a count.
-	 * @return int|array|\WP_Comment|false Activity result.
-	 * @psalm-return ($return_comments is false ? int|false : int|array|\WP_Comment|false)
-	 */
-	public static function query_report_activity( array $args, bool $return_comments = false ) {
-		$token                            = wp_unique_id( 'sensei_reports_' );
-		$args['sensei_reports_exclusion'] = $token;
-		// Separate filtered results from generic counts: the comment cache key ignores SQL clauses.
-		$args['cache_domain'] = ( $args['cache_domain'] ?? 'core' ) . ':sensei_reports';
-		$exclude              = static function ( array $clauses, \WP_Comment_Query $query ) use ( $token ): array {
-			if ( ( $query->query_vars['sensei_reports_exclusion'] ?? null ) === $token ) {
-				$clauses['where'] .= self::build_comment_author_exclusion_clause(
-					$GLOBALS['wpdb'],
-					array( 'exclude_user_login_prefixes' => self::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
-				);
-			}
-			return $clauses;
-		};
-		add_filter( 'comments_clauses', $exclude, PHP_INT_MAX, 2 );
-
-		try {
-			return \Sensei_Utils::sensei_check_for_activity( $args, $return_comments );
-		} finally {
-			remove_filter( 'comments_clauses', $exclude, PHP_INT_MAX );
-		}
-	}
-
-	/**
 	 * Build SQL clause for excluding users by login prefix.
 	 *
 	 * When include_statuses_override is set, excluded users are kept

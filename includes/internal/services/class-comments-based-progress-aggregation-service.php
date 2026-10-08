@@ -224,11 +224,33 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 *
 	 * @since 4.26.4
 	 *
-	 * @param array $args Comments-API-shaped activity arguments.
+	 * @param array $args Lesson query arguments: optional post_id (defaults to 0) and statuses. The type and count keys are ignored.
 	 * @return int Number of students with matching completed lesson activity.
 	 */
 	public function get_lesson_completion_count( array $args ): int {
-		return (int) Utils::query_report_activity( $args );
+		$wpdb        = $this->wpdb;
+		$post_id     = (int) ( $args['post_id'] ?? 0 );
+		$post_id_map = Utils::get_progress_post_id_map( array( $post_id ), 'lesson' );
+		$status_sql  = Utils::get_statuses_sql( $wpdb, $args );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name comes from $wpdb.
+		$query  = $wpdb->prepare(
+			"SELECT COUNT(DISTINCT user_id) FROM {$wpdb->comments} WHERE comment_post_ID = %d AND comment_type = 'sensei_lesson_status'",
+			$post_id_map[ $post_id ]
+		);
+		$query .= Utils::build_comment_author_exclusion_clause(
+			$wpdb,
+			array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Status values are prepared by the helper.
+		$query .= " AND comment_approved IN ( {$status_sql} )";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query and exclusion clauses are prepared above.
+		$count = (int) $wpdb->get_var( $query );
+		Utils::log_query_error( $wpdb, 'Comments-based lesson completion count' );
+
+		return $count;
 	}
 
 	/**
@@ -351,7 +373,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			"SELECT c.comment_post_id AS lesson_id, COUNT(*) AS completion_count
 			FROM {$wpdb->comments} c
 			WHERE c.comment_approved IN ('graded', 'ungraded', 'passed', 'failed', 'complete')
-			AND c.comment_type IN ('sensei_lesson_status')
+			AND c.comment_type = 'sensei_lesson_status'
 			AND c.comment_post_ID IN ( $placeholders )
 			AND c.comment_post_ID IN (
 				SELECT wpm.post_id FROM {$wpdb->posts} wpc
