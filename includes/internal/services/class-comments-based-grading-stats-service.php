@@ -185,7 +185,10 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 
 		$status_placeholders = implode( ',', array_fill( 0, count( $statuses ), '%s' ) );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $status_placeholders is a list of %s; WP 6.4 changed WP_Comment_Query to use get_col(), so a comments_clauses-based aggregate is unreliable.
+		$exclusion = Utils::build_comment_author_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
+
+		// WP_Comment_Query treats results as comment IDs or an integer count, so query the average directly.
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names come from $wpdb; $status_placeholders contains %s placeholders; $exclusion is prepared by its helper.
 		$avg = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT AVG(cm.meta_value)
@@ -194,11 +197,11 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 				   ON cm.comment_id = c.comment_ID AND cm.meta_key = %s
 				 WHERE c.comment_post_ID = %d
 				   AND c.comment_type = %s
-				   AND c.comment_approved IN ( {$status_placeholders} )",
+				   AND c.comment_approved IN ( {$status_placeholders} )" . $exclusion,
 				array_merge( array( $meta_key, $post_id, $type ), $statuses )
 			)
 		);
-		// phpcs:enable
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		Utils::log_query_error( $wpdb, 'Comments-based lesson average grade' );
 
 		return null !== $avg ? round( (float) $avg, 2 ) : null;

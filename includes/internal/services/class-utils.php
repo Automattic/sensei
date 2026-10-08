@@ -167,42 +167,6 @@ class Utils {
 	}
 
 	/**
-	 * Query Reports activity without guest and preview users.
-	 *
-	 * Uses the activity helper to retain its filters and WPML translation.
-	 * Scopes the SQL filter to this query so nested reads keep their own exclusions.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param array $args Activity query arguments.
-	 * @param bool  $return_comments Whether to return comments instead of a count.
-	 * @return int|array|\WP_Comment|false Activity result.
-	 * @psalm-return ($return_comments is false ? int|false : int|array|\WP_Comment|false)
-	 */
-	public static function query_report_activity( array $args, bool $return_comments = false ) {
-		$token                            = wp_unique_id( 'sensei_reports_' );
-		$args['sensei_reports_exclusion'] = $token;
-		// Separate filtered results from generic counts: the comment cache key ignores SQL clauses.
-		$args['cache_domain'] = ( $args['cache_domain'] ?? 'core' ) . ':sensei_reports';
-		$exclude              = static function ( array $clauses, \WP_Comment_Query $query ) use ( $token ): array {
-			if ( ( $query->query_vars['sensei_reports_exclusion'] ?? null ) === $token ) {
-				$clauses['where'] .= self::build_comment_author_exclusion_clause(
-					$GLOBALS['wpdb'],
-					array( 'exclude_user_login_prefixes' => self::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
-				);
-			}
-			return $clauses;
-		};
-		add_filter( 'comments_clauses', $exclude, PHP_INT_MAX, 2 );
-
-		try {
-			return \Sensei_Utils::sensei_check_for_activity( $args, $return_comments );
-		} finally {
-			remove_filter( 'comments_clauses', $exclude, PHP_INT_MAX );
-		}
-	}
-
-	/**
 	 * Build SQL clause for excluding users by login prefix.
 	 *
 	 * When include_statuses_override is set, excluded users are kept
@@ -297,7 +261,8 @@ class Utils {
 	 * Get user IDs whose login matches any of the given prefixes.
 	 *
 	 * Runs as a separate query to avoid JOINing wp_users, which may
-	 * be on a different database in some environments.
+	 * be on a different database in some environments. Cache results for the
+	 * request until WordPress invalidates its users cache.
 	 *
 	 * @since 4.26.0
 	 *
@@ -306,9 +271,16 @@ class Utils {
 	 * @return int[] Matching user IDs.
 	 */
 	private static function get_user_ids_by_login_prefixes( \wpdb $wpdb, array $prefixes ): array {
+		static $cached_ids = array();
+
 		$prefixes = array_filter( $prefixes );
 		if ( empty( $prefixes ) ) {
 			return array();
+		}
+		sort( $prefixes );
+		$cache_key = $wpdb->users . ':' . wp_cache_get_last_changed( 'users' ) . ':' . (string) wp_json_encode( $prefixes );
+		if ( isset( $cached_ids[ $cache_key ] ) ) {
+			return $cached_ids[ $cache_key ];
 		}
 
 		$like_clauses = array();
@@ -323,6 +295,7 @@ class Utils {
 		$result = (array) $wpdb->get_col( "SELECT ID FROM {$wpdb->users} WHERE $where" );
 		self::log_query_error( $wpdb, 'User ID lookup by login prefix' );
 
-		return array_map( 'intval', $result );
+		$cached_ids[ $cache_key ] = array_map( 'intval', $result );
+		return $cached_ids[ $cache_key ];
 	}
 }
