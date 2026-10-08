@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix quiz grade being deflated when submitted answers include question IDs that are not a valid 'question' post type. PHP's loose `0 == false` comparison caused such IDs to be silently treated as zero-grade questions, potentially corrupting the per-question grade record. They are now skipped entirely.
