@@ -90,13 +90,13 @@ Fill each section from the diff. Guidance per section:
   If capture or upload is unavailable, leave the Before/After table for the user
   to fill and identify the missing images. Local file paths are not usable image
   links in a GitHub PR body.
-- **`## Testing Instructions`** — a checkbox list (`- [ ] step`) of manual steps a
-  human follows to verify the change (click paths, expected on-screen results,
-  edge cases), so the reviewer can tick each as they test. **Never list running
-  the automated suites (`make test-php`, PHPUnit, Playwright/e2e) as a step** —
-  those run in CI; the reviewer verifies behavior by hand. If the change has no
-  manual surface (e.g. test-only or pure internal refactor), say so briefly
-  instead of padding with "run the tests".
+- **`## Testing Instructions`** — reserve this section for manual behavior checks
+  in WordPress wherever possible. Use a checkbox list (`- [ ] step`) with click
+  paths and expected results. Omit the entire section for CI-only changes or
+  changes with no meaningful manual behavior to test, such as documentation or
+  test-only changes. Do not use file or diff review as a testing step, and do not
+  add placeholder text saying no manual testing is needed. Never list automated
+  suites (`make test-php`, PHPUnit, Playwright/e2e) as steps; those run in CI.
 - **`## New/Updated Hooks`** — fill only if the diff adds or changes an action or
   filter; describe each and its args, and plan to add the **Hooks** label. If the
   diff touches no hooks, **remove this whole section** (heading, comment, and
