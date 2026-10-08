@@ -82,8 +82,20 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 
 		/** Assert. */
 		$processor = new \WP_HTML_Tag_Processor( $tabs );
-		$this->assertTrue( $processor->next_tag( array( 'class_name' => 'current' ) ) );
-		$this->assertSame( admin_url( 'admin.php' ) . '?page=sensei-settings&tab=default-settings', $processor->get_attribute( 'href' ) );
+		$this->assertTrue(
+			$processor->next_tag(
+				array(
+					'tag_name'   => 'A',
+					'class_name' => 'current',
+				)
+			),
+			'Default tab should be a link with the current class.'
+		);
+		$this->assertSame(
+			admin_url( 'admin.php' ) . '?page=sensei-settings&tab=default-settings',
+			$processor->get_attribute( 'href' ),
+			'Default tab link should point to its settings section.'
+		);
 	}
 
 	public function testSettingsTabs_WhenHasTabParam_AddsTheCurrentClassToTheTabLink() {
@@ -109,8 +121,20 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 
 		/** Assert. */
 		$processor = new \WP_HTML_Tag_Processor( $tabs );
-		$this->assertTrue( $processor->next_tag( array( 'class_name' => 'current' ) ) );
-		$this->assertSame( admin_url( 'admin.php' ) . '?page=sensei-settings&tab=other-settings', $processor->get_attribute( 'href' ) );
+		$this->assertTrue(
+			$processor->next_tag(
+				array(
+					'tag_name'   => 'A',
+					'class_name' => 'current',
+				)
+			),
+			'Selected tab should be a link with the current class.'
+		);
+		$this->assertSame(
+			admin_url( 'admin.php' ) . '?page=sensei-settings&tab=other-settings',
+			$processor->get_attribute( 'href' ),
+			'Selected tab link should point to its settings section.'
+		);
 	}
 
 	public function testSettingsTabs_WhenTabIsExternal_AddsTheExternalClassToTheTabLink() {
@@ -132,7 +156,19 @@ class Sensei_Settings_Api_Test extends \WP_UnitTestCase {
 
 		/** Assert. */
 		$processor = new \WP_HTML_Tag_Processor( $tabs );
-		$this->assertTrue( $processor->next_tag( array( 'class_name' => 'external' ) ) );
-		$this->assertSame( admin_url( 'admin.php' ) . '?page=sensei-settings&tab=other-settings', $processor->get_attribute( 'href' ) );
+		$this->assertTrue(
+			$processor->next_tag(
+				array(
+					'tag_name'   => 'A',
+					'class_name' => 'external',
+				)
+			),
+			'External tab should be a link with the external class.'
+		);
+		$this->assertSame(
+			admin_url( 'admin.php' ) . '?page=sensei-settings&tab=other-settings',
+			$processor->get_attribute( 'href' ),
+			'External tab link should point to its settings section.'
+		);
 	}
 }
