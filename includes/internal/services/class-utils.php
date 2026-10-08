@@ -261,7 +261,8 @@ class Utils {
 	 * Get user IDs whose login matches any of the given prefixes.
 	 *
 	 * Runs as a separate query to avoid JOINing wp_users, which may
-	 * be on a different database in some environments.
+	 * be on a different database in some environments. Cache results for the
+	 * request until WordPress invalidates its users cache.
 	 *
 	 * @since 4.26.0
 	 *
@@ -270,12 +271,19 @@ class Utils {
 	 * @return int[] Matching user IDs.
 	 */
 	private static function get_user_ids_by_login_prefixes( \wpdb $wpdb, array $prefixes ): array {
+		static $cached_ids = array();
+
 		$prefixes = array_filter( $prefixes );
 		if ( empty( $prefixes ) ) {
-			return [];
+			return array();
+		}
+		sort( $prefixes );
+		$cache_key = $wpdb->users . ':' . wp_cache_get_last_changed( 'users' ) . ':' . (string) wp_json_encode( $prefixes );
+		if ( isset( $cached_ids[ $cache_key ] ) ) {
+			return $cached_ids[ $cache_key ];
 		}
 
-		$like_clauses = [];
+		$like_clauses = array();
 		foreach ( $prefixes as $prefix ) {
 			$escaped_prefix = $wpdb->esc_like( $prefix );
 			$like_clauses[] = $wpdb->prepare( 'user_login LIKE %s', $escaped_prefix . '%' );
@@ -287,6 +295,7 @@ class Utils {
 		$result = (array) $wpdb->get_col( "SELECT ID FROM {$wpdb->users} WHERE $where" );
 		self::log_query_error( $wpdb, 'User ID lookup by login prefix' );
 
-		return array_map( 'intval', $result );
+		$cached_ids[ $cache_key ] = array_map( 'intval', $result );
+		return $cached_ids[ $cache_key ];
 	}
 }

@@ -193,10 +193,10 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$post_id           = (int) ( $args['post_id'] ?? 0 );
 		$status_sql        = Utils::get_statuses_sql( $wpdb, $args );
 
-		// Filter by the caller-provided statuses on the effective quiz status,
-		// then average the grade from quiz_submissions. Table names are trusted $wpdb
-		// properties and $status_sql is built from escaped args; the post_id uses a placeholder.
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$exclusion = Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
+
+		// Use the quiz status when quiz progress exists; otherwise use the lesson status.
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names come from $wpdb properties or its prefix; $status_sql and $exclusion are prepared by their helpers; post_id uses a placeholder.
 		$avg = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT AVG( qs.final_grade )'
@@ -205,11 +205,12 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 				. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
 				. " LEFT JOIN `$submissions_table` qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id"
 				. " WHERE p.post_id = %d AND p.type = 'lesson' AND qs.final_grade IS NOT NULL"
+				. $exclusion
 				. " AND ( q.status IN ( {$status_sql} ) OR ( q.post_id IS NULL AND p.status IN ( {$status_sql} ) ) )",
 				$post_id
 			)
 		);
-		// phpcs:enable
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		Utils::log_query_error( $wpdb, 'Tables-based lesson average grade' );
 
 		return null !== $avg ? round( (float) $avg, 2 ) : null;
