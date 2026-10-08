@@ -201,6 +201,33 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 		$this->assertNotNull( $result['items'][0]->percent, 'Percent should be computed.' );
 	}
 
+	public function testGetCourseStudents_TranslatedCourseQueried_UsesOriginalCourseLessonsForPercent(): void {
+		global $wpdb;
+		$created    = $this->sensei_factory->get_course_with_lessons( array( 'lesson_count' => 1 ) );
+		$translated = $this->sensei_factory->course->create();
+		$user_id    = $this->sensei_factory->user->create();
+		$this->insert_progress( $created['course_id'], $user_id, 'course', 'in-progress' );
+		$this->insert_progress( $created['lesson_ids'][0], $user_id, 'lesson', 'complete' );
+		$map_progress = static function ( int $course_id ) use ( $created, $translated ): int {
+			return $translated === $course_id ? $created['course_id'] : $course_id;
+		};
+		add_filter( 'sensei_course_progress_get_course_id', $map_progress );
+
+		try {
+			$actual = ( new Tables_Based_Reports_Listing_Service( $wpdb ) )->get_course_students(
+				array(
+					'post_id' => $translated,
+					'status'  => 'any',
+				)
+			);
+		} finally {
+			remove_filter( 'sensei_course_progress_get_course_id', $map_progress );
+		}
+
+		$this->assertSame( 1, $actual['total_count'] );
+		$this->assertSame( 100.0, $actual['items'][0]->percent );
+	}
+
 	/**
 	 * Tests that get_user_lesson_progress returns a Reports_Item for lesson progress.
 	 *

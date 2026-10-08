@@ -74,6 +74,42 @@ abstract class Reports_Listing_Service_Test extends WP_UnitTestCase {
 
 	abstract protected function seed_report_progress( int $post, int $user, string $type, string $status, string $date ): void;
 
+	public function testGetCourseStudents_TranslatedCourseQueried_ReturnsOriginalProgress(): void {
+		$this->assert_translated_post_returns_original_progress( 'course', 'get_course_students', 'sensei_course_progress_get_course_id' );
+	}
+
+	public function testGetLessonStudents_TranslatedLessonQueried_ReturnsOriginalProgress(): void {
+		$this->assert_translated_post_returns_original_progress( 'lesson', 'get_lesson_students', 'sensei_lesson_progress_get_lesson_id' );
+	}
+
+	private function assert_translated_post_returns_original_progress( string $type, string $method, string $filter_name ): void {
+		$factory      = new Sensei_Factory();
+		$original     = $factory->post->create( array( 'post_type' => $type ) );
+		$translated   = $factory->post->create( array( 'post_type' => $type ) );
+		$user         = $factory->user->create();
+		$map_progress = static function ( int $post_id ) use ( $original, $translated ): int {
+			return $translated === $post_id ? $original : $post_id;
+		};
+		$this->seed_report_progress( $original, $user, $type, 'in-progress', '2022-01-01 00:00:00' );
+		add_filter( $filter_name, $map_progress );
+
+		try {
+			$actual = $this->get_report_service()->$method(
+				array(
+					'post_id' => $translated,
+					'type'    => 'sensei_' . $type . '_status',
+					'status'  => 'any',
+				)
+			);
+		} finally {
+			remove_filter( $filter_name, $map_progress );
+		}
+
+		$this->assertSame( 1, $actual['total_count'] );
+		$this->assertSame( array( $user ), wp_list_pluck( $actual['items'], 'user_id' ) );
+		$this->assertSame( $translated, $actual['items'][0]->post_id );
+	}
+
 	private function assert_temporary_progress_interspersed_returns_full_eligible_pages( string $type, string $method ): void {
 		$factory = new Sensei_Factory();
 		$post    = $factory->post->create( array( 'post_type' => $type ) );
