@@ -96,11 +96,13 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 				'operator' => 'NOT IN',
 			),
 		);
-		$args      = array(
-			'post_type'      => 'course',
-			'posts_per_page' => -1,
-			'tax_query'      => $tax_query, // phpcs:ignore WordPress.DB.SlowDBQuery
-			'fields'         => 'ids',
+		// Run the query with filters so multilingual plugins scope the excluded courses to the current language.
+		$args = array(
+			'post_type'        => 'course',
+			'posts_per_page'   => -1,
+			'tax_query'        => $tax_query, // phpcs:ignore WordPress.DB.SlowDBQuery
+			'fields'           => 'ids',
+			'suppress_filters' => false,
 		);
 
 		return get_posts( $args );

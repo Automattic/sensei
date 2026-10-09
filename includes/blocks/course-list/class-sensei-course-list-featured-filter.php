@@ -87,10 +87,11 @@ class Sensei_Course_List_Featured_Filter extends Sensei_Course_List_Filter_Abstr
 			return [];
 		}
 
+		// Run the query with filters so multilingual plugins scope the excluded courses to the current language.
 		$args = array(
-			'post_type'      => 'course',
-			'posts_per_page' => -1,
-			'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery
+			'post_type'        => 'course',
+			'posts_per_page'   => -1,
+			'meta_query'       => [ // phpcs:ignore WordPress.DB.SlowDBQuery
 				'relation' => 'OR',
 				[
 					'key'     => '_course_featured',
@@ -102,7 +103,8 @@ class Sensei_Course_List_Featured_Filter extends Sensei_Course_List_Filter_Abstr
 					'compare' => '!=',
 				],
 			],
-			'fields'         => 'ids',
+			'fields'           => 'ids',
+			'suppress_filters' => false,
 		);
 
 		return get_posts( $args );
