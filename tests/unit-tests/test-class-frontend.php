@@ -20,17 +20,27 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	 */
 	protected $factory;
 
+	/**
+	 * Course completion setting as found before the test, restored on teardown.
+	 *
+	 * @var string|bool
+	 */
+	private $initial_course_completion;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 		self::resetEnrolmentProviders();
 		$this->prepareEnrolmentManager();
+
+		$this->initial_course_completion = Sensei()->settings->get( 'course_completion' );
 	}
 
 	public function tearDown(): void {
 		$this->restore_progress_insert_failure();
 		$this->restore_progress_storage_mode();
+		Sensei()->settings->set( 'course_completion', $this->initial_course_completion );
 
 		unset(
 			$_POST['course_complete'],
@@ -93,7 +103,8 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * An enrolled student can mark the course as complete.
+	 * An enrolled student can mark the course as complete when the site allows
+	 * on-demand completion.
 	 *
 	 * @covers Sensei_Frontend::sensei_complete_course
 	 */
@@ -107,6 +118,8 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 					'question_count' => 0,
 				)
 			)['course_id'];
+
+			Sensei()->settings->set( 'course_completion', 'complete' );
 
 			wp_set_current_user( $student_id );
 			$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
@@ -137,6 +150,9 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 		$this->set_progress_storage_mode( $mode );
 		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
 		$course_id  = $this->factory->course->create();
+
+		Sensei()->settings->set( 'course_completion', 'complete' );
+
 		wp_set_current_user( $student_id );
 		$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
 		Sensei_Utils::user_start_course( $student_id, $course_id );
@@ -171,6 +187,9 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 			)
 		)['course_id'];
 
+		// On-demand completion is allowed, so enrolment is the only gate under test.
+		Sensei()->settings->set( 'course_completion', 'complete' );
+
 		wp_set_current_user( $student_id );
 		$this->submitCompletion( $course_id );
 
@@ -179,6 +198,34 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 		self::assertFalse(
 			Sensei_Utils::user_completed_course( $course_id, $student_id ),
 			'A student who is not enrolled should not be able to complete the course.'
+		);
+	}
+
+	/**
+	 * When the site completes courses by passing the lessons, an enrolled student
+	 * cannot short-circuit the gate with the "Mark as Complete" request.
+	 */
+	public function testSenseiCompleteCourse_CompletionByPassingGiven_DoesNotCompleteCourse() {
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course_id  = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		)['course_id'];
+
+		// The default mode: courses are complete once their lessons are passed.
+		Sensei()->settings->set( 'course_completion', 'passed' );
+
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
+		$this->submitCompletion( $course_id );
+
+		Sensei()->frontend->sensei_complete_course();
+
+		self::assertFalse(
+			Sensei_Utils::user_completed_course( $course_id, $student_id ),
+			'On-demand completion should be rejected when the site completes courses by passing.'
 		);
 	}
 
@@ -287,6 +334,58 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 		self::assertFalse(
 			Sensei_Utils::user_completed_lesson( $locked_lesson, $student_id ),
 			'A locked lesson should not be completable even when login is not required.'
+		);
+	}
+
+	public function testSenseiCompleteLesson_QuizPassRequiredGiven_DoesNotCompleteLesson() {
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course     = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 1,
+			)
+		);
+		$lesson_id  = $course['lesson_ids'][0];
+
+		// The lesson's quiz must be passed, so "Complete Lesson" cannot be used to skip it.
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		update_post_meta( $quiz_id, '_pass_required', 'on' );
+
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course['course_id'] );
+		$this->submitLessonCompletion( $lesson_id );
+
+		Sensei()->frontend->sensei_complete_lesson();
+
+		self::assertFalse(
+			Sensei_Utils::user_completed_lesson( $lesson_id, $student_id ),
+			'A lesson whose quiz requires a passing grade should not be completable on demand.'
+		);
+	}
+
+	public function testSenseiCompleteLesson_QuizWithQuestionsAndNoPassRequiredGiven_CompletesLesson() {
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course     = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 1,
+			)
+		);
+		$lesson_id  = $course['lesson_ids'][0];
+
+		// The quiz has questions but does not have to be passed, so the lesson stays self-completable.
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		update_post_meta( $quiz_id, '_pass_required', '' );
+
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course['course_id'] );
+		$this->submitLessonCompletion( $lesson_id );
+
+		Sensei()->frontend->sensei_complete_lesson();
+
+		self::assertTrue(
+			Sensei_Utils::user_completed_lesson( $lesson_id, $student_id ),
+			'A lesson whose quiz does not require a passing grade should still be completable.'
 		);
 	}
 

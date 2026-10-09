@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Respect the course completion mode and the quiz pass requirement when completing a course or lesson from the front end.
