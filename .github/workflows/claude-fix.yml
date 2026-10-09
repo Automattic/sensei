@@ -9,8 +9,8 @@ on:
 jobs:
   fix:
     if: |
-      (github.event_name == 'issues' && !github.event.issue.pull_request && github.event.label.name == 'claude') ||
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot' &&
+      (github.event_name == 'issues' && !github.event.issue.pull_request && github.event.label.name == 'claude' && github.event.sender.type != 'Bot') ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude') && !contains(github.event.comment.body, '@claude-triage') && github.event.comment.user.type != 'Bot' &&
         !github.event.issue.pull_request &&
         (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER'))
     runs-on: ubuntu-latest
