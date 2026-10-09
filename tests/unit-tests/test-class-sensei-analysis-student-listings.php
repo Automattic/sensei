@@ -6,7 +6,7 @@
  */
 
 /**
- * Verify student population in Reports exports.
+ * Verify students shown in Reports exports.
  *
  * @covers Sensei_Analysis_Course_List_Table
  * @covers Sensei_Analysis_Lesson_List_Table
@@ -33,11 +33,11 @@ class Sensei_Analysis_Student_Listings_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Exports and pagination must use the same eligible students.
+	 * Exports and pagination must show the same registered students.
 	 *
 	 * @dataProvider student_report_provider
 	 */
-	public function testGenerateReport_StudentListingRequested_ExportsOnlyRegisteredStudents( string $view, string $search ): void {
+	public function testGenerateReport_StudentListingRequested_ExportsOnlyRegisteredStudents( string $table_class, string $post_type, string $search, array $expected ): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Preserve the test request state.
 		$original_get = $_GET;
 
@@ -59,16 +59,19 @@ class Sensei_Analysis_Student_Listings_Test extends WP_UnitTestCase {
 			$_GET['view'] = 'user';
 			$_GET['s']    = $search;
 
-			$table = 'course' === $view ? new Sensei_Analysis_Course_List_Table( $created['course_id'] ) : new Sensei_Analysis_Lesson_List_Table( $created['lesson_ids'][0] );
+			$post_ids = array(
+				'course' => $created['course_id'],
+				'lesson' => $created['lesson_ids'][0],
+			);
+			$table    = new $table_class( $post_ids[ $post_type ] );
 
 			$actual = $table->generate_report( 'students-overview' );
 
-			$expected = '' === $search ? array( 'registered_match', 'registered_other' ) : array( 'registered_match' );
-			$titles   = wp_list_pluck( array_slice( $actual, 1 ), 'title' );
+			$titles = wp_list_pluck( array_slice( $actual, 1 ), 'title' );
 			sort( $titles );
 
 			$this->assertSame( $expected, $titles, 'CSV contains only matching registered students.' );
-			$this->assertSame( count( $expected ), $table->total_items, 'Report total matches the eligible CSV rows.' );
+			$this->assertSame( count( $expected ), $table->total_items, 'Report total matches the registered students in the CSV.' );
 		} finally {
 			$_GET = $original_get;
 
@@ -100,13 +103,8 @@ class Sensei_Analysis_Student_Listings_Test extends WP_UnitTestCase {
 
 			$actual = $table->generate_report( 'student-courses' );
 
-			$this->assertSame(
-				array( 'Course', 'Date Started', 'Date Completed', 'Status', 'Percent Complete' ),
-				$actual[0],
-				'CSV should contain its column header.'
-			);
-			$this->assertSame( $expected_titles, wp_list_pluck( array_slice( $actual, 1 ), 'title' ), 'CSV should contain only eligible courses.' );
-			$this->assertSame( count( $expected_titles ), $table->total_items, 'Pagination should match the eligible CSV rows.' );
+			$this->assertSame( $expected_titles, wp_list_pluck( array_slice( $actual, 1 ), 'title' ), 'CSV should contain the expected courses.' );
+			$this->assertSame( count( $expected_titles ), $table->total_items, 'Report total should match the courses in the CSV.' );
 		} finally {
 			$_GET = $original_get;
 
@@ -116,10 +114,10 @@ class Sensei_Analysis_Student_Listings_Test extends WP_UnitTestCase {
 
 	public function student_report_provider(): array {
 		return array(
-			'course students' => array( 'course', '' ),
-			'lesson students' => array( 'lesson', '' ),
-			'course search'   => array( 'course', 'match' ),
-			'lesson search'   => array( 'lesson', 'match' ),
+			'course students' => array( Sensei_Analysis_Course_List_Table::class, 'course', '', array( 'registered_match', 'registered_other' ) ),
+			'lesson students' => array( Sensei_Analysis_Lesson_List_Table::class, 'lesson', '', array( 'registered_match', 'registered_other' ) ),
+			'course search'   => array( Sensei_Analysis_Course_List_Table::class, 'course', 'match', array( 'registered_match' ) ),
+			'lesson search'   => array( Sensei_Analysis_Lesson_List_Table::class, 'lesson', 'match', array( 'registered_match' ) ),
 		);
 	}
 

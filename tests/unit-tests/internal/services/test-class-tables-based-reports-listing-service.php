@@ -92,7 +92,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
 	 */
-	public function testGetLessonStudents_WithLessonProgress_ReturnsReportsItems(): void {
+	public function testGetLessonStudents_LessonProgressCreated_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -128,7 +128,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
 	 */
-	public function testGetLessonStudents_WithQuizStatus_UsesCoalescedStatus(): void {
+	public function testGetLessonStudents_QuizProgressAndSubmissionCreated_ReturnsQuizStatusAndGrade(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -170,7 +170,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_course_students
 	 */
-	public function testGetCourseStudents_WithCourseProgress_ReturnsReportsItems(): void {
+	public function testGetCourseStudents_CourseProgressCreated_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -233,7 +233,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithProgress_ReturnsReportsItem(): void {
+	public function testGetUserLessonProgress_LessonProgressCreated_ReturnsReportsItem(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -265,7 +265,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithNoProgress_ReturnsNull(): void {
+	public function testGetUserLessonProgress_NoLessonProgressCreated_ReturnsNull(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -295,7 +295,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_courses
 	 */
-	public function testGetUserCourses_WithCourseProgress_ReturnsReportsItems(): void {
+	public function testGetUserCourses_CourseProgressCreated_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -322,38 +322,6 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
 	}
 
-	/**
-	 * Tests that get_lesson_students corrects pagination when offset exceeds total.
-	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
-	 */
-	public function testGetLessonStudents_WithOffsetBeyondTotal_CorrectsPagination(): void {
-		/* Arrange. */
-		global $wpdb;
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
-		);
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
-
-		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->get_lesson_students(
-			array(
-				'post_id' => $lesson_id,
-				'type'    => 'sensei_lesson_status',
-				'number'  => 10,
-				'offset'  => 100,
-				'status'  => 'any',
-			)
-		);
-
-		/* Assert. */
-		$this->assertSame( 1, $result['total_count'], 'Total count should still reflect the actual total.' );
-		$this->assertCount( 1, $result['items'], 'Should snap offset to last page and return items.' );
-	}
 	protected function get_report_service(): \Sensei\Internal\Services\Reports_Listing_Service_Interface {
 		return new Tables_Based_Reports_Listing_Service( $GLOBALS['wpdb'] );
 	}

@@ -65,7 +65,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \Reports_Listing_Servi
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_students
 	 */
-	public function testGetLessonStudents_WithLessonStatus_ReturnsReportsItems(): void {
+	public function testGetLessonStudents_LessonProgressCreated_ReturnsReportsItems(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -100,7 +100,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \Reports_Listing_Servi
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_course_students
 	 */
-	public function testGetCourseStudents_WithCourseStatus_ReturnsReportsItems(): void {
+	public function testGetCourseStudents_CourseProgressCreated_ReturnsReportsItems(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -126,7 +126,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \Reports_Listing_Servi
 		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
 	}
 
-	public function testGetCourseStudents_WpmlFiltersComments_ReturnsProgress(): void {
+	public function testGetCourseStudents_CommentsFilteredByLanguage_ReturnsProgress(): void {
 		$course_id = $this->sensei_factory->course->create();
 		$user_id   = $this->sensei_factory->user->create();
 		$this->seed_report_progress( $course_id, $user_id, 'course', 'in-progress', '2022-01-01 00:00:00' );
@@ -158,41 +158,11 @@ class Comments_Based_Reports_Listing_Service_Test extends \Reports_Listing_Servi
 	}
 
 	/**
-	 * Tests that get_user_courses returns reports items for a user with course status.
-	 *
-	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_courses
-	 */
-	public function testGetUserCourses_WithCourseStatus_ReturnsReportsItems(): void {
-		/* Arrange. */
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$this->create_course_status( $course_id, $user_id, 'in-progress' );
-
-		$service = new Comments_Based_Reports_Listing_Service();
-
-		/* Act. */
-		$result = $service->get_user_courses(
-			array(
-				'user_id' => $user_id,
-				'type'    => 'sensei_course_status',
-				'number'  => 10,
-				'offset'  => 0,
-				'status'  => 'any',
-			)
-		);
-
-		/* Assert. */
-		$this->assertSame( 1, $result['total_count'], 'Total count should be 1.' );
-		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
-		$this->assertSame( $course_id, $result['items'][0]->post_id, 'Post ID should match the course.' );
-	}
-
-	/**
 	 * Tests that get_user_lesson_progress returns a Reports_Item for a lesson with status.
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithLessonStatus_ReturnsReportsItem(): void {
+	public function testGetUserLessonProgress_LessonProgressCreated_ReturnsReportsItem(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -223,7 +193,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \Reports_Listing_Servi
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithNoProgress_ReturnsNull(): void {
+	public function testGetUserLessonProgress_NoLessonProgressCreated_ReturnsNull(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -246,6 +216,37 @@ class Comments_Based_Reports_Listing_Service_Test extends \Reports_Listing_Servi
 		/* Assert. */
 		$this->assertNull( $result );
 	}
+
+	/**
+	 * Tests that get_user_courses returns reports items for a user with course status.
+	 *
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_courses
+	 */
+	public function testGetUserCourses_CourseProgressCreated_ReturnsReportsItems(): void {
+		/* Arrange. */
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$this->create_course_status( $course_id, $user_id, 'in-progress' );
+
+		$service = new Comments_Based_Reports_Listing_Service();
+
+		/* Act. */
+		$result = $service->get_user_courses(
+			array(
+				'user_id' => $user_id,
+				'type'    => 'sensei_course_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'status'  => 'any',
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['total_count'], 'Total count should be 1.' );
+		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
+		$this->assertSame( $course_id, $result['items'][0]->post_id, 'Post ID should match the course.' );
+	}
+
 	protected function get_report_service(): \Sensei\Internal\Services\Reports_Listing_Service_Interface {
 		return new Comments_Based_Reports_Listing_Service();
 	}
