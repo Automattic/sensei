@@ -44,7 +44,7 @@ An issue number or URL (e.g. `1234` or `https://github.com/Automattic/sensei/iss
 
 ## Operating environments
 
-Both environments can drive a real browser — reproduction is always a browser repro via the **e2e-testing** skill (`.claude/skills/e2e-testing/SKILL.md`):
+Both environments can drive a real browser — reproduction is always a browser repro via the **e2e-testing** skill (`.agents/skills/e2e-testing/SKILL.md`):
 
 - **Interactive (local Claude Code):** `make up` (wp-env at `http://localhost:8888`, admin `admin`/`password`) and Chrome DevTools MCP are available. PHPUnit is available via `scripts/triage-phpunit <TestClass>`.
 - **CI (`claude-code-action` runner):** wp-env and Chrome DevTools MCP are already running — don't run `make up`/`make down` yourself; verify with `curl -sI http://localhost:8888`.
