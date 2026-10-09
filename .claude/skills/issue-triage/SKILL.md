@@ -61,6 +61,8 @@ Both environments can drive a real browser — reproduction is always a browser 
 - **To get an enrolled student, use `scripts/triage-wp sensei db seed --users=1 --courses=1 --lessons=2`.** Sensei ships this WP-CLI command and it enrols the users it creates. Don't reach for `wp eval` — it's blocked, and you don't need it. The two browser routes also work: **Students → Add Student to Course** in wp-admin, and the frontend **Take Course** button for self-enrolment.
 - **Create `question` posts only after confirming Sensei is active.** The `question-type` taxonomy doesn't exist until then, so `wp post term set` fails and you end up with a quiz holding zero usable questions — which silently makes a pagination or progress-bar bug un-reproducible.
 - **Don't fetch a quiz by URL.** Sensei redirects the quiz permalink to its lesson until the lesson has been started, so you'll get the lesson page and may misread it as the quiz rendering wrongly. Reach the quiz through the lesson's **Take Quiz** action.
+- **A lesson only shows its quiz once the lesson has `_quiz_has_questions` set** — on the lesson, not the quiz. Without it the lesson renders "Complete Lesson" with no quiz action.
+- **"Take Quiz" is a form button, not a link.** Find it with `button` elements, not `a`.
 - **Before any block-editor repro, confirm the JS assets are built.** If `assets/dist/` is missing, WordPress still loads the editor but **no Sensei blocks are registered** — so a block repro finds nothing and looks exactly like "could not reproduce". Verify in the page with `wp.blocks.getBlockTypes()` (filter for names starting `sensei-`), and fix with `npm run build:assets`. Plugin-active and theme-active checks do **not** catch this.
 - **Bulk-seed taxonomy terms with `wp term generate`** — `scripts/triage-wp term generate question-category --count=105` seeds any number in one call. It doesn't start numbering at 1, so read the names back rather than assuming them.
 - **`wp post term set <id> <taxonomy> <term>` matches terms by name or slug, not ID.** Passing a number meant as a `term_id` silently **creates a new term with that name** and assigns that instead, inflating the fixture with no error. Pass `--by=id`, and re-count after seeding — nothing else reveals it.
@@ -324,12 +326,13 @@ Either way, confirm line numbers against this checkout before citing them — th
 
 `[Status] Triaged` means **triage is finished and someone can act on the issue** — not merely "a comment was posted". One rule decides it:
 
-> **If the comment ends by asking the reporter for something, the issue is `[Status] Needs Author Reply`, never `[Status] Triaged`.** If triage is complete and actionable, it's `[Status] Triaged`. If triage can't reach a conclusion, say so in the comment and leave the issue for a human triager: keep `[Status] Needs Triage` and change no labels.
+> **If the comment ends by asking the reporter for something, the issue is `[Status] Needs Author Reply`, never `[Status] Triaged`.** If triage is complete and actionable, it's `[Status] Triaged`. If triage can't reach a conclusion, or the finding is a product decision or feature request rather than a defect, say so in the comment and leave the issue for a human triager: keep `[Status] Needs Triage` and change no labels. Sharing evidence doesn't make an issue triaged.
 
 | Outcome | Status | Priority |
 |---|---|---|
 | **Reproduced**, or confidently traced | swap `[Status] Needs Triage` → `[Status] Triaged` | apply `[Pri] …` |
 | **Could not reproduce** | swap → `[Status] Needs Author Reply` | **hold** |
+| **Confirmed, but a product decision or feature request** — the behavior is real, yet whether it's a defect is a maintainer's call | leave `[Status] Needs Triage`; change no labels | none (state an estimate in the comment) |
 | **Inconclusive** — triage can't reach a conclusion | leave `[Status] Needs Triage`; change no labels | none |
 | **Not reproduced in Sensei Core triage** | leave `[Status] Needs Triage` | none |
 | **Needs more info** (the [B2 gate](#b2-reproducible-steps-completeness)) | swap → `[Status] Needs Author Reply` | none |
@@ -354,7 +357,7 @@ When reproduced (or confidently traced), include:
 - **Likely affected code** — concrete `path/to/file.php:line` references with a one-line note on each.
 - **Suggested fix** — the minimal change that addresses the root cause, not the symptom.
 
-Then post the [bug comment](#bug-comment-template) and apply `[Type] Bug` + relevant area label(s). For the status and priority labels, follow [Status label by outcome](#status-label-by-outcome) — `[Status] Triaged` and a `[Pri]` label apply **only** when you reproduced or confidently traced the bug.
+Then post the [bug comment](#bug-comment-template) and apply `[Type] Bug` + relevant area label(s). For the status and priority labels, follow [Status label by outcome](#status-label-by-outcome) — `[Status] Triaged` and a `[Pri]` label apply **only** when you reproduced or confidently traced a bug that's actionable as a defect, not a product decision.
 
 ---
 
@@ -381,7 +384,7 @@ Apply labels with `gh issue edit <number> --repo Automattic/sensei --add-label "
 Plain language up top, for the reporter. The reproduction narrative goes in one collapsed section — GitHub collapses `<details>` by default, so the comment reads short — but the parts a maintainer scans a backlog for (duplicates, affected code, priority, effort, fix) stay **outside** the fold, so they're visible without a click. Labels themselves are applied separately via `gh issue edit`, never as an instruction inside the comment ("apply `[Pri] High`") — the comment states the value, it doesn't ask anyone to act on it.
 
 ```markdown
-## <✅ Confirmed | ❓ Couldn't Reproduce This | ⚠️ Not Sure Yet | 🚫 Not a Sensei Bug | 🔁 Need More Info | ♻️ Already Reported>
+## <✅ Confirmed | ✅ Confirmed — needs a product decision | ❓ Couldn't Reproduce This | ⚠️ Not Sure Yet | 🚫 Not a Sensei Bug | 🔁 Need More Info | ♻️ Already Reported>
 
 <1–2 plain sentences: what's wrong, in words a non-developer would understand. No jargon, no file paths, no version numbers here.>
 
@@ -406,6 +409,8 @@ _Triage assisted by Claude._
 ```
 
 **Include a third-party dependency (WPML, Sensei Pro, a paid plugin) only when the verdict relies on it** — an inconclusive result, or an assumption left unverified in an otherwise-confirmed diagnosis. When a matching commit, release tag, and passing test already settle it, don't add "couldn't install WPML" as a reflexive caveat.
+
+**Confirmed — needs a product decision:** the full bug template, plus one plain paragraph after the summary saying why this looks like a product decision rather than a bug and what the open question is. Apply no labels.
 
 **Could Not Reproduce / Not Sure Yet:** drop the collapsed section unless there's a real trace to share; just the plain-language summary plus what you tried. For Not Sure Yet, also say that triage couldn't reach a conclusion and a maintainer will review it.
 
