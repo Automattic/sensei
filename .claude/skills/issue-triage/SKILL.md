@@ -256,7 +256,7 @@ When Playground isn't eligible, name the evidence you do have, best available fi
 3. **A targeted PHPUnit run** (`scripts/triage-phpunit <TestClass>`) — quote the failing assertion.
 4. **A code-only trace**, explicitly labelled as such, when the browser was unavailable.
 
-Always say which of these it was, and one line on why a Playground link wasn't possible.
+Name which of these it was in the comment. Don't explain in the comment why a Playground link wasn't possible; in an interactive run, tell the user that in the session instead.
 
 #### Read many screens in one call
 
