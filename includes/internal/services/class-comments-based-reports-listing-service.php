@@ -31,7 +31,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_lesson_students( array $args ): array {
-		return $this->query_activity( $args, 'grade' );
+		return $this->query_activity( $args, 'lesson', 'grade' );
 	}
 
 	/**
@@ -43,7 +43,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_course_students( array $args ): array {
-		return $this->query_activity( $args, 'percent' );
+		return $this->query_activity( $args, 'course', 'percent' );
 	}
 
 	/**
@@ -73,43 +73,41 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
 	public function get_user_courses( array $args ): array {
-		return $this->query_activity( $args, 'percent' );
+		return $this->query_activity( $args, 'course', 'percent' );
 	}
 
 	/**
 	 * Run a paginated activity query and map results to Reports_Item objects.
 	 *
 	 * @param array  $args      Activity args documented by Reports_Listing_Service_Interface.
+	 * @param string $type      Progress post type: 'lesson' or 'course'.
 	 * @param string $meta_kind Numeric meta field to read: 'grade' or 'percent'.
 	 * @return array{ items: Reports_Item[], total_count: int }
 	 */
-	private function query_activity( array $args, string $meta_kind ): array {
+	private function query_activity( array $args, string $type, string $meta_kind ): array {
+		global $wpdb;
+
 		$requested_post_id = null;
 
 		// WPML stores progress against the original post, while the report shows the requested translation.
 		if ( isset( $args['post_id'] ) ) {
 			$requested_post_id = (int) $args['post_id'];
-			$type              = 'grade' === $meta_kind ? 'lesson' : 'course';
 			$post_id_map       = Utils::get_progress_post_id_map( array( $requested_post_id ), $type );
 			$args['post_id']   = $post_id_map[ $requested_post_id ];
 		}
 
 		// Exclude guest and preview users from both the pagination total and the returned rows.
-		$excluded_user_ids      = Utils::get_user_ids_by_login_prefixes( $GLOBALS['wpdb'], Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES );
+		$excluded_user_ids      = Utils::get_user_ids_by_login_prefixes( $wpdb, Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES );
 		$args['author__not_in'] = array_values( array_unique( array_merge( (array) ( $args['author__not_in'] ?? array() ), $excluded_user_ids ) ) );
 
-		$count_args           = $args;
-		$count_args['count']  = true;
-		$count_args['offset'] = 0;
-		$count_args['number'] = 0;
+		// Count all eligible comments so pagination totals do not depend on the requested page.
+		$count_args          = $args;
+		$count_args['count'] = true;
+		unset( $count_args['offset'], $count_args['number'] );
 
-		/**
-		 * Report filters may add WP_Comment_Query arguments.
-		 *
-		 * @psalm-suppress InvalidArgument
-		 */
 		$total_count = $this->query_report_comments( $count_args );
 
+		// An out-of-range page request shows the last available page.
 		$offset = $args['offset'] ?? 0;
 		$number = $args['number'] ?? 0;
 		if ( $number > 0 && (int) $total_count > 0 && $offset >= (int) $total_count ) {
@@ -117,16 +115,19 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 			$args['offset'] = $last_page * $number;
 		}
 
+		/**
+		 * Fetch the requested page using the same filters as the count.
+		 *
+		 * @var \WP_Comment[] $statuses
+		 */
 		$statuses = $this->query_report_comments( $args );
-		if ( ! is_array( $statuses ) ) {
-			$statuses = array( $statuses );
-		}
 
 		$items = array();
 		foreach ( $statuses as $comment ) {
 			if ( ! $comment instanceof \WP_Comment ) {
 				continue;
 			}
+
 			$items[] = $this->item_from_comment( $comment, $meta_kind, $requested_post_id );
 		}
 
