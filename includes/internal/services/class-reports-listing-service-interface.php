@@ -83,6 +83,8 @@ interface Reports_Listing_Service_Interface {
 	/**
 	 * Get paginated course progress for a specific user.
 	 *
+	 * Guest and preview users are excluded from Reports.
+	 *
 	 * @since 4.26.0
 	 *
 	 * @param array $args {

@@ -251,7 +251,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$table = $this->get_progress_table_name();
 
 		$user_id = (int) ( $args['user_id'] ?? 0 );
-		$where   = " WHERE p.type = 'course'" . $this->build_filters( $args );
+
+		$where = " WHERE p.type = 'course'" . $this->build_filters( $args )
+			. Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 
 		if ( ! empty( $args['post_author'] ) ) {
 			// Table name is a trusted $wpdb property; value clause uses $wpdb->prepare().

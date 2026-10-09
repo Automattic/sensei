@@ -35,10 +35,17 @@ abstract class Reports_Listing_Service_Test extends WP_UnitTestCase {
 		$this->assert_user_status_and_date_restrictions_given_preserves_restrictions( 'lesson', 'get_lesson_students' );
 	}
 
-	public function testGetUserCourses_TemporaryStudentRequested_KeepsSelectedUserProgress(): void {
+	/**
+	 * Temporary student course reports are empty.
+	 *
+	 * @dataProvider temporary_user_login_provider
+	 *
+	 * @param string $login Temporary user login.
+	 */
+	public function testGetUserCourses_TemporaryStudentCoursesRequested_ReturnsNoCourses( string $login ): void {
 		$factory = new Sensei_Factory();
 		$post    = $factory->course->create();
-		$user    = $factory->user->create( array( 'user_login' => 'sensei_guest_student' ) );
+		$user    = $factory->user->create( array( 'user_login' => $login ) );
 		$this->seed_report_progress( $post, $user, 'course', 'in-progress', '2022-01-01 00:00:00' );
 
 		$actual = $this->get_report_service()->get_user_courses(
@@ -48,11 +55,11 @@ abstract class Reports_Listing_Service_Test extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame( 1, $actual['total_count'], 'Selected-user operations keep their population.' );
-		$this->assertSame( array( $post ), wp_list_pluck( $actual['items'], 'post_id' ), 'The temporary student still has their course progress.' );
+		$this->assertSame( 0, $actual['total_count'], 'Temporary student courses should not count in Reports.' );
+		$this->assertSame( array(), $actual['items'], 'Temporary student courses should not appear in Reports.' );
 	}
 
-	public function testGetUserLessonProgress_TemporaryStudentRequested_KeepsSelectedUserProgress(): void {
+	public function testGetUserLessonProgress_TemporaryStudentLessonRequested_ReturnsProgress(): void {
 		$factory = new Sensei_Factory();
 		$post    = $factory->lesson->create();
 		$user    = $factory->user->create( array( 'user_login' => 'sensei_preview_student' ) );
@@ -228,6 +235,13 @@ abstract class Reports_Listing_Service_Test extends WP_UnitTestCase {
 			),
 			$wrong_date,
 			'Start date restriction is retained.'
+		);
+	}
+
+	public function temporary_user_login_provider(): array {
+		return array(
+			'guest student'   => array( 'sensei_guest_student' ),
+			'preview student' => array( 'sensei_preview_student' ),
 		);
 	}
 }
