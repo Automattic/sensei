@@ -106,7 +106,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 		 *
 		 * @psalm-suppress InvalidArgument
 		 */
-		$total_count = $exclude_temporary_users ? get_comments( $count_args ) : \Sensei_Utils::sensei_check_for_activity( $count_args );
+		$total_count = $exclude_temporary_users ? $this->query_report_comments( $count_args ) : \Sensei_Utils::sensei_check_for_activity( $count_args );
 
 		$offset = $args['offset'] ?? 0;
 		$number = $args['number'] ?? 0;
@@ -115,7 +115,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 			$args['offset'] = $last_page * $number;
 		}
 
-		$statuses = $exclude_temporary_users ? get_comments( $args ) : \Sensei_Utils::sensei_check_for_activity( $args, true );
+		$statuses = $exclude_temporary_users ? $this->query_report_comments( $args ) : \Sensei_Utils::sensei_check_for_activity( $args, true );
 		if ( ! is_array( $statuses ) ) {
 			$statuses = array( $statuses );
 		}
@@ -132,6 +132,25 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 			'items'       => $items,
 			'total_count' => (int) $total_count,
 		);
+	}
+
+	/**
+	 * Query report comments without WPML language filtering.
+	 *
+	 * @param array $args Comment query arguments.
+	 * @return int|array<array-key, int|\WP_Comment> Comment count or rows.
+	 */
+	private function query_report_comments( array $args ) {
+		$disable_language_filter = static function (): bool {
+			return false;
+		};
+		add_filter( 'wpml_is_comment_query_filtered', $disable_language_filter, 10, 0 );
+
+		try {
+			return get_comments( $args );
+		} finally {
+			remove_filter( 'wpml_is_comment_query_filtered', $disable_language_filter, 10 );
+		}
 	}
 
 	/**

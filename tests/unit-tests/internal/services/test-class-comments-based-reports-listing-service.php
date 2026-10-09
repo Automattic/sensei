@@ -126,6 +126,37 @@ class Comments_Based_Reports_Listing_Service_Test extends \Reports_Listing_Servi
 		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
 	}
 
+	public function testGetCourseStudents_WpmlFiltersComments_ReturnsProgress(): void {
+		$course_id = $this->sensei_factory->course->create();
+		$user_id   = $this->sensei_factory->user->create();
+		$this->seed_report_progress( $course_id, $user_id, 'course', 'in-progress', '2022-01-01 00:00:00' );
+		$filter = static function ( array $clauses ): array {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML owns this hook.
+			if ( apply_filters( 'wpml_is_comment_query_filtered', true ) ) {
+				$clauses['where'] .= ' AND 1=0';
+			}
+			return $clauses;
+		};
+		add_filter( 'comments_clauses', $filter );
+
+		try {
+			$result = ( new Comments_Based_Reports_Listing_Service() )->get_course_students(
+				array(
+					'post_id' => $course_id,
+					'type'    => 'sensei_course_status',
+					'status'  => 'any',
+				)
+			);
+		} finally {
+			remove_filter( 'comments_clauses', $filter );
+		}
+
+		$this->assertSame( 1, $result['total_count'], 'The count should include progress in every language.' );
+		$this->assertSame( array( $user_id ), wp_list_pluck( $result['items'], 'user_id' ), 'The listing should include progress in every language.' );
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML owns this hook.
+		$this->assertTrue( apply_filters( 'wpml_is_comment_query_filtered', true ), 'WPML filtering should be restored after the report query.' );
+	}
+
 	/**
 	 * Tests that get_user_courses returns reports items for a user with course status.
 	 *
