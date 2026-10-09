@@ -14,9 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface Reports_Listing_Service_Interface.
  *
- * The paginated methods accept comments-API-shaped activity arguments so that
- * existing `sensei_analysis_*` filters can continue to modify the query in the
- * same way they do for the legacy comments-based path.
+ * The paginated methods accept activity arguments from the report list tables,
+ * including arguments modified by the `sensei_analysis_*` filters.
  *
  * @internal
  *
@@ -26,6 +25,8 @@ interface Reports_Listing_Service_Interface {
 
 	/**
 	 * Get paginated users' progress on a specific lesson.
+	 *
+	 * Guest and preview users are excluded regardless of status.
 	 *
 	 * @since 4.26.0
 	 *
@@ -47,6 +48,8 @@ interface Reports_Listing_Service_Interface {
 
 	/**
 	 * Get paginated users' progress on a specific course.
+	 *
+	 * Guest and preview users are excluded regardless of status.
 	 *
 	 * @since 4.26.0
 	 *
@@ -79,6 +82,8 @@ interface Reports_Listing_Service_Interface {
 
 	/**
 	 * Get paginated course progress for a specific user.
+	 *
+	 * Guest and preview users are excluded from Reports.
 	 *
 	 * @since 4.26.0
 	 *

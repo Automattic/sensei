@@ -270,7 +270,7 @@ class Utils {
 	 * @param string[] $prefixes User login prefixes to match.
 	 * @return int[] Matching user IDs.
 	 */
-	private static function get_user_ids_by_login_prefixes( \wpdb $wpdb, array $prefixes ): array {
+	public static function get_user_ids_by_login_prefixes( \wpdb $wpdb, array $prefixes ): array {
 		static $cached_ids = array();
 
 		$prefixes = array_filter( $prefixes );

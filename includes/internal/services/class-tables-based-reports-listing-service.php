@@ -71,8 +71,11 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
 		$post_id           = (int) ( $args['post_id'] ?? 0 );
+		$post_id_map       = Utils::get_progress_post_id_map( array( $post_id ), 'lesson' );
+		$args['post_id']   = $post_id_map[ $post_id ];
 
-		$where      = " WHERE p.type = 'lesson'" . $this->build_filters( $args );
+		$where      = " WHERE p.type = 'lesson'" . $this->build_filters( $args )
+			. Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 		$pagination = $this->build_pagination( $where, $args );
 
 		/** Query result rows. @var object[] $rows */
@@ -93,7 +96,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			. $pagination['limit_clause']
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		Utils::log_query_error( $wpdb, 'Reports lesson students items' );
+		Utils::log_query_error( $wpdb, 'Tables-based lesson students items' );
 
 		$items = array();
 		foreach ( $rows as $row ) {
@@ -126,10 +129,14 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
 
-		$course_id     = (int) ( $args['post_id'] ?? 0 );
-		$where         = " WHERE p.type = 'course'" . $this->build_filters( $args );
-		$pagination    = $this->build_pagination( $where, $args );
-		$total_lessons = count( Sensei()->course->course_lessons( $course_id, 'publish', 'ids' ) );
+		$course_id       = (int) ( $args['post_id'] ?? 0 );
+		$post_id_map     = Utils::get_progress_post_id_map( array( $course_id ), 'course' );
+		$progress_id     = $post_id_map[ $course_id ];
+		$args['post_id'] = $progress_id;
+		$where           = " WHERE p.type = 'course'" . $this->build_filters( $args )
+			. Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
+		$pagination      = $this->build_pagination( $where, $args );
+		$total_lessons   = count( Sensei()->course->course_lessons( $progress_id, 'publish', 'ids' ) );
 
 		/** Query result rows. @var object[] $rows */
 		// Table names are trusted $wpdb properties; value clauses use $wpdb->prepare().
@@ -152,14 +159,14 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. '   GROUP BY lp.user_id'
 				. ' ) completed ON completed.user_id = p.user_id',
 				$total_lessons,
-				$course_id
+				$progress_id
 			)
 			. $where
 			. $pagination['order_clause']
 			. $pagination['limit_clause']
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		Utils::log_query_error( $wpdb, 'Reports course students items' );
+		Utils::log_query_error( $wpdb, 'Tables-based course students items' );
 
 		$items = array();
 		foreach ( $rows as $row ) {
@@ -244,7 +251,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$table = $this->get_progress_table_name();
 
 		$user_id = (int) ( $args['user_id'] ?? 0 );
-		$where   = " WHERE p.type = 'course'" . $this->build_filters( $args );
+
+		$where = " WHERE p.type = 'course'" . $this->build_filters( $args )
+			. Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 
 		if ( ! empty( $args['post_author'] ) ) {
 			// Table name is a trusted $wpdb property; value clause uses $wpdb->prepare().
@@ -331,7 +340,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is a trusted $wpdb property; $where is built from $wpdb->prepare() calls.
 		$total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$table` p" . $where );
-		Utils::log_query_error( $wpdb, 'Reports pagination count' );
+		Utils::log_query_error( $wpdb, 'Tables-based reports pagination count' );
 
 		$number = (int) ( $args['number'] ?? 0 );
 		$offset = (int) ( $args['offset'] ?? 0 );

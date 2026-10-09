@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Exclude guest and preview users from Reports listings, totals, and exports.
