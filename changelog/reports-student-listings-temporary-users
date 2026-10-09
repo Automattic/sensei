@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Exclude guest and preview users from report student listings and exports.
+Exclude guest and preview users from Reports listings, totals, and exports.
