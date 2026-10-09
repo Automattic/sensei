@@ -250,7 +250,7 @@ https://playground.wordpress.net/?plugin=sensei-lms&login=yes&url=<url-encoded a
 When Playground isn't eligible, name the evidence you do have, best available first. Options 1 and (for screenshots) the interactive half of option 2 exist only because JN access and saved image files exist only interactively, not because the bug itself is somehow less eligible there:
 
 1. **[Jurassic Ninja](#jurassic-ninja-interactive-only-staff-only)** — interactive runs only, and **preferred there**: it runs the released build the reporter actually has, and can host WooCommerce or a third-party plugin. Name it in the `**Evidence:**` line as prose ("reproduced on a throwaway test site running released Sensei `<ver>`"), never the domain. It can't tell you whether trunk is affected, so pair it with a code check before naming affected lines.
-2. **Browser reproduction** against local wp-env via Chrome DevTools — the reproduction CI actually performs, since wp-env is the only site its browser can reach. Quote the values you read, before and after, in the technical details. Interactively, this is also where a saved screenshot comes in (CI never keeps one — see [Screenshot verification](#screenshot-verification-interactive-only)): reference its path (e.g. `.claude/tmp/screenshots/<name>.png`) in the `**Evidence:**` line.
+2. **Browser reproduction** against local wp-env via Chrome DevTools — the reproduction CI actually performs, since wp-env is the only site its browser can reach. Quote the values you read, before and after, in the technical details. Interactively, this is also where a saved screenshot comes in (CI never keeps one — see [Screenshot verification](#screenshot-verification-interactive-only)): reference its path (e.g. `.claude/tmp/screenshots/<name>.png`) after the `**Evidence:**` line — the whole captioned sequence when there's more than one.
 3. **A targeted PHPUnit run** (`scripts/triage-phpunit <TestClass>`) — quote the failing assertion.
 4. **A code-only trace**, explicitly labelled as such, when the browser was unavailable.
 
@@ -274,7 +274,9 @@ A screenshot is evidence only if the reported issue is visible in it. Three bloc
 
 Before attaching one, ask what a reader would conclude from it alone. A collapsed, empty control demonstrates nothing, yet posting it still *looks* like proof.
 
-**Reference the saved path outside the collapsed section**, per [Visual evidence line](#visual-evidence-line-playground-jurassic-ninja-or-screenshot) — a reviewer scanning the issue shouldn't have to expand the details to know a screenshot exists.
+**When the reproduction is a before/during/after narrative, attach the whole sequence, not just the one decisive shot.** Each screenshot gets its own short caption line stating what it shows, in the order the steps happened — including a "setup" screenshot that looks unremarkable on its own (e.g. the bug hasn't triggered yet at that step). The caption is what makes it evidence rather than a random image; don't post one without the other. This whole sequence goes **outside** the collapsed section, immediately after the `**Evidence:**` line and before `<details>` — see [Visual evidence line](#visual-evidence-line-playground-jurassic-ninja-or-screenshot). A reviewer should be able to follow the reproduction by scrolling past images and captions alone, without expanding anything.
+
+In a draft file (before a human posts it), list each saved path with its caption in the same sequence — there's no image to embed yet, so note that each should be attached in order when posting.
 
 **In CI, don't capture screenshots at all** — verify with `take_snapshot` and `evaluate_script` instead. If a purely visual issue needs a look, call `take_screenshot` with no `filePath` so it's returned inline for you to inspect, then discard it. The comment has to carry the evidence in words: state the values you read, before and after. Only an interactive run saves images to disk.
 
@@ -343,10 +345,11 @@ When reproduced (or confidently traced), include:
 
 - **Priority** — map impact to the repo's labels:
   - `[Pri] Critical` — data loss, security, or a broken core flow for all users; ship same day.
-  - `[Pri] High` — significant breakage with no easy workaround; ship ASAP.
-  - `[Pri] Normal` — real bug with a workaround; can wait for the next release.
-  - `[Pri] Low` — cosmetic / low impact / easy workaround.
-  - Weigh reach (how many users) × severity (data/blocking vs. cosmetic). Note `Popular Request` / repeated reports if visible.
+  - `[Pri] High` — wide impact and no easy workaround; ship ASAP. An edge case — one specific content-authoring action, one specific type conversion — isn't High even without a workaround.
+  - `[Pri] Normal` — a real bug with a workaround, or a bad bug that only hits an edge case.
+  - `[Pri] Low` — cosmetic, low impact, or an easy workaround.
+  - Weigh reach (how many users, how common the trigger) against severity. Note `Popular Request` or repeated reports if you see them.
+  - For a reproduced or traced bug that sits between two levels, pick the closer one rather than leaving it blank — a reviewer can correct a guess but has nothing to react to otherwise. (This doesn't apply to unreproduced reports; see above.)
 - **Estimated effort** — High / Mid / Low, with one line of rationale (surface area touched, test complexity, HPPS/migration concerns).
 - **Likely affected code** — concrete `path/to/file.php:line` references with a one-line note on each.
 - **Suggested fix** — the minimal change that addresses the root cause, not the symptom.
@@ -382,18 +385,18 @@ Plain language up top, for the reporter. The reproduction narrative goes in one 
 
 <1–2 plain sentences: what's wrong, in words a non-developer would understand. No jargon, no file paths, no version numbers here.>
 
-<If eligible: **Evidence:** <Playground link, or JN named as a throwaway site, or a saved screenshot path, e.g. `.claude/tmp/screenshots/<name>.png`> — one line before `<details>`, never inside it. Playground eligibility is about the bug, not the run mode — see [Visual evidence line](#visual-evidence-line-playground-jurassic-ninja-or-screenshot). JN and screenshots are interactive-only options; CI has neither.>
+<If eligible: **Evidence:** <one-line summary of what it shows> — <Playground link, or JN named as a throwaway site, or a screenshot path>, before `<details>`, never inside it. Playground eligibility is about the bug, not the run mode — see [Visual evidence line](#visual-evidence-line-playground-jurassic-ninja-or-screenshot). JN and screenshots are interactive-only; CI has neither. For a before/during/after screenshot narrative, follow the Evidence line with each screenshot in sequence, one short caption per image (e.g. `.claude/tmp/screenshots/<name>.png`, attach when posting) — not just the single most decisive one.>
 
 <details>
 <summary>Technical details</summary>
 
-**Environment:** WP <ver>, PHP <ver>, theme <name>, Sensei <ver>
+**Environment:** WP <ver>, PHP <ver>, theme <name>, Sensei <ver> — only when the environment is what the verdict rests on (a live reproduction, a version comparison). When the verdict comes from history/code trace alone, replace this line with a one-clause statement of that method instead (e.g. "Confirmed via project history and a targeted PHPUnit run.") — no environment to report.
 
 <Numbered steps taken and what was observed at each.>
 
 </details>
 
-**Duplicates/related:** <#N with a word on the relationship, or "None found.">
+**Duplicates/related:** <#N with a word on the relationship. Omit this line entirely when nothing was found — don't state "None found.">
 **Affected code:** `includes/.../file.php:NN` — <what this line does and why it's implicated>
 **Priority:** `[Pri] <Critical|High|Normal|Low>` — <impact: reach × severity>
 **Effort:** <High|Mid|Low> — <one-line rationale>
@@ -401,6 +404,8 @@ Plain language up top, for the reporter. The reproduction narrative goes in one 
 
 _Triage assisted by Claude._
 ```
+
+**Include a third-party dependency (WPML, Sensei Pro, a paid plugin) only when the verdict relies on it** — an inconclusive result, or an assumption left unverified in an otherwise-confirmed diagnosis. When a matching commit, release tag, and passing test already settle it, don't add "couldn't install WPML" as a reflexive caveat.
 
 **Could Not Reproduce / Not Sure Yet:** drop the collapsed section unless there's a real trace to share; just the plain-language summary plus what you tried.
 
