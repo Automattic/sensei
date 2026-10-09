@@ -14,8 +14,16 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		Sensei()->grading = new WooThemes_Sensei_Grading( '' );
-		$this->factory    = new Sensei_Factory();
+		$query_service_factory = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+
+		Sensei()->grading = Sensei_Grading::create_with_dependencies(
+			'',
+			$query_service_factory->create_grading_listing_service(),
+			$query_service_factory->create_aggregation_service(),
+			$query_service_factory->create_grading_stats_service()
+		);
+
+		$this->factory = new Sensei_Factory();
 	}
 
 	public function tearDown(): void {
@@ -60,7 +68,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		$method = new ReflectionMethod( Sensei_Grading_Main::class, 'get_row_data' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 		$row = $method->invoke( $grading_main, $item );
 
 		/* Clean up & Assert. */
@@ -318,21 +326,12 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that courses average grade is calculated correctly when there are no grades.
+	 * Test that graded lessons average grade is calculated correctly when there are no grades.
 	 *
-	 * @covers Sensei_Grading::get_courses_average_grade
+	 * @covers Sensei_Grading::get_graded_lessons_average_grade
 	 */
 	public function testGetGradedLessonsAverageGradeNoGrades() {
 		$this->assertEquals( 0, Sensei()->grading->get_graded_lessons_average_grade() );
-	}
-
-	/**
-	 * Test that courses average grade returns zero when there are no courses with graded quizzes.
-	 *
-	 * @covers Sensei_Grading::get_courses_average_grade
-	 */
-	public function testGetCoursesAverageGrade_WhenNoCourses_ReturnsZero() {
-		$this->assertSame( 0.0, Sensei()->grading->get_courses_average_grade(), 'Average grade should be zero when there are no courses with graded quizzes.' );
 	}
 
 	/**
@@ -350,6 +349,15 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$graded_lessons_average_grade = Sensei()->grading->get_graded_lessons_average_grade();
 
 		$this->assertEquals( 30, $graded_lessons_average_grade );
+	}
+
+	/**
+	 * Test that courses average grade returns zero when there are no courses with graded quizzes.
+	 *
+	 * @covers Sensei_Grading::get_courses_average_grade
+	 */
+	public function testGetCoursesAverageGrade_WhenNoCourses_ReturnsZero() {
+		$this->assertSame( 0.0, Sensei()->grading->get_courses_average_grade(), 'Average grade should be zero when there are no courses with graded quizzes.' );
 	}
 
 	/**

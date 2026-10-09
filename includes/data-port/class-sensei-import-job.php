@@ -297,9 +297,8 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 
 		// Validate file.
 		if ( extension_loaded( 'fileinfo' ) ) {
-			$finfo     = finfo_open( FILEINFO_MIME_TYPE );
-			$real_mime = finfo_file( $finfo, $file );
-			finfo_close( $finfo );
+			$finfo     = new finfo( FILEINFO_MIME_TYPE );
+			$real_mime = $finfo->file( $file );
 
 			// Some versions of PHP 8 return `application/csv` instead of `text/csv`.
 			if ( in_array( 'text/csv', $allowed, true ) ) {

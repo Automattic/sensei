@@ -34,7 +34,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 		$block  = new Sensei_Block_Contact_Teacher();
 		$output = $block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
 
-		$this->assertMatchesRegularExpression( '|<a href="/course/test/\?contact=course#private_message".*>Contact teacher</a>|', $output );
+		$this->assertMatchesRegularExpression( '|<a\b[^>]*\shref="/course/test/\?contact=course#private_message"[^>]*>Contact teacher</a>|', $output );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 	 */
 	public function testSuccessMessageDisplayed() {
 		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
-		$property->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $property );
 		$property->setValue( Sensei()->notices, false );
 
 		$_GET['send'] = 'complete';

@@ -45,7 +45,7 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count course progress records grouped by user and status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param array $args {
 	 *     Query arguments.
@@ -58,11 +58,27 @@ interface Progress_Aggregation_Service_Interface {
 	public function count_statuses_by_user( array $args ): array;
 
 	/**
-	 * Count students with activity on a lesson.
+	 * Count course progress records grouped by post and status.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param array $args Comments-API-shaped activity arguments.
+	 * @param int[] $course_ids Course IDs to count; an empty list counts all courses.
+	 * @param array $args {
+	 *     Optional query filters.
+	 *
+	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
+	 * }
+	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
+	 */
+	public function count_statuses_by_post( array $course_ids, array $args = array() ): array;
+	/**
+	 * Count students with activity on a lesson.
+	 *
+	 * Guest and preview users are excluded regardless of status.
+	 *
+	 * @since 4.26.4
+	 *
+	 * @param array $args Lesson query arguments: optional post_id (defaults to 0) and status (defaults to any). The type key is ignored.
 	 * @return int Number of students with matching lesson activity.
 	 */
 	public function get_lesson_student_count( array $args ): int;
@@ -70,9 +86,11 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count students who completed a lesson.
 	 *
-	 * @since $$next-version$$
+	 * Guest and preview users are excluded regardless of status.
 	 *
-	 * @param array $args Comments-API-shaped activity arguments.
+	 * @since 4.26.4
+	 *
+	 * @param array $args Lesson query arguments: optional post_id (defaults to 0) and statuses. The type and count keys are ignored.
 	 * @return int Number of students with matching completed lesson activity.
 	 */
 	public function get_lesson_completion_count( array $args ): int;
@@ -107,4 +125,38 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return int Number of ungraded quiz submissions for live (publish or private) lessons.
 	 */
 	public function count_ungraded_quizzes( array $args = array() ): int;
+
+	/**
+	 * Count completed lesson progress per lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $lesson_ids Lesson post IDs.
+	 * @param array $args {
+	 *     Optional query filters.
+	 *
+	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
+	 * }
+	 * @return array<int, int> Map of lesson_id => completion count.
+	 */
+	public function get_lesson_completion_counts( array $lesson_ids, array $args = array() ): array;
+
+	/**
+	 * Get rounded completion-day averages keyed by requested course ID.
+	 *
+	 * A course is omitted unless at least one completed record has both a valid
+	 * start and completion date. Completed records with a valid start but no
+	 * completion date add zero days while still counting in that course's average.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Course post IDs.
+	 * @param array $args {
+	 *     Optional query filters.
+	 *
+	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
+	 * }
+	 * @return array<int, float> Rounded per-course averages.
+	 */
+	public function get_average_days_to_completion_by_course( array $course_ids, array $args = array() ): array;
 }

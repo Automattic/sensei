@@ -64,7 +64,9 @@ class Sensei_Messages {
 		add_action( 'sensei_single_quiz_questions_before', array( $this, 'send_message_link' ), 10, 2 );
 
 		// Hide messages and replies from users who do not have access.
+		add_filter( 'request', array( $this, 'remove_sensei_message_from_post_type_array' ) );
 		add_action( 'template_redirect', array( $this, 'message_login' ), 10, 1 );
+		add_filter( 'redirect_canonical', array( $this, 'prevent_message_canonical_redirect' ), 10, 1 );
 		add_action( 'pre_get_posts', array( $this, 'message_list' ), 10, 1 );
 		add_filter( 'the_title', array( $this, 'message_title' ), 10, 2 );
 		add_filter( 'the_content', array( $this, 'message_content' ), 10, 1 );
@@ -81,6 +83,28 @@ class Sensei_Messages {
 		add_action( 'sensei_new_private_message', [ $this, 'show_success_notice' ], 999 );
 	}
 
+	/**
+	 * Remove 'sensei_message' from an array `post_type`.
+	 *
+	 * The checks that keep messages private only run when `post_type` is the string
+	 * `sensei_message`. `?post_type[]=sensei_message` skips them and exposes every
+	 * message, so never let messages be queried through an array.
+	 *
+	 * @since 4.26.4
+	 *
+	 * @internal
+	 *
+	 * @param array $query_vars The main request's query vars.
+	 * @return array
+	 */
+	public function remove_sensei_message_from_post_type_array( $query_vars ) {
+		if ( is_array( $query_vars['post_type'] ?? null ) ) {
+			$query_vars['post_type'] = array_values( array_diff( $query_vars['post_type'], array( $this->post_type ) ) );
+		}
+
+		return $query_vars;
+	}
+
 	public function only_show_messages_to_owner( $query ) {
 		if ( is_admin() ) {
 			return;
@@ -94,7 +118,7 @@ class Sensei_Messages {
 			return;
 		}
 
-		if ( current_user_can( 'manage_sensei_grades' ) ) {
+		if ( current_user_can( 'manage_sensei' ) ) {
 			return;
 		}
 
@@ -369,8 +393,10 @@ class Sensei_Messages {
 		$post         = get_post( absint( $_POST['post_id'] ) );
 		$current_user = wp_get_current_user();
 
-		if ( is_wp_error( $post ) ) {
-			return false;
+		// Only a user enrolled in the related course may message the teacher.
+		// This also rejects a post_id that does not resolve to a post at all.
+		if ( ! $this->can_current_user_send_message_about( $post ) ) {
+			return;
 		}
 
 		$message = empty( $_POST['contact_message'] )
@@ -378,6 +404,41 @@ class Sensei_Messages {
 			: sensei_request_text( $_POST['contact_message'] );
 
 		$this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
+	}
+
+	/**
+	 * Check whether the current user may send a private message about the given post.
+	 *
+	 * Mirrors the enrolment check the REST endpoint enforces: the user must be enrolled
+	 * in the course the message is about, resolving quiz and lesson posts to their course.
+	 *
+	 * @since 4.26.4
+	 *
+	 * @param WP_Post|null $post The post the message is about.
+	 * @return bool Whether the current user is allowed to send the message.
+	 */
+	private function can_current_user_send_message_about( $post ) {
+		if ( ! ( $post instanceof WP_Post ) || ! is_user_logged_in() ) {
+			return false;
+		}
+
+		$course = $post;
+
+		if ( 'quiz' === $course->post_type ) {
+			$lesson_id = (int) Sensei()->quiz->get_lesson_id( $course->ID );
+			$course    = $lesson_id ? get_post( $lesson_id ) : null;
+		}
+
+		if ( $course instanceof WP_Post && 'lesson' === $course->post_type ) {
+			$course_id = (int) Sensei()->lesson->get_course_id( $course->ID );
+			$course    = $course_id ? get_post( $course_id ) : null;
+		}
+
+		if ( ! ( $course instanceof WP_Post ) || 'course' !== $course->post_type ) {
+			return false;
+		}
+
+		return Sensei()->course->is_user_enrolled( $course->ID, get_current_user_id() );
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {
@@ -669,7 +730,11 @@ class Sensei_Messages {
 		if ( is_single() && is_singular( $this->post_type )
 			|| is_post_type_archive( $this->post_type ) ) {
 
-			$permalink = get_permalink();
+			// The message slug is built from the message body, so it must not reach a visitor who
+			// cannot read the message. Send them back through the ID instead of the pretty permalink.
+			$permalink = is_singular( $this->post_type )
+				? add_query_arg( 'p', get_queried_object_id(), home_url( '/' ) )
+				: get_post_type_archive_link( $this->post_type );
 
 			if ( isset( $my_courses_url ) ) {
 				wp_safe_redirect( add_query_arg( 'redirect_to', $permalink, $my_courses_url ), 303 );
@@ -679,6 +744,32 @@ class Sensei_Messages {
 				exit;
 			}
 		}
+	}
+
+	/**
+	 * Stop the canonical redirect from revealing a message slug to users who cannot read the message.
+	 *
+	 * The slug is built from the message body, and core's redirect_canonical() sends `?p=ID` to the
+	 * pretty permalink for any public post type before message_login() runs.
+	 *
+	 * @since 4.26.4
+	 *
+	 * @internal
+	 *
+	 * @param string|false $redirect_url The redirect URL, or false to skip the redirect.
+	 * @return string|false
+	 */
+	public function prevent_message_canonical_redirect( $redirect_url ) {
+		$post_id = (int) get_query_var( 'p' );
+		if ( ! $post_id && is_singular() ) {
+			$post_id = get_queried_object_id();
+		}
+
+		if ( ! $post_id || get_post_type( $post_id ) !== $this->post_type ) {
+			return $redirect_url;
+		}
+
+		return current_user_can( 'manage_sensei' ) || $this->view_message( $post_id ) ? $redirect_url : false;
 	}
 
 	/**

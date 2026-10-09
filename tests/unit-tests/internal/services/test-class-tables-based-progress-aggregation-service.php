@@ -3,101 +3,16 @@
 namespace SenseiTest\Internal\Services;
 
 use Sensei\Internal\Services\Tables_Based_Progress_Aggregation_Service;
+use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
+
+require_once __DIR__ . '/test-class-progress-aggregation-service.php';
 
 /**
  * Class Tables_Based_Progress_Aggregation_Service_Test.
  *
  * @covers \Sensei\Internal\Services\Tables_Based_Progress_Aggregation_Service
  */
-class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
-
-	/**
-	 * Sensei factory.
-	 *
-	 * @var \Sensei_Factory
-	 */
-	private $sensei_factory;
-
-	public function setUp(): void {
-		parent::setUp();
-		$this->sensei_factory = new \Sensei_Factory();
-	}
-
-	/**
-	 * Insert a progress row directly into the HPPS progress table.
-	 *
-	 * @param int         $post_id        The post ID.
-	 * @param int         $user_id        The user ID.
-	 * @param string      $type           The progress type ('course' or 'lesson').
-	 * @param string      $status         The progress status.
-	 */
-	private function insert_progress_with_dates( int $post_id, int $user_id, string $type, string $status, string $started_at, string $completed_at ): void {
-		$wpdb  = $GLOBALS['wpdb'];
-		$table = $wpdb->prefix . 'sensei_lms_progress';
-		$now   = current_time( 'mysql' );
-		$data  = [
-			'post_id'      => $post_id,
-			'user_id'      => $user_id,
-			'type'         => $type,
-			'status'       => $status,
-			'started_at'   => $started_at,
-			'completed_at' => $completed_at,
-			'created_at'   => $now,
-			'updated_at'   => $now,
-		];
-
-		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s' ];
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
-		$wpdb->insert( $table, $data, $format );
-	}
-
-	private function insert_progress( int $post_id, int $user_id, string $type, string $status, ?string $completed_at = null ): void {
-		$wpdb   = $GLOBALS['wpdb'];
-		$table  = $wpdb->prefix . 'sensei_lms_progress';
-		$now    = current_time( 'mysql' );
-		$data   = [
-			'post_id'    => $post_id,
-			'user_id'    => $user_id,
-			'type'       => $type,
-			'status'     => $status,
-			'started_at' => $now,
-			'created_at' => $now,
-			'updated_at' => $now,
-		];
-		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s' ];
-
-		if ( null !== $completed_at ) {
-			$data['completed_at'] = $completed_at;
-			$format[]             = '%s';
-		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
-		$wpdb->insert( $table, $data, $format );
-	}
-
-	/**
-	 * Insert a quiz submission row directly into the HPPS quiz submissions table.
-	 *
-	 * @param int $quiz_id The quiz post ID.
-	 * @param int $user_id The user ID.
-	 */
-	private function insert_quiz_submission( int $quiz_id, int $user_id ): void {
-		$wpdb  = $GLOBALS['wpdb'];
-		$table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
-		$now   = current_time( 'mysql' );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
-		$wpdb->insert(
-			$table,
-			[
-				'quiz_id'    => $quiz_id,
-				'user_id'    => $user_id,
-				'created_at' => $now,
-				'updated_at' => $now,
-			],
-			[ '%d', '%d', '%s', '%s' ]
-		);
-	}
+class Tables_Based_Progress_Aggregation_Service_Test extends \Progress_Aggregation_Service_Test {
 
 	public function testCountStatuses_LessonType_ReturnsStatusCounts(): void {
 		/* Arrange. */
@@ -1214,5 +1129,146 @@ class Tables_Based_Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 		/* Act & Assert. */
 		$this->assertSame( 1, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'sensei_guest_' ) ) ), 'Matching prefix should exclude the guest user.' );
 		$this->assertSame( 2, $service->count_ungraded_quizzes( array( 'exclude_user_login_prefixes' => array( 'no_match_' ) ) ), 'Non-matching prefix should leave both users counted.' );
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_MissingCompletionDateGiven_KeepsStartInDenominator(): void {
+		/* Arrange. */
+		$course_id  = $this->sensei_factory->course->create();
+		$user_id    = $this->sensei_factory->user->create();
+		$other_user = $this->sensei_factory->user->create();
+		$this->seed_progress( $course_id, $user_id, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-04 00:00:00' );
+		$this->seed_progress( $course_id, $other_user, 'course', 'complete', '2022-01-01 00:00:00', null );
+		$service = $this->get_service();
+
+		/* Act. */
+		$actual = $service->get_average_days_to_completion_by_course( array( $course_id ) );
+
+		/* Assert. */
+		// Four inclusive days / two starts = two days; a missing completion adds no days.
+		self::assertSame( array( $course_id => 2.0 ), $actual );
+	}
+
+	public function testGetAverageDaysToCompletionByCourse_MigratedMissingStartDateGiven_ExcludesItFromDenominator(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$course_id  = $this->sensei_factory->course->create();
+		$user_id    = $this->sensei_factory->user->create();
+		$other_user = $this->sensei_factory->user->create();
+		$this->insert_progress_with_dates( $course_id, $user_id, 'course', 'complete', '2022-01-01 00:00:00', '2022-01-04 00:00:00' );
+		// The existing migration writes 0 when start metadata is absent.
+		$this->insert_progress_with_dates( $course_id, $other_user, 'course', 'complete', '0000-00-00 00:00:00', '2022-01-04 00:00:00' );
+		$service = new Tables_Based_Progress_Aggregation_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_average_days_to_completion_by_course( array( $course_id ) );
+
+		/* Assert. */
+		$this->assertSame( array( $course_id => 4.0 ), $result );
+	}
+
+	protected function get_service(): Progress_Aggregation_Service_Interface {
+		global $wpdb;
+		return new Tables_Based_Progress_Aggregation_Service( $wpdb );
+	}
+
+	protected function seed_progress( int $post_id, int $user_id, string $type, string $status, ?string $started_at = '2022-01-01 00:00:00', ?string $completed_at = '2022-01-02 00:00:00' ): void {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Shared contract fixture.
+		$wpdb->insert(
+			$wpdb->prefix . 'sensei_lms_progress',
+			array(
+				'post_id'      => $post_id,
+				'user_id'      => $user_id,
+				'type'         => $type,
+				'status'       => $status,
+				'started_at'   => null === $started_at ? null : get_gmt_from_date( $started_at ),
+				'completed_at' => null === $completed_at || in_array( $status, array( 'in-progress', 'ungraded', 'failed' ), true ) ? null : get_gmt_from_date( $completed_at ),
+				'created_at'   => current_time( 'mysql', true ),
+				'updated_at'   => current_time( 'mysql', true ),
+			)
+		);
+	}
+
+	protected function seed_ungraded_quiz( int $lesson_id, int $quiz_id, int $user_id ): void {
+		$this->seed_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
+		$this->seed_progress( $quiz_id, $user_id, 'quiz', 'ungraded' );
+		$this->insert_quiz_submission( $quiz_id, $user_id );
+	}
+
+	/**
+	 * Insert a progress row directly into the HPPS progress table.
+	 *
+	 * @param int         $post_id        The post ID.
+	 * @param int         $user_id        The user ID.
+	 * @param string      $type           The progress type ('course' or 'lesson').
+	 * @param string      $status         The progress status.
+	 */
+	private function insert_progress_with_dates( int $post_id, int $user_id, string $type, string $status, string $started_at, string $completed_at ): void {
+		$wpdb  = $GLOBALS['wpdb'];
+		$table = $wpdb->prefix . 'sensei_lms_progress';
+		$now   = current_time( 'mysql' );
+		$data  = [
+			'post_id'      => $post_id,
+			'user_id'      => $user_id,
+			'type'         => $type,
+			'status'       => $status,
+			'started_at'   => $started_at,
+			'completed_at' => $completed_at,
+			'created_at'   => $now,
+			'updated_at'   => $now,
+		];
+
+		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s' ];
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
+		$wpdb->insert( $table, $data, $format );
+	}
+
+	private function insert_progress( int $post_id, int $user_id, string $type, string $status, ?string $completed_at = null ): void {
+		$wpdb   = $GLOBALS['wpdb'];
+		$table  = $wpdb->prefix . 'sensei_lms_progress';
+		$now    = current_time( 'mysql' );
+		$data   = [
+			'post_id'    => $post_id,
+			'user_id'    => $user_id,
+			'type'       => $type,
+			'status'     => $status,
+			'started_at' => $now,
+			'created_at' => $now,
+			'updated_at' => $now,
+		];
+		$format = [ '%d', '%d', '%s', '%s', '%s', '%s', '%s' ];
+
+		if ( null !== $completed_at ) {
+			$data['completed_at'] = $completed_at;
+			$format[]             = '%s';
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
+		$wpdb->insert( $table, $data, $format );
+	}
+
+	/**
+	 * Insert a quiz submission row directly into the HPPS quiz submissions table.
+	 *
+	 * @param int $quiz_id The quiz post ID.
+	 * @param int $user_id The user ID.
+	 */
+	private function insert_quiz_submission( int $quiz_id, int $user_id ): void {
+		$wpdb  = $GLOBALS['wpdb'];
+		$table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
+		$now   = current_time( 'mysql' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Test helper inserting directly into custom table.
+		$wpdb->insert(
+			$table,
+			[
+				'quiz_id'    => $quiz_id,
+				'user_id'    => $user_id,
+				'created_at' => $now,
+				'updated_at' => $now,
+			],
+			[ '%d', '%d', '%s', '%s' ]
+		);
 	}
 }

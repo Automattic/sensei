@@ -1782,11 +1782,15 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  array   $columns Table column data
-	 * @param  WP_Post $lesson
-	 * @return array              Updated columns data
+	 * @param array                                          $columns Table column data.
+	 * @param WP_Post|\Sensei\Internal\Services\Reports_Item $lesson Current row item.
+	 * @return array Updated columns data.
 	 */
 	public function analysis_course_column_data( $columns, $lesson ) {
+		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
+			return $columns;
+		}
+
 		if ( isset( $_GET['course_id'] ) ) {
 			$lesson_module      = '';
 			$lesson_module_list = wp_get_post_terms( $lesson->ID, $this->taxonomy );
@@ -2536,7 +2540,14 @@ class Sensei_Core_Modules {
 
 		}
 
-		$course_id = isset( $_POST['course_id'] ) ? sensei_request_text( $_POST['course_id'] ) : '';
+		$course_id = isset( $_POST['course_id'] ) ? absint( sensei_request_text( $_POST['course_id'] ) ) : 0;
+
+		// The course ID is optional: an unsaved course has none yet. When one is supplied it must be a
+		// course the current user can edit, post type included, since `edit_course` maps to
+		// `edit_post` on whatever the ID points at.
+		if ( $course_id && ( 'course' !== get_post_type( $course_id ) || ! Sensei_Course::can_current_user_edit_course( $course_id ) ) ) {
+			wp_send_json_error( array( 'error' => 'cannot edit this course' ) );
+		}
 
 		// save the term. wp_insert_term() unslashes internally, so re-slash to preserve any backslashes in the name.
 		$slug = wp_insert_term( wp_slash( $term_name ), 'module', array( 'slug' => $term_slug ) );
@@ -2555,7 +2566,9 @@ class Sensei_Core_Modules {
 				$term_data['id']   = $term->term_id;
 
 				// set the object terms
-				wp_set_object_terms( $course_id, $term->term_id, 'module', true );
+				if ( $course_id ) {
+					wp_set_object_terms( $course_id, $term->term_id, 'module', true );
+				}
 			}
 
 			wp_send_json_error(
@@ -2568,7 +2581,9 @@ class Sensei_Core_Modules {
 		}
 
 		// make sure the new term is checked for this course
-		wp_set_object_terms( $course_id, $slug['term_id'], 'module', true );
+		if ( $course_id ) {
+			wp_set_object_terms( $course_id, $slug['term_id'], 'module', true );
+		}
 
 		// Handle request then generate response using WP_Ajax_Response
 		wp_send_json_success(
@@ -2635,16 +2650,10 @@ class Sensei_Core_Modules {
 			return $terms;
 		}
 
-		// in certain cases the array is passed in as reference to the parent term_id => parent_id
-		if ( isset( $args['fields'] ) ) {
-			if ( in_array( $args['fields'], array( 'ids', 'tt_ids' ), true ) ) {
-				return $terms;
-			}
-
-			// change only scrub the terms ids form the array keys
-			if ( 'id=>parent' == $args['fields'] ) {
-				$terms = array_keys( $terms );
-			}
+		// These formats are ID lists or an id => parent map rather than term objects, and the caller
+		// needs that shape back. Same as in append_teacher_name_to_module().
+		if ( isset( $args['fields'] ) && in_array( $args['fields'], array( 'id=>parent', 'ids', 'tt_ids' ), true ) ) {
+			return $terms;
 		}
 
 		$teachers_terms = $this->filter_terms_by_owner_no_infinite_loop( $terms, get_current_user_id() );

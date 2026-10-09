@@ -121,16 +121,17 @@ class Course_Translation {
 	 * to its translation. Lessons of the translated course with no original
 	 * are left alone.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int    $original_course_id   Original course ID.
 	 * @param int    $translated_course_id Translated course ID.
 	 * @param string $source_language_code Language code of the original course.
 	 */
 	private function detach_lessons_removed_from_original_course( $original_course_id, $translated_course_id, $source_language_code ) {
-		$original_lesson_ids = $this->get_course_lesson_ids( $original_course_id );
+		$original_lesson_ids   = Sensei()->course->get_course_lesson_ids( $original_course_id, array( 'post_status' => 'any' ) );
+		$translated_lesson_ids = Sensei()->course->get_course_lesson_ids( $translated_course_id, array( 'post_status' => 'any' ) );
 
-		foreach ( $this->get_course_lesson_ids( $translated_course_id ) as $translated_lesson_id ) {
+		foreach ( $translated_lesson_ids as $translated_lesson_id ) {
 			$original_lesson_id = $this->get_object_id( $translated_lesson_id, 'lesson', false, $source_language_code );
 
 			if ( ! $original_lesson_id || $original_lesson_id === $translated_lesson_id || in_array( $original_lesson_id, $original_lesson_ids, true ) ) {
@@ -148,7 +149,7 @@ class Course_Translation {
 	 * removed from it, plus the lesson's order in the course, which the
 	 * outline leaves behind.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
@@ -180,33 +181,6 @@ class Course_Translation {
 	}
 
 	/**
-	 * Get the IDs of the lessons attached to a course, whatever their language.
-	 *
-	 * WPML filters queries by the current language, which during a translation
-	 * job is not the language of the course, so the query runs without filters.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param int $course_id Course ID.
-	 * @return int[]
-	 */
-	private function get_course_lesson_ids( $course_id ) {
-		$lesson_ids = get_posts(
-			array(
-				'post_type'        => 'lesson',
-				'post_status'      => 'any',
-				'numberposts'      => -1,
-				'fields'           => 'ids',
-				'suppress_filters' => true,
-				'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Lessons are attached to their course by meta.
-				'meta_value'       => (int) $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
-			)
-		);
-
-		return array_map( 'intval', $lesson_ids );
-	}
-
-	/**
 	 * Rewrite the delivered course outline to the lesson and module IDs of the course language.
 	 *
 	 * WPML delivers translated content with the source language's lesson and module
@@ -214,7 +188,7 @@ class Course_Translation {
 	 * at another language's content and a later editor save adopts it. Remapping the
 	 * stored outline right after delivery keeps every consumer of the content safe.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *
@@ -238,7 +212,7 @@ class Course_Translation {
 	/**
 	 * Rewrite a duplicated course outline to the lesson and module IDs of the duplicate's language.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @internal
 	 *

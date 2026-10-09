@@ -608,13 +608,14 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'status'  => 'any',
 		);
 		/**
-		 * Filter the lesson learners activity arguments for the Course Analysis list table.
+		 * Filter the lesson student count arguments for the Course Analysis list table.
+		 * The type key remains for compatibility; the count always uses lesson status activity.
 		 *
 		 * @hook sensei_analysis_lesson_learners
 		 *
-		 * @param {array}  $lesson_args The lesson learners activity arguments.
+		 * @param {array}  $lesson_args The lesson student count arguments.
 		 * @param {object} $item The current item.
-		 * @return {array} The lesson learners activity arguments.
+		 * @return {array} Filtered lesson student count arguments.
 		 */
 		$lesson_students = $this->aggregation_service->get_lesson_student_count(
 			apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item )
@@ -628,6 +629,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		);
 		/**
 		 * Filter the lesson completions activity arguments for the Course Analysis list table.
+		 * The count uses post_id and status. The type and count keys remain for compatibility.
 		 *
 		 * @hook sensei_analysis_lesson_completions
 		 *

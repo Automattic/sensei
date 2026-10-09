@@ -14,11 +14,6 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 	protected $factory;
 
 	/**
-	 * Skip tests for wp versions older than query block.
-	 */
-	private $skip_tests = false;
-
-	/**
 	 * Reference of the block instance
 	 *
 	 * @var object
@@ -44,20 +39,12 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 	 * Set up the test.
 	 */
 	public function setUp(): void {
-		global $wp_version;
-
-		$version = str_replace( '-src', '', $wp_version );
-		if ( version_compare( $version, '5.8', '<' ) ) {
-			$this->skip_tests = true;
-			return;
-		}
-
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 		new Sensei_Course_List_Block();
-		$this->factory->course->create_and_get( [ 'post_name' => 'some course' ] );
+		$this->factory->course->create_and_get( array( 'post_name' => 'some course' ) );
 
-		add_filter( 'render_block_core/post-template', [ $this, 'get_block_instance' ], 10, 3 );
+		add_filter( 'render_block_core/post-template', array( $this, 'get_block_instance' ), 10, 3 );
 	}
 
 	public function get_block_instance( $block_content, $block_parent, \WP_Block $instance ) {
@@ -67,9 +54,6 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 	}
 
 	public function testCourseListBlock_AddsAttributeToInnerTakeCourseButton_WhenRendered() {
-		if ( $this->skip_tests ) {
-			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
-		}
 		/* ACT */
 		do_blocks( $this->content );
 
@@ -78,9 +62,6 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 	}
 
 	public function testQueryLoopBlock_DoesNotAddCourseListAttributeToInnerTakeCourseButton_WhenRendered() {
-		if ( $this->skip_tests ) {
-			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
-		}
 		/* ARRANGE */
 		$modified_content = str_replace( '"postType":"course"', '"postType":"post"', $this->content );
 
@@ -89,5 +70,50 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 
 		/* ASSERT */
 		$this->assertArrayNotHasKey( 'isCourseListChild', $this->block_instance->parsed_block['innerBlocks'][1]['innerBlocks'][0]['attrs'] );
+	}
+
+	public function testMaybeChangeInheritedToTrue_CourseListBlockOnSingularPage_StopsInheriting() {
+		/* ARRANGE */
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$this->go_to( get_permalink( $page_id ) );
+		$modified_content = str_replace( '"sticky":""', '"sticky":"","inherit":true', $this->content );
+
+		/* ACT */
+		do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertFalse( $this->block_instance->context['query']['inherit'] );
+	}
+
+	public function testMaybeChangeInheritedToTrue_CourseListBlockOnSingularPageWithoutPerPage_UsesPostsPerPageOption() {
+		/* ARRANGE */
+		update_option( 'posts_per_page', 7 );
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$this->go_to( get_permalink( $page_id ) );
+		$modified_content = str_replace( ',"perPage":4', '', $this->content );
+
+		/* ACT */
+		do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertSame( 7, $this->block_instance->context['query']['perPage'] );
+	}
+
+	public function testMaybeChangeInheritedToTrue_CourseListBlockOnCourseArchive_Inherits() {
+		/* ARRANGE */
+		$courses_page_id = $this->factory->post->create(
+			array(
+				'post_type'    => 'page',
+				'post_content' => $this->content,
+			)
+		);
+		Sensei()->settings->set( 'course_page', $courses_page_id );
+		$this->go_to( '/?post_type=course' );
+
+		/* ACT */
+		do_blocks( $this->content );
+
+		/* ASSERT */
+		$this->assertTrue( $this->block_instance->context['query']['inherit'] ?? false );
 	}
 }

@@ -32,31 +32,6 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Helper: create a lesson status comment with a grade.
-	 *
-	 * @param int    $lesson_id Lesson post ID.
-	 * @param int    $user_id   User ID.
-	 * @param string $status    Comment status (e.g. 'graded', 'passed', 'failed').
-	 * @param float  $grade            The grade value.
-	 * @param bool   $has_quiz_answers Whether to add quiz_answers meta.
-	 */
-	private function create_lesson_status_with_grade( int $lesson_id, int $user_id, string $status, float $grade, bool $has_quiz_answers = true ): void {
-		$comment_id = wp_insert_comment(
-			array(
-				'comment_post_ID'  => $lesson_id,
-				'user_id'          => $user_id,
-				'comment_type'     => 'sensei_lesson_status',
-				'comment_approved' => $status,
-				'comment_content'  => '',
-			)
-		);
-		update_comment_meta( $comment_id, 'grade', $grade );
-		if ( $has_quiz_answers ) {
-			update_comment_meta( $comment_id, 'quiz_answers', 'a:1:{i:0;s:1:"1";}' );
-		}
-	}
-
-	/**
 	 * Test testGetGradeTotals_WithNoData_ReturnsZeros.
 	 */
 	public function testGetGradeTotals_WithNoData_ReturnsZeros(): void {
@@ -263,6 +238,47 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Different grades make accidental inclusion of guest and preview users visible.
+	 *
+	 * @dataProvider report_grade_population_provider
+	 */
+	public function testGetLessonAverageGrade_TemporaryGradesCreated_UsesRegisteredGrades( array $registered_grades, ?float $expected ): void {
+		$lesson = $this->sensei_factory->lesson->create();
+		$quiz   = $this->sensei_factory->quiz->create();
+		$course = $this->sensei_factory->course->create();
+		foreach ( array_merge(
+			$registered_grades,
+			array(
+				'sensei_guest_student'   => 80,
+				'sensei_preview_student' => 100,
+			)
+		) as $login => $grade ) {
+			$user = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
+			$this->create_lesson_status_with_grade( $lesson, $user, 'graded', $grade );
+		}
+		$service = new Comments_Based_Grading_Stats_Service( $GLOBALS['wpdb'] );
+
+		$actual = $service->get_lesson_average_grade(
+			array(
+				'post_id'  => $lesson,
+				'type'     => 'sensei_lesson_status',
+				'status'   => array( 'graded' ),
+				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Exercise the supported grade argument.
+			)
+		);
+
+		$this->assertSame( $expected, $actual );
+	}
+
+	public function report_grade_population_provider(): array {
+		return array(
+			'registered grade' => array( array( 'registered' => 40 ), 40.0 ),
+			'zero grade'       => array( array( 'registered' => 0 ), 0.0 ),
+			'temporary only'   => array( array(), null ),
+		);
+	}
+
 	public function testGetLessonAverageGrade_MatchingStatusGiven_ReturnsMatchingAverage(): void {
 		/* Arrange. */
 		global $wpdb;
@@ -373,6 +389,36 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
 		$result  = $service->get_courses_average_grade();
 
+		$this->assertSame( 80.0, $result );
+	}
+
+	public function testGetCoursesAverageGrade_WithExcludeUserLoginPrefixes_ExcludesMatchingUsers(): void {
+		/* Arrange. */
+		global $wpdb;
+		$course_id = $this->sensei_factory->course->create();
+		$grades    = array(
+			'registered_student'     => 80,
+			'sensei_guest_student'   => 20,
+			'sensei_preview_student' => 40,
+		);
+
+		foreach ( $grades as $login => $grade ) {
+			$user_id   = $this->sensei_factory->user->create( array( 'user_login' => $login ) );
+			$lesson_id = $this->sensei_factory->lesson->create(
+				array( 'meta_input' => array( '_lesson_course' => $course_id ) )
+			);
+			$this->create_lesson_status_with_grade( $lesson_id, $user_id, 'graded', $grade );
+		}
+
+		$service = new Comments_Based_Grading_Stats_Service( $wpdb );
+
+		/* Act. */
+		$result = $service->get_courses_average_grade(
+			array( $course_id ),
+			array( 'exclude_user_login_prefixes' => array( 'sensei_guest_', 'sensei_preview_' ) )
+		);
+
+		/* Assert. */
 		$this->assertSame( 80.0, $result );
 	}
 
@@ -537,5 +583,32 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$result  = $service->get_users_average_grade( array( $user_1 ) );
 
 		$this->assertSame( 80.0, $result );
+	}
+
+	/**
+	 * Helper: create a lesson status comment with a grade.
+	 *
+	 * @param int    $lesson_id Lesson post ID.
+	 * @param int    $user_id   User ID.
+	 * @param string $status    Comment status (e.g. 'graded', 'passed', 'failed').
+	 * @param float  $grade            The grade value.
+	 * @param bool   $has_quiz_answers Whether to add quiz_answers meta.
+	 */
+	private function create_lesson_status_with_grade( int $lesson_id, int $user_id, string $status, float $grade, bool $has_quiz_answers = true ): void {
+		$user       = get_userdata( $user_id );
+		$comment_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'user_id'          => $user_id,
+				'comment_author'   => $user->user_login,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => $status,
+				'comment_content'  => '',
+			)
+		);
+		update_comment_meta( $comment_id, 'grade', $grade );
+		if ( $has_quiz_answers ) {
+			update_comment_meta( $comment_id, 'quiz_answers', 'a:1:{i:0;s:1:"1";}' );
+		}
 	}
 }

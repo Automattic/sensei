@@ -261,6 +261,11 @@ body {
 .sensei-course-theme-locked-lesson-notice {
 	&__text {
 		margin: 0 0 32px;
+
+		// The margin is only needed when buttons follow.
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	.wp-block-button__link, .is-primary {

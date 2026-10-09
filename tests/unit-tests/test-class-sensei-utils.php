@@ -257,7 +257,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$result = ob_get_clean();
 
 		/* Assert. */
-		$this->assertSame( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
+		$this->assertEqualHTML( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
 	}
 
 	public function testOutputQueryParamsAsInputs_WhenUrlIsProvidedAndEchoIsFalse_ReturnsCorrectInputs() {
@@ -268,7 +268,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$result = Sensei_Utils::output_query_params_as_inputs( [], $url, false );
 
 		/* Assert. */
-		$this->assertSame( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
+		$this->assertEqualHTML( '<input type="hidden" name="param_1" value="value_1"><input type="hidden" name="param_2" value="value_2">', $result );
 	}
 
 	public function testOutputQueryParamsAsInputs_WhenAParamIsExcluded_ReturnsCorrectInputs() {
@@ -279,7 +279,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$result = Sensei_Utils::output_query_params_as_inputs( [ 'param_2' ], $url, false );
 
 		/* Assert. */
-		$this->assertSame( '<input type="hidden" name="param_1" value="value_1">', $result );
+		$this->assertEqualHTML( '<input type="hidden" name="param_1" value="value_1">', $result );
 	}
 
 	/**
@@ -726,5 +726,72 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		/* Clean up & Assert. */
 		remove_filter( 'posts_where', $language_filter );
 		$this->assertSame( 80.0, (float) $course_grade, 'The course grade should count the quiz when it is hidden from post queries.' );
+	}
+
+	public function testSenseiRemoveUserFromCourse_LessonsHiddenByQueryFilters_DeletesTheLessonProgress(): void {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+
+		$language_filter = function ( $where, $query ) {
+			if ( 'lesson' === $query->get( 'post_type' ) ) {
+				$where .= ' AND 1=0';
+			}
+			return $where;
+		};
+		add_filter( 'posts_where', $language_filter, 10, 2 );
+
+		/* Act. */
+		Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
+
+		/* Clean up & Assert. */
+		remove_filter( 'posts_where', $language_filter );
+		$this->assertFalse( Sensei()->lesson_progress_repository->has( $lesson_id, $user_id ) );
+	}
+
+	public function testUploadFile_FileGiven_CreatesPrivateAttachment(): void {
+		/* Arrange. */
+		$file = $this->create_upload_file_array();
+
+		/* Act. */
+		$attachment_id = Sensei_Utils::upload_file( $file );
+
+		/* Assert. */
+		$this->assertSame( 'private', get_post_status( $attachment_id ) );
+	}
+
+	public function testUploadFile_FileGiven_AttachmentIsNotReadableAnonymously(): void {
+		/* Arrange. */
+		$attachment_id = Sensei_Utils::upload_file( $this->create_upload_file_array() );
+		wp_set_current_user( 0 );
+
+		/* Act. */
+		$response = rest_do_request( new WP_REST_Request( 'GET', '/wp/v2/media/' . $attachment_id ) );
+
+		/* Assert. */
+		$this->assertSame( 401, $response->get_status() );
+	}
+
+	private function create_upload_file_array(): array {
+		$tmp_file = wp_tempnam( 'sensei.png' );
+		copy( dirname( __DIR__ ) . '/images/sensei.png', $tmp_file );
+
+		add_filter(
+			'sensei_file_upload_args',
+			function ( $args ) {
+				$args['action'] = 'sensei_unit_test_upload';
+				return $args;
+			}
+		);
+
+		return array(
+			'name'     => 'sensei.png',
+			'type'     => 'image/png',
+			'tmp_name' => $tmp_file,
+			'error'    => 0,
+			'size'     => filesize( $tmp_file ),
+		);
 	}
 }

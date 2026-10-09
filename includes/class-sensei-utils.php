@@ -144,7 +144,7 @@ class Sensei_Utils {
 		 *
 		 * @hook sensei_check_for_activity_args
 		 *
-		 * @since $$next-version$$
+		 * @since 4.26.4
 		 *
 		 * @param {array} $args Search arguments.
 		 * @return {array} Filtered search arguments.
@@ -428,7 +428,7 @@ class Sensei_Utils {
 				'post_mime_type' => $file_return['type'],
 				'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $filename ) ),
 				'post_content'   => '',
-				'post_status'    => 'inherit',
+				'post_status'    => 'private',
 				'guid'           => $file_return['url'],
 			);
 
@@ -720,7 +720,7 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+		$lesson_ids = Sensei()->course->get_course_lesson_ids( $course_id, array( 'post_status' => 'any' ) );
 
 		foreach ( $lesson_ids as $lesson_id ) {
 			self::sensei_remove_user_from_lesson( $lesson_id, $user_id, true );

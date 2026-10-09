@@ -10,12 +10,14 @@ namespace SenseiTest\Internal\Services;
 use Sensei\Internal\Services\Comments_Based_Reports_Listing_Service;
 use Sensei\Internal\Services\Reports_Item;
 
+require_once __DIR__ . '/test-class-reports-listing-service.php';
+
 /**
  * Class Comments_Based_Reports_Listing_Service_Test.
  *
  * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service
  */
-class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
+class Comments_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service_Test {
 
 	/**
 	 * Sensei factory.
@@ -63,7 +65,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_lesson_students
 	 */
-	public function testGetLessonStudents_WithLessonStatus_ReturnsReportsItems(): void {
+	public function testGetLessonStudents_LessonProgressCreated_ReturnsReportsItems(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -98,7 +100,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_course_students
 	 */
-	public function testGetCourseStudents_WithCourseStatus_ReturnsReportsItems(): void {
+	public function testGetCourseStudents_CourseProgressCreated_ReturnsReportsItems(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -124,34 +126,35 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
 	}
 
-	/**
-	 * Tests that get_user_courses returns reports items for a user with course status.
-	 *
-	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_courses
-	 */
-	public function testGetUserCourses_WithCourseStatus_ReturnsReportsItems(): void {
-		/* Arrange. */
-		$user_id   = $this->sensei_factory->user->create();
+	public function testGetCourseStudents_CommentsFilteredByLanguage_ReturnsProgress(): void {
 		$course_id = $this->sensei_factory->course->create();
-		$this->create_course_status( $course_id, $user_id, 'in-progress' );
+		$user_id   = $this->sensei_factory->user->create();
+		$this->seed_report_progress( $course_id, $user_id, 'course', 'in-progress', '2022-01-01 00:00:00' );
+		$filter = static function ( array $clauses ): array {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML owns this hook.
+			if ( apply_filters( 'wpml_is_comment_query_filtered', true ) ) {
+				$clauses['where'] .= ' AND 1=0';
+			}
+			return $clauses;
+		};
+		add_filter( 'comments_clauses', $filter );
 
-		$service = new Comments_Based_Reports_Listing_Service();
+		try {
+			$result = ( new Comments_Based_Reports_Listing_Service() )->get_course_students(
+				array(
+					'post_id' => $course_id,
+					'type'    => 'sensei_course_status',
+					'status'  => 'any',
+				)
+			);
+		} finally {
+			remove_filter( 'comments_clauses', $filter );
+		}
 
-		/* Act. */
-		$result = $service->get_user_courses(
-			array(
-				'user_id' => $user_id,
-				'type'    => 'sensei_course_status',
-				'number'  => 10,
-				'offset'  => 0,
-				'status'  => 'any',
-			)
-		);
-
-		/* Assert. */
-		$this->assertSame( 1, $result['total_count'], 'Total count should be 1.' );
-		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
-		$this->assertSame( $course_id, $result['items'][0]->post_id, 'Post ID should match the course.' );
+		$this->assertSame( 1, $result['total_count'], 'The count should include progress in every language.' );
+		$this->assertSame( array( $user_id ), wp_list_pluck( $result['items'], 'user_id' ), 'The listing should include progress in every language.' );
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML owns this hook.
+		$this->assertTrue( apply_filters( 'wpml_is_comment_query_filtered', true ), 'WPML filtering should be restored after the report query.' );
 	}
 
 	/**
@@ -159,7 +162,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithLessonStatus_ReturnsReportsItem(): void {
+	public function testGetUserLessonProgress_LessonProgressCreated_ReturnsReportsItem(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -190,7 +193,7 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithNoProgress_ReturnsNull(): void {
+	public function testGetUserLessonProgress_NoLessonProgressCreated_ReturnsNull(): void {
 		/* Arrange. */
 		$user_id   = $this->sensei_factory->user->create();
 		$course_id = $this->sensei_factory->course->create();
@@ -212,5 +215,53 @@ class Comments_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertNull( $result );
+	}
+
+	/**
+	 * Tests that get_user_courses returns reports items for a user with course status.
+	 *
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_user_courses
+	 */
+	public function testGetUserCourses_CourseProgressCreated_ReturnsReportsItems(): void {
+		/* Arrange. */
+		$user_id   = $this->sensei_factory->user->create();
+		$course_id = $this->sensei_factory->course->create();
+		$this->create_course_status( $course_id, $user_id, 'in-progress' );
+
+		$service = new Comments_Based_Reports_Listing_Service();
+
+		/* Act. */
+		$result = $service->get_user_courses(
+			array(
+				'user_id' => $user_id,
+				'type'    => 'sensei_course_status',
+				'number'  => 10,
+				'offset'  => 0,
+				'status'  => 'any',
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 1, $result['total_count'], 'Total count should be 1.' );
+		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
+		$this->assertSame( $course_id, $result['items'][0]->post_id, 'Post ID should match the course.' );
+	}
+
+	protected function get_report_service(): \Sensei\Internal\Services\Reports_Listing_Service_Interface {
+		return new Comments_Based_Reports_Listing_Service();
+	}
+
+	protected function seed_report_progress( int $post, int $user, string $type, string $status, string $date ): void {
+		$comment = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $post,
+				'user_id'          => $user,
+				'comment_author'   => get_userdata( $user )->user_login,
+				'comment_type'     => 'sensei_' . $type . '_status',
+				'comment_approved' => $status,
+				'comment_date'     => $date,
+			)
+		);
+		update_comment_meta( $comment, 'start', $date );
 	}
 }

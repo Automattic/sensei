@@ -50,6 +50,15 @@
 	</rule>
 	<!-- End of Temporary Rule Exclusions -->
 
+	<!-- Recognize shared service test bases as PHPUnit test classes. -->
+	<rule ref="WordPress.Files.FileName">
+		<properties>
+			<property name="custom_test_classes" type="array">
+				<element value="Progress_Aggregation_Service_Test" />
+				<element value="Reports_Listing_Service_Test" />
+			</property>
+		</properties>
+	</rule>
 	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
 		<exclude-pattern>tests/framework/actionscheduler-mocks.php</exclude-pattern>
 	</rule>

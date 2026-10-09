@@ -10,12 +10,14 @@ namespace SenseiTest\Internal\Services;
 use Sensei\Internal\Services\Tables_Based_Reports_Listing_Service;
 use Sensei\Internal\Services\Reports_Item;
 
+require_once __DIR__ . '/test-class-reports-listing-service.php';
+
 /**
  * Class Tables_Based_Reports_Listing_Service_Test.
  *
  * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service
  */
-class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
+class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service_Test {
 
 	/**
 	 * Sensei factory.
@@ -90,7 +92,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
 	 */
-	public function testGetLessonStudents_WithLessonProgress_ReturnsReportsItems(): void {
+	public function testGetLessonStudents_LessonProgressCreated_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -126,7 +128,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
 	 */
-	public function testGetLessonStudents_WithQuizStatus_UsesCoalescedStatus(): void {
+	public function testGetLessonStudents_QuizProgressAndSubmissionCreated_ReturnsQuizStatusAndGrade(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -168,7 +170,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_course_students
 	 */
-	public function testGetCourseStudents_WithCourseProgress_ReturnsReportsItems(): void {
+	public function testGetCourseStudents_CourseProgressCreated_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -199,12 +201,39 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertNotNull( $result['items'][0]->percent, 'Percent should be computed.' );
 	}
 
+	public function testGetCourseStudents_TranslatedCourseQueried_UsesOriginalCourseLessonsForPercent(): void {
+		global $wpdb;
+		$created    = $this->sensei_factory->get_course_with_lessons( array( 'lesson_count' => 1 ) );
+		$translated = $this->sensei_factory->course->create();
+		$user_id    = $this->sensei_factory->user->create();
+		$this->insert_progress( $created['course_id'], $user_id, 'course', 'in-progress' );
+		$this->insert_progress( $created['lesson_ids'][0], $user_id, 'lesson', 'complete' );
+		$map_progress = static function ( int $course_id ) use ( $created, $translated ): int {
+			return $translated === $course_id ? $created['course_id'] : $course_id;
+		};
+		add_filter( 'sensei_course_progress_get_course_id', $map_progress );
+
+		try {
+			$actual = ( new Tables_Based_Reports_Listing_Service( $wpdb ) )->get_course_students(
+				array(
+					'post_id' => $translated,
+					'status'  => 'any',
+				)
+			);
+		} finally {
+			remove_filter( 'sensei_course_progress_get_course_id', $map_progress );
+		}
+
+		$this->assertSame( 1, $actual['total_count'] );
+		$this->assertSame( 100.0, $actual['items'][0]->percent );
+	}
+
 	/**
 	 * Tests that get_user_lesson_progress returns a Reports_Item for lesson progress.
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithProgress_ReturnsReportsItem(): void {
+	public function testGetUserLessonProgress_LessonProgressCreated_ReturnsReportsItem(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -236,7 +265,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_lesson_progress
 	 */
-	public function testGetUserLessonProgress_WithNoProgress_ReturnsNull(): void {
+	public function testGetUserLessonProgress_NoLessonProgressCreated_ReturnsNull(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -266,7 +295,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_user_courses
 	 */
-	public function testGetUserCourses_WithCourseProgress_ReturnsReportsItems(): void {
+	public function testGetUserCourses_CourseProgressCreated_ReturnsReportsItems(): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -293,36 +322,23 @@ class Tables_Based_Reports_Listing_Service_Test extends \WP_UnitTestCase {
 		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
 	}
 
-	/**
-	 * Tests that get_lesson_students corrects pagination when offset exceeds total.
-	 *
-	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
-	 */
-	public function testGetLessonStudents_WithOffsetBeyondTotal_CorrectsPagination(): void {
-		/* Arrange. */
-		global $wpdb;
-		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
-		$lesson_id = $this->sensei_factory->lesson->create(
-			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
-		);
-		$this->insert_progress( $lesson_id, $user_id, 'lesson', 'in-progress' );
+	protected function get_report_service(): \Sensei\Internal\Services\Reports_Listing_Service_Interface {
+		return new Tables_Based_Reports_Listing_Service( $GLOBALS['wpdb'] );
+	}
 
-		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
-
-		/* Act. */
-		$result = $service->get_lesson_students(
+	protected function seed_report_progress( int $post, int $user, string $type, string $status, string $date ): void {
+		$GLOBALS['wpdb']->insert(
+			$GLOBALS['wpdb']->prefix . 'sensei_lms_progress',
 			array(
-				'post_id' => $lesson_id,
-				'type'    => 'sensei_lesson_status',
-				'number'  => 10,
-				'offset'  => 100,
-				'status'  => 'any',
+				'post_id'      => $post,
+				'user_id'      => $user,
+				'type'         => $type,
+				'status'       => $status,
+				'started_at'   => $date,
+				'completed_at' => $date,
+				'created_at'   => $date,
+				'updated_at'   => $date,
 			)
 		);
-
-		/* Assert. */
-		$this->assertSame( 1, $result['total_count'], 'Total count should still reflect the actual total.' );
-		$this->assertCount( 1, $result['items'], 'Should snap offset to last page and return items.' );
 	}
 }

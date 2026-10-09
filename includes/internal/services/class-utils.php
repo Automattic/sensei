@@ -24,16 +24,28 @@ class Utils {
 	 * Post statuses that Reports counts as live content: a course or lesson that
 	 * exists and is accessible.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @var string[]
 	 */
 	public const REPORTS_POST_STATUSES = array( 'publish', 'private' );
 
 	/**
-	 * Post statuses that Grading counts as live content.
+	 * Temporary user accounts excluded from Reports lists and calculations.
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @var string[]
+	 */
+	public const REPORTS_EXCLUDED_USER_LOGIN_PREFIXES = array(
+		\Sensei_Guest_User::LOGIN_PREFIX,
+		\Sensei_Preview_User::LOGIN_PREFIX,
+	);
+
+	/**
+	 * Post statuses that Grading counts as live content.
+	 *
+	 * @since 4.26.4
 	 *
 	 * @var string[]
 	 */
@@ -42,7 +54,7 @@ class Utils {
 	/**
 	 * Get the Reports post statuses as a quoted list for a `post_status IN ( ... )` SQL clause.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @return string Quoted, comma-separated statuses, e.g. "'publish','private'".
 	 */
@@ -51,9 +63,59 @@ class Utils {
 	}
 
 	/**
-	 * Get the Grading post statuses as a quoted list for a `post_status IN ( ... )` SQL clause.
+	 * Resolve progress IDs while retaining the IDs used by report rows.
+	 *
+	 * Use the same progress-ID filters as the repositories to locate stored progress.
+	 * For example, WPML uses these filters to share progress with the original-language post.
+	 * Callers query the mapped IDs and key their results by the requested IDs.
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @param int[]  $post_ids Requested post IDs.
+	 * @param string $type     Course or lesson progress type.
+	 * @return array<int, int> Requested ID => stored progress ID.
+	 */
+	public static function get_progress_post_id_map( array $post_ids, string $type ): array {
+		$map = array();
+		foreach ( $post_ids as $post_id ) {
+			$post_id = (int) $post_id;
+			if ( 'course' === $type ) {
+				$map[ $post_id ] = (int) apply_filters( 'sensei_course_progress_get_course_id', $post_id );
+			} else {
+				$map[ $post_id ] = (int) apply_filters( 'sensei_lesson_progress_get_lesson_id', $post_id );
+			}
+		}
+
+		return $map;
+	}
+
+	/**
+	 * Re-key stored progress results using the requested post IDs.
+	 *
+	 * Requested IDs without a stored result are omitted. Result values are preserved.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @template T
+	 * @param array<int, T>   $results     Results keyed by stored progress ID.
+	 * @param array<int, int> $post_id_map Requested ID => stored progress ID.
+	 * @return array<int, T> Results keyed by requested post ID.
+	 */
+	public static function map_results_to_requested_post_ids( array $results, array $post_id_map ): array {
+		$requested_results = array();
+		foreach ( $post_id_map as $requested_id => $stored_id ) {
+			if ( isset( $results[ $stored_id ] ) ) {
+				$requested_results[ $requested_id ] = $results[ $stored_id ];
+			}
+		}
+
+		return $requested_results;
+	}
+
+	/**
+	 * Get the Grading post statuses as a quoted list for a `post_status IN ( ... )` SQL clause.
+	 *
+	 * @since 4.26.4
 	 *
 	 * @return string Quoted, comma-separated statuses.
 	 */
@@ -64,7 +126,7 @@ class Utils {
 	/**
 	 * Build a SQL-safe quoted status list from activity arguments.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 * @param array $args Activity arguments containing a status key.
@@ -141,6 +203,46 @@ class Utils {
 	}
 
 	/**
+	 * Build a SQL clause for excluding comments by author login prefix.
+	 *
+	 * When include_statuses_override is set, excluded users are kept if their
+	 * effective status matches one of the override statuses.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \wpdb $wpdb WordPress database object.
+	 * @param array $args Query arguments with 'exclude_user_login_prefixes' and optional 'include_statuses_override'.
+	 * @return string SQL clause.
+	 */
+	public static function build_comment_author_exclusion_clause( \wpdb $wpdb, array $args ): string {
+		if ( empty( $args['exclude_user_login_prefixes'] ) ) {
+			return '';
+		}
+
+		$prefixes = array_filter( $args['exclude_user_login_prefixes'] );
+		if ( empty( $prefixes ) ) {
+			return '';
+		}
+
+		$not_like_clauses = array();
+		foreach ( $prefixes as $prefix ) {
+			$escaped_prefix     = $wpdb->esc_like( $prefix );
+			$not_like_clauses[] = $wpdb->prepare( 'comment_author NOT LIKE %s', $escaped_prefix . '%' );
+		}
+
+		$exclusion_sql = '( ' . implode( ' AND ', $not_like_clauses ) . ' )';
+
+		if ( ! empty( $args['include_statuses_override'] ) ) {
+			$status_placeholders = implode( ', ', array_fill( 0, count( $args['include_statuses_override'] ), '%s' ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
+			$override_sql = $wpdb->prepare( "comment_approved IN ( $status_placeholders )", $args['include_statuses_override'] );
+			return " AND ( $exclusion_sql OR $override_sql )";
+		}
+
+		return " AND $exclusion_sql";
+	}
+
+	/**
 	 * Log a database query error if one occurred.
 	 *
 	 * @since 4.26.0
@@ -159,7 +261,8 @@ class Utils {
 	 * Get user IDs whose login matches any of the given prefixes.
 	 *
 	 * Runs as a separate query to avoid JOINing wp_users, which may
-	 * be on a different database in some environments.
+	 * be on a different database in some environments. Cache results for the
+	 * request until WordPress invalidates its users cache.
 	 *
 	 * @since 4.26.0
 	 *
@@ -167,13 +270,20 @@ class Utils {
 	 * @param string[] $prefixes User login prefixes to match.
 	 * @return int[] Matching user IDs.
 	 */
-	private static function get_user_ids_by_login_prefixes( \wpdb $wpdb, array $prefixes ): array {
+	public static function get_user_ids_by_login_prefixes( \wpdb $wpdb, array $prefixes ): array {
+		static $cached_ids = array();
+
 		$prefixes = array_filter( $prefixes );
 		if ( empty( $prefixes ) ) {
-			return [];
+			return array();
+		}
+		sort( $prefixes );
+		$cache_key = $wpdb->users . ':' . wp_cache_get_last_changed( 'users' ) . ':' . (string) wp_json_encode( $prefixes );
+		if ( isset( $cached_ids[ $cache_key ] ) ) {
+			return $cached_ids[ $cache_key ];
 		}
 
-		$like_clauses = [];
+		$like_clauses = array();
 		foreach ( $prefixes as $prefix ) {
 			$escaped_prefix = $wpdb->esc_like( $prefix );
 			$like_clauses[] = $wpdb->prepare( 'user_login LIKE %s', $escaped_prefix . '%' );
@@ -185,6 +295,7 @@ class Utils {
 		$result = (array) $wpdb->get_col( "SELECT ID FROM {$wpdb->users} WHERE $where" );
 		self::log_query_error( $wpdb, 'User ID lookup by login prefix' );
 
-		return array_map( 'intval', $result );
+		$cached_ids[ $cache_key ] = array_map( 'intval', $result );
+		return $cached_ids[ $cache_key ];
 	}
 }

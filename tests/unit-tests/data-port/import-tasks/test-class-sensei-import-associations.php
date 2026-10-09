@@ -41,7 +41,7 @@ class Sensei_Import_Associations_Tests extends WP_UnitTestCase {
 		$task = new Sensei_Import_Associations( $job );
 
 		$method = new ReflectionMethod( $task, 'handle_lesson_module' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$method->invokeArgs(
 			$task,
@@ -74,7 +74,7 @@ class Sensei_Import_Associations_Tests extends WP_UnitTestCase {
 
 		$task   = new Sensei_Import_Associations( $job );
 		$method = new ReflectionMethod( $task, 'handle_course_lessons' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$method->invokeArgs(
 			$task,
@@ -116,7 +116,7 @@ class Sensei_Import_Associations_Tests extends WP_UnitTestCase {
 
 		$task   = new Sensei_Import_Associations( $job );
 		$method = new ReflectionMethod( $task, 'handle_course_lessons' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$method->invokeArgs(
 			$task,
@@ -162,7 +162,7 @@ class Sensei_Import_Associations_Tests extends WP_UnitTestCase {
 
 		$task   = new Sensei_Import_Associations( $job );
 		$method = new ReflectionMethod( $task, 'handle_course_lessons' );
-		$method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
 
 		$method->invokeArgs(
 			$task,

@@ -46,7 +46,7 @@ interface Grading_Stats_Service_Interface {
 	/**
 	 * Get average grade grouped by user.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.26.4
 	 *
 	 * @param int[] $user_ids User IDs to include.
 	 * @return array<int, float> Map of user ID to average grade.
@@ -56,7 +56,9 @@ interface Grading_Stats_Service_Interface {
 	/**
 	 * Get the average quiz grade for a lesson.
 	 *
-	 * @since $$next-version$$
+	 * Guest and preview users are excluded regardless of status.
+	 *
+	 * @since 4.26.4
 	 *
 	 * @param array $args {
 	 *     Comments-API-shaped activity arguments.
@@ -77,9 +79,14 @@ interface Grading_Stats_Service_Interface {
 	 * @since 4.26.0
 	 *
 	 * @param int[] $course_ids Optional. Filter by courses. Empty = all.
+	 * @param array $args {
+	 *     Optional query filters.
+	 *
+	 *     @type string[] $exclude_user_login_prefixes User login prefixes to exclude; none by default.
+	 * }
 	 * @return float
 	 */
-	public function get_courses_average_grade( array $course_ids = array() ): float;
+	public function get_courses_average_grade( array $course_ids = array(), array $args = array() ): float;
 
 	/**
 	 * Average grade filtered by user IDs.

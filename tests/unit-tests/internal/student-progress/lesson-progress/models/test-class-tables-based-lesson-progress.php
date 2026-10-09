@@ -219,7 +219,7 @@ class Tables_Based_Lesson_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( $completed_at, $progress->get_completed_at() );
 	}
 
-	private function create_progress( string $status = null ): Tables_Based_Lesson_Progress {
+	private function create_progress( ?string $status = null ): Tables_Based_Lesson_Progress {
 		return new Tables_Based_Lesson_Progress(
 			1,
 			2,

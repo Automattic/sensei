@@ -57,6 +57,11 @@ class Sensei_Course_List_Block {
 
 	/**
 	 * If course list block is being rendered in Archive page, set inherited to true.
+	 * On a singular page, set it to false.
+	 *
+	 * The Courses page is saved with `inherit` on because its URL doubles as the course
+	 * archive. On a singular page (for example a WPML translation of the Courses page,
+	 * served under its own slug) inheriting would only yield the page itself.
 	 *
 	 * @param array $parsed_block The block to be rendered.
 	 *
@@ -64,14 +69,27 @@ class Sensei_Course_List_Block {
 	 */
 	public function maybe_change_inherited_to_true( $parsed_block ) {
 		if (
-			'core/query' === $parsed_block['blockName'] &&
-			'course' === ( $parsed_block['attrs']['query']['postType'] ?? '' ) &&
-			false !== strpos( ( $parsed_block['attrs']['className'] ?? '' ), 'wp-block-sensei-lms-course-list' ) &&
+			'core/query' !== $parsed_block['blockName'] ||
+			'course' !== ( $parsed_block['attrs']['query']['postType'] ?? '' ) ||
+			false === strpos( ( $parsed_block['attrs']['className'] ?? '' ), 'wp-block-sensei-lms-course-list' )
+		) {
+			return $parsed_block;
+		}
+
+		if (
 			Sensei()->course->course_archive_page_has_query_block() &&
 			( is_post_type_archive( 'course' ) || is_tax( 'course-category' ) )
 		) {
 			$parsed_block['attrs']['query']['inherit'] = true;
+		} elseif ( is_singular() ) {
+			$parsed_block['attrs']['query']['inherit'] = false;
+
+			// Without `perPage` the Query Loop block does not paginate.
+			if ( ! isset( $parsed_block['attrs']['query']['perPage'] ) ) {
+				$parsed_block['attrs']['query']['perPage'] = (int) get_option( 'posts_per_page' );
+			}
 		}
+
 		return $parsed_block;
 	}
 
