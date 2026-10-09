@@ -324,13 +324,13 @@ Either way, confirm line numbers against this checkout before citing them — th
 
 `[Status] Triaged` means **triage is finished and someone can act on the issue** — not merely "a comment was posted". One rule decides it:
 
-> **If the comment ends by asking the reporter for something, the issue is `[Status] Needs Author Reply`, never `[Status] Triaged`.** If triage is complete and actionable, it's `[Status] Triaged`. If it still needs a *human triager* rather than the reporter, leave `[Status] Needs Triage` in place.
+> **If the comment ends by asking the reporter for something, the issue is `[Status] Needs Author Reply`, never `[Status] Triaged`.** If triage is complete and actionable, it's `[Status] Triaged`. If triage can't reach a conclusion, say so in the comment and leave the issue for a human triager: keep `[Status] Needs Triage` and change no labels.
 
 | Outcome | Status | Priority |
 |---|---|---|
 | **Reproduced**, or confidently traced | swap `[Status] Needs Triage` → `[Status] Triaged` | apply `[Pri] …` |
 | **Could not reproduce** | swap → `[Status] Needs Author Reply` | **hold** |
-| **Inconclusive** | swap → `[Status] Needs Author Reply` if you're asking the reporter anything; otherwise leave `[Status] Needs Triage` | **hold** |
+| **Inconclusive** — triage can't reach a conclusion | leave `[Status] Needs Triage`; change no labels | none |
 | **Not reproduced in Sensei Core triage** | leave `[Status] Needs Triage` | none |
 | **Needs more info** (the [B2 gate](#b2-reproducible-steps-completeness)) | swap → `[Status] Needs Author Reply` | none |
 | **Out of scope** — conflict/customization, reporter asked for a clean-env repro | swap → `[Status] Needs Author Reply`, plus `Third-Party` if a conflict is the likely cause | none |
@@ -407,7 +407,7 @@ _Triage assisted by Claude._
 
 **Include a third-party dependency (WPML, Sensei Pro, a paid plugin) only when the verdict relies on it** — an inconclusive result, or an assumption left unverified in an otherwise-confirmed diagnosis. When a matching commit, release tag, and passing test already settle it, don't add "couldn't install WPML" as a reflexive caveat.
 
-**Could Not Reproduce / Not Sure Yet:** drop the collapsed section unless there's a real trace to share; just the plain-language summary plus what you tried.
+**Could Not Reproduce / Not Sure Yet:** drop the collapsed section unless there's a real trace to share; just the plain-language summary plus what you tried. For Not Sure Yet, also say that triage couldn't reach a conclusion and a maintainer will review it.
 
 **Need More Info:** no collapsed section. List exactly which of the [B2 completeness items](#b2-reproducible-steps-completeness) are missing, in plain language (e.g. "Can you tell us: does this happen for every user, or just you?").
 
