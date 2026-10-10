@@ -41,6 +41,95 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure a course with an Administrator-owned module is available to an Editor.
+	 *
+	 * @covers Sensei_Core_Modules::module_order_screen
+	 */
+	public function testModuleOrderScreen_EditorViewsCourseWithAdminOwnedModule_DisplaysCourseInSelector() {
+		/* Arrange. */
+		$admin_id  = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$editor_id = $this->factory->user->create( array( 'role' => 'editor' ) );
+		$course_id = $this->factory->course->create( array( 'post_author' => $editor_id ) );
+		$module    = wp_insert_term( 'Admin Module', 'module' );
+		$module_id = $module['term_id'];
+
+		update_term_meta( $module_id, 'module_author', $admin_id );
+		wp_set_object_terms( $course_id, array( $module_id ), 'module' );
+		wp_set_current_user( $editor_id );
+		set_current_screen( 'admin_page_module-order' );
+		wp_cache_set( $course_id, array(), 'module_relationships' );
+
+		/* Act. */
+		ob_start();
+		Sensei()->modules->module_order_screen();
+		$output = ob_get_clean();
+
+		/* Assert. */
+		self::assertStringContainsString( '<option value="' . $course_id . '"', $output );
+	}
+
+	/**
+	 * Ensure the module order screen includes modules owned by an Administrator.
+	 *
+	 * @covers Sensei_Core_Modules::module_order_screen
+	 */
+	public function testModuleOrderScreen_EditorViewsCourseWithAdminOwnedModule_DisplaysModule() {
+		/* Arrange. */
+		$admin_id  = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$editor_id = $this->factory->user->create( array( 'role' => 'editor' ) );
+		$course_id = $this->factory->course->create( array( 'post_author' => $editor_id ) );
+		$module    = wp_insert_term( 'Admin Module', 'module' );
+		$module_id = $module['term_id'];
+
+		update_term_meta( $module_id, 'module_author', $admin_id );
+		wp_set_object_terms( $course_id, array( $module_id ), 'module' );
+		wp_set_current_user( $editor_id );
+		set_current_screen( 'admin_page_module-order' );
+		$_GET['course_id'] = $course_id;
+
+		/* Act. */
+		ob_start();
+		Sensei()->modules->module_order_screen();
+		$output = ob_get_clean();
+		unset( $_GET['course_id'] );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Admin Module', $output );
+	}
+
+	/**
+	 * Ensure an Editor can reorder modules owned by an Administrator.
+	 *
+	 * @covers Sensei_Core_Modules::save_course_module_order
+	 */
+	public function testSaveCourseModuleOrder_EditorReordersModulesOwnedByAdmin_SavesCompleteOrder() {
+		/* Arrange. */
+		$admin_id  = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$editor_id = $this->factory->user->create( array( 'role' => 'editor' ) );
+		$course_id = $this->factory->course->create( array( 'post_author' => $editor_id ) );
+		$modules   = $this->factory->module->create_many( 2 );
+
+		foreach ( $modules as $module_id ) {
+			update_term_meta( $module_id, 'module_author', $admin_id );
+		}
+		wp_set_object_terms( $course_id, $modules, 'module' );
+		update_post_meta( $course_id, '_module_order', array_map( 'strval', $modules ) );
+
+		wp_set_current_user( $editor_id );
+		set_current_screen( 'edit-course' );
+
+		$expected = array_reverse( $modules );
+		$method   = new ReflectionMethod( Sensei()->modules, 'save_course_module_order' );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
+
+		/* Act. */
+		$method->invoke( Sensei()->modules, implode( ',', $expected ), $course_id );
+
+		/* Assert. */
+		self::assertSame( array_map( 'strval', $expected ), get_post_meta( $course_id, '_module_order', true ) );
+	}
+
+	/**
 	 * @covers Sensei_Core_Modules::do_link_to_module
 	 */
 	public function testDoLinkToModuleEmptyDescription() {

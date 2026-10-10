@@ -1377,9 +1377,17 @@ class Sensei_Admin {
 			if ( isset( $_GET['course_id'] ) ) {
 				$course_id = intval( $_GET['course_id'] );
 				if ( $course_id > 0 ) {
+					// Include every course module so non-admin users do not submit a partial structure.
+					remove_filter( 'get_terms', array( Sensei()->modules, 'filter_module_terms' ), 20 );
+					remove_filter( 'get_object_terms', array( Sensei()->modules, 'filter_course_selected_terms' ), 20 );
+
 					$course_structure = $this->get_course_structure( $course_id );
-					$modules          = $this->get_course_structure( $course_structure, 'module' );
-					$has_lessons      = false;
+
+					add_filter( 'get_terms', array( Sensei()->modules, 'filter_module_terms' ), 20, 3 );
+					add_filter( 'get_object_terms', array( Sensei()->modules, 'filter_course_selected_terms' ), 20, 3 );
+
+					$modules     = $this->get_course_structure( $course_structure, 'module' );
+					$has_lessons = false;
 
 					// Form start.
 					$html .= '<form id="editgrouping" method="post" action="'
@@ -1500,11 +1508,7 @@ class Sensei_Admin {
 
 		if ( $course_id ) {
 			remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
-			// Temporarily remove the module ownership filters so the full unfiltered set of modules
-			// is used throughout the read-and-save cycle. Without this, non-admin users (e.g. Editors)
-			// would only see their own modules: get_course_structure() would return a partial list,
-			// and save() — which internally re-reads the current structure for diffing — would
-			// disassociate all other modules from the course. Filters are restored after save().
+			// Ownership filters are for display only; saving a partial structure resets hidden modules.
 			remove_filter( 'get_terms', array( Sensei()->modules, 'filter_module_terms' ), 20 );
 			remove_filter( 'get_object_terms', array( Sensei()->modules, 'filter_course_selected_terms' ), 20 );
 
@@ -1563,9 +1567,13 @@ class Sensei_Admin {
 	 * @return bool
 	 */
 	private function sync_lesson_order( array $lesson_ids, int $course_id ): bool {
-
 		remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
+		// Ownership filters are for display only; saving a partial structure resets hidden modules.
+		remove_filter( 'get_terms', array( Sensei()->modules, 'filter_module_terms' ), 20 );
+		remove_filter( 'get_object_terms', array( Sensei()->modules, 'filter_course_selected_terms' ), 20 );
+
 		$original_course_structure = $this->get_course_structure( $course_id );
+
 		add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
 
 		$lessons = [];
@@ -1605,6 +1613,8 @@ class Sensei_Admin {
 		// Save the new course structure.
 		$saved = Sensei_Course_Structure::instance( $course_id )
 			->save( $reordered_course_structure );
+		add_filter( 'get_terms', array( Sensei()->modules, 'filter_module_terms' ), 20, 3 );
+		add_filter( 'get_object_terms', array( Sensei()->modules, 'filter_course_selected_terms' ), 20, 3 );
 
 		return true === $saved;
 	}
