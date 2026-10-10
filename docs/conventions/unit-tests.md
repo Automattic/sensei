@@ -79,7 +79,18 @@ Examples:
 
 Names get long. That is the accepted trade-off: the reader gets the full context (what, under which circumstances, expecting what) without reading the body, and a reviewer can spot an expectation that does not match the assertion.
 
-## 5. One logical behavior per test
+## 5. Organize tests around the source class
+
+Make the test class easy to compare with the class under test:
+
+- Order test groups to match the order of the methods in the source class.
+- Keep all tests for the same source method together. Add a new case beside the existing tests for that method, not at the end of the file.
+- Keep lifecycle methods such as `setUp()` and `tearDown()` near the top of the class. Group private helper methods together at the bottom.
+- Extract a test helper only when multiple tests share meaningful setup or assertions. Keep scenario-specific details in the test so the behavior remains clear.
+
+Give every test a docblock with a short description and an `@covers` tag. Describe the lasting requirement, not the current PR or bug report.
+
+## 6. One logical behavior per test
 
 A test should verify one logical behavior. That behavior may require multiple assertions, such as checking that an unauthorized request returns an error and saves no data.
 
@@ -92,7 +103,7 @@ A test should verify one logical behavior. That behavior may require multiple as
 
 When splitting, check what each assertion is actually verifying. An assertion that only confirms the fixture was built correctly — `assertEquals( '1', get_post_meta( $lesson_id, '_lesson_preview', true ) )` right after the factory created that lesson — tests the factory, not the class under test. Delete it; do not give it its own test.
 
-## 6. Use data providers for repeated scenarios
+## 7. Use data providers for repeated scenarios
 
 Use named PHPUnit datasets when scenarios share the same setup, action, and assertion structure, and only the inputs and expected results vary.
 
@@ -100,11 +111,11 @@ Use named PHPUnit datasets when scenarios share the same setup, action, and asse
 - Keep the test method free of conditional logic that selects different actions or assertion structures for different datasets.
 - Keep each dataset focused on one logical behavior and follow the assertion convention above.
 
-## 7. Keep tests repeatable and isolated
+## 8. Keep tests repeatable and isolated
 
 Use fixed dates and controlled inputs where possible. Restore any globals, options, filters, or other shared state changed by the test, using the suite's cleanup mechanisms.
 
-## 8. Progress storage: comments and HPPS
+## 9. Progress storage: comments and HPPS
 
 For behavior involving progress storage, reuse existing tests across the WordPress comments and High-Performance Progress Storage (HPPS) backends. Assert the same expected behavior in both modes; running a shared scenario against different implementations is meaningful coverage.
 
