@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix lesson and module ordering for non-admin users when a course contains modules owned by another user.
