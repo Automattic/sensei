@@ -53,8 +53,8 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$module    = wp_insert_term( 'Admin Module', 'module' );
 		$module_id = $module['term_id'];
 
-		update_term_meta( $module_id, 'module_author', $admin_id );
 		wp_set_object_terms( $course_id, array( $module_id ), 'module' );
+		update_term_meta( $module_id, 'module_author', $admin_id );
 		wp_set_current_user( $editor_id );
 		set_current_screen( 'admin_page_module-order' );
 		wp_cache_set( $course_id, array(), 'module_relationships' );
@@ -81,8 +81,8 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$module    = wp_insert_term( 'Admin Module', 'module' );
 		$module_id = $module['term_id'];
 
-		update_term_meta( $module_id, 'module_author', $admin_id );
 		wp_set_object_terms( $course_id, array( $module_id ), 'module' );
+		update_term_meta( $module_id, 'module_author', $admin_id );
 		wp_set_current_user( $editor_id );
 		set_current_screen( 'admin_page_module-order' );
 		$_GET['course_id'] = $course_id;
@@ -109,10 +109,10 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$course_id = $this->factory->course->create( array( 'post_author' => $editor_id ) );
 		$modules   = $this->factory->module->create_many( 2 );
 
+		wp_set_object_terms( $course_id, $modules, 'module' );
 		foreach ( $modules as $module_id ) {
 			update_term_meta( $module_id, 'module_author', $admin_id );
 		}
-		wp_set_object_terms( $course_id, $modules, 'module' );
 		update_post_meta( $course_id, '_module_order', array_map( 'strval', $modules ) );
 
 		wp_set_current_user( $editor_id );
