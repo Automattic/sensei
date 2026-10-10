@@ -88,7 +88,7 @@ Make the test class easy to compare with the class under test:
 - Keep lifecycle methods such as `setUp()` and `tearDown()` near the top of the class. Group private helper methods together at the bottom.
 - Extract a test helper only when multiple tests share meaningful setup or assertions. Keep scenario-specific details in the test so the behavior remains clear.
 
-Give every test a docblock with a short description and an `@covers` tag. Describe the lasting requirement, not the current PR or bug report.
+Give every PHPUnit test a docblock with a short description and an `@covers` tag. Describe the lasting requirement, not the current PR or bug report.
 
 ## 6. One logical behavior per test
 
