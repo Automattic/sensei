@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed a fatal error on URLs containing `/learn/` caused by checking the request before WordPress finished loading.
