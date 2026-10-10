@@ -41,15 +41,15 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure a course with an Administrator-owned module is available to an Editor.
+	 * Ensure an Administrator-owned course with an Administrator-owned module is available to an Editor.
 	 *
 	 * @covers Sensei_Core_Modules::module_order_screen
 	 */
-	public function testModuleOrderScreen_EditorViewsCourseWithAdminOwnedModule_DisplaysCourseInSelector() {
+	public function testModuleOrderScreen_EditorViewsAdminOwnedCourseWithAdminOwnedModule_DisplaysCourseInSelector() {
 		/* Arrange. */
 		$admin_id  = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		$editor_id = $this->factory->user->create( array( 'role' => 'editor' ) );
-		$course_id = $this->factory->course->create( array( 'post_author' => $editor_id ) );
+		$course_id = $this->factory->course->create( array( 'post_author' => $admin_id ) );
 		$module    = wp_insert_term( 'Admin Module', 'module' );
 		$module_id = $module['term_id'];
 
@@ -69,15 +69,15 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure the module order screen includes modules owned by an Administrator.
+	 * Ensure the module order screen includes an Administrator-owned course's modules for an Editor.
 	 *
 	 * @covers Sensei_Core_Modules::module_order_screen
 	 */
-	public function testModuleOrderScreen_EditorViewsCourseWithAdminOwnedModule_DisplaysModule() {
+	public function testModuleOrderScreen_EditorViewsAdminOwnedCourseWithAdminOwnedModule_DisplaysModule() {
 		/* Arrange. */
 		$admin_id  = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		$editor_id = $this->factory->user->create( array( 'role' => 'editor' ) );
-		$course_id = $this->factory->course->create( array( 'post_author' => $editor_id ) );
+		$course_id = $this->factory->course->create( array( 'post_author' => $admin_id ) );
 		$module    = wp_insert_term( 'Admin Module', 'module' );
 		$module_id = $module['term_id'];
 
@@ -98,15 +98,15 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure an Editor can reorder modules owned by an Administrator.
+	 * Ensure an Editor can reorder an Administrator-owned course's modules.
 	 *
 	 * @covers Sensei_Core_Modules::save_course_module_order
 	 */
-	public function testSaveCourseModuleOrder_EditorReordersModulesOwnedByAdmin_SavesCompleteOrder() {
+	public function testSaveCourseModuleOrder_EditorReordersAdminOwnedCourseModules_SavesCompleteOrder() {
 		/* Arrange. */
 		$admin_id  = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		$editor_id = $this->factory->user->create( array( 'role' => 'editor' ) );
-		$course_id = $this->factory->course->create( array( 'post_author' => $editor_id ) );
+		$course_id = $this->factory->course->create( array( 'post_author' => $admin_id ) );
 		$modules   = $this->factory->module->create_many( 2 );
 
 		wp_set_object_terms( $course_id, $modules, 'module' );
