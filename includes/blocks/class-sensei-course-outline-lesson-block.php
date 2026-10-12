@@ -34,6 +34,10 @@ class Sensei_Course_Outline_Lesson_Block {
 			$class_names[] = 'completed';
 		}
 
+		if ( ! Sensei_Lesson::is_prerequisite_complete( $lesson_id, get_current_user_id() ) ) {
+			$class_names[] = 'blocked';
+		}
+
 		$css           = Sensei_Block_Helpers::build_styles( $attributes ?? [], [], [ 'fontSize' => 'font-size' ] );
 		$preview_badge = '';
 
