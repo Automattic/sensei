@@ -144,7 +144,17 @@ export const onTimeupdate = ( player, callback, w = window ) => {
 	// Update the current time based on an interval.
 	const interval = setInterval( () => {
 		if ( player.getPlayerState() !== w.YT.PlayerState.ENDED ) {
-			updateCurrentTime( player.getCurrentTime() );
+			const currentTime = player.getCurrentTime();
+			const duration = player.getDuration();
+
+			// YouTube doesn't always emit the ENDED state at the very end, so
+			// completion, which relies on reaching the duration, can be missed.
+			// Once we're within a second of the end, report the full duration.
+			if ( duration > 0 && currentTime >= duration - 1 ) {
+				updateCurrentTime( duration );
+			} else {
+				updateCurrentTime( currentTime );
+			}
 		}
 	}, timer );
 
