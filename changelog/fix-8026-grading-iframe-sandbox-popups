@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix answer links not opening from grading screen by adding allow-popups to the answer iframe sandbox.

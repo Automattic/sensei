@@ -81,6 +81,23 @@ class Sensei_Grading_User_Quiz {
 	}
 
 	/**
+	 * Returns the HTML for a student answer iframe with appropriate sandbox attributes.
+	 *
+	 * The sandbox allows `allow-same-origin` (required for srcdoc access) and
+	 * `allow-popups` so that links inside sanitized answer content with
+	 * `target="_blank"` can open in a new tab. Content is sanitized via
+	 * `wp_kses_post()` before being passed here.
+	 *
+	 * @since  4.26.2
+	 *
+	 * @param string $html Sanitized HTML to render inside the iframe.
+	 * @return string The iframe element HTML.
+	 */
+	private static function render_answer_iframe( $html ) {
+		return '<iframe class="user-answer" srcdoc="' . esc_attr( $html ) . '" sandbox="allow-same-origin allow-popups" height="auto"></iframe>';
+	}
+
+	/**
 	 * Display output to the admin view
 	 *
 	 * This view is shown when grading a quiz for a single user in admin under grading
@@ -338,7 +355,9 @@ class Sensei_Grading_User_Quiz {
 							$html = wp_kses_post( $_user_answer );
 							$html = '<html><head><title></title></head><body>' . $html . '</body></html>';
 							?>
-							<iframe class="user-answer" srcdoc="<?php echo esc_attr( $html ); ?>" sandbox="allow-same-origin" height="auto"></iframe>
+							<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped within render_answer_iframe().
+							echo self::render_answer_iframe( $html );
+							?>
 							<?php
 						}
 						?>
