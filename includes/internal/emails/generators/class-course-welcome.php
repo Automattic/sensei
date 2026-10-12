@@ -164,20 +164,62 @@ class Course_Welcome extends Email_Generators_Abstract {
 		$teacher    = new \WP_User( $teacher_id );
 		$recipient  = stripslashes( $student->user_email );
 		$course_url = get_permalink( $course_id );
+		if ( ! $course_url ) {
+			$course_url = '';
+		}
+
+		$first_lesson_id  = $this->get_first_lesson_id( $course_id );
+		$first_lesson_url = $first_lesson_id ? get_permalink( $first_lesson_id ) : '';
 
 		$this->send_email_action(
 			array(
 				$recipient => array(
-					'teacher:id'          => $teacher->ID,
-					'teacher:displayname' => $teacher->display_name,
-					'student:id'          => $student->ID,
-					'student:displayname' => $student->display_name,
-					'course:id'           => $course->ID,
-					'course:name'         => $course->post_title,
-					'course:url'          => $course_url,
+					'teacher:id'              => $teacher->ID,
+					'teacher:displayname'     => $teacher->display_name,
+					'student:id'              => $student->ID,
+					'student:displayname'     => $student->display_name,
+					'course:id'               => $course->ID,
+					'course:name'             => $course->post_title,
+					'course:url'              => $course_url,
+					'course:first_lesson_url' => $first_lesson_url ? esc_url( $first_lesson_url ) : $course_url,
 				),
 			)
 		);
+	}
+
+	/**
+	 * Get the ID of the first published lesson in a course.
+	 *
+	 * Follows the lesson order saved on the course page (`_lesson_order`) when
+	 * present, falling back to the course_lessons order.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $course_id The course ID.
+	 * @return int The first lesson ID, or 0 if the course has no published lessons.
+	 */
+	private function get_first_lesson_id( int $course_id ): int {
+		$lessons = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+		if ( empty( $lessons ) ) {
+			return 0;
+		}
+
+		$lesson_order = get_post_meta( $course_id, '_lesson_order', true );
+		if ( $lesson_order ) {
+			$ordered_ids = array_map( 'intval', explode( ',', $lesson_order ) );
+
+			foreach ( $ordered_ids as $lesson_id ) {
+				if ( in_array( $lesson_id, $lessons, true ) ) {
+					return $lesson_id;
+				}
+			}
+		}
+
+		$first_lesson = $lessons[0];
+
+		return $first_lesson instanceof \WP_Post ? $first_lesson->ID : (int) $first_lesson;
 	}
 
 	/**
