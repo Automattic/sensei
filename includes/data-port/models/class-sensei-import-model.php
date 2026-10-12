@@ -106,28 +106,93 @@ abstract class Sensei_Import_Model {
 	/**
 	 * Check to see if the post already exists in the database.
 	 *
-	 * @return int
+	 * Lookup precedence:
+	 *   1. Slug (`post_name`).
+	 *   2. Job-local map (`Sensei_Import_Job::get_import_id()`).
+	 *   3. Source-import-id post meta (`_sensei_import_id`) — durable across runs.
+	 *
+	 * Rows with no slug and no source `id` cannot be matched durably and will
+	 * be re-inserted on re-import.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return int|null
 	 */
 	protected function get_existing_post_id() {
-		$post_id = null;
-		$data    = $this->get_data();
+		$data = $this->get_data();
 
-		if ( ! empty( $data[ $this->schema->get_column_slug() ] ) ) {
+		// 1. Slug fast path — unchanged behavior.
+		$slug = isset( $data[ $this->schema->get_column_slug() ] ) ? (string) $data[ $this->schema->get_column_slug() ] : '';
+		if ( '' !== $slug ) {
 			$existing_posts = get_posts(
-				[
+				array(
 					'post_type'      => $this->schema->get_post_type(),
-					'post_name__in'  => [ $data[ $this->schema->get_column_slug() ] ],
+					'post_name__in'  => array( $slug ),
 					'posts_per_page' => 1,
 					'post_status'    => 'any',
-				]
+					'fields'         => 'ids',
+				)
 			);
 
 			if ( ! empty( $existing_posts[0] ) ) {
-				return $existing_posts[0]->ID;
+				return (int) $existing_posts[0];
 			}
 		}
 
-		return $post_id;
+		// 2 & 3. Resolve by source import id — first via the in-memory job map,
+		// then via the durable post meta.
+		$import_id = isset( $data[ $this->schema->get_column_id() ] ) ? (string) $data[ $this->schema->get_column_id() ] : '';
+		if ( '' !== $import_id && $this->task ) {
+			$mapped = $this->task->get_job()->get_import_id( $this->schema->get_post_type(), $import_id );
+			if ( $mapped ) {
+				return (int) $mapped;
+			}
+
+			$post_id = $this->get_existing_post_id_by_import_id( $import_id );
+			if ( $post_id ) {
+				return $post_id;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Look up an existing post id by the durable source import id meta.
+	 *
+	 * Scoped to the schema's post type so `_sensei_import_id = 7` on a course
+	 * does not match a lesson with the same id. Trashed and auto-draft posts
+	 * are excluded to match the slug path, where `post_status => 'any'` never
+	 * returns those statuses.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $import_id The source import id from the CSV row.
+	 *
+	 * @return int|null
+	 */
+	private function get_existing_post_id_by_import_id( $import_id ) {
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Single indexed postmeta lookup by meta key; no cache layer exists for this path.
+		$post_id = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT pm.post_id
+				   FROM {$wpdb->postmeta} pm
+				   INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+				  WHERE pm.meta_key = %s
+				    AND pm.meta_value = %s
+				    AND p.post_type = %s
+				    AND p.post_status NOT IN ( 'trash', 'auto-draft' )
+				  ORDER BY p.ID ASC
+				  LIMIT 1",
+				$this->schema->get_meta_key_import_id(),
+				$import_id,
+				$this->schema->get_post_type()
+			)
+		);
+
+		return $post_id > 0 ? $post_id : null;
 	}
 
 	/**
@@ -483,13 +548,35 @@ abstract class Sensei_Import_Model {
 	}
 
 	/**
-	 * Stores an import id to the job.
+	 * Stores an import id on the post and the job.
+	 *
+	 * The post meta is the durable identity; the in-memory job map remains the
+	 * fast path within a single run. An existing meta value is never
+	 * overwritten, so a slug-resolved post whose source id has changed keeps
+	 * the id it was first written with. The in-memory map is also not
+	 * overwritten when the post already carries a different id, matching the
+	 * meta-write contract.
+	 *
+	 * @since $$next-version$$
 	 */
 	protected function store_import_id() {
 		$import_id = $this->get_value( $this->schema->get_column_id() );
 
-		if ( ! empty( $import_id ) && $this->task ) {
-			$this->task->get_job()->set_import_id( $this->schema->get_post_type(), $import_id, $this->get_post_id() );
+		if ( empty( $import_id ) || ! $this->task ) {
+			return;
+		}
+
+		$post_id  = $this->get_post_id();
+		$meta_key = $this->schema->get_meta_key_import_id();
+
+		$existing = (string) get_post_meta( $post_id, $meta_key, true );
+
+		if ( '' === $existing ) {
+			update_post_meta( $post_id, $meta_key, (string) $import_id );
+		}
+
+		if ( '' === $existing || (string) $existing === (string) $import_id ) {
+			$this->task->get_job()->set_import_id( $this->schema->get_post_type(), $import_id, $post_id );
 		}
 	}
 
