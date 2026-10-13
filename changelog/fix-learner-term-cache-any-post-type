@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix out-of-memory errors when searching for courses with Jetpack Search on sites with many enrolled students.
