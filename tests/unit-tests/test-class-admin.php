@@ -168,6 +168,44 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure the lesson order screen includes modules owned by an Administrator.
+	 *
+	 * @covers Sensei_Admin::lesson_order_screen
+	 */
+	public function testLessonOrderScreen_EditorViewsCourseWithAdminOwnedModule_DisplaysModule() {
+		/* Arrange. */
+		$admin_id  = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$editor_id = $this->factory->user->create( array( 'role' => 'editor' ) );
+		$course_id = $this->factory->course->create( array( 'post_author' => $admin_id ) );
+		$module    = wp_insert_term( 'Admin Module', 'module' );
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_id,
+				),
+			)
+		);
+		$module_id = $module['term_id'];
+
+		update_term_meta( $module_id, 'module_author', $admin_id );
+		wp_set_object_terms( $course_id, array( $module_id ), 'module' );
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+		wp_set_current_user( $editor_id );
+		set_current_screen( 'admin_page_lesson-order' );
+		$_GET['course_id'] = $course_id;
+
+		/* Act. */
+		ob_start();
+		$admin = new Sensei_Admin();
+		$admin->lesson_order_screen();
+		$output = ob_get_clean();
+		unset( $_GET['course_id'] );
+
+		/* Assert. */
+		self::assertStringContainsString( 'Admin Module', $output );
+	}
+
+	/**
 	 * Ensure the lessons could be moved and unassigned from modules.
 	 */
 	public function testShouldMoveLessonsBetweenModulesAndUnassignModules() {
@@ -294,6 +332,102 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure an Editor can reorder lessons in modules owned by an Administrator.
+	 *
+	 * @covers Sensei_Admin::sync_lesson_order
+	 */
+	public function testSyncLessonOrder_EditorReordersLessonsInModulesOwnedByAdmin_SavesOrder() {
+		/* Arrange. */
+		$admin_id  = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$editor_id = $this->factory->user->create( array( 'role' => 'editor' ) );
+		$course_id = $this->factory->course->create( array( 'post_author' => $admin_id ) );
+		$modules   = $this->factory->module->create_many( 2 );
+		$lessons   = $this->factory->lesson->create_many(
+			2,
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_id,
+				),
+			)
+		);
+
+		foreach ( $modules as $index => $module_id ) {
+			update_term_meta( $module_id, 'module_author', $admin_id );
+			wp_set_object_terms( $lessons[ $index ], array( $module_id ), 'module' );
+			update_post_meta( $lessons[ $index ], '_order_module_' . $module_id, 0 );
+		}
+		wp_set_object_terms( $course_id, $modules, 'module' );
+		update_post_meta( $course_id, '_module_order', array_map( 'strval', $modules ) );
+
+		$admin  = new Sensei_Admin();
+		$method = new ReflectionMethod( $admin, 'sync_lesson_order' );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
+
+		wp_set_current_user( $editor_id );
+		set_current_screen( 'edit-course' );
+
+		$lessons_to_sync = array(
+			$lessons[0] => array( 'module' => $modules[0] ),
+			$lessons[1] => array( 'module' => $modules[1] ),
+		);
+
+		/* Act. */
+		$actual = $method->invoke( $admin, $lessons_to_sync, $course_id );
+
+		/* Assert. */
+		self::assertTrue( $actual );
+		self::assertSame(
+			array_map( 'strval', $modules ),
+			get_post_meta( $course_id, '_module_order', true ),
+			'The complete module order should be preserved.'
+		);
+
+		wp_set_current_user( $admin_id );
+		clean_object_term_cache( $course_id, 'course' );
+		$actual_modules = wp_get_object_terms( $course_id, 'module', array( 'fields' => 'ids' ) );
+		self::assertEqualsCanonicalizing( $modules, $actual_modules, 'All modules should remain attached to the course.' );
+	}
+
+	/**
+	 * Ensure a Teacher cannot save the course order.
+	 *
+	 * @covers Sensei_Admin::handle_order_courses
+	 */
+	public function testHandleOrderCourses_TeacherGiven_DoesNotSaveOrder() {
+		/* Arrange. */
+		// Teachers hold edit_courses but not manage_sensei.
+		$this->login_as_teacher();
+		$_REQUEST['_wpnonce']  = wp_create_nonce( 'order_courses' );
+		$_POST['course-order'] = implode( ',', $this->factory->course->create_many( 2 ) );
+
+		/* Assert. */
+		$this->expectException( WPDieException::class );
+
+		/* Act. */
+		( new Sensei_Admin() )->handle_order_courses();
+	}
+
+	/**
+	 * Ensure an Administrator can save the course order.
+	 *
+	 * @covers Sensei_Admin::handle_order_courses
+	 */
+	public function testHandleOrderCourses_AdminGiven_SavesOrder() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$course_order          = implode( ',', $this->factory->course->create_many( 2 ) );
+		$_REQUEST['_wpnonce']  = wp_create_nonce( 'order_courses' );
+		$_POST['course-order'] = $course_order;
+		add_filter( 'wp_redirect', '__return_false' );
+
+		/* Act. */
+		( new Sensei_Admin() )->handle_order_courses();
+
+		/* Assert. */
+		$this->assertSame( $course_order, get_option( 'sensei_course_order' ) );
+	}
+
+	/**
 	 * Setup method for Sensei_Admin::sync_lesson_order.
 	 *
 	 * @return array
@@ -407,34 +541,5 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 			'per_page'    => 1,
 		);
 		return get_posts( $duplicated_lesson_args )[0];
-	}
-
-	public function testHandleOrderCourses_TeacherGiven_DoesNotSaveOrder() {
-		/* Arrange. */
-		// Teachers hold edit_courses but not manage_sensei.
-		$this->login_as_teacher();
-		$_REQUEST['_wpnonce']  = wp_create_nonce( 'order_courses' );
-		$_POST['course-order'] = implode( ',', $this->factory->course->create_many( 2 ) );
-
-		/* Assert. */
-		$this->expectException( WPDieException::class );
-
-		/* Act. */
-		( new Sensei_Admin() )->handle_order_courses();
-	}
-
-	public function testHandleOrderCourses_AdminGiven_SavesOrder() {
-		/* Arrange. */
-		$this->login_as_admin();
-		$course_order          = implode( ',', $this->factory->course->create_many( 2 ) );
-		$_REQUEST['_wpnonce']  = wp_create_nonce( 'order_courses' );
-		$_POST['course-order'] = $course_order;
-		add_filter( 'wp_redirect', '__return_false' );
-
-		/* Act. */
-		( new Sensei_Admin() )->handle_order_courses();
-
-		/* Assert. */
-		$this->assertSame( $course_order, get_option( 'sensei_course_order' ) );
 	}
 }

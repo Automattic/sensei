@@ -1366,8 +1366,17 @@ class Sensei_Core_Modules {
 			$html .= '<select id="module-order-course" name="course_id">' . "\n";
 			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
 
+			// Include editable courses containing modules owned by another user.
+			remove_filter( 'get_object_terms', array( $this, 'filter_course_selected_terms' ), 20 );
+
 			foreach ( $courses as $course ) {
-				if ( has_term( '', $this->taxonomy, $course->ID ) ) {
+				if ( ! Sensei_Course::can_current_user_edit_course( $course->ID ) ) {
+					continue;
+				}
+
+				$module_ids = wp_get_object_terms( $course->ID, $this->taxonomy, array( 'fields' => 'ids' ) );
+
+				if ( ! is_wp_error( $module_ids ) && ! empty( $module_ids ) ) {
 					$course_id = '';
 					if ( isset( $_GET['course_id'] ) ) {
 						$course_id = intval( $_GET['course_id'] );
@@ -1376,6 +1385,8 @@ class Sensei_Core_Modules {
 				}
 			}
 
+			add_filter( 'get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
+
 			$html .= '</select>' . "\n";
 			$html .= '<input type="submit" class="button-primary module-order-select-course-submit" value="' . esc_attr__( 'Select', 'sensei-lms' ) . '" />' . "\n";
 			$html .= '</form>' . "\n";
@@ -1383,7 +1394,15 @@ class Sensei_Core_Modules {
 			if ( isset( $_GET['course_id'] ) ) {
 				$course_id = intval( $_GET['course_id'] );
 				if ( $course_id > 0 ) {
+					// Include every course module so non-admin users do not submit a partial structure.
+					remove_filter( 'get_terms', array( $this, 'filter_module_terms' ), 20 );
+					remove_filter( 'get_object_terms', array( $this, 'filter_course_selected_terms' ), 20 );
+
 					$modules = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+
+					add_filter( 'get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
+					add_filter( 'get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
+
 					if ( ! empty( $modules ) ) {
 						$html .= '<form id="editgrouping" method="post" action="'
 							. esc_url( admin_url( 'admin-post.php' ) )
@@ -1616,14 +1635,22 @@ class Sensei_Core_Modules {
 	private function save_course_module_order( $order_string = '', $course_id = 0 ) {
 		if ( $order_string && $course_id ) {
 			remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
+			// Ownership filters are for display only; saving a partial structure resets hidden modules.
+			remove_filter( 'get_terms', array( $this, 'filter_module_terms' ), 20 );
+			remove_filter( 'get_object_terms', array( $this, 'filter_course_selected_terms' ), 20 );
+
 			$course_structure = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+
 			add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
 
-			$order = array_map( 'absint', explode( ',', $order_string ) );
-
+			$order            = array_map( 'absint', explode( ',', $order_string ) );
 			$course_structure = Sensei_Course_Structure::sort_structure( $course_structure, $order, 'module' );
+			$save_result      = Sensei_Course_Structure::instance( $course_id )->save( $course_structure );
 
-			if ( true === Sensei_Course_Structure::instance( $course_id )->save( $course_structure ) ) {
+			add_filter( 'get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
+			add_filter( 'get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
+
+			if ( true === $save_result ) {
 				return true;
 			}
 		}

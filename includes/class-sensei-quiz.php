@@ -1873,11 +1873,16 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Rendering html element that will be replaced with Progress Bar.
+	 * Render the quiz progress bar for existing callers.
 	 *
 	 * @since 3.15.0
+	 * @deprecated $$next-version$$ Automatic quiz progress bars have been retired. No replacement.
+	 *
+	 * @return void
 	 */
 	public static function the_quiz_progress_bar() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$quiz_id             = get_the_ID();
 		$pagination_settings = json_decode(
 			get_post_meta( $quiz_id, '_pagination', true ),
@@ -1891,12 +1896,12 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$attributes = [
+		$attributes = array(
 			'radius'                   => $pagination_settings['progress_bar_radius'],
 			'height'                   => $pagination_settings['progress_bar_height'],
 			'customBarColor'           => empty( $pagination_settings['progress_bar_color'] ) ? '' : $pagination_settings['progress_bar_color'],
 			'customBarBackgroundColor' => empty( $pagination_settings['progress_bar_background'] ) ? '' : $pagination_settings['progress_bar_background'],
-		];
+		);
 
 		Sensei()->assets->enqueue( 'sensei-shared-blocks-style', 'blocks/shared-style.scss' );
 
