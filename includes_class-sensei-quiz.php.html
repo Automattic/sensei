@@ -1906,6 +1906,42 @@ class Sensei_Quiz {
 	}
 
 	/**
+	 * Render the quiz progress bar for existing callers.
+	 *
+	 * @since 3.15.0
+	 * @deprecated $$next-version$$ Automatic quiz progress bars have been retired. No replacement.
+	 *
+	 * @return void
+	 */
+	public static function the_quiz_progress_bar() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		$quiz_id             = get_the_ID();
+		$pagination_settings = json_decode(
+			get_post_meta( $quiz_id, '_pagination', true ),
+			true
+		);
+
+		global $sensei_question_loop;
+
+		// Make sure the quiz is paginated and the progress bar enabled.
+		if ( $sensei_question_loop['total_pages'] &lt;= 1 || empty( $pagination_settings['show_progress_bar'] ) ) {
+			return;
+		}
+
+		$attributes = array(
+			'radius'                   => $pagination_settings['progress_bar_radius'],
+			'height'                   => $pagination_settings['progress_bar_height'],
+			'customBarColor'           => empty( $pagination_settings['progress_bar_color'] ) ? '' : $pagination_settings['progress_bar_color'],
+			'customBarBackgroundColor' => empty( $pagination_settings['progress_bar_background'] ) ? '' : $pagination_settings['progress_bar_background'],
+		);
+
+		Sensei()->assets->enqueue( 'sensei-shared-blocks-style', 'blocks/shared-style.scss' );
+
+		echo wp_kses_post( ( new Sensei_Block_Quiz_Progress() )->render( $attributes ) );
+	}
+
+	/**
 	 * The quiz action buttons needed to output quiz
 	 * action such as reset complete and save.
 	 *
