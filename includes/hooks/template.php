@@ -131,7 +131,6 @@ add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'output
 
 // @since 3.15.0
 // Add the quiz progress bar.
-add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_progress_bar' ), 20 );
 
 // @since 1.9.0
 // hook in the question title, description and question media
