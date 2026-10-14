@@ -946,6 +946,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertEquals( 10, $json_array['progress_bar_height'] );
 		$this->assertEquals( '#ffffff', $json_array['progress_bar_color'] );
 		$this->assertEquals( '#eeeeee', $json_array['progress_bar_background'] );
+
+		$response_data = $this->send_get_request( $lesson_id );
+
+		$this->assertSame( $body['options']['pagination'], $response_data['options']['pagination'], 'Deprecated progress bar settings should round-trip through the API.' );
 	}
 
 	/**
