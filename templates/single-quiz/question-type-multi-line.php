@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     4.17.0
+ * @version     $$next-version$$
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,13 +20,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
-$sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available();
+$sensei_is_quiz_completed = $question_data['quiz_is_completed'];
+$sensei_is_quiz_available = Sensei_Quiz::is_quiz_available();
 
-if ( $sensei_is_quiz_view_only_mode ) {
+if ( $sensei_is_quiz_completed ) {
 	?>
 	<div class="wp-block-sensei-lms-question-answers__answer">
 		<?php echo wp_kses_post( $question_data['user_answer_entry'] ?? '' ); ?>
 	</div>
+	<?php
+} elseif ( ! $sensei_is_quiz_available ) {
+	?>
+	<textarea class="sensei_text_editor"
+		id="<?php echo esc_attr( 'textquestion' . $question_data['ID'] ); ?>"
+		name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>"
+		rows="10"
+		disabled><?php echo esc_html( $question_data['user_answer_entry'] ?? '' ); ?></textarea>
 	<?php
 } else {
 	Sensei_Utils::sensei_text_editor(
