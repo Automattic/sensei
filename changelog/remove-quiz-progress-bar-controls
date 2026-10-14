@@ -1,4 +1,4 @@
-Significance: patch
+Significance: minor
 Type: removed
 
-Remove the lesson Quiz block progress bar settings, editor preview, and automatic frontend rendering. REST API progress bar fields remain available for compatibility but no longer affect automatic rendering.
+Remove the progress bar option from the Quiz block and its automatic frontend rendering.
