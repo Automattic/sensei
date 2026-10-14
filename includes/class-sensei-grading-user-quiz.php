@@ -335,10 +335,14 @@ class Sensei_Grading_User_Quiz {
 							 */
 							$_user_answer = apply_filters( 'sensei_answer_text', $_user_answer );
 
-							$html = wp_kses_post( $_user_answer );
-							$html = '<html><head><title></title></head><body>' . $html . '</body></html>';
+							$html    = wp_kses_post( $_user_answer );
+							$html    = '<html><head><title></title></head><body>' . $html . '</body></html>';
+							$sandbox = 'allow-same-origin';
+							if ( 'file-upload' === $type ) {
+								$sandbox .= ' allow-popups allow-downloads';
+							}
 							?>
-							<iframe class="user-answer" srcdoc="<?php echo esc_attr( $html ); ?>" sandbox="allow-same-origin" height="auto"></iframe>
+							<iframe class="user-answer" srcdoc="<?php echo esc_attr( $html ); ?>" sandbox="<?php echo esc_attr( $sandbox ); ?>" height="auto"></iframe>
 							<?php
 						}
 						?>

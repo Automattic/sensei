@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix submitted files failing to open or download from Grading.
