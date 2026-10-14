@@ -219,7 +219,7 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	/**
 	 * A module archive with no lessons, e.g. filtered to a course without the module, renders no lesson pagination.
 	 */
-	public function testLoadContentPagination_EmptyModuleArchive_OutputsNothing() {
+	public function testLoadContentPagination_EmptyModuleArchiveGiven_OutputsNothing() {
 		$module_id = $this->factory->module->create();
 
 		$this->go_to( get_term_link( $module_id, 'module' ) );
