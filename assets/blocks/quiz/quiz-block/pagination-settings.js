@@ -4,7 +4,6 @@
 import {
 	PanelBody,
 	PanelRow,
-	ToggleControl,
 	SelectControl,
 	ToolbarItem,
 	ToolbarGroup,
@@ -83,12 +82,7 @@ const QuestionsControl = forwardRef(
  * @param {Function} props.updatePagination Update pagination options function.
  */
 export const PaginationSidebarSettings = ( { settings, updatePagination } ) => {
-	const {
-		paginationNumber,
-		showProgressBar,
-		progressBarRadius,
-		progressBarHeight,
-	} = settings;
+	const { paginationNumber } = settings;
 
 	return (
 		<>
@@ -112,51 +106,6 @@ export const PaginationSidebarSettings = ( { settings, updatePagination } ) => {
 							updatePagination={ updatePagination }
 						/>
 					</PanelRow>
-				) }
-				{ paginationNumber !== null && (
-					<>
-						<PanelRow>
-							<ToggleControl
-								checked={ showProgressBar }
-								label={ __(
-									'Show Progress Bar',
-									'sensei-lms'
-								) }
-								value={ progressBarRadius }
-								onChange={ ( value ) =>
-									updatePagination( {
-										showProgressBar: value,
-									} )
-								}
-							/>
-						</PanelRow>
-						<PanelRow className="sensei-lms-quiz-block-settings__progress-bar">
-							<NumberControl
-								label={ __( 'Radius', 'sensei-lms' ) }
-								min={ 1 }
-								step={ 1 }
-								suffix={ __( 'PX', 'sensei-lms' ) }
-								value={ progressBarRadius }
-								onChange={ ( value ) =>
-									updatePagination( {
-										progressBarRadius: value,
-									} )
-								}
-							/>
-							<NumberControl
-								label={ __( 'Height', 'sensei-lms' ) }
-								min={ 1 }
-								step={ 1 }
-								suffix={ __( 'PX', 'sensei-lms' ) }
-								value={ progressBarHeight }
-								onChange={ ( value ) =>
-									updatePagination( {
-										progressBarHeight: value,
-									} )
-								}
-							/>
-						</PanelRow>
-					</>
 				) }
 			</PanelBody>
 		</>
