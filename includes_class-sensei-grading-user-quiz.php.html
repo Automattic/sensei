@@ -237,7 +237,7 @@ class Sensei_Grading_User_Quiz {
 
 								if ( $answer_media_url &amp;&amp; $answer_media_filename ) {
 									// translators: Placeholder %1$s is a link to the submitted file.
-									$user_answer_content = sprintf( __( 'Submitted file: %1$s', 'sensei-lms' ), '&lt;a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '&lt;/a>' );
+									$user_answer_content = sprintf( __( 'Submitted file: %1$s', 'sensei-lms' ), '&lt;a href="' . esc_url( $answer_media_url ) . '" target="_blank" download>' . esc_html( $answer_media_filename ) . '&lt;/a>' );
 								}
 							}
 						} else {
@@ -368,10 +368,14 @@ class Sensei_Grading_User_Quiz {
 							 */
 							$_user_answer = apply_filters( 'sensei_answer_text', $_user_answer );
 
-							$html = wp_kses_post( $_user_answer );
-							$html = '&lt;html>&lt;head>&lt;title>&lt;/title>&lt;/head>&lt;body>' . $html . '&lt;/body>&lt;/html>';
+							$html    = wp_kses_post( $_user_answer );
+							$html    = '&lt;html>&lt;head>&lt;title>&lt;/title>&lt;/head>&lt;body>' . $html . '&lt;/body>&lt;/html>';
+							$sandbox = 'allow-same-origin';
+							if ( 'file-upload' === $type ) {
+								$sandbox .= ' allow-popups allow-downloads';
+							}
 							?>
-							&lt;iframe class="user-answer" srcdoc="&lt;?php echo esc_attr( $html ); ?>" sandbox="allow-same-origin" height="auto">&lt;/iframe>
+							&lt;iframe class="user-answer" srcdoc="&lt;?php echo esc_attr( $html ); ?>" sandbox="&lt;?php echo esc_attr( $sandbox ); ?>" height="auto">&lt;/iframe>
 							&lt;?php
 						}
 						?>
