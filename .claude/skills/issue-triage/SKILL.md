@@ -258,7 +258,7 @@ Before attaching one, ask what a reader would conclude from it alone. A collapse
 
 **When the reproduction is a before/during/after narrative, attach the whole sequence, not just the one decisive shot.** Each screenshot gets its own short caption line stating what it shows, in the order the steps happened — including a "setup" screenshot that looks unremarkable on its own (e.g. the bug hasn't triggered yet at that step). The caption is what makes it evidence rather than a random image; don't post one without the other. This whole sequence goes **outside** the collapsed section, immediately after the `**Evidence:**` line and before `<details>` — see [Visual evidence line](#visual-evidence-line-playground-jurassic-ninja-or-screenshot). A reviewer should be able to follow the reproduction by scrolling past images and captions alone, without expanding anything.
 
-In a draft file (before a human posts it), put a `[SCREENSHOT PLACEHOLDER FOR <file name>.png]` line followed by its caption for each image, in the same sequence, so each can be swapped for the image when posting.
+In a draft file (before a human posts it), put a `[SCREENSHOT PLACEHOLDER FOR <file name>.png]` line followed by its caption for each image, in the same sequence. `gh` can't upload images, so remove the placeholder lines when posting the comment and keep the captions; the staff member adds each image by editing the comment.
 
 After writing the draft, tell the staff member in the session — not in the draft — that screenshots were captured, give the exact path of each file, and ask them to check them before posting.
 
@@ -342,6 +342,8 @@ Then post the [bug comment](#bug-comment-template) and apply `[Type] Bug` + rele
 ---
 
 ## Posting the comment
+
+Before posting, show the staff member the draft and the labels you would apply, and ask them to choose: **1.** accept the draft and labels, or **2.** decline or edit the draft. Post the comment and apply the labels only after they accept. If they edit, show the revised draft and ask again.
 
 Write the comment body to a temp file and post it (avoids shell-quoting issues with markdown):
 
