@@ -204,7 +204,7 @@ class Sensei_Grading_User_Quiz {
 
 								if ( $answer_media_url && $answer_media_filename ) {
 									// translators: Placeholder %1$s is a link to the submitted file.
-									$user_answer_content = sprintf( __( 'Submitted file: %1$s', 'sensei-lms' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
+									$user_answer_content = sprintf( __( 'Submitted file: %1$s', 'sensei-lms' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank" download>' . esc_html( $answer_media_filename ) . '</a>' );
 								}
 							}
 						} else {

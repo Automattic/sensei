@@ -48,6 +48,7 @@ class Sensei_Grading_User_Quiz_Test extends WP_UnitTestCase {
 		$link = new WP_HTML_Tag_Processor( $iframe->get_attribute( 'srcdoc' ) );
 		$link->next_tag( array( 'tag_name' => 'A' ) );
 		$this->assertSame( wp_get_attachment_url( $attachment_id ), $link->get_attribute( 'href' ), 'The link should use the submitted file URL.' );
+		$this->assertNotNull( $link->get_attribute( 'download' ), 'Submitted files should download instead of opening a sandboxed preview.' );
 	}
 
 	/**
