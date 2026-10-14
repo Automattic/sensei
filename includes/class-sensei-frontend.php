@@ -276,6 +276,11 @@ class Sensei_Frontend {
 			Sensei_Templates::get_template( 'globals/pagination-posts.php' );
 
 		} elseif ( is_tax( 'module' ) || is_singular( 'lesson' ) ) {
+			// An empty module archive (e.g. `?course_id=` for a course without this module) has no lesson to paginate from.
+			if ( ! get_post() ) {
+				return;
+			}
+
 			// Backwards compatibility check for old location under the wrappers directory of the active theme.
 			$template = locate_template( array( Sensei()->template_url . 'wrappers/pagination-lesson.php' ) );
 			if ( ! empty( $template ) ) {
