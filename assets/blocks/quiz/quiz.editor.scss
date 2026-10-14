@@ -34,8 +34,7 @@ $gray-400: #ccc;
 
 /* Block Settings */
 .sensei-lms-quiz-block-settings {
-	&__question-count,
-	&__progress-bar {
+	&__question-count {
 		align-items: baseline;
 		justify-content: flex-start;
 
@@ -130,11 +129,6 @@ $gray-400: #ccc;
 				gap: 8px;
 			}
 		}
-	}
-
-	&__progress-bar {
-		margin-top: $default-block-margin;
-		margin-bottom: $default-block-margin;
 	}
 
 	&__pre-publish-validation {

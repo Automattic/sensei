@@ -18,7 +18,6 @@ import QuestionsModal from './questions-modal';
 import QuizSettings from './quiz-settings';
 import { useUpdateQuizHasQuestionsMeta } from './use-update-quiz-has-questions-meta';
 import { isQuestionEmpty } from '../data';
-import QuizProgressBarEdit from './quiz-progress-bar-edit';
 import { Slot } from '@wordpress/components';
 
 const ALLOWED_BLOCKS = [
@@ -62,9 +61,6 @@ const QuizEdit = ( props ) => {
 		),
 		[ clientId ]
 	);
-	const pagination = props?.attributes?.options?.pagination;
-	const showPaginationProgressBar =
-		pagination?.paginationNumber && pagination?.showProgressBar;
 
 	const blockProps = useBlockProps();
 
@@ -79,10 +75,6 @@ const QuizEdit = ( props ) => {
 			</div>
 
 			<Slot name="SenseiQuizBlockTop" />
-
-			{ showPaginationProgressBar && (
-				<QuizProgressBarEdit pagination={ pagination } />
-			) }
 
 			<InnerBlocks
 				allowedBlocks={ ALLOWED_BLOCKS }
