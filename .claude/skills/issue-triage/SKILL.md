@@ -34,7 +34,7 @@ Rules that follow from that:
 
 ## Inputs
 
-An issue number or URL (e.g. `1234` or `https://github.com/Automattic/sensei/issues/1234`). Default repo is `Automattic/sensei`. If given a URL, take the number after `/issues/` and use that number in every command and file name below. A URL for another repository isn't supported: tell the staff member and stop.
+An issue number or URL (e.g. `1234` or `https://github.com/Automattic/sensei/issues/1234`). Default repo is `Automattic/sensei`. If given a URL, take the number after `/issues/`. The number must be digits only; if it isn't, tell the staff member and stop before running any command or writing any file. Use that number in every command and file name below. A URL for another repository isn't supported: tell the staff member and stop.
 
 ## Environment
 
@@ -180,7 +180,7 @@ Apply the [scope check](#4-support-policy-scope-check); if the symptom may come 
 
 ### B2. Reproducible-steps completeness
 
-A triagable bug needs, per the [bug-report guidelines](https://senseilms.com/documentation/contribute/#submit-a-bug-report-on-github):
+A triageable bug needs numbered, deterministic steps to reproduce plus the expected and actual result (item 7). The other items are supplemental, since the bug report template makes every field optional: record which are missing, ask for them in the comment where useful, but don't stop for them. The [bug-report guidelines](https://senseilms.com/documentation/contribute/#submit-a-bug-report-on-github) list these items:
 
 1. Confirmation the reporter checked for plugin/theme conflicts.
 2. Up-to-date WordPress core, Sensei, extensions, and other plugins/themes.
@@ -190,7 +190,7 @@ A triagable bug needs, per the [bug-report guidelines](https://senseilms.com/doc
 6. Environment details (WP Admin → Tools → Site Health → Info).
 7. Numbered, deterministic steps to reproduce, plus expected vs actual result.
 
-If steps are missing or non-deterministic, **do not guess**. Post a comment asking the reporter to resubmit per the guideline above, apply `[Status] Triaged` and `[Status] Needs Author Reply`, and stop.
+If item 7 is missing or non-deterministic (the steps, or the expected and actual result), **do not guess**. Post a comment asking the reporter to resubmit per the guideline above, apply `[Status] Triaged` and `[Status] Needs Author Reply`, and stop.
 
 ### B3. Reproduce in the browser
 
@@ -404,7 +404,7 @@ _Triage assisted by Claude._
 
 **Inconclusive:** drop the collapsed section unless there's a real trace to share; give the plain-language summary and what you tried, say that triage couldn't reach a conclusion, and recommend a review by a product maintainer. Tell the staff member in the session to review it. Don't ask the reporter for anything.
 
-**Needs More Info:** no collapsed section. List exactly which of the [B2 completeness items](#b2-reproducible-steps-completeness) are missing, in plain language (e.g. "Can you tell us: does this happen for every user, or just you?"). For a possible third-party conflict, ask the reporter to rule it out: reproduce with a default theme and only Sensei active. Don't say it isn't a Sensei bug.
+**Needs More Info:** no collapsed section. List exactly what's missing from item 7 of the [B2 list](#b2-reproducible-steps-completeness) (the steps, or the expected and actual result), in plain language (e.g. "Can you share the steps you took and what you expected to happen?"). You may ask for other missing B2 items too. For a possible third-party conflict, ask the reporter to rule it out: reproduce with a default theme and only Sensei active. Don't say it isn't a Sensei bug.
 
 **Already fixed (released fix):** use the ♻️ Already Fixed heading. Verdict line, the fixing PR and release, a recommendation to close as already-resolved, and the advice to update to the latest release and re-open with fresh steps if it recurs.
 
