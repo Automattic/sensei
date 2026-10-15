@@ -50,25 +50,22 @@ class Prev_Next_Lesson {
 	 * @return string The link,
 	 */
 	private function get_link( $urls, $type, $label, $icon_name, $aria_label ) {
-		$disabled_attrs = '';
+		$aria_label = esc_attr( $aria_label ?? $label );
 
 		if ( empty( $urls[ $type ]['url'] ) ) {
-			$url            = '#';
-			$tag            = 'span';
-			$disabled_attrs = 'data-disabled="disabled" aria-disabled="true"';
+			$tag        = 'span';
+			$link_attrs = 'role="link" data-disabled="disabled" aria-disabled="true"';
 		} else {
-			$url = esc_url( $urls[ $type ]['url'] );
-			$tag = 'a';
+			$tag        = 'a';
+			$link_attrs = 'href="' . esc_url( $urls[ $type ]['url'] ) . '"';
 		}
 
-		$icon        = \Sensei()->assets->get_icon( $icon_name );
+		$icon        = \Sensei()->assets->get_icon( $icon_name, '', true );
 		$before_icon = 'previous' === $type ? $icon : '';
 		$after_icon  = 'next' === $type ? $icon : '';
 
-		$aria_label = $aria_label ?? $label;
-
 		return ( "
-			<{$tag} class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next' href='{$url}' aria-label='{$aria_label}' {$disabled_attrs}>
+			<{$tag} class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next' aria-label='{$aria_label}' {$link_attrs}>
 				{$before_icon}
 				<span class='sensei-course-theme-prev-next-lesson-text sensei-course-theme-prev-next-lesson-text__next'>
 					{$label}
@@ -99,7 +96,8 @@ class Prev_Next_Lesson {
 
 		$wrapper_attr = get_block_wrapper_attributes(
 			[
-				'class' => 'sensei-course-theme-prev-next-lesson-container',
+				'class'      => 'sensei-course-theme-prev-next-lesson-container',
+				'aria-label' => __( 'Lesson navigation', 'sensei-lms' ),
 			]
 		);
 

@@ -301,16 +301,19 @@ class Sensei_Assets {
 	 * Gets SVG HTML from a generated sprite.
 	 *
 	 * @since 3.15.0
+	 * @since $$next-version$$ Added the decorative parameter.
 	 *
 	 * @param string $name        The name of the icon file at "assets/images/<name>.svg".
 	 * @param string $class_names Classnames to add to the SVG element.
+	 * @param bool   $decorative Whether assistive technology should ignore the icon.
 	 *
 	 * @return string The SVG HTML.
 	 */
-	public function get_icon( string $name, string $class_names = '' ) : string {
-		$href = $this->get_icon_href( $name );
+	public function get_icon( string $name, string $class_names = '', bool $decorative = false ): string {
+		$href       = $this->get_icon_href( $name );
+		$attributes = $decorative ? ' aria-hidden="true" focusable="false"' : '';
 
-		return '<svg class="' . esc_attr( $class_names ) . '"><use href="' . esc_url( $href ) . '"></use></svg>';
+		return '<svg class="' . esc_attr( $class_names ) . '"' . $attributes . '><use href="' . esc_url( $href ) . '"></use></svg>';
 	}
 
 	/**

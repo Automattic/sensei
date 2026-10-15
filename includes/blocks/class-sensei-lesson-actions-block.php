@@ -22,6 +22,7 @@ class Sensei_Lesson_Actions_Block {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/lesson-actions',
 			[
+				'style'           => 'sensei-button-style',
 				'render_callback' => [ $this, 'render' ],
 			],
 			Sensei()->assets->src_path( 'blocks/lesson-actions/lesson-actions-block' )

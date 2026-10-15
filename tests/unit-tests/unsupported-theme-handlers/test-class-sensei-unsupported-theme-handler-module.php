@@ -173,6 +173,21 @@ class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A module archive with no lessons, e.g. filtered to a course without the module, still renders the module page.
+	 */
+	public function testHandleRequest_EmptyModuleArchiveGiven_RendersModulePage() {
+		global $post;
+
+		$module = wp_insert_term( 'Empty Module', Sensei()->modules->taxonomy );
+		$this->go_to( get_term_link( $module['term_id'], Sensei()->modules->taxonomy ) );
+		$post = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Simulate the empty loop.
+
+		$this->handler->handle_request();
+
+		self::assertSame( 'Empty Module', $post->post_title, 'The dummy page should be titled after the module.' );
+	}
+
+	/**
 	 * Helper to set up the current request to be a Module page. This request
 	 * will be handled by the unsupported theme handler if the theme is not
 	 * supported.

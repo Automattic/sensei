@@ -938,7 +938,8 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	/**
 	 * A secondary query that returns courses — whether `post_type` is `course` (e.g. the Course List
 	 * block / Query Loop) or an array that includes `course` (e.g. teacher author archives, which merge
-	 * `course` into the existing post types) — must skip object term cache priming so the large
+	 * `course` into the existing post types) or `any` (e.g. Jetpack Search, which loads its results with
+	 * `post_type => any`) — must skip object term cache priming so the large
 	 * `sensei_learner` taxonomy is not loaded into memory.
 	 *
 	 * @dataProvider data_postTypesIncludingCourse
@@ -970,6 +971,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		return array(
 			'course post type'                => array( 'course' ),
 			'array of post types with course' => array( array( 'post', 'course' ) ),
+			'any post type'                   => array( 'any' ),
 		);
 	}
 

@@ -217,6 +217,22 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A module archive with no lessons, e.g. filtered to a course without the module, renders no lesson pagination.
+	 */
+	public function testLoadContentPagination_EmptyModuleArchiveGiven_OutputsNothing() {
+		$module_id = $this->factory->module->create();
+
+		$this->go_to( get_term_link( $module_id, 'module' ) );
+		$GLOBALS['post'] = null;
+
+		ob_start();
+		Sensei_Frontend::load_content_pagination();
+		$output = ob_get_clean();
+
+		self::assertSame( '', $output, 'An empty module archive should not render lesson pagination.' );
+	}
+
+	/**
 	 * Populate the request as the "Complete Lesson" form submission does.
 	 *
 	 * The nonce is bound to the already-set current user, and carries no lesson id.
