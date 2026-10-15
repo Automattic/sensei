@@ -265,7 +265,7 @@ After writing the draft, tell the staff member in the session — not in the dra
 Classify the outcome:
 
 - **Reproduced** — you saw the reported behavior in the browser.
-- **Could not reproduce** — you actually ran the steps in a capable environment and the behavior didn't occur. Before settling on this, check the steps are *complete*: if the code implies a precondition the reporter didn't mention, add it and retry. Reporters routinely omit the step that actually triggers the bug.
+- **Could not reproduce** — you actually ran the steps in a capable environment and the behavior didn't occur. Before settling on this, check the steps are *complete*: if the code implies a precondition the reporter didn't mention, add it and retry. Reporters routinely omit the step that actually triggers the bug. Then, **look for the fix** (see [Look up the fix](#look-up-the-fix-when-it-no-longer-reproduces)) before you settle on this.
 - **Inconclusive** — environment-dependent, or the steps only partly exercised the reported path (say which part you couldn't cover).
 - **Not reproduced in Sensei Core triage** — the exact phrase to use when the bug **can't be exercised in the core wp-env** because it requires Sensei Pro / Interactive Blocks / a third-party plugin that isn't installable here. Don't call that "could not reproduce", which implies a real attempt in a capable environment.
 
@@ -282,6 +282,10 @@ Two things this rule does **not** license:
 - **Don't skip the version gap silently.** Say plainly which versions you tested versus which were reported, so nobody reads the result as broader than it is.
 
 If you *do* identify the fix — a merged PR or release note that matches — then say so, link it, and recommend closing as already-resolved per the [duplicate rules](#3-duplicate-check). Tell the reporter plainly to **update to the latest Sensei LMS release** and **re-open with fresh steps if it recurs** — closing on "already fixed" is only safe when there's an easy path back if the diagnosis turns out wrong or incomplete.
+
+#### Look up the fix when it no longer reproduces
+
+When the bug doesn't reproduce on current code, always try to identify what fixed it before you settle on **Could not reproduce**, because a report older than the code often means it was fixed. Search the history of the implicated files since the issue was filed, then the releases that contain a candidate commit, then the merged PR. Where behavior is observable, confirm a candidate changes it: compare the old and current code under the same conditions, and drop a candidate that behaves the same. If you can name the commit, the release, and the PR, report it as fixed with the PR link. If you can't, say which candidates you ruled out, so a human doesn't repeat the search.
 
 **You can answer "already fixed?" from history alone** — the checkout has full history and tags:
 
