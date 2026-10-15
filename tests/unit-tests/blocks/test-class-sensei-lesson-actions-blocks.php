@@ -52,14 +52,66 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 		Sensei_Utils::update_lesson_status( $user_id, $lessons[1], 'passed' );
 
 		$this->set_current_lesson( $lessons[0] );
-		$this->assertNotEmpty( $next_lesson->render( [], '' ), 'Next lesson button is not displayed on the first lesson.' );
+		$this->assertNotEmpty( $next_lesson->render( array(), '<button class="wp-block-button__link">Next Lesson</button>' ), 'Next lesson button is not displayed on the first lesson.' );
 
 		$this->set_current_lesson( $lessons[1] );
-		$this->assertEmpty( $next_lesson->render( [], '' ), 'Next lesson button is displayed on the last lesson.' );
+		$this->assertEmpty( $next_lesson->render( array(), '<button class="wp-block-button__link">Next Lesson</button>' ), 'Next lesson button is displayed on the last lesson.' );
 
 		Sensei_Utils::update_lesson_status( $user_id, $lessons[0], 'failed' );
 		$this->set_current_lesson( $lessons[0] );
-		$this->assertEmpty( $next_lesson->render( [], '' ), 'Next lesson button is displayed when the learner did not complete the lesson.' );
+		$this->assertEmpty( $next_lesson->render( array(), '<button class="wp-block-button__link">Next Lesson</button>' ), 'Next lesson button is displayed when the learner did not complete the lesson.' );
+	}
+
+	/**
+	 * Saved button styles retain their destination, styling, and formatted label.
+	 *
+	 * @covers Sensei_Next_Lesson_Block::render
+	 * @dataProvider next_lesson_styles
+	 */
+	public function testRender_CompletedLessonWithSavedButton_PreservesNavigationAndContent( $style, $tag ) {
+		$block     = new Sensei_Next_Lesson_Block();
+		$user_id   = $this->login_as_student()->get_user_by_role( 'subscriber' );
+		$course_id = $this->factory->course->create();
+		$lessons   = $this->factory->lesson->create_many(
+			2,
+			array(
+				'meta_input' => array(
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+				),
+			)
+		);
+		Sensei_Utils::update_lesson_status( $user_id, $lessons[0], 'passed' );
+		$this->set_current_lesson( $lessons[0] );
+		$content = '<div class="' . $style . '"><' . $tag . ' class="wp-block-button__link">Next <strong>Lesson</strong></' . $tag . '></div>';
+
+		$html = $block->render( array( 'className' => $style ), $content );
+
+		$tags = new WP_HTML_Tag_Processor( $html );
+		$this->assertTrue(
+			$tags->next_tag(
+				array(
+					'tag_name'   => 'A',
+					'class_name' => 'wp-block-button__link',
+				)
+			),
+			'The link must retain button styling.'
+		);
+		$this->assertSame( get_permalink( $lessons[1] ), $tags->get_attribute( 'href' ), 'The link must target the next lesson.' );
+		$this->assertStringContainsString( 'Next <strong>Lesson</strong>', $html, 'The saved label formatting must remain.' );
+	}
+
+	/**
+	 * Saved Next Lesson styles.
+	 *
+	 * @return array
+	 */
+	public static function next_lesson_styles() {
+		return array(
+			'fill'    => array( 'is-style-default', 'button' ),
+			'outline' => array( 'is-style-outline', 'button' ),
+			'link'    => array( 'is-style-link', 'a' ),
+		);
 	}
 
 	/**

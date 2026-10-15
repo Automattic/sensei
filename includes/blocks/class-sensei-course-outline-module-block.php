@@ -87,7 +87,7 @@ class Sensei_Course_Outline_Module_Block {
 					' . $progress_indicator .
 			( ! empty( $outline_attributes['collapsibleModules'] ) ?
 				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow sensei-collapsible__toggle" aria-expanded="true">
-						' . Sensei()->assets->get_icon( 'chevron-up' ) . '
+						' . Sensei()->assets->get_icon( 'chevron-up', '', true ) . '
 						<span class="screen-reader-text">' . $title . '</span>
 					</button>' : '' ) .
 			'</header>
