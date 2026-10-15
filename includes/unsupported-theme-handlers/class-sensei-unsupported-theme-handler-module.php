@@ -39,11 +39,14 @@ class Sensei_Unsupported_Theme_Handler_Module
 
 		// The post is always a lesson. This is because a Module query is
 		// always limited to lessons (see function `module_archive_filter` in
-		// Sensei_Modules).
-		$lesson_id = $post->ID;
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-		$course    = get_post( $course_id );
-		$module    = get_queried_object();
+		// Sensei_Modules). An empty module archive (e.g. `?course_id=` for a
+		// course without this module) has no lesson, so there is no course.
+		$course = null;
+		if ( $post ) {
+			$course_id = Sensei()->lesson->get_course_id( $post->ID );
+			$course    = get_post( $course_id );
+		}
+		$module = get_queried_object();
 
 		// Render the module page and output it as a Page.
 		$content = $this->render_module_page();
