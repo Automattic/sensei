@@ -136,4 +136,21 @@ class Sensei_REST_API_Course_Utils_Controller_Test extends WP_Test_REST_TestCase
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertEquals( 'Sorry, you are not allowed to do that.', $response->get_data()['message'] );
 	}
+
+	public function testUpdateTeacher_EmptyBody_AllowHeaderOmitsUpdateMethods() {
+		/* Arrange. */
+		$this->login_as_admin();
+
+		$request = new WP_REST_Request( 'PUT', '/sensei-internal/v1/course-utils/update-teacher' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( '{}' );
+
+		/* Act. */
+		$response = $this->server->dispatch( $request );
+		$response = apply_filters( 'rest_post_dispatch', rest_ensure_response( $response ), $this->server, $request );
+
+		/* Assert. */
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertArrayNotHasKey( 'Allow', $response->get_headers() );
+	}
 }

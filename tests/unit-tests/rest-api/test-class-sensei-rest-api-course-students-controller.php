@@ -284,4 +284,21 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		];
 		$this->assertEquals( $expected, $this->getResponseStatusAndData( $response ) );
 	}
+
+	public function testBatchOperationPermissionsCheck_EmptyBody_AllowHeaderOmitsBatchMethods() {
+		/* Arrange. */
+		$this->login_as_admin();
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-students/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( '{}' );
+
+		/* Act. */
+		$response = $this->server->dispatch( $request );
+		$response = apply_filters( 'rest_post_dispatch', rest_ensure_response( $response ), $this->server, $request );
+
+		/* Assert. */
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertArrayNotHasKey( 'Allow', $response->get_headers() );
+	}
 }
