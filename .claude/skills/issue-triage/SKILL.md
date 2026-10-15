@@ -34,7 +34,7 @@ Rules that follow from that:
 
 ## Inputs
 
-An issue number or URL (e.g. `1234` or `https://github.com/Automattic/sensei/issues/1234`). Default repo is `Automattic/sensei`.
+An issue number or URL (e.g. `1234` or `https://github.com/Automattic/sensei/issues/1234`). Default repo is `Automattic/sensei`. If given a URL, take the number after `/issues/` and use that number in every command and file name below. A URL for another repository isn't supported: tell the staff member and stop.
 
 ## Environment
 
