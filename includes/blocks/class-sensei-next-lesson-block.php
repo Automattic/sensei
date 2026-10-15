@@ -50,15 +50,13 @@ class Sensei_Next_Lesson_Block {
 			return '';
 		}
 
-		if ( ! empty( $attributes['className'] ) && false !== strpos( $attributes['className'], 'is-style-link' ) ) {
-			return preg_replace(
-				'/<a /',
-				'<a href="' . esc_url( $urls['next']['url'] ) . '" ',
-				$content,
-				1
-			);
+		// Convert any saved button tags to links.
+		$content = preg_replace( '/<(\/?)button\b/i', '<$1a', $content );
+		$tags    = new WP_HTML_Tag_Processor( $content );
+		if ( $tags->next_tag( array( 'tag_name' => 'A' ) ) ) {
+			$tags->set_attribute( 'href', esc_url_raw( $urls['next']['url'] ) );
 		}
 
-		return '<a href="' . esc_url( $urls['next']['url'] ) . '" >' . $content . '</a>';
+		return $tags->get_updated_html();
 	}
 }

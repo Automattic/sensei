@@ -22,6 +22,11 @@ window.addEventListener( 'load', () => {
 			return;
 		}
 
+		content.toggleAttribute(
+			'inert',
+			content.classList.contains( 'sensei-collapsed' )
+		);
+
 		let originalHeight = content.offsetHeight + 'px';
 
 		if ( content.classList.contains( 'sensei-collapsed' ) ) {
@@ -41,6 +46,15 @@ window.addEventListener( 'load', () => {
 			const collapsed = content.classList.toggle( 'sensei-collapsed' );
 			toggleButton.classList.toggle( 'sensei-collapsed', collapsed );
 			toggleButton.setAttribute( 'aria-expanded', ! collapsed );
+
+			if (
+				collapsed &&
+				content.contains( content.ownerDocument.activeElement )
+			) {
+				toggleButton.focus();
+			}
+			// Exclude hidden links even when the transition is interrupted or disabled.
+			content.toggleAttribute( 'inert', collapsed );
 
 			if ( ! collapsed ) {
 				content.style.visibility = '';

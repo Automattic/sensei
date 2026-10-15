@@ -215,10 +215,10 @@ class Course_Navigation {
 					<button type="button" class="sensei-collapsible__toggle sensei-lms-course-navigation-module__button ' . $collapsed . '"
 						aria-controls="' . $content_id . '" aria-expanded="' . esc_attr( $is_current_module ? 'true' : 'false' ) . '">
 						<h3 class="sensei-lms-course-navigation-module__title">' . $title . '</h3>
-						' . Sensei()->assets->get_icon( 'chevron-up', 'sensei-lms-course-navigation-module__collapsible-icon' ) . '
+						' . Sensei()->assets->get_icon( 'chevron-up', 'sensei-lms-course-navigation-module__collapsible-icon', true ) . '
 					</button>
 				</div>
-				<ol id="' . $content_id . '" class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '">
+				<ol id="' . $content_id . '" class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '"' . ( $collapsed ? ' inert' : '' ) . '>
 					' . $lessons_html . '
 				</ol>
 				<div class="sensei-lms-course-navigation-module__summary">
