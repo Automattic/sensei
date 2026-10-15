@@ -285,7 +285,7 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$this->assertEquals( $expected, $this->getResponseStatusAndData( $response ) );
 	}
 
-	public function testBatch_EmptyBody_AllowHeaderOmitsBatchMethods() {
+	public function testBatchOperationPermissionsCheck_EmptyBody_AllowHeaderOmitsBatchMethods() {
 		/* Arrange. */
 		$this->login_as_admin();
 
