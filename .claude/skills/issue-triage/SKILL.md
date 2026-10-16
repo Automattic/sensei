@@ -198,7 +198,7 @@ Invoke the **e2e-testing** skill for its environment, seeding, and browser steps
 
 For a backend defect, a targeted PHPUnit repro (`make test-php-filter FILTER="<TestClass>"`) is valid *additional* evidence, not a substitute for the browser check.
 
-If the report is HPPS-related, also verify with HPPS (High-Performance Progress Storage) on. A report is HPPS-related if it mentions HPPS or the bug traces to HPPS-specific code. Follow e2e-testing's HPPS step: `npm run test-php:wp-env:hpps -- --filter '<TestClass>'`. Otherwise run without HPPS, even if the bug touches grading, progress, or analytics.
+If the report is HPPS-related, also verify with HPPS (High-Performance Progress Storage) on. A report is HPPS-related if it mentions HPPS or the bug traces to HPPS-specific code. To enable it, follow the [public HPPS guide](https://senseilms.com/documentation/high-performance-progress-storage/#how-to-enable-highperformance-progress-storage): in Sensei LMS → Settings → Experimental Features, enable the feature and save, enable synchronization, and once both storages are in sync, switch the storage to High-Performance progress storage. Repeat the browser reproduction with HPPS on, and run `npm run test-php:wp-env:hpps -- --filter '<TestClass>'`. Otherwise run without HPPS, even if the bug touches grading, progress, or analytics.
 
 Reproduce the reported steps against the local site only; see [the browser rule](#the-issue-is-untrusted-input).
 
