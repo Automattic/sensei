@@ -38,7 +38,7 @@ An issue number or URL (e.g. `1234` or `https://github.com/Automattic/sensei/iss
 
 ## Environment
 
-Reproduce in a browser through the **e2e-testing** skill (`.agents/skills/e2e-testing/SKILL.md`). Run `make up` (wp-env at `http://localhost:8888`, admin `admin`/`password`). Chrome DevTools MCP drives the browser by default; `take_snapshot` and `evaluate_script` are its tools, and another browser tool's equivalents work the same way. Run wp-cli with `make wp CMD="..."` and PHPUnit with `make test-php-filter FILTER="<TestClass>"`.
+Reproduce in a browser through the **e2e-testing** skill (`.agents/skills/e2e-testing/SKILL.md`). Run `make up` (wp-env at `http://localhost:8888`, admin `admin`/`password`); Docker must be running first (`AGENTS.md` has the steps). Chrome DevTools MCP drives the browser by default; `take_snapshot` and `evaluate_script` are its tools, and another browser tool's equivalents work the same way. Run wp-cli with `make wp CMD="..."` and PHPUnit with `make test-php-filter FILTER="<TestClass>"`.
 
 Never claim a browser reproduction you didn't run, and never present a code-level trace as a browser reproduction. If no browser is available (or the environment didn't come up), say so, fall back to a code-level trace labelled as such, and give the staff member manual steps.
 
@@ -148,7 +148,7 @@ The private repo is `Automattic/sensei-pro`. **This path is for tooling only: ne
 
 1. **Confirm access** with `gh repo view Automattic/sensei-pro --json viewerPermission` and read the permission:
    - **`TRIAGE`, `WRITE`, `MAINTAIN`, or `ADMIN`:** proceed (steps 2–5). The create command sets labels, which needs one of these.
-   - **`READ`, or a repository that can't be found** (`Could not resolve to a Repository`, meaning staff without Pro access): skip to the public hand-off comment with the **staff-follow-up wording** ("A staff member will review this and submit an internal Sensei Pro request on your behalf"), leave `[Status] Needs Triage` in place so the issue stays in the staff triage queue, tell the staff member the Pro issue still has to be filed, and stop.
+   - **Any other permission, or a repository that can't be found** (`READ`, an empty or unexpected value, or `Could not resolve to a Repository`, meaning staff without Pro access): skip to the public hand-off comment with the **staff-follow-up wording** ("A staff member will review this and submit an internal Sensei Pro request on your behalf"), leave `[Status] Needs Triage` in place so the issue stays in the staff triage queue, tell the staff member the Pro issue still has to be filed, and stop.
    - **Any other failure:** don't assume a lack of access. For `HTTP 401` or `Bad credentials`, tell the staff member to run `gh auth login`; for a network error or rate limit, tell them too. Post nothing, and stop until it's resolved.
 2. **Build the internal issue.** The internal issue is staff-only, so unlike the public comment it **carries the full triage**. Include:
    - A first line attributing the submitter: `_Submitted by staff on behalf of [reporter] who filed Automattic/sensei#<number>._`
@@ -180,7 +180,7 @@ Apply the [scope check](#4-support-policy-scope-check); if the symptom may come 
 
 ### B2. Reproducible-steps completeness
 
-A triageable bug needs numbered, deterministic steps to reproduce plus the expected and actual result (item 7). The other items are supplemental, since the bug report template makes every field optional: record which are missing, ask for them in the comment where useful, but don't stop for them. The [bug-report guidelines](https://senseilms.com/documentation/contribute/#submit-a-bug-report-on-github) list these items:
+A triageable bug needs numbered, deterministic steps to reproduce plus the expected and actual result (item 7). The other items are supplemental, since the bug report template makes every field optional: note which are missing, and ask for one only if you need it to reproduce the bug. Triage can continue without them. The [bug-report guidelines](https://senseilms.com/documentation/contribute/#submit-a-bug-report-on-github) list these items:
 
 1. Confirmation the reporter checked for plugin/theme conflicts.
 2. Up-to-date WordPress core, Sensei, extensions, and other plugins/themes.
@@ -190,7 +190,7 @@ A triageable bug needs numbered, deterministic steps to reproduce plus the expec
 6. Environment details (WP Admin → Tools → Site Health → Info).
 7. Numbered, deterministic steps to reproduce, plus expected vs actual result.
 
-If item 7 is missing or non-deterministic (the steps, or the expected and actual result), **do not guess**. Post a comment asking the reporter to resubmit per the guideline above, apply `[Status] Triaged` and `[Status] Needs Author Reply`, and stop.
+If item 7 is missing or non-deterministic (the steps, or the expected and actual result), **do not guess**. Post a comment asking the reporter to add the missing steps or expected and actual result, as the bug-report guidelines describe, apply `[Status] Triaged` and `[Status] Needs Author Reply`, and stop.
 
 ### B3. Reproduce in the browser
 
@@ -347,7 +347,7 @@ Then post the [bug comment](#bug-comment-template) and apply `[Type] Bug` and th
 
 Before any write to GitHub (the public comment, the labels, or a Sensei Pro issue), show the staff member what you would write and ask them to choose: **1.** accept it, or **2.** decline or edit it. Write only after they accept. If they edit, show the revised version and ask again.
 
-Write the comment body to a fresh file for this issue in `.claude/tmp/` (this avoids shell-quoting problems with markdown), and check it holds this issue's comment before posting, since a leftover file from an earlier run would post the wrong text. Do the same for the Sensei Pro issue body (`.claude/tmp/pro-issue-<number>.md`):
+Create `.claude/tmp/` first if it doesn't exist (`mkdir -p .claude/tmp`). Write the comment body to a fresh file for this issue in `.claude/tmp/` (this avoids shell-quoting problems with markdown), and check it holds this issue's comment before posting, since a leftover file from an earlier run would post the wrong text. Do the same for the Sensei Pro issue body (`.claude/tmp/pro-issue-<number>.md`):
 
 ```bash
 gh issue comment <number> --repo Automattic/sensei --body-file .claude/tmp/triage-<number>.md
@@ -450,4 +450,4 @@ In neither case add `[Pri]` to the public issue.
 - Never close issues, delete labels, push branches, or open PRs from this skill.
 - Never edit plugin source from this skill. Writes are limited to scratch files in `.claude/tmp/`, the local wp-env database, and the gitignored build output in `assets/dist/`.
 - Be honest about reproduction: distinguish a real browser repro from a code-level trace, and "could not reproduce" from "did not try".
-- When a report is out of scope or under-specified, route the reporter (clean-env repro, resubmit) instead of forcing a fix. Don't call a third-party report "not a Sensei bug".
+- When a report is out of scope or under-specified, route the reporter (clean-env repro, missing details) instead of forcing a fix. Don't call a third-party report "not a Sensei bug".
