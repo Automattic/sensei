@@ -173,7 +173,8 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	}
 
 	/**
-	 * Get all the item ids.
+	 * Get IDs for all matching items so column headers can show totals across pages.
+	 * Request IDs only, without the current page-size limit.
 	 *
 	 * @return array The post ids.
 	 */
