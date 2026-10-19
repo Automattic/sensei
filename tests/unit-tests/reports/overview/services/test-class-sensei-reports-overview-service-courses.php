@@ -52,30 +52,39 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Registered callbacks receive a notice without changing completion counts.
+	 * Returns complete counts, including zero for courses without completions.
 	 *
-	 * @expectedDeprecated sensei_analysis_course_completions
+	 * @covers Sensei_Reports_Overview_Service_Courses::get_completion_counts_by_course
 	 */
-	public function testGetCompletionCountsByCourse_QueryFilterRegistered_DeprecatesHookAndReturnsUnfilteredCompletions(): void {
+	public function testGetCompletionCountsByCourse_CoursesWithMixedStatusesGiven_ReturnsCompletionCountsIncludingZero(): void {
 		/* Arrange. */
-		$course   = $this->factory->course->create_and_get();
-		$student  = $this->factory->user->create();
-		$progress = Sensei()->course_progress_repository->create( $course->ID, $student );
-		$progress->complete();
-		Sensei()->course_progress_repository->save( $progress );
-		add_filter(
-			'sensei_analysis_course_completions',
-			static function () {
-				self::fail( 'The discontinued course-completions filter must not execute.' );
-			}
+		$aggregation_service = $this->createMock( Progress_Aggregation_Service_Interface::class );
+		$aggregation_service->method( 'count_statuses_by_post' )->willReturn(
+			array(
+				11 => array(
+					'complete'    => 2,
+					'in-progress' => 1,
+				),
+				22 => array( 'in-progress' => 3 ),
+			)
 		);
-		$service = new Sensei_Reports_Overview_Service_Courses();
+		$service = Sensei_Reports_Overview_Service_Courses::create_with_dependencies(
+			$this->createMock( Grading_Stats_Service_Interface::class ),
+			$aggregation_service
+		);
 
 		/* Act. */
-		$actual = $service->get_completion_counts_by_course( array( $course->ID ) );
+		$actual = $service->get_completion_counts_by_course( array( 11, 22, 33 ) );
 
 		/* Assert. */
-		self::assertSame( array( $course->ID => 1 ), $actual, 'The report must retain the stored completion count.' );
+		self::assertSame(
+			array(
+				11 => 2,
+				22 => 0,
+				33 => 0,
+			),
+			$actual
+		);
 	}
 
 	public function testGetTotalAverageProgress_CoursesGiven_AveragesCourseProgressAndRoundsUp(): void {
@@ -333,7 +342,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$instance  = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Act. */
-		$actual = $instance->get_courses_average_grade( [ $course_id ] );
+		$actual = $instance->get_courses_average_grade( array( $course_id ) );
 
 		/* Assert. */
 		self::assertSame( 0.0, $actual, 'Average grade should be zero when there are no graded quizzes.' );
