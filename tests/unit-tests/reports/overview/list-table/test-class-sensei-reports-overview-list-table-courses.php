@@ -157,6 +157,16 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, array_intersect_key( $actual, $expected ) );
 	}
 
+	public function testGetColumns_TranslatedCourseGiven_UsesOriginalRegisteredCompletions(): void {
+		list( $table ) = $this->create_translated_course_table();
+
+		$actual = $table->get_columns();
+
+		self::assertSame( 'Enrolled (2)', $actual['enrolled'] );
+		self::assertSame( 'Completions (1)', $actual['completions'] );
+		self::assertSame( 'Completion Rate (50%)', $actual['completion_rate'] );
+	}
+
 	public function testGetColumns_TemporaryCompletionsGiven_RoundsRegisteredCompletionDaysUp(): void {
 		/* Arrange. */
 		// First course: four registered days, with longer guest and preview completions excluded.

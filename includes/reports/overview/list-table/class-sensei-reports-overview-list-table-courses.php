@@ -108,14 +108,13 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$all_course_ids   = $this->get_all_item_ids();
 		$total_completion = 0;
 		if ( ! empty( $all_course_ids ) ) {
-			$counts           = $this->aggregation_service->count_statuses(
+			$counts           = $this->aggregation_service->count_statuses_by_post(
+				$all_course_ids,
 				array(
-					'type'                        => 'course',
-					'post__in'                    => $all_course_ids,
 					'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES,
 				)
 			);
-			$total_completion = $counts['complete'] ?? 0;
+			$total_completion = (int) array_sum( array_column( $counts, 'complete' ) );
 		}
 
 		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress( $all_course_ids );
