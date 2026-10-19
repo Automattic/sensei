@@ -75,16 +75,14 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		/* Assert. */
 		$expected = [
 			[
-				'id'                   => $course_id,
-				'last_activity_date'   => null,
-				'days_to_completion'   => '2',
-				'count_of_completions' => '1',
+				'id'                 => $course_id,
+				'last_activity_date' => null,
+				'days_to_completion' => '2',
 			],
 			[
-				'id'                   => $unfinished_course_id,
-				'last_activity_date'   => null,
-				'days_to_completion'   => null,
-				'count_of_completions' => '0',
+				'id'                 => $unfinished_course_id,
+				'last_activity_date' => null,
+				'days_to_completion' => null,
 			],
 		];
 
@@ -149,10 +147,9 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		/* Assert. */
 		$expected = [
 			[
-				'id'                   => $course_id,
-				'last_activity_date'   => '2022-01-02 00:00:01',
-				'days_to_completion'   => '2',
-				'count_of_completions' => '1',
+				'id'                 => $course_id,
+				'last_activity_date' => '2022-01-02 00:00:01',
+				'days_to_completion' => '2',
 			],
 		];
 
@@ -199,10 +196,9 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		// Temporary-only progress contributes no completion days; the course remains in the report.
 		$expected = array(
 			array(
-				'id'                   => $course_id,
-				'last_activity_date'   => null,
-				'days_to_completion'   => null,
-				'count_of_completions' => '0',
+				'id'                 => $course_id,
+				'last_activity_date' => null,
+				'days_to_completion' => null,
 			),
 		);
 
@@ -210,21 +206,17 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	}
 
 	/**
-	 * Published and private courses remain eligible for completion rows.
+	 * Published and private courses remain eligible for report rows.
 	 *
 	 * @covers Sensei_Reports_Overview_Data_Provider_Courses::get_items
 	 */
-	public function testGetItems_MixedCoursePostStatusesGiven_ReturnsOnlyPublishedAndPrivateCompletionRows(): void {
+	public function testGetItems_MixedCoursePostStatusesGiven_ReturnsOnlyPublishedAndPrivateCourses(): void {
 		/* Arrange. */
 		$this->maybe_enable_hpps_tables_repository();
 		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
-		$user                          = $this->factory->user->create();
 		$course_ids                    = array();
 		foreach ( array( 'publish', 'private', 'draft', 'trash' ) as $status ) {
 			$course_ids[ $status ] = $this->factory->course->create( array( 'post_status' => $status ) );
-			$progress              = Sensei()->course_progress_repository->create( $course_ids[ $status ], $user );
-			$progress->complete();
-			Sensei()->course_progress_repository->save( $progress );
 		}
 		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
 
@@ -240,52 +232,6 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 
 		/* Assert. */
 		self::assertEqualsCanonicalizing( array( $course_ids['publish'], $course_ids['private'] ), wp_list_pluck( $actual, 'ID' ), 'Only published and private courses should appear.' );
-		self::assertSame( array( '1', '1' ), wp_list_pluck( $actual, 'count_of_completions' ), 'Each eligible course must retain its completion count.' );
-	}
-
-	/**
-	 * Translated course records expose completions stored under the original course ID.
-	 *
-	 * @covers Sensei_Reports_Overview_Data_Provider_Courses::get_items
-	 */
-	public function testGetItems_TranslatedCourseWithoutStartDateGiven_ReturnsStoredCompletions(): void {
-		/* Arrange. */
-		$this->maybe_enable_hpps_tables_repository();
-		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
-		$original                      = $this->factory->course->create();
-		$translation                   = $this->factory->course->create();
-		$user                          = $this->factory->user->create();
-		$progress                      = Sensei()->course_progress_repository->create( $original, $user );
-		$progress->complete();
-		Sensei()->course_progress_repository->save( $progress );
-		add_filter(
-			'sensei_course_progress_get_course_id',
-			static function ( $id ) use ( $original, $translation ) {
-				return $translation === $id ? $original : $id;
-			}
-		);
-		add_filter(
-			'sensei_analysis_overview_filter_courses',
-			static function ( $args ) use ( $translation ) {
-				$args['post__in'] = array( $translation );
-				return $args;
-			}
-		);
-		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
-
-		/* Act. */
-		$actual = $provider->get_items(
-			array(
-				'number'  => 1,
-				'offset'  => 0,
-				'orderby' => 'title',
-				'order'   => 'ASC',
-			)
-		);
-
-		/* Assert. */
-		self::assertSame( $translation, $actual[0]->ID, 'The translated course should be returned.' );
-		self::assertSame( '1', $actual[0]->count_of_completions, 'The course should expose the completion stored under the original ID.' );
 	}
 
 	private function exportCourses( array $courses ): array {
@@ -293,10 +239,9 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 
 		foreach ( $courses as $course ) {
 			$ret[] = [
-				'id'                   => $course->ID,
-				'last_activity_date'   => $course->last_activity_date,
-				'days_to_completion'   => $course->days_to_completion,
-				'count_of_completions' => $course->count_of_completions,
+				'id'                 => $course->ID,
+				'last_activity_date' => $course->last_activity_date,
+				'days_to_completion' => $course->days_to_completion,
 			];
 		}
 
