@@ -128,6 +128,11 @@ gh pr view <PR_NUMBER> --json headRefOid,statusCheckRollup
 gh pr checks <PR_NUMBER> --watch --interval 30
 ```
 
+Keep repeated polling output out of the model context: redirect watch output to
+a temporary file or filter it before returning tool results. Read compact
+summaries at bounded intervals, report meaningful changes, and retrieve failed
+job logs only when needed for diagnosis.
+
 - Wait for checks to appear; an empty list is not a pass. Use bounded waits and
   share meaningful progress.
 - Inspect failed jobs and logs (`gh run view <RUN_ID> --log-failed`) before acting.
