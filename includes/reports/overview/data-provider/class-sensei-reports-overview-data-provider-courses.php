@@ -89,10 +89,6 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		add_filter( 'posts_clauses', array( $this, 'add_days_to_completion_to_courses_query' ) );
 		add_filter( 'posts_clauses', array( $this, 'filter_courses_by_last_activity' ) );
 
-		if ( 'count_of_completions' === $course_args['orderby'] ) {
-			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
-		}
-
 		/**
 		 * Filter the courses query arguments.
 		 *
@@ -101,14 +97,13 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		 * @param {array} $course_args Array of arguments for the courses query.
 		 * @return {array} Filtered array of arguments for the courses query.
 		 */
-		$course_args   = apply_filters( 'sensei_analysis_overview_filter_courses', $course_args );
+		$course_args = apply_filters( 'sensei_analysis_overview_filter_courses', $course_args );
+
 		$courses_query = new WP_Query( $course_args );
 
-		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 		remove_filter( 'posts_clauses', array( $this, 'filter_courses_by_last_activity' ) );
 		remove_filter( 'posts_clauses', array( $this, 'add_days_to_completion_to_courses_query' ) );
 		remove_filter( 'posts_clauses', array( $this, 'add_last_activity_to_courses_query' ) );
-		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 
 		$this->last_total_items = $courses_query->found_posts;
 

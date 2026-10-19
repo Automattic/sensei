@@ -75,16 +75,14 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		/* Assert. */
 		$expected = [
 			[
-				'id'                   => $course_id,
-				'last_activity_date'   => null,
-				'days_to_completion'   => '2',
-				'count_of_completions' => '1',
+				'id'                 => $course_id,
+				'last_activity_date' => null,
+				'days_to_completion' => '2',
 			],
 			[
-				'id'                   => $unfinished_course_id,
-				'last_activity_date'   => null,
-				'days_to_completion'   => null,
-				'count_of_completions' => '0',
+				'id'                 => $unfinished_course_id,
+				'last_activity_date' => null,
+				'days_to_completion' => null,
 			],
 		];
 
@@ -149,10 +147,9 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		/* Assert. */
 		$expected = [
 			[
-				'id'                   => $course_id,
-				'last_activity_date'   => '2022-01-02 00:00:01',
-				'days_to_completion'   => '2',
-				'count_of_completions' => '1',
+				'id'                 => $course_id,
+				'last_activity_date' => '2022-01-02 00:00:01',
+				'days_to_completion' => '2',
 			],
 		];
 
@@ -199,32 +196,27 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		// Temporary-only progress contributes no completion days; the course remains in the report.
 		$expected = array(
 			array(
-				'id'                   => $course_id,
-				'last_activity_date'   => null,
-				'days_to_completion'   => null,
-				'count_of_completions' => '0',
+				'id'                 => $course_id,
+				'last_activity_date' => null,
+				'days_to_completion' => null,
 			),
 		);
 
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
 	}
 
-	public function testGetItems_TemporaryCompletionsGiven_SortsByEligibleCompletionCount(): void {
+	/**
+	 * Published and private courses remain eligible for report rows.
+	 *
+	 * @covers Sensei_Reports_Overview_Data_Provider_Courses::get_items
+	 */
+	public function testGetItems_MixedCoursePostStatusesGiven_ReturnsOnlyPublishedAndPrivateCourses(): void {
 		/* Arrange. */
 		$this->maybe_enable_hpps_tables_repository();
 		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
-		$registered_course             = $this->factory->course->create();
-		$temporary_course              = $this->factory->course->create();
-		foreach ( array(
-			'registered_student'     => $registered_course,
-			'sensei_guest_student'   => $temporary_course,
-			'sensei_preview_student' => $temporary_course,
-		) as $login => $course_id ) {
-			$user_id  = $this->factory->user->create( array( 'user_login' => $login ) );
-			$progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
-			$progress->start( current_datetime() );
-			$progress->complete( current_datetime() );
-			Sensei()->course_progress_repository->save( $progress );
+		$course_ids                    = array();
+		foreach ( array( 'publish', 'private', 'draft', 'trash' ) as $status ) {
+			$course_ids[ $status ] = $this->factory->course->create( array( 'post_status' => $status ) );
 		}
 		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
 
@@ -233,14 +225,13 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 			array(
 				'number'  => 10,
 				'offset'  => 0,
-				'orderby' => 'count_of_completions',
-				'order'   => 'DESC',
+				'orderby' => 'title',
+				'order'   => 'ASC',
 			)
 		);
 
 		/* Assert. */
-		// One registered completion sorts ahead of two excluded temporary completions.
-		self::assertSame( array( $registered_course, $temporary_course ), wp_list_pluck( $actual, 'ID' ) );
+		self::assertEqualsCanonicalizing( array( $course_ids['publish'], $course_ids['private'] ), wp_list_pluck( $actual, 'ID' ), 'Only published and private courses should appear.' );
 	}
 
 	private function exportCourses( array $courses ): array {
@@ -248,10 +239,9 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 
 		foreach ( $courses as $course ) {
 			$ret[] = [
-				'id'                   => $course->ID,
-				'last_activity_date'   => $course->last_activity_date,
-				'days_to_completion'   => $course->days_to_completion,
-				'count_of_completions' => $course->count_of_completions,
+				'id'                 => $course->ID,
+				'last_activity_date' => $course->last_activity_date,
+				'days_to_completion' => $course->days_to_completion,
 			];
 		}
 

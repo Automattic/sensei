@@ -52,6 +52,11 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
+	/**
+	 * CSV exports use the plain course title.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
+	 */
 	public function testGenerateReport_CourseGiven_ReturnsPlainCourseTitle(): void {
 		/* Arrange. */
 		$item     = (object) array(
@@ -85,6 +90,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	/**
 	 * Exclude guest and preview progress while retaining registered progress.
 	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
 	 * @dataProvider temporary_user_logins
 	 */
 	public function testGenerateReport_TemporaryProgressGiven_UsesRegisteredProgress( string $temporary_user_login ): void {
@@ -109,6 +115,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			array(
 				'last_activity'      => Sensei_Utils::format_last_activity_date( '2022-01-04 12:00:00' ),
 				'enrolled'           => '1',
+				'completions'        => '1',
+				'completion_rate'    => '100%',
 				'average_progress'   => '50%',
 				'days_to_completion' => '4',
 			),
@@ -116,6 +124,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			array(
 				'last_activity'      => 'N/A',
 				'enrolled'           => '0',
+				'completions'        => '0',
+				'completion_rate'    => 'N/A',
 				'average_progress'   => 'N/A',
 				'days_to_completion' => 'N/A',
 			),
@@ -124,6 +134,49 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $this->get_progress_fields_from_rows( array_slice( $actual, 1 ) ) );
 	}
 
+	/**
+	 * CSV rows use original course progress for translated courses and exclude temporary users.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
+	 */
+	public function testGenerateReport_TranslatedCourseGiven_UsesOriginalRegisteredCompletions(): void {
+		/* Arrange. */
+		list( $table ) = $this->create_translated_course_table();
+
+		/* Act. */
+		$actual = $table->generate_report();
+
+		/* Assert. */
+		$expected = array(
+			'completions'     => '1',
+			'completion_rate' => '50%',
+		);
+		self::assertSame( $expected, array_intersect_key( $actual[1], $expected ) );
+	}
+
+	/**
+	 * Column headers use original course progress for translated courses and exclude temporary users.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
+	public function testGetColumns_TranslatedCourseGiven_UsesOriginalRegisteredCompletions(): void {
+		/* Arrange. */
+		list( $table ) = $this->create_translated_course_table();
+
+		/* Act. */
+		$actual = $table->get_columns();
+
+		/* Assert. */
+		self::assertSame( 'Enrolled (2)', $actual['enrolled'], 'The header should count registered enrollments.' );
+		self::assertSame( 'Completions (1)', $actual['completions'], 'The header should count the original course completion.' );
+		self::assertSame( 'Completion Rate (50%)', $actual['completion_rate'], 'The header rate should use registered completions and enrollments.' );
+	}
+
+	/**
+	 * Completion days in the header include only registered students and round up.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
 	public function testGetColumns_TemporaryCompletionsGiven_RoundsRegisteredCompletionDaysUp(): void {
 		/* Arrange. */
 		// First course: four registered days, with longer guest and preview completions excluded.
@@ -158,7 +211,12 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 'Days to Completion (3)', $actual['days_to_completion'] );
 	}
 
-	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
+	/**
+	 * Column headers show zero or N/A when no course completions exist.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
+	public function testGetColumns_NoCompletionsFound_ReturnsHeadersWithZeroCompletions() {
 		/* Arrange. */
 		$course_id     = $this->factory->course->create();
 		$course        = $this->createMock( Sensei_Course::class );
@@ -195,6 +253,11 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
+	/**
+	 * Completion headers exclude guest and preview progress.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
 	public function testGetColumns_RegisteredAndTemporaryProgressCreated_ExcludesTemporaryCompletions() {
 		/* Arrange. */
 		$completed_user_id   = $this->factory->user->create();
@@ -248,7 +311,12 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, array_intersect_key( $actual, $expected ) );
 	}
 
-	public function testGetSortableColumns_WhenCalled_ReturnsMatchingArray() {
+	/**
+	 * Only course titles can be sorted.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_sortable_columns
+	 */
+	public function testGetSortableColumns_DefaultColumnsRequested_ReturnsOnlyTitle() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
@@ -262,13 +330,15 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$actual = $list_table->get_sortable_columns();
 
 		/* Assert. */
-		$expected = array(
-			'title'       => array( 'title', false ),
-			'completions' => array( 'count_of_completions', false ),
-		);
+		$expected = array( 'title' => array( 'title', false ) );
 		self::assertSame( $expected, $actual );
 	}
 
+	/**
+	 * Course rows format the supplied aggregate values.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_row_data
+	 */
 	public function testGetRowData_CourseAndAggregateValuesGiven_ReturnsFormattedRow(): void {
 		/* Arrange. */
 		$item   = (object) array(
@@ -285,9 +355,10 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
 		$service->method( 'get_grade_sum_for_lessons' )->willReturn( 50 );
 		$service->method( 'get_total_enrollments' )->willReturn( 2 );
+		$service->method( 'get_completion_counts_by_course' )->willReturn( array( 123 => 1 ) );
 		$service->method( 'get_average_progress_by_course' )->willReturn( array( 123 => 50.0 ) );
 		$service->method( 'get_average_days_to_completion_by_course' )->willReturn( array( 123 => 4.0 ) );
-		// Supply one course completion and one graded lesson without storage fixtures.
+		// Supply one graded lesson without storage fixtures; course completions come from the service.
 		add_filter(
 			'sensei_check_for_activity',
 			static function () {
@@ -333,7 +404,35 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
-	public function testSearchButton_WhenCalled_ReturnsMatchingString() {
+	/**
+	 * Report rows use original course progress for translated courses and exclude temporary users.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_row_data
+	 */
+	public function testGetRowData_TranslatedCourseGiven_UsesOriginalRegisteredCompletions(): void {
+		/* Arrange. */
+		list( $table, $item ) = $this->create_translated_course_table();
+		$method               = new ReflectionMethod( $table, 'get_row_data' );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
+		$table->prepare_items();
+
+		/* Act. */
+		$actual = $method->invoke( $table, $item );
+
+		/* Assert. */
+		$expected = array(
+			'completions'     => '1',
+			'completion_rate' => '50%',
+		);
+		self::assertSame( $expected, array_intersect_key( $actual, $expected ) );
+	}
+
+	/**
+	 * Course reports use a course-specific search label.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::search_button
+	 */
+	public function testSearchButton_CourseTableCreated_ReturnsCourseSearchLabel() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
@@ -355,6 +454,49 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'guest'   => array( 'sensei_guest_student' ),
 			'preview' => array( 'sensei_preview_student' ),
 		);
+	}
+
+	/**
+	 * Create a translated course with one completed and one active registered student, plus guest and preview completions.
+	 *
+	 * @return array Report table and translated course post.
+	 */
+	private function create_translated_course_table(): array {
+		$original    = $this->factory->course->create();
+		$translation = $this->factory->course->create();
+		foreach ( array( 'registered_complete', 'registered_started', 'sensei_guest_student', 'sensei_preview_student' ) as $login ) {
+			$user     = $this->factory->user->create( array( 'user_login' => $login ) );
+			$progress = Sensei()->course_progress_repository->create( $original, $user );
+			$progress->start();
+			if ( 'registered_started' !== $login ) {
+				$progress->complete();
+			}
+			Sensei()->course_progress_repository->save( $progress );
+		}
+		add_filter(
+			'sensei_course_progress_get_course_id',
+			static function ( $id ) use ( $original, $translation ) {
+				return $translation === $id ? $original : $id;
+			}
+		);
+		$item                     = get_post( $translation );
+		$item->last_activity_date = null;
+		$provider                 = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$provider->method( 'get_items' )->willReturnCallback(
+			static function ( $filters ) use ( $item ) {
+				return 'ids' === ( $filters['fields'] ?? '' ) ? array( $item->ID ) : array( $item );
+			}
+		);
+		$provider->method( 'get_last_total_items' )->willReturn( 1 );
+		$table = new Sensei_Reports_Overview_List_Table_Courses(
+			Sensei()->grading,
+			Sensei()->course,
+			$provider,
+			new Sensei_Reports_Overview_Service_Courses(),
+			( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service()
+		);
+
+		return array( $table, $item );
 	}
 
 	/**
@@ -401,7 +543,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	private function get_progress_fields_from_rows( array $rows ): array {
 		$actual = array();
 		foreach ( $rows as $row ) {
-			$actual[] = array_intersect_key( $row, array_flip( array( 'last_activity', 'enrolled', 'average_progress', 'days_to_completion' ) ) );
+			$actual[] = array_intersect_key( $row, array_flip( array( 'last_activity', 'enrolled', 'completions', 'completion_rate', 'average_progress', 'days_to_completion' ) ) );
 		}
 		usort(
 			$actual,

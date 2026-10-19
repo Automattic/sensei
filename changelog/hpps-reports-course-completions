@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Read course completion counts and rates from the selected progress backend.
