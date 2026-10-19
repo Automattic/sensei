@@ -134,6 +134,36 @@ class Sensei_Reports_Overview_Service_Courses {
 	}
 
 	/**
+	 * Get eligible completion counts keyed by requested course ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Requested course IDs.
+	 * @return array<int, int> Completion counts including zero for courses without completions.
+	 */
+	public function get_completion_counts_by_course( array $course_ids ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
+
+		if ( has_filter( 'sensei_analysis_course_completions' ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_hook handles its own output.
+			_deprecated_hook( 'sensei_analysis_course_completions', '$$next-version$$', '', __( 'This filter is no longer used. Course completion counts now use the progress aggregation service.', 'sensei-lms' ) );
+		}
+
+		$counts = $this->get_aggregation_service()->count_statuses_by_post(
+			$course_ids,
+			array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
+		);
+		$result = array();
+		foreach ( $course_ids as $course_id ) {
+			$result[ (int) $course_id ] = $counts[ (int) $course_id ]['complete'] ?? 0;
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Get the average grade of the courses.
 	 *
 	 * @since 4.4.1

@@ -51,6 +51,33 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
+	/**
+	 * Registered callbacks receive a notice without changing completion counts.
+	 *
+	 * @expectedDeprecated sensei_analysis_course_completions
+	 */
+	public function testGetCompletionCountsByCourse_QueryFilterRegistered_DeprecatesHookAndReturnsUnfilteredCompletions(): void {
+		/* Arrange. */
+		$course   = $this->factory->course->create_and_get();
+		$student  = $this->factory->user->create();
+		$progress = Sensei()->course_progress_repository->create( $course->ID, $student );
+		$progress->complete();
+		Sensei()->course_progress_repository->save( $progress );
+		add_filter(
+			'sensei_analysis_course_completions',
+			static function () {
+				self::fail( 'The discontinued course-completions filter must not execute.' );
+			}
+		);
+		$service = new Sensei_Reports_Overview_Service_Courses();
+
+		/* Act. */
+		$actual = $service->get_completion_counts_by_course( array( $course->ID ) );
+
+		/* Assert. */
+		self::assertSame( array( $course->ID => 1 ), $actual, 'The report must retain the stored completion count.' );
+	}
+
 	public function testGetTotalAverageProgress_CoursesGiven_AveragesCourseProgressAndRoundsUp(): void {
 		/* Arrange. */
 		$course_ids = array( 11, 22 );
