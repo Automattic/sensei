@@ -40,6 +40,13 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	private $aggregation_service;
 
 	/**
+	 * Per-course completion-day averages for the current result set.
+	 *
+	 * @var array<int, float>
+	 */
+	private $average_days_to_completion_by_course = array();
+
+	/**
 	 * Per-course average-progress cache for the current result set.
 	 *
 	 * @var float[]
@@ -47,11 +54,11 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	private $average_progress_by_course = array();
 
 	/**
-	 * Per-course completion-day averages for the current result set.
+	 * Eligible completion counts for the current page or CSV export.
 	 *
-	 * @var array<int, float>
+	 * @var array<int, int>
 	 */
-	private $average_days_to_completion_by_course = array();
+	private array $completion_counts_by_course = array();
 
 	/**
 	 * Constructor
@@ -231,22 +238,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		// Last Activity.
 		$lessons = $this->course->course_lessons( $item->ID, 'any', 'ids' );
 
-		// Get Course Completions.
-		$course_args = array(
-			'post_id' => $item->ID,
-			'type'    => 'sensei_course_status',
-			'status'  => 'complete',
-		);
-		/**
-		 * Filter the course completions query arguments.
-		 *
-		 * @hook sensei_analysis_course_completions
-		 *
-		 * @param {array} $course_args Array of query arguments for course completions.
-		 * @param {WP_Post} $item Current course post object.
-		 * @return {array} Filtered array of query arguments for course completions.
-		 */
-		$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
+		$course_completions = $this->completion_counts_by_course[ (int) $item->ID ] ?? 0;
 
 		// Average Grade will be N/A if the course has no lessons or quizzes, if none of the lessons
 		// have a status of 'graded', 'passed' or 'failed', or if none of the quizzes have grades.
@@ -404,7 +396,8 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			$items
 		);
 
-		$this->average_progress_by_course           = $this->reports_overview_service_courses->get_average_progress_by_course( $course_ids );
 		$this->average_days_to_completion_by_course = $this->reports_overview_service_courses->get_average_days_to_completion_by_course( $course_ids );
+		$this->average_progress_by_course           = $this->reports_overview_service_courses->get_average_progress_by_course( $course_ids );
+		$this->completion_counts_by_course          = $this->reports_overview_service_courses->get_completion_counts_by_course( $course_ids );
 	}
 }

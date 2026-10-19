@@ -20,6 +20,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Overview_Data_Provider_Interface {
 
 	/**
+	 * Storage-neutral course metrics.
+	 *
+	 * @var Sensei_Reports_Overview_Service_Courses
+	 */
+	private Sensei_Reports_Overview_Service_Courses $courses_service;
+
+	/**
+	 * Completion counts used for ordering the current query.
+	 *
+	 * @var array<int, int>
+	 */
+	private array $completion_counts = array();
+
+	/**
 	 * Total number of courses found with given criteria.
 	 *
 	 * @var int Total number of items
@@ -52,9 +66,11 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 *
 	 * @since 4.26.0
 	 *
-	 * @param Progress_Clauses_Service_Interface|null $progress_clauses_service The progress clauses service.
+	 * @param Progress_Clauses_Service_Interface|null      $progress_clauses_service The progress clauses service.
+	 * @param Sensei_Reports_Overview_Service_Courses|null $courses_service The course metrics service.
 	 */
-	public function __construct( ?Progress_Clauses_Service_Interface $progress_clauses_service = null ) {
+	public function __construct( ?Progress_Clauses_Service_Interface $progress_clauses_service = null, ?Sensei_Reports_Overview_Service_Courses $courses_service = null ) {
+		$this->courses_service          = $courses_service ?? new Sensei_Reports_Overview_Service_Courses();
 		$this->progress_clauses_service = $progress_clauses_service
 			?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_clauses_service();
 	}
@@ -85,14 +101,6 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 			$course_args['s'] = $filters['search'];
 		}
 
-		add_filter( 'posts_clauses', array( $this, 'add_last_activity_to_courses_query' ) );
-		add_filter( 'posts_clauses', array( $this, 'add_days_to_completion_to_courses_query' ) );
-		add_filter( 'posts_clauses', array( $this, 'filter_courses_by_last_activity' ) );
-
-		if ( 'count_of_completions' === $course_args['orderby'] ) {
-			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
-		}
-
 		/**
 		 * Filter the courses query arguments.
 		 *
@@ -101,7 +109,37 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		 * @param {array} $course_args Array of arguments for the courses query.
 		 * @return {array} Filtered array of arguments for the courses query.
 		 */
-		$course_args   = apply_filters( 'sensei_analysis_overview_filter_courses', $course_args );
+		$course_args             = apply_filters( 'sensei_analysis_overview_filter_courses', $course_args );
+		$this->completion_counts = array();
+		if ( 'count_of_completions' === $course_args['orderby'] ) {
+			// Count all candidate courses before pagination, using exactly the same metric as report rows.
+			$all_course_args = array_merge(
+				$course_args,
+				array(
+					'posts_per_page' => -1,
+					'offset'         => 0,
+					'fields'         => 'ids',
+					'orderby'        => 'ID',
+					'no_found_rows'  => true,
+				)
+			);
+			/**
+			 * Course IDs requested by the candidate query.
+			 *
+			 * @var int[] $candidate_ids
+			 */
+			$candidate_ids           = get_posts( $all_course_args );
+			$this->completion_counts = $this->courses_service->get_completion_counts_by_course( $candidate_ids );
+		}
+
+		add_filter( 'posts_clauses', array( $this, 'add_last_activity_to_courses_query' ) );
+		add_filter( 'posts_clauses', array( $this, 'add_days_to_completion_to_courses_query' ) );
+		add_filter( 'posts_clauses', array( $this, 'filter_courses_by_last_activity' ) );
+
+		if ( 'count_of_completions' === $course_args['orderby'] ) {
+			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
+		}
+
 		$courses_query = new WP_Query( $course_args );
 
 		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
@@ -111,6 +149,23 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 
 		$this->last_total_items = $courses_query->found_posts;
+		if ( ! in_array( $course_args['fields'], array( 'ids', 'id=>parent' ), true ) ) {
+			/**
+			 * Full course posts requested by the report query.
+			 *
+			 * @var WP_Post[] $posts
+			 */
+			$posts  = $courses_query->posts;
+			$counts = ! empty( $this->completion_counts ) ? $this->completion_counts : $this->courses_service->get_completion_counts_by_course( array_map( 'intval', wp_list_pluck( $posts, 'ID' ) ) );
+			foreach ( $posts as $course ) {
+				/**
+				 * Populate the existing extra Reports query field.
+				 *
+				 * @psalm-suppress UndefinedPropertyAssignment
+				 */
+				$course->count_of_completions = (string) ( $counts[ (int) $course->ID ] ?? 0 );
+			}
+		}
 
 		return $courses_query->posts;
 	}
@@ -125,7 +180,21 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 * @param object $query Query.
 	 */
 	public function add_orderby_custom_field_to_query( $args, $query ) {
-		return $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
+		if ( 'count_of_completions' !== $query->query_vars['orderby'] ) {
+			return $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
+		}
+
+		global $wpdb;
+		$cases = '';
+		foreach ( $this->completion_counts as $course_id => $count ) {
+			if ( $count ) {
+				$cases .= $wpdb->prepare( ' WHEN %d THEN %d', $course_id, $count );
+			}
+		}
+		$expression = $cases ? "CASE {$wpdb->posts}.ID {$cases} ELSE 0 END" : '0 + 0';
+		$order      = 'DESC' === strtoupper( $query->query_vars['order'] ) ? 'DESC' : 'ASC';
+
+		return "$expression $order, {$wpdb->posts}.ID ASC";
 	}
 
 	/**

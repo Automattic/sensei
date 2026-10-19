@@ -243,6 +243,128 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		self::assertSame( array( $registered_course, $temporary_course ), wp_list_pluck( $actual, 'ID' ) );
 	}
 
+	public function testGetItems_MixedCoursePostStatusesGiven_ReturnsOnlyPublishedAndPrivateCompletionRows(): void {
+		/* Arrange. */
+		$this->maybe_enable_hpps_tables_repository();
+		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
+		$user                          = $this->factory->user->create();
+		$course_ids                    = array();
+		foreach ( array( 'publish', 'private', 'draft', 'trash' ) as $status ) {
+			$course_ids[ $status ] = $this->factory->course->create( array( 'post_status' => $status ) );
+			$progress              = Sensei()->course_progress_repository->create( $course_ids[ $status ], $user );
+			$progress->complete();
+			Sensei()->course_progress_repository->save( $progress );
+		}
+		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+
+		/* Act. */
+		$actual = $provider->get_items(
+			array(
+				'number'  => 10,
+				'offset'  => 0,
+				'orderby' => 'count_of_completions',
+				'order'   => 'ASC',
+			)
+		);
+
+		/* Assert. */
+		self::assertSame( array( $course_ids['publish'], $course_ids['private'] ), wp_list_pluck( $actual, 'ID' ), 'Completion sorting must retain published/private course eligibility.' );
+		self::assertSame( array( '1', '1' ), wp_list_pluck( $actual, 'count_of_completions' ), 'Each eligible course must retain its completion count.' );
+	}
+
+	/**
+	 * Sort translated progress before applying the page limit.
+	 *
+	 * @dataProvider completion_sort_orders
+	 */
+	public function testGetItems_TranslatedCourseWithoutStartDateGiven_SortsByStoredCompletions( string $order, bool $reverse ): void {
+		$this->maybe_enable_hpps_tables_repository();
+		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
+		$original                      = $this->factory->course->create();
+		$translation                   = $this->factory->course->create();
+		$empty                         = $this->factory->course->create( array( 'post_status' => 'private' ) );
+		$user                          = $this->factory->user->create();
+		$progress                      = Sensei()->course_progress_repository->create( $original, $user );
+		$progress->complete();
+		Sensei()->course_progress_repository->save( $progress );
+		add_filter(
+			'sensei_course_progress_get_course_id',
+			static function ( $id ) use ( $original, $translation ) {
+				return $translation === $id ? $original : $id;
+			}
+		);
+		add_filter(
+			'sensei_analysis_overview_filter_courses',
+			static function ( $args ) use ( $translation, $empty ) {
+				$args['post__in'] = array( $translation, $empty );
+				return $args;
+			}
+		);
+		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+
+		$actual = $provider->get_items(
+			array(
+				'number'  => 1,
+				'offset'  => 0,
+				'orderby' => 'count_of_completions',
+				'order'   => $order,
+			)
+		);
+
+		self::assertSame( $reverse ? $empty : $translation, $actual[0]->ID, 'Sorting must use original progress before pagination.' );
+		self::assertSame( $reverse ? '0' : '1', $actual[0]->count_of_completions, 'The exposed sort count must match eligible completions, even without a start date.' );
+		self::assertSame( 2, $provider->get_last_total_items(), 'Pagination must retain the filtered total.' );
+	}
+
+	/**
+	 * Discontinued query customizations must not change completion sorting.
+	 *
+	 * @expectedDeprecated sensei_analysis_course_completions
+	 */
+	public function testGetItems_DeprecatedCompletionFilterRegistered_SortsByStoredCompletions(): void {
+		/* Arrange. */
+		$this->maybe_enable_hpps_tables_repository();
+		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
+		$completed                     = $this->factory->course->create();
+		$started                       = $this->factory->course->create();
+		$user                          = $this->factory->user->create();
+		$progress                      = Sensei()->course_progress_repository->create( $completed, $user );
+		$progress->complete();
+		Sensei()->course_progress_repository->save( $progress );
+		$progress = Sensei()->course_progress_repository->create( $started, $user );
+		$progress->start();
+		Sensei()->course_progress_repository->save( $progress );
+		add_filter(
+			'sensei_analysis_course_completions',
+			static function ( $args ) {
+				$args['status'] = 'in-progress';
+				return $args;
+			}
+		);
+		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+
+		/* Act. */
+		$actual = $provider->get_items(
+			array(
+				'number'  => 1,
+				'offset'  => 0,
+				'orderby' => 'count_of_completions',
+				'order'   => 'DESC',
+			)
+		);
+
+		/* Assert. */
+		self::assertSame( $completed, $actual[0]->ID, 'Sorting must use stored completions despite the discontinued filter.' );
+		self::assertSame( '1', $actual[0]->count_of_completions, 'The sort count must match stored completions.' );
+	}
+
+	public static function completion_sort_orders(): array {
+		return array(
+			'descending' => array( 'DESC', false ),
+			'ascending'  => array( 'ASC', true ),
+		);
+	}
+
 	private function exportCourses( array $courses ): array {
 		$ret = [];
 
