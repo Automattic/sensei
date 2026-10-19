@@ -29,7 +29,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - `.github/workflows/` — CI definitions; PR previews are built by `playground-preview.yml`.
 
 ## Development environment
-- Run WordPress development commands inside the `make up` (wp-env) sandbox rather than against any host WordPress install — this keeps mistakes off shared/local state. `make psalm` runs static analysis on the host using Homebrew PHP versions (see Linting).
+- Run WordPress development commands inside the `make up` (wp-env) sandbox rather than against any host WordPress install — this keeps mistakes off shared/local state.
 - Use the Node version pinned in `.nvmrc`.
 - Ensure Docker Desktop is running before `make up`; verify with `docker info`. If it isn't running, start it without asking — this is a routine local action, not a user-facing change. Use `open -a Docker` on macOS or `sudo systemctl start docker` on Linux, then wait until `docker info` succeeds.
 - `make up` boots the wp-env Docker stack; `make down` stops it; `make destroy` wipes containers and data for a clean slate.
@@ -39,7 +39,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 ## Building
 - `make build` produces the plugin zip via wp-env, which sidesteps host PHP version issues.
 - On a fresh checkout, run `make install-php` before `make build`. The build runs `composer install --no-dev --no-scripts`, which skips the `post-autoload-dump` hook that generates the scoped vendor tree at `vendor/sensei-lms/third-party-libs/` (consumed at runtime, e.g. `Sensei\ThirdParty\Pelago\Emogrifier\CssInliner`). `make install-php` runs the full composer install with scripts and populates that tree.
-- `make build` runs `composer install --no-dev` inside the container, which strips all dev dependencies (`vendor/bin/phpunit`, `vendor/bin/psalm`, etc.). After a build, restore dev tooling before running tests or static analysis with `make install-php`.
+- `make build` runs `composer install --no-dev` inside the container, which strips all dev dependencies (`vendor/bin/phpunit`, `vendor/bin/psalm`, etc.). After a build, restore dev tooling before running tests with `make install-php`.
 
 ## Testing
 - **Focused local tests**: Run the smallest relevant subset of tests for the affected behavior, including new or changed tests. Leave full suites and broader regression coverage to CI; do not run the full suite locally.
@@ -53,12 +53,11 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - **Ad-hoc UI verification**: After `make up`, the dev site is at `http://localhost:8888` with admin credentials `admin` / `password` (wp-env defaults). For agent-driven verification, use the `e2e-testing` skill (`.agents/skills/e2e-testing/SKILL.md`) — it scopes from `git diff`, lists Sensei's admin/frontend surfaces, and uses the available browser tools to walk through the relevant flow.
 
 ## Linting
-Leave routine CI-covered linting, static analysis, validation builds, and compatibility matrices to CI. For CI failures, follow the local-verification guidance above; not every check supports a meaningful focused run. Command reference:
+Leave routine CI-covered linting, static analysis, validation builds, and compatibility matrices to CI. Do not run Psalm locally; CI handles it. For other CI failures, follow the local-verification guidance above. Command reference:
 
 - **PHPCS**: `make lint` is the diff-based check CI uses; requires a clean working tree. Whole-codebase scans: `./vendor/bin/phpcs`.
-- **Psalm**: `make psalm` runs Psalm on the host against every PHP version in `.github/workflows/psalm.yml`'s matrix (parsed at runtime), including all branches of its conditional expression, since type narrowing differs between versions. Requires the matching `php@<version>` brew formulae installed.
 - **JS / CSS / types**: `npm run lint-js` (ESLint on `assets`), `npm run lint-css` (stylelint on SCSS), `npm run lint-types` (tsc). Each JS/CSS one has a `:fix` variant.
-- **Before pushing**: Review the diff, run focused tests for affected behavior, and complete relevant manual checks CI does not cover. Routine PHPCS and Psalm runs remain with CI; when fixing a specific CI failure, follow the local-verification guidance above.
+- **Before pushing**: Review the diff, run focused tests for affected behavior, and complete relevant manual checks CI does not cover. Leave routine checks to CI; when fixing a CI failure, follow the local-verification guidance above.
 
 ## Conventions
 - **Changelogs**: Every user-facing change MUST have a changelog entry. Run `make changelog` and commit the generated `changelog/` file with the PR. For purely internal changes (refactors, test-only), apply the `No Changelog` label instead.
