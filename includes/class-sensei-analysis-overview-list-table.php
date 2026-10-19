@@ -213,8 +213,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title'       => array( 'title', false ),
-					'completions' => array( 'count_of_completions', false ),
+					'title' => array( 'title', false ),
 				);
 				break;
 
@@ -866,10 +865,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		add_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
-		if ( isset( $args['orderby'] ) && ( 'count_of_completions' === $args['orderby'] ) ) {
-			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_non_user_query' ), 10, 2 );
-		}
-
 		/**
 		 * Filter the query arguments for courses in the Analysis Overview list table.
 		 *
@@ -882,7 +877,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		$courses_query = new WP_Query( $course_args );
 
-		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_non_user_query' ), 10, 2 );
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
 

@@ -291,7 +291,12 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, array_intersect_key( $actual, $expected ) );
 	}
 
-	public function testGetSortableColumns_WhenCalled_ReturnsMatchingArray() {
+	/**
+	 * Only course titles can be sorted.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_sortable_columns
+	 */
+	public function testGetSortableColumns_WhenCalled_ReturnsOnlyTitle() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
@@ -305,10 +310,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$actual = $list_table->get_sortable_columns();
 
 		/* Assert. */
-		$expected = array(
-			'title'       => array( 'title', false ),
-			'completions' => array( 'count_of_completions', false ),
-		);
+		$expected = array( 'title' => array( 'title', false ) );
 		self::assertSame( $expected, $actual );
 	}
 
