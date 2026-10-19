@@ -59,10 +59,12 @@ it describes the intended change rather than assuming any entry is sufficient.
 
 ## 3. Validate and commit
 
-Run the checks required by `AGENTS.md` for the changed code. Stage only relevant
-files or hunks, including the changelog, and review the staged diff. Commit them
-without including unrelated staged work; do not use `git add .` or `git add -A`.
-Skip creating a commit if the intended changes are already committed.
+Validate changes according to the testing policy in `AGENTS.md`.
+
+Stage only relevant files or hunks, including the changelog, and review the staged
+diff. Commit them without including unrelated staged work; do not use `git add .`
+or `git add -A`. Skip creating a commit if the intended changes are already
+committed.
 
 Read `git diff origin/trunk...HEAD` again. This final committed diff is the basis
 for the PR description. If it is empty, report that there is nothing to PR.
@@ -129,8 +131,9 @@ gh pr checks <PR_NUMBER> --watch --interval 30
 - Wait for checks to appear; an empty list is not a pass. Use bounded waits and
   share meaningful progress.
 - Inspect failed jobs and logs (`gh run view <RUN_ID> --log-failed`) before acting.
-  Autonomously fix failures caused by the PR, validate locally, commit relevant
-  fixes, and push to the same branch. Update the body or changelog if needed.
+  Autonomously fix failures caused by the PR and validate changes according to
+  the testing policy in `AGENTS.md`. Commit relevant fixes and push to the same
+  branch. Update the body or changelog if needed.
 - After **every push**, obtain the new head SHA and watch its checks. Earlier
   commits' passing runs do not count. For reruns, use the latest attempt of each
   applicable check rather than treating superseded failures as current failures.
