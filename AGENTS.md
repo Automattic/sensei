@@ -14,7 +14,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 
 ## Repository skills
 - Shared skills live in `.agents/skills/`; `.claude/skills/` contains symlinks to the same directories for Claude Code.
-- When creating, opening, or drafting a PR, read `.agents/skills/pull-request/SKILL.md`.
+- When creating, opening, drafting, or updating a PR, follow `.agents/skills/pull-request/SKILL.md` for the PR workflow, including CI monitoring and fixes.
 - For agent-driven UI verification, read `.agents/skills/e2e-testing/SKILL.md`.
 
 ## Repository layout
@@ -42,7 +42,10 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - `make build` runs `composer install --no-dev` inside the container, which strips all dev dependencies (`vendor/bin/phpunit`, `vendor/bin/psalm`, etc.). After a build, restore dev tooling before running tests or static analysis with `make install-php`.
 
 ## Testing
-- **Test-driven development**: Follow a TDD approach for non-trivial new behavior and bug fixes — write a failing test first, then implement until it passes. Skip tests for trivial changes such as copy/string tweaks, config, mechanical renames, one-line passthroughs, styling etc.. If unsure a change needs a test, ask rather than write one by default.
+- **Focused local tests**: Run the smallest relevant subset of tests for the affected behavior, including new or changed tests. Leave full suites and broader regression coverage to CI; do not run the full suite locally.
+- **Regression coverage**: Write regression tests for non-trivial new behavior and bug fixes, following `docs/conventions/unit-tests.md`, and run them locally. For bug fixes, confirm the regression test fails before the fix and passes afterward where practical. Skip tests for trivial changes such as copy/string tweaks, config, mechanical renames, one-line passthroughs, styling etc.. If unsure a change needs a test, ask rather than write one by default.
+- **Manual verification**: Perform relevant manual checks CI does not cover, such as browser workflows, visual inspection, or performance measurements. Report what was checked and what awaits CI; do not claim unexecuted tests passed.
+- **Verifying CI fixes**: When diagnosing or verifying a CI failure, run the smallest meaningful local check where practical. If verification requires a full suite, broad analysis, or complete build, leave it to CI and report that local verification was limited. If local reproduction is unavailable, explain the limitation and use CI to validate the fix.
 - **PHPUnit**: `make test-php` (runs inside wp-env). Targeted runs: `make test-php-filter FILTER="TestClass"` or `FILTER="TestClass::method"`.
 - **PHPUnit with HPPS enabled**: `npm run test-php:wp-env:hpps`.
 - **JS unit tests**: `npm run test-js`.
@@ -50,10 +53,12 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - **Ad-hoc UI verification**: After `make up`, the dev site is at `http://localhost:8888` with admin credentials `admin` / `password` (wp-env defaults). For agent-driven verification, use the `e2e-testing` skill (`.agents/skills/e2e-testing/SKILL.md`) — it scopes from `git diff`, lists Sensei's admin/frontend surfaces, and uses the available browser tools to walk through the relevant flow.
 
 ## Linting
-- **PHPCS**: Run `make lint` (the same diff-based check CI uses; requires a clean working tree). Whole-codebase scans: `./vendor/bin/phpcs`.
-- **Psalm**: Run `make psalm`. This runs Psalm on the host against every PHP version in `.github/workflows/psalm.yml`'s matrix (parsed at runtime), including all branches of its conditional expression, since type narrowing differs between versions. Requires the matching `php@<version>` brew formulae installed.
+Leave routine CI-covered linting, static analysis, validation builds, and compatibility matrices to CI. For CI failures, follow the local-verification guidance above; not every check supports a meaningful focused run. Command reference:
+
+- **PHPCS**: `make lint` is the diff-based check CI uses; requires a clean working tree. Whole-codebase scans: `./vendor/bin/phpcs`.
+- **Psalm**: `make psalm` runs Psalm on the host against every PHP version in `.github/workflows/psalm.yml`'s matrix (parsed at runtime), including all branches of its conditional expression, since type narrowing differs between versions. Requires the matching `php@<version>` brew formulae installed.
 - **JS / CSS / types**: `npm run lint-js` (ESLint on `assets`), `npm run lint-css` (stylelint on SCSS), `npm run lint-types` (tsc). Each JS/CSS one has a `:fix` variant.
-- **Before pushing**: The pre-commit hook only lints PHP files added after 2020-01-01. CI lints all changed lines. Always run PHPCS and the full Psalm matrix on modified files before pushing to avoid CI failures.
+- **Before pushing**: Review the diff, run focused tests for affected behavior, and complete relevant manual checks CI does not cover. Routine PHPCS and Psalm runs remain with CI; when fixing a specific CI failure, follow the local-verification guidance above.
 
 ## Conventions
 - **Changelogs**: Every user-facing change MUST have a changelog entry. Run `make changelog` and commit the generated `changelog/` file with the PR. For purely internal changes (refactors, test-only), apply the `No Changelog` label instead.
@@ -61,4 +66,4 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - **Version placeholders in docblocks**: Never hardcode a release number in `@since` tags for new code. Use `@since $$next-version$$` — release tooling replaces the placeholder on version bump.
 - **Coding standards**: Follow the WordPress coding standards for the language you're touching — [PHP](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/), [JavaScript](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/), [CSS](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/css/), [HTML](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/html/). See **Linting** above for the enforcing commands; HTML has no linter, so apply that standard by hand.
 - **Documenting hooks and functions**: Document new or updated actions/filters and public functions with docblocks (params, return, `@since` per the version-placeholder rule above). When a change adds or updates a hook, describe it and apply the `Hooks` label; when it deprecates code, name the replacement and apply the `Deprecation` label.
-- **Minimum supported versions**: The `sensei-lms.php` plugin header is the source of truth — `Requires PHP` is the minimum PHP and `Requires at least` is the minimum WordPress. Test changes against those minimums, not only the latest — use the `make up WP=… PHP=…` override (see Development environment) before pushing anything version-sensitive.
+- **Minimum supported versions**: The `sensei-lms.php` plugin header is the source of truth — `Requires PHP` is the minimum PHP and `Requires at least` is the minimum WordPress. Check CI coverage for version-sensitive changes and leave covered compatibility checks to CI. Use the `make up WP=… PHP=…` override (see Development environment) for relevant manual checks on supported versions that CI does not cover.
