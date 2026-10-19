@@ -52,6 +52,11 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
+	/**
+	 * CSV exports use the plain course title.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
+	 */
 	public function testGenerateReport_CourseGiven_ReturnsPlainCourseTitle(): void {
 		/* Arrange. */
 		$item     = (object) array(
@@ -85,6 +90,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	/**
 	 * Exclude guest and preview progress while retaining registered progress.
 	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
 	 * @dataProvider temporary_user_logins
 	 */
 	public function testGenerateReport_TemporaryProgressGiven_UsesRegisteredProgress( string $temporary_user_login ): void {
@@ -128,45 +134,49 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $this->get_progress_fields_from_rows( array_slice( $actual, 1 ) ) );
 	}
 
+	/**
+	 * CSV rows use original course progress for translated courses and exclude temporary users.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
+	 */
 	public function testGenerateReport_TranslatedCourseGiven_UsesOriginalRegisteredCompletions(): void {
+		/* Arrange. */
 		list( $table ) = $this->create_translated_course_table();
 
-		$report = $table->generate_report();
+		/* Act. */
+		$actual = $table->generate_report();
 
-		// One registered completion / two registered enrollments = 50%; temporary completions would yield 150%.
+		/* Assert. */
 		$expected = array(
 			'completions'     => '1',
 			'completion_rate' => '50%',
 		);
-		self::assertSame( $expected, array_intersect_key( $report[1], $expected ) );
+		self::assertSame( $expected, array_intersect_key( $actual[1], $expected ) );
 	}
 
-	public function testGetRowData_TranslatedCourseGiven_UsesOriginalRegisteredCompletions(): void {
-		list( $table, $item ) = $this->create_translated_course_table();
-		$table->prepare_items();
-		$method = new ReflectionMethod( $table, 'get_row_data' );
-		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
-
-		$actual = $method->invoke( $table, $item );
-
-		// One registered completion / two registered enrollments = 50%; temporary completions would yield 150%.
-		$expected = array(
-			'completions'     => '1',
-			'completion_rate' => '50%',
-		);
-		self::assertSame( $expected, array_intersect_key( $actual, $expected ) );
-	}
-
+	/**
+	 * Column headers use original course progress for translated courses and exclude temporary users.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
 	public function testGetColumns_TranslatedCourseGiven_UsesOriginalRegisteredCompletions(): void {
+		/* Arrange. */
 		list( $table ) = $this->create_translated_course_table();
 
+		/* Act. */
 		$actual = $table->get_columns();
 
-		self::assertSame( 'Enrolled (2)', $actual['enrolled'] );
-		self::assertSame( 'Completions (1)', $actual['completions'] );
-		self::assertSame( 'Completion Rate (50%)', $actual['completion_rate'] );
+		/* Assert. */
+		self::assertSame( 'Enrolled (2)', $actual['enrolled'], 'The header should count registered enrollments.' );
+		self::assertSame( 'Completions (1)', $actual['completions'], 'The header should count the original course completion.' );
+		self::assertSame( 'Completion Rate (50%)', $actual['completion_rate'], 'The header rate should use registered completions and enrollments.' );
 	}
 
+	/**
+	 * Completion days in the header include only registered students and round up.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
 	public function testGetColumns_TemporaryCompletionsGiven_RoundsRegisteredCompletionDaysUp(): void {
 		/* Arrange. */
 		// First course: four registered days, with longer guest and preview completions excluded.
@@ -201,7 +211,12 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 'Days to Completion (3)', $actual['days_to_completion'] );
 	}
 
-	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
+	/**
+	 * Column headers show zero or N/A when no course completions exist.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
+	public function testGetColumns_NoCompletionsFound_ReturnsHeadersWithZeroCompletions() {
 		/* Arrange. */
 		$course_id     = $this->factory->course->create();
 		$course        = $this->createMock( Sensei_Course::class );
@@ -238,6 +253,11 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
+	/**
+	 * Completion headers exclude guest and preview progress.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
 	public function testGetColumns_RegisteredAndTemporaryProgressCreated_ExcludesTemporaryCompletions() {
 		/* Arrange. */
 		$completed_user_id   = $this->factory->user->create();
@@ -296,7 +316,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_sortable_columns
 	 */
-	public function testGetSortableColumns_WhenCalled_ReturnsOnlyTitle() {
+	public function testGetSortableColumns_DefaultColumnsRequested_ReturnsOnlyTitle() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
@@ -314,6 +334,11 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
+	/**
+	 * Course rows format the supplied aggregate values.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_row_data
+	 */
 	public function testGetRowData_CourseAndAggregateValuesGiven_ReturnsFormattedRow(): void {
 		/* Arrange. */
 		$item   = (object) array(
@@ -379,7 +404,35 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
-	public function testSearchButton_WhenCalled_ReturnsMatchingString() {
+	/**
+	 * Report rows use original course progress for translated courses and exclude temporary users.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_row_data
+	 */
+	public function testGetRowData_TranslatedCourseGiven_UsesOriginalRegisteredCompletions(): void {
+		/* Arrange. */
+		list( $table, $item ) = $this->create_translated_course_table();
+		$method               = new ReflectionMethod( $table, 'get_row_data' );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
+		$table->prepare_items();
+
+		/* Act. */
+		$actual = $method->invoke( $table, $item );
+
+		/* Assert. */
+		$expected = array(
+			'completions'     => '1',
+			'completion_rate' => '50%',
+		);
+		self::assertSame( $expected, array_intersect_key( $actual, $expected ) );
+	}
+
+	/**
+	 * Course reports use a course-specific search label.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::search_button
+	 */
+	public function testSearchButton_CourseTableCreated_ReturnsCourseSearchLabel() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
@@ -404,7 +457,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Create a report containing one translated course with shared original progress.
+	 * Create a translated course with one completed and one active registered student, plus guest and preview completions.
 	 *
 	 * @return array Report table and translated course post.
 	 */
