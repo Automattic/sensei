@@ -112,7 +112,10 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set a fixed activity date in the selected backend.
 				$wpdb->update(
 					$wpdb->comments,
-					array( 'comment_date' => $date, 'comment_date_gmt' => $date ),
+					array(
+						'comment_date'     => $date,
+						'comment_date_gmt' => $date,
+					),
 					array(
 						'comment_post_ID' => $lesson_id,
 						'user_id'         => $user_id,
@@ -132,7 +135,12 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 			)
 		);
 
-		$expected = array( array( 'id' => $course_ids[0], 'last_activity_date' => '2022-01-02 00:00:01' ) );
+		$expected = array(
+			array(
+				'id'                 => $course_ids[0],
+				'last_activity_date' => '2022-01-02 00:00:01',
+			),
+		);
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
 	}
 
@@ -213,13 +221,13 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	}
 
 	private function exportCourses( array $courses ): array {
-		$ret = [];
+		$ret = array();
 
 		foreach ( $courses as $course ) {
-			$ret[] = [
+			$ret[] = array(
 				'id'                 => $course->ID,
 				'last_activity_date' => $course->last_activity_date,
-			];
+			);
 		}
 
 		return $ret;
