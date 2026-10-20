@@ -91,7 +91,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	}
 
 	/**
-	 * Last Activity selects courses using the active progress backend.
+	 * Last Activity filtering retains completion days from the active progress backend.
 	 *
 	 * @covers Sensei_Reports_Overview_Data_Provider_Courses::get_items
 	 */
@@ -136,6 +136,20 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 				);
 			}
 		}
+		$course_progress = Sensei()->course_progress_repository->create( $course_ids[0], $user_id );
+		$course_progress->start( new DateTimeImmutable( '2022-01-01 00:00:01', new DateTimeZone( 'UTC' ) ) );
+		$course_progress->complete( new DateTimeImmutable( '2022-01-02 00:00:01', new DateTimeZone( 'UTC' ) ) );
+		Sensei()->course_progress_repository->save( $course_progress );
+		if ( ! self::is_hpps_tables_mode() ) {
+			// Comments storage stamps saves with the current time; restore the fixture completion date.
+			wp_update_comment(
+				array(
+					'comment_ID'       => $course_progress->get_id(),
+					'comment_date'     => '2022-01-02 00:00:01',
+					'comment_date_gmt' => '2022-01-02 00:00:01',
+				)
+			);
+		}
 		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
 
 		$courses = $provider->get_items(
@@ -151,7 +165,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 			array(
 				'id'                 => $course_ids[0],
 				'last_activity_date' => '2022-01-02 00:00:01',
-				'days_to_completion' => null,
+				'days_to_completion' => '2',
 			),
 		);
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
