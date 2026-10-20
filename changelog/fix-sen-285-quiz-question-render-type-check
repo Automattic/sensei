@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Only render question posts when loading the questions a student was asked in a quiz.

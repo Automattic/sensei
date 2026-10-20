@@ -2057,6 +2057,43 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$this->assertSame( [ $question_1, $question_2 ], $question_ids );
 	}
 
+	public function testLessonQuizQuestions_NonQuestionPostStoredInSubmission_ReturnsOnlyQuestions(): void {
+		/* Arrange. */
+		$user_id = $this->factory->user->create();
+		wp_set_current_user( $user_id );
+
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'meta_input'  => array(
+					'_quiz_lesson' => $lesson_id,
+				),
+			)
+		);
+
+		$question_id     = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$private_post_id = $this->factory->post->create( array( 'post_status' => 'private' ) );
+
+		// A tampered quiz save stores the private post as one of the asked questions.
+		Sensei_Quiz::save_user_answers(
+			array(
+				$question_id     => 'answer',
+				$private_post_id => '',
+			),
+			array(),
+			$lesson_id,
+			$user_id
+		);
+
+		/* Act. */
+		$questions    = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+		$question_ids = wp_list_pluck( $questions, 'ID' );
+
+		/* Assert. */
+		$this->assertSame( array( $question_id ), $question_ids );
+	}
+
 	public function testSaveAllLessonsEditFields_WhenCalled_UpdatesPostMeta(): void {
 		/* Arrange */
 		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );

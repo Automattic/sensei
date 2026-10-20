@@ -3876,7 +3876,7 @@ class Sensei_Lesson {
 				$questions = array();
 				foreach ( $selected_questions as $question_id ) {
 					$question = get_post( $question_id );
-					if ( ! isset( $question ) || ! isset( $question->ID ) ) {
+					if ( ! isset( $question ) || ! isset( $question->ID ) || 'question' !== $question->post_type ) {
 						continue;
 					}
 					$questions[] = $question;
