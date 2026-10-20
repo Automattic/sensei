@@ -348,28 +348,175 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 0.0, $actual, 'Average grade should be zero when there are no graded quizzes.' );
 	}
 
-	public function testGetGradeSumForLessons_LessonIdsGiven_ReturnsServiceResult() {
-		/* Arrange. */
-		$lesson_ids                   = array( 11, 22 );
-		$grading_stats_service        = $this->createMock( Grading_Stats_Service_Interface::class );
-		$progress_aggregation_service = $this->createMock( Progress_Aggregation_Service_Interface::class );
-		$grading_stats_service
-			->expects( self::once() )
-			->method( 'get_grade_totals' )
-			->with( array( 'post__in' => $lesson_ids ) )
-			->willReturn(
+	/**
+	 * The overall grade averages eligible course averages, without weighting by attempt counts or rounding first.
+	 *
+	 * @covers Sensei_Reports_Overview_Service_Courses::get_courses_average_grade
+	 * @dataProvider course_grade_totals
+	 */
+	public function testGetCoursesAverageGrade_PerCourseTotalsGiven_AveragesUnroundedEligibleCourses( array $totals, float $expected, array $translations = array() ): void {
+		$this->add_progress_id_filter( $translations );
+		$service = $this->getMockBuilder( Sensei_Reports_Overview_Service_Courses::class )
+			->onlyMethods( array( 'get_grade_totals_by_course' ) )
+			->getMock();
+		$service->method( 'get_grade_totals_by_course' )->willReturnCallback(
+			static function ( $course_ids ) use ( $totals ) {
+				return array_intersect_key( $totals, array_flip( $course_ids ) );
+			}
+		);
+
+		$actual = $service->get_courses_average_grade( array( 11, 22, 33 ) );
+
+		self::assertEqualsWithDelta( $expected, $actual, 0.0000000001 );
+	}
+
+	/**
+	 * Course averages preserve requested keys, zero grades, and precision while omitting missing grades.
+	 *
+	 * @covers Sensei_Reports_Overview_Service_Courses::get_average_grades_by_course
+	 */
+	public function testGetAverageGradesByCourse_GradeTotalsGiven_ReturnsUnroundedEligibleCourseGrades(): void {
+		$service = $this->getMockBuilder( Sensei_Reports_Overview_Service_Courses::class )
+			->onlyMethods( array( 'get_grade_totals_by_course' ) )
+			->getMock();
+		$service->method( 'get_grade_totals_by_course' )->willReturn(
+			array(
+				17 => array(
+					'count' => 3,
+					'sum'   => 100.0,
+				),
+				21 => array(
+					'count' => 1,
+					'sum'   => 0.0,
+				),
+				23 => array(
+					'count' => 0,
+					'sum'   => 0.0,
+				),
+			)
+		);
+
+		$actual = $service->get_average_grades_by_course( array( 17, 21, 23 ) );
+
+		self::assertSame(
+			array(
+				17 => 33.333333333333336,
+				21 => 0.0,
+			),
+			$actual
+		);
+	}
+
+	/**
+	 * One lesson with quiz questions makes the course eligible, and all its lesson grades contribute.
+	 *
+	 * @covers Sensei_Reports_Overview_Service_Courses::get_grade_totals_by_course
+	 * @dataProvider course_quiz_question_meta
+	 */
+	public function testGetGradeTotalsByCourse_QuizQuestionMetaGiven_IncludesAllLessonsOnlyWhenAnyHasQuestions( array $quiz_question_meta, array $expected ): void {
+		$course_id = $this->factory->course->create();
+		$grades    = array();
+		foreach ( $quiz_question_meta as $has_questions ) {
+			$lesson_id            = $this->factory->lesson->create(
 				array(
-					'count' => 2,
-					'sum'   => 75.0,
+					'meta_input' => array(
+						'_lesson_course'      => $course_id,
+						'_quiz_has_questions' => $has_questions,
+					),
 				)
 			);
-		$instance = Sensei_Reports_Overview_Service_Courses::create_with_dependencies( $grading_stats_service, $progress_aggregation_service );
+			$grades[ $lesson_id ] = array(
+				'count' => 1,
+				'sum'   => 40.0,
+			);
+		}
+		$grading = $this->createMock( Grading_Stats_Service_Interface::class );
+		$grading->method( 'get_grade_totals_by_lesson' )->willReturn( $grades );
+		$service = Sensei_Reports_Overview_Service_Courses::create_with_dependencies( $grading, $this->createMock( Progress_Aggregation_Service_Interface::class ) );
 
-		/* Act. */
-		$actual = $instance->get_grade_sum_for_lessons( $lesson_ids );
+		$actual = $service->get_grade_totals_by_course( array( $course_id ) );
 
-		/* Assert. */
-		self::assertSame( 75, $actual );
+		self::assertSame( array( $course_id => $expected ), $actual );
+	}
+
+	/**
+	 * Translated courses and lessons use original progress and retain requested course keys.
+	 *
+	 * @covers Sensei_Reports_Overview_Service_Courses::get_grade_totals_by_course
+	 */
+	public function testGetGradeTotalsByCourse_TranslatedIdsGiven_ReturnsRequestedCourseTotals(): void {
+		$created           = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 1,
+			)
+		);
+		$original          = $created['course_id'];
+		$translation       = $this->factory->course->create();
+		$empty             = $this->factory->course->create();
+		$translated_lesson = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $original ) ) );
+		wp_update_post(
+			array(
+				'ID'          => $created['lesson_ids'][0],
+				'post_status' => 'draft',
+			)
+		);
+		add_filter(
+			'sensei_lesson_progress_get_lesson_id',
+			static function ( $id ) use ( $translated_lesson, $created ) {
+				return $translated_lesson === $id ? $created['lesson_ids'][0] : $id;
+			}
+		);
+		add_filter(
+			'sensei_course_progress_get_course_id',
+			static function ( $id ) use ( $original, $translation ) {
+				return $translation === $id ? $original : $id;
+			}
+		);
+		$grading = $this->createMock( Grading_Stats_Service_Interface::class );
+		$grading->expects( self::once() )
+			->method( 'get_grade_totals_by_lesson' )
+			->with(
+				self::callback(
+					static function ( $ids ) use ( $created ) {
+						sort( $ids );
+						return $created['lesson_ids'] === $ids;
+					}
+				),
+				array(
+					'exclude_user_login_prefixes' => \Sensei\Internal\Services\Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES,
+				)
+			)
+			->willReturn(
+				array(
+					$created['lesson_ids'][0] => array(
+						'count' => 1,
+						'sum'   => 0.0,
+					),
+					$created['lesson_ids'][1] => array(
+						'count' => 1,
+						'sum'   => 80.0,
+					),
+				)
+			);
+		$service = Sensei_Reports_Overview_Service_Courses::create_with_dependencies( $grading, $this->createMock( Progress_Aggregation_Service_Interface::class ) );
+
+		$actual = $service->get_grade_totals_by_course( array( $translation, $empty ) );
+
+		self::assertSame(
+			array(
+				$translation => array(
+					'count' => 2,
+					'sum'   => 80.0,
+				),
+				$empty       => array(
+					'count' => 0,
+					'sum'   => 0.0,
+				),
+			),
+			$actual,
+			'Translated IDs should resolve to both stored lesson totals and retain the requested course key.'
+		);
 	}
 
 	public function testGetAverageDaysToCompletion_EmptyCourseIdsGiven_ReturnsZero() {
@@ -496,6 +643,107 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 1, $actual );
+	}
+
+	public static function course_quiz_question_meta(): array {
+		return array(
+			'first lesson has questions' => array(
+				array( true, false ),
+				array(
+					'count' => 2,
+					'sum'   => 80.0,
+				),
+			),
+			'last lesson has questions'  => array(
+				array( false, true ),
+				array(
+					'count' => 2,
+					'sum'   => 80.0,
+				),
+			),
+			'neither has questions'      => array(
+				array( false, false ),
+				array(
+					'count' => 0,
+					'sum'   => 0.0,
+				),
+			),
+		);
+	}
+
+	public static function course_grade_totals(): array {
+		return array(
+			'equal course weights and missing grades' => array(
+				array(
+					11 => array(
+						'count' => 2,
+						'sum'   => 80.0,
+					),
+					22 => array(
+						'count' => 1,
+						'sum'   => 90.0,
+					),
+					33 => array(
+						'count' => 0,
+						'sum'   => 0.0,
+					),
+				),
+				65.0,
+			),
+			'zero grade included'                     => array(
+				array(
+					11 => array(
+						'count' => 1,
+						'sum'   => 0.0,
+					),
+					22 => array(
+						'count' => 1,
+						'sum'   => 80.0,
+					),
+				),
+				40.0,
+			),
+			'no eligible grades'                      => array(
+				array(
+					11 => array(
+						'count' => 0,
+						'sum'   => 0.0,
+					),
+				),
+				0.0,
+			),
+			'shared translated progress counted once' => array(
+				array(
+					11 => array(
+						'count' => 1,
+						'sum'   => 40.0,
+					),
+					22 => array(
+						'count' => 1,
+						'sum'   => 90.0,
+					),
+					33 => array(
+						'count' => 1,
+						'sum'   => 40.0,
+					),
+				),
+				65.0,
+				array( 33 => 11 ),
+			),
+			'per-course precision retained'           => array(
+				array(
+					11 => array(
+						'count' => 3,
+						'sum'   => 100.0,
+					),
+					22 => array(
+						'count' => 1,
+						'sum'   => 66.67,
+					),
+				),
+				50.001666666666665,
+			),
+		);
 	}
 
 	/**

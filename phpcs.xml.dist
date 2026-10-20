@@ -54,6 +54,7 @@
 	<rule ref="WordPress.Files.FileName">
 		<properties>
 			<property name="custom_test_classes" type="array">
+				<element value="Grading_Stats_Service_Test" />
 				<element value="Progress_Aggregation_Service_Test" />
 				<element value="Reports_Listing_Service_Test" />
 			</property>
