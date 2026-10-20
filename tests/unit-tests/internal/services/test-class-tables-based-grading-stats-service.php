@@ -9,12 +9,14 @@ namespace SenseiTest\Internal\Services;
 
 use Sensei\Internal\Services\Tables_Based_Grading_Stats_Service;
 
+require_once __DIR__ . '/test-class-grading-stats-service.php';
+
 /**
  * Class Tables_Based_Grading_Stats_Service_Test.
  *
  * @covers \Sensei\Internal\Services\Tables_Based_Grading_Stats_Service
  */
-class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
+class Tables_Based_Grading_Stats_Service_Test extends \Grading_Stats_Service_Test {
 
 	/**
 	 * Service instance.
@@ -666,5 +668,24 @@ class Tables_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		$this->insert_progress( $lesson_id, $user_id, 'lesson', $status );
 		$this->insert_progress( $quiz_id, $user_id, 'quiz', $status );
 		$this->insert_quiz_submission( $quiz_id, $user_id, $grade );
+	}
+	protected function get_service(): \Sensei\Internal\Services\Grading_Stats_Service_Interface {
+		global $wpdb;
+
+		return new Tables_Based_Grading_Stats_Service( $wpdb );
+	}
+
+	protected function create_grade( int $lesson, int $user, string $status, float $grade, bool $submitted = true ): void {
+		$quiz = (int) get_post_meta( $lesson, '_lesson_quiz', true );
+		if ( ! $quiz ) {
+			$quiz = $this->sensei_factory->quiz->create();
+		}
+		if ( $submitted ) {
+			$this->create_graded_lesson( $lesson, $quiz, $user, 0, $status, $grade );
+		} else {
+			update_post_meta( $lesson, '_lesson_quiz', $quiz );
+			$this->insert_progress( $lesson, $user, 'lesson', $status );
+			$this->insert_progress( $quiz, $user, 'quiz', $status );
+		}
 	}
 }

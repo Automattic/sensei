@@ -177,10 +177,115 @@ class Sensei_Reports_Overview_Service_Courses {
 			return 0;
 		}
 
-		return $this->get_grading_stats_service()->get_courses_average_grade(
+		$requested_courses = array();
+		foreach ( Utils::get_progress_post_id_map( $course_ids, 'course' ) as $requested_id => $stored_id ) {
+			// Count shared original progress once, retaining the first requested course ID.
+			$requested_courses[ $stored_id ] = $requested_courses[ $stored_id ] ?? $requested_id;
+		}
+		$course_averages = $this->get_average_grades_by_course( array_values( $requested_courses ) );
+
+		return $course_averages ? array_sum( $course_averages ) / count( $course_averages ) : 0.0;
+	}
+
+	/**
+	 * Get unrounded course grade averages keyed by requested course ID.
+	 *
+	 * Courses without eligible grades are omitted; a zero grade is included.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Requested course IDs.
+	 * @return array<int, float> Average grades before display rounding.
+	 */
+	public function get_average_grades_by_course( array $course_ids ): array {
+		$averages = array();
+		foreach ( $this->get_grade_totals_by_course( $course_ids ) as $course_id => $totals ) {
+			if ( $totals['count'] > 0 && $totals['sum'] >= 0 ) {
+				$averages[ $course_id ] = $totals['sum'] / $totals['count'];
+			}
+		}
+
+		return $averages;
+	}
+
+	/**
+	 * Get eligible grade counts and sums keyed by requested course ID.
+	 *
+	 * Includes published and private lessons.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int[] $course_ids Requested course IDs.
+	 * @return array<int, array{count:int, sum:float}> Grade totals for each requested course.
+	 */
+	public function get_grade_totals_by_course( array $course_ids ): array {
+		if ( empty( $course_ids ) ) {
+			return array();
+		}
+
+		if ( has_filter( 'sensei_analysis_course_percentage' ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_hook handles its own output.
+			_deprecated_hook( 'sensei_analysis_course_percentage', '$$next-version$$', '', __( 'This filter is no longer used. Course grades now use the grading statistics service.', 'sensei-lms' ) );
+		}
+
+		$course_ids        = array_map( 'intval', $course_ids );
+		$totals            = array_fill_keys(
 			$course_ids,
+			array(
+				'count' => 0,
+				'sum'   => 0.0,
+			)
+		);
+		$lessons_by_course = $this->get_lessons_in_courses( $course_ids );
+		$lesson_ids        = array_unique( array_merge( ...array_values( $lessons_by_course ) ) );
+		$lesson_id_map     = Utils::get_progress_post_id_map( $lesson_ids, 'lesson' );
+
+		// Resolve translated lessons to the original IDs used to store grades.
+		foreach ( $lessons_by_course as $course_id => $lessons ) {
+			$stored_lessons = array();
+			foreach ( $lessons as $lesson_id ) {
+				$stored_lessons[] = $lesson_id_map[ $lesson_id ];
+			}
+			$lessons_by_course[ $course_id ] = array_unique( $stored_lessons );
+		}
+
+		$quiz_question_meta = $this->get_quiz_question_meta_by_lesson( array_unique( array_values( $lesson_id_map ) ) );
+
+		// Courses without quiz questions display N/A, even when historical grades remain.
+		foreach ( $lessons_by_course as $course_id => $lessons ) {
+			$has_quiz_questions = false;
+			foreach ( $lessons as $lesson_id ) {
+				if ( ! empty( $quiz_question_meta[ $lesson_id ] ) ) {
+					$has_quiz_questions = true;
+					break;
+				}
+			}
+
+			if ( ! $has_quiz_questions ) {
+				unset( $lessons_by_course[ $course_id ] );
+			}
+		}
+
+		// Free temporary arrays before loading grade totals for all lessons.
+		unset( $lesson_ids, $lesson_id_map, $quiz_question_meta );
+
+		if ( empty( $lessons_by_course ) ) {
+			return $totals;
+		}
+
+		$lesson_totals = $this->get_grading_stats_service()->get_grade_totals_by_lesson(
+			array_unique( array_merge( ...array_values( $lessons_by_course ) ) ),
 			array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES )
 		);
+
+		foreach ( $lessons_by_course as $course_id => $lessons ) {
+			foreach ( $lessons as $lesson_id ) {
+				$totals[ $course_id ]['count'] += $lesson_totals[ $lesson_id ]['count'] ?? 0;
+				$totals[ $course_id ]['sum']   += $lesson_totals[ $lesson_id ]['sum'] ?? 0.0;
+			}
+		}
+
+		return $totals;
 	}
 
 	/**
@@ -318,6 +423,34 @@ class Sensei_Reports_Overview_Service_Courses {
 		}
 
 		return Utils::map_results_to_requested_post_ids( $lessons_by_course, $course_id_map );
+	}
+
+	/**
+	 * Read whether each lesson has quiz questions, without loading unrelated metadata.
+	 *
+	 * @param int[] $lesson_ids Original lesson IDs.
+	 * @return array<int, bool> Metadata values cast to booleans, keyed by lesson ID; missing metadata is omitted.
+	 */
+	private function get_quiz_question_meta_by_lesson( array $lesson_ids ): array {
+		global $wpdb;
+
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
+		$ids = implode( ',', array_map( 'intval', $lesson_ids ) );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- IDs are integers; quiz metadata is read once for this selection.
+		$metadata = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ($ids) AND meta_key = '_quiz_has_questions' ORDER BY meta_id" );
+
+		$quiz_question_meta = array();
+		foreach ( $metadata as $meta ) {
+			if ( ! array_key_exists( (int) $meta->post_id, $quiz_question_meta ) ) {
+				$quiz_question_meta[ (int) $meta->post_id ] = (bool) maybe_unserialize( $meta->meta_value );
+			}
+		}
+
+		return $quiz_question_meta;
 	}
 
 	/**

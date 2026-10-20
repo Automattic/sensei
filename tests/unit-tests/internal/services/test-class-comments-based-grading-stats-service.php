@@ -9,12 +9,14 @@ namespace SenseiTest\Internal\Services;
 
 use Sensei\Internal\Services\Comments_Based_Grading_Stats_Service;
 
+require_once __DIR__ . '/test-class-grading-stats-service.php';
+
 /**
  * Class Comments_Based_Grading_Stats_Service_Test.
  *
  * @covers \Sensei\Internal\Services\Comments_Based_Grading_Stats_Service
  */
-class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
+class Comments_Based_Grading_Stats_Service_Test extends \Grading_Stats_Service_Test {
 
 	/**
 	 * Service instance.
@@ -610,5 +612,14 @@ class Comments_Based_Grading_Stats_Service_Test extends \WP_UnitTestCase {
 		if ( $has_quiz_answers ) {
 			update_comment_meta( $comment_id, 'quiz_answers', 'a:1:{i:0;s:1:"1";}' );
 		}
+	}
+	protected function get_service(): \Sensei\Internal\Services\Grading_Stats_Service_Interface {
+		global $wpdb;
+
+		return new Comments_Based_Grading_Stats_Service( $wpdb );
+	}
+
+	protected function create_grade( int $lesson, int $user, string $status, float $grade, bool $submitted = true ): void {
+		$this->create_lesson_status_with_grade( $lesson, $user, $status, $grade, $submitted );
 	}
 }

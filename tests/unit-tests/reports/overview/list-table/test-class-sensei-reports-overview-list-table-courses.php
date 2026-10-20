@@ -88,6 +88,47 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Header, row, and CSV grades use the same registered attempts in either language.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_row_data
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 * @dataProvider grade_report_courses
+	 */
+	public function testGenerateReport_RegisteredAndTemporaryGradesGiven_MatchesDisplayedGrade( bool $translated ): void {
+		list( $table, $item ) = $this->create_graded_course_table( $translated );
+		$method               = new ReflectionMethod( $table, 'get_row_data' );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
+		$table->prepare_items();
+
+		$columns = $table->get_columns();
+		$row     = $method->invoke( $table, $item );
+		$csv     = $table->generate_report();
+
+		self::assertSame( 'Average Grade (40%)', $columns['average_percent'], 'The header must use only registered attempts.' );
+		self::assertSame( '40%', $row['average_percent'], 'The displayed grade must use only registered attempts.' );
+		self::assertSame( '40%', $csv[1]['average_percent'], 'CSV must use the same grade inputs as the row.' );
+	}
+
+	/**
+	 * Courses without quiz questions omit historical grades consistently from rows and the header.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
+	public function testGenerateReport_QuizQuestionsRemovedGiven_MatchesHeaderEligibility(): void {
+		list( $table, $item ) = $this->create_graded_course_table( false );
+		$lessons              = Sensei()->course->course_lessons( $item->ID, 'any', 'ids' );
+		update_post_meta( $lessons[0], '_quiz_has_questions', false );
+
+		$columns = $table->get_columns();
+		$csv     = $table->generate_report();
+
+		self::assertSame( 'Average Grade (0%)', $columns['average_percent'], 'The header should omit courses whose rows have no eligible quiz.' );
+		self::assertSame( 'N/A', $csv[1]['average_percent'], 'The course row should preserve its no-quiz result despite historical grades.' );
+	}
+
+	/**
 	 * Exclude guest and preview progress while retaining registered progress.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
@@ -170,6 +211,42 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 'Enrolled (2)', $actual['enrolled'], 'The header should count registered enrollments.' );
 		self::assertSame( 'Completions (1)', $actual['completions'], 'The header should count the original course completion.' );
 		self::assertSame( 'Completion Rate (50%)', $actual['completion_rate'], 'The header rate should use registered completions and enrollments.' );
+	}
+
+	/**
+	 * The grade header rounds up only after averaging the unrounded course grades.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
+	public function testGetColumns_FractionalCourseGradesGiven_RoundsOverallGradeUp(): void {
+		$provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$provider->method( 'get_items' )->willReturn( array( 11, 22 ) );
+		$service = $this->getMockBuilder( Sensei_Reports_Overview_Service_Courses::class )
+			->onlyMethods( array( 'get_grade_totals_by_course', 'get_total_enrollments', 'get_total_average_progress', 'get_average_days_to_completion' ) )
+			->getMock();
+		$service->method( 'get_grade_totals_by_course' )->willReturn(
+			array(
+				11 => array(
+					'count' => 3,
+					'sum'   => 100.0,
+				),
+				22 => array(
+					'count' => 1,
+					'sum'   => 66.67,
+				),
+			)
+		);
+		$table = new Sensei_Reports_Overview_List_Table_Courses(
+			$this->createMock( Sensei_Grading::class ),
+			$this->createMock( Sensei_Course::class ),
+			$provider,
+			$service,
+			$this->createMock( Progress_Aggregation_Service_Interface::class )
+		);
+
+		$actual = $table->get_columns();
+
+		self::assertSame( 'Average Grade (51%)', $actual['average_percent'] );
 	}
 
 	/**
@@ -338,33 +415,25 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	 * Course rows format the supplied aggregate values.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_row_data
+	 * @dataProvider row_average_grades
 	 */
-	public function testGetRowData_CourseAndAggregateValuesGiven_ReturnsFormattedRow(): void {
+	public function testGetRowData_CourseAndAggregateValuesGiven_ReturnsFormattedRow( array $course_grades, string $average_grade ): void {
 		/* Arrange. */
-		$item   = (object) array(
+		$item     = (object) array(
 			'ID'                 => 123,
 			'post_title'         => 'Course',
 			'last_activity_date' => '2022-01-01 00:00:00',
 		);
-		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'course_lessons' )->willReturn( array( 456 ) );
-		$course->method( 'course_quizzes' )->willReturn( true );
+		$course   = $this->createMock( Sensei_Course::class );
 		$provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
 		$provider->method( 'get_items' )->willReturn( array( $item ) );
 		$provider->method( 'get_last_total_items' )->willReturn( 1 );
 		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
-		$service->method( 'get_grade_sum_for_lessons' )->willReturn( 50 );
+		$service->method( 'get_average_grades_by_course' )->willReturn( $course_grades );
 		$service->method( 'get_total_enrollments' )->willReturn( 2 );
 		$service->method( 'get_completion_counts_by_course' )->willReturn( array( 123 => 1 ) );
 		$service->method( 'get_average_progress_by_course' )->willReturn( array( 123 => 50.0 ) );
 		$service->method( 'get_average_days_to_completion_by_course' )->willReturn( array( 123 => 4.0 ) );
-		// Supply one graded lesson without storage fixtures; course completions come from the service.
-		add_filter(
-			'sensei_check_for_activity',
-			static function () {
-				return 1;
-			}
-		);
 		$table  = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
 			$course,
@@ -397,8 +466,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			// One supplied completion / two enrollments = 50%.
 			'completion_rate'    => '50%',
 			'average_progress'   => '50%',
-			// Supplied grade total 50 / one graded lesson = 50%.
-			'average_percent'    => '50%',
+			'average_percent'    => $average_grade,
 			'days_to_completion' => '4',
 		);
 		self::assertSame( $expected, $actual );
@@ -454,6 +522,88 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'guest'   => array( 'sensei_guest_student' ),
 			'preview' => array( 'sensei_preview_student' ),
 		);
+	}
+
+	public static function row_average_grades(): array {
+		return array(
+			'graded'     => array( array( 123 => 50.0 ), '50%' ),
+			'fractional' => array( array( 123 => 20.125 ), '20.13%' ),
+			'zero grade' => array( array( 123 => 0.0 ), '0%' ),
+			'no grades'  => array( array(), 'N/A' ),
+		);
+	}
+
+	public static function grade_report_courses(): array {
+		return array(
+			'original'   => array( false ),
+			'translated' => array( true ),
+		);
+	}
+
+	/**
+	 * Create one graded quiz and a report selecting its original or translated course.
+	 *
+	 * @param bool $translated Whether to select the translated course.
+	 * @return array Table and requested course post.
+	 */
+	private function create_graded_course_table( bool $translated ): array {
+		$created  = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 1,
+			)
+		);
+		$course   = $created['course_id'];
+		$lesson   = $created['lesson_ids'][0];
+		$quiz     = $created['quiz_ids'][0];
+		$question = Sensei()->quiz->get_questions( $quiz )[0]->ID;
+		foreach ( array(
+			'registered'             => 40,
+			'sensei_guest_student'   => 80,
+			'sensei_preview_student' => 100,
+		) as $login => $grade ) {
+			$user = $this->factory->user->create( array( 'user_login' => $login ) );
+			Sensei()->lesson_progress_repository->create( $lesson, $user );
+			$progress = Sensei()->quiz_progress_repository->create( $quiz, $user );
+			$progress->grade();
+			Sensei()->quiz_progress_repository->save( $progress );
+			$submission = Sensei()->quiz_submission_repository->create( $quiz, $user, $grade );
+			Sensei()->quiz_answer_repository->create( $submission, $question, 'Answer' );
+		}
+		$requested = $translated ? $this->factory->course->create() : $course;
+		add_filter(
+			'sensei_course_progress_get_course_id',
+			static function ( $id ) use ( $course, $requested ) {
+				return $requested === $id ? $course : $id;
+			}
+		);
+		// Model the current-language query restriction that hides the original lessons.
+		add_filter(
+			'posts_where',
+			static function ( $where, $query ) use ( $translated ) {
+				return $translated && 'lesson' === $query->get( 'post_type' ) ? $where . ' AND 1=0' : $where;
+			},
+			10,
+			2
+		);
+		$item                     = get_post( $requested );
+		$item->last_activity_date = null;
+		$provider                 = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$provider->method( 'get_items' )->willReturnCallback(
+			static function ( $filters ) use ( $item ) {
+				return 'ids' === ( $filters['fields'] ?? '' ) ? array( $item->ID ) : array( $item );
+			}
+		);
+		$provider->method( 'get_last_total_items' )->willReturn( 1 );
+		$table = new Sensei_Reports_Overview_List_Table_Courses(
+			Sensei()->grading,
+			Sensei()->course,
+			$provider,
+			new Sensei_Reports_Overview_Service_Courses(),
+			( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service()
+		);
+
+		return array( $table, $item );
 	}
 
 	/**

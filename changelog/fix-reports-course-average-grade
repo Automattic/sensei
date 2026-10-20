@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Read per-course report grades from the selected progress backend.
