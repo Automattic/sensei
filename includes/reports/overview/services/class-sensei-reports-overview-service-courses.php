@@ -289,18 +289,6 @@ class Sensei_Reports_Overview_Service_Courses {
 	}
 
 	/**
-	 * Get the sum of all user grades for the lessons in a course.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param int[] $lesson_ids Lesson IDs in the course.
-	 * @return int Sum of the grades.
-	 */
-	public function get_grade_sum_for_lessons( array $lesson_ids ): int {
-		return (int) $this->get_grading_stats_service()->get_grade_totals( array( 'post__in' => $lesson_ids ) )['sum'];
-	}
-
-	/**
 	 * Get average days to completion by courses.
 	 *
 	 * @since 4.4.1
