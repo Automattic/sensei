@@ -16,151 +16,168 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	protected $factory;
 
 	/**
-	 * Whether this test switched to HPPS table repositories.
-	 *
-	 * @var bool
-	 */
-	private $hpps_repository_enabled = false;
-
-	/**
 	 * Set up before each test.
 	 */
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+		$this->maybe_enable_hpps_tables_repository();
 	}
 
 	/**
 	 * Tear down after each test.
 	 */
 	public function tearDown(): void {
-		if ( $this->hpps_repository_enabled ) {
-			$this->maybe_reset_hpps_repository();
-		}
+		$this->maybe_reset_hpps_repository();
 
 		parent::tearDown();
 
 		$this->factory->tearDown();
 	}
 
-	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsMatchingCourses() {
-		/* Arrange. */
-		$user_id = $this->factory->user->create();
+	/**
+	 * Courses with completed or unfinished progress remain in the report.
+	 *
+	 * @covers Sensei_Reports_Overview_Data_Provider_Courses::get_items
+	 */
+	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsMatchingCourses(): void {
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$started   = new DateTimeImmutable( '2022-01-01 00:00:01', new DateTimeZone( 'UTC' ) );
+		$progress  = Sensei()->course_progress_repository->create( $course_id, $user_id );
+		$progress->start( $started );
+		$progress->complete( new DateTimeImmutable( '2022-01-02 00:00:01', new DateTimeZone( 'UTC' ) ) );
+		Sensei()->course_progress_repository->save( $progress );
+		if ( ! self::is_hpps_tables_mode() ) {
+			// Comments storage stamps saves with the current time; restore the fixture completion date.
+			wp_update_comment(
+				array(
+					'comment_ID'       => $progress->get_id(),
+					'comment_date'     => '2022-01-02 00:00:01',
+					'comment_date_gmt' => '2022-01-02 00:00:01',
+				)
+			);
+		}
 
-		$course_id  = $this->factory->course->create();
-		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
-		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
-		wp_update_comment(
-			[
-				'comment_ID'   => $comment_id,
-				'comment_date' => '2022-01-02 00:00:01',
-			]
-		);
-
-		$unfinished_course_id  = $this->factory->course->create();
-		$unfinished_comment_id = Sensei_Utils::update_course_status( $user_id, $unfinished_course_id, 'in-progress' );
-
+		$unfinished_course_id = $this->factory->course->create();
+		$unfinished_progress  = Sensei()->course_progress_repository->create( $unfinished_course_id, $user_id );
+		$unfinished_progress->start( $started );
+		Sensei()->course_progress_repository->save( $unfinished_progress );
 		$data_provider = new Sensei_Reports_Overview_Data_Provider_Courses();
 
-		/* Act. */
-		$filters = array(
-			'number'  => 2,
-			'offset'  => 0,
-			'orderby' => '',
-			'order'   => 'ASC',
+		$courses = $data_provider->get_items(
+			array(
+				'number'  => 2,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			)
 		);
-		$courses = $data_provider->get_items( $filters );
 
-		/* Assert. */
-		$expected = [
-			[
+		$expected = array(
+			array(
 				'id'                 => $course_id,
 				'last_activity_date' => null,
 				'days_to_completion' => '2',
-			],
-			[
+			),
+			array(
 				'id'                 => $unfinished_course_id,
 				'last_activity_date' => null,
 				'days_to_completion' => null,
-			],
-		];
-
+			),
+		);
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
 	}
 
-	public function testGetItems_FiltersWithLastActivityGiven_ReturnsMatchingCourses() {
-		/* Arrange. */
+	/**
+	 * Last Activity filtering retains completion days from the active progress backend.
+	 *
+	 * @covers Sensei_Reports_Overview_Data_Provider_Courses::get_items
+	 */
+	public function testGetItems_FiltersWithLastActivityGiven_ReturnsMatchingCourses(): void {
+		global $wpdb;
+
 		$user_id    = $this->factory->user->create();
-		$course_id  = $this->factory->course->create();
-		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
-		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
-		wp_update_comment(
-			[
-				'comment_ID'   => $comment_id,
-				'comment_date' => '2022-01-02 00:00:01',
-			]
+		$course_ids = array();
+		foreach ( array( '2022-01-02 00:00:01', '2022-01-01 00:00:01' ) as $date ) {
+			$course_id    = $this->factory->course->create();
+			$course_ids[] = $course_id;
+			$lesson_id    = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+			$progress     = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			$progress->start( new DateTimeImmutable( $date, new DateTimeZone( 'UTC' ) ) );
+			$progress->complete( new DateTimeImmutable( $date, new DateTimeZone( 'UTC' ) ) );
+			Sensei()->lesson_progress_repository->save( $progress );
+			// Both repositories stamp saves with the current time; fix the date used by Last Activity.
+			if ( self::is_hpps_tables_mode() ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set a fixed activity date in the selected backend.
+				$wpdb->update(
+					$wpdb->prefix . 'sensei_lms_progress',
+					array( 'updated_at' => $date ),
+					array(
+						'post_id' => $lesson_id,
+						'user_id' => $user_id,
+						'type'    => 'lesson',
+					)
+				);
+			} else {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set a fixed activity date in the selected backend.
+				$wpdb->update(
+					$wpdb->comments,
+					array(
+						'comment_date'     => $date,
+						'comment_date_gmt' => $date,
+					),
+					array(
+						'comment_post_ID' => $lesson_id,
+						'user_id'         => $user_id,
+						'comment_type'    => 'sensei_lesson_status',
+					)
+				);
+			}
+		}
+		$course_progress = Sensei()->course_progress_repository->create( $course_ids[0], $user_id );
+		$course_progress->start( new DateTimeImmutable( '2022-01-01 00:00:01', new DateTimeZone( 'UTC' ) ) );
+		$course_progress->complete( new DateTimeImmutable( '2022-01-02 00:00:01', new DateTimeZone( 'UTC' ) ) );
+		Sensei()->course_progress_repository->save( $course_progress );
+		if ( ! self::is_hpps_tables_mode() ) {
+			// Comments storage stamps saves with the current time; restore the fixture completion date.
+			wp_update_comment(
+				array(
+					'comment_ID'       => $course_progress->get_id(),
+					'comment_date'     => '2022-01-02 00:00:01',
+					'comment_date_gmt' => '2022-01-02 00:00:01',
+				)
+			);
+		}
+		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+
+		$courses = $provider->get_items(
+			array(
+				'number'                  => 2,
+				'offset'                  => 0,
+				'last_activity_date_from' => '2022-01-02 00:00:00',
+				'last_activity_date_to'   => '2022-01-03 23:59:59',
+			)
 		);
 
-		$lesson1_id                  = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
-		$lesson1_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson1_id, $user_id );
-		wp_update_comment(
-			[
-				'comment_ID'       => $lesson1_activity_comment_id,
-				'comment_approved' => 'complete',
-				'comment_date'     => '2022-01-02 00:00:01',
-			]
-		);
-
-		$unfinished_course_id  = $this->factory->course->create();
-		$unfinished_comment_id = Sensei_Utils::update_course_status( $user_id, $unfinished_course_id, 'in-progress' );
-		wp_update_comment(
-			[
-				'comment_ID'   => $unfinished_comment_id,
-				'comment_date' => '2022-01-01 00:00:01',
-			]
-		);
-
-		$lesson2_id                  = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $unfinished_course_id ] ] );
-		$lesson2_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson2_id, $user_id );
-		wp_update_comment(
-			[
-				'comment_ID'       => $lesson2_activity_comment_id,
-				'comment_approved' => 'complete',
-				'comment_date'     => '2022-01-01 00:00:01',
-			]
-		);
-
-		$data_provider = new Sensei_Reports_Overview_Data_Provider_Courses();
-
-		/* Act. */
-		$filters = array(
-			'number'                  => 2,
-			'offset'                  => 0,
-			'orderby'                 => '',
-			'order'                   => 'ASC',
-			'last_activity_date_from' => '2022-01-02 00:00:00',
-			'last_activity_date_to'   => '2022-01-03 23:59:59',
-		);
-		$courses = $data_provider->get_items( $filters );
-
-		/* Assert. */
-		$expected = [
-			[
-				'id'                 => $course_id,
+		$expected = array(
+			array(
+				'id'                 => $course_ids[0],
 				'last_activity_date' => '2022-01-02 00:00:01',
 				'days_to_completion' => '2',
-			],
-		];
-
+			),
+		);
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
 	}
 
+	/**
+	 * Temporary progress does not supply Last Activity.
+	 *
+	 * @covers Sensei_Reports_Overview_Data_Provider_Courses::get_items
+	 */
 	public function testGetItems_TemporaryUserProgressCreated_ReturnsMatchingCourse() {
 		/* Arrange. */
-		$this->maybe_enable_hpps_tables_repository();
-		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
-
 		$course_id = $this->factory->course->create();
 		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
 		$started   = current_datetime();
@@ -193,7 +210,6 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		);
 
 		/* Assert. */
-		// Temporary-only progress contributes no completion days; the course remains in the report.
 		$expected = array(
 			array(
 				'id'                 => $course_id,
@@ -202,7 +218,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 			),
 		);
 
-		self::assertSame( $expected, $this->exportCourses( $courses ) );
+		self::assertSame( $expected, $this->exportCourses( $courses ), 'Temporary-only courses should remain without Last Activity.' );
 	}
 
 	/**
@@ -212,9 +228,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	 */
 	public function testGetItems_MixedCoursePostStatusesGiven_ReturnsOnlyPublishedAndPrivateCourses(): void {
 		/* Arrange. */
-		$this->maybe_enable_hpps_tables_repository();
-		$this->hpps_repository_enabled = self::is_hpps_tables_mode();
-		$course_ids                    = array();
+		$course_ids = array();
 		foreach ( array( 'publish', 'private', 'draft', 'trash' ) as $status ) {
 			$course_ids[ $status ] = $this->factory->course->create( array( 'post_status' => $status ) );
 		}
@@ -235,14 +249,14 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	}
 
 	private function exportCourses( array $courses ): array {
-		$ret = [];
+		$ret = array();
 
 		foreach ( $courses as $course ) {
-			$ret[] = [
+			$ret[] = array(
 				'id'                 => $course->ID,
 				'last_activity_date' => $course->last_activity_date,
 				'days_to_completion' => $course->days_to_completion,
-			];
+			);
 		}
 
 		return $ret;
