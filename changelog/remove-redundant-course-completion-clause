@@ -1,0 +1,4 @@
+Significance: minor
+Type: deprecated
+
+Deprecate the unused Courses report completion callback and stop registering it.

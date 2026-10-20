@@ -60,7 +60,10 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	}
 
 	/**
-	 * Get the data for the overview report.
+	 * Gets the data for the overview report.
+	 *
+	 * @since $$next-version$$ Returned posts no longer include `days_to_completion`
+	 *                         or `count_of_completions` properties.
 	 *
 	 * @param array $filters Filters to apply to the data.
 	 *
@@ -86,7 +89,6 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		}
 
 		add_filter( 'posts_clauses', array( $this, 'add_last_activity_to_courses_query' ) );
-		add_filter( 'posts_clauses', array( $this, 'add_days_to_completion_to_courses_query' ) );
 		add_filter( 'posts_clauses', array( $this, 'filter_courses_by_last_activity' ) );
 
 		/**
@@ -102,7 +104,6 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		$courses_query = new WP_Query( $course_args );
 
 		remove_filter( 'posts_clauses', array( $this, 'filter_courses_by_last_activity' ) );
-		remove_filter( 'posts_clauses', array( $this, 'add_days_to_completion_to_courses_query' ) );
 		remove_filter( 'posts_clauses', array( $this, 'add_last_activity_to_courses_query' ) );
 
 		$this->last_total_items = $courses_query->found_posts;
@@ -158,15 +159,18 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	}
 
 	/**
-	 * Add the sum of days taken by each student to complete a course and the number of completions for each course.
+	 * Adds summed completion days and completion counts to the course query.
 	 *
 	 * @access private
+	 * @deprecated $$next-version$$ No replacement.
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 *
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_days_to_completion_to_courses_query( array $clauses ): array {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		return $this->progress_clauses_service->add_days_to_completion_to_courses_clauses( $clauses );
 	}
 
