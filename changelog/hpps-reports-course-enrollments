@@ -1,4 +1,4 @@
-Significance: patch
+Significance: minor
 Type: changed
 
-Read Courses enrollment counts from the selected progress backend.
+HPPS: Add support for enrollment counts in the Courses report.

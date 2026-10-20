@@ -1,4 +1,4 @@
 Significance: minor
 Type: deprecated
 
-Deprecate the sensei_analysis_course_percentage filter - course grades now use the grading statistics service.
+Deprecate the sensei_analysis_course_percentage filter - the Courses report now uses the grading statistics service.
