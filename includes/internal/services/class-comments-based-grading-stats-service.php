@@ -167,7 +167,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 		$rows = $wpdb->get_results( $query );
 		Utils::log_query_error( $wpdb, 'Comments-based lesson grade totals' );
 
-		foreach ( $rows as $row ) {
+		foreach ( (array) $rows as $row ) {
 			$totals[ (int) $row->lesson_id ] = array(
 				'count' => (int) $row->count,
 				'sum'   => (float) $row->sum,
