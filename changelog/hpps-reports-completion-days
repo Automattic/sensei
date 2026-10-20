@@ -1,4 +1,4 @@
-Significance: patch
+Significance: minor
 Type: changed
 
-Read completion-day averages for Days to Completion in the Courses report from the selected progress backend.
+HPPS: Add support for Days to Completion in the Courses report.
