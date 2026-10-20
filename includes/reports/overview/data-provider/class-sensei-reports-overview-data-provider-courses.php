@@ -62,9 +62,6 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	/**
 	 * Gets the data for the overview report.
 	 *
-	 * @since $$next-version$$ Returned posts no longer include `days_to_completion`
-	 *                         or `count_of_completions` properties.
-	 *
 	 * @param array $filters Filters to apply to the data.
 	 *
 	 * @return array
@@ -89,6 +86,8 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		}
 
 		add_filter( 'posts_clauses', array( $this, 'add_last_activity_to_courses_query' ) );
+		// Retain the completion properties for compatibility until the deprecated wrapper is removed.
+		add_filter( 'posts_clauses', array( $this->progress_clauses_service, 'add_days_to_completion_to_courses_clauses' ) );
 		add_filter( 'posts_clauses', array( $this, 'filter_courses_by_last_activity' ) );
 
 		/**
@@ -104,6 +103,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		$courses_query = new WP_Query( $course_args );
 
 		remove_filter( 'posts_clauses', array( $this, 'filter_courses_by_last_activity' ) );
+		remove_filter( 'posts_clauses', array( $this->progress_clauses_service, 'add_days_to_completion_to_courses_clauses' ) );
 		remove_filter( 'posts_clauses', array( $this, 'add_last_activity_to_courses_query' ) );
 
 		$this->last_total_items = $courses_query->found_posts;

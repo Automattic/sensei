@@ -49,6 +49,16 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		$progress->start( $started );
 		$progress->complete( new DateTimeImmutable( '2022-01-02 00:00:01', new DateTimeZone( 'UTC' ) ) );
 		Sensei()->course_progress_repository->save( $progress );
+		if ( ! self::is_hpps_tables_mode() ) {
+			// Comments storage stamps saves with the current time; restore the fixture completion date.
+			wp_update_comment(
+				array(
+					'comment_ID'       => $progress->get_id(),
+					'comment_date'     => '2022-01-02 00:00:01',
+					'comment_date_gmt' => '2022-01-02 00:00:01',
+				)
+			);
+		}
 
 		$unfinished_course_id = $this->factory->course->create();
 		$unfinished_progress  = Sensei()->course_progress_repository->create( $unfinished_course_id, $user_id );
@@ -69,10 +79,12 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 			array(
 				'id'                 => $course_id,
 				'last_activity_date' => null,
+				'days_to_completion' => '2',
 			),
 			array(
 				'id'                 => $unfinished_course_id,
 				'last_activity_date' => null,
+				'days_to_completion' => null,
 			),
 		);
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
@@ -139,6 +151,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 			array(
 				'id'                 => $course_ids[0],
 				'last_activity_date' => '2022-01-02 00:00:01',
+				'days_to_completion' => null,
 			),
 		);
 		self::assertSame( $expected, $this->exportCourses( $courses ) );
@@ -187,6 +200,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 			array(
 				'id'                 => $course_id,
 				'last_activity_date' => null,
+				'days_to_completion' => null,
 			),
 		);
 
@@ -227,6 +241,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 			$ret[] = array(
 				'id'                 => $course->ID,
 				'last_activity_date' => $course->last_activity_date,
+				'days_to_completion' => $course->days_to_completion,
 			);
 		}
 
