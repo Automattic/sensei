@@ -128,7 +128,7 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		);
 		$table       = ( new Sensei_Reports_Overview_List_Table_Factory() )->create( 'students' );
 		$row_method  = new ReflectionMethod( $table, 'get_row_data' );
-		$row_method->setAccessible( true );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $row_method );
 
 		try {
 			$table->prepare_items();
