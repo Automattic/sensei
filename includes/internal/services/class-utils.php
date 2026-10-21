@@ -107,7 +107,14 @@ class Utils {
 		// Fetch course IDs without applying the active report query filters.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The mapping depends on the current progress-ID filters.
 		$course_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'course'" );
-		$rows       = array();
+
+		// WPML normally primes translations after querying posts; this mapping runs before that.
+		global $wpml_post_translations;
+		if ( is_callable( array( $wpml_post_translations, 'prefetch_ids' ) ) ) {
+			$wpml_post_translations->prefetch_ids( $course_ids );
+		}
+
+		$rows = array();
 		foreach ( self::get_progress_post_id_map( $course_ids, 'course' ) as $requested_id => $stored_id ) {
 			if ( $requested_id !== $stored_id ) {
 				$rows[] = $wpdb->prepare( 'SELECT %d AS requested_id, %d AS stored_id', $requested_id, $stored_id );
