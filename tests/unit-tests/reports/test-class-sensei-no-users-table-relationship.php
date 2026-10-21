@@ -52,4 +52,36 @@ class Sensei_No_Users_Table_Relationship_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertTrue( $actual, 'Users relationship check should be true when there are posts related to users' );
 	}
+
+	/**
+	 * Course columns retain their activity when the student fallback is enabled.
+	 *
+	 * @covers Sensei_No_Users_Table_Relationship::filter_analysis_overview_column_data
+	 */
+	public function testFilterAnalysisOverviewColumnData_CoursesReportGiven_ReturnsUnchangedColumns(): void {
+		global $wpdb;
+
+		tests_add_filter( 'sensei_can_use_users_relationship', '__return_false' );
+		$database           = $this->createStub( wpdb::class );
+		$database->comments = 'wp_comments';
+		$database->method( 'prepare' )->willReturn( 'student activity query' );
+		$database->method( 'get_var' )->willReturn( '2022-02-20 12:00:00' );
+		$table             = $this->createStub( Sensei_Reports_Overview_List_Table_Courses::class );
+		$table->csv_output = true;
+		$columns           = array( 'last_activity' => '2022-01-04 12:00:00' );
+		$original_database = $wpdb;
+
+		try {
+			$wpdb   = $database;
+			$actual = Sensei_No_Users_Table_Relationship::instance()->filter_analysis_overview_column_data(
+				$columns,
+				(object) array( 'ID' => 42 ),
+				$table
+			);
+		} finally {
+			$wpdb = $original_database;
+		}
+
+		self::assertSame( $columns, $actual );
+	}
 }

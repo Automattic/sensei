@@ -130,17 +130,22 @@ class Sensei_No_Users_Table_Relationship {
 	}
 
 	/**
-	 * Undocumented function
+	 * Supplies student activity when the users table cannot be joined.
 	 *
 	 * @access private
 	 *
-	 * @param array                               $columns Data columns.
-	 * @param object                              $item    Item data object.
-	 * @param Sensei_Analysis_Overview_List_Table $object  Class instance.
+	 * @param array                                                                           $columns Data columns.
+	 * @param object                                                                          $item    Item data object.
+	 * @param Sensei_Reports_Overview_List_Table_Abstract|Sensei_Analysis_Overview_List_Table $object  Class instance.
 	 *
 	 * @return array Filtered columns.
 	 */
 	public function filter_analysis_overview_column_data( $columns, $item, $object ) {
+		if ( ! ( $object instanceof Sensei_Reports_Overview_List_Table_Students )
+			&& ! ( $object instanceof Sensei_Analysis_Overview_List_Table && 'users' === $object->type ) ) {
+			return $columns;
+		}
+
 		if ( ! $this->can_use_users_relationship() ) {
 			$last_activity_date = $this->get_user_last_activity_date( $item->ID );
 
