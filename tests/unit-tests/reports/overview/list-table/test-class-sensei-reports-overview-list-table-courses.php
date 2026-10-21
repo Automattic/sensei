@@ -88,6 +88,82 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Last Activity date selection is shared by translated rows, CSV, and headers.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_row_data
+	 * @covers Sensei_Reports_Overview_List_Table_Courses::get_columns
+	 */
+	public function testGenerateReport_TranslatedActivityDateFiltered_ReturnsMatchingRowAndTotals(): void {
+		$original    = $this->factory->course->create();
+		$translation = $this->factory->course->create( array( 'post_title' => 'Translated course' ) );
+		$unmatched   = $this->factory->course->create();
+		$user        = $this->factory->user->create();
+		$date        = '2022-01-02 12:00:00';
+		$activities  = array(
+			$original  => $date,
+			$unmatched => '2022-01-01 12:00:00',
+		);
+		foreach ( $activities as $course => $activity ) {
+			$progress = Sensei()->course_progress_repository->create( $course, $user );
+			$progress->start();
+			$progress->complete();
+			Sensei()->course_progress_repository->save( $progress );
+			$lesson   = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course ) ) );
+			$progress = Sensei()->lesson_progress_repository->create( $lesson, $user );
+			$progress->start();
+			$progress->complete();
+			Sensei()->lesson_progress_repository->save( $progress );
+			$this->set_lesson_progress_activity_date( $lesson, $user, new DateTimeImmutable( $activity, new DateTimeZone( 'UTC' ) ) );
+		}
+		add_filter(
+			'sensei_course_progress_get_course_id',
+			static function ( $id ) use ( $original, $translation ) {
+				return $translation === $id ? $original : $id;
+			}
+		);
+		// Select the secondary-language course and a course outside the date range.
+		add_filter(
+			'sensei_analysis_overview_filter_courses',
+			static function ( $args ) use ( $translation, $unmatched ) {
+				$args['post__in'] = array( $translation, $unmatched );
+				return $args;
+			}
+		);
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Preserve request state for this report test.
+		$initial_get = $_GET;
+
+		$_GET['start_date'] = '2022-01-02';
+		$_GET['end_date']   = '2022-01-02';
+		$_GET['timezone']   = 'UTC';
+
+		$table = new Sensei_Reports_Overview_List_Table_Courses(
+			Sensei()->grading,
+			Sensei()->course,
+			new Sensei_Reports_Overview_Data_Provider_Courses(),
+			new Sensei_Reports_Overview_Service_Courses(),
+			( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_aggregation_service()
+		);
+
+		try {
+			$table->prepare_items();
+			$columns = $table->get_columns();
+			$items   = $table->items;
+			$csv     = $table->generate_report();
+		} finally {
+			$_GET = $initial_get;
+		}
+
+		self::assertSame( array( $translation ), wp_list_pluck( $items, 'ID' ), 'Rows should retain only the matching translated course ID.' );
+		self::assertSame( 'Course (1)', $columns['title'], 'The header should count the selected translation.' );
+		self::assertSame( 'Enrolled (1)', $columns['enrolled'], 'Header enrollments should use only the selected course.' );
+		self::assertSame( 'Completions (1)', $columns['completions'], 'Header completions should use only the selected course.' );
+		self::assertCount( 2, $csv, 'CSV should contain a header and the selected course.' );
+		self::assertSame( 'Translated course', $csv[1]['title'], 'CSV should retain the requested translated course title.' );
+		self::assertSame( Sensei_Utils::format_last_activity_date( $date ), $csv[1]['last_activity'], 'CSV should display the original lesson activity.' );
+	}
+
+	/**
 	 * Header, row, and CSV grades use the same registered attempts in either language.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report

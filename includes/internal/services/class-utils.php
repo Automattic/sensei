@@ -90,6 +90,41 @@ class Utils {
 	}
 
 	/**
+	 * Build a mapping query for courses whose progress uses a different ID.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \wpdb $wpdb WordPress database object.
+	 * @return string Mapping query with requested_id and stored_id columns, or an empty string.
+	 */
+	public static function get_course_progress_id_map_sql( \wpdb $wpdb ): string {
+		if ( ! has_filter( 'sensei_course_progress_get_course_id' ) ) {
+			return '';
+		}
+
+		// Fetch course IDs without applying the active report query filters.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The mapping depends on the current progress-ID filters.
+		$course_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'course'" );
+
+		// WPML normally primes translations after querying posts; this mapping runs before that.
+		global $wpml_post_translations;
+		if ( is_callable( array( $wpml_post_translations, 'prefetch_ids' ) ) ) {
+			$wpml_post_translations->prefetch_ids( $course_ids );
+		}
+
+		$rows = array();
+		foreach ( self::get_progress_post_id_map( $course_ids, 'course' ) as $requested_id => $stored_id ) {
+			if ( $requested_id !== $stored_id ) {
+				$rows[] = $wpdb->prepare( 'SELECT %d AS requested_id, %d AS stored_id', $requested_id, $stored_id );
+			}
+		}
+
+		return implode( ' UNION ALL ', $rows );
+	}
+
+	/**
 	 * Re-key stored progress results using the requested post IDs.
 	 *
 	 * Requested IDs without a stored result are omitted. Result values are preserved.

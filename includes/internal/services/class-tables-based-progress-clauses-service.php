@@ -89,14 +89,22 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 			GROUP BY p.post_id';
 
 		// Map lessons to courses via postmeta, then take the most recent activity date across all lessons per course.
-		$course_query = "SELECT pm.meta_value AS course_id, MAX(lq.last_activity_date) AS last_activity_date
+		// Numeric course IDs allow indexed lookups in the derived activity table.
+		$course_query = "SELECT CAST(pm.meta_value AS UNSIGNED) AS course_id, MAX(lq.last_activity_date) AS last_activity_date
 			FROM {$wpdb->postmeta} pm
 			JOIN ({$lessons_query}) lq ON lq.lesson_id = pm.post_id
 			AND pm.meta_key = '_lesson_course'
 			GROUP BY pm.meta_value";
 
+		$course_id_map_sql = Utils::get_course_progress_id_map_sql( $wpdb );
+		$course_id_sql     = "{$wpdb->posts}.ID";
+		if ( $course_id_map_sql ) {
+			$clauses['join'] .= " LEFT JOIN ({$course_id_map_sql}) AS course_progress_ids ON course_progress_ids.requested_id = {$wpdb->posts}.ID";
+			$course_id_sql    = "COALESCE(course_progress_ids.stored_id, {$wpdb->posts}.ID)";
+		}
+
 		$clauses['fields'] .= ', la.last_activity_date AS last_activity_date';
-		$clauses['join']   .= " LEFT JOIN ({$course_query}) AS la ON la.course_id = {$wpdb->posts}.ID";
+		$clauses['join']   .= " LEFT JOIN ({$course_query}) AS la ON la.course_id = {$course_id_sql}";
 
 		return $clauses;
 	}
