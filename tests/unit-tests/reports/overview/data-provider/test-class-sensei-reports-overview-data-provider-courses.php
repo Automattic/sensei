@@ -172,6 +172,62 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	}
 
 	/**
+	 * Translated courses retain original lesson activity and date selection.
+	 *
+	 * @covers Sensei_Reports_Overview_Data_Provider_Courses::get_items
+	 * @dataProvider translated_activity_filters
+	 */
+	public function testGetItems_TranslatedCourseGiven_ResolvesOriginalLastActivity( array $dates, bool $included ): void {
+		global $wpdb;
+
+		$original           = $this->factory->course->create();
+		$translation        = $this->factory->course->create();
+		$second_translation = $this->factory->course->create();
+		$lesson             = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $original ) ) );
+		$user               = $this->factory->user->create();
+		$date               = '2022-01-02 12:00:00';
+		$progress           = Sensei()->lesson_progress_repository->create( $lesson, $user );
+		$progress->start();
+		$progress->complete();
+		Sensei()->lesson_progress_repository->save( $progress );
+		// Saves stamp the current time; fix the timestamp read by each backend.
+		if ( self::is_hpps_tables_mode() ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set a fixed activity date in the selected backend.
+			$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'updated_at' => $date ), array( 'id' => $progress->get_id() ) );
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set a fixed activity date in the selected backend.
+			$wpdb->update( $wpdb->comments, array( 'comment_date_gmt' => $date ), array( 'comment_ID' => $progress->get_id() ) );
+		}
+		add_filter(
+			'sensei_course_progress_get_course_id',
+			static function ( $id ) use ( $original, $translation, $second_translation ) {
+				return in_array( $id, array( $translation, $second_translation ), true ) ? $original : $id;
+			}
+		);
+		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+
+		$courses = $provider->get_items( array_merge( array( 'number' => -1, 'offset' => 0 ), $dates ) );
+		$actual  = array_column( $courses, 'last_activity_date', 'ID' );
+		ksort( $actual );
+
+		self::assertSame( $included ? array( $original => $date, $translation => $date, $second_translation => $date ) : array(), $actual, 'Original and requested translated IDs should share the stored activity and date selection.' );
+		self::assertSame( $included ? 3 : 0, $provider->get_last_total_items(), 'The total should count the selected course posts.' );
+	}
+
+	/**
+	 * Date ranges selecting or excluding the original activity.
+	 *
+	 * @return array
+	 */
+	public function translated_activity_filters(): array {
+		return array(
+			'no date filter'      => array( array(), true ),
+			'matching date range' => array( array( 'last_activity_date_from' => '2022-01-02 00:00:00', 'last_activity_date_to' => '2022-01-02 23:59:59' ), true ),
+			'outside date range'  => array( array( 'last_activity_date_from' => '2022-01-03 00:00:00', 'last_activity_date_to' => '2022-01-03 23:59:59' ), false ),
+		);
+	}
+
+	/**
 	 * Temporary progress does not supply Last Activity.
 	 *
 	 * @covers Sensei_Reports_Overview_Data_Provider_Courses::get_items
