@@ -254,6 +254,60 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 	}
 
+	/**
+	 * The comment feeds list a lesson's comments only for viewers who can view the lesson.
+	 *
+	 * @dataProvider providerProtectFeedsCommentFeed
+	 */
+	public function testProtectFeeds_CommentFeedRequested_ListsLessonCommentOnlyForViewersWithAccess( string $feed_url, bool $enrolled, bool $expected_listed, bool $expected_post_comment_listed ): void {
+		/* Arrange. */
+		$course_id       = $this->factory->course->create();
+		$lesson_id       = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_id,
+				),
+			)
+		);
+		$comment_id      = $this->factory->comment->create(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'comment_approved' => 1,
+			)
+		);
+		$post_comment_id = $this->factory->comment->create(
+			array(
+				'comment_post_ID'  => $this->factory->post->create(),
+				'comment_approved' => 1,
+			)
+		);
+
+		$user_id = 0;
+		if ( $enrolled ) {
+			$user_id = $this->factory->user->create();
+			Sensei_Course_Enrolment::get_course_instance( $course_id )->enrol( $user_id );
+		}
+		wp_set_current_user( $user_id );
+
+		/* Act. */
+		$this->go_to( str_replace( '{lesson}', get_post_field( 'post_name', $lesson_id ), $feed_url ) );
+		$listed_comment_ids = array_map( 'intval', wp_list_pluck( $GLOBALS['wp_query']->comments, 'comment_ID' ) );
+
+		/* Assert. */
+		$this->assertSame( $expected_listed, in_array( $comment_id, $listed_comment_ids, true ), 'The lesson comment should be listed only for viewers with access.' );
+		$this->assertSame( $expected_post_comment_listed, in_array( $post_comment_id, $listed_comment_ids, true ), 'The site feed should keep listing comments on other posts.' );
+		$this->assertCount( $GLOBALS['wp_query']->comment_count, $listed_comment_ids, 'The comment count should match the listed comments.' );
+	}
+
+	public function providerProtectFeedsCommentFeed(): array {
+		return array(
+			'site feed, visitor without access'   => array( '/?feed=rss2&withcomments=1', false, false, true ),
+			'site feed, enrolled student'         => array( '/?feed=rss2&withcomments=1', true, true, true ),
+			'lesson feed, visitor without access' => array( '/?lesson={lesson}&feed=rss2', false, false, false ),
+			'lesson feed, enrolled student'       => array( '/?lesson={lesson}&feed=rss2', true, true, false ),
+		);
+	}
+
 	public function testExcludePostTypesFromRestSearch_WhenHasPostTypes_RemovesExcludedPostTypes() {
 		/* Arrange. */
 		$post_types = [

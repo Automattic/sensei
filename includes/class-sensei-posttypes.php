@@ -209,8 +209,24 @@ class Sensei_PostTypes {
 	 * @access private
 	 */
 	public function protect_feeds() {
+		global $wp_query;
+
 		if ( is_feed() && is_post_type_archive( [ 'lesson', 'question', 'quiz', 'sensei_message' ] ) ) {
 			wp_die( esc_html__( 'Error: Feed does not exist', 'sensei-lms' ), '', [ 'response' => 404 ] );
+		}
+
+		// The comment feed query loads comments without any access check; apply the same rule as the lesson page and the REST API.
+		if ( $wp_query->is_comment_feed() && ! empty( $wp_query->comments ) ) {
+			$wp_query->comments = array_values(
+				array_filter(
+					$wp_query->comments,
+					function ( WP_Comment $comment ) {
+						return ! $this->lesson_is_protected( false, get_post( (int) $comment->comment_post_ID ) );
+					}
+				)
+			);
+
+			$wp_query->comment_count = count( $wp_query->comments );
 		}
 	}
 
