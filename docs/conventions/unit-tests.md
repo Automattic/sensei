@@ -2,9 +2,13 @@
 
 The behavior and scenario-selection principles apply to all Sensei tests. PHP examples, naming conventions, and data-provider instructions apply to the PHPUnit suite.
 
+Tests that load WordPress and exercise its APIs or database are integration tests, even when they live in `tests/unit-tests/` or extend `WP_UnitTestCase`. For hook or REST wiring, test through the hook or REST dispatcher when that wiring is part of the requirement; directly calling a callback does not verify registration or routing.
+
 ## 1. Select meaningful scenarios
 
 Before adding or extending a test, read the existing tests for the method or behavior being changed. Identify the requirement or regression the proposed case protects and why existing coverage does not already protect it. If it adds no distinct coverage, omit it.
+
+Apply this check throughout implementation, refinement, and review. For small refinements to already-tested behavior, reuse and rerun existing tests. Added production code, branches, or dependency calls do not by themselves justify more tests. For example, adding cache priming that preserves existing results calls for rerunning relevant tests and focused performance measurements where appropriate, rather than a new test asserting that the priming method was called. If the change fixes an uncovered failure, test the observable result of that failure instead.
 
 Choose how to add the coverage:
 
