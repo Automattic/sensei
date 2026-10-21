@@ -100,7 +100,11 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$unmatched   = $this->factory->course->create();
 		$user        = $this->factory->user->create();
 		$date        = '2022-01-02 12:00:00';
-		foreach ( array( $original => $date, $unmatched => '2022-01-01 12:00:00' ) as $course => $activity ) {
+		$activities  = array(
+			$original  => $date,
+			$unmatched => '2022-01-01 12:00:00',
+		);
+		foreach ( $activities as $course => $activity ) {
 			$progress = Sensei()->course_progress_repository->create( $course, $user );
 			$progress->start();
 			$progress->complete();
@@ -126,11 +130,14 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 				return $args;
 			}
 		);
-		$initial_get        = $_GET;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Preserve request state for this report test.
+		$initial_get = $_GET;
+
 		$_GET['start_date'] = '2022-01-02';
 		$_GET['end_date']   = '2022-01-02';
 		$_GET['timezone']   = 'UTC';
-		$table             = new Sensei_Reports_Overview_List_Table_Courses(
+
+		$table = new Sensei_Reports_Overview_List_Table_Courses(
 			Sensei()->grading,
 			Sensei()->course,
 			new Sensei_Reports_Overview_Data_Provider_Courses(),

@@ -206,11 +206,24 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		);
 		$provider = new Sensei_Reports_Overview_Data_Provider_Courses();
 
-		$courses = $provider->get_items( array_merge( array( 'number' => -1, 'offset' => 0 ), $dates ) );
+		$courses = $provider->get_items(
+			array_merge(
+				array(
+					'number' => -1,
+					'offset' => 0,
+				),
+				$dates
+			)
+		);
 		$actual  = array_column( $courses, 'last_activity_date', 'ID' );
 		ksort( $actual );
 
-		self::assertSame( $included ? array( $original => $date, $translation => $date, $second_translation => $date ) : array(), $actual, 'Original and requested translated IDs should share the stored activity and date selection.' );
+		$expected = $included ? array(
+			$original           => $date,
+			$translation        => $date,
+			$second_translation => $date,
+		) : array();
+		self::assertSame( $expected, $actual, 'Original and requested translated IDs should share the stored activity and date selection.' );
 		self::assertSame( $included ? 3 : 0, $provider->get_last_total_items(), 'The total should count the selected course posts.' );
 	}
 
@@ -222,8 +235,20 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	public function translated_activity_filters(): array {
 		return array(
 			'no date filter'      => array( array(), true ),
-			'matching date range' => array( array( 'last_activity_date_from' => '2022-01-02 00:00:00', 'last_activity_date_to' => '2022-01-02 23:59:59' ), true ),
-			'outside date range'  => array( array( 'last_activity_date_from' => '2022-01-03 00:00:00', 'last_activity_date_to' => '2022-01-03 23:59:59' ), false ),
+			'matching date range' => array(
+				array(
+					'last_activity_date_from' => '2022-01-02 00:00:00',
+					'last_activity_date_to'   => '2022-01-02 23:59:59',
+				),
+				true,
+			),
+			'outside date range'  => array(
+				array(
+					'last_activity_date_from' => '2022-01-03 00:00:00',
+					'last_activity_date_to'   => '2022-01-03 23:59:59',
+				),
+				false,
+			),
 		);
 	}
 
