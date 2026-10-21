@@ -201,4 +201,50 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 
 		return $clauses;
 	}
+
+	/**
+	 * Add Last Activity grouped by user ID to a WP_User_Query.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \WP_User_Query $query The user query.
+	 * @return void
+	 */
+	public function add_last_activity_to_users_query( \WP_User_Query $query ): void {
+		$wpdb = $this->wpdb;
+
+		$query->query_fields .= ', l.last_activity_date';
+		$query->query_from   .= "
+			LEFT JOIN (
+				SELECT user_id, MAX(comment_date_gmt) AS last_activity_date
+				FROM {$wpdb->comments}
+				WHERE comment_approved IN ('complete', 'passed', 'graded')
+				AND comment_type = 'sensei_lesson_status'
+				GROUP BY user_id
+			) AS l ON {$wpdb->users}.ID = l.user_id";
+	}
+
+	/**
+	 * Filter users by Last Activity after adding the activity field and grouping by user ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \WP_User_Query $query The user query.
+	 * @param string         $from  Start date, or empty for no lower bound.
+	 * @param string         $to    End date, or empty for no upper bound.
+	 * @return void
+	 */
+	public function filter_users_by_last_activity( \WP_User_Query $query, string $from = '', string $to = '' ): void {
+		if ( ! $from && ! $to ) {
+			return;
+		}
+
+		$query->query_where .= ' HAVING 1 = 1';
+		if ( $from ) {
+			$query->query_where .= $this->wpdb->prepare( ' AND last_activity_date >= %s', $from );
+		}
+		if ( $to ) {
+			$query->query_where .= $this->wpdb->prepare( ' AND last_activity_date <= %s', $to );
+		}
+	}
 }
