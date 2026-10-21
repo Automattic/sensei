@@ -48,7 +48,13 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$data_provider = new Sensei_Reports_Overview_Data_Provider_Students();
 
 		/* Act. */
-		$students = $data_provider->get_items( [ 'number' => -1, 'orderby' => 'last_activity_date', 'order' => 'ASC' ] );
+		$students = $data_provider->get_items(
+			array(
+				'number'  => -1,
+				'orderby' => 'last_activity_date',
+				'order'   => 'ASC',
+			)
+		);
 
 		/* Assert. */
 		$this->assertSame( array( $no_last_activity_user, $user_with_last_activity ), array_map( 'intval', wp_list_pluck( $students, 'ID' ) ), 'Ascending activity order should retain the student without activity.' );
@@ -339,10 +345,23 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set the activity fixture date.
 			$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'updated_at' => $activity_date ), array( 'id' => $progress->get_id() ) );
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Verify HPPS without mirrored lesson comments.
-			$wpdb->delete( $wpdb->comments, array( 'user_id' => $user_id, 'comment_type' => 'sensei_lesson_status' ) );
+			$wpdb->delete(
+				$wpdb->comments,
+				array(
+					'user_id'      => $user_id,
+					'comment_type' => 'sensei_lesson_status',
+				)
+			);
 		} else {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set the activity fixture date.
-			$wpdb->update( $wpdb->comments, array( 'comment_date' => $activity_date, 'comment_date_gmt' => $activity_date ), array( 'comment_ID' => $progress->get_id() ) );
+			$wpdb->update(
+				$wpdb->comments,
+				array(
+					'comment_date'     => $activity_date,
+					'comment_date_gmt' => $activity_date,
+				),
+				array( 'comment_ID' => $progress->get_id() )
+			);
 		}
 
 		return $user_id;

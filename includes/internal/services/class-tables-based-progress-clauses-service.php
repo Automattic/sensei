@@ -237,7 +237,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 
 		$query->query_fields .= ', l.last_activity_date';
 
-		$query->query_from   .= "
+		$query->query_from .= "
 			LEFT JOIN (
 				SELECT p.user_id, MAX(p.updated_at) AS last_activity_date
 				FROM {$progress_table} p

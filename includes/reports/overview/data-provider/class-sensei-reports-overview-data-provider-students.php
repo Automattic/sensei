@@ -117,7 +117,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 			remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
 			remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 			remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
-			remove_action( 'pre_user_query', [ $this, 'group_by_users' ] );
+			remove_action( 'pre_user_query', array( $this, 'group_by_users' ) );
 		}
 
 		$learners               = $wp_user_search->get_results();

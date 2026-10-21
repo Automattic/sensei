@@ -101,7 +101,13 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set the activity fixture date.
 				$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'updated_at' => $date ), array( 'id' => $progress->get_id() ) );
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Verify HPPS without mirrored lesson comments.
-				$wpdb->delete( $wpdb->comments, array( 'user_id' => $user_id, 'comment_type' => 'sensei_lesson_status' ) );
+				$wpdb->delete(
+					$wpdb->comments,
+					array(
+						'user_id'      => $user_id,
+						'comment_type' => 'sensei_lesson_status',
+					)
+				);
 			}
 		}
 		add_filter(
@@ -111,10 +117,17 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 				return $args;
 			}
 		);
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Preserve the test request state.
 		$initial_get = $_GET;
-		$_GET       = array( 'start_date' => '2022-03-01', 'end_date' => '2022-03-02', 'timezone' => 'UTC', 'orderby' => 'last_activity_date', 'order' => 'desc' );
-		$table      = ( new Sensei_Reports_Overview_List_Table_Factory() )->create( 'students' );
-		$row_method = new ReflectionMethod( $table, 'get_row_data' );
+		$_GET        = array(
+			'start_date' => '2022-03-01',
+			'end_date'   => '2022-03-02',
+			'timezone'   => 'UTC',
+			'orderby'    => 'last_activity_date',
+			'order'      => 'desc',
+		);
+		$table       = ( new Sensei_Reports_Overview_List_Table_Factory() )->create( 'students' );
+		$row_method  = new ReflectionMethod( $table, 'get_row_data' );
 		$row_method->setAccessible( true );
 
 		try {
