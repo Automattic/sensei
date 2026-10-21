@@ -141,7 +141,11 @@ class Sensei_No_Users_Table_Relationship {
 	 * @return array Filtered columns.
 	 */
 	public function filter_analysis_overview_column_data( $columns, $item, $object ) {
-		/** @psalm-suppress MissingPropertyType The legacy overview exposes an untyped report type. */
+		/**
+		 * The legacy overview exposes an untyped report type.
+		 *
+		 * @psalm-suppress MissingPropertyType
+		 */
 		if ( ! ( $object instanceof Sensei_Reports_Overview_List_Table_Students )
 			&& ! ( $object instanceof Sensei_Analysis_Overview_List_Table && 'users' === $object->type ) ) {
 			return $columns;
