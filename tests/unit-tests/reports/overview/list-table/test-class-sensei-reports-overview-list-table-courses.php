@@ -96,7 +96,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	 */
 	public function testGenerateReport_TranslatedActivityDateFiltered_ReturnsMatchingRowAndTotals(): void {
 		$original    = $this->factory->course->create();
-		$translation = $this->factory->course->create();
+		$translation = $this->factory->course->create( array( 'post_title' => 'Translated course' ) );
 		$unmatched   = $this->factory->course->create();
 		$user        = $this->factory->user->create();
 		$date        = '2022-01-02 12:00:00';
@@ -159,6 +159,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		self::assertSame( 'Enrolled (1)', $columns['enrolled'], 'Header enrollments should use only the selected course.' );
 		self::assertSame( 'Completions (1)', $columns['completions'], 'Header completions should use only the selected course.' );
 		self::assertCount( 2, $csv, 'CSV should contain a header and the selected course.' );
+		self::assertSame( 'Translated course', $csv[1]['title'], 'CSV should retain the requested translated course title.' );
 		self::assertSame( Sensei_Utils::format_last_activity_date( $date ), $csv[1]['last_activity'], 'CSV should display the original lesson activity.' );
 	}
 
