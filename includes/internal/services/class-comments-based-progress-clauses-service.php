@@ -208,7 +208,6 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	 * @since $$next-version$$
 	 *
 	 * @param \WP_User_Query $query The user query.
-	 * @return void
 	 */
 	public function add_last_activity_to_users_query( \WP_User_Query $query ): void {
 		$wpdb = $this->wpdb;
@@ -225,26 +224,21 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	}
 
 	/**
-	 * Filter users by Last Activity after adding the activity field and grouping by user ID.
+	 * Filter users by Last Activity after adding the activity field.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @param \WP_User_Query $query The user query.
 	 * @param string         $from  Start date, or empty for no lower bound.
 	 * @param string         $to    End date, or empty for no upper bound.
-	 * @return void
 	 */
 	public function filter_users_by_last_activity( \WP_User_Query $query, string $from = '', string $to = '' ): void {
-		if ( ! $from && ! $to ) {
-			return;
+		if ( $from ) {
+			$query->query_where .= $this->wpdb->prepare( ' AND l.last_activity_date >= %s', $from );
 		}
 
-		$query->query_where .= ' HAVING 1 = 1';
-		if ( $from ) {
-			$query->query_where .= $this->wpdb->prepare( ' AND last_activity_date >= %s', $from );
-		}
 		if ( $to ) {
-			$query->query_where .= $this->wpdb->prepare( ' AND last_activity_date <= %s', $to );
+			$query->query_where .= $this->wpdb->prepare( ' AND l.last_activity_date <= %s', $to );
 		}
 	}
 }

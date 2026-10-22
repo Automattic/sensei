@@ -97,8 +97,6 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		 */
 		$query_args = apply_filters( 'sensei_analysis_overview_filter_users', $query_args );
 
-		add_action( 'pre_user_query', [ $this, 'group_by_users' ] );
-
 		if ( $this->get_is_last_activity_filter_enabled() ) {
 			add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 			add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
@@ -108,6 +106,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 			}
 		}
 
+		add_action( 'pre_user_query', [ $this, 'group_by_users' ] );
 		add_action( 'pre_user_query', [ $this, 'add_pre_user_query_hook' ] );
 
 		try {

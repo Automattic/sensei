@@ -88,21 +88,19 @@ interface Progress_Clauses_Service_Interface {
 	 * @since $$next-version$$
 	 *
 	 * @param \WP_User_Query $query The user query.
-	 * @return void
 	 */
 	public function add_last_activity_to_users_query( \WP_User_Query $query ): void;
 
 	/**
 	 * Filter users by Last Activity after add_last_activity_to_users_query runs.
 	 *
-	 * The provider must group the query by user ID before applying this filter.
+	 * Apply this filter before appending GROUP BY to query_where.
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @param \WP_User_Query $query The user query.
 	 * @param string         $from  Start date, or empty for no lower bound.
 	 * @param string         $to    End date, or empty for no upper bound.
-	 * @return void
 	 */
 	public function filter_users_by_last_activity( \WP_User_Query $query, string $from = '', string $to = '' ): void;
 }
