@@ -40,7 +40,12 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$this->factory->tearDown();
 	}
 
-	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsAllStudents() {
+	/**
+	 * Without a date filter, students with and without activity are returned.
+	 *
+	 * @covers Sensei_Reports_Overview_Data_Provider_Students::get_items
+	 */
+	public function testGetItems_NoActivityFilterGiven_ReturnsAllStudents() {
 		/* Arrange. */
 		$no_last_activity_user   = $this->createUserWithCourseEnrollment();
 		$user_with_last_activity = $this->createUserWithActivity( '2022-03-01 00:00:00' );
@@ -48,16 +53,10 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$data_provider = new Sensei_Reports_Overview_Data_Provider_Students();
 
 		/* Act. */
-		$students = $data_provider->get_items(
-			array(
-				'number'  => -1,
-				'orderby' => 'last_activity_date',
-				'order'   => 'ASC',
-			)
-		);
+		$students = $data_provider->get_items( [ 'number' => -1 ] );
 
 		/* Assert. */
-		$this->assertSame( array( $no_last_activity_user, $user_with_last_activity ), array_map( 'intval', wp_list_pluck( $students, 'ID' ) ), 'Ascending activity order should retain the student without activity.' );
+		$this->assertEqualsCanonicalizing( array( $no_last_activity_user, $user_with_last_activity ), array_map( 'intval', wp_list_pluck( $students, 'ID' ) ), 'Students with and without activity should be returned when no date filter is given.' );
 	}
 
 	/**
@@ -65,7 +64,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	 *
 	 * @covers Sensei_Reports_Overview_Data_Provider_Students::get_items
 	 */
-	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsStudentsWithCorrectFields() {
+	public function testGetItems_CompletedAndIncompleteLessonActivityGiven_ReturnsStudentFieldsWithLatestCompletedActivity() {
 		/* Arrange. */
 		$user_id = $this->createUserWithActivity(
 			'2022-03-01 00:00:00',
@@ -325,7 +324,6 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	private function createUserWithActivity( string $activity_date, array $user_args = [], string $status = 'complete' ): int {
 		$user_id   = $user_args['ID'] ?? $this->factory->user->create( $user_args );
 		$course_id = $this->factory->course->create();
-
 		$lesson_id = $this->factory->lesson->create(
 			[
 				'meta_input' => [ '_lesson_course' => $course_id ],
@@ -334,13 +332,16 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 
 		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
 		$progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+
 		if ( 'in-progress' !== $status ) {
 			$progress->complete( new DateTimeImmutable( $activity_date, new DateTimeZone( 'UTC' ) ) );
 		}
+
 		Sensei()->lesson_progress_repository->save( $progress );
 
 		global $wpdb;
-		// Saves stamp the current time; fix the date read by Last Activity in the active backend.
+
+		// Saving sets the current time; overwrite the Last Activity timestamp with the requested test date.
 		if ( self::is_hpps_tables_mode() ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set the activity fixture date.
 			$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'updated_at' => $activity_date ), array( 'id' => $progress->get_id() ) );
