@@ -233,6 +233,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		$wpdb = $this->wpdb;
 
 		$progress_table = $this->get_progress_table_name();
+		$complete       = Lesson_Progress_Interface::STATUS_COMPLETE;
 
 		$query->query_fields .= ', l.last_activity_date';
 
@@ -241,7 +242,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 				SELECT user_id, MAX(updated_at) AS last_activity_date
 				FROM {$progress_table}
 				WHERE type = 'lesson'
-				AND status = 'complete'
+				AND status = '{$complete}'
 				GROUP BY user_id
 			) AS l ON {$wpdb->users}.ID = l.user_id";
 	}

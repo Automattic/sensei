@@ -212,12 +212,16 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	public function add_last_activity_to_users_query( \WP_User_Query $query ): void {
 		$wpdb = $this->wpdb;
 
+		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
+		$passed   = Quiz_Progress_Interface::STATUS_PASSED;
+		$graded   = Quiz_Progress_Interface::STATUS_GRADED;
+
 		$query->query_fields .= ', l.last_activity_date';
 		$query->query_from   .= "
 			LEFT JOIN (
 				SELECT user_id, MAX(comment_date_gmt) AS last_activity_date
 				FROM {$wpdb->comments}
-				WHERE comment_approved IN ('complete', 'passed', 'graded')
+				WHERE comment_approved IN ('{$complete}', '{$passed}', '{$graded}')
 				AND comment_type = 'sensei_lesson_status'
 				GROUP BY user_id
 			) AS l ON {$wpdb->users}.ID = l.user_id";
