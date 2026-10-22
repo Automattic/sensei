@@ -71,6 +71,17 @@ interface Progress_Aggregation_Service_Interface {
 	 * @return array<int, array<string, int>> Map of post_id => [ status => count ].
 	 */
 	public function count_statuses_by_post( array $course_ids, array $args = array() ): array;
+
+	/**
+	 * Get status counts for a lesson, resolving its stored progress ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Requested lesson post ID.
+	 * @return array<string, int> Counts keyed by progress status.
+	 */
+	public function get_lesson_status_counts( int $lesson_id ): array;
+
 	/**
 	 * Count students with activity on a lesson.
 	 *
@@ -97,6 +108,8 @@ interface Progress_Aggregation_Service_Interface {
 
 	/**
 	 * Get aggregate totals for a set of lessons.
+	 *
+	 * Translated IDs resolve to stored progress; shared stored lessons are counted once.
 	 *
 	 * @since 4.26.0
 	 *
