@@ -99,7 +99,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 			case 'users':
 			case 'students':
 				return new Sensei_Reports_Overview_List_Table_Students(
-					new Sensei_Reports_Overview_Data_Provider_Students(),
+					new Sensei_Reports_Overview_Data_Provider_Students( $progress_clauses_service ),
 					new Sensei_Reports_Overview_Service_Students(
 						$aggregation_service,
 						$grading_stats_service

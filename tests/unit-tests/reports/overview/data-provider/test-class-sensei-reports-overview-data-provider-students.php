@@ -7,6 +7,7 @@
  */
 class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use Sensei_HPPS_Helpers;
 
 	/**
 	 * Factory for setting up testing data.
@@ -23,6 +24,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$this->resetCourseEnrolmentManager();
 
 		$this->factory = new Sensei_Factory();
+		$this->maybe_enable_hpps_tables_repository();
 
 		add_filter( 'sensei_analysis_overview_filter_users', [ $this, 'excludeAdminFromUserQuery' ] );
 	}
@@ -31,12 +33,19 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	 * Tear down after each test.
 	 */
 	public function tearDown(): void {
+		$this->maybe_reset_hpps_repository();
+
 		parent::tearDown();
 
 		$this->factory->tearDown();
 	}
 
-	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsAllStudents() {
+	/**
+	 * Without a date filter, students with and without activity are returned.
+	 *
+	 * @covers Sensei_Reports_Overview_Data_Provider_Students::get_items
+	 */
+	public function testGetItems_NoActivityFilterGiven_ReturnsAllStudents() {
 		/* Arrange. */
 		$no_last_activity_user   = $this->createUserWithCourseEnrollment();
 		$user_with_last_activity = $this->createUserWithActivity( '2022-03-01 00:00:00' );
@@ -47,10 +56,15 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$students = $data_provider->get_items( [ 'number' => -1 ] );
 
 		/* Assert. */
-		$this->assertCount( 2, $students );
+		$this->assertEqualsCanonicalizing( array( $no_last_activity_user, $user_with_last_activity ), array_map( 'intval', wp_list_pluck( $students, 'ID' ) ), 'Students with and without activity should be returned when no date filter is given.' );
 	}
 
-	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsStudentsWithCorrectFields() {
+	/**
+	 * Student fields include the latest completed lesson activity.
+	 *
+	 * @covers Sensei_Reports_Overview_Data_Provider_Students::get_items
+	 */
+	public function testGetItems_CompletedAndIncompleteLessonActivityGiven_ReturnsStudentFieldsWithLatestCompletedActivity() {
 		/* Arrange. */
 		$user_id = $this->createUserWithActivity(
 			'2022-03-01 00:00:00',
@@ -62,6 +76,9 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 			]
 		);
 
+		$this->createUserWithActivity( '2022-02-28 00:00:00', array( 'ID' => $user_id ) );
+		$this->createUserWithActivity( '2022-03-02 00:00:00', array( 'ID' => $user_id ), 'in-progress' );
+
 		$data_provider = new Sensei_Reports_Overview_Data_Provider_Students();
 
 		/* Act. */
@@ -72,7 +89,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$this->assertEquals( 'test', $students[0]->user_login );
 		$this->assertEquals( 'test@example.org', $students[0]->user_email );
 		$this->assertEquals( 'test', $students[0]->display_name );
-		$this->assertEquals( '2022-03-01 00:00:00', $students[0]->last_activity_date );
+		$this->assertEquals( '2022-03-01 00:00:00', $students[0]->last_activity_date, 'Last Activity should use the latest completed lesson, excluding newer incomplete activity.' );
 		$this->assertEquals( '2022-03-01 00:00:00', $students[0]->user_registered );
 	}
 
@@ -299,14 +316,14 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	 * Create a user that has an activity.
 	 *
 	 * @param string $activity_date The activity date.
-	 * @param array  $user_args The user args.
+	 * @param array  $user_args The user args, or ID of an existing user.
+	 * @param string $status The lesson status: complete or in-progress.
 	 *
 	 * @return int The user ID.
 	 */
-	private function createUserWithActivity( string $activity_date, array $user_args = [] ): int {
-		$user_id   = $this->factory->user->create( $user_args );
+	private function createUserWithActivity( string $activity_date, array $user_args = [], string $status = 'complete' ): int {
+		$user_id   = $user_args['ID'] ?? $this->factory->user->create( $user_args );
 		$course_id = $this->factory->course->create();
-
 		$lesson_id = $this->factory->lesson->create(
 			[
 				'meta_input' => [ '_lesson_course' => $course_id ],
@@ -314,14 +331,39 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		);
 
 		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
-		$activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+		$progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 
-		wp_update_comment(
-			[
-				'comment_ID'   => $activity_comment_id,
-				'comment_date' => $activity_date,
-			]
-		);
+		if ( 'in-progress' !== $status ) {
+			$progress->complete( new DateTimeImmutable( $activity_date, new DateTimeZone( 'UTC' ) ) );
+		}
+
+		Sensei()->lesson_progress_repository->save( $progress );
+
+		global $wpdb;
+
+		// Saving sets the current time; overwrite the Last Activity timestamp with the requested test date.
+		if ( self::is_hpps_tables_mode() ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set the activity fixture date.
+			$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'updated_at' => $activity_date ), array( 'id' => $progress->get_id() ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Verify HPPS without mirrored lesson comments.
+			$wpdb->delete(
+				$wpdb->comments,
+				array(
+					'user_id'      => $user_id,
+					'comment_type' => 'sensei_lesson_status',
+				)
+			);
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set the activity fixture date.
+			$wpdb->update(
+				$wpdb->comments,
+				array(
+					'comment_date'     => $activity_date,
+					'comment_date_gmt' => $activity_date,
+				),
+				array( 'comment_ID' => $progress->get_id() )
+			);
+		}
 
 		return $user_id;
 	}
