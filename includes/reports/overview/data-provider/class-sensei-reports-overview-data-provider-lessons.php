@@ -40,6 +40,13 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	private Progress_Clauses_Service_Interface $progress_clauses_service;
 
 	/**
+	 * Requested lesson IDs for the current query.
+	 *
+	 * @var int[]
+	 */
+	private array $requested_lesson_ids = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Sensei_Course                           $course                   Sensei course related services.
@@ -82,8 +89,6 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		if ( isset( $filters['search'] ) ) {
 			$lessons_args['s'] = $filters['search'];
 		}
-		add_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
-		add_filter( 'posts_clauses', [ $this, 'add_last_activity_to_lessons_query' ] );
 
 		// Using WP_Query as get_posts() doesn't support 'found_posts'.
 
@@ -95,9 +100,17 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		 * @param {array} $lessons_args Arguments for the query.
 		 * @return {array} Filtered arguments for the query.
 		 */
-		$lessons_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args ) );
-		remove_filter( 'posts_clauses', [ $this, 'add_last_activity_to_lessons_query' ] );
-		remove_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
+		$lessons_args               = apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args );
+		$this->requested_lesson_ids = $lessons_args['post__in'] ?? $course_lessons;
+		add_filter( 'posts_clauses', array( $this, 'add_progress_to_lessons_query' ) );
+
+		try {
+			$lessons_query = new WP_Query( $lessons_args );
+		} finally {
+			remove_filter( 'posts_clauses', array( $this, 'add_progress_to_lessons_query' ) );
+			$this->requested_lesson_ids = array();
+		}
+
 		$this->last_total_items = $lessons_query->found_posts;
 		return $lessons_query->posts;
 	}
@@ -112,30 +125,47 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	}
 
 	/**
-	 * Add the sum of days taken by each student to complete a lesson with returning lesson row.
+	 * Add lesson progress fields to the report query.
 	 *
-	 * @since  4.3.0
+	 * @since $$next-version$$
 	 * @access private
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_progress_to_lessons_query( array $clauses ): array {
+		return $this->progress_clauses_service->add_progress_to_lessons_clauses( $clauses, $this->requested_lesson_ids );
+	}
+
+	/**
+	 * Add Days to Completion to the lesson query.
 	 *
+	 * @since 4.3.0
+	 * @access private
+	 * @deprecated $$next-version$$ Use add_progress_to_lessons_query() for report queries.
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_days_to_complete_to_lessons_query( array $clauses ): array {
+		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Reports_Overview_Data_Provider_Lessons::add_progress_to_lessons_query' );
+
 		return $this->progress_clauses_service->add_days_to_completion_to_lessons_clauses( $clauses );
 	}
 
 	/**
-	 * Add the `last_activity` field to the query.
+	 * Add Last Activity to the lesson query.
 	 *
-	 * @since  4.4.1
+	 * @since 4.4.1
 	 * @access private
+	 * @deprecated $$next-version$$ Use add_progress_to_lessons_query() for report queries.
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
-	 *
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_last_activity_to_lessons_query( array $clauses ): array {
+		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Reports_Overview_Data_Provider_Lessons::add_progress_to_lessons_query' );
+
 		return $this->progress_clauses_service->add_last_activity_to_lessons_clauses( $clauses );
 	}
 }
