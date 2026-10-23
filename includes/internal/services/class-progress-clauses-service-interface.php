@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface Progress_Clauses_Service_Interface.
  *
- * Adapts WP_Query and WP_User_Query for progress-related report data.
+ * Provides methods to modify WP_Query clauses for progress-related data
+ * (last activity, days to completion) in course reports.
  *
  * @internal
  *
@@ -63,24 +64,37 @@ interface Progress_Clauses_Service_Interface {
 	public function filter_courses_by_last_activity( array $clauses, string $from = '', string $to = '' ): array;
 
 	/**
-	 * Modify WP_Query clauses to add last activity date to lesson posts.
+	 * Add Last Activity and Days to Completion fields to lesson queries.
 	 *
-	 * @since 4.26.0
+	 * @since $$next-version$$
 	 *
-	 * @param array $clauses Associative array of the clauses for the query.
+	 * @param array $clauses    Associative array of the clauses for the query.
+	 * @param int[] $lesson_ids Requested lesson post IDs.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_last_activity_to_lessons_clauses( array $clauses ): array;
+	public function add_progress_to_lessons_clauses( array $clauses, array $lesson_ids = array() ): array;
 
 	/**
-	 * Modify WP_Query clauses to add days-to-complete data to lesson posts.
+	 * Add Days to Completion to lesson queries.
 	 *
 	 * @since 4.26.0
 	 *
-	 * @param array $clauses Associative array of the clauses for the query.
+	 * @param array  $clauses       Associative array of the clauses for the query.
+	 * @param string $lesson_id_sql Stored lesson ID SQL expression; defaults to the queried post ID.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_days_to_completion_to_lessons_clauses( array $clauses ): array;
+	public function add_days_to_completion_to_lessons_clauses( array $clauses, string $lesson_id_sql = '' ): array;
+
+	/**
+	 * Add Last Activity to lesson queries.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @param array  $clauses       Associative array of the clauses for the query.
+	 * @param string $lesson_id_sql Stored lesson ID SQL expression; defaults to the queried post ID.
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_last_activity_to_lessons_clauses( array $clauses, string $lesson_id_sql = '' ): array;
 
 	/**
 	 * Add Last Activity grouped by user ID to a WP_User_Query.

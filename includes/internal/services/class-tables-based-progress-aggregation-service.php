@@ -181,6 +181,25 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	}
 
 	/**
+	 * Get status counts for a lesson, resolving its stored progress ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Requested lesson post ID.
+	 * @return array<string, int> Counts keyed by progress status.
+	 */
+	public function get_lesson_status_counts( int $lesson_id ): array {
+		$post_id_map = Utils::get_progress_post_id_map( array( $lesson_id ), 'lesson' );
+
+		return $this->count_statuses(
+			array(
+				'type'    => 'lesson',
+				'post_id' => $post_id_map[ $lesson_id ],
+			)
+		);
+	}
+
+	/**
 	 * Count students with activity on a lesson.
 	 *
 	 * @since 4.26.4
@@ -250,6 +269,8 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Get aggregate totals for a set of lessons.
 	 *
+	 * Translated IDs resolve to stored progress; shared stored lessons are counted once.
+	 *
 	 * @since 4.26.0
 	 *
 	 * @param int[] $lesson_ids Array of lesson post IDs.
@@ -267,6 +288,8 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		if ( empty( $lesson_ids ) ) {
 			return $defaults;
 		}
+
+		$lesson_ids = array_values( array_unique( Utils::get_progress_post_id_map( $lesson_ids, 'lesson' ) ) );
 
 		$wpdb              = $this->wpdb;
 		$table             = $this->get_progress_table_name();

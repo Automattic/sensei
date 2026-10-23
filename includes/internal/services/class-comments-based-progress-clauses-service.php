@@ -154,15 +154,63 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	}
 
 	/**
-	 * Modify WP_Query clauses to add last activity date to lesson posts.
+	 * Add Last Activity and Days to Completion fields to lesson queries.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $clauses    Associative array of the clauses for the query.
+	 * @param int[] $lesson_ids Requested lesson post IDs.
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_progress_to_lessons_clauses( array $clauses, array $lesson_ids = array() ): array {
+		$wpdb              = $this->wpdb;
+		$lesson_id_clauses = Utils::get_lesson_progress_id_mapping_clauses( $wpdb, $lesson_ids );
+		$clauses['join']  .= $lesson_id_clauses['join'];
+		$lesson_id_sql     = $lesson_id_clauses['lesson_id'];
+
+		$clauses = $this->add_days_to_completion_to_lessons_clauses( $clauses, $lesson_id_sql );
+
+		return $this->add_last_activity_to_lessons_clauses( $clauses, $lesson_id_sql );
+	}
+
+	/**
+	 * Add Days to Completion to lesson queries.
 	 *
 	 * @since 4.26.0
 	 *
-	 * @param array $clauses Associative array of the clauses for the query.
+	 * @param array  $clauses       Associative array of the clauses for the query.
+	 * @param string $lesson_id_sql Stored lesson ID SQL expression; defaults to the queried post ID.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_last_activity_to_lessons_clauses( array $clauses ): array {
-		$wpdb = $this->wpdb;
+	public function add_days_to_completion_to_lessons_clauses( array $clauses, string $lesson_id_sql = '' ): array {
+		$wpdb          = $this->wpdb;
+		$lesson_id_sql = $lesson_id_sql ? $lesson_id_sql : "{$wpdb->posts}.ID";
+
+		$has_completion = "'" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "'";
+
+		$clauses['fields'] .= ", (SELECT SUM( ABS( DATEDIFF( STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date )) + 1 ) as days_to_complete";
+		$clauses['fields'] .= " FROM {$wpdb->comments}";
+		$clauses['fields'] .= " INNER JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
+		$clauses['fields'] .= " WHERE {$wpdb->comments}.comment_post_ID = {$lesson_id_sql}";
+		$clauses['fields'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
+		$clauses['fields'] .= " AND {$wpdb->comments}.comment_approved IN ( $has_completion )";
+		$clauses['fields'] .= " AND {$wpdb->commentmeta}.meta_key = 'start') as days_to_complete";
+
+		return $clauses;
+	}
+
+	/**
+	 * Add Last Activity to lesson queries.
+	 *
+	 * @since 4.26.0
+	 *
+	 * @param array  $clauses       Associative array of the clauses for the query.
+	 * @param string $lesson_id_sql Stored lesson ID SQL expression; defaults to the queried post ID.
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_last_activity_to_lessons_clauses( array $clauses, string $lesson_id_sql = '' ): array {
+		$wpdb          = $this->wpdb;
+		$lesson_id_sql = $lesson_id_sql ? $lesson_id_sql : "{$wpdb->posts}.ID";
 
 		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
 		$passed   = Quiz_Progress_Interface::STATUS_PASSED;
@@ -171,33 +219,10 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 		$clauses['fields'] .= ", (
 			SELECT MAX({$wpdb->comments}.comment_date_gmt)
 			FROM {$wpdb->comments}
-			WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID
+			WHERE {$wpdb->comments}.comment_post_ID = {$lesson_id_sql}
 			AND {$wpdb->comments}.comment_approved IN ('{$complete}', '{$passed}', '{$graded}')
 			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
 		) AS last_activity_date";
-
-		return $clauses;
-	}
-
-	/**
-	 * Modify WP_Query clauses to add days-to-complete data to lesson posts.
-	 *
-	 * @since 4.26.0
-	 *
-	 * @param array $clauses Associative array of the clauses for the query.
-	 * @return array Modified associative array of the clauses for the query.
-	 */
-	public function add_days_to_completion_to_lessons_clauses( array $clauses ): array {
-		$wpdb           = $this->wpdb;
-		$has_completion = "'" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "'";
-
-		$clauses['fields'] .= ", (SELECT SUM( ABS( DATEDIFF( STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date )) + 1 ) as days_to_complete";
-		$clauses['fields'] .= " FROM {$wpdb->comments}";
-		$clauses['fields'] .= " INNER JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
-		$clauses['fields'] .= " WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
-		$clauses['fields'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
-		$clauses['fields'] .= " AND {$wpdb->comments}.comment_approved IN ( $has_completion )";
-		$clauses['fields'] .= " AND {$wpdb->commentmeta}.meta_key = 'start') as days_to_complete";
 
 		return $clauses;
 	}

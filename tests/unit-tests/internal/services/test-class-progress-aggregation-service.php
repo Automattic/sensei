@@ -81,6 +81,33 @@ abstract class Progress_Aggregation_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Multiple requested translations must not multiply shared stored lesson totals.
+	 *
+	 * @covers \Sensei\Internal\Services\Comments_Based_Progress_Aggregation_Service::get_lesson_totals
+	 * @covers \Sensei\Internal\Services\Tables_Based_Progress_Aggregation_Service::get_lesson_totals
+	 */
+	public function testGetLessonTotals_OriginalAndTranslationsGiven_CountsStoredProgressOnce(): void {
+		$original     = $this->sensei_factory->lesson->create();
+		$translations = $this->sensei_factory->lesson->create_many( 2 );
+		$user         = $this->sensei_factory->user->create();
+		$this->seed_progress( $original, $user, 'lesson', 'complete' );
+		$this->add_lesson_progress_id_filter( array_fill_keys( $translations, $original ) );
+
+		$actual = $this->get_service()->get_lesson_totals( array_merge( array( $original ), $translations ) );
+
+		$this->assertSame(
+			array(
+				'unique_student_count'   => 1,
+				'lesson_start_count'     => 1,
+				'lesson_completed_count' => 1,
+				'days_to_complete_count' => 1,
+				'days_to_complete_sum'   => 2,
+			),
+			$actual
+		);
+	}
+
+	/**
 	 * Temporary completions must not mask a registered student's unfinished lesson.
 	 *
 	 * @dataProvider report_lesson_population_provider

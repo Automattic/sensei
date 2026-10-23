@@ -125,6 +125,38 @@ class Utils {
 	}
 
 	/**
+	 * Build the join and stored lesson ID expression for a report query.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param \wpdb $wpdb       WordPress database object.
+	 * @param int[] $lesson_ids Requested lesson post IDs.
+	 * @return array{join: string, lesson_id: string} Join SQL and lesson ID expression.
+	 */
+	public static function get_lesson_progress_id_mapping_clauses( \wpdb $wpdb, array $lesson_ids ): array {
+		$rows = array();
+		foreach ( self::get_progress_post_id_map( $lesson_ids, 'lesson' ) as $requested_id => $stored_id ) {
+			if ( $requested_id !== $stored_id ) {
+				$rows[] = $wpdb->prepare( 'SELECT %d AS requested_id, %d AS stored_id', $requested_id, $stored_id );
+			}
+		}
+
+		if ( empty( $rows ) ) {
+			return array(
+				'join'      => '',
+				'lesson_id' => "{$wpdb->posts}.ID",
+			);
+		}
+
+		$mapping_sql = implode( ' UNION ALL ', $rows );
+
+		return array(
+			'join'      => " LEFT JOIN ({$mapping_sql}) AS lesson_progress_ids ON lesson_progress_ids.requested_id = {$wpdb->posts}.ID",
+			'lesson_id' => "COALESCE(lesson_progress_ids.stored_id, {$wpdb->posts}.ID)",
+		);
+	}
+
+	/**
 	 * Re-key stored progress results using the requested post IDs.
 	 *
 	 * Requested IDs without a stored result are omitted. Result values are preserved.
