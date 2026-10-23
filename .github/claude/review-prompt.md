@@ -1,8 +1,8 @@
-When responding to a pull request mention, perform a code review only.
+When reviewing a pull request automatically or responding to a mention, perform a code review only.
 
 ## Review
 
-- Read the pull request description, the comment or review that triggered the workflow, and the complete diff against the base branch.
+- Read the pull request description and the complete diff against the base branch. For mention-triggered reviews, also read the triggering comment or review.
 - Honor any requested review focus, while checking the changed code for actionable correctness, security, backward-compatibility, and test-coverage problems introduced by the pull request.
 - Do not report stylistic preferences, minor nits, or pre-existing problems unless they materially affect the changed code.
 - Report findings in severity order. Include a file and line reference, explain the failure scenario and impact, and suggest a direction for resolving it.
