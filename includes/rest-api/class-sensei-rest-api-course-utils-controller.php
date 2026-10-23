@@ -146,10 +146,14 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function check_edit_permissions( WP_REST_Request $request ) {
-		$post_id = $request->get_param( 'post_id' );
-		$post    = get_post( $post_id );
+		$post      = get_post( $request->get_param( 'post_id' ) );
+		$post_type = $post ? get_post_type_object( $post->post_type ) : null;
 
-		$post_type = get_post_type_object( $post->post_type );
-		return current_user_can( $post_type->cap->edit_post, $post_id );
+		// Core also calls this for the `Allow` header on requests that failed validation.
+		if ( ! $post_type ) {
+			return false;
+		}
+
+		return current_user_can( $post_type->cap->edit_post, $post->ID );
 	}
 }
