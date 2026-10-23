@@ -46,6 +46,11 @@ jobs:
             - name: Build assets
               run: npm run build:assets
 
+            - name: Configure Ubuntu package mirrors
+              run: |
+                  # The Azure mirror can download too slowly to finish within the job timeout.
+                  printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' | sudo tee /etc/apt/apt-mirrors.txt
+
             - name: Install Playwright
               run: npx playwright install --with-deps chromium
 
