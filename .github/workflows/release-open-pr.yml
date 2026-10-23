@@ -54,7 +54,9 @@ jobs:
                   OPEN_ITEMS=$( gh api "repos/$GITHUB_REPOSITORY/issues?milestone=$MILESTONE_NUMBER&state=open&per_page=100" \
                       --jq '[.[] | "#\(.number)"] | join(", ")' )
                   if [[ -n "$OPEN_ITEMS" ]]; then
-                      echo "::error::Milestone $VERSION has open items: $OPEN_ITEMS. Merge them or move them to another milestone."
+                      MILESTONE_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/milestone/$MILESTONE_NUMBER"
+                      echo "::error::Milestone $VERSION has open items: $OPEN_ITEMS. Merge them or move them to another milestone: $MILESTONE_URL"
+                      echo "Milestone $VERSION has open items. [See them in the milestone]($MILESTONE_URL)." >> "$GITHUB_STEP_SUMMARY"
                       exit 1
                   fi
 
