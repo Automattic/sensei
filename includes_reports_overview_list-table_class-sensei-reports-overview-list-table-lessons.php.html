@@ -218,12 +218,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 			_deprecated_hook( 'sensei_analysis_lesson_completions', '4.26.0', '', __( 'This filter is no longer used. Lesson counts now use the progress aggregation service.', 'sensei-lms' ) );
 		}
 
-		$status_counts = $this->aggregation_service->count_statuses(
-			[
-				'type'    => 'lesson',
-				'post_id' => $item->ID,
-			]
-		);
+		$status_counts = $this->aggregation_service->get_lesson_status_counts( $item->ID );
 
 		$lesson_students    = array_sum( $status_counts );
 		$lesson_completions = 0;
