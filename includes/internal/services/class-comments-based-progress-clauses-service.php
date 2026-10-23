@@ -194,6 +194,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 		$clauses['fields'] .= " WHERE {$wpdb->comments}.comment_post_ID = {$lesson_id_sql}";
 		$clauses['fields'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
 		$clauses['fields'] .= " AND {$wpdb->comments}.comment_approved IN ( $has_completion )";
+		$clauses['fields'] .= Utils::build_comment_author_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 		$clauses['fields'] .= " AND {$wpdb->commentmeta}.meta_key = 'start') as days_to_complete";
 
 		return $clauses;
@@ -216,12 +217,15 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 		$passed   = Quiz_Progress_Interface::STATUS_PASSED;
 		$graded   = Quiz_Progress_Interface::STATUS_GRADED;
 
+		$exclusion = Utils::build_comment_author_exclusion_clause( $this->wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
+
 		$clauses['fields'] .= ", (
 			SELECT MAX({$wpdb->comments}.comment_date_gmt)
 			FROM {$wpdb->comments}
 			WHERE {$wpdb->comments}.comment_post_ID = {$lesson_id_sql}
 			AND {$wpdb->comments}.comment_approved IN ('{$complete}', '{$passed}', '{$graded}')
 			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
+			{$exclusion}
 		) AS last_activity_date";
 
 		return $clauses;

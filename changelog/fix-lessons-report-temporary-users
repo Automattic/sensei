@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Exclude guest and preview progress from Lessons report counts, activity and completion durations.

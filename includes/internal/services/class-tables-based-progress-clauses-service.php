@@ -212,6 +212,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		$clauses['fields'] .= " AND p.type = 'lesson'";
 		$has_completion     = "'" . implode( "','", Grading_Item::STATUSES_WITH_COMPLETION_DATE ) . "'";
 		$clauses['fields'] .= " AND COALESCE( q.status, p.status ) IN ( $has_completion )";
+		$clauses['fields'] .= Utils::build_user_exclusion_clause( $this->wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 		$clauses['fields'] .= ') as days_to_complete';
 
 		return $clauses;
@@ -236,12 +237,15 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 		// so only lesson status 'complete' is needed here.
 		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
 
+		$exclusion = Utils::build_user_exclusion_clause( $this->wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
+
 		$clauses['fields'] .= ", (
-			SELECT MAX(completed_at)
-			FROM {$progress_table}
-			WHERE post_id = {$lesson_id_sql}
-			AND type = 'lesson'
-			AND status = '{$complete}'
+			SELECT MAX(p.completed_at)
+			FROM {$progress_table} p
+			WHERE p.post_id = {$lesson_id_sql}
+			AND p.type = 'lesson'
+			AND p.status = '{$complete}'
+			{$exclusion}
 		) AS last_activity_date";
 
 		return $clauses;
