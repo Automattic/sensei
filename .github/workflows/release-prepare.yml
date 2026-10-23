@@ -1,0 +1,180 @@
+name: 'Release: Prepare'
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Version to release (X.Y.Z). Leave empty to use the open milestone with the lowest version.'
+                required: false
+                default: ''
+
+permissions: {}
+
+concurrency:
+    group: release-prepare
+
+jobs:
+    prepare:
+        name: Prepare release
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        permissions:
+            contents: write
+            pull-requests: write
+        env:
+            INPUT_VERSION: ${{ inputs.version }}
+            # Skip the lint-staged pre-commit hook; CI lints the release PR.
+            HUSKY: 0
+        steps:
+            - name: Check the release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  MILESTONES=$( gh api "repos/$GITHUB_REPOSITORY/milestones?state=open&per_page=100" )
+                  VERSION=${INPUT_VERSION:-$( jq -r '.[].title | select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))' <<< "$MILESTONES" | sort -V | head -n 1 )}
+
+                  # Validated before writing to GITHUB_ENV so the input can't inject other variables.
+                  if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                      echo "::error::Version '$VERSION' is not in X.Y.Z format, or no open X.Y.Z milestone was found."
+                      exit 1
+                  fi
+                  if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/version/$VERSION" --silent 2>/dev/null; then
+                      echo "::error::Tag version/$VERSION already exists."
+                      exit 1
+                  fi
+                  if gh api "repos/$GITHUB_REPOSITORY/branches/release/$VERSION" --silent 2>/dev/null; then
+                      echo "::error::Branch release/$VERSION already exists."
+                      exit 1
+                  fi
+                  MILESTONE_NUMBER=$( jq -r --arg v "$VERSION" '.[] | select(.title == $v) | .number' <<< "$MILESTONES" )
+                  if [[ -z "$MILESTONE_NUMBER" ]]; then
+                      echo "::error::Open milestone '$VERSION' not found."
+                      exit 1
+                  fi
+                  OPEN_ITEMS=$( gh api "repos/$GITHUB_REPOSITORY/issues?milestone=$MILESTONE_NUMBER&state=open&per_page=100" \
+                      --jq '[.[] | "#\(.number)"] | join(", ")' )
+                  if [[ -n "$OPEN_ITEMS" ]]; then
+                      echo "::error::Milestone $VERSION has open items: $OPEN_ITEMS. Merge them or move them to another milestone."
+                      exit 1
+                  fi
+
+                  echo "::notice::Preparing release $VERSION."
+                  echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+            - uses: actions/checkout@v7.0.1
+              with:
+                  ref: trunk
+                  # Changelogger needs the history to add PR numbers to the entries.
+                  fetch-depth: 0
+                  # Keep the token out of .git/config so dependency install scripts can't read it.
+                  persist-credentials: false
+
+            - name: Check "Tested up to"
+              run: |
+                  WP_VERSIONS=$( curl -fsS https://api.wordpress.org/core/stable-check/1.0/ | jq -r 'keys[]' | cut -d. -f1,2 | sort -uV ) || true
+                  LATEST=$( tail -n 1 <<< "$WP_VERSIONS" )
+                  # Sensei supports the latest three WordPress versions.
+                  MINIMUM=$( tail -n 3 <<< "$WP_VERSIONS" | head -n 1 )
+                  TESTED=$( sed -nE 's/^Tested up to: ([0-9]+\.[0-9]+).*/\1/p' readme.txt )
+                  if ! [[ "$LATEST" =~ ^[0-9]+\.[0-9]+$ && "$MINIMUM" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                      echo "::warning::Could not get the WordPress versions. Check Tested up to ($TESTED) and Requires at least by hand."
+                      echo "WP_CHECK_FAILED=1" >> "$GITHUB_ENV"
+                  elif [[ "$( printf '%s\n' "$TESTED" "$LATEST" | sort -V | tail -n 1 )" != "$TESTED" ]]; then
+                      echo "WP_LATEST=$LATEST" >> "$GITHUB_ENV"
+                      echo "WP_MINIMUM=$MINIMUM" >> "$GITHUB_ENV"
+                  fi
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'npm'
+
+            - uses: ./.github/actions/install-php
+
+            - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+              with:
+                  php-version: '7.4'
+                  tools: wp-cli
+                  coverage: none
+
+            - name: Install JS dependencies
+              run: npm ci
+
+            - name: Commit the release changes
+              run: |
+                  commit() {
+                      git add -A
+                      git diff --cached --quiet || git commit -m "$1"
+                  }
+
+                  git config user.name 'github-actions[bot]'
+                  git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+                  git switch -c "release/$VERSION"
+
+                  ./scripts/replace-next-version-tag.sh "$VERSION"
+                  commit 'Replace next version tag'
+
+                  sed -E -i "s/^ \* Version: .*/ * Version: $VERSION/" sensei-lms.php
+                  sed -E -i "s/'SENSEI_LMS_VERSION', '[^']*'/'SENSEI_LMS_VERSION', '$VERSION'/" sensei-lms.php
+                  sed -E -i "s/^Stable tag: .*/Stable tag: $VERSION/" readme.txt
+                  npm version "$VERSION" --no-git-tag-version --ignore-scripts
+                  commit 'Update plugin version'
+
+                  # Kept as its own commit so it can be reverted if QA on the new WordPress version fails.
+                  if [[ -n "$WP_LATEST" ]]; then
+                      for FILE in readme.txt sensei-lms.php; do
+                          sed -E -i \
+                              -e "s/^((\s\*\s)?Tested up to: ).*/\1$WP_LATEST/" \
+                              -e "s/^((\s\*\s)?Requires at least: ).*/\1$WP_MINIMUM/" \
+                              "$FILE"
+                      done
+                      commit "Bump Tested up to $WP_LATEST and Requires at least $WP_MINIMUM"
+                  fi
+
+                  ./vendor/bin/changelogger write --add-pr-num --use-version="$VERSION" --no-interaction
+                  ./scripts/changelog-unwrap-pr-links.sh
+                  ./scripts/copy-changelog-to-readme.php
+                  commit 'Update changelog'
+
+                  npm run i18n:build
+                  commit 'Update translations'
+
+            - name: Open the release pull request
+              env:
+                  # Pushes made with GITHUB_TOKEN don't trigger CI on the release PR; the bot token does.
+                  GH_TOKEN: ${{ secrets.SENSEI_BOT_PR_CREATE_TOKEN || secrets.GITHUB_TOKEN }}
+              run: |
+                  gh auth setup-git
+                  git push --set-upstream origin "release/$VERSION"
+
+                  {
+                      echo "Release $VERSION."
+                      echo
+                      if [[ -n "$WP_LATEST" ]]; then
+                          echo '> [!WARNING]'
+                          echo "> Tested up to is bumped to WordPress $WP_LATEST and Requires at least to $WP_MINIMUM in their own commit. Test on $WP_LATEST during QA and revert that commit if it fails."
+                          echo
+                      elif [[ -n "$WP_CHECK_FAILED" ]]; then
+                          echo '> [!WARNING]'
+                          echo '> Could not get the WordPress versions. Check Tested up to and Requires at least by hand.'
+                          echo
+                      fi
+                      cat <<'EOF'
+                  ## Before merging
+
+                  - [ ] Cherry-pick any approved fixes from [sensei-security](https://github.com/Automattic/sensei-security/pulls) into this branch.
+                  - [ ] Review the generated changelog in `changelog.txt` and `readme.txt`.
+                  - [ ] Build the package from this branch and run the release checklist in a new installation.
+                  - [ ] Check whether `Requires PHP` needs a bump. If it does, bump it in its own commit on this branch.
+                  - [ ] Confirm no new commits landed after testing.
+                  EOF
+                  } > pr-body.md
+
+                  gh pr create \
+                      --draft \
+                      --base trunk \
+                      --head "release/$VERSION" \
+                      --title "Release $VERSION" \
+                      --body-file pr-body.md \
+                      --label 'No Changelog' \
+                      --milestone "$VERSION"
