@@ -16,12 +16,33 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	protected $factory;
 
 	/**
+	 * Request arguments to restore after each test.
+	 *
+	 * @var array
+	 */
+	private array $initial_get;
+
+	/**
+	 * Date options to restore after each test.
+	 *
+	 * @var array
+	 */
+	private array $date_options;
+
+	/**
 	 * Set up before each test.
 	 */
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->factory = new Sensei_Factory();
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Preserve the request used by report fixtures.
+		$this->initial_get  = $_GET;
+		$this->date_options = array(
+			'timezone_string' => get_option( 'timezone_string' ),
+			'gmt_offset'      => get_option( 'gmt_offset' ),
+			'date_format'     => get_option( 'date_format' ),
+		);
+		$this->factory      = new Sensei_Factory();
 		$this->maybe_enable_hpps_tables_repository();
 	}
 
@@ -29,6 +50,10 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	 * Tear down after each test.
 	 */
 	public function tearDown(): void {
+		$_GET = $this->initial_get;
+		foreach ( $this->date_options as $option => $value ) {
+			update_option( $option, $value );
+		}
 		$this->maybe_reset_hpps_repository();
 
 		parent::tearDown();
@@ -37,57 +62,53 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Lesson report rows, headers and CSV reflect the selected activity.
+	 * Displayed lesson rows and headers reflect the selected activity.
 	 *
-	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::prepare_items
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::get_row_data
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::get_columns
 	 * @dataProvider lesson_report_scenarios
 	 */
-	public function testGenerateReport_LessonActivityGiven_ReturnsMatchingProgressMetrics( array $activity, int $offset, ?string $date, ?string $sum, array $expected ): void {
+	public function testPrepareItems_LessonActivityGiven_DisplaysMatchingProgressMetrics( array $activity, int $offset, array $expected ): void {
 		/* Arrange. */
-		$course           = $this->factory->course->create();
-		$lesson           = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course ) ) );
-		$timezone_options = array(
-			'timezone_string' => get_option( 'timezone_string' ),
-			'gmt_offset'      => get_option( 'gmt_offset' ),
-		);
-		update_option( 'timezone_string', '' );
-		update_option( 'gmt_offset', $offset );
-		foreach ( $activity as $dates ) {
-			$this->create_lesson_progress( $lesson, $dates[0], $dates[1] );
-		}
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Preserve the request used by the report fixture.
-		$initial_get           = $_GET;
-		$_GET['course_filter'] = $course;
-		$table                 = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course ) );
-		$row_method            = new ReflectionMethod( $table, 'get_row_data' );
+		list( $table, $lesson ) = $this->create_lesson_report( $activity, $offset );
+		$row_method             = new ReflectionMethod( $table, 'get_row_data' );
 		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $row_method );
 
 		/* Act. */
-		try {
-			$table->prepare_items();
-			$items   = $table->items;
-			$columns = $table->get_columns();
-			$row     = $row_method->invoke( $table, $items[0] );
-			$csv     = $table->generate_report();
-		} finally {
-			$_GET = $initial_get;
-			foreach ( $timezone_options as $option => $value ) {
-				update_option( $option, $value );
-			}
-		}
+		$table->prepare_items();
+		$items   = $table->items;
+		$columns = $table->get_columns();
+		$row     = $row_method->invoke( $table, $items[0] );
 
 		/* Assert. */
 		self::assertSame( array( $lesson ), wp_list_pluck( $items, 'ID' ), 'The row must retain the requested lesson ID.' );
-		self::assertSame( $date, $items[0]->last_activity_date, 'Last Activity must use the latest eligible completion.' );
-		self::assertSame( $sum, $items[0]->days_to_complete, 'The duration sum must use eligible progress and local dates.' );
 		self::assertSame( 'Students (' . $expected['students'] . ')', $columns['students'], 'The header must count the selected students.' );
+		self::assertSame( 'Completed (' . $expected['completions'] . ')', $columns['completions'], 'The header must count eligible completions.' );
+		self::assertSame( 'Completion Rate (' . ( 'N/A' === $expected['completion_rate'] ? '0%' : $expected['completion_rate'] ) . ')', $columns['completion_rate'], 'The header must use eligible starts and completions.' );
 		self::assertSame( 'Days to Completion (' . $expected['days_to_completion'] . ')', $columns['days_to_completion'], 'The header must use the expected average duration.' );
 		self::assertSame( $expected, array_intersect_key( $row, $expected ), 'The row must display the expected progress metrics.' );
-		self::assertSame( $expected, array_intersect_key( $csv[1], $expected ), 'CSV must display the same expected progress metrics.' );
-		self::assertSame( $row['last_activity'], $csv[1]['last_activity'], 'CSV must share the displayed activity.' );
-		self::assertSame( $date ? Sensei_Utils::format_last_activity_date( $date ) : 'N/A', $row['last_activity'], 'The row must format the expected activity or show N/A.' );
+	}
+
+	/**
+	 * Exported lesson rows and headers reflect the selected activity.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
+	 * @dataProvider lesson_report_scenarios
+	 */
+	public function testGenerateReport_LessonActivityGiven_ExportsMatchingProgressMetrics( array $activity, int $offset, array $expected ): void {
+		/* Arrange. */
+		list( $table ) = $this->create_lesson_report( $activity, $offset );
+
+		/* Act. */
+		$csv = $table->generate_report();
+
+		/* Assert. */
+		self::assertSame( 'Students (' . $expected['students'] . ')', $csv[0][1], 'The CSV header must count the selected students.' );
+		self::assertSame( 'Completed (' . $expected['completions'] . ')', $csv[0][3], 'The CSV header must count eligible completions.' );
+		self::assertSame( 'Completion Rate (' . ( 'N/A' === $expected['completion_rate'] ? '0%' : $expected['completion_rate'] ) . ')', $csv[0][4], 'The CSV header must use eligible starts and completions.' );
+		self::assertSame( 'Days to Completion (' . $expected['days_to_completion'] . ')', $csv[0][5], 'The CSV header must use the expected average duration.' );
+		self::assertSame( $expected, array_intersect_key( $csv[1], $expected ), 'CSV must export the expected progress metrics.' );
 	}
 
 	/**
@@ -123,6 +144,8 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 		$this->create_lesson_progress( $originals[1], '2022-01-01 12:00:00', '2022-01-04 12:00:00' );
 		$this->create_lesson_progress( $originals[1], '2022-01-05 12:00:00', null );
 		$this->create_lesson_progress( $third, '2022-01-01 12:00:00', '2022-01-06 12:00:00' );
+		$this->create_lesson_progress( $originals[0], '2022-01-01 12:00:00', '2022-01-11 12:00:00', array( 'user_login' => Sensei_Guest_User::LOGIN_PREFIX . 'translated' ) );
+		$this->create_lesson_progress( $originals[1], '2022-01-01 12:00:00', '2022-01-21 12:00:00', array( 'user_login' => Sensei_Preview_User::LOGIN_PREFIX . 'translated' ) );
 		$id_map = array(
 			$first  => $originals[0],
 			$second => $originals[1],
@@ -337,31 +360,53 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	public function lesson_report_scenarios(): array {
 		$completed = array(
 			'students'           => '1',
+			'last_activity'      => 'January 3, 2022',
 			'completions'        => '1',
 			'completion_rate'    => '100%',
 			'days_to_completion' => '3',
 		);
 		return array(
-			'completed activity'                => array( array( array( '2022-01-01 12:00:00', '2022-01-03 12:00:00' ) ), 0, '2022-01-03 12:00:00', '3', $completed ),
-			'no activity'                       => array(
-				array(),
+			'completed activity'                        => array( array( array( '2022-01-01 12:00:00', '2022-01-03 12:00:00' ) ), 0, $completed ),
+			'registered, guest and preview completions' => array(
+				array(
+					array( '2022-01-01 12:00:00', '2022-01-03 12:00:00' ),
+					array( '2022-01-01 12:00:00', '2022-01-11 12:00:00', array( 'user_login' => Sensei_Guest_User::LOGIN_PREFIX . 'report' ) ),
+					array( '2022-01-01 12:00:00', '2022-01-21 12:00:00', array( 'user_login' => Sensei_Preview_User::LOGIN_PREFIX . 'report' ) ),
+				),
 				0,
-				null,
-				null,
+				$completed,
+			),
+			'only guest and preview completions'        => array(
+				array(
+					array( '2022-01-01 12:00:00', '2022-01-11 12:00:00', array( 'user_login' => Sensei_Guest_User::LOGIN_PREFIX . 'report' ) ),
+					array( '2022-01-01 12:00:00', '2022-01-21 12:00:00', array( 'user_login' => Sensei_Preview_User::LOGIN_PREFIX . 'report' ) ),
+				),
+				0,
 				array(
 					'students'           => '0',
+					'last_activity'      => 'N/A',
 					'completions'        => '0',
 					'completion_rate'    => 'N/A',
 					'days_to_completion' => 'N/A',
 				),
 			),
-			'unfinished activity'               => array(
+			'no activity'                               => array(
+				array(),
+				0,
+				array(
+					'students'           => '0',
+					'last_activity'      => 'N/A',
+					'completions'        => '0',
+					'completion_rate'    => 'N/A',
+					'days_to_completion' => 'N/A',
+				),
+			),
+			'unfinished activity'                       => array(
 				array( array( '2022-01-01 12:00:00', null ) ),
 				0,
-				null,
-				null,
 				array(
 					'students'           => '1',
+					'last_activity'      => 'N/A',
 					'completions'        => '0',
 					'completion_rate'    => '0%',
 					'days_to_completion' => 'N/A',
@@ -374,22 +419,20 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 					array( '2022-01-05 12:00:00', null ),
 				),
 				0,
-				'2022-01-04 12:00:00',
-				'5',
 				array(
 					'students'           => '3',
+					'last_activity'      => 'January 4, 2022',
 					'completions'        => '2',
 					'completion_rate'    => '67%',
 					'days_to_completion' => '3',
 				),
 			),
-			'UTC midnight within one local day' => array(
+			'UTC midnight within one local day'         => array(
 				array( array( '2022-01-01 23:30:00', '2022-01-02 01:30:00' ) ),
 				-5,
-				'2022-01-02 01:30:00',
-				'1',
 				array(
 					'students'           => '1',
+					'last_activity'      => 'January 2, 2022',
 					'completions'        => '1',
 					'completion_rate'    => '100%',
 					'days_to_completion' => '1',
@@ -426,15 +469,38 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Create a lesson report with fixed activity and date formatting.
+	 *
+	 * @param array $activity Student activity dates and optional user arguments.
+	 * @param int   $offset   Site UTC offset in hours.
+	 * @return array{Sensei_Reports_Overview_List_Table_Lessons, int} Table and requested lesson ID.
+	 */
+	private function create_lesson_report( array $activity, int $offset ): array {
+		$course = $this->factory->course->create();
+		$lesson = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course ) ) );
+		update_option( 'timezone_string', '' );
+		update_option( 'gmt_offset', $offset );
+		update_option( 'date_format', 'F j, Y' );
+		foreach ( $activity as $dates ) {
+			$this->create_lesson_progress( $lesson, $dates[0], $dates[1], $dates[2] ?? array() );
+		}
+		$_GET['course_filter'] = $course;
+		$table                 = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course ) );
+
+		return array( $table, $lesson );
+	}
+
+	/**
 	 * Create one student's lesson activity with fixed UTC dates.
 	 *
 	 * @param int         $lesson    Lesson ID.
 	 * @param string      $start     UTC start date.
 	 * @param string|null $completed UTC completion date, or null for unfinished activity.
+	 * @param array       $user_args User factory arguments.
 	 * @return int Student ID.
 	 */
-	private function create_lesson_progress( int $lesson, string $start, ?string $completed ): int {
-		$user     = $this->factory->user->create();
+	private function create_lesson_progress( int $lesson, string $start, ?string $completed, array $user_args = array() ): int {
+		$user     = $this->factory->user->create( $user_args );
 		$progress = Sensei()->lesson_progress_repository->create( $lesson, $user );
 		$progress->start( new DateTimeImmutable( $start, new DateTimeZone( 'UTC' ) ) );
 		if ( null !== $completed ) {

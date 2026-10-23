@@ -73,7 +73,7 @@ interface Progress_Aggregation_Service_Interface {
 	public function count_statuses_by_post( array $course_ids, array $args = array() ): array;
 
 	/**
-	 * Get status counts for a lesson, resolving its stored progress ID.
+	 * Get report status counts for a lesson, excluding temporary users.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -110,6 +110,7 @@ interface Progress_Aggregation_Service_Interface {
 	 * Get aggregate totals for a set of lessons.
 	 *
 	 * Translated IDs resolve to stored progress; shared stored lessons are counted once.
+	 * Guest and preview users are excluded from all totals.
 	 *
 	 * @since 4.26.0
 	 *

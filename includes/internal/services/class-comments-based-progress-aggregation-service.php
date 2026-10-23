@@ -184,7 +184,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	}
 
 	/**
-	 * Get status counts for a lesson, resolving its stored progress ID.
+	 * Get report status counts for a lesson, excluding temporary users.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -196,8 +196,9 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 
 		return $this->count_statuses(
 			array(
-				'type'    => 'lesson',
-				'post_id' => $post_id_map[ $lesson_id ],
+				'type'                        => 'lesson',
+				'post_id'                     => $post_id_map[ $lesson_id ],
+				'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES,
 			)
 		);
 	}
@@ -318,6 +319,8 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			array_merge( array( '%Y-%m-%d %H:%i:%s' ), $lesson_ids )
 		);
 		// phpcs:enable
+
+		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$row = $wpdb->get_row( $query );
