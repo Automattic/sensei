@@ -175,11 +175,16 @@ jobs:
                       yq '.paths[][] | "- [ ] " + .' .github/RELEASE-CHECKLIST.yml
                   } > pr-body.md
 
-                  gh pr create \
+                  if ! gh pr create \
                       --draft \
                       --base trunk \
                       --head "release/$VERSION" \
                       --title "Release $VERSION" \
                       --body-file pr-body.md \
                       --label 'No Changelog' \
-                      --milestone "$VERSION"
+                      --milestone "$VERSION"; then
+                      # Remove the pushed branch so the workflow can be re-run once the cause is fixed.
+                      echo "::error::Could not open the release pull request. Deleting release/$VERSION."
+                      git push origin --delete "release/$VERSION"
+                      exit 1
+                  fi
