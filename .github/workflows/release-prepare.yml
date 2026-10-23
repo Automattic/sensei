@@ -164,10 +164,14 @@ jobs:
 
                   - [ ] Cherry-pick any approved fixes from [sensei-security](https://github.com/Automattic/sensei-security/pulls) into this branch.
                   - [ ] Review the generated changelog in `changelog.txt` and `readme.txt`.
-                  - [ ] Build the package from this branch and run the release checklist in a new installation.
+                  - [ ] Build the package from this branch and run the QA checklist below in a new installation.
                   - [ ] Check whether `Requires PHP` needs a bump. If it does, bump it in its own commit on this branch.
                   - [ ] Confirm no new commits landed after testing.
+
+                  ## QA
+
                   EOF
+                      yq '.paths[][] | "- [ ] " + .' .github/RELEASE-CHECKLIST.yml
                   } > pr-body.md
 
                   gh pr create \
