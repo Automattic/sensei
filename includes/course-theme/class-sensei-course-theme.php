@@ -375,7 +375,7 @@ class Sensei_Course_Theme {
 
 		Sensei()->assets->enqueue( self::THEME_NAME . '-style', $css_file );
 
-		if ( ! current_theme_supports( 'sensei-learning-mode' ) ) {
+		if ( Sensei_Course_Theme_Option::should_load_learning_mode_compat() ) {
 			Sensei()->assets->enqueue( self::THEME_NAME . 'compatibility-style', $compat_css_file );
 		}
 
