@@ -1,9 +1,9 @@
 .DEFAULT_GOAL := help
 
 PLUGIN_NAME := sensei-lms
-WP_ENV := COMPOSE_PROJECT_NAME=$(PLUGIN_NAME) npx @wordpress/env
+WP_ENV := node scripts/sensei-env.cjs
 NODE_MIN_VERSION := 22
-WP ?= latest
+WP ?=
 PHP ?=
 
 define check_node
@@ -20,41 +20,6 @@ define check_node
 	fi
 endef
 
-# Write .wp-env.override.json when WP or PHP overrides are specified.
-# Resolves WP value to a wp-env core source:
-#   latest  -> no override (uses .wp-env.json as-is)
-#   6.8     -> WordPress/WordPress#6.8-branch (GitHub mirror)
-#   7.0-beta1, 6.9-RC1 -> wordpress.org zip URL
-#   nightly -> wordpress.org nightly zip
-define write_override
-	@if [ "$(WP)" != "latest" ] || [ -n "$(PHP)" ]; then \
-		WP_VAL="$(WP)"; \
-		if [ "$$WP_VAL" = "nightly" ]; then \
-			WP_CORE='"https://wordpress.org/nightly-builds/wordpress-latest.zip"'; \
-		elif echo "$$WP_VAL" | grep -qiE -- '-beta|-rc'; then \
-			WP_CORE="\"https://wordpress.org/wordpress-$$WP_VAL.zip\""; \
-		elif [ "$$WP_VAL" != "latest" ]; then \
-			WP_CORE="\"WordPress/WordPress#$$WP_VAL-branch\""; \
-		else \
-			echo "Error: Unrecognised WP value '$$WP_VAL'"; exit 1; \
-		fi; \
-		( \
-			printf '{\n'; \
-			if [ "$(WP)" != "latest" ]; then \
-				printf '  "core": %s' "$$WP_CORE"; \
-				if [ -n "$(PHP)" ]; then printf ',\n'; else printf '\n'; fi; \
-			fi; \
-			if [ -n "$(PHP)" ]; then \
-				printf '  "phpVersion": "%s"\n' "$(PHP)"; \
-			fi; \
-			printf '}\n'; \
-		) > .wp-env.override.json; \
-		echo "Override: $$(cat .wp-env.override.json | tr -d '\n')"; \
-	else \
-		rm -f .wp-env.override.json; \
-	fi
-endef
-
 ## Development environment
 install: ## Install dependencies (requires Node 22+)
 	$(check_node)
@@ -63,23 +28,27 @@ install: ## Install dependencies (requires Node 22+)
 install-php: ## Install PHP dependencies via wp-env (requires: make up)
 	$(WP_ENV) run cli --env-cwd=wp-content/plugins/sensei composer install
 
-up: ## Start WordPress dev environment (WP=6.8|7.0-beta1|nightly PHP=8.3)
+up: ## Start WordPress (NAME=label CLONE_FROM=id WP=6.8 PHP=8.3)
 	$(check_node)
-	$(write_override)
-	@if [ "$(WP)" != "latest" ] || [ -n "$(PHP)" ]; then \
-		echo "Starting wp-env with WP=$(WP)$${PHP:+ PHP=$(PHP)}"; \
-	else \
-		echo "Starting wp-env with latest WordPress"; \
-	fi
-	$(WP_ENV) start --update
+	WP="$(WP)" PHP="$(PHP)" CLONE_FROM="$(CLONE_FROM)" SENSEI_ENV_NAME="$(NAME)" $(WP_ENV) start
 
-down: ## Stop WordPress dev environment
-	-$(WP_ENV) stop
-	@rm -f .wp-env.override.json
+down: ## Stop the selected worktree environment
+	$(WP_ENV) stop
 
-destroy: ## Remove WordPress environment containers and data
-	-$(WP_ENV) destroy
-	@rm -f .wp-env.override.json
+destroy: ## Remove this worktree environment and its data
+	$(WP_ENV) destroy
+
+env-status: ## Show selected environment status and URLs
+	$(WP_ENV) status
+
+env-list: ## List managed environments across worktrees
+	$(WP_ENV) list
+
+env-prune: ## Preview orphans; remove selected IDs with APPLY=1 IDS=id,id
+	APPLY="$(APPLY)" IDS="$(IDS)" $(WP_ENV) prune
+
+env-retry: ## Retry interrupted development data initialization
+	$(WP_ENV) retry
 
 logs: ## Show WordPress environment logs
 	$(WP_ENV) logs
@@ -134,4 +103,4 @@ build: ## Build plugin zip via wp-env (requires: make up)
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: install install-php up down destroy logs shell wp test-php test-php-filter lint psalm changelog build help
+.PHONY: env-status env-list env-prune env-retry install install-php up down destroy logs shell wp test-php test-php-filter lint psalm changelog build help
