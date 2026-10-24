@@ -3,6 +3,11 @@
  */
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
+import { areMultipleChoiceAnswersCorrect } from './grading-general-utils';
+
 jQuery( document ).ready( function ( $ ) {
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
@@ -137,23 +142,10 @@ jQuery( document ).ready( function ( $ ) {
 					// Split answers to multiple choice questions into an array since there may be
 					// multiple correct answers.
 					if ( $this.hasClass( 'multiple-choice' ) ) {
-						const userAnswers = userAnswer.split( '<br>' );
-						const correctAnswers = correctAnswer.split( '<br>' );
-
-						allCorrect = true;
-
-						userAnswers.forEach( function ( answer ) {
-							if ( -1 === $.inArray( answer, correctAnswers ) ) {
-								allCorrect = false;
-							}
-						} );
-
-						if (
-							userAnswers.length !==
-							correctAnswers.length - 1
-						) {
-							allCorrect = false;
-						}
+						allCorrect = areMultipleChoiceAnswersCorrect(
+							userAnswer,
+							correctAnswer
+						);
 					} else {
 						userAnswer = userAnswer.split( '<br>' )[ 0 ];
 						correctAnswer = correctAnswer.split( '<br>' )[ 0 ];
