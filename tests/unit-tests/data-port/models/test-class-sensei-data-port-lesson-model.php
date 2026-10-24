@@ -738,4 +738,162 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$this->assertNotEmpty( $post, 'Private lesson should exist.' );
 		$this->assertEquals( 'private', $post[0]->post_status, 'Lesson post status should be private.' );
 	}
+
+	/**
+	 * A slug match resolves the existing post even when the source id is absent.
+	 */
+	public function testGetExistingPostId_BySlug_ReturnsExisting() {
+		$existing_id = $this->factory->lesson->create( array( 'post_name' => 'intro' ) );
+
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$data  = array(
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Intro lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG  => 'intro',
+		);
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
+
+		$this->assertSame( $existing_id, $model->get_post_id(), 'Slug match should resolve to the existing post id.' );
+	}
+
+	/**
+	 * The slug-matched post is treated as not-new, so sync_post updates it
+	 * rather than inserting a duplicate.
+	 */
+	public function testGetExistingPostId_BySlug_MarksPostAsNotNew() {
+		$this->factory->lesson->create( array( 'post_name' => 'intro' ) );
+
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$data  = array(
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Intro lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG  => 'intro',
+		);
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
+
+		$this->assertFalse( $model->is_new(), 'Slug match should be treated as not-new.' );
+	}
+
+	/**
+	 * When the slug is empty but the source id matches a stored meta, the post
+	 * is resolved via the durable identity — the +22 case from #8066.
+	 */
+	public function testGetExistingPostId_ByIdWithNoSlug_ReturnsExisting() {
+		$existing_id = $this->factory->lesson->create( array( 'post_name' => '' ) );
+		update_post_meta( $existing_id, Sensei_Data_Port_Schema::META_KEY_IMPORT_ID, '42' );
+
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$data  = array(
+			Sensei_Data_Port_Lesson_Schema::COLUMN_ID    => '42',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'No slug lesson',
+		);
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
+
+		$this->assertSame( $existing_id, $model->get_post_id(), 'Meta id match should resolve to the existing post id.' );
+	}
+
+	/**
+	 * The id meta written by an earlier run resolves a new run even when the
+	 * in-memory job map is empty.
+	 */
+	public function testGetExistingPostId_IdMatchesPostInAnotherJob_ReturnsThatPost() {
+		$first_task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'first', 0 ) );
+		$first_data  = array(
+			Sensei_Data_Port_Lesson_Schema::COLUMN_ID    => '99',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Carried over',
+		);
+		$first_model = Sensei_Import_Lesson_Model::from_source_array( 1, $first_data, new Sensei_Data_Port_Lesson_Schema(), $first_task );
+
+		$first_model->sync_post();
+
+		$second_task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'second', 0 ) );
+		$second_model = Sensei_Import_Lesson_Model::from_source_array( 1, $first_data, new Sensei_Data_Port_Lesson_Schema(), $second_task );
+
+		$existing = get_posts(
+			array(
+				'post_type'      => 'lesson',
+				'post_status'    => 'any',
+				's'              => 'Carried over',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+
+		$this->assertCount( 1, $existing, 'Exactly one lesson should exist after re-import (no duplicate insert).' );
+		$this->assertSame( $first_model->get_post_id(), $second_model->get_post_id(), 'Meta written by an earlier run should resolve the post in a new run.' );
+	}
+
+	/**
+	 * The id lookup is scoped to the schema's post type so a matching id on a
+	 * different post type does not collide.
+	 */
+	public function testGetExistingPostId_IdScopedToPostType_DoesNotMatchOtherType() {
+		$course_id = $this->factory->course->create();
+		update_post_meta( $course_id, Sensei_Data_Port_Schema::META_KEY_IMPORT_ID, '7' );
+
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$data  = array(
+			Sensei_Data_Port_Lesson_Schema::COLUMN_ID    => '7',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Lesson with course id',
+		);
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
+
+		$this->assertTrue( $model->is_new(), 'Lesson with an id only present on a course should be treated as new.' );
+	}
+
+	/**
+	 * A row with no source id and no slug has no durable identity and is
+	 * re-inserted on re-import. Documented limitation.
+	 */
+	public function testGetExistingPostId_NoIdAndNoSlug_CreatesNew() {
+		$this->factory->lesson->create(
+			array(
+				'post_title' => 'Same title',
+				'post_name'  => '',
+			)
+		);
+
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$data  = array(
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Same title',
+		);
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
+
+		$this->assertTrue( $model->is_new(), 'No id and no slug resolves to no existing post; model is new.' );
+		$this->assertNull( $model->get_post_id(), 'No id and no slug resolves to no post id before sync_post.' );
+	}
+
+	/**
+	 * After a successful import, the source id is written to the post meta.
+	 */
+	public function testStoreImportId_WritesMetaAfterInsert() {
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$data  = array(
+			Sensei_Data_Port_Lesson_Schema::COLUMN_ID    => '500',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Meta write lesson',
+		);
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
+
+		$model->sync_post();
+
+		$this->assertSame( '500', (string) get_post_meta( $model->get_post_id(), Sensei_Data_Port_Schema::META_KEY_IMPORT_ID, true ) );
+	}
+
+	/**
+	 * An existing meta value is not overwritten by a later import.
+	 */
+	public function testStoreImportId_DoesNotOverwriteDifferentId() {
+		$existing_id = $this->factory->lesson->create( array( 'post_name' => 'kept' ) );
+		update_post_meta( $existing_id, Sensei_Data_Port_Schema::META_KEY_IMPORT_ID, 'a' );
+
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$data  = array(
+			Sensei_Data_Port_Lesson_Schema::COLUMN_ID    => 'b',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Updated',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG  => 'kept',
+		);
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
+
+		$model->sync_post();
+
+		$this->assertSame( 'a', (string) get_post_meta( $existing_id, Sensei_Data_Port_Schema::META_KEY_IMPORT_ID, true ) );
+	}
 }
