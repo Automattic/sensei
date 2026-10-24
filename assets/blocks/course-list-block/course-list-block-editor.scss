@@ -1,9 +1,5 @@
 .editor-styles-wrapper {
 	.wp-block-sensei-lms-course-list {
-		.components-button.is-secondary {
-			display: none;
-		}
-
 		&--is-grid-view {
 			/* Align button to bottom of card. */
 			[data-type="sensei-lms/course-actions"] {
