@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     4.17.0
+ * @version     $$next-version$$
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,7 +22,8 @@ Sensei()->assets->enqueue( 'sensei-file-upload-question-type', 'js/file-upload-q
  */
 $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
-$sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available();
+$sensei_is_quiz_completed = $question_data['quiz_is_completed'];
+$sensei_is_quiz_available = Sensei_Quiz::is_quiz_available();
 ?>
 
 <?php if ( $question_data['question_helptext'] ) { ?>
@@ -50,11 +51,11 @@ $sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei
 
 	</p>
 
-	<?php if ( $sensei_is_quiz_view_only_mode && getimagesize( $question_data['answer_media_url'] ) ) { ?>
+	<?php if ( $sensei_is_quiz_completed && getimagesize( $question_data['answer_media_url'] ) ) { ?>
 		<img src="<?php echo esc_url( $question_data['answer_media_url'] ); ?>" class="wp-block-sensei-lms-question-answers__preview" />
 	<?php } ?>
 
-	<?php if ( ! $question_data['quiz_is_completed'] ) { ?>
+	<?php if ( ! $sensei_is_quiz_completed && $sensei_is_quiz_available ) { ?>
 
 		<aside class="reupload_notice"><?php esc_html_e( 'Uploading a new file will replace your existing one:', 'sensei-lms' ); ?></aside>
 
@@ -62,10 +63,10 @@ $sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei
 
 <?php } ?>
 
-<?php if ( ! $question_data['quiz_is_completed'] ) { ?>
+<?php if ( ! $sensei_is_quiz_completed ) { ?>
 
 	<label for="file-upload-<?php echo esc_attr( $question_data['ID'] ); ?>" class="wp-block-button is-style-outline sensei-lms-question-block__file-upload">
-		<input id="file-upload-<?php echo esc_attr( $question_data['ID'] ); ?>" type="file" class="sensei-lms-question-block__file-input" name="file_upload_<?php echo esc_attr( $question_data['ID'] ); ?>" />
+		<input id="file-upload-<?php echo esc_attr( $question_data['ID'] ); ?>" type="file" class="sensei-lms-question-block__file-input" name="file_upload_<?php echo esc_attr( $question_data['ID'] ); ?>" <?php echo ! $sensei_is_quiz_available ? 'disabled' : ''; ?> />
 		<span type="button" class="wp-block-button__link wp-element-button is-secondary sensei-course-theme__button sensei-lms-question-block__file-upload-button">
 			<?php echo esc_html__( 'Choose File', 'sensei-lms' ); ?>
 		</span>
@@ -73,7 +74,7 @@ $sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei
 	<span class="sensei-lms-question-block__file-upload-name"></span>
 
 	<input type="hidden" name="sensei_question[<?php echo esc_attr( $question_data['ID'] ); ?>]"
-		value="<?php echo esc_attr( $question_data['user_answer_entry'] ); ?>" />
+		value="<?php echo esc_attr( $question_data['user_answer_entry'] ?? '' ); ?>" />
 
 	<aside class="max_upload_size"><?php echo esc_html( $question_data['max_upload_size'] ); ?></aside>
 
