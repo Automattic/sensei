@@ -18,6 +18,13 @@ To contribute to Sensei LMS, please follow these steps:
 6. Commit your changes and push them to your forked repository.
 7. Create a pull request to merge your changes into the main Sensei LMS repository.
 
+For isolated worktree testing, run `make up` from the worktree. It automatically
+copies data from `sensei-lms`, or from your running primary checkout environment
+when `sensei-lms` is absent. The primary checkout uses `sensei-lms` directly,
+preserving its existing database and uploads. Start it with `make up` first to
+provide a baseline for new worktrees. See
+[worktree environments](docs/development/worktree-environments.md) for details.
+
 ## Issues
 
 If you notice any issues with Sensei LMS or have a feature request, please submit an issue on our [issue tracker](https://github.com/Automattic/sensei/issues). Please include as much detail as possible, including steps to reproduce the issue or a clear description of the feature you're requesting.

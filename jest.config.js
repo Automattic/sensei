@@ -14,6 +14,7 @@ module.exports = {
 		'<rootDir>/assets/dist/',
 		'<rootDir>/tests/e2e/',
 		'<rootDir>/tests/e2e-playwright/',
+		'<rootDir>/tests/tooling/',
 	],
 	testEnvironment: 'jsdom',
 	moduleNameMapper: {

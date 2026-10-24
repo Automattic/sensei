@@ -9,8 +9,8 @@ This skill verifies that a change actually behaves correctly from a user's persp
 
 ## Prerequisites
 
-- `make up` is running. The wp-env dev site listens on `http://localhost:8888` (admin: `admin` / `password` — wp-env defaults).
-- The active theme is `course` (`Automattic/themes/course`, pinned in `.wp-env.json`). All frontend verification should run against it.
+- `make up` is running. Get its URL from `make env-status`. Newly initialized development sites use `admin` / `password` unless a private password is set; an adopted primary retains its existing login details.
+- Verify that the active theme is `course` before frontend checks. New sites use the WordPress.org release pinned in `.wp-env.json`; an adopted primary retains its existing theme and activation state. If a change requires Course, activate it only in the isolated test environment.
 - Browser tools are available, such as Chrome DevTools MCP or the harness's browser automation tools. Read their usage instructions before driving the browser. If none are available, report that agent-driven browser verification is unavailable and provide manual steps.
 - For PHP changes that touch built assets, run `npm run build:assets` first. For changes that affect the scoped vendor tree, run `make build`.
 
@@ -58,14 +58,16 @@ Heuristics:
 ### 2. Confirm the env is live
 
 ```bash
-curl -sI http://localhost:8888 | head -1
+make env-status
+DEVELOPMENT_URL=http://localhost:9000 # Replace with the development URL reported above.
+curl -sI "$DEVELOPMENT_URL" | head -1
 ```
 
 If empty, run `make up` and wait ~30–60s on a warm Docker daemon (longer on a cold start).
 
 ### 3. Seed enough test data
 
-wp-env starts empty. For most flows you'll need at least one published course with one lesson and one quiz. Quick seed:
+New linked-worktree environments automatically copy data from `sensei-lms` when present, otherwise from their repository's managed primary checkout when available. Start the primary checkout with `make up` to provide a baseline. Check existing content before creating fixtures. A new linked-worktree site starts fresh if the default source is absent or `NO_CLONE=1` is set. An existing primary is adopted with its data preserved. Use `--clone-from` to select an existing environment when needed. A stopped source must be started manually. For most flows you'll need at least one published course with one lesson and one quiz. Quick seed:
 
 ```bash
 make wp CMD="post create --post_type=course --post_title='Sensei E2E' --post_status=publish --porcelain"
@@ -87,7 +89,7 @@ The bare question above has no `question-type` taxonomy term or `_question_right
 
 Per in-scope surface:
 
-1. Open `http://localhost:8888/wp-login.php` using the available browser tools, fill `admin` / `password`, and click Log In.
+1. Open `/wp-login.php` at the development URL from `make env-status` using the available browser tools, use the environment’s login details, and click Log In.
 2. Navigate to the surface URL.
 3. Inspect the page using the browser tool's DOM or accessibility snapshot and capture a screenshot for visual verification. Target controls using the tool's supported locators.
 4. Drive any specific interaction the change requires (click, fill, navigate). After each interaction, take another screenshot.

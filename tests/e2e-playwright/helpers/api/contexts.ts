@@ -3,6 +3,7 @@ import { APIRequestContext, request } from '@playwright/test';
 import { retry } from '@lifeomic/attempt';
 import { API } from '@e2e/factories/users';
 import { getContextByRole } from '../context';
+import { TEST_URL } from '../environment';
 
 const NONCE_PATH = '/wp-admin/admin-ajax.php?action=rest-nonce';
 
@@ -17,7 +18,7 @@ type RequestRunner = ( WpApiRequestContext ) => void;
  */
 export const asAdmin = async ( callback: RequestRunner ): Promise< void > => {
 	const context = await request.newContext( {
-		baseURL: 'http://localhost:8889',
+		baseURL: TEST_URL,
 		storageState: getContextByRole( API.username ),
 	} );
 
