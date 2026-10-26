@@ -1,4 +1,0 @@
-Significance: minor
-Type: removed
-
-Remove Sensei_Course_Theme::get_learning_mode_customizer_url(), unused since the Customize Colors link was removed.
