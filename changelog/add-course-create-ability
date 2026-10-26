@@ -1,0 +1,4 @@
+Significance: minor
+Type: added
+
+Add the sensei/course-create ability so AI agents can create draft courses with the default course layout.
