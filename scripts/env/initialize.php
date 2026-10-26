@@ -38,8 +38,10 @@ $sensei_env_data  = array(
 );
 if ( $sensei_env_admin ) {
 	$sensei_env_data['ID'] = $sensei_env_admin->ID;
+	$sensei_env_result     = wp_update_user( $sensei_env_data );
+} else {
+	$sensei_env_result = wp_insert_user( $sensei_env_data );
 }
-$sensei_env_result = wp_insert_user( $sensei_env_data );
 if ( is_wp_error( $sensei_env_result ) ) {
 	WP_CLI::error( $sensei_env_result->get_error_message() );
 }
