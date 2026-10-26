@@ -135,6 +135,60 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Teacher course selections must have matching listing rows and status counters.
+	 *
+	 * @covers Sensei_Grading_Main::get_views
+	 */
+	public function testGetViews_TeacherCourseSelected_CountsOnlySelectedCourse(): void {
+		$this->maybe_enable_hpps_tables_repository();
+		$previous_grading = Sensei()->grading;
+		$teacher          = $this->get_user_by_role( 'teacher' );
+		$student          = $this->factory->user->create();
+		$courses          = $this->factory->course->create_many( 2, array( 'post_author' => $teacher ) );
+		foreach ( $courses as $course ) {
+			$lesson   = $this->factory->lesson->create(
+				array(
+					'post_author' => $teacher,
+					'meta_input'  => array( '_lesson_course' => $course ),
+				)
+			);
+			$progress = Sensei()->lesson_progress_repository->create( $lesson, $student );
+			$progress->complete();
+			Sensei()->lesson_progress_repository->save( $progress );
+		}
+		// Exercise the fallback counters even when HPPS can reuse listing counts.
+		add_filter(
+			'sensei_grading_count_statuses',
+			static function ( $args ) {
+				return $args;
+			}
+		);
+		set_current_screen( 'sensei-lms_page_sensei_grading' );
+		$this->login_as( $teacher );
+		$factory          = new \Sensei\Internal\Services\Progress_Query_Service_Factory( Sensei()->progress_storage_configuration );
+		$listing          = $factory->create_grading_listing_service();
+		Sensei()->grading = Sensei_Grading::create_with_dependencies( '', $listing, $factory->create_aggregation_service(), $factory->create_grading_stats_service() );
+		$table            = new Sensei_Grading_Main(
+			array(
+				'course_id' => $courses[0],
+				'view'      => 'all',
+			),
+			$listing
+		);
+
+		try {
+			$table->prepare_items();
+			$actual = $table->get_views();
+
+			self::assertCount( 1, $table->items, 'Only the selected course should have a listing row.' );
+			self::assertSame( 'All (1)', wp_strip_all_tags( $actual['all'] ), 'The counter must match the selected course rather than all teacher courses.' );
+		} finally {
+			Sensei()->grading = $previous_grading;
+			$this->maybe_reset_hpps_repository();
+		}
+	}
+
+	/**
 	 * Tests that the ungraded quiz count is not displayed in the Grading menu.
 	 *
 	 * @covers Sensei_Grading::grading_admin_menu
