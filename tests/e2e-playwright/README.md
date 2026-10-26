@@ -2,7 +2,8 @@
 
 ## Quickstart
 You should first make sure that the [dependencies are installed](#dependencies). 
-Run `npm run wp-env start`.
+Run `make up` (or `npm run wp-env -- start`). Each worktree has its own test database and ports.
+Use `make env-status` for URLs. See [worktree environments](../../docs/development/worktree-environments.md).
 Run `npm run test:e2e`.
 
 ## Running

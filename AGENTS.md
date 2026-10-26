@@ -34,7 +34,9 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - Ensure Docker Desktop is running before `make up`; verify with `docker info`. If it isn't running, start it without asking — this is a routine local action, not a user-facing change. Use `open -a Docker` on macOS or `sudo systemctl start docker` on Linux, then wait until `docker info` succeeds.
 - `make up` boots the wp-env Docker stack; `make down` stops it; `make destroy` wipes containers and data for a clean slate.
 - `make shell` opens a shell inside the WordPress container; `make wp CMD="..."` runs wp-cli commands against it.
-- Override the WordPress or PHP version with `make up WP=6.8 PHP=8.3` (writes a transient `.wp-env.override.json`).
+- The primary checkout uses `sensei-lms`, preserving its existing database, uploads, plugins, and ports on first adoption. Linked worktrees have isolated WordPress data. New linked-worktree environments copy data from `sensei-lms` when present, otherwise from their repository's managed primary checkout. Run `make up` in the primary checkout first to provide a baseline for linked worktrees. If no source exists, start fresh; a selected source must be initialized and running. Use `NO_CLONE=1 make up` to opt out. Cloning leaves source data unchanged. New linked-worktree Docker names use readable branch/worktree labels plus stable IDs; optionally choose `NAME=label` on first startup. See `docs/development/worktree-environments.md` for `--clone-from` source selection and cleanup. Install additional plugins only in worktrees that need them.
+- Override WordPress or PHP with `make up WP=6.8 PHP=8.3`; selections persist for that environment.
+- Read actual URLs with `make env-status`; do not assume ports 8888/8889. Destroy environments before retiring a worktree, or preview orphans with `make env-prune`.
 
 ## Building
 - `make build` produces the plugin zip via wp-env, which sidesteps host PHP version issues.
@@ -52,7 +54,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - **PHPUnit with HPPS enabled**: `npm run test-php:wp-env:hpps`.
 - **JS unit tests**: `npm run test-js`.
 - **End-to-end (Playwright)**: `npm run test:e2e` runs headless against the wp-env stack; `npm run test:e2e:debug` runs headed. Requires `make up` to be running first. The `pretest:e2e` hook runs ESLint + `tsc` before Playwright launches — failures there appear before any test output. See `tests/e2e-playwright/README.md` for details.
-- **Ad-hoc UI verification**: After `make up`, the dev site is at `http://localhost:8888` with admin credentials `admin` / `password` (wp-env defaults). For agent-driven verification, use the `e2e-testing` skill (`.agents/skills/e2e-testing/SKILL.md`) — it scopes from `git diff`, lists Sensei's admin/frontend surfaces, and uses the available browser tools to walk through the relevant flow.
+- **Ad-hoc UI verification**: After `make up`, get the dev URL from `make env-status`; newly initialized development sites use `admin` / `password` unless a private password is set. An adopted primary retains its existing login details. For agent-driven verification, use the `e2e-testing` skill (`.agents/skills/e2e-testing/SKILL.md`) — it scopes from `git diff`, lists Sensei's admin/frontend surfaces, and uses the available browser tools to walk through the relevant flow.
 
 ## Linting
 Leave routine CI-covered linting, static analysis, validation builds, and compatibility matrices to CI. Do not run Psalm locally; CI handles it. For other CI failures, follow the local-verification guidance above. Command reference:

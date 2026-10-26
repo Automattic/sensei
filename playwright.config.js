@@ -3,6 +3,7 @@
  */
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { devices } = require( '@playwright/test' );
+const { testURL } = require( './scripts/env/urls.cjs' );
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -36,7 +37,7 @@ const config = {
 		/* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
 		actionTimeout: 10 * 1000, // 10 seconds.
 		/* Base URL to use in actions like `await page.goto('/')`. */
-		baseURL: 'http://localhost:8889/',
+		baseURL: testURL,
 
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 		trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',

@@ -2,6 +2,7 @@ import { Browser } from '@playwright/test';
 import { User } from './api';
 import fs from 'fs/promises';
 import { login, getContextByRole } from './context';
+import { TEST_URL } from './environment';
 
 export type UserPreference = {
 	path: string;
@@ -56,7 +57,7 @@ export const setDefaultPreferences = async (
 		...userPreference.initialState,
 		origins: [
 			{
-				origin: 'http://localhost:8889',
+				origin: TEST_URL,
 				localStorage: [
 					{
 						name: userPreference.key,

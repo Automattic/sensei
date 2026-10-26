@@ -2,11 +2,15 @@
  * External dependencies
  */
 import path from 'path';
+import fs from 'fs';
 import type { APIRequestContext, Browser, Page } from '@playwright/test';
 import { User } from './api';
+import { TEST_URL } from './environment';
 import { ADMIN, API, EDITOR, STUDENT, TEACHER } from '@e2e/factories/users';
 
 const CONTEXT_DIR = path.resolve( __dirname, '../contexts' );
+
+fs.mkdirSync( CONTEXT_DIR, { recursive: true } );
 
 /**
  * @typedef {"admin"} UserRole
@@ -61,7 +65,7 @@ export const createAdminContext = async (
 
 export const login = async ( page: Page, user: User ): Promise< Page > => {
 	const response = await page.request.post(
-		'http://localhost:8889/wp-login.php',
+		`${ TEST_URL }/wp-login.php`,
 		{
 			failOnStatusCode: true,
 			form: {
