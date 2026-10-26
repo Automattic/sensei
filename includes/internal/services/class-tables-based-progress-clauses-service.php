@@ -72,16 +72,12 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 
 		$wpdb = $this->wpdb;
 
-		// For each lesson, find the most recent activity date across all students.
-		// Uses updated_at (not completed_at) because it captures the latest
-		// modification to the progress row, which better represents "last activity"
-		// at the course level. The lesson-level query uses completed_at because
-		// it specifically tracks completion dates for individual lessons.
+		// For each lesson, find the most recent completion date across all students.
 		// In HPPS, quiz-derived statuses (passed, graded) live on separate quiz progress
 		// rows, so only lesson status 'complete' is needed here.
 		$complete = Lesson_Progress_Interface::STATUS_COMPLETE;
 
-		$lessons_query = "SELECT p.post_id AS lesson_id, MAX(p.updated_at) AS last_activity_date
+		$lessons_query = "SELECT p.post_id AS lesson_id, MAX(p.completed_at) AS last_activity_date
 			FROM {$progress_table} p
 			WHERE p.type = 'lesson'
 			AND p.status = '{$complete}'"
@@ -268,7 +264,7 @@ class Tables_Based_Progress_Clauses_Service implements Progress_Clauses_Service_
 
 		$query->query_from .= "
 			LEFT JOIN (
-				SELECT user_id, MAX(updated_at) AS last_activity_date
+				SELECT user_id, MAX(completed_at) AS last_activity_date
 				FROM {$progress_table}
 				WHERE type = 'lesson'
 				AND status = '{$complete}'

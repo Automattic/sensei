@@ -341,10 +341,10 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 
 		global $wpdb;
 
-		// Saving sets the current time; overwrite the Last Activity timestamp with the requested test date.
+		// Later progress updates must not move Last Activity beyond the completion date.
 		if ( self::is_hpps_tables_mode() ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set the activity fixture date.
-			$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'updated_at' => $activity_date ), array( 'id' => $progress->get_id() ) );
+			$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'updated_at' => '2022-04-01 00:00:00' ), array( 'id' => $progress->get_id() ) );
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Verify HPPS without mirrored lesson comments.
 			$wpdb->delete(
 				$wpdb->comments,
