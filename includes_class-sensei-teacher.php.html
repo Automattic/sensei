@@ -1040,6 +1040,13 @@ AND comments.comment_type = 'sensei_course_status'";
 			}
 		}
 
+		if ( ! empty( $args['post__in'] ) &amp;&amp; is_array( $args['post__in'] ) ) {
+			// Compare shared progress IDs, but retain requested IDs for subsequent filters.
+			$allowed_ids   = \Sensei\Internal\Services\Utils::get_progress_post_id_map( $quiz_scope, 'lesson' );
+			$requested_ids = \Sensei\Internal\Services\Utils::get_progress_post_id_map( $args['post__in'], 'lesson' );
+			$quiz_scope    = array_keys( array_intersect( $requested_ids, $allowed_ids ) );
+		}
+
 		$args['post__in'] = empty( $quiz_scope ) ? array( 0 ) : $quiz_scope;
 
 		return $args;
