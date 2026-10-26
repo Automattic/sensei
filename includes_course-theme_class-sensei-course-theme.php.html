@@ -507,6 +507,45 @@ class Sensei_Course_Theme {
 	}
 
 	/**
+	 * Returns the url for customizing Learning Mode template colors.
+	 *
+	 * @deprecated $$next-version$$ Unused since the Customize Colors link was removed.
+	 */
+	public static function get_learning_mode_customizer_url(): string {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+			// Get the last modified lesson.
+		$result = get_posts(
+			array(
+				'posts_per_page' => 1,
+				'post_type'      => 'lesson',
+				'orderby'        => 'modified',
+				'meta'           => array(
+					'key'     => '_lesson_course',
+					'compare' => 'EXISTS',
+				),
+			)
+		);
+		if ( empty( $result ) ) {
+			return '';
+		}
+
+		$lesson      = $result[0];
+		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
+		$preview_url = '/?p=' . $lesson->ID;
+
+		if ( ! $course_id ) {
+			return '';
+		}
+
+		if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+			$preview_url .= '&amp;' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
+		}
+
+		return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&amp;url=' . rawurlencode( $preview_url );
+	}
+
+	/**
 	 * Replace 'Edit site' in admin bar to point to the current theme template.
 	 *
 	 * @access private
