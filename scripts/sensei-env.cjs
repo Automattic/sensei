@@ -108,7 +108,7 @@ async function main( args ) {
 			'Commands: start, stop, status, list, destroy, prune, retry, exec, run, logs, clean tests.'
 		);
 	}
-	if ( ! state.initialized ) {
+	if ( command !== 'logs' && ! state.initialized ) {
 		throw new Error(
 			'Initialization is incomplete. Run make up or make env-retry.'
 		);

@@ -4,7 +4,7 @@ const fs = require( 'node:fs' );
 const os = require( 'node:os' );
 const path = require( 'node:path' );
 const net = require( 'node:net' );
-const { execFileSync } = require( 'node:child_process' );
+const { execFileSync, spawnSync } = require( 'node:child_process' );
 const registry = require( '../../scripts/env/registry.cjs' );
 const environment = require( '../../scripts/env/environment.cjs' );
 const cloning = require( '../../scripts/env/clone.cjs' );
@@ -218,6 +218,95 @@ test( 'childEnvironment replaces inherited Docker and wp-env targets', () => {
 		}
 	}
 } );
+
+function cliFixture() {
+	const checkout = path.join( temporary, 'checkout' );
+	const state = record( checkout );
+	state.initialized = false;
+	environment.save( state );
+	fs.cpSync(
+		path.join( environment.toolRoot, 'scripts/env' ),
+		path.join( checkout, 'scripts/env' ),
+		{ recursive: true }
+	);
+	const script = path.join( checkout, 'scripts/sensei-env.cjs' );
+	fs.copyFileSync(
+		path.join( environment.toolRoot, 'scripts/sensei-env.cjs' ),
+		script
+	);
+	const wpEnv = path.join(
+		checkout,
+		'node_modules/@wordpress/env/bin/wp-env'
+	);
+	fs.mkdirSync( path.dirname( wpEnv ), { recursive: true } );
+	fs.writeFileSync(
+		wpEnv,
+		`console.log(JSON.stringify({args:process.argv.slice(2),project:process.env.COMPOSE_PROJECT_NAME,runtime:process.env.WP_ENV_HOME}));`
+	);
+	return {
+		state,
+		run: ( args ) =>
+			spawnSync( process.execPath, [ script, ...args ], {
+				cwd: checkout,
+				encoding: 'utf8',
+			} ),
+	};
+}
+
+test( 'logs reaches the recorded environment before initialization completes', () => {
+	const { state, run } = cliFixture();
+	const stateFile = path.join( registry.directory( state.id ), 'state.json' );
+	const savedState = fs.readFileSync( stateFile, 'utf8' );
+	registry.writeJSON( registry.configPath( state ), { port: state.port } );
+	const savedConfig = fs.readFileSync( registry.configPath( state ), 'utf8' );
+
+	const result = run( [ 'logs', '--watch' ] );
+
+	assert.equal( result.status, 0, result.stderr );
+	assert.deepEqual( JSON.parse( result.stdout ), {
+		args: [ '--config', registry.configPath( state ), 'logs', '--watch' ],
+		project: state.project,
+		runtime: path.join( registry.directory( state.id ), 'runtime' ),
+	} );
+	assert.equal( fs.readFileSync( stateFile, 'utf8' ), savedState );
+	assert.equal(
+		fs.readFileSync( registry.configPath( state ), 'utf8' ),
+		savedConfig
+	);
+} );
+
+for ( const args of [
+	[ 'run', 'cli', 'wp', 'option', 'get', 'siteurl' ],
+	[ 'exec', process.execPath, '-e', 'console.log("executed")' ],
+	[ 'clean', 'tests' ],
+	[ 'reset', 'tests' ],
+] ) {
+	test( `${ args[ 0 ] } remains blocked before initialization completes`, () => {
+		const { run } = cliFixture();
+
+		const result = run( args );
+
+		assert.equal( result.status, 1 );
+		assert.match( result.stderr, /Initialization is incomplete/ );
+		assert.equal( result.stdout, '' );
+	} );
+}
+
+for ( const flag of [
+	'--config=other.json',
+	'--runtime=other',
+	'--auto-port',
+] ) {
+	test( `logs rejects managed configuration override ${ flag }`, () => {
+		const { run } = cliFixture();
+
+		const result = run( [ 'logs', flag ] );
+
+		assert.equal( result.status, 1 );
+		assert.match( result.stderr, /managed by this tool/ );
+		assert.equal( result.stdout, '' );
+	} );
+}
 
 for ( const mismatch of [ false, true ] ) {
 	test( `destroy ${
