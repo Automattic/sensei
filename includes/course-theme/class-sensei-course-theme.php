@@ -476,7 +476,7 @@ class Sensei_Course_Theme {
 	/**
 	 * Returns the url for customizing Learning Mode template colors.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated $$next-version$$ Unused since the Customize Colors link was removed.
 	 */
 	public static function get_learning_mode_customizer_url(): string {
 		_deprecated_function( __METHOD__, '$$next-version$$' );
