@@ -108,12 +108,12 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 			$progress->start( new DateTimeImmutable( $date, new DateTimeZone( 'UTC' ) ) );
 			$progress->complete( new DateTimeImmutable( $date, new DateTimeZone( 'UTC' ) ) );
 			Sensei()->lesson_progress_repository->save( $progress );
-			// Both repositories stamp saves with the current time; fix the date used by Last Activity.
+			// Later progress updates must not move Last Activity beyond the completion date.
 			if ( self::is_hpps_tables_mode() ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set a fixed activity date in the selected backend.
 				$wpdb->update(
 					$wpdb->prefix . 'sensei_lms_progress',
-					array( 'updated_at' => $date ),
+					array( 'updated_at' => '2022-02-01 00:00:00' ),
 					array(
 						'post_id' => $lesson_id,
 						'user_id' => $user_id,
@@ -193,7 +193,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		// Saves stamp the current time; fix the timestamp read by each backend.
 		if ( self::is_hpps_tables_mode() ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set a fixed activity date in the selected backend.
-			$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'updated_at' => $date ), array( 'id' => $progress->get_id() ) );
+			$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'completed_at' => $date ), array( 'id' => $progress->get_id() ) );
 		} else {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set a fixed activity date in the selected backend.
 			$wpdb->update( $wpdb->comments, array( 'comment_date_gmt' => $date ), array( 'comment_ID' => $progress->get_id() ) );

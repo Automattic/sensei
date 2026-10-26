@@ -814,7 +814,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Set deterministic fixture data in the backend under test.
 			$wpdb->update(
 				$wpdb->prefix . 'sensei_lms_progress',
-				array( 'updated_at' => $activity_date->format( 'Y-m-d H:i:s' ) ),
+				array( 'completed_at' => $activity_date->format( 'Y-m-d H:i:s' ) ),
 				array(
 					'post_id' => $lesson_id,
 					'user_id' => $user_id,
