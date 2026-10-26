@@ -18,7 +18,8 @@ To contribute to Sensei LMS, please follow these steps:
 6. Commit your changes and push them to your forked repository.
 7. Create a pull request to merge your changes into the main Sensei LMS repository.
 
-For isolated worktree testing, run `make up` from the worktree. It automatically
+For isolated worktree testing, run `npm ci` and `npm run build:assets` in each new
+worktree, then run `make up`. It automatically
 copies data from `sensei-lms`, or from your running primary checkout environment
 when `sensei-lms` is absent. The primary checkout uses `sensei-lms` directly,
 preserving its existing database and uploads. Start it with `make up` first to

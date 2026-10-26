@@ -5,9 +5,12 @@ uploads, and ports. Sensei is mounted from that checkout at
 `wp-content/plugins/sensei`. Multiple sessions in the same checkout share that
 environment; use separate worktrees for independent development and testing.
 
-Use Node from `.nvmrc`, install dependencies with `npm ci`, and start Docker Desktop.
+Use Node from `.nvmrc` and start Docker Desktop. In each new checkout or worktree,
+install dependencies and build Sensei's JavaScript and CSS before opening the site:
 
 ```sh
+npm ci
+npm run build:assets
 make up
 make env-status
 make wp CMD="plugin list"
@@ -15,6 +18,10 @@ make test-php-filter FILTER="Sensei_Quiz_Test"
 npm run test:e2e -- tests/e2e-playwright/specs/your-test.spec.ts
 make down
 ```
+
+Build assets in each new worktree; `make up` does not build them. Run
+`npm run build:assets` again after frontend changes, or use `npm run start` to
+rebuild automatically while developing.
 
 Environment identity uses Git's worktree metadata and the private registry location.
 Moving a linked checkout with `git worktree move` keeps its environment, ports, and
