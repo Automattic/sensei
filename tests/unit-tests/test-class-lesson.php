@@ -243,6 +243,40 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		}
 	}
 
+	/**
+	 * A valid prerequisite is returned as a string ID.
+	 *
+	 * @covers Sensei_Lesson::get_lesson_prerequisite_id
+	 */
+	public function testGetLessonPrerequisiteId_ValidPrerequisiteSet_ReturnsItsIdAsString() {
+		/* Arrange. */
+		$prerequisite_id = $this->factory->lesson->create();
+		$lesson_id       = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_prerequisite' => $prerequisite_id ) ) );
+
+		/* Act. */
+		$actual = Sensei_Lesson::get_lesson_prerequisite_id( $lesson_id );
+
+		/* Assert. */
+		$this->assertSame( (string) $prerequisite_id, $actual );
+	}
+
+	/**
+	 * A lesson cannot be its own prerequisite.
+	 *
+	 * @covers Sensei_Lesson::get_lesson_prerequisite_id
+	 */
+	public function testGetLessonPrerequisiteId_PrerequisiteIsTheLessonItself_ReturnsFalse() {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+		update_post_meta( $lesson_id, '_lesson_prerequisite', $lesson_id );
+
+		/* Act. */
+		$actual = Sensei_Lesson::get_lesson_prerequisite_id( $lesson_id );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
 	public function testAddLessonToCourseOrderHook() {
 		if ( ! isset( Sensei()->admin ) ) {
 			Sensei()->admin = new WooThemes_Sensei_Admin();

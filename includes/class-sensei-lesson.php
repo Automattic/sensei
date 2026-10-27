@@ -4723,11 +4723,11 @@ class Sensei_Lesson {
 	 */
 	public static function get_lesson_prerequisite_id( $current_lesson_id ) {
 
-		$prerequisite_lesson_id = get_post_meta( $current_lesson_id, '_lesson_prerequisite', true );
+		$prerequisite_lesson_id = (string) Sensei()->course_lessons_repository->get_lesson_prerequisite_id( (int) $current_lesson_id );
 
-		// set ti to false if not a valid prerequisite lesson id
+		// set it to false if not a valid prerequisite lesson id.
 		if ( empty( $prerequisite_lesson_id )
-			|| 'lesson' != get_post_type( $prerequisite_lesson_id )
+			|| 'lesson' != get_post_type( (int) $prerequisite_lesson_id )
 			|| $prerequisite_lesson_id == $current_lesson_id ) {
 
 			$prerequisite_lesson_id = false;
