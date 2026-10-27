@@ -134,6 +134,32 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A lesson whose course meta points to a deleted course or to a post that is not a course gets false.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_course_ids
+	 */
+	public function testGetCourseIds_LessonsAttachedToMissingOrNonCoursePostsGiven_ReturnsFalseForThem(): void {
+		/* Arrange. */
+		$deleted_course_id = $this->factory->course->create();
+		wp_delete_post( $deleted_course_id, true );
+		$page_id                  = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$lesson_in_deleted_course = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $deleted_course_id ) ) );
+		$lesson_in_page           = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $page_id ) ) );
+
+		/* Act. */
+		$actual = $this->repository->get_course_ids( array( $lesson_in_deleted_course, $lesson_in_page ) );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				$lesson_in_deleted_course => false,
+				$lesson_in_page           => false,
+			),
+			$actual
+		);
+	}
+
+	/**
 	 * The lessons of the course are found even when query filters would hide them, and only published ones by default.
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_lesson_ids
