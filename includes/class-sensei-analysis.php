@@ -1081,6 +1081,7 @@ class Sensei_Analysis {
 		$fp = fopen( 'php://output', 'w' );
 		foreach ( $report_data as $row ) {
 			$row = array_map(
+				/** @param mixed $cell */
 				static function ( $cell ) {
 					return html_entity_decode( (string) $cell, ENT_QUOTES, 'UTF-8' );
 				},
