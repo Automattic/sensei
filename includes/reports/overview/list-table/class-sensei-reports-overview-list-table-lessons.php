@@ -248,6 +248,10 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 
 		foreach ( $column_data as $key => $data ) {
 			$escaped_column_data[ $key ] = wp_kses_post( $data );
+			if ( $this->csv_output && 'title' === $key ) {
+				// Decode after sanitizing, which can encode ampersands again.
+				$escaped_column_data[ $key ] = html_entity_decode( $escaped_column_data[ $key ], ENT_QUOTES, 'UTF-8' );
+			}
 		}
 
 		return $escaped_column_data;

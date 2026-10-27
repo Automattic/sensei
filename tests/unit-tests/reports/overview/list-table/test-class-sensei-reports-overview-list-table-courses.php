@@ -56,12 +56,13 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	 * CSV exports use the plain course title.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
+	 * @dataProvider course_csv_titles
 	 */
-	public function testGenerateReport_CourseGiven_ReturnsPlainCourseTitle(): void {
+	public function testGenerateReport_CourseGiven_ReturnsPlainCourseTitle( string $title, string $expected ): void {
 		/* Arrange. */
 		$item     = (object) array(
 			'ID'                 => 123,
-			'post_title'         => 'Exported course',
+			'post_title'         => $title,
 			'last_activity_date' => null,
 		);
 		$provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
@@ -84,7 +85,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$actual = $table->generate_report();
 
 		/* Assert. */
-		self::assertSame( 'Exported course', $actual[1]['title'] );
+		self::assertSame( $expected, $actual[1]['title'] );
 	}
 
 	/**
@@ -591,6 +592,19 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 'Search Courses', $actual );
+	}
+
+	/**
+	 * Course titles retain readable punctuation in CSV exports.
+	 *
+	 * @return array
+	 */
+	public static function course_csv_titles(): array {
+		return array(
+			'plain title' => array( 'Exported course', 'Exported course' ),
+			'apostrophe'  => array( "Roger Love's 3-Step Sequence to Eliminate Stage Fright", 'Roger Love’s 3-Step Sequence to Eliminate Stage Fright' ),
+			'ampersand'   => array( 'Research & Practice', 'Research & Practice' ),
+		);
 	}
 
 	public static function temporary_user_logins(): array {

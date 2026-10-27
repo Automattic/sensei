@@ -99,7 +99,7 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
 	 * @dataProvider lesson_search_requests
 	 */
-	public function testPrepareItems_SearchRequestGiven_ReturnsMatchingRowsTotalsAndCsv( string $search, string $matching_title, string $other_title ): void {
+	public function testPrepareItems_SearchRequestGiven_ReturnsMatchingRowsTotalsAndCsv( string $search, string $matching_title, string $other_title, string $csv_title ): void {
 		$course = $this->factory->course->create();
 		$lesson = $this->factory->lesson->create(
 			array(
@@ -143,7 +143,7 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 		self::assertSame( 'Completion Rate (100%)', $columns['completion_rate'], 'The completion rate must exclude unmatched activity.' );
 		self::assertSame( $search, $export_args['s'] ?? null, 'The export link must preserve the submitted search text.' );
 		self::assertCount( 2, $csv, 'The CSV must contain its header and only the matching lesson.' );
-		self::assertStringStartsWith( 'Selected ', $csv[1]['title'], 'The CSV must export the matching lesson after following the export link.' );
+		self::assertSame( $csv_title, $csv[1]['title'], 'The CSV must export the complete matching lesson title with readable characters.' );
 		self::assertSame( 'Students (1)', $csv[0][1], 'The CSV header must retain the selected student total.' );
 	}
 
@@ -416,12 +416,12 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	 */
 	public function lesson_search_requests(): array {
 		return array(
-			'ordinary text'     => array( 'needle', 'Selected needle lesson', 'Another lesson' ),
-			'apostrophe'        => array( "King's", "Selected King's guide", 'Kings guide' ),
-			'ampersand'         => array( 'Rock & Roll', 'Selected Rock & Roll workshop', 'Rock and Roll workshop' ),
-			'quoted phrase'     => array( '"red fox"', 'Selected red fox workshop', 'A red swift fox workshop' ),
-			'zero'              => array( '0', 'Selected Lesson 0', 'Lesson 1' ),
-			'literal backslash' => array( 'path\\chapter', 'Selected path\\chapter guide', 'A pathchapter guide' ),
+			'ordinary text'     => array( 'needle', 'Selected needle lesson', 'Another lesson', 'Selected needle lesson' ),
+			'apostrophe'        => array( "King's", "Selected King's guide", 'Kings guide', 'Selected King’s guide' ),
+			'ampersand'         => array( 'Rock & Roll', 'Selected Rock & Roll workshop', 'Rock and Roll workshop', 'Selected Rock & Roll workshop' ),
+			'quoted phrase'     => array( '"red fox"', 'Selected red fox workshop', 'A red swift fox workshop', 'Selected red fox workshop' ),
+			'zero'              => array( '0', 'Selected Lesson 0', 'Lesson 1', 'Selected Lesson 0' ),
+			'literal backslash' => array( 'path\\chapter', 'Selected path\\chapter guide', 'A pathchapter guide', 'Selected path\\chapter guide' ),
 		);
 	}
 
