@@ -308,6 +308,66 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		);
 	}
 
+	public function testCloseCommentsOnLockedLessons_StudentWithoutPrerequisite_RejectsComment(): void {
+		/* Arrange. */
+		list( $course_id, $lesson_id ) = $this->create_course_with_locked_lesson();
+		$student_id                    = $this->factory->user->create();
+		Sensei_Course_Enrolment::get_course_instance( $course_id )->enrol( $student_id );
+		wp_set_current_user( $student_id );
+
+		/* Act. */
+		$result = wp_handle_comment_submission(
+			array(
+				'comment_post_ID' => $lesson_id,
+				'comment'         => 'Comment on the lesson.',
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 'comment_closed', $result->get_error_code() );
+	}
+
+	public function testCloseCommentsOnLockedLessons_CourseTeacher_AcceptsComment(): void {
+		/* Arrange. */
+		list( , $lesson_id, $teacher_id ) = $this->create_course_with_locked_lesson();
+		wp_set_current_user( $teacher_id );
+		// Earlier tests leave comments from the same IP, which would trip the flood check.
+		remove_action( 'check_comment_flood', 'check_comment_flood_db' );
+
+		/* Act. */
+		$result = wp_handle_comment_submission(
+			array(
+				'comment_post_ID' => $lesson_id,
+				'comment'         => 'Comment on the lesson.',
+			)
+		);
+
+		/* Assert. */
+		$this->assertInstanceOf( WP_Comment::class, $result );
+	}
+
+	/**
+	 * Create a teacher's course with a lesson locked behind a prerequisite.
+	 *
+	 * @return int[] The course ID, the locked lesson ID and the teacher ID.
+	 */
+	private function create_course_with_locked_lesson(): array {
+		$teacher_id   = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$course_id    = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$lesson_args  = array(
+			'post_author'    => $teacher_id,
+			'comment_status' => 'open',
+			'meta_input'     => array(
+				'_lesson_course' => $course_id,
+			),
+		);
+		$prerequisite = $this->factory->lesson->create( $lesson_args );
+		$lesson_id    = $this->factory->lesson->create( $lesson_args );
+		update_post_meta( $lesson_id, '_lesson_prerequisite', $prerequisite );
+
+		return array( $course_id, $lesson_id, $teacher_id );
+	}
+
 	public function testExcludePostTypesFromRestSearch_WhenHasPostTypes_RemovesExcludedPostTypes() {
 		/* Arrange. */
 		$post_types = [

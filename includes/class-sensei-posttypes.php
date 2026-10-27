@@ -120,6 +120,8 @@ class Sensei_PostTypes {
 		add_action( 'wp', [ $this, 'protect_feeds' ] );
 		add_filter( 'wp_sitemaps_post_types', [ $this, 'exclude_sitemaps_post_types' ] );
 
+		add_filter( 'comments_open', array( $this, 'close_comments_on_locked_lessons' ), 10, 2 );
+
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
 
@@ -228,6 +230,26 @@ class Sensei_PostTypes {
 
 			$wp_query->comment_count = count( $wp_query->comments );
 		}
+	}
+
+	/**
+	 * Close comments on lessons the current user cannot view.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param bool $open    Whether the post is open for comments.
+	 * @param int  $post_id The post ID.
+	 *
+	 * @return bool
+	 */
+	public function close_comments_on_locked_lessons( $open, $post_id ) {
+		if ( ! $open || ! $this->lesson_is_protected( false, get_post( $post_id ) ) ) {
+			return $open;
+		}
+
+		// Course teachers are not enrolled, so let anyone who can edit the lesson comment on it.
+		return current_user_can( 'edit_post', $post_id );
 	}
 
 	/**
