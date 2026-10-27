@@ -103,9 +103,6 @@ For each failure: the step, what was expected, what happened, and the screenshot
 
 ## Observations
 Console errors, visual oddities and slow steps seen on passing scenarios.
-
-## Not covered
-A green run does not cover: browsers other than Chrome, mobile, other themes, HPPS, Sensei Pro, multilingual sites, emails, and exploratory testing.
 ```
 
 Leave the content created in the run unless asked to remove it.
