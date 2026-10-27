@@ -74,7 +74,8 @@ class Sensei_Course_Structure {
 			return false;
 		}
 
-		if ( ! is_user_logged_in() || ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course->ID ) ) {
+		$post_type_object = get_post_type_object( 'course' );
+		if ( ! $post_type_object || ! is_user_logged_in() || ! current_user_can( $post_type_object->cap->edit_post, $course->ID ) ) {
 			return false;
 		}
 
@@ -415,7 +416,7 @@ class Sensei_Course_Structure {
 			$lesson_ids[] = $lesson_id;
 		}
 
-		if ( $item['slug'] && $item['lastTitle'] ) {
+		if ( ! empty( $item['slug'] ) && ! empty( $item['lastTitle'] ) ) {
 			// If a custom slug is defined, remove any unused module generated when changing teacher.
 			$previous_term = get_term_by( 'slug', $this->get_module_slug( $item['lastTitle'] ), 'module' );
 			$previous_term && Sensei()->modules->remove_if_unused( $previous_term->term_id );
@@ -471,7 +472,7 @@ class Sensei_Course_Structure {
 			'slug'        => $item['slug'] ?? $this->get_module_slug( $item['title'] ),
 		];
 
-		$create_result = wp_insert_term( wp_slash( $item['title'] ), 'module', wp_slash( $args ) );
+		$create_result = wp_insert_term( (string) wp_slash( $item['title'] ), 'module', wp_slash( $args ) );
 		if ( is_wp_error( $create_result ) ) {
 			return false;
 		}
