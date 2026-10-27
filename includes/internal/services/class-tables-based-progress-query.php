@@ -177,7 +177,11 @@ class Tables_Based_Progress_Query {
 			'completed'    => 'p.completed_at',
 		);
 
-		/** Sanitized column name. @var string $column */
+		/**
+		 * Sanitized column name.
+		 *
+		 * @var string $column
+		 */
 		$column = esc_sql( $orderby_map[ $orderby ] ?? 'p.started_at' );
 
 		return " ORDER BY {$column} {$order}";
