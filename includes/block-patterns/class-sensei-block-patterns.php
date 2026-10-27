@@ -153,6 +153,11 @@ class Sensei_Block_Patterns {
 			return null;
 		}
 
+		/**
+		 * The path is built from the allow-list above, so the include is safe.
+		 *
+		 * @psalm-suppress UnresolvableInclude
+		 */
 		$pattern = require __DIR__ . "/{$post_type}/{$name}.php";
 
 		return $pattern['content'] ?? null;

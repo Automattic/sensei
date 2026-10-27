@@ -902,9 +902,6 @@ class Sensei_Abilities {
 		if ( is_wp_error( $course_id ) ) {
 			return $course_id;
 		}
-		if ( ! $course_id ) {
-			return new WP_Error( 'sensei_course_create_failed', __( 'The course could not be created.', 'sensei-lms' ) );
-		}
 
 		$course = get_post( $course_id );
 
