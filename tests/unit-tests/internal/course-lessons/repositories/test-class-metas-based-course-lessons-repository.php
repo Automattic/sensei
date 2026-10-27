@@ -25,9 +25,11 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	private $repository;
 
 	public function setUp(): void {
+		global $wpdb;
+
 		parent::setUp();
 		$this->factory    = new \Sensei_Factory();
-		$this->repository = new Metas_Based_Course_Lessons_Repository();
+		$this->repository = new Metas_Based_Course_Lessons_Repository( $wpdb );
 	}
 
 	public function tearDown(): void {
@@ -105,6 +107,30 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertNull( $actual );
+	}
+
+	/**
+	 * Each lesson gets its course ID as an integer, or false when it has no course.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_course_ids
+	 */
+	public function testGetCourseIds_LessonsWithAndWithoutCourseGiven_ReturnsIntCourseIdOrFalse(): void {
+		/* Arrange. */
+		$course_id        = $this->factory->course->create();
+		$lesson_in_course = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$lesson_no_course = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = $this->repository->get_course_ids( array( $lesson_in_course, $lesson_no_course ) );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				$lesson_in_course => $course_id,
+				$lesson_no_course => false,
+			),
+			$actual
+		);
 	}
 
 	/**
