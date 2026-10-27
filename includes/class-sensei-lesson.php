@@ -4153,9 +4153,7 @@ class Sensei_Lesson {
 	public function get_course_ids( $lesson_ids ) {
 		// Callers have always received the course IDs as strings.
 		return array_map(
-			static function ( $course_id ) {
-				return false === $course_id ? false : (string) $course_id;
-			},
+			static fn( $course_id ) => $course_id ? (string) $course_id : false,
 			Sensei()->course_lessons_repository->get_course_ids( (array) $lesson_ids )
 		);
 	}
