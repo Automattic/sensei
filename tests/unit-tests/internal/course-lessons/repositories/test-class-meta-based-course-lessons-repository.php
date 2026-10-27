@@ -2,14 +2,14 @@
 
 namespace SenseiTest\Internal\Course_Lessons\Repositories;
 
-use Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository;
+use Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository;
 
 /**
- * Tests for Metas_Based_Course_Lessons_Repository.
+ * Tests for Meta_Based_Course_Lessons_Repository.
  *
- * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository
+ * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository
  */
-class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
+class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * Sensei factory.
 	 *
@@ -20,7 +20,7 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * Repository under test.
 	 *
-	 * @var Metas_Based_Course_Lessons_Repository
+	 * @var Meta_Based_Course_Lessons_Repository
 	 */
 	private $repository;
 
@@ -29,7 +29,7 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 
 		parent::setUp();
 		$this->factory    = new \Sensei_Factory();
-		$this->repository = new Metas_Based_Course_Lessons_Repository( $wpdb );
+		$this->repository = new Meta_Based_Course_Lessons_Repository( $wpdb );
 	}
 
 	public function tearDown(): void {
@@ -40,7 +40,7 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * The course ID is returned as an integer.
 	 *
-	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_course_id
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_course_id
 	 */
 	public function testGetCourseId_LessonAttachedToCourse_ReturnsTheCourseId(): void {
 		/* Arrange. */
@@ -57,7 +57,7 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * An empty, zero or non-numeric course meta means no course.
 	 *
-	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_course_id
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_course_id
 	 * @dataProvider noValueMetasProvider
 	 *
 	 * @param mixed $meta_value Value stored in the meta.
@@ -76,7 +76,7 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * The prerequisite lesson ID is returned.
 	 *
-	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_lesson_prerequisite_id
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_prerequisite_id
 	 */
 	public function testGetLessonPrerequisiteId_PrerequisiteStored_ReturnsTheLessonId(): void {
 		/* Arrange. */
@@ -93,7 +93,7 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * An empty, zero or non-numeric prerequisite meta means no prerequisite.
 	 *
-	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_lesson_prerequisite_id
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_prerequisite_id
 	 * @dataProvider noValueMetasProvider
 	 *
 	 * @param mixed $meta_value Value stored in the meta.
@@ -112,7 +112,7 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * Each lesson gets its course ID as an integer, or false when it has no course.
 	 *
-	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_course_ids
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_course_ids
 	 */
 	public function testGetCourseIds_LessonsWithAndWithoutCourseGiven_ReturnsIntCourseIdOrFalse(): void {
 		/* Arrange. */
@@ -136,7 +136,7 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * A lesson whose course meta points to a deleted course or to a post that is not a course gets false.
 	 *
-	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_course_ids
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_course_ids
 	 */
 	public function testGetCourseIds_LessonsAttachedToMissingOrNonCoursePostsGiven_ReturnsFalseForThem(): void {
 		/* Arrange. */
@@ -162,7 +162,7 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * The lessons of the course are found even when query filters would hide them, and only published ones by default.
 	 *
-	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_lesson_ids
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_ids
 	 */
 	public function testGetLessonIds_QueryFiltersHidingLessonsGiven_ReturnsThePublishedLessonIds(): void {
 		/* Arrange. */
@@ -198,7 +198,7 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * Lessons of any status are returned when asked for.
 	 *
-	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_lesson_ids
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_ids
 	 */
 	public function testGetLessonIds_AnyPostStatusGiven_ReturnsTheDraftLessonIds(): void {
 		/* Arrange. */

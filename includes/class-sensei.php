@@ -10,7 +10,7 @@ use Sensei\Clock\Clock;
 use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Course_Lessons\Repositories\Course_Lessons_Repository_Interface;
-use Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository;
+use Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository;
 use Sensei\Internal\Emails\Email_Customization;
 use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Migration\Migration_Job;
@@ -656,7 +656,7 @@ class Sensei_Main {
 	public function initialize_global_objects() {
 		// Course lessons repository.
 		global $wpdb;
-		$this->course_lessons_repository = new Metas_Based_Course_Lessons_Repository( $wpdb );
+		$this->course_lessons_repository = new Meta_Based_Course_Lessons_Repository( $wpdb );
 
 		// Setup settings.
 		$this->settings                       = new Sensei_Settings();

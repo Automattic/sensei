@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Metas_Based_Course_Lessons_Repository class.
+ * File containing the Meta_Based_Course_Lessons_Repository class.
  *
  * @package sensei
  */
@@ -14,13 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Metas_Based_Course_Lessons_Repository.
+ * Class Meta_Based_Course_Lessons_Repository.
  *
  * @internal
  *
  * @since $$next-version$$
  */
-class Metas_Based_Course_Lessons_Repository implements Course_Lessons_Repository_Interface {
+class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_Interface {
 	/**
 	 * WordPress database object.
 	 *
@@ -29,7 +29,7 @@ class Metas_Based_Course_Lessons_Repository implements Course_Lessons_Repository
 	private $wpdb;
 
 	/**
-	 * Metas_Based_Course_Lessons_Repository constructor.
+	 * Meta_Based_Course_Lessons_Repository constructor.
 	 *
 	 * @internal
 	 *
