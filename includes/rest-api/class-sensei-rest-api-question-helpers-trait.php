@@ -119,7 +119,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			],
 		];
 
-		$result = $question_id ? wp_update_post( $post_args ) : wp_insert_post( $post_args );
+		$result = $question_id ? wp_update_post( wp_slash( $post_args ) ) : wp_insert_post( wp_slash( $post_args ) );
 
 		/**
 		 * This action is triggered when a category question is created or updated by the lesson quiz REST endpoint.
@@ -199,7 +199,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$post_args['post_content'] = '';
 		}
 
-		$result = $question_id ? wp_update_post( $post_args ) : wp_insert_post( $post_args );
+		// The insert and update functions unslash their input.
+		$result = $question_id ? wp_update_post( wp_slash( $post_args ) ) : wp_insert_post( wp_slash( $post_args ) );
 
 		if ( ! $is_new && ! is_wp_error( $result ) ) {
 			$this->migrate_non_editor_question( $result, $question['type'] );

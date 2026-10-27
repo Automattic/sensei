@@ -1,0 +1,4 @@
+Significance: minor
+Type: added
+
+Add the sensei/quiz-questions-set ability so AI agents can set a lesson quiz's settings and questions, and reject invalid quiz questions before creating the quiz.
