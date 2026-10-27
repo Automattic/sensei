@@ -203,10 +203,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 
 		$selection = $this->progress_query->build_selection(
 			array(
-				'type'             => 'lesson',
-				'post_id'          => $post_id,
-				'user_id'          => $user_id,
-				'with_quiz_status' => true,
+				'type'    => 'lesson',
+				'post_id' => $post_id,
+				'user_id' => $user_id,
 			)
 		);
 
@@ -322,10 +321,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	 */
 	private function build_selection( array $args, string $type, bool $filter_author = false ): array {
 		$criteria = array(
-			'type'             => $type,
-			'with_quiz_status' => 'lesson' === $type,
-			'status_source'    => 'progress',
-			'user_exclusions'  => array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ),
+			'type'                        => $type,
+			'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES,
 		);
 
 		if ( ! empty( $args['post_id'] ) ) {

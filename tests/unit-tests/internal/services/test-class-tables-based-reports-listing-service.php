@@ -126,9 +126,13 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 	/**
 	 * Tests that get_lesson_students uses the coalesced quiz status when available.
 	 *
+	 * @dataProvider lesson_status_filter_provider
+	 *
 	 * @covers \Sensei\Internal\Services\Tables_Based_Reports_Listing_Service::get_lesson_students
+	 *
+	 * @param string $status Progress status filter.
 	 */
-	public function testGetLessonStudents_QuizProgressAndSubmissionCreated_ReturnsQuizStatusAndGrade(): void {
+	public function testGetLessonStudents_QuizProgressAndSubmissionCreated_ReturnsQuizStatusAndGrade( string $status ): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
@@ -156,13 +160,26 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 				'type'    => 'sensei_lesson_status',
 				'number'  => 10,
 				'offset'  => 0,
-				'status'  => 'any',
+				'status'  => $status,
 			)
 		);
 
 		/* Assert. */
+		$this->assertSame( 1, $result['total_count'], 'The lesson progress should count even when its displayed quiz status differs.' );
 		$this->assertSame( 'passed', $result['items'][0]->status, 'Status should be the coalesced quiz status.' );
 		$this->assertSame( 90.0, $result['items'][0]->grade, 'Grade should come from quiz submission.' );
+	}
+
+	/**
+	 * Status filters that include completed lesson progress.
+	 *
+	 * @return array
+	 */
+	public function lesson_status_filter_provider(): array {
+		return array(
+			'all progress'          => array( 'any' ),
+			'raw lesson completion' => array( 'complete' ),
+		);
 	}
 
 	/**

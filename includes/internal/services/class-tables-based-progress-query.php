@@ -42,10 +42,9 @@ class Tables_Based_Progress_Query {
 	 * Prepare a progress relation and its filters.
 	 *
 	 * Criteria accept type, post_id, user_id (scalar or list), status (list),
-	 * started_at (value/compare clauses), post_author, and user_exclusions
-	 * (Utils::build_user_exclusion_clause arguments). Dates use stored UTC values.
-	 * with_quiz_status adds lesson quiz progress as q via lesson metadata pm.
-	 * status_source accepts 'progress' (default) or 'quiz' (quiz-aware status).
+	 * started_at (value/compare clauses), post_author, and exclude_user_login_prefixes.
+	 * Dates use stored UTC values. Lesson selections include quiz progress as q
+	 * via lesson metadata pm for display; filters and counts use raw progress status.
 	 * Returned fields/from/where can be used with listing-specific metric joins.
 	 *
 	 * @since $$next-version$$
@@ -54,15 +53,13 @@ class Tables_Based_Progress_Query {
 	 * @return array{fields: string, from: string, where: string, count_from: string} Prepared selection.
 	 */
 	public function build_selection( array $criteria ): array {
-		$wpdb            = $this->wpdb;
-		$table           = $wpdb->prefix . 'sensei_lms_progress';
-		$base_from       = " FROM `$table` p";
-		$from            = $base_from;
-		$fields          = 'p.post_id, p.user_id, p.status, p.started_at, p.completed_at';
-		$use_quiz_status = 'quiz' === ( $criteria['status_source'] ?? 'progress' );
-		$status_column   = $use_quiz_status ? 'COALESCE( q.status, p.status )' : 'p.status';
+		$wpdb      = $this->wpdb;
+		$table     = $wpdb->prefix . 'sensei_lms_progress';
+		$base_from = " FROM `$table` p";
+		$from      = $base_from;
+		$fields    = 'p.post_id, p.user_id, p.status, p.started_at, p.completed_at';
 
-		if ( ! empty( $criteria['with_quiz_status'] ) || $use_quiz_status ) {
+		if ( 'lesson' === $criteria['type'] ) {
 			$from   .= " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 			$from   .= " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'";
 			$fields .= ', COALESCE( q.status, p.status ) AS effective_status';
@@ -85,8 +82,8 @@ class Tables_Based_Progress_Query {
 		if ( ! empty( $criteria['status'] ) ) {
 			$statuses     = array_map( 'strval', (array) $criteria['status'] );
 			$placeholders = implode( ', ', array_fill( 0, count( $statuses ), '%s' ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Status expression is selected above.
-			$where .= $wpdb->prepare( " AND $status_column IN ( $placeholders )", $statuses );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			$where .= $wpdb->prepare( " AND p.status IN ( $placeholders )", $statuses );
 		}
 		foreach ( $criteria['started_at'] ?? array() as $clause ) {
 			$compare = $clause['compare'] ?? '=';
@@ -100,14 +97,17 @@ class Tables_Based_Progress_Query {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is a trusted wpdb property.
 			$where .= $wpdb->prepare( " AND p.post_id IN ( SELECT ID FROM `{$wpdb->posts}` WHERE post_author = %d )", (int) $criteria['post_author'] );
 		}
-		$where .= Utils::build_user_exclusion_clause( $wpdb, $criteria['user_exclusions'] ?? array(), $status_column );
+		$where .= Utils::build_user_exclusion_clause(
+			$wpdb,
+			array( 'exclude_user_login_prefixes' => $criteria['exclude_user_login_prefixes'] ?? array() )
+		);
 
 		return array(
 			'fields'     => $fields,
 			'from'       => $from,
 			'where'      => $where,
 			// Display-only quiz joins must not multiply raw progress counts.
-			'count_from' => $use_quiz_status ? $from : $base_from,
+			'count_from' => $base_from,
 		);
 	}
 
