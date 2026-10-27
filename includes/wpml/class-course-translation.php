@@ -128,8 +128,8 @@ class Course_Translation {
 	 * @param string $source_language_code Language code of the original course.
 	 */
 	private function detach_lessons_removed_from_original_course( $original_course_id, $translated_course_id, $source_language_code ) {
-		$original_lesson_ids   = Sensei()->course->get_course_lesson_ids( $original_course_id, array( 'post_status' => 'any' ) );
-		$translated_lesson_ids = Sensei()->course->get_course_lesson_ids( $translated_course_id, array( 'post_status' => 'any' ) );
+		$original_lesson_ids   = Sensei()->course_lessons_repository->get_lesson_ids( (int) $original_course_id, 'any' );
+		$translated_lesson_ids = Sensei()->course_lessons_repository->get_lesson_ids( (int) $translated_course_id, 'any' );
 
 		foreach ( $translated_lesson_ids as $translated_lesson_id ) {
 			$original_lesson_id = $this->get_object_id( $translated_lesson_id, 'lesson', false, $source_language_code );

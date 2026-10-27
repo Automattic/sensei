@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Metas_Based_Course_Lessons_Repository.
  *
  * Reads the course structure of lessons from post metas: the course a lesson is attached to
- * (`_lesson_course`) and its prerequisite (`_lesson_prerequisite`).
+ * (`_lesson_course`), its prerequisite (`_lesson_prerequisite`), and the lessons of a course.
  *
  * @internal
  *
@@ -123,5 +123,35 @@ class Metas_Based_Course_Lessons_Repository implements Course_Lessons_Repository
 			wp_cache_set( $cache_key, $courses_by_lesson, $cache_group, 60 );
 		}
 		return $courses_by_lesson;
+	}
+
+	/**
+	 * Get the IDs of the lessons attached to a course, without applying query filters.
+	 *
+	 * `suppress_filters` keeps multilingual plugins from limiting the query to the current language.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int             $course_id   Course ID.
+	 * @param string|string[] $post_status Lesson post status or statuses. Default 'publish'.
+	 * @return int[] Lesson IDs, in no particular order.
+	 */
+	public function get_lesson_ids( int $course_id, $post_status = 'publish' ): array {
+		$lesson_ids = get_posts(
+			array(
+				'post_type'        => 'lesson',
+				'post_status'      => $post_status,
+				'numberposts'      => -1,
+				'fields'           => 'ids',
+				'orderby'          => 'none',
+				'suppress_filters' => true,
+				'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Lessons are attached to their course by meta.
+				'meta_value'       => $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+			)
+		);
+
+		return array_map( 'intval', $lesson_ids );
 	}
 }

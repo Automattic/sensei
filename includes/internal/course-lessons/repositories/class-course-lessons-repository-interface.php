@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface Course_Lessons_Repository_Interface.
  *
- * Reads the course structure of lessons: the course a lesson is attached to and its prerequisite.
+ * Reads the course structure of lessons: the course a lesson is attached to, its prerequisite,
+ * and the lessons of a course.
  *
  * @internal
  *
@@ -50,4 +51,16 @@ interface Course_Lessons_Repository_Interface {
 	 * @return array<int, int|false> Course ID keyed by lesson ID, or false when the lesson has no existing course.
 	 */
 	public function get_course_ids( array $lesson_ids ): array;
+
+	/**
+	 * Get the IDs of the lessons attached to a course, without applying query filters, so the result
+	 * is not limited to the current language.
+	 *
+	 * @internal
+	 *
+	 * @param int             $course_id   Course ID.
+	 * @param string|string[] $post_status Lesson post status or statuses. Default 'publish'.
+	 * @return int[] Lesson IDs, in no particular order.
+	 */
+	public function get_lesson_ids( int $course_id, $post_status = 'publish' ): array;
 }

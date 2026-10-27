@@ -720,7 +720,7 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		$lesson_ids = Sensei()->course->get_course_lesson_ids( $course_id, array( 'post_status' => 'any' ) );
+		$lesson_ids = Sensei()->course_lessons_repository->get_lesson_ids( (int) $course_id, 'any' );
 
 		foreach ( $lesson_ids as $lesson_id ) {
 			self::sensei_remove_user_from_lesson( $lesson_id, $user_id, true );

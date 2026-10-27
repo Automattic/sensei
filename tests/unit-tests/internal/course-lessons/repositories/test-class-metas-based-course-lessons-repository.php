@@ -134,6 +134,64 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * The lessons of the course are found even when query filters would hide them, and only published ones by default.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_lesson_ids
+	 */
+	public function testGetLessonIds_QueryFiltersHidingLessonsGiven_ReturnsThePublishedLessonIds(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$this->factory->lesson->create(
+			array(
+				'post_status' => 'draft',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $this->factory->course->create() ) ) );
+
+		add_filter(
+			'posts_where',
+			function ( $where, $query ) {
+				if ( 'lesson' === $query->get( 'post_type' ) ) {
+					$where .= ' AND 1=0';
+				}
+				return $where;
+			},
+			10,
+			2
+		);
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_ids( $course_id );
+
+		/* Assert. */
+		self::assertSame( array( $lesson_id ), $actual );
+	}
+
+	/**
+	 * Lessons of any status are returned when asked for.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_lesson_ids
+	 */
+	public function testGetLessonIds_AnyPostStatusGiven_ReturnsTheDraftLessonIds(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'post_status' => 'draft',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_ids( $course_id, 'any' );
+
+		/* Assert. */
+		self::assertSame( array( $lesson_id ), $actual );
+	}
+
+	/**
 	 * Provides meta values that mean "no value": empty, zero, not numeric and not a scalar.
 	 *
 	 * @return array
