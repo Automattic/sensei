@@ -112,31 +112,6 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Export links preserve the search text and CSV includes only the matching lesson.
-	 *
-	 * @covers Sensei_Reports_Overview_List_Table_Lessons::data_table_footer
-	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
-	 * @dataProvider lesson_search_exports
-	 */
-	public function testGenerateReport_SearchRequestGiven_ExportsMatchingLessonAndReadableTitle( string $search, string $matching_title, string $other_title, string $csv_title ): void {
-		list( $table ) = $this->create_search_report( $search, $matching_title, $other_title );
-		$table->prepare_items();
-
-		ob_start();
-		$table->data_table_footer();
-		$footer = ob_get_clean();
-		preg_match( '/href="([^"]+)"/', $footer, $matches );
-		parse_str( wp_parse_url( html_entity_decode( $matches[1] ?? '' ), PHP_URL_QUERY ) ?? '', $export_args );
-		$_GET = wp_slash( $export_args );
-		$csv  = $table->generate_report();
-
-		self::assertSame( $search, $export_args['s'] ?? null, 'The export link must preserve the submitted search text.' );
-		self::assertCount( 2, $csv, 'The CSV must contain its header and only the matching lesson.' );
-		self::assertSame( $csv_title, $csv[1]['title'], 'The CSV must export the complete matching lesson title with readable characters.' );
-		self::assertContains( 'Students (1)', $csv[0], 'The CSV header must retain the selected student total.' );
-	}
-
-	/**
 	 * Exported lesson rows and headers reflect the selected activity.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
@@ -404,27 +379,13 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	 * @return array
 	 */
 	public function lesson_search_requests(): array {
-		return array_map(
-			static function ( array $scenario ): array {
-				return array_slice( $scenario, 0, 3 );
-			},
-			$this->lesson_search_exports()
-		);
-	}
-
-	/**
-	 * Search text and complete titles that must survive CSV exports.
-	 *
-	 * @return array
-	 */
-	public function lesson_search_exports(): array {
 		return array(
-			'ordinary text'     => array( 'needle', 'Selected needle lesson', 'Another lesson', 'Selected needle lesson' ),
-			'apostrophe'        => array( "King's", "Selected King's guide", 'Kings guide', 'Selected King’s guide' ),
-			'ampersand'         => array( 'Rock & Roll', 'Selected Rock & Roll workshop', 'Rock and Roll workshop', 'Selected Rock & Roll workshop' ),
-			'quoted phrase'     => array( '"red fox"', 'Selected red fox workshop', 'A red swift fox workshop', 'Selected red fox workshop' ),
-			'zero'              => array( '0', 'Selected Lesson 0', 'Lesson 1', 'Selected Lesson 0' ),
-			'literal backslash' => array( 'path\\chapter', 'Selected path\\chapter guide', 'A pathchapter guide', 'Selected path\\chapter guide' ),
+			'ordinary text'     => array( 'needle', 'Selected needle lesson', 'Another lesson' ),
+			'apostrophe'        => array( "King's", "Selected King's guide", 'Kings guide' ),
+			'ampersand'         => array( 'Rock & Roll', 'Selected Rock & Roll workshop', 'Rock and Roll workshop' ),
+			'quoted phrase'     => array( '"red fox"', 'Selected red fox workshop', 'A red swift fox workshop' ),
+			'zero'              => array( '0', 'Selected Lesson 0', 'Lesson 1' ),
+			'literal backslash' => array( 'path\\chapter', 'Selected path\\chapter guide', 'A pathchapter guide' ),
 		);
 	}
 

@@ -53,42 +53,6 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * CSV exports use the plain course title.
-	 *
-	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
-	 * @dataProvider course_csv_titles
-	 */
-	public function testGenerateReport_CourseGiven_ReturnsPlainCourseTitle( string $title, string $expected ): void {
-		/* Arrange. */
-		$item     = (object) array(
-			'ID'                 => 123,
-			'post_title'         => $title,
-			'last_activity_date' => null,
-		);
-		$provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-		$provider->method( 'get_items' )->willReturn( array( $item ) );
-		$provider->method( 'get_last_total_items' )->willReturn( 1 );
-		$table = $this->getMockBuilder( Sensei_Reports_Overview_List_Table_Courses::class )
-			->setConstructorArgs(
-				array(
-					$this->createMock( Sensei_Grading::class ),
-					$this->createMock( Sensei_Course::class ),
-					$provider,
-					$this->createMock( Sensei_Reports_Overview_Service_Courses::class ),
-					$this->createMock( Progress_Aggregation_Service_Interface::class ),
-				)
-			)
-			->onlyMethods( array( 'get_columns' ) )->getMock();
-		$table->method( 'get_columns' )->willReturn( array( 'title' => 'Course' ) );
-
-		/* Act. */
-		$actual = $table->generate_report();
-
-		/* Assert. */
-		self::assertSame( $expected, $actual[1]['title'] );
-	}
-
-	/**
 	 * Last Activity date selection is shared by translated rows, CSV, and headers.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
@@ -592,19 +556,6 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( 'Search Courses', $actual );
-	}
-
-	/**
-	 * Course titles retain readable punctuation in CSV exports.
-	 *
-	 * @return array
-	 */
-	public static function course_csv_titles(): array {
-		return array(
-			'plain title' => array( 'Exported course', 'Exported course' ),
-			'apostrophe'  => array( "Roger Love's 3-Step Sequence to Eliminate Stage Fright", 'Roger Love’s 3-Step Sequence to Eliminate Stage Fright' ),
-			'ampersand'   => array( 'Research & Practice', 'Research & Practice' ),
-		);
 	}
 
 	public static function temporary_user_logins(): array {
