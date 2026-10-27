@@ -472,7 +472,8 @@ class Sensei_Course_Structure {
 			'slug'        => $item['slug'] ?? $this->get_module_slug( $item['title'] ),
 		];
 
-		$create_result = wp_insert_term( (string) wp_slash( $item['title'] ), 'module', wp_slash( $args ) );
+		// wp_insert_term() unslashes its input; addslashes() is wp_slash() for a string.
+		$create_result = wp_insert_term( addslashes( $item['title'] ), 'module', wp_slash( $args ) );
 		if ( is_wp_error( $create_result ) ) {
 			return false;
 		}
