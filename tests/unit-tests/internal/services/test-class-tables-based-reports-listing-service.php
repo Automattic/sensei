@@ -124,7 +124,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 	}
 
 	/**
-	 * Tests that get_lesson_students uses the coalesced quiz status when available.
+	 * Counts matching lesson progress and returns the quiz status and grade.
 	 *
 	 * @dataProvider lesson_status_filter_provider
 	 *
@@ -132,7 +132,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 	 *
 	 * @param string $status Progress status filter.
 	 */
-	public function testGetLessonStudents_QuizProgressAndSubmissionCreated_ReturnsQuizStatusAndGrade( string $status ): void {
+	public function testGetLessonStudents_QuizProgressAndSubmissionCreated_ReturnsMatchingTotalAndQuizStatusAndGrade( string $status ): void {
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
