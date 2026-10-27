@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Normalize Lessons report searches consistently across rows, totals, and CSV exports.
+Fix search text handling and CSV export filters in the Lessons, Courses, and Students reports.
