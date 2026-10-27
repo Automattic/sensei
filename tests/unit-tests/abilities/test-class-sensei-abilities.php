@@ -770,4 +770,363 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 			'administrator' => array( 'administrator', true ),
 		);
 	}
+
+	/**
+	 * Build a teacher-owned course and the structure input used by the structure tests.
+	 *
+	 * @return array{0:int,1:int,2:array} Teacher id, course id and a structure with one module and one top-level lesson.
+	 */
+	private function createTeacherCourseWithStructureInput(): array {
+		$factory   = new Sensei_Factory();
+		$teacher   = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$course_id = $factory->course->create( array( 'post_author' => $teacher ) );
+		$structure = array(
+			array(
+				'type'        => 'module',
+				'title'       => 'Basics',
+				'description' => 'Start here.',
+				'lessons'     => array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Welcome',
+					),
+					array(
+						'type'  => 'lesson',
+						'title' => 'Tuning',
+					),
+				),
+			),
+			array(
+				'type'  => 'lesson',
+				'title' => 'Wrap up',
+			),
+		);
+
+		return array( $teacher, $course_id, $structure );
+	}
+
+	/**
+	 * Count the lessons attached to a course.
+	 *
+	 * @param int $course_id Course ID.
+	 */
+	private function countCourseLessons( int $course_id ): int {
+		return count(
+			get_posts(
+				array(
+					'post_type'   => 'lesson',
+					'post_status' => 'any',
+					'numberposts' => -1,
+					'fields'      => 'ids',
+					'meta_key'    => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_value'  => $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				)
+			)
+		);
+	}
+
+	/**
+	 * New modules and lessons are created as drafts owned by the teacher, each lesson with an empty quiz.
+	 *
+	 * @covers Sensei_Abilities::execute_course_structure_set
+	 */
+	public function testExecuteCourseStructureSet_NewItemsGiven_CreatesDraftLessonsWithQuizzesAndModule() {
+		list( $teacher, $course_id, $structure ) = $this->createTeacherCourseWithStructureInput();
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/course-structure-set' );
+
+		$result = $ability->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => $structure,
+			)
+		);
+
+		$this->assertIsArray( $result, 'The ability should return the saved structure.' );
+		$this->assertSame( $course_id, $result['course']['id'], 'The course should be echoed.' );
+		$this->assertCount( 2, $result['structure'], 'The module and the top-level lesson should be returned.' );
+
+		$module = $result['structure'][0];
+		$this->assertSame( 'module', $module['type'] );
+		$this->assertGreaterThan( 0, $module['id'], 'The module should have an id.' );
+		$this->assertSame( 'Basics', $module['title'] );
+		$this->assertSame( 'Start here.', $module['description'] );
+		$this->assertSame( array( 'Welcome', 'Tuning' ), wp_list_pluck( $module['lessons'], 'title' ), 'The module lessons should keep their order.' );
+		$this->assertTrue( has_term( $module['id'], 'module', $course_id ), 'The module should be attached to the course.' );
+		$this->assertSame( 'Wrap up', $result['structure'][1]['title'] );
+		$this->assertTrue( $result['structure'][1]['draft'], 'New lessons should be drafts.' );
+
+		$lesson = get_post( $module['lessons'][0]['id'] );
+		$this->assertSame( 'draft', $lesson->post_status, 'The lesson should be a draft.' );
+		$this->assertSame( $teacher, (int) $lesson->post_author, 'The teacher should own the lesson.' );
+		$this->assertSame( $course_id, (int) get_post_meta( $lesson->ID, '_lesson_course', true ), 'The lesson should belong to the course.' );
+		$this->assertSame( 'quiz', get_post_type( (int) get_post_meta( $lesson->ID, '_lesson_quiz', true ) ), 'The lesson should have a quiz.' );
+	}
+
+	/**
+	 * Sending the returned ids back updates items in place instead of creating duplicates.
+	 *
+	 * @covers Sensei_Abilities::execute_course_structure_set
+	 */
+	public function testExecuteCourseStructureSet_ReturnedIdsResent_UpdatesInPlace() {
+		list( $teacher, $course_id, $structure ) = $this->createTeacherCourseWithStructureInput();
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/course-structure-set' );
+		$first   = $ability->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => $structure,
+			)
+		);
+
+		$resend = array(
+			array(
+				'type'    => 'module',
+				'id'      => $first['structure'][0]['id'],
+				'title'   => 'Basics',
+				'lessons' => array(
+					array(
+						'type'  => 'lesson',
+						'id'    => $first['structure'][0]['lessons'][0]['id'],
+						'title' => 'Welcome back',
+					),
+					array(
+						'type'  => 'lesson',
+						'id'    => $first['structure'][0]['lessons'][1]['id'],
+						'title' => 'Tuning',
+					),
+				),
+			),
+			array(
+				'type'  => 'lesson',
+				'id'    => $first['structure'][1]['id'],
+				'title' => 'Wrap up',
+			),
+		);
+		$second = $ability->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => $resend,
+			)
+		);
+
+		$this->assertSame( $first['structure'][0]['id'], $second['structure'][0]['id'], 'The module id should be unchanged.' );
+		$this->assertSame( wp_list_pluck( $first['structure'][0]['lessons'], 'id' ), wp_list_pluck( $second['structure'][0]['lessons'], 'id' ), 'The lesson ids should be unchanged.' );
+		$this->assertSame( 'Welcome back', $second['structure'][0]['lessons'][0]['title'], 'The lesson title should be updated.' );
+		$this->assertSame( 3, $this->countCourseLessons( $course_id ), 'No lessons should be duplicated.' );
+	}
+
+	/**
+	 * A lesson left out of the structure is detached from the course but not deleted.
+	 *
+	 * @covers Sensei_Abilities::execute_course_structure_set
+	 */
+	public function testExecuteCourseStructureSet_LessonOmitted_DetachesWithoutDeleting() {
+		list( $teacher, $course_id, $structure ) = $this->createTeacherCourseWithStructureInput();
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/course-structure-set' );
+		$first   = $ability->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => $structure,
+			)
+		);
+		$omitted = $first['structure'][1]['id'];
+
+		$second = $ability->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => array(
+					array(
+						'type'    => 'module',
+						'id'      => $first['structure'][0]['id'],
+						'title'   => 'Basics',
+						'lessons' => array(
+							array(
+								'type'  => 'lesson',
+								'id'    => $first['structure'][0]['lessons'][0]['id'],
+								'title' => 'Welcome',
+							),
+						),
+					),
+				),
+			)
+		);
+
+		$this->assertCount( 1, $second['structure'], 'Only the module should remain.' );
+		$this->assertSame( 'draft', get_post_status( $omitted ), 'The omitted lesson should still exist.' );
+		$this->assertSame( '', get_post_meta( $omitted, '_lesson_course', true ), 'The omitted lesson should no longer belong to the course.' );
+		$this->assertSame( 1, $this->countCourseLessons( $course_id ), 'Only the kept lesson should belong to the course.' );
+	}
+
+	/**
+	 * Validation failures write nothing.
+	 *
+	 * @covers Sensei_Abilities::execute_course_structure_set
+	 */
+	public function testExecuteCourseStructureSet_DuplicateModuleTitlesGiven_ReturnsErrorWithoutWriting() {
+		list( $teacher, $course_id ) = $this->createTeacherCourseWithStructureInput();
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/course-structure-set' );
+		$module  = array(
+			'type'    => 'module',
+			'title'   => 'Twice',
+			'lessons' => array(
+				array(
+					'type'  => 'lesson',
+					'title' => 'Lesson',
+				),
+			),
+		);
+
+		$result = $ability->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => array( $module, $module ),
+			)
+		);
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'sensei_course_structure_duplicate_module_title', $result->get_error_code() );
+		$this->assertSame( 0, $this->countCourseLessons( $course_id ), 'No lesson should be created.' );
+		$this->assertEmpty(
+			get_terms(
+				array(
+					'taxonomy'   => 'module',
+					'name'       => 'Twice',
+					'hide_empty' => false,
+				)
+			),
+			'No module should be created.'
+		);
+	}
+
+	/**
+	 * The execute callback re-checks the post type.
+	 *
+	 * @covers Sensei_Abilities::execute_course_structure_set
+	 * @covers Sensei_Abilities::execute_course_structure_get
+	 */
+	public function testExecuteCourseStructure_PageIdGiven_ReturnsCourseNotFound() {
+		$this->login_as_admin();
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+
+		$set = Sensei_Abilities::execute_course_structure_set(
+			array(
+				'course'    => $page_id,
+				'structure' => array(),
+			)
+		);
+		$get = Sensei_Abilities::execute_course_structure_get( array( 'course' => $page_id ) );
+
+		$this->assertSame( 'sensei_course_not_found', $set->get_error_code() );
+		$this->assertSame( 'sensei_course_not_found', $get->get_error_code() );
+	}
+
+	/**
+	 * The structure can be read back with the ids a later set call needs.
+	 *
+	 * @covers Sensei_Abilities::execute_course_structure_get
+	 */
+	public function testExecuteCourseStructureGet_CourseGiven_ReturnsStructureWithIds() {
+		list( $teacher, $course_id, $structure ) = $this->createTeacherCourseWithStructureInput();
+		wp_set_current_user( $teacher );
+		$saved = wp_get_ability( 'sensei/course-structure-set' )->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => $structure,
+			)
+		);
+
+		$result = wp_get_ability( 'sensei/course-structure-get' )->execute( array( 'course' => $course_id ) );
+
+		$this->assertSame( $course_id, $result['course']['id'] );
+		$this->assertSame( get_post_status( $course_id ), $result['course']['status'] );
+		$this->assertSame( wp_list_pluck( $saved['structure'], 'id' ), wp_list_pluck( $result['structure'], 'id' ), 'The same items should come back in order.' );
+		$this->assertSame( wp_list_pluck( $saved['structure'][0]['lessons'], 'id' ), wp_list_pluck( $result['structure'][0]['lessons'], 'id' ), 'The module lessons should come back in order.' );
+	}
+
+	/**
+	 * A teacher can set and get their own course's structure.
+	 *
+	 * @covers Sensei_Abilities::can_set_course_structure
+	 * @covers Sensei_Abilities::can_get_course_structure
+	 */
+	public function testCanCourseStructure_OwnCourseGiven_ReturnsTrue() {
+		list( $teacher, $course_id, $structure ) = $this->createTeacherCourseWithStructureInput();
+		wp_set_current_user( $teacher );
+
+		$this->assertTrue(
+			wp_get_ability( 'sensei/course-structure-set' )->check_permissions(
+				array(
+					'course'    => $course_id,
+					'structure' => $structure,
+				)
+			)
+		);
+		$this->assertTrue( wp_get_ability( 'sensei/course-structure-get' )->check_permissions( array( 'course' => $course_id ) ) );
+	}
+
+	/**
+	 * Another teacher's course, or a lesson of theirs inside the caller's own course, is refused.
+	 *
+	 * @covers Sensei_Abilities::can_set_course_structure
+	 * @covers Sensei_Abilities::can_get_course_structure
+	 */
+	public function testCanCourseStructure_AnotherTeachersContentGiven_ReturnsFalse() {
+		list( $teacher_a, $course_a ) = $this->createTeacherCourseWithStructureInput();
+		$factory                      = new Sensei_Factory();
+		$lesson_a                     = $factory->lesson->create( array( 'post_author' => $teacher_a ) );
+		$teacher_b                    = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$course_b                     = $factory->course->create( array( 'post_author' => $teacher_b ) );
+		wp_set_current_user( $teacher_b );
+		$set = wp_get_ability( 'sensei/course-structure-set' );
+
+		$this->assertFalse(
+			$set->check_permissions(
+				array(
+					'course'    => $course_a,
+					'structure' => array(),
+				)
+			),
+			"Another teacher's course should be refused."
+		);
+		$this->assertFalse(
+			$set->check_permissions(
+				array(
+					'course'    => $course_b,
+					'structure' => array(
+						array(
+							'type'  => 'lesson',
+							'id'    => $lesson_a,
+							'title' => 'Stolen',
+						),
+					),
+				)
+			),
+			"Another teacher's lesson should be refused."
+		);
+		$this->assertFalse( wp_get_ability( 'sensei/course-structure-get' )->check_permissions( array( 'course' => $course_a ) ), "Another teacher's course should not be readable." );
+	}
+
+	/**
+	 * Logged-out users are refused.
+	 *
+	 * @covers Sensei_Abilities::can_set_course_structure
+	 * @covers Sensei_Abilities::can_get_course_structure
+	 */
+	public function testCanCourseStructure_LoggedOut_ReturnsFalse() {
+		list( , $course_id ) = $this->createTeacherCourseWithStructureInput();
+		wp_set_current_user( 0 );
+
+		$this->assertFalse(
+			wp_get_ability( 'sensei/course-structure-set' )->check_permissions(
+				array(
+					'course'    => $course_id,
+					'structure' => array(),
+				)
+			)
+		);
+		$this->assertFalse( wp_get_ability( 'sensei/course-structure-get' )->check_permissions( array( 'course' => $course_id ) ) );
+	}
 }

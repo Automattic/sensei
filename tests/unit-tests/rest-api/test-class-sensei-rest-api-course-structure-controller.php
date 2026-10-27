@@ -353,6 +353,39 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 	}
 
 	/**
+	 * A module id owned by another teacher is refused before anything is saved.
+	 */
+	public function testPost_ModuleIdOwnedByAnotherTeacherGiven_Returns403() {
+		$teacher_a_id = $this->get_user_by_role( 'teacher' );
+		$module_id    = $this->factory->term->create(
+			array(
+				'taxonomy' => 'module',
+				'name'     => 'Teacher A module',
+				'slug'     => $teacher_a_id . '-teacher-a-module',
+			)
+		);
+		add_term_meta( $module_id, 'module_author', $teacher_a_id, true );
+
+		$this->login_as_teacher_b();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'id'      => $module_id,
+				'title'   => 'Hijacked',
+				'lessons' => array(),
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertSame( 'Teacher A module', get_term( $module_id, 'module' )->name, 'The module should be untouched.' );
+	}
+	/**
 	 * Tests to make sure an guest cannot edit course structure with `POST /sensei-internal/v1/course-structure/{course_id}`.
 	 */
 	public function testPostGuest() {

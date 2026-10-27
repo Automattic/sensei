@@ -113,51 +113,10 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 			);
 		}
 
-		if ( ! $this->can_current_user_edit_course( $course->ID ) ) {
-			return false;
-		}
-
 		// A malformed body has nothing to authorize; save_course_structure() rejects it with a 400.
 		$structure = $this->get_request_structure( $request ) ?? array();
 
-		foreach ( $structure as $item ) {
-			$type = $item['type'] ?? null;
-
-			if ( 'lesson' === $type && ! $this->can_current_user_edit_structure_lesson( $item ) ) {
-				return false;
-			}
-
-			if ( 'module' === $type ) {
-				foreach ( (array) ( $item['lessons'] ?? array() ) as $lesson_item ) {
-					if ( ! $this->can_current_user_edit_structure_lesson( $lesson_item ) ) {
-						return false;
-					}
-				}
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Check user permission for editing the lesson a course structure item refers to.
-	 *
-	 * Items without an ID stand for lessons that do not exist yet, so they are always allowed.
-	 *
-	 * @since 4.26.4
-	 *
-	 * @param mixed $item Course structure lesson item.
-	 *
-	 * @return bool Whether the user can edit the lesson.
-	 */
-	private function can_current_user_edit_structure_lesson( $item ) {
-		$id = is_array( $item ) ? ( $item['id'] ?? null ) : null;
-
-		if ( ! $id ) {
-			return true;
-		}
-
-		return current_user_can( 'edit_post', $id );
+		return Sensei_Course_Structure::can_current_user_save( $course->ID, $structure );
 	}
 
 	/**
