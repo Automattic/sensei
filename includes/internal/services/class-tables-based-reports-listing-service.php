@@ -333,5 +333,4 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			'total_count' => $pagination['total_count'],
 		);
 	}
-
 }
