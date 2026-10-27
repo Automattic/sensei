@@ -16,6 +16,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - Shared skills live in `.agents/skills/`; `.claude/skills/` contains symlinks to the same directories for Claude Code.
 - When creating, opening, drafting, or updating a PR, follow `.agents/skills/pull-request/SKILL.md` for the PR workflow, including CI monitoring and fixes.
 - For agent-driven UI verification, read `.agents/skills/e2e-testing/SKILL.md`.
+- To smoke test Sensei's core flows, independent of any diff, read `.agents/skills/smoke-testing/SKILL.md`.
 
 ## Repository layout
 - `includes/` — main plugin PHP source.
