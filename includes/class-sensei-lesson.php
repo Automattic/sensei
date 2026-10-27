@@ -4154,7 +4154,7 @@ class Sensei_Lesson {
 		// Callers have always received the course IDs as strings.
 		return array_map(
 			static fn( $course_id ) => $course_id ? (string) $course_id : false,
-			Sensei()->course_lessons_repository->get_course_ids( (array) $lesson_ids )
+			Sensei()->course_lessons_repository->get_course_ids( $lesson_ids )
 		);
 	}
 
