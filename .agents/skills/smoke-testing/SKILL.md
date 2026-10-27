@@ -10,7 +10,7 @@ A short, fixed pass over the flows that block users when they break. It is not s
 ## Before starting
 
 1. The site must be running (`make up`). Get its URL with `make env-status`. New development sites use `admin` / `password`.
-2. If `assets/dist` may not match the current code (a branch switch, JS or CSS changes), run `npm run build:assets`. It deletes `assets/dist` before building, so if it fails, run `npm ci` and build again before going on.
+2. Run `npm run build:assets`. It deletes `assets/dist` before building, so if it fails, run `npm ci` and build again before going on.
 3. Browser tools are required. If there are none, stop and say so.
 4. Check in **Appearance > Themes** that Course is the active theme. If it is not, ask before activating it.
 5. Pick a run suffix (for example the date and a letter, `1027a`) and add it to every title and login created, so runs do not collide. Below, `<run>` stands for it.
