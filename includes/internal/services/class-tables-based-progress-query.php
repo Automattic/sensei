@@ -100,15 +100,10 @@ class Tables_Based_Progress_Query {
 
 		if ( isset( $args['user_id'] ) && '' !== $args['user_id'] && array() !== $args['user_id'] ) {
 			if ( is_array( $args['user_id'] ) ) {
-				$ids = array_map( 'intval', $args['user_id'] );
-				if ( empty( $ids ) ) {
-					// Force empty result.
-					$sql .= ' AND 1 = 0';
-				} else {
-					$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
-					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-					$sql .= $wpdb->prepare( " AND p.user_id IN ( $placeholders )", $ids );
-				}
+				$ids          = array_map( 'intval', $args['user_id'] );
+				$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				$sql .= $wpdb->prepare( " AND p.user_id IN ( $placeholders )", $ids );
 			} else {
 				$sql .= $wpdb->prepare( ' AND p.user_id = %d', (int) $args['user_id'] );
 			}
