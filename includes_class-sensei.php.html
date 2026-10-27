@@ -688,7 +688,8 @@ class Sensei_Main {
 	 */
 	public function initialize_global_objects() {
 		// Course lessons repository.
-		$this->course_lessons_repository = new Metas_Based_Course_Lessons_Repository();
+		global $wpdb;
+		$this->course_lessons_repository = new Metas_Based_Course_Lessons_Repository( $wpdb );
 
 		// Setup settings.
 		$this->settings                       = new Sensei_Settings();
