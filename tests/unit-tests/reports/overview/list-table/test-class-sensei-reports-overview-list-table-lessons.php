@@ -109,7 +109,7 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 				'meta_input'   => array( '_lesson_course' => $course ),
 			)
 		);
-		$other = $this->factory->lesson->create(
+		$other  = $this->factory->lesson->create(
 			array(
 				'post_title'   => wp_slash( $other_title ),
 				'post_content' => '',
@@ -119,7 +119,7 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 		);
 		$this->create_lesson_progress( $lesson, '2022-01-01 12:00:00', '2022-01-02 12:00:00' );
 		$this->create_lesson_progress( $other, '2022-01-01 12:00:00', null );
-		$_GET = array(
+		$_GET  = array(
 			'course_filter' => $course,
 			's'             => wp_slash( $search ),
 		);
