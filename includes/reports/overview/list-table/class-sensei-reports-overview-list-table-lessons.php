@@ -329,10 +329,10 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
 		// Add search filter to query arguments.
 		$query_args = [];
-		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for searching.
-		if ( ! empty( $_GET['s'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$query_args['s'] = esc_html( $_GET['s'] );
+		$search     = $this->get_search_value();
+		if ( '' !== $search ) {
+			// WP_Query strips slashes from search text before parsing it.
+			$query_args['s'] = wp_slash( $search );
 		}
 		$lessons = $this->course->course_lessons( $course_id, Utils::REPORTS_POST_STATUSES, 'ids', $query_args );
 

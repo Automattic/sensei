@@ -289,6 +289,21 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * CSV output contains readable headers and text characters.
+	 *
+	 * @covers Sensei_Analysis::report_write_download
+	 */
+	public function testReportWriteDownload_EncodedHeadersAndTextGiven_OutputsReadableCsv(): void {
+		$report_data = array(
+			array( 'Title &amp; name', 'Module' ),
+			array( 'Roger Love&#8217;s Research &amp; Practice', 'Rock &amp; Roll' ),
+		);
+		$this->expectOutputString( "\"Title & name\",Module\n\"Roger Love’s Research & Practice\",\"Rock & Roll\"\n" );
+
+		Sensei()->analysis->report_write_download( $report_data );
+	}
+
+	/**
 	 * Returns a partial mock object for the specified class
 	 * with all of its methods mocked but one.
 	 *
