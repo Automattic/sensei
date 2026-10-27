@@ -16,9 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Metas_Based_Course_Lessons_Repository.
  *
- * Reads the course structure of lessons from post metas: the course a lesson is attached to
- * (`_lesson_course`), its prerequisite (`_lesson_prerequisite`), and the lessons of a course.
- *
  * @internal
  *
  * @since $$next-version$$
@@ -126,7 +123,7 @@ class Metas_Based_Course_Lessons_Repository implements Course_Lessons_Repository
 	}
 
 	/**
-	 * Get the IDs of the lessons attached to a course, without applying query filters.
+	 * Get the IDs of the lessons attached to a course.
 	 *
 	 * `suppress_filters` keeps multilingual plugins from limiting the query to the current language.
 	 *

@@ -14,9 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface Course_Lessons_Repository_Interface.
  *
- * Reads the course structure of lessons: the course a lesson is attached to, its prerequisite,
- * and the lessons of a course.
- *
  * @internal
  *
  * @since $$next-version$$
@@ -53,8 +50,7 @@ interface Course_Lessons_Repository_Interface {
 	public function get_course_ids( array $lesson_ids ): array;
 
 	/**
-	 * Get the IDs of the lessons attached to a course, without applying query filters, so the result
-	 * is not limited to the current language.
+	 * Get the IDs of the lessons attached to a course.
 	 *
 	 * @internal
 	 *
