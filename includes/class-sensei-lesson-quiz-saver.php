@@ -41,7 +41,9 @@ class Sensei_Lesson_Quiz_Saver {
 			return false;
 		}
 
-		return is_user_logged_in() && current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson->ID );
+		$post_type_object = get_post_type_object( 'lesson' );
+
+		return $post_type_object && is_user_logged_in() && current_user_can( $post_type_object->cap->edit_post, $lesson->ID );
 	}
 
 	/**
@@ -56,7 +58,7 @@ class Sensei_Lesson_Quiz_Saver {
 		foreach ( $questions as $question ) {
 			$result = rest_sanitize_value_from_schema( $question, $this->get_question_schema( $question['type'] ) );
 
-			if ( is_wp_error( $result ) ) {
+			if ( $result instanceof WP_Error ) {
 				return $result;
 			}
 

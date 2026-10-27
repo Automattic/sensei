@@ -980,15 +980,15 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$response = $this->send_post_request(
 			$lesson_id,
-			[
-				'options'   => [],
-				'questions' => [
-					[
+			array(
+				'options'   => array(),
+				'questions' => array(
+					array(
 						'title' => '',
 						'type'  => 'multi-line',
-					],
-				],
-			]
+					),
+				),
+			)
 		);
 
 		$this->assertSame( 'sensei_lesson_quiz_question_missing_title', $response->get_data()['code'] );
