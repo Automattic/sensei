@@ -1,5 +1,4 @@
 Significance: patch
 Type: fixed
 
-Fix search text handling and CSV export filters in the Lessons, Courses, and Students reports.
-Export readable title characters in Courses and Lessons overview CSV files.
+Fix report searches, CSV export filters, and HTML entities in exported titles.

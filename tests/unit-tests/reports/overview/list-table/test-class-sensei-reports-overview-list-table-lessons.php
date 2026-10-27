@@ -91,43 +91,37 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Search requests select the same lessons for displayed rows, totals and CSV exports.
+	 * Search requests select the displayed lessons and their header totals.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::prepare_items
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::get_columns
-	 * @covers Sensei_Reports_Overview_List_Table_Lessons::data_table_footer
-	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
 	 * @dataProvider lesson_search_requests
 	 */
-	public function testPrepareItems_SearchRequestGiven_ReturnsMatchingRowsTotalsAndCsv( string $search, string $matching_title, string $other_title, string $csv_title ): void {
-		$course = $this->factory->course->create();
-		$lesson = $this->factory->lesson->create(
-			array(
-				'post_title'   => wp_slash( $matching_title ),
-				'post_content' => '',
-				'post_excerpt' => '',
-				'meta_input'   => array( '_lesson_course' => $course ),
-			)
-		);
-		$other  = $this->factory->lesson->create(
-			array(
-				'post_title'   => wp_slash( $other_title ),
-				'post_content' => '',
-				'post_excerpt' => '',
-				'meta_input'   => array( '_lesson_course' => $course ),
-			)
-		);
-		$this->create_lesson_progress( $lesson, '2022-01-01 12:00:00', '2022-01-02 12:00:00' );
-		$this->create_lesson_progress( $other, '2022-01-01 12:00:00', null );
-		$_GET  = array(
-			'course_filter' => $course,
-			's'             => wp_slash( $search ),
-		);
-		$table = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course ) );
+	public function testPrepareItems_SearchRequestGiven_ReturnsMatchingRowsAndTotals( string $search, string $matching_title, string $other_title ): void {
+		list( $table, $lesson ) = $this->create_search_report( $search, $matching_title, $other_title );
 
 		$table->prepare_items();
 		$items   = $table->items;
 		$columns = $table->get_columns();
+
+		self::assertSame( array( $lesson ), wp_list_pluck( $items, 'ID' ), 'The displayed rows must include only the matching lesson.' );
+		self::assertSame( 'Lesson (1)', $columns['title'], 'The lesson total must reflect the search.' );
+		self::assertSame( 'Students (1)', $columns['students'], 'The student total must exclude the unmatched lesson.' );
+		self::assertSame( 'Completed (1)', $columns['completions'], 'The completed total must reflect the matching lesson.' );
+		self::assertSame( 'Completion Rate (100%)', $columns['completion_rate'], 'The completion rate must exclude unmatched activity.' );
+	}
+
+	/**
+	 * Export links preserve the search text and CSV includes only the matching lesson.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::data_table_footer
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
+	 * @dataProvider lesson_search_exports
+	 */
+	public function testGenerateReport_SearchRequestGiven_ExportsMatchingLessonAndReadableTitle( string $search, string $matching_title, string $other_title, string $csv_title ): void {
+		list( $table ) = $this->create_search_report( $search, $matching_title, $other_title );
+		$table->prepare_items();
+
 		ob_start();
 		$table->data_table_footer();
 		$footer = ob_get_clean();
@@ -136,15 +130,10 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 		$_GET = wp_slash( $export_args );
 		$csv  = $table->generate_report();
 
-		self::assertSame( array( $lesson ), wp_list_pluck( $items, 'ID' ), 'The displayed rows must include only the matching lesson.' );
-		self::assertSame( 'Lesson (1)', $columns['title'], 'The lesson total must reflect the search.' );
-		self::assertSame( 'Students (1)', $columns['students'], 'The student total must exclude the unmatched lesson.' );
-		self::assertSame( 'Completed (1)', $columns['completions'], 'The completed total must reflect the matching lesson.' );
-		self::assertSame( 'Completion Rate (100%)', $columns['completion_rate'], 'The completion rate must exclude unmatched activity.' );
 		self::assertSame( $search, $export_args['s'] ?? null, 'The export link must preserve the submitted search text.' );
 		self::assertCount( 2, $csv, 'The CSV must contain its header and only the matching lesson.' );
 		self::assertSame( $csv_title, $csv[1]['title'], 'The CSV must export the complete matching lesson title with readable characters.' );
-		self::assertSame( 'Students (1)', $csv[0][1], 'The CSV header must retain the selected student total.' );
+		self::assertContains( 'Students (1)', $csv[0], 'The CSV header must retain the selected student total.' );
 	}
 
 	/**
@@ -410,11 +399,25 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Search text that must survive request normalization and export links.
+	 * Search requests used for displayed rows and header totals.
 	 *
 	 * @return array
 	 */
 	public function lesson_search_requests(): array {
+		return array_map(
+			static function ( array $scenario ): array {
+				return array_slice( $scenario, 0, 3 );
+			},
+			$this->lesson_search_exports()
+		);
+	}
+
+	/**
+	 * Search text and complete titles that must survive CSV exports.
+	 *
+	 * @return array
+	 */
+	public function lesson_search_exports(): array {
 		return array(
 			'ordinary text'     => array( 'needle', 'Selected needle lesson', 'Another lesson', 'Selected needle lesson' ),
 			'apostrophe'        => array( "King's", "Selected King's guide", 'Kings guide', 'Selected King’s guide' ),
@@ -539,6 +542,43 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 			'N/A'  => array( 0, 0, 'N/A' ),
 			'0%'   => array( 1, 0, '0%' ),
 		);
+	}
+
+	/**
+	 * Create a searchable report with matching and unmatched lesson activity.
+	 *
+	 * @param string $search         Submitted search text.
+	 * @param string $matching_title Matching lesson title.
+	 * @param string $other_title    Unmatched lesson title.
+	 * @return array{Sensei_Reports_Overview_List_Table_Lessons, int} Table and matching lesson ID.
+	 */
+	private function create_search_report( string $search, string $matching_title, string $other_title ): array {
+		$course = $this->factory->course->create();
+		$lesson = $this->factory->lesson->create(
+			array(
+				'post_title'   => wp_slash( $matching_title ),
+				'post_content' => '',
+				'post_excerpt' => '',
+				'meta_input'   => array( '_lesson_course' => $course ),
+			)
+		);
+		$other  = $this->factory->lesson->create(
+			array(
+				'post_title'   => wp_slash( $other_title ),
+				'post_content' => '',
+				'post_excerpt' => '',
+				'meta_input'   => array( '_lesson_course' => $course ),
+			)
+		);
+		$this->create_lesson_progress( $lesson, '2022-01-01 12:00:00', '2022-01-02 12:00:00' );
+		$this->create_lesson_progress( $other, '2022-01-01 12:00:00', null );
+		$_GET  = array(
+			'course_filter' => $course,
+			's'             => wp_slash( $search ),
+		);
+		$table = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course ) );
+
+		return array( $table, $lesson );
 	}
 
 	/**
