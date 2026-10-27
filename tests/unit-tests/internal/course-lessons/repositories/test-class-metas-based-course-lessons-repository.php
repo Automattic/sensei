@@ -25,9 +25,11 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	private $repository;
 
 	public function setUp(): void {
+		global $wpdb;
+
 		parent::setUp();
 		$this->factory    = new \Sensei_Factory();
-		$this->repository = new Metas_Based_Course_Lessons_Repository();
+		$this->repository = new Metas_Based_Course_Lessons_Repository( $wpdb );
 	}
 
 	public function tearDown(): void {
@@ -105,6 +107,114 @@ class Metas_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertNull( $actual );
+	}
+
+	/**
+	 * Each lesson gets its course ID as an integer, or false when it has no course.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_course_ids
+	 */
+	public function testGetCourseIds_LessonsWithAndWithoutCourseGiven_ReturnsIntCourseIdOrFalse(): void {
+		/* Arrange. */
+		$course_id        = $this->factory->course->create();
+		$lesson_in_course = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$lesson_no_course = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = $this->repository->get_course_ids( array( $lesson_in_course, $lesson_no_course ) );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				$lesson_in_course => $course_id,
+				$lesson_no_course => false,
+			),
+			$actual
+		);
+	}
+
+	/**
+	 * A lesson whose course meta points to a deleted course or to a post that is not a course gets false.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_course_ids
+	 */
+	public function testGetCourseIds_LessonsAttachedToMissingOrNonCoursePostsGiven_ReturnsFalseForThem(): void {
+		/* Arrange. */
+		$deleted_course_id = $this->factory->course->create();
+		wp_delete_post( $deleted_course_id, true );
+		$page_id                  = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$lesson_in_deleted_course = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $deleted_course_id ) ) );
+		$lesson_in_page           = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $page_id ) ) );
+
+		/* Act. */
+		$actual = $this->repository->get_course_ids( array( $lesson_in_deleted_course, $lesson_in_page ) );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				$lesson_in_deleted_course => false,
+				$lesson_in_page           => false,
+			),
+			$actual
+		);
+	}
+
+	/**
+	 * The lessons of the course are found even when query filters would hide them, and only published ones by default.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_lesson_ids
+	 */
+	public function testGetLessonIds_QueryFiltersHidingLessonsGiven_ReturnsThePublishedLessonIds(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$this->factory->lesson->create(
+			array(
+				'post_status' => 'draft',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $this->factory->course->create() ) ) );
+
+		add_filter(
+			'posts_where',
+			function ( $where, $query ) {
+				if ( 'lesson' === $query->get( 'post_type' ) ) {
+					$where .= ' AND 1=0';
+				}
+				return $where;
+			},
+			10,
+			2
+		);
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_ids( $course_id );
+
+		/* Assert. */
+		self::assertSame( array( $lesson_id ), $actual );
+	}
+
+	/**
+	 * Lessons of any status are returned when asked for.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository::get_lesson_ids
+	 */
+	public function testGetLessonIds_AnyPostStatusGiven_ReturnsTheDraftLessonIds(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'post_status' => 'draft',
+				'meta_input'  => array( '_lesson_course' => $course_id ),
+			)
+		);
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_ids( $course_id, 'any' );
+
+		/* Assert. */
+		self::assertSame( array( $lesson_id ), $actual );
 	}
 
 	/**

@@ -3,10 +3,10 @@
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTimeImmutable;
+use Sensei\Internal\Course_Lessons\Repositories\Course_Lessons_Repository_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
-use Sensei_Course;
 use wpdb;
 
 /**
@@ -615,11 +615,11 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCount_ParamsGiven_ReturnsMatchingValue(): void {
 		/* Arrange. */
-		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'get_course_lesson_ids' )->with( 1 )->willReturn( [ 2, 3, 4 ] );
+		$course_lessons_repository = $this->createMock( Course_Lessons_Repository_Interface::class );
+		$course_lessons_repository->method( 'get_lesson_ids' )->with( 1 )->willReturn( array( 2, 3, 4 ) );
 
-		$initial_course  = Sensei()->course;
-		Sensei()->course = $course;
+		$initial_course_lessons_repository  = Sensei()->course_lessons_repository;
+		Sensei()->course_lessons_repository = $course_lessons_repository;
 
 		$wpdb = $this->createMock( wpdb::class );
 		$wpdb
@@ -643,7 +643,7 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( 5, $actual );
 
-		Sensei()->course = $initial_course;
+		Sensei()->course_lessons_repository = $initial_course_lessons_repository;
 	}
 
 	public function testCount_LessonsHiddenByQueryFilters_CountsTheStartedLessons(): void {

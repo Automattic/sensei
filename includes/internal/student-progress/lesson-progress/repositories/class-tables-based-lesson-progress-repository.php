@@ -391,7 +391,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		 */
 		$course_id = (int) apply_filters( 'sensei_lesson_progress_count_course_id', $course_id );
 
-		$lesson_ids = Sensei()->course->get_course_lesson_ids( $course_id );
+		$lesson_ids = Sensei()->course_lessons_repository->get_lesson_ids( $course_id );
 
 		if ( empty( $lesson_ids ) ) {
 			return 0;

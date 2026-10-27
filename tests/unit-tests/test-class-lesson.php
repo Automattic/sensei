@@ -216,8 +216,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			$expected_course_id    = $course_ids[ $expected_course_index ];
 			$course_id             = $result_courses_id[ $lesson_id ];
 			$get_course_id_result  = Sensei()->lesson->get_course_id( $lesson_id );
-			$this->assertEquals(
-				$expected_course_id,
+			$this->assertSame(
+				(string) $expected_course_id,
 				$course_id,
 				"Lesson with ID {$lesson_id} has course ID {$course_id}, expected {$expected_course_id}"
 			);
@@ -235,12 +235,28 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			$expected_course_index = $lesson_id_index % count( $course_ids );
 			$expected_course_id    = $course_ids[ $expected_course_index ];
 			$course_id             = $cached_courses_id[ $lesson_id ];
-			$this->assertEquals(
-				$expected_course_id,
+			$this->assertSame(
+				(string) $expected_course_id,
 				$course_id,
 				"Lesson with ID {$lesson_id} has course ID {$course_id}, expected {$expected_course_id}"
 			);
 		}
+	}
+
+	/**
+	 * A lesson without a course gets false, not an empty string.
+	 *
+	 * @covers Sensei_Lesson::get_course_ids
+	 */
+	public function testGetCourseIds_LessonWithoutCourseGiven_ReturnsFalseForIt() {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = Sensei()->lesson->get_course_ids( array( $lesson_id ) );
+
+		/* Assert. */
+		$this->assertSame( array( $lesson_id => false ), $actual );
 	}
 
 	/**
