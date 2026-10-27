@@ -91,6 +91,63 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Search requests select the same lessons for displayed rows, totals and CSV exports.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::prepare_items
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::get_columns
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::data_table_footer
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
+	 * @dataProvider lesson_search_requests
+	 */
+	public function testPrepareItems_SearchRequestGiven_ReturnsMatchingRowsTotalsAndCsv( string $search, string $matching_title, string $other_title ): void {
+		$course = $this->factory->course->create();
+		$lesson = $this->factory->lesson->create(
+			array(
+				'post_title'   => wp_slash( $matching_title ),
+				'post_content' => '',
+				'post_excerpt' => '',
+				'meta_input'   => array( '_lesson_course' => $course ),
+			)
+		);
+		$other = $this->factory->lesson->create(
+			array(
+				'post_title'   => wp_slash( $other_title ),
+				'post_content' => '',
+				'post_excerpt' => '',
+				'meta_input'   => array( '_lesson_course' => $course ),
+			)
+		);
+		$this->create_lesson_progress( $lesson, '2022-01-01 12:00:00', '2022-01-02 12:00:00' );
+		$this->create_lesson_progress( $other, '2022-01-01 12:00:00', null );
+		$_GET = array(
+			'course_filter' => $course,
+			's'             => wp_slash( $search ),
+		);
+		$table = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course ) );
+
+		$table->prepare_items();
+		$items   = $table->items;
+		$columns = $table->get_columns();
+		ob_start();
+		$table->data_table_footer();
+		$footer = ob_get_clean();
+		preg_match( '/href="([^"]+)"/', $footer, $matches );
+		parse_str( wp_parse_url( html_entity_decode( $matches[1] ?? '' ), PHP_URL_QUERY ) ?? '', $export_args );
+		$_GET = wp_slash( $export_args );
+		$csv  = $table->generate_report();
+
+		self::assertSame( array( $lesson ), wp_list_pluck( $items, 'ID' ), 'The displayed rows must include only the matching lesson.' );
+		self::assertSame( 'Lesson (1)', $columns['title'], 'The lesson total must reflect the search.' );
+		self::assertSame( 'Students (1)', $columns['students'], 'The student total must exclude the unmatched lesson.' );
+		self::assertSame( 'Completed (1)', $columns['completions'], 'The completed total must reflect the matching lesson.' );
+		self::assertSame( 'Completion Rate (100%)', $columns['completion_rate'], 'The completion rate must exclude unmatched activity.' );
+		self::assertSame( $search, $export_args['s'] ?? null, 'The export link must preserve the submitted search text.' );
+		self::assertCount( 2, $csv, 'The CSV must contain its header and only the matching lesson.' );
+		self::assertStringStartsWith( 'Selected ', $csv[1]['title'], 'The CSV must export the matching lesson after following the export link.' );
+		self::assertSame( 'Students (1)', $csv[0][1], 'The CSV header must retain the selected student total.' );
+	}
+
+	/**
 	 * Exported lesson rows and headers reflect the selected activity.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
@@ -350,6 +407,22 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 			'days_to_completion' => 'Days to Completion (9)',
 		);
 		self::assertSame( $expected, $actual, 'The expected column headers for lessons table in overview report does not match the actual output' );
+	}
+
+	/**
+	 * Search text that must survive request normalization and export links.
+	 *
+	 * @return array
+	 */
+	public function lesson_search_requests(): array {
+		return array(
+			'ordinary text'     => array( 'needle', 'Selected needle lesson', 'Another lesson' ),
+			'apostrophe'        => array( "King's", "Selected King's guide", 'Kings guide' ),
+			'ampersand'         => array( 'Rock & Roll', 'Selected Rock & Roll workshop', 'Rock and Roll workshop' ),
+			'quoted phrase'     => array( '"red fox"', 'Selected red fox workshop', 'A red swift fox workshop' ),
+			'zero'              => array( '0', 'Selected Lesson 0', 'Lesson 1' ),
+			'literal backslash' => array( 'path\\chapter', 'Selected path\\chapter guide', 'A pathchapter guide' ),
+		);
 	}
 
 	/**

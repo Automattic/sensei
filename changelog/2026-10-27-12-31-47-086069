@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Normalize Lessons report searches consistently across rows, totals, and CSV exports.
