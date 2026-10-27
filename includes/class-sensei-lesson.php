@@ -4151,6 +4151,10 @@ class Sensei_Lesson {
 	 * @return array<int, string|false> Array where the key is the lesson ID, and the value is the course ID (or false if not found)
 	 */
 	public function get_course_ids( $lesson_ids ) {
+		if ( empty( $lesson_ids ) ) {
+			return array();
+		}
+
 		// Callers have always received the course IDs as strings.
 		return array_map(
 			static fn( $course_id ) => $course_id ? (string) $course_id : false,
