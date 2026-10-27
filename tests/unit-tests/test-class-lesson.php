@@ -185,8 +185,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$lesson_id          = $this->factory->lesson->create();
 		update_post_meta( $lesson_id, '_lesson_course', $expected_course_id );
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-		$this->assertEquals(
-			$expected_course_id,
+		$this->assertSame(
+			(string) $expected_course_id,
 			$course_id,
 			"Lesson {$lesson_id} has course ID {$course_id}, expected {$expected_course_id}"
 		);

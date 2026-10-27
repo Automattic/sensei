@@ -4128,19 +4128,17 @@ class Sensei_Lesson {
 			return false;
 		}
 
-		$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+		$lesson_course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
 
 		// make sure the course id is valid
 		if ( empty( $lesson_course_id )
-			|| is_array( $lesson_course_id )
-			|| intval( $lesson_course_id ) < 1
 			|| 'course' != get_post_type( $lesson_course_id ) ) {
 
 			return false;
 
 		}
 
-		return $lesson_course_id;
+		return (string) $lesson_course_id;
 	}
 
 	/**
