@@ -64,6 +64,21 @@ class Sensei_Block_Patterns_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A styled paragraph, as in the life-coach pattern, keeps the markup its attributes describe.
+	 *
+	 * @covers Sensei_Block_Patterns::replace_placeholders
+	 */
+	public function testReplacePlaceholders_StyledParagraphMatched_KeepsWrapperMarkup() {
+		$content = "<!-- wp:paragraph {\"style\":{\"typography\":{\"lineHeight\":1.2,\"fontSize\":\"17px\"}},\"textColor\":\"foreground\",\"className\":\"sensei-content-description\"} -->\n<p class=\"has-foreground-color has-text-color sensei-content-description\" style=\"font-size:17px;line-height:1.2\">Old text</p>\n<!-- /wp:paragraph -->";
+
+		$actual = Sensei_Block_Patterns::replace_placeholders( $content, array( 'sensei-content-description' => 'Root and fifth.' ) );
+
+		$this->assertStringContainsString( '<p class="has-foreground-color has-text-color sensei-content-description" style="font-size:17px;line-height:1.2">Root and fifth.</p>', $actual, 'The styled wrapper should be kept around the new content.' );
+		$this->assertStringNotContainsString( 'Old text', $actual, 'The old content should be replaced.' );
+		$this->assertStringContainsString( '"textColor":"foreground"', $actual, 'The block attributes should be kept.' );
+	}
+
+	/**
 	 * Placeholders nested inside container blocks are filled too.
 	 *
 	 * @covers Sensei_Block_Patterns::replace_placeholders

@@ -671,6 +671,28 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Backslashes in the input survive wp_insert_post(), which unslashes its data.
+	 *
+	 * @covers Sensei_Abilities::execute_course_create
+	 */
+	public function testExecuteCourseCreate_BackslashesGiven_KeepsBackslashes() {
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/course-create' );
+
+		$result = $ability->execute(
+			array(
+				'title'       => 'Regex \\d+ basics',
+				'description' => 'Match C:\\temp with \\\\ escapes.',
+			)
+		);
+
+		$course = get_post( $result['id'] );
+		$this->assertSame( 'Regex \\d+ basics', $course->post_title, 'The title should keep its backslash.' );
+		$this->assertSame( 'Match C:\\temp with \\\\ escapes.', $course->post_excerpt, 'The excerpt should keep its backslashes.' );
+		$this->assertStringContainsString( 'Match C:\\temp with \\\\ escapes.', $course->post_content, 'The description paragraph should keep its backslashes.' );
+	}
+
+	/**
 	 * Even an administrator only gets a draft: publishing is left to a person.
 	 *
 	 * @covers Sensei_Abilities::execute_course_create

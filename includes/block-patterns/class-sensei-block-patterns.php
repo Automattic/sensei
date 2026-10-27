@@ -168,7 +168,9 @@ class Sensei_Block_Patterns {
 	 *
 	 * Server-side counterpart of `replacePlaceholders` in the editor wizard: every block
 	 * without inner blocks whose className contains a key of `$replaces` gets that value
-	 * as its content. Values are inserted as-is, so the caller escapes them.
+	 * as its content. The block's wrapper element is kept, so styled paragraphs keep
+	 * the markup their attributes describe. Values are inserted as-is, so the caller
+	 * escapes them.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -208,7 +210,11 @@ class Sensei_Block_Patterns {
 					continue;
 				}
 
-				$html                  = '<p class="' . esc_attr( $class_name ) . '">' . $value . '</p>';
+				$html = self::replace_element_content( (string) ( $block['innerHTML'] ?? '' ), $value );
+				if ( null === $html ) {
+					continue;
+				}
+
 				$block['innerHTML']    = $html;
 				$block['innerContent'] = array( $html );
 			}
@@ -216,6 +222,22 @@ class Sensei_Block_Patterns {
 		unset( $block );
 
 		return $blocks;
+	}
+
+	/**
+	 * Replace the content of a block's wrapper element, keeping the element itself.
+	 *
+	 * @param string $html  Block inner HTML, a single element such as `<p class="…" style="…">…</p>`.
+	 * @param string $value Escaped content to put inside the element.
+	 *
+	 * @return string|null The HTML with the new content, or null when it is not a single element.
+	 */
+	private static function replace_element_content( string $html, string $value ): ?string {
+		if ( ! preg_match( '/^(\s*<([a-z][a-z0-9]*)\b[^>]*>).*(<\/\2>\s*)$/is', $html, $matches ) ) {
+			return null;
+		}
+
+		return $matches[1] . $value . $matches[3];
 	}
 
 	/**

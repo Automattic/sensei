@@ -887,14 +887,17 @@ class Sensei_Abilities {
 
 		$description = trim( sanitize_textarea_field( $input['description'] ?? '' ) );
 
+		// wp_insert_post() expects slashed data; ability input is not slashed.
 		$course_id = wp_insert_post(
-			array(
-				'post_type'    => 'course',
-				'post_status'  => 'draft',
-				'post_title'   => $title,
-				'post_excerpt' => $description,
-				'post_content' => self::get_default_course_content( $description ),
-				'post_author'  => get_current_user_id(),
+			wp_slash(
+				array(
+					'post_type'    => 'course',
+					'post_status'  => 'draft',
+					'post_title'   => $title,
+					'post_excerpt' => $description,
+					'post_content' => self::get_default_course_content( $description ),
+					'post_author'  => get_current_user_id(),
+				)
 			),
 			true
 		);
