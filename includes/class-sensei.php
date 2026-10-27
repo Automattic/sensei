@@ -9,6 +9,8 @@ use Sensei\Admin\Tour\Sensei_Tour;
 use Sensei\Clock\Clock;
 use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
+use Sensei\Internal\Course_Lessons\Repositories\Course_Lessons_Repository_Interface;
+use Sensei\Internal\Course_Lessons\Repositories\Metas_Based_Course_Lessons_Repository;
 use Sensei\Internal\Emails\Email_Customization;
 use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Migration\Migration_Job;
@@ -357,6 +359,15 @@ class Sensei_Main {
 	public $sensei_wpml;
 
 	/**
+	 * Course lessons repository.
+	 *
+	 * @since $$next-version$$
+	 * @psalm-suppress PropertyNotSetInConstructor
+	 * @var Course_Lessons_Repository_Interface
+	 */
+	public $course_lessons_repository;
+
+	/**
 	 * Course progress repository factory.
 	 *
 	 * @var Course_Progress_Repository_Factory
@@ -643,6 +654,9 @@ class Sensei_Main {
 	 * @since 1.9.0
 	 */
 	public function initialize_global_objects() {
+		// Course lessons repository.
+		$this->course_lessons_repository = new Metas_Based_Course_Lessons_Repository();
+
 		// Setup settings.
 		$this->settings                       = new Sensei_Settings();
 		$this->progress_storage_configuration = Progress_Storage_Configuration::resolve( $this->settings->settings );

@@ -4128,19 +4128,17 @@ class Sensei_Lesson {
 			return false;
 		}
 
-		$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+		$lesson_course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
 
 		// make sure the course id is valid
 		if ( empty( $lesson_course_id )
-			|| is_array( $lesson_course_id )
-			|| intval( $lesson_course_id ) < 1
 			|| 'course' != get_post_type( $lesson_course_id ) ) {
 
 			return false;
 
 		}
 
-		return $lesson_course_id;
+		return (string) $lesson_course_id;
 	}
 
 	/**
@@ -4725,11 +4723,11 @@ class Sensei_Lesson {
 	 */
 	public static function get_lesson_prerequisite_id( $current_lesson_id ) {
 
-		$prerequisite_lesson_id = get_post_meta( $current_lesson_id, '_lesson_prerequisite', true );
+		$prerequisite_lesson_id = (string) Sensei()->course_lessons_repository->get_lesson_prerequisite_id( (int) $current_lesson_id );
 
-		// set ti to false if not a valid prerequisite lesson id
+		// set it to false if not a valid prerequisite lesson id.
 		if ( empty( $prerequisite_lesson_id )
-			|| 'lesson' != get_post_type( $prerequisite_lesson_id )
+			|| 'lesson' != get_post_type( (int) $prerequisite_lesson_id )
 			|| $prerequisite_lesson_id == $current_lesson_id ) {
 
 			$prerequisite_lesson_id = false;

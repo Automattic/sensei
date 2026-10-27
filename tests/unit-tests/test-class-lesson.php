@@ -185,8 +185,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$lesson_id          = $this->factory->lesson->create();
 		update_post_meta( $lesson_id, '_lesson_course', $expected_course_id );
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-		$this->assertEquals(
-			$expected_course_id,
+		$this->assertSame(
+			(string) $expected_course_id,
 			$course_id,
 			"Lesson {$lesson_id} has course ID {$course_id}, expected {$expected_course_id}"
 		);
@@ -241,6 +241,40 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				"Lesson with ID {$lesson_id} has course ID {$course_id}, expected {$expected_course_id}"
 			);
 		}
+	}
+
+	/**
+	 * A valid prerequisite is returned as a string ID.
+	 *
+	 * @covers Sensei_Lesson::get_lesson_prerequisite_id
+	 */
+	public function testGetLessonPrerequisiteId_ValidPrerequisiteSet_ReturnsItsIdAsString() {
+		/* Arrange. */
+		$prerequisite_id = $this->factory->lesson->create();
+		$lesson_id       = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_prerequisite' => $prerequisite_id ) ) );
+
+		/* Act. */
+		$actual = Sensei_Lesson::get_lesson_prerequisite_id( $lesson_id );
+
+		/* Assert. */
+		$this->assertSame( (string) $prerequisite_id, $actual );
+	}
+
+	/**
+	 * A lesson cannot be its own prerequisite.
+	 *
+	 * @covers Sensei_Lesson::get_lesson_prerequisite_id
+	 */
+	public function testGetLessonPrerequisiteId_PrerequisiteIsTheLessonItself_ReturnsFalse() {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+		update_post_meta( $lesson_id, '_lesson_prerequisite', $lesson_id );
+
+		/* Act. */
+		$actual = Sensei_Lesson::get_lesson_prerequisite_id( $lesson_id );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
 	}
 
 	public function testAddLessonToCourseOrderHook() {
