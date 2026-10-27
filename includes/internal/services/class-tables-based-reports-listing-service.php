@@ -30,6 +30,13 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	private \wpdb $wpdb;
 
 	/**
+	 * Shared HPPS query mechanics.
+	 *
+	 * @var Tables_Based_Progress_Query
+	 */
+	private Tables_Based_Progress_Query $progress_query;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 4.26.0
@@ -37,7 +44,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	 * @param \wpdb $wpdb WordPress database object.
 	 */
 	public function __construct( \wpdb $wpdb ) {
-		$this->wpdb = $wpdb;
+		$this->wpdb           = $wpdb;
+		$this->progress_query = new Tables_Based_Progress_Query( $wpdb );
 	}
 
 	/**
@@ -68,30 +76,22 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	 */
 	public function get_lesson_students( array $args ): array {
 		$wpdb              = $this->wpdb;
-		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
 		$post_id           = (int) ( $args['post_id'] ?? 0 );
 		$post_id_map       = Utils::get_progress_post_id_map( array( $post_id ), 'lesson' );
 		$args['post_id']   = $post_id_map[ $post_id ];
 
-		$where      = " WHERE p.type = 'lesson'" . $this->build_filters( $args )
-			. Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
-		$pagination = $this->build_pagination( $where, $args );
+		$selection  = $this->build_selection( $args, 'lesson' );
+		$pagination = $this->build_pagination( $selection, $args );
 
 		/** Query result rows. @var object[] $rows */
 		// Table names are trusted $wpdb properties; value clauses use $wpdb->prepare().
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = (array) $wpdb->get_results(
-			// Fetch each student's lesson progress with their effective quiz/lesson status and grade.
-			// Join quiz progress (q) to get the quiz-aware status via COALESCE: if a quiz
-			// exists for this lesson, its status takes precedence over the lesson status.
-			// Join quiz submissions (qs) to get the final_grade when available.
-			'SELECT p.user_id, COALESCE( q.status, p.status ) AS effective_status, p.started_at, p.completed_at, qs.final_grade AS grade'
-			. " FROM `$table` p"
-			. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
-			. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
+			'SELECT ' . $selection['fields'] . ', qs.final_grade AS grade'
+			. $selection['from']
 			. " LEFT JOIN `$submissions_table` qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id"
-			. $where
+			. $selection['where']
 			. $pagination['order_clause']
 			. $pagination['limit_clause']
 		);
@@ -133,9 +133,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$post_id_map     = Utils::get_progress_post_id_map( array( $course_id ), 'course' );
 		$progress_id     = $post_id_map[ $course_id ];
 		$args['post_id'] = $progress_id;
-		$where           = " WHERE p.type = 'course'" . $this->build_filters( $args )
-			. Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
-		$pagination      = $this->build_pagination( $where, $args );
+		$selection       = $this->build_selection( $args, 'course' );
+		$pagination      = $this->build_pagination( $selection, $args );
 		$total_lessons   = count( Sensei()->course->course_lessons( $progress_id, 'publish', 'ids' ) );
 
 		/** Query result rows. @var object[] $rows */
@@ -146,9 +145,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				// Fetch each student's course progress with a computed percent column.
 				// percent = (completed lessons / total lessons) * 100.
 				// The total_lessons denominator is pre-computed in PHP since all rows share the same course.
-				'SELECT p.user_id, p.status, p.started_at, p.completed_at,'
+				'SELECT ' . $selection['fields'] . ','
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( %d, 0 ), 0 ) AS percent'
-				. " FROM `$table` p"
+				. $selection['from']
 				// Derived table: count completed published lessons per student in this course.
 				. ' LEFT JOIN ('
 				. '   SELECT lp.user_id, COUNT(*) AS cnt'
@@ -161,7 +160,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$total_lessons,
 				$progress_id
 			)
-			. $where
+			. $selection['where']
 			. $pagination['order_clause']
 			. $pagination['limit_clause']
 		);
@@ -197,28 +196,27 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	 */
 	public function get_user_lesson_progress( array $args ): ?Reports_Item {
 		$wpdb              = $this->wpdb;
-		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_quiz_submissions_table_name();
 
 		$post_id = (int) ( $args['post_id'] ?? 0 );
 		$user_id = (int) ( $args['user_id'] ?? 0 );
 
+		$selection = $this->progress_query->build_selection(
+			array(
+				'type'             => 'lesson',
+				'post_id'          => $post_id,
+				'user_id'          => $user_id,
+				'with_quiz_status' => true,
+			)
+		);
+
 		// Table names are trusted $wpdb properties; value clauses use $wpdb->prepare(). Caching handled by callers.
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$row = $wpdb->get_row(
-			$wpdb->prepare(
-				// Fetch one lesson's progress for one user, with quiz-aware effective status.
-				// Same JOIN pattern as get_lesson_students but for a single row.
-				'SELECT COALESCE( q.status, p.status ) AS effective_status,'
-				. ' p.started_at, p.completed_at, qs.final_grade AS grade'
-				. " FROM `$table` p"
-				. " LEFT JOIN `{$wpdb->postmeta}` pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0"
-				. " LEFT JOIN `$table` q ON q.post_id = pm.meta_value AND q.user_id = p.user_id AND q.type = 'quiz'"
-				. " LEFT JOIN `$submissions_table` qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id"
-				. " WHERE p.post_id = %d AND p.user_id = %d AND p.type = 'lesson'",
-				$post_id,
-				$user_id
-			)
+			'SELECT ' . $selection['fields'] . ', qs.final_grade AS grade'
+			. $selection['from']
+			. " LEFT JOIN `$submissions_table` qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id"
+			. $selection['where']
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		Utils::log_query_error( $wpdb, 'Reports user lesson progress' );
@@ -252,20 +250,8 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 
 		$user_id = (int) ( $args['user_id'] ?? 0 );
 
-		$where = " WHERE p.type = 'course'" . $this->build_filters( $args )
-			. Utils::build_user_exclusion_clause( $wpdb, array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ) );
-
-		if ( ! empty( $args['post_author'] ) ) {
-			// Table name is a trusted $wpdb property; value clause uses $wpdb->prepare().
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$where .= $wpdb->prepare(
-				" AND p.post_id IN ( SELECT ID FROM `{$wpdb->posts}` WHERE post_author = %d )",
-				(int) $args['post_author']
-			);
-			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		}
-
-		$pagination = $this->build_pagination( $where, $args );
+		$selection  = $this->build_selection( $args, 'course', true );
+		$pagination = $this->build_pagination( $selection, $args );
 
 		/** Query result rows. @var object[] $rows */
 		// Table names are trusted $wpdb properties; value clauses use $wpdb->prepare().
@@ -274,9 +260,9 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			$wpdb->prepare(
 				// Fetch each course's progress for this user with a computed percent column.
 				// percent = (completed lessons / total lessons) * 100.
-				'SELECT p.post_id, p.status, p.started_at, p.completed_at,'
+				'SELECT ' . $selection['fields'] . ','
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( total.cnt, 0 ), 0 ) AS percent'
-				. " FROM `$table` p"
+				. $selection['from']
 				// Derived table: count completed published lessons per course for this user.
 				// Lessons are mapped to courses via the _lesson_course postmeta.
 				. ' LEFT JOIN ('
@@ -299,7 +285,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. ' ) total ON total.course_id = p.post_id',
 				$user_id
 			)
-			. $where
+			. $selection['where']
 			. $pagination['order_clause']
 			. $pagination['limit_clause']
 		);
@@ -327,139 +313,65 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	}
 
 	/**
-	 * Run the count query, snap the offset if it exceeds the total, and build
-	 * ORDER BY / LIMIT clauses. Shared by all paginated query methods.
+	 * Translate Reports activity arguments into storage criteria.
 	 *
-	 * @param string $where SQL WHERE clause (already prepared).
-	 * @param array  $args  Activity args containing number, offset, orderby, order.
-	 * @return array{ total_count: int, order_clause: string, limit_clause: string }
+	 * @param array  $args          Activity arguments.
+	 * @param string $type          Progress type.
+	 * @param bool   $filter_author Whether to filter by course author.
+	 * @return array Prepared progress selection.
 	 */
-	private function build_pagination( string $where, array $args ): array {
-		$wpdb  = $this->wpdb;
-		$table = $this->get_progress_table_name();
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is a trusted $wpdb property; $where is built from $wpdb->prepare() calls.
-		$total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$table` p" . $where );
-		Utils::log_query_error( $wpdb, 'Tables-based reports pagination count' );
-
-		$number = (int) ( $args['number'] ?? 0 );
-		$offset = (int) ( $args['offset'] ?? 0 );
-		if ( $number > 0 && $total_count > 0 && $offset >= $total_count ) {
-			$last_page = max( 0, (int) ceil( $total_count / $number ) - 1 );
-			$offset    = $last_page * $number;
-		}
-
-		return array(
-			'total_count'  => $total_count,
-			'order_clause' => $this->build_order_clause( $args ),
-			'limit_clause' => $number > 0 ? (string) $wpdb->prepare( ' LIMIT %d OFFSET %d', $number, $offset ) : '',
+	private function build_selection( array $args, string $type, bool $filter_author = false ): array {
+		$criteria = array(
+			'type'             => $type,
+			'with_quiz_status' => 'lesson' === $type,
+			'status_source'    => 'progress',
+			'user_exclusions'  => array( 'exclude_user_login_prefixes' => Utils::REPORTS_EXCLUDED_USER_LOGIN_PREFIXES ),
 		);
-	}
-
-	/**
-	 * Translate the activity-args shape into shared SQL WHERE clauses.
-	 *
-	 * Applies post_id, user_id, status, and the meta_query entry with key 'start'
-	 * (used by the course list table for start-date range filtering).
-	 *
-	 * @param array $args Activity args.
-	 * @return string SQL clauses, each prefixed with ' AND '.
-	 */
-	private function build_filters( array $args ): string {
-		$wpdb = $this->wpdb;
-		$sql  = '';
 
 		if ( ! empty( $args['post_id'] ) ) {
-			$sql .= $wpdb->prepare( ' AND p.post_id = %d', (int) $args['post_id'] );
+			$criteria['post_id'] = (int) $args['post_id'];
 		}
-
 		if ( isset( $args['user_id'] ) && '' !== $args['user_id'] && array() !== $args['user_id'] ) {
-			if ( is_array( $args['user_id'] ) ) {
-				$ids = array_map( 'intval', $args['user_id'] );
-				if ( empty( $ids ) ) {
-					// Force empty result.
-					$sql .= ' AND 1 = 0';
-				} else {
-					$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
-					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-					$sql .= $wpdb->prepare( " AND p.user_id IN ( $placeholders )", $ids );
-				}
-			} else {
-				$sql .= $wpdb->prepare( ' AND p.user_id = %d', (int) $args['user_id'] );
-			}
+			$criteria['user_id'] = $args['user_id'];
 		}
-
 		if ( ! empty( $args['status'] ) && 'any' !== $args['status'] ) {
-			$statuses = array_map( 'strval', (array) $args['status'] );
-			if ( ! empty( $statuses ) ) {
-				$placeholders = implode( ', ', array_fill( 0, count( $statuses ), '%s' ) );
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-				$sql .= $wpdb->prepare( " AND p.status IN ( $placeholders )", $statuses );
-			}
+			$criteria['status'] = (array) $args['status'];
+		}
+		if ( ! empty( $args['post_author'] ) && $filter_author ) {
+			$criteria['post_author'] = (int) $args['post_author'];
 		}
 
-		$sql .= $this->build_start_date_filter( $args );
-
-		return $sql;
-	}
-
-	/**
-	 * Translate a meta_query entry with key 'start' into started_at SQL.
-	 *
-	 * The course list table passes start-date range filters via meta_query
-	 * (to remain compatible with the comments-based path). For tables-based
-	 * storage the equivalent column is p.started_at.
-	 *
-	 * @param array $args Activity args.
-	 * @return string SQL clause.
-	 */
-	private function build_start_date_filter( array $args ): string {
-		if ( empty( $args['meta_query'] ) || ! is_array( $args['meta_query'] ) ) {
-			return '';
-		}
-
-		$wpdb = $this->wpdb;
-		$sql  = '';
-
-		foreach ( $args['meta_query'] as $outer ) {
-			if ( ! is_array( $outer ) ) {
-				continue;
-			}
-			foreach ( $outer as $clause ) {
-				if ( ! is_array( $clause ) || ( $clause['key'] ?? '' ) !== 'start' ) {
+		if ( ! empty( $args['meta_query'] ) && is_array( $args['meta_query'] ) ) {
+			foreach ( $args['meta_query'] as $outer ) {
+				if ( ! is_array( $outer ) ) {
 					continue;
 				}
-				$compare = $clause['compare'] ?? '=';
-				$value   = $clause['value'] ?? '';
-				if ( in_array( $compare, array( '>=', '<=', '>', '<', '=' ), true ) && '' !== $value ) {
-					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $compare whitelisted above.
-					$sql .= $wpdb->prepare( " AND p.started_at {$compare} %s", $value );
+				foreach ( $outer as $clause ) {
+					if ( is_array( $clause ) && ( $clause['key'] ?? '' ) === 'start' ) {
+						$criteria['started_at'][] = $clause;
+					}
 				}
 			}
 		}
 
-		return $sql;
+		return $this->progress_query->build_selection( $criteria );
 	}
 
 	/**
-	 * Build ORDER BY clause.
+	 * Translate Reports ordering aliases and paginate the selection.
 	 *
-	 * @param array $args Query arguments.
-	 * @return string SQL ORDER BY clause.
+	 * @param array $selection Prepared progress selection.
+	 * @param array $args      Activity arguments.
+	 * @return array Count, order, and limit clauses.
 	 */
-	private function build_order_clause( array $args ): string {
-		$order   = isset( $args['order'] ) && 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
-		$orderby = $args['orderby'] ?? '';
-
+	private function build_pagination( array $selection, array $args ): array {
 		$orderby_map = array(
-			'comment_date' => 'p.completed_at',
-			'started'      => 'p.started_at',
-			'completed'    => 'p.completed_at',
+			'comment_date' => 'completed_at',
+			'started'      => 'started_at',
+			'completed'    => 'completed_at',
 		);
+		$args['orderby'] = $orderby_map[ $args['orderby'] ?? '' ] ?? 'started_at';
 
-		/** Sanitized column name. @var string $column */
-		$column = esc_sql( $orderby_map[ $orderby ] ?? 'p.started_at' );
-
-		return " ORDER BY {$column} {$order}";
+		return $this->progress_query->build_pagination( $selection, $args );
 	}
 }
