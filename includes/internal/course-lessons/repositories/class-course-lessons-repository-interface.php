@@ -70,4 +70,14 @@ interface Course_Lessons_Repository_Interface {
 	 * @return int|null Position, or null when none is stored for that course.
 	 */
 	public function get_lesson_position( int $lesson_id, int $course_id ): ?int;
+
+	/**
+	 * Get the module of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @return \WP_Term|null The module term, or null when the lesson has none or a filter returns no term.
+	 */
+	public function get_lesson_module( int $lesson_id ): ?\WP_Term;
 }

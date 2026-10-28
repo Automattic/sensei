@@ -41,6 +41,40 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The module assigned to a lesson is returned by its term ID.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module_if_exists
+	 */
+	public function testGetLessonModuleIfExists_LessonHasModule_ReturnsItsTermId() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson    = $this->factory->lesson->create_and_get();
+		wp_set_object_terms( $lesson->ID, array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module_if_exists( $lesson );
+
+		/* Assert. */
+		$this->assertSame( $module_id, $actual );
+	}
+
+	/**
+	 * A lesson without a module has no module term ID.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module_if_exists
+	 */
+	public function testGetLessonModuleIfExists_LessonHasNoModule_ReturnsZero() {
+		/* Arrange. */
+		$lesson = $this->factory->lesson->create_and_get();
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module_if_exists( $lesson );
+
+		/* Assert. */
+		$this->assertSame( 0, $actual );
+	}
+
+	/**
 	 * Ensure an Administrator-owned course with an Administrator-owned module is available to an Editor.
 	 *
 	 * @covers Sensei_Core_Modules::module_order_screen
@@ -127,6 +161,40 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( array_map( 'strval', $expected ), get_post_meta( $course_id, '_module_order', true ) );
+	}
+
+	/**
+	 * The module assigned to a lesson is returned as its term.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module
+	 */
+	public function testGetLessonModule_LessonHasModule_ReturnsTheModule() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module( $lesson_id );
+
+		/* Assert. */
+		$this->assertSame( $module_id, $actual->term_id );
+	}
+
+	/**
+	 * A lesson without a module has no module.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module
+	 */
+	public function testGetLessonModule_LessonHasNoModule_ReturnsFalse() {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module( $lesson_id );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
 	}
 
 	/**
