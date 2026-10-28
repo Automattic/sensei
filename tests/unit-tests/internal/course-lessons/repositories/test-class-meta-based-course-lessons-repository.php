@@ -230,4 +230,55 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 			'array'              => array( array( 1 ) ),
 		);
 	}
+
+	/**
+	 * A stored position is cast to an integer like `intval()`, including zero and non-canonical numbers.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_position
+	 * @dataProvider storedPositionsProvider
+	 *
+	 * @param string $meta_value Value stored in the meta.
+	 * @param int    $expected   Expected position.
+	 */
+	public function testGetLessonPosition_PositionStored_ReturnsItAsInteger( string $meta_value, int $expected ): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_order_' . $course_id => $meta_value ) ) );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_position( $lesson_id, $course_id );
+
+		/* Assert. */
+		self::assertSame( $expected, $actual );
+	}
+
+	/**
+	 * Provides stored positions and the position they are read as.
+	 *
+	 * @return array
+	 */
+	public function storedPositionsProvider(): array {
+		return array(
+			'positive integer'     => array( '3', 3 ),
+			'zero'                 => array( '0', 0 ),
+			'non-canonical number' => array( '3abc', 3 ),
+		);
+	}
+
+	/**
+	 * A lesson without a position meta for the course has no position.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_position
+	 */
+	public function testGetLessonPosition_NoPositionStored_ReturnsNull(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_position( $lesson_id, $course_id );
+
+		/* Assert. */
+		self::assertNull( $actual );
+	}
 }
