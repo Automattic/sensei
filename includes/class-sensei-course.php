@@ -1660,14 +1660,7 @@ class Sensei_Course {
 			]
 		);
 
-		if ( ! isset( $query_args['meta_query'] ) ) {
-			$query_args['meta_query'] = [];
-		}
-
-		$query_args['meta_query'][] = [
-			'key'   => '_lesson_course',
-			'value' => intval( $course_id ),
-		];
+		$query_args['sensei_course'] = (int) $course_id;
 
 		$query_results = new WP_Query( $query_args );
 		$lessons       = $query_results->posts;
