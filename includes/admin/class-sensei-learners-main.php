@@ -648,7 +648,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					)
 				);
 
-				$lesson_learners = $this->student_listing_service->count_students( $lesson_args );
+				$lesson_learners = $this->can_view_students( $lesson_args )
+					? $this->student_listing_service->count_students( $lesson_args )
+					: 0;
 
 				$title = get_the_title( $item );
 				// translators: Placeholder is the item title/name.
@@ -867,6 +869,11 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		 * @return {array} The modified arguments.
 		 */
 		$activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
+
+		if ( ! $this->can_view_students( $activity_args ) ) {
+			$this->total_items = 0;
+			return array();
+		}
 
 		$result            = $this->student_listing_service->get_students( $activity_args );
 		$this->total_items = (int) $result['total_count'];
@@ -1262,6 +1269,20 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 */
 	public function get_view() : string {
 		return $this->view;
+	}
+
+	/**
+	 * Check access to the final course or lesson selected by activity filters.
+	 *
+	 * @param array $args Filtered student activity arguments.
+	 * @return bool Whether the current user can view students for the target.
+	 */
+	private function can_view_students( array $args ): bool {
+		$type      = 'sensei_course_status' === ( $args['type'] ?? '' ) ? 'course' : 'lesson';
+		$post_id   = (int) ( $args['post_id'] ?? 0 );
+		$post_type = get_post_type_object( $type );
+
+		return $post_id && $post_type && current_user_can( $post_type->cap->edit_post, $post_id );
 	}
 }
 
