@@ -198,6 +198,52 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The lessons of a module are only those of the given course, ordered by their module position.
+	 *
+	 * @covers Sensei_Core_Modules::get_lessons_query
+	 */
+	public function testGetLessonsQuery_ModulePositionsStored_ReturnsTheCourseLessonsInModuleOrder() {
+		/* Arrange. */
+		$module_id           = $this->factory->module->create();
+		$course_id           = $this->factory->course->create();
+		$older_lesson        = $this->factory->lesson->create(
+			array(
+				'post_date'  => '2020-01-01 00:00:00',
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_module_' . $module_id => 2,
+				),
+			)
+		);
+		$recent_lesson       = $this->factory->lesson->create(
+			array(
+				'post_date'  => '2020-01-02 00:00:00',
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_module_' . $module_id => 1,
+				),
+			)
+		);
+		$other_course_lesson = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'              => $this->factory->course->create(),
+					'_order_module_' . $module_id => 0,
+				),
+			)
+		);
+		wp_set_object_terms( $older_lesson, array( $module_id ), 'module' );
+		wp_set_object_terms( $recent_lesson, array( $module_id ), 'module' );
+		wp_set_object_terms( $other_course_lesson, array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lessons_query( $course_id, $module_id );
+
+		/* Assert. */
+		$this->assertSame( array( $recent_lesson, $older_lesson ), wp_list_pluck( $actual->posts, 'ID' ) );
+	}
+
+	/**
 	 * @covers Sensei_Core_Modules::do_link_to_module
 	 */
 	public function testDoLinkToModuleEmptyDescription() {

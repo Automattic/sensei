@@ -2122,13 +2122,7 @@ class Sensei_Core_Modules {
 			'post_type'        => 'lesson',
 			'post_status'      => $course_lessons_post_status,
 			'posts_per_page'   => -1,
-			'meta_query'       => array(
-				array(
-					'key'     => '_lesson_course',
-					'value'   => intval( $course_id ),
-					'compare' => '=',
-				),
-			),
+			'sensei_course'    => intval( $course_id ),
 			'tax_query'        => array(
 				array(
 					'taxonomy' => 'module',
