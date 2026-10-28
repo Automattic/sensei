@@ -387,16 +387,9 @@ class Sensei_Core_Modules {
 	 * @return int
 	 */
 	public function get_lesson_module_if_exists( $post ) {
-		// Get existing lesson module.
-		$lesson_module      = 0;
-		$lesson_module_list = wp_get_post_terms( $post->ID, $this->taxonomy );
-		if ( is_array( $lesson_module_list ) &amp;&amp; count( $lesson_module_list ) > 0 ) {
-			foreach ( $lesson_module_list as $single_module ) {
-				$lesson_module = $single_module->term_id;
-				break;
-			}
-		}
-		return $lesson_module;
+		$module = Sensei()->course_lessons_repository->get_lesson_module( (int) $post->ID );
+
+		return $module ? $module->term_id : 0;
 	}
 
 	/**
@@ -1886,25 +1879,8 @@ class Sensei_Core_Modules {
 			return false;
 		}
 
-		// get taxonomy terms on this lesson
-		$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
-
-		// check if error returned
-		if ( empty( $modules )
-			|| is_wp_error( $modules )
-			|| isset( $modules['errors'] ) ) {
-
-			return false;
-
-		}
-
-		// get the last item in the array there should be only be 1 really.
-		// this method works for all php versions.
-		foreach ( $modules as $module ) {
-			break;
-		}
-
-		if ( ! isset( $module ) || ! is_object( $module ) || is_wp_error( $module ) ) {
+		$module = Sensei()->course_lessons_repository->get_lesson_module( $lesson_id );
+		if ( ! $module ) {
 			return false;
 		}
 
