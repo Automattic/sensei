@@ -78,7 +78,6 @@ jQuery( document ).ready( function ( $ ) {
 		const userId = $this.attr( 'data-user-id' );
 		const postId = $this.attr( 'data-post-id' );
 		const postType = $this.attr( 'data-post-type' );
-		const commentId = $this.attr( 'data-comment-id' );
 		const newDates = {};
 
 		$this
@@ -92,7 +91,6 @@ jQuery( document ).ready( function ( $ ) {
 			! userId ||
 			! postId ||
 			! postType ||
-			! commentId ||
 			Object.keys( newDates ).length === 0
 		) {
 			return;
@@ -102,7 +100,6 @@ jQuery( document ).ready( function ( $ ) {
 			user_id: userId,
 			post_id: postId,
 			post_type: postType,
-			comment_id: commentId,
 			new_dates: newDates,
 		};
 

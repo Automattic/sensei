@@ -53,17 +53,19 @@ class Tables_Based_Progress_Query {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param string $where SQL WHERE clause (already prepared).
-	 * @param array  $args  Activity args containing number, offset, orderby, order.
+	 * @param string      $where SQL WHERE clause (already prepared).
+	 * @param array       $args  Activity args containing number, offset, orderby, order.
+	 * @param string|null $from Prepared FROM clause, or null for the progress table.
 	 * @return array{ total_count: int, order_clause: string, limit_clause: string }
 	 */
-	public function build_pagination( string $where, array $args ): array {
+	public function build_pagination( string $where, array $args, ?string $from = null ): array {
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
+		$from  = $from ?? " FROM `$table` p";
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is a trusted $wpdb property; $where is built from $wpdb->prepare() calls.
-		$total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$table` p" . $where );
-		Utils::log_query_error( $wpdb, 'Tables-based reports pagination count' );
+		$total_count = (int) $wpdb->get_var( 'SELECT COUNT(*)' . $from . $where );
+		Utils::log_query_error( $wpdb, 'Tables-based progress pagination count' );
 
 		$number = (int) ( $args['number'] ?? 0 );
 		$offset = (int) ( $args['offset'] ?? 0 );
