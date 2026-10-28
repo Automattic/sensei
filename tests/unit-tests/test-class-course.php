@@ -1026,18 +1026,19 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Course::course_lessons
 	 * @dataProvider data_unpositionedCoursePositions
 	 *
-	 * @param string $position Value stored as the course position.
+	 * @param string|null $position Value stored as the course position, or null for no meta.
 	 */
 	public function testCourseLessons_UnpositionedValueStored_SortsTheLessonLast( $position ) {
 		/* Arrange. */
-		$course_id           = $this->factory->course->create();
+		$course_id  = $this->factory->course->create();
+		$meta_input = array( '_lesson_course' => $course_id );
+		if ( null !== $position ) {
+			$meta_input[ '_order_' . $course_id ] = $position;
+		}
 		$unpositioned_lesson = $this->factory->lesson->create(
 			array(
 				'post_date'  => '2020-01-01 00:00:00',
-				'meta_input' => array(
-					'_lesson_course'       => $course_id,
-					'_order_' . $course_id => $position,
-				),
+				'meta_input' => $meta_input,
 			)
 		);
 		$positioned_lesson   = $this->factory->lesson->create(
@@ -1064,6 +1065,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	 */
 	public function data_unpositionedCoursePositions() {
 		return array(
+			'no meta'      => array( null ),
 			'zero'         => array( '0' ),
 			'empty string' => array( '' ),
 		);

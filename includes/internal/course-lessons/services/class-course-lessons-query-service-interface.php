@@ -23,13 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 interface Course_Lessons_Query_Service_Interface {
 	/**
-	 * Register the hooks that resolve the query conditions.
-	 *
-	 * @internal
-	 */
-	public function init(): void;
-
-	/**
 	 * Limit a lesson query to the lessons of the course given in its `sensei_course` query var.
 	 *
 	 * @internal
