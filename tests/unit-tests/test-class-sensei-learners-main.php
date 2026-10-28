@@ -128,15 +128,21 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		$progress   = $repository->get( $post_id, $user_id );
 		$progress->complete( new DateTimeImmutable( '2026-01-03 04:05:06', new DateTimeZone( 'UTC' ) ) );
 		$repository->save( $progress );
-		if ( 'course' === $type && ! self::is_hpps_tables_mode() ) {
-			// Course comments are saved with the current date rather than the supplied completion date.
-			wp_update_comment(
-				array(
-					'comment_ID'       => $progress->get_id(),
-					'comment_date'     => '2026-01-03 04:05:06',
-					'comment_date_gmt' => '2026-01-03 04:05:06',
-				)
-			);
+		if ( 'course' === $type ) {
+			// Course rows display the activity date, which repository saves set to the current time.
+			if ( self::is_hpps_tables_mode() ) {
+				global $wpdb;
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Seed a fixed activity date for the row fixture.
+				$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'updated_at' => '2026-01-03 04:05:06' ), array( 'id' => $progress->get_id() ) );
+			} else {
+				wp_update_comment(
+					array(
+						'comment_ID'       => $progress->get_id(),
+						'comment_date'     => '2026-01-03 04:05:06',
+						'comment_date_gmt' => '2026-01-03 04:05:06',
+					)
+				);
+			}
 		}
 		$table = $this->prepareListing( $type, $post_id );
 
