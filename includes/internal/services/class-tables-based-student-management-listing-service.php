@@ -180,6 +180,12 @@ class Tables_Based_Student_Management_Listing_Service implements Student_Managem
 	private function build_order_clause( array $args ): string {
 		$order = 'ASC' === strtoupper( $args['order'] ?? '' ) ? 'ASC' : 'DESC';
 
+		if ( 'title' === ( $args['orderby'] ?? '' ) ) {
+			$name = Utils::get_student_name_sql( $this->wpdb, 'p.user_id' );
+
+			return " ORDER BY $name $order, p.id $order";
+		}
+
 		$date = 'sensei_lesson_status' === ( $args['type'] ?? '' )
 			? "CASE WHEN p.status = 'complete' THEN COALESCE( p.completed_at, p.updated_at ) ELSE p.updated_at END"
 			: 'p.updated_at';

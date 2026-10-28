@@ -222,6 +222,61 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Student names determine the full result order before pagination.
+	 *
+	 * @dataProvider studentNameSortCases
+	 * @covers Sensei_Learners_Main::get_learners
+	 */
+	public function testGetLearners_NameSortRequested_ReturnsAlphabeticalPages( $type, $order, $expected_indexes ) {
+		$post_id = $this->createListingPost( $type );
+		$names   = array(
+			array(
+				'first_name'   => 'Zoe',
+				'last_name'    => 'Zeta',
+				'display_name' => 'First display name',
+			),
+			array(
+				'first_name'   => 'Alice',
+				'last_name'    => 'Alpha',
+				'display_name' => 'Last display name',
+			),
+			array(
+				'first_name'   => 'Aaron',
+				'last_name'    => '',
+				'display_name' => 'Molly',
+			),
+		);
+		$users   = array();
+		foreach ( $names as $name ) {
+			$user_id = $this->factory->user->create( $name );
+			$this->createListingProgress( $type, $post_id, $user_id );
+			$users[] = $user_id;
+		}
+		add_filter(
+			'sensei_comments_per_page',
+			static function () {
+				return 2;
+			}
+		);
+		$_GET['orderby'] = 'title';
+		$_GET['order']   = $order;
+		$expected        = array_map(
+			static function ( $index ) use ( $users ) {
+				return $users[ $index ];
+			},
+			$expected_indexes
+		);
+
+		$first_page        = $this->prepareListing( $type, $post_id );
+		$_REQUEST['paged'] = 2;
+		$second_page       = $this->prepareListing( $type, $post_id );
+
+		self::assertSame( array_slice( $expected, 0, 2 ), array_map( 'intval', wp_list_pluck( $first_page->items, 'user_id' ) ), 'The first page sorts by the displayed student name.' );
+		self::assertSame( array_slice( $expected, 2 ), array_map( 'intval', wp_list_pluck( $second_page->items, 'user_id' ) ), 'Name sorting applies before selecting the second page.' );
+		self::assertSame( 3, $first_page->get_pagination_arg( 'total_items' ), 'Sorting preserves the student total.' );
+	}
+
+	/**
 	 * The Lessons view displays the number of students with lesson progress.
 	 *
 	 * @covers Sensei_Learners_Main::get_row_data
@@ -281,6 +336,15 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		return array(
 			'course' => array( 'course' ),
 			'lesson' => array( 'lesson' ),
+		);
+	}
+
+	public function studentNameSortCases() {
+		return array(
+			'course ascending'  => array( 'course', 'asc', array( 1, 2, 0 ) ),
+			'course descending' => array( 'course', 'desc', array( 0, 2, 1 ) ),
+			'lesson ascending'  => array( 'lesson', 'asc', array( 1, 2, 0 ) ),
+			'lesson descending' => array( 'lesson', 'desc', array( 0, 2, 1 ) ),
 		);
 	}
 

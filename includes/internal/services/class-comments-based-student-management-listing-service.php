@@ -46,7 +46,7 @@ class Comments_Based_Student_Management_Listing_Service implements Student_Manag
 			$args['offset'] = $new_paged * $args['number'];
 		}
 
-		$students = \Sensei_Utils::sensei_check_for_activity( $args, true );
+		$students = $this->query_students( $args );
 
 		// Need to always return an array, even with only 1 item.
 		if ( ! is_array( $students ) ) {
@@ -84,5 +84,37 @@ class Comments_Based_Student_Management_Listing_Service implements Student_Manag
 	 */
 	public function count_students( array $args ) {
 		return \Sensei_Utils::sensei_check_for_activity( $args );
+	}
+
+	/**
+	 * Apply name ordering to the requested student query before pagination.
+	 *
+	 * @param array $args Student activity arguments.
+	 * @return array|\WP_Comment|false Activity rows, one row, or an invalid-user result.
+	 */
+	private function query_students( array $args ) {
+		if ( 'title' !== ( $args['orderby'] ?? '' ) ) {
+			return \Sensei_Utils::sensei_check_for_activity( $args, true );
+		}
+
+		global $wpdb;
+
+		$order = 'ASC' === strtoupper( $args['order'] ?? '' ) ? 'ASC' : 'DESC';
+		$name  = Utils::get_student_name_sql( $wpdb, "{$wpdb->comments}.user_id" );
+		$sort  = static function ( array $clauses, \WP_Comment_Query $query ) use ( $args, $wpdb, $order, $name ): array {
+			if ( 'title' === $query->query_vars['orderby']
+				&& $args['type'] === $query->query_vars['type'] ) {
+				$clauses['orderby'] = "$name $order, {$wpdb->comments}.comment_ID $order";
+			}
+
+			return $clauses;
+		};
+		add_filter( 'comments_clauses', $sort, 10, 2 );
+
+		try {
+			return \Sensei_Utils::sensei_check_for_activity( $args, true );
+		} finally {
+			remove_filter( 'comments_clauses', $sort, 10 );
+		}
 	}
 }
