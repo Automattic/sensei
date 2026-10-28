@@ -310,29 +310,6 @@ class Utils {
 	}
 
 	/**
-	 * Build the student name expression used by the Students column.
-	 *
-	 * Matches Sensei_Learner::get_full_name(): first and last name when both
-	 * exist, otherwise display name.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param \wpdb  $wpdb           WordPress database object.
-	 * @param string $user_id_column Trusted SQL column identifying the student.
-	 * @return string SQL expression for the student's name.
-	 */
-	public static function get_student_name_sql( \wpdb $wpdb, string $user_id_column ): string {
-		return '( SELECT CASE'
-			. " WHEN first_name.meta_value NOT IN ('', '0') AND last_name.meta_value NOT IN ('', '0')"
-			. " THEN CONCAT(TRIM(first_name.meta_value), ' ', TRIM(last_name.meta_value))"
-			. ' ELSE student.display_name END'
-			. " FROM `{$wpdb->users}` student"
-			. " LEFT JOIN `{$wpdb->usermeta}` first_name ON first_name.user_id = student.ID AND first_name.meta_key = 'first_name'"
-			. " LEFT JOIN `{$wpdb->usermeta}` last_name ON last_name.user_id = student.ID AND last_name.meta_key = 'last_name'"
-			. " WHERE student.ID = $user_id_column LIMIT 1 )";
-	}
-
-	/**
 	 * Log a database query error if one occurred.
 	 *
 	 * @since 4.26.0
