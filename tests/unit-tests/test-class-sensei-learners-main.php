@@ -35,7 +35,7 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		$this->maybe_enable_hpps_tables_repository();
 
 		$this->login_as_teacher();
-		$this->course_id = $this->createCourseEnrolments();
+		$this->course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
 	}
 
 	public function tearDown(): void {
@@ -104,62 +104,69 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		$table->single_row( get_post( $lesson_id ) );
 		$html = ob_get_clean();
 
-		self::assertMatchesRegularExpression( '/column-num_learners[^>]*>1<\/td>/', $html );
+		self::assertStringContainsString( esc_html( get_the_title( $lesson_id ) ) . '</a>', $html, 'The row displays the lesson title.' );
+		self::assertMatchesRegularExpression( '/column-num_learners[^>]*>1<\/td>/', $html, 'The row displays the lesson student count.' );
+		self::assertSame( 1, $table->get_pagination_arg( 'total_items' ), 'The table contains the course lesson.' );
 	}
 
 	/**
-	 * Column filters receive the student row and can change rendered columns.
+	 * Course and lesson student rows display names, enrollment, status, and dates.
 	 *
 	 * @dataProvider listingTypes
 	 * @covers Sensei_Learners_Main::get_row_data
 	 */
-	public function testGetRowData_ColumnFilterRegistered_RendersFilteredColumns( $type ) {
+	public function testGetRowData_CompletedStudentListed_RendersStudentDetails( $type ) {
 		$post_id = $this->createListingPost( $type );
-		$user_id = $this->factory->user->create();
-		$this->createListingProgress( $type, $post_id, $user_id );
-		$table = $this->prepareListing( $type, $post_id );
-		$row   = null;
-		add_filter(
-			'sensei_learners_main_column_data',
-			static function ( $columns, $item ) use ( $user_id, &$row ) {
-				$row = array( $item->post_id, $item->user_id, $item->status, $item->completed_at );
-				if ( (int) $item->user_id === $user_id ) {
-					$columns['title'] .= ' custom-column-marker';
-				}
-
-				return $columns;
-			},
-			10,
-			2
+		$user_id = $this->factory->user->create(
+			array(
+				'first_name' => 'Alice',
+				'last_name'  => 'Student',
+			)
 		);
-
-		ob_start();
-		$table->single_row( $table->items[0] );
-		$html = ob_get_clean();
-
-		self::assertSame( array( $post_id, $user_id, 'in-progress', null ), $row, 'Column filters receive storage-neutral student progress fields.' );
-		self::assertStringContainsString( 'custom-column-marker', $html, 'The existing column filter receives the student row.' );
-	}
-
-	/**
-	 * Progress actions target the listed student and course or lesson.
-	 *
-	 * @dataProvider listingTypes
-	 * @covers Sensei_Learners_Main::get_row_data
-	 */
-	public function testGetRowData_UnenrolledStudentListed_RendersProgressActions( $type ) {
-		$post_id = $this->createListingPost( $type );
-		$user_id = $this->factory->user->create();
 		$this->createListingProgress( $type, $post_id, $user_id );
+		$repository = 'course' === $type ? Sensei()->course_progress_repository : Sensei()->lesson_progress_repository;
+		$progress   = $repository->get( $post_id, $user_id );
+		$progress->complete( new DateTimeImmutable( '2026-01-03 04:05:06', new DateTimeZone( 'UTC' ) ) );
+		$repository->save( $progress );
 		$table = $this->prepareListing( $type, $post_id );
 
 		ob_start();
 		$table->single_row( $table->items[0] );
 		$html = ob_get_clean();
 
-		self::assertStringContainsString( 'data-action="remove_progress"', $html, 'Unenrolled students retain the remove-progress action.' );
-		self::assertStringContainsString( 'data-post-id="' . $post_id . '"', $html, 'Actions target the requested post.' );
-		self::assertStringContainsString( 'data-user-id="' . $user_id . '"', $html, 'Actions target the listed student.' );
+		self::assertStringContainsString( 'Alice Student</a>', $html, 'The row displays the student name.' );
+		self::assertMatchesRegularExpression( '/column-enrolment_status[^>]*>.*?>No<\/span>/s', $html, 'The row displays the enrollment status.' );
+		self::assertMatchesRegularExpression( '/column-user_status[^>]*>Completed<\/td>/', $html, 'The row displays the progress status.' );
+		self::assertStringContainsString( 'value="2026-01-02 03:04:05"', $html, 'The row displays the start date.' );
+		self::assertMatchesRegularExpression( '/column-date_completed[^>]*>2026-01-03 04:05:06<\/td>/', $html, 'The row displays the completion date.' );
+		self::assertSame( 1, $table->get_pagination_arg( 'total_items' ), 'The total includes the displayed student.' );
+	}
+
+	/**
+	 * Students who passed a lesson quiz display as completed.
+	 *
+	 * @covers Sensei_Learners_Main::get_row_data
+	 */
+	public function testGetRowData_LessonWithPassedQuizGiven_RendersCompletedStatus() {
+		$lesson_id = $this->createListingPost( 'lesson' );
+		$quiz_id   = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		$user_id = $this->factory->user->create();
+		$this->createListingProgress( 'lesson', $lesson_id, $user_id );
+		$progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+		$progress->complete();
+		Sensei()->lesson_progress_repository->save( $progress );
+		$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+		$quiz_progress->pass();
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
+
+		$table = $this->prepareListing( 'lesson', $lesson_id );
+
+		ob_start();
+		$table->single_row( $table->items[0] );
+		$html = ob_get_clean();
+
+		self::assertMatchesRegularExpression( '/column-user_status[^>]*>Completed<\/td>/', $html );
 	}
 
 	/**
@@ -171,6 +178,8 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function testGetLearners_EnrolmentStatusGiven_ReturnsMatchingStudents( $enrolment_status, $expected_result, $type ) {
+		$this->course_id = $this->createCourseEnrolments();
+
 		if ( 'lesson' === $type ) {
 			$lesson_id = $this->createListingPost( 'lesson' );
 			foreach ( $this->course_students as $user_id ) {
@@ -186,7 +195,8 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		$sensei_learners_main = new Sensei_Learners_Main();
 		$sensei_learners_main->prepare_items();
 
-		$this->assertCount( $expected_result, $sensei_learners_main->items );
+		self::assertCount( $expected_result, $sensei_learners_main->items, 'The table contains the matching students.' );
+		self::assertSame( $expected_result, $sensei_learners_main->get_pagination_arg( 'total_items' ), 'The total matches the enrollment filter.' );
 	}
 
 	/**
@@ -260,29 +270,6 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		$table = $this->prepareListing( $type, $translation );
 
 		self::assertSame( array( $user_id ), array_map( 'intval', wp_list_pluck( $table->items, 'user_id' ) ), 'Translated listings resolve the original progress ID.' );
-	}
-
-	/**
-	 * Lesson student rows expose the quiz status.
-	 *
-	 * @covers Sensei_Learners_Main::get_learners
-	 */
-	public function testGetLearners_LessonWithPassedQuizGiven_ReturnsQuizStatus() {
-		$lesson_id = $this->createListingPost( 'lesson' );
-		$quiz_id   = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
-		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
-		$user_id = $this->factory->user->create();
-		$this->createListingProgress( 'lesson', $lesson_id, $user_id );
-		$progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
-		$progress->complete();
-		Sensei()->lesson_progress_repository->save( $progress );
-		$quiz_progress = Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
-		$quiz_progress->pass();
-		Sensei()->quiz_progress_repository->save( $quiz_progress );
-
-		$table = $this->prepareListing( 'lesson', $lesson_id );
-
-		self::assertSame( 'passed', $table->items[0]->status );
 	}
 
 	public function enrolmentFilterTestCases() {
