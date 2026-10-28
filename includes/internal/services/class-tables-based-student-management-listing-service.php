@@ -78,15 +78,15 @@ class Tables_Based_Student_Management_Listing_Service implements Student_Managem
 
 		foreach ( $items as $row ) {
 			// Start-date edits must not replace a completed lesson's completion date with its activity time.
-			$date        = 'sensei_lesson_status' === $args['type'] && 'complete' === $row->status && $row->completed_at ? $row->completed_at : $row->updated_at;
-			$activity_at = get_date_from_gmt( $date );
+			$date       = 'sensei_lesson_status' === $args['type'] && 'complete' === $row->status && $row->completed_at ? $row->completed_at : $row->updated_at;
+			$updated_at = get_date_from_gmt( $date );
 
 			$students[] = new Student_Management_Item(
 				(int) $args['post_id'],
 				(int) $row->user_id,
 				$row->status,
-				'complete' === $row->status ? $activity_at : null,
-				$activity_at
+				'complete' === $row->status ? $updated_at : null,
+				$updated_at
 			);
 		}
 

@@ -52,7 +52,7 @@ class Student_Management_Item {
 	 *
 	 * @var string
 	 */
-	public string $activity_at;
+	public string $updated_at;
 
 	/**
 	 * Legacy comment properties exposed by student column filters.
@@ -62,7 +62,7 @@ class Student_Management_Item {
 	private const LEGACY_PROPERTY_MAP = array(
 		'comment_approved' => 'status',
 		'comment_post_ID'  => 'post_id',
-		'comment_date'     => 'activity_at',
+		'comment_date'     => 'updated_at',
 	);
 
 	/**
@@ -74,14 +74,14 @@ class Student_Management_Item {
 	 * @param int         $user_id      Student ID.
 	 * @param string      $status       Progress status.
 	 * @param string|null $completed_at Completion date in the site timezone.
-	 * @param string      $activity_at  Activity date in the site timezone.
+	 * @param string      $updated_at   Activity date in the site timezone.
 	 */
-	public function __construct( int $post_id, int $user_id, string $status, ?string $completed_at, string $activity_at ) {
+	public function __construct( int $post_id, int $user_id, string $status, ?string $completed_at, string $updated_at ) {
 		$this->post_id      = $post_id;
 		$this->user_id      = $user_id;
 		$this->status       = $status;
 		$this->completed_at = $completed_at;
-		$this->activity_at  = $activity_at;
+		$this->updated_at   = $updated_at;
 	}
 
 	/**
