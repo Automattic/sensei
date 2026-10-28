@@ -71,9 +71,13 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * Constructor
 	 *
 	 * @since  1.6.0
+	 * @since $$next-version$$ Accepts an optional student listing service.
+	 *
+	 * @param Student_Management_Listing_Service_Interface|null $student_listing_service Student listing service.
 	 */
-	public function __construct() {
-		$this->student_listing_service = ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_student_management_listing_service();
+	public function __construct( ?Student_Management_Listing_Service_Interface $student_listing_service = null ) {
+		$this->student_listing_service = $student_listing_service
+			?? ( new Progress_Query_Service_Factory( Sensei()->progress_storage_configuration ) )->create_student_management_listing_service();
 
 		// phpcs:disable WordPress.Security.NonceVerification -- No data are modified.
 		if ( isset( $_GET['course_id'] ) ) {
