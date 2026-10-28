@@ -991,4 +991,83 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		self::assertNotFalse( $query->get( 'update_post_term_cache' ), 'Non-course queries should keep term cache priming enabled.' );
 		self::assertNotFalse( wp_cache_get( $post_id, 'category_relationships' ), 'Non-course queries should still prime the term cache.' );
 	}
+
+	/**
+	 * The lessons of a course come back in the order of their course positions, whatever their dates.
+	 *
+	 * @covers Sensei_Course::course_lessons
+	 */
+	public function testCourseLessons_PositionsStored_ReturnsTheLessonsInPositionOrder() {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = array();
+		foreach ( array( 3, 1, 2 ) as $index => $position ) {
+			$lesson_ids[ $position ] = $this->factory->lesson->create(
+				array(
+					'post_date'  => '2020-01-0' . ( $index + 1 ) . ' 00:00:00',
+					'meta_input' => array(
+						'_lesson_course'       => $course_id,
+						'_order_' . $course_id => $position,
+					),
+				)
+			);
+		}
+
+		/* Act. */
+		$actual = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+
+		/* Assert. */
+		self::assertSame( array( $lesson_ids[1], $lesson_ids[2], $lesson_ids[3] ), $actual );
+	}
+
+	/**
+	 * A lesson whose course position is zero or empty sorts after the lessons with a position.
+	 *
+	 * @covers Sensei_Course::course_lessons
+	 * @dataProvider data_unpositionedCoursePositions
+	 *
+	 * @param string|null $position Value stored as the course position, or null for no meta.
+	 */
+	public function testCourseLessons_UnpositionedValueStored_SortsTheLessonLast( $position ) {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$meta_input = array( '_lesson_course' => $course_id );
+		if ( null !== $position ) {
+			$meta_input[ '_order_' . $course_id ] = $position;
+		}
+		$unpositioned_lesson = $this->factory->lesson->create(
+			array(
+				'post_date'  => '2020-01-01 00:00:00',
+				'meta_input' => $meta_input,
+			)
+		);
+		$positioned_lesson   = $this->factory->lesson->create(
+			array(
+				'post_date'  => '2020-01-02 00:00:00',
+				'meta_input' => array(
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+				),
+			)
+		);
+
+		/* Act. */
+		$actual = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+
+		/* Assert. */
+		self::assertSame( array( $positioned_lesson, $unpositioned_lesson ), $actual );
+	}
+
+	/**
+	 * Course position values that count as no position.
+	 *
+	 * @return array
+	 */
+	public function data_unpositionedCoursePositions() {
+		return array(
+			'no meta'      => array( null ),
+			'zero'         => array( '0' ),
+			'empty string' => array( '' ),
+		);
+	}
 }

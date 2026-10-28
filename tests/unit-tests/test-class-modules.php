@@ -41,6 +41,40 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The module assigned to a lesson is returned by its term ID.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module_if_exists
+	 */
+	public function testGetLessonModuleIfExists_LessonHasModule_ReturnsItsTermId() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson    = $this->factory->lesson->create_and_get();
+		wp_set_object_terms( $lesson->ID, array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module_if_exists( $lesson );
+
+		/* Assert. */
+		$this->assertSame( $module_id, $actual );
+	}
+
+	/**
+	 * A lesson without a module has no module term ID.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module_if_exists
+	 */
+	public function testGetLessonModuleIfExists_LessonHasNoModule_ReturnsZero() {
+		/* Arrange. */
+		$lesson = $this->factory->lesson->create_and_get();
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module_if_exists( $lesson );
+
+		/* Assert. */
+		$this->assertSame( 0, $actual );
+	}
+
+	/**
 	 * Ensure an Administrator-owned course with an Administrator-owned module is available to an Editor.
 	 *
 	 * @covers Sensei_Core_Modules::module_order_screen
@@ -127,6 +161,86 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( array_map( 'strval', $expected ), get_post_meta( $course_id, '_module_order', true ) );
+	}
+
+	/**
+	 * The module assigned to a lesson is returned as its term.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module
+	 */
+	public function testGetLessonModule_LessonHasModule_ReturnsTheModule() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module( $lesson_id );
+
+		/* Assert. */
+		$this->assertSame( $module_id, $actual->term_id );
+	}
+
+	/**
+	 * A lesson without a module has no module.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module
+	 */
+	public function testGetLessonModule_LessonHasNoModule_ReturnsFalse() {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module( $lesson_id );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	/**
+	 * The lessons of a module are only those of the given course, ordered by their module position.
+	 *
+	 * @covers Sensei_Core_Modules::get_lessons_query
+	 */
+	public function testGetLessonsQuery_ModulePositionsStored_ReturnsTheCourseLessonsInModuleOrder() {
+		/* Arrange. */
+		$module_id           = $this->factory->module->create();
+		$course_id           = $this->factory->course->create();
+		$older_lesson        = $this->factory->lesson->create(
+			array(
+				'post_date'  => '2020-01-01 00:00:00',
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_module_' . $module_id => 2,
+				),
+			)
+		);
+		$recent_lesson       = $this->factory->lesson->create(
+			array(
+				'post_date'  => '2020-01-02 00:00:00',
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_module_' . $module_id => 1,
+				),
+			)
+		);
+		$other_course_lesson = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'              => $this->factory->course->create(),
+					'_order_module_' . $module_id => 0,
+				),
+			)
+		);
+		wp_set_object_terms( $older_lesson, array( $module_id ), 'module' );
+		wp_set_object_terms( $recent_lesson, array( $module_id ), 'module' );
+		wp_set_object_terms( $other_course_lesson, array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lessons_query( $course_id, $module_id );
+
+		/* Assert. */
+		$this->assertSame( array( $recent_lesson, $older_lesson ), wp_list_pluck( $actual->posts, 'ID' ) );
 	}
 
 	/**

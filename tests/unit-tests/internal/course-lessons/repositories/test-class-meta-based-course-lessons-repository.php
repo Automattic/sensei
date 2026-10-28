@@ -230,4 +230,108 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 			'array'              => array( array( 1 ) ),
 		);
 	}
+
+	/**
+	 * A stored position is cast to an integer like `intval()`, including zero and non-canonical numbers.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_position
+	 * @dataProvider storedPositionsProvider
+	 *
+	 * @param string $meta_value Value stored in the meta.
+	 * @param int    $expected   Expected position.
+	 */
+	public function testGetLessonPosition_PositionStored_ReturnsItAsInteger( string $meta_value, int $expected ): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_order_' . $course_id => $meta_value ) ) );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_position( $lesson_id, $course_id );
+
+		/* Assert. */
+		self::assertSame( $expected, $actual );
+	}
+
+	/**
+	 * Provides stored positions and the position they are read as.
+	 *
+	 * @return array
+	 */
+	public function storedPositionsProvider(): array {
+		return array(
+			'positive integer'     => array( '3', 3 ),
+			'zero'                 => array( '0', 0 ),
+			'non-canonical number' => array( '3abc', 3 ),
+		);
+	}
+
+	/**
+	 * A lesson without a position meta for the course has no position.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_position
+	 */
+	public function testGetLessonPosition_NoPositionStored_ReturnsNull(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_position( $lesson_id, $course_id );
+
+		/* Assert. */
+		self::assertNull( $actual );
+	}
+
+	/**
+	 * The module assigned to a lesson is returned as its term.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_module
+	 */
+	public function testGetLessonModule_LessonHasModule_ReturnsTheTerm(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_module( $lesson_id );
+
+		/* Assert. */
+		self::assertSame( $module_id, $actual->term_id );
+	}
+
+	/**
+	 * A lesson without a module has no module term.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_module
+	 */
+	public function testGetLessonModule_LessonHasNoModule_ReturnsNull(): void {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_module( $lesson_id );
+
+		/* Assert. */
+		self::assertNull( $actual );
+	}
+
+	/**
+	 * A filter that returns something other than terms leaves the lesson without a module.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_module
+	 */
+	public function testGetLessonModule_FilterReturnsNonTerms_ReturnsNull(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+		add_filter( 'get_object_terms', fn( $terms ) => wp_list_pluck( $terms, 'term_id' ) );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_module( $lesson_id );
+
+		/* Assert. */
+		self::assertNull( $actual );
+	}
 }

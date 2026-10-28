@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Course_Lessons\Repositories;
 
 use wpdb;
+use WP_Term;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -150,5 +151,53 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 		);
 
 		return array_map( 'intval', $lesson_ids );
+	}
+
+	/**
+	 * Get the position of a lesson in a course.
+	 *
+	 * Non-canonical values such as `'3abc'` are read as 3, like `intval()`, so stored positions keep their order.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 * @return int|null Position, or null when the meta is missing or empty.
+	 */
+	public function get_lesson_position( int $lesson_id, int $course_id ): ?int {
+		$position = get_post_meta( $lesson_id, '_order_' . $course_id, true );
+
+		return '' === $position ? null : (int) $position;
+	}
+
+	/**
+	 * Get the module of a lesson.
+	 *
+	 * Reads with `wp_get_post_terms()`, so the `get_object_terms` filters apply.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @return WP_Term|null The lesson's module term, or null when it has none or a filter returns no term.
+	 */
+	public function get_lesson_module( int $lesson_id ): ?WP_Term {
+		$terms = wp_get_post_terms( $lesson_id, 'module' );
+
+		if ( ! is_array( $terms ) || empty( $terms ) ) {
+			return null;
+		}
+
+		/**
+		 * A get_object_terms filter can hand back something other than a term.
+		 *
+		 * @var mixed $term
+		 */
+		$term = reset( $terms );
+
+		return $term instanceof WP_Term ? $term : null;
 	}
 }
