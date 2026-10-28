@@ -1660,14 +1660,7 @@ class Sensei_Course {
 			]
 		);
 
-		if ( ! isset( $query_args['meta_query'] ) ) {
-			$query_args['meta_query'] = [];
-		}
-
-		$query_args['meta_query'][] = [
-			'key'   => '_lesson_course',
-			'value' => intval( $course_id ),
-		];
+		$query_args['sensei_course'] = (int) $course_id;
 
 		$query_results = new WP_Query( $query_args );
 		$lessons       = $query_results->posts;
@@ -1681,7 +1674,7 @@ class Sensei_Course {
 			$lesson_order = array();
 			foreach ( $lessons as $lesson ) {
 
-				$order = intval( get_post_meta( $lesson->ID, '_order_' . $course_id, true ) );
+				$order = Sensei()->course_lessons_repository->get_lesson_position( $lesson->ID, (int) $course_id );
 				// for lessons with no order set it to be 10000 so that it show up at the end
 				$lesson_order[ $lesson->ID ] = $order ? $order : 100000;
 			}

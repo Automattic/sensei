@@ -11,6 +11,7 @@ use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Course_Lessons\Repositories\Course_Lessons_Repository_Interface;
 use Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository;
+use Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service;
 use Sensei\Internal\Emails\Email_Customization;
 use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Migration\Migration_Job;
@@ -846,6 +847,9 @@ class Sensei_Main {
 		if ( $this->progress_storage_configuration->is_hpps_enabled() && $this->action_scheduler ) {
 			$this->init_migration_scheduler();
 		}
+
+		// Init course lessons query service.
+		( new Meta_Based_Course_Lessons_Query_Service() )->init();
 
 		// Init student progress handlers.
 		( new Course_Deleted_Handler( $this->course_progress_repository ) )->init();
