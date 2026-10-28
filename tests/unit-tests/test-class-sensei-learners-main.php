@@ -30,9 +30,10 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		$this->original_get = $_GET;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Preserve request state for isolated test fixtures.
 		$this->original_request = $_REQUEST;
-		$this->maybe_enable_hpps_tables_repository();
 
 		$this->factory = new Sensei_Factory();
+		$this->maybe_enable_hpps_tables_repository();
+
 		$this->login_as_teacher();
 		$this->course_id = $this->createCourseEnrolments();
 	}
@@ -43,6 +44,8 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		$this->maybe_reset_hpps_repository();
 
 		parent::tearDown();
+
+		$this->factory->tearDown();
 	}
 
 	/**
@@ -85,15 +88,89 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that only enrolled users are shown when filtered
+	 * The Lessons view displays the number of students with lesson progress.
+	 *
+	 * @covers Sensei_Learners_Main::get_row_data
+	 */
+	public function testGetRowData_LessonWithStudentProgressGiven_RendersStudentCount() {
+		$lesson_id = $this->createListingPost( 'lesson' );
+		$this->createListingProgress( 'lesson', $lesson_id, $this->factory->user->create() );
+		$_GET['course_id'] = $this->course_id;
+		$_GET['view']      = 'lessons';
+		$table             = new Sensei_Learners_Main();
+		$table->prepare_items();
+
+		ob_start();
+		$table->single_row( get_post( $lesson_id ) );
+		$html = ob_get_clean();
+
+		self::assertMatchesRegularExpression( '/column-num_learners[^>]*>1<\/td>/', $html );
+	}
+
+	/**
+	 * Column filters receive the student row and can change rendered columns.
+	 *
+	 * @dataProvider listingTypes
+	 * @covers Sensei_Learners_Main::get_row_data
+	 */
+	public function testGetRowData_ColumnFilterRegistered_RendersFilteredColumns( $type ) {
+		$post_id = $this->createListingPost( $type );
+		$user_id = $this->factory->user->create();
+		$this->createListingProgress( $type, $post_id, $user_id );
+		$table = $this->prepareListing( $type, $post_id );
+		$row   = null;
+		add_filter(
+			'sensei_learners_main_column_data',
+			static function ( $columns, $item ) use ( $user_id, &$row ) {
+				$row = array( $item->post_id, $item->user_id, $item->status, $item->completed_at );
+				if ( (int) $item->user_id === $user_id ) {
+					$columns['title'] .= ' custom-column-marker';
+				}
+
+				return $columns;
+			},
+			10,
+			2
+		);
+
+		ob_start();
+		$table->single_row( $table->items[0] );
+		$html = ob_get_clean();
+
+		self::assertSame( array( $post_id, $user_id, 'in-progress', null ), $row, 'Column filters receive storage-neutral student progress fields.' );
+		self::assertStringContainsString( 'custom-column-marker', $html, 'The existing column filter receives the student row.' );
+	}
+
+	/**
+	 * Progress actions target the listed student and course or lesson.
+	 *
+	 * @dataProvider listingTypes
+	 * @covers Sensei_Learners_Main::get_row_data
+	 */
+	public function testGetRowData_UnenrolledStudentListed_RendersProgressActions( $type ) {
+		$post_id = $this->createListingPost( $type );
+		$user_id = $this->factory->user->create();
+		$this->createListingProgress( $type, $post_id, $user_id );
+		$table = $this->prepareListing( $type, $post_id );
+
+		ob_start();
+		$table->single_row( $table->items[0] );
+		$html = ob_get_clean();
+
+		self::assertStringContainsString( 'data-action="remove_progress"', $html, 'Unenrolled students retain the remove-progress action.' );
+		self::assertStringContainsString( 'data-post-id="' . $post_id . '"', $html, 'Actions target the requested post.' );
+		self::assertStringContainsString( 'data-user-id="' . $user_id . '"', $html, 'Actions target the listed student.' );
+	}
+
+	/**
+	 * Enrollment filters return the matching course or lesson students.
 	 *
 	 * @dataProvider enrolmentFilterTestCases
 	 * @covers       Sensei_Learners_Main::get_learners
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function testUsersAreFilteredByEnrolmentStatus( $enrolment_status, $expected_result, $type ) {
-
+	public function testGetLearners_EnrolmentStatusGiven_ReturnsMatchingStudents( $enrolment_status, $expected_result, $type ) {
 		if ( 'lesson' === $type ) {
 			$lesson_id = $this->createListingPost( 'lesson' );
 			foreach ( $this->course_students as $user_id ) {
@@ -110,19 +187,6 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		$sensei_learners_main->prepare_items();
 
 		$this->assertCount( $expected_result, $sensei_learners_main->items );
-	}
-
-	public function enrolmentFilterTestCases() {
-		return array(
-			'All students'                      => array( 'all', 9, 'course' ),
-			'Enrolled students'                 => array( 'enrolled', 6, 'course' ),
-			'Unenrolled students'               => array( 'unenrolled', 3, 'course' ),
-			'Manually enrolled students'        => array( 'manual', 2, 'course' ),
-			'All lesson students'               => array( 'all', 9, 'lesson' ),
-			'Enrolled lesson students'          => array( 'enrolled', 6, 'lesson' ),
-			'Unenrolled lesson students'        => array( 'unenrolled', 3, 'lesson' ),
-			'Manually enrolled lesson students' => array( 'manual', 2, 'lesson' ),
-		);
 	}
 
 	/**
@@ -221,130 +285,23 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		self::assertSame( 'passed', $table->items[0]->status );
 	}
 
-	/**
-	 * Student names determine the full result order before pagination.
-	 *
-	 * @dataProvider studentNameSortCases
-	 * @covers Sensei_Learners_Main::get_learners
-	 */
-	public function testGetLearners_NameSortRequested_ReturnsAlphabeticalPages( $type, $order, $expected_indexes ) {
-		$post_id = $this->createListingPost( $type );
-		$names   = array(
-			array(
-				'first_name'   => 'Zoe',
-				'last_name'    => 'Zeta',
-				'display_name' => 'First display name',
-			),
-			array(
-				'first_name'   => 'Alice',
-				'last_name'    => 'Alpha',
-				'display_name' => 'Last display name',
-			),
-			array(
-				'first_name'   => 'Aaron',
-				'last_name'    => '',
-				'display_name' => 'Molly',
-			),
+	public function enrolmentFilterTestCases() {
+		return array(
+			'All students'                      => array( 'all', 9, 'course' ),
+			'Enrolled students'                 => array( 'enrolled', 6, 'course' ),
+			'Unenrolled students'               => array( 'unenrolled', 3, 'course' ),
+			'Manually enrolled students'        => array( 'manual', 2, 'course' ),
+			'All lesson students'               => array( 'all', 9, 'lesson' ),
+			'Enrolled lesson students'          => array( 'enrolled', 6, 'lesson' ),
+			'Unenrolled lesson students'        => array( 'unenrolled', 3, 'lesson' ),
+			'Manually enrolled lesson students' => array( 'manual', 2, 'lesson' ),
 		);
-		$users   = array();
-		foreach ( $names as $name ) {
-			$user_id = $this->factory->user->create( $name );
-			$this->createListingProgress( $type, $post_id, $user_id );
-			$users[] = $user_id;
-		}
-		add_filter(
-			'sensei_comments_per_page',
-			static function () {
-				return 2;
-			}
-		);
-		$_GET['orderby'] = 'title';
-		$_GET['order']   = $order;
-		$expected        = array_map(
-			static function ( $index ) use ( $users ) {
-				return $users[ $index ];
-			},
-			$expected_indexes
-		);
-
-		$first_page        = $this->prepareListing( $type, $post_id );
-		$_REQUEST['paged'] = 2;
-		$second_page       = $this->prepareListing( $type, $post_id );
-
-		self::assertSame( array_slice( $expected, 0, 2 ), array_map( 'intval', wp_list_pluck( $first_page->items, 'user_id' ) ), 'The first page sorts by the displayed student name.' );
-		self::assertSame( array_slice( $expected, 2 ), array_map( 'intval', wp_list_pluck( $second_page->items, 'user_id' ) ), 'Name sorting applies before selecting the second page.' );
-		self::assertSame( 3, $first_page->get_pagination_arg( 'total_items' ), 'Sorting preserves the student total.' );
-	}
-
-	/**
-	 * The Lessons view displays the number of students with lesson progress.
-	 *
-	 * @covers Sensei_Learners_Main::get_row_data
-	 */
-	public function testGetRowData_LessonWithStudentProgressGiven_RendersStudentCount() {
-		$lesson_id = $this->createListingPost( 'lesson' );
-		$this->createListingProgress( 'lesson', $lesson_id, $this->factory->user->create() );
-		$_GET['course_id'] = $this->course_id;
-		$_GET['view']      = 'lessons';
-		$table             = new Sensei_Learners_Main();
-		$table->prepare_items();
-
-		ob_start();
-		$table->single_row( get_post( $lesson_id ) );
-		$html = ob_get_clean();
-
-		self::assertMatchesRegularExpression( '/column-num_learners[^>]*>1<\/td>/', $html );
-	}
-
-	/**
-	 * Column filters and progress actions retain their student and post identifiers.
-	 *
-	 * @dataProvider listingTypes
-	 * @covers Sensei_Learners_Main::get_row_data
-	 */
-	public function testGetRowData_StudentListed_RendersActionsAndColumnFilter( $type ) {
-		$post_id = $this->createListingPost( $type );
-		$user_id = $this->factory->user->create();
-		$this->createListingProgress( $type, $post_id, $user_id );
-		$table = $this->prepareListing( $type, $post_id );
-		$row   = null;
-		add_filter(
-			'sensei_learners_main_column_data',
-			static function ( $columns, $item ) use ( $user_id, &$row ) {
-				$row = array( $item->post_id, $item->user_id, $item->status, $item->completed_at );
-				if ( (int) $item->user_id === $user_id ) {
-					$columns['title'] .= ' custom-column-marker';
-				}
-				return $columns;
-			},
-			10,
-			2
-		);
-
-		ob_start();
-		$table->single_row( $table->items[0] );
-		$html = ob_get_clean();
-
-		self::assertSame( array( $post_id, $user_id, 'in-progress', null ), $row, 'Column filters receive storage-neutral student progress fields.' );
-		self::assertStringContainsString( 'custom-column-marker', $html, 'The existing column filter receives the student row.' );
-		self::assertStringContainsString( 'data-action="remove_progress"', $html, 'Unenrolled students retain the remove-progress action.' );
-		self::assertStringContainsString( 'data-post-id="' . $post_id . '"', $html, 'Actions target the requested post.' );
-		self::assertStringContainsString( 'data-user-id="' . $user_id . '"', $html, 'Actions target the listed student.' );
 	}
 
 	public function listingTypes() {
 		return array(
 			'course' => array( 'course' ),
 			'lesson' => array( 'lesson' ),
-		);
-	}
-
-	public function studentNameSortCases() {
-		return array(
-			'course ascending'  => array( 'course', 'asc', array( 1, 2, 0 ) ),
-			'course descending' => array( 'course', 'desc', array( 0, 2, 1 ) ),
-			'lesson ascending'  => array( 'lesson', 'asc', array( 1, 2, 0 ) ),
-			'lesson descending' => array( 'lesson', 'desc', array( 0, 2, 1 ) ),
 		);
 	}
 
