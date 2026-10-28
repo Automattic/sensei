@@ -25,7 +25,7 @@ class Comments_Based_Student_Management_Listing_Service implements Student_Manag
 	 * @since $$next-version$$
 	 *
 	 * @param array $args Arguments for the query (see interface).
-	 * @return array{items: Student_Management_Item[], total_count: int|false} Activity rows and total.
+	 * @return array{items: Students_Item[], total_count: int|false} Activity rows and total.
 	 */
 	public function get_students( array $args ): array {
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice.
@@ -60,7 +60,7 @@ class Comments_Based_Student_Management_Listing_Service implements Student_Manag
 				continue;
 			}
 
-			$items[] = new Student_Management_Item(
+			$items[] = new Students_Item(
 				(int) $args['post_id'],
 				(int) $comment->user_id,
 				$comment->comment_approved,

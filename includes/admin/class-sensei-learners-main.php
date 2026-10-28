@@ -6,8 +6,8 @@
  */
 
 use Sensei\Internal\Services\Progress_Query_Service_Factory;
-use Sensei\Internal\Services\Student_Management_Item;
 use Sensei\Internal\Services\Student_Management_Listing_Service_Interface;
+use Sensei\Internal\Services\Students_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -388,7 +388,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				/**
 				 * Student progress for this row.
 				 *
-				 * @var Student_Management_Item $student
+				 * @var Students_Item $student
 				 */
 				$student     = $item;
 				$post_id     = false;
@@ -575,7 +575,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				 * This filter runs on the learner management screen for a specific course.
 				 * It provides the student row column details.
 				 *
-				 * @since $$next-version$$ The $item argument is a Student_Management_Item.
+				 * @since $$next-version$$ The $item argument is a Students_Item.
 				 *
 				 * @param {array}   $columns {
 				 *   @type {string}   $title             Learner name.
@@ -585,7 +585,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				 *   @type {string}   $enrolment_status  Enrolment status.
 				 *   @type {string}   $action_buttons    Actions that can be taken for this learner.
 				 * }
-				 * @param {Student_Management_Item} $item Current student row.
+				 * @param {Students_Item} $item Current student row.
 				 * @param {int}     $post_id    Course ID.
 				 * @param {string}  $post_type  Post type.
 				 *
@@ -712,15 +712,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	/**
 	 * Generates the edit start date form.
 	 *
-	 * @param Student_Management_Item $student   The student row.
-	 * @param int                     $post_id   The post ID.
-	 * @param string                  $post_type The post type (lesson or course).
+	 * @param Students_Item $student   The student row.
+	 * @param int           $post_id   The post ID.
+	 * @param string        $post_type The post type (lesson or course).
 	 *
 	 * @return string The form.
 	 *
 	 * @psalm-suppress InternalProperty This global table consumes the internal student row model.
 	 */
-	private function get_edit_start_date_form( Student_Management_Item $student, $post_id, $post_type ) : string {
+	private function get_edit_start_date_form( Students_Item $student, $post_id, $post_type ) : string {
 		$submit_button_text = __( 'Update Student', 'sensei-lms' );
 
 		return '<form class="edit-start-date">

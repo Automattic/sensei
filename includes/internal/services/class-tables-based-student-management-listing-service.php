@@ -51,7 +51,7 @@ class Tables_Based_Student_Management_Listing_Service implements Student_Managem
 	 * @since $$next-version$$
 	 *
 	 * @param array $args Arguments for the query (see interface).
-	 * @return array{items: Student_Management_Item[], total_count: int} Activity rows and total.
+	 * @return array{items: Students_Item[], total_count: int} Activity rows and total.
 	 */
 	public function get_students( array $args ): array {
 		$query = $this->build_query( $args );
@@ -81,7 +81,7 @@ class Tables_Based_Student_Management_Listing_Service implements Student_Managem
 			$date       = 'sensei_lesson_status' === $args['type'] && 'complete' === $row->status && $row->completed_at ? $row->completed_at : $row->updated_at;
 			$updated_at = get_date_from_gmt( $date );
 
-			$students[] = new Student_Management_Item(
+			$students[] = new Students_Item(
 				(int) $args['post_id'],
 				(int) $row->user_id,
 				$row->status,

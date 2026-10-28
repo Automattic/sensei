@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  * @since $$next-version$$
  */
-class Student_Management_Item {
+class Students_Item {
 
 	/**
 	 * Course or lesson ID.
@@ -98,11 +98,11 @@ class Student_Management_Item {
 		if ( isset( self::LEGACY_PROPERTY_MAP[ $key ] ) ) {
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_argument handles its own output.
 			_deprecated_argument(
-				'Student_Management_Item::$' . $key,
+				'Students_Item::$' . $key,
 				'$$next-version$$',
 				sprintf(
 					/* translators: 1: old property name, 2: new property name */
-					'Accessing Student_Management_Item via legacy WP_Comment property "%1$s" is deprecated. Use "%2$s" instead.',
+					'Accessing Students_Item via legacy WP_Comment property "%1$s" is deprecated. Use "%2$s" instead.',
 					$key,
 					self::LEGACY_PROPERTY_MAP[ $key ]
 				)
@@ -114,10 +114,10 @@ class Student_Management_Item {
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- _doing_it_wrong handles its own output.
 		_doing_it_wrong(
-			'Student_Management_Item::$' . $key,
+			'Students_Item::$' . $key,
 			sprintf(
 				/* translators: %s: property name */
-				'Property "%s" does not exist on Student_Management_Item. The student list table no longer uses WP_Comment objects.',
+				'Property "%s" does not exist on Students_Item. The student list table no longer uses WP_Comment objects.',
 				$key
 			),
 			'$$next-version$$'

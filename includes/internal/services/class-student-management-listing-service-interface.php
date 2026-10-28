@@ -28,7 +28,7 @@ interface Student_Management_Listing_Service_Interface {
 	 *                    sensei_course_status or sensei_lesson_status, respectively.
 	 *                    Also accepts user_id, status, number, offset, orderby, and order.
 	 *                    Use orderby=title for student-name sorting and order=ASC or DESC.
-	 * @return array{items: Student_Management_Item[], total_count: int|false} Activity rows and total.
+	 * @return array{items: Students_Item[], total_count: int|false} Activity rows and total.
 	 */
 	public function get_students( array $args ): array;
 
