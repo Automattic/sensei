@@ -27,7 +27,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - `changelog/` — per-PR changelog entries (created via `make changelog`; see Conventions).
 - `config/scoper.inc.php` — php-scoper config used during the build.
 - `scripts/linter-ci` — the diff-based PHPCS runner used by `make lint` and CI.
-- `.github/workflows/` — CI definitions; PR previews are built by `playground-preview.yml`.
+- `.github/workflows/` — CI definitions.
 
 ## Development environment
 - Run WordPress development commands inside the `make up` (wp-env) sandbox rather than against any host WordPress install — this keeps mistakes off shared/local state.
