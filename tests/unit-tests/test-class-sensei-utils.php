@@ -15,6 +15,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
  * phpcs:disable Generic.Commenting.DocComment.MissingShort
  */
 class Sensei_Utils_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
 	use \Sensei_File_System_Helper;
 	use \Sensei_Clock_Helpers;
 	use \Sensei_Course_Enrolment_Manual_Test_Helpers;
@@ -411,6 +412,33 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertFalse( $is_frontend_request );
 	}
 
+	/**
+	 * Completing a new lesson with questions initializes its comment grade.
+	 *
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_NewLessonWithQuestionsCompleted_InitializesLessonCommentGrade() {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$user_id = $this->factory->user->create();
+			$course  = $this->factory->get_course_with_lessons(
+				array(
+					'lesson_count'   => 1,
+					'question_count' => 1,
+				)
+			);
+			Sensei_Utils::start_user_on_course( $user_id, $course['course_id'] );
+
+			Sensei_Utils::sensei_start_lesson( $course['lesson_ids'][0], $user_id, true );
+
+			$comment = Sensei_Utils::user_lesson_status( $course['lesson_ids'][0], $user_id );
+
+			self::assertSame( '0', get_comment_meta( $comment->comment_ID, 'grade', true ), 'The completed lesson comment should have its initial grade.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
+	}
+
 	public function testSenseiDeleteQuizAnswers_WhenNoQuizProvided_ReturnsFalse() {
 		/* Act. */
 		$result = Sensei_Utils::sensei_delete_quiz_answers( 0, 1 );
@@ -501,6 +529,53 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		Sensei()->quiz_answer_repository     = $quiz_answer_repository;
 		Sensei()->quiz_grade_repository      = $quiz_grade_repository;
 		Sensei()->quiz_submission_repository = $quiz_submission_repository;
+	}
+
+	/**
+	 * Course completion stores the lesson counts on its mirrored comment.
+	 *
+	 * @covers Sensei_Utils::user_complete_course
+	 * @dataProvider course_metadata_completion_provider
+	 */
+	public function testUserCompleteCourse_LessonsCompleted_UpdatesCourseCommentMetadata( $completed_lessons, $percent, $status ) {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$user_id = $this->factory->user->create();
+			$course  = $this->factory->get_course_with_lessons(
+				array(
+					'lesson_count'   => 2,
+					'question_count' => 0,
+				)
+			);
+			Sensei()->course_progress_repository->create( $course['course_id'], $user_id );
+			foreach ( array_slice( $course['lesson_ids'], 0, $completed_lessons ) as $lesson_id ) {
+				$progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+				$progress->complete();
+				Sensei()->lesson_progress_repository->save( $progress );
+			}
+
+			Sensei_Utils::user_complete_course( $course['course_id'], $user_id );
+
+			$comment = Sensei_Utils::user_course_status( $course['course_id'], $user_id );
+
+			self::assertSame( (string) $percent, get_comment_meta( $comment->comment_ID, 'percent', true ), 'The course comment should reflect the completion percentage.' );
+			self::assertSame( (string) $completed_lessons, get_comment_meta( $comment->comment_ID, 'complete', true ), 'The course comment should reflect the completed lesson count.' );
+			self::assertSame( $status, Sensei()->course_progress_repository->get( $course['course_id'], $user_id )->get_status(), 'Course status should reflect lesson completion.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
+	}
+
+	/**
+	 * Completion counts for a two-lesson course.
+	 *
+	 * @return array
+	 */
+	public static function course_metadata_completion_provider(): array {
+		return array(
+			'partially completed' => array( 1, 50, 'in-progress' ),
+			'fully completed'     => array( 2, 100, 'complete' ),
+		);
 	}
 
 	/**

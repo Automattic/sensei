@@ -856,7 +856,7 @@ class Sensei_Frontend {
 						'complete' => count( $course_lesson_ids ),
 					];
 					foreach ( $course_metadata as $key => $value ) {
-						update_comment_meta( $course_progress->get_id(), $key, $value );
+						Sensei_Utils::update_user_data( $key, $sanitized_course_id, $value, $current_user->ID );
 					}
 
 					/**
