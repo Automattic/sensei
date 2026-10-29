@@ -1148,6 +1148,51 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		self::assertSame( 'Video', $meta_box_title );
 	}
 
+	/**
+	 * The course meta box preselects the lesson's course.
+	 *
+	 * @covers Sensei_Lesson::lesson_course_meta_box_content
+	 */
+	public function testLessonCourseMetaBoxContent_WhenLessonHadCourse_SelectsIt(): void {
+		/* Arrange */
+		global $post;
+		$course_lessons = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$course_id      = $course_lessons['course_id'];
+		$post           = get_post( $course_lessons['lesson_ids'][0] );
+
+		$lesson = new Sensei_Lesson();
+
+		/* Act */
+		ob_start();
+		$lesson->lesson_course_meta_box_content();
+		$output = ob_get_clean();
+
+		/* Assert */
+		self::assertMatchesRegularExpression( '/<option value="' . $course_id . '"\s+selected=.selected./', $output );
+	}
+
+	/**
+	 * Without a course, the course meta box selects no course.
+	 *
+	 * @covers Sensei_Lesson::lesson_course_meta_box_content
+	 */
+	public function testLessonCourseMetaBoxContent_WhenLessonHadNoCourse_SelectsNone(): void {
+		/* Arrange */
+		global $post;
+		$post      = $this->factory->lesson->create_and_get();
+		$course_id = $this->factory->course->create();
+
+		$lesson = new Sensei_Lesson();
+
+		/* Act */
+		ob_start();
+		$lesson->lesson_course_meta_box_content();
+		$output = ob_get_clean();
+
+		/* Assert */
+		self::assertStringContainsString( '<option value="' . $course_id . '">', $output );
+	}
+
 	public function testLessonComplexities_Always_ReturnsMatchingArray(): void {
 		/* Arrange */
 		$lesson = new Sensei_Lesson();
