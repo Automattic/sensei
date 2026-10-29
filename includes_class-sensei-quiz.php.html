@@ -946,7 +946,7 @@ class Sensei_Quiz {
 				'percent'  => 0,
 			];
 			foreach ( $course_progress_metadata as $key => $value ) {
-				update_comment_meta( $course_progress->get_id(), $key, $value );
+				Sensei_Utils::update_user_data( $key, (int) $course_id, $value, $user_id );
 			}
 		}
 
