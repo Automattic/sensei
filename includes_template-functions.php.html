@@ -928,7 +928,7 @@ function sensei_the_single_lesson_meta() {
 	}
 
 	// Get the meta info
-	$lesson_course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
+	$lesson_course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id ) ?? 0;
 	$is_preview       = $lesson_id &amp;&amp; Sensei_Utils::is_preview_lesson( $lesson_id );
 
 	// Complete Lesson Logic
