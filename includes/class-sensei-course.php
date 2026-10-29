@@ -1674,7 +1674,7 @@ class Sensei_Course {
 			$lesson_order = array();
 			foreach ( $lessons as $lesson ) {
 
-				$order = Sensei()->course_lessons_repository->get_lesson_position( $lesson->ID, (int) $course_id );
+				$order = Sensei()->course_lessons_repository->get_lesson_order( $lesson->ID, (int) $course_id );
 				// for lessons with no order set it to be 10000 so that it show up at the end
 				$lesson_order[ $lesson->ID ] = $order ? $order : 100000;
 			}

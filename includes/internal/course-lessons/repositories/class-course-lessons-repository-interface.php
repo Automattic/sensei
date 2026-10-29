@@ -61,15 +61,15 @@ interface Course_Lessons_Repository_Interface {
 	public function get_lesson_ids( int $course_id, $post_status = 'publish' ): array;
 
 	/**
-	 * Get the position of a lesson in a course.
+	 * Get the order of a lesson in a course.
 	 *
 	 * @internal
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
-	 * @return int|null Position, or null when none is stored for that course.
+	 * @return int|null Order, or null when none is stored for that course.
 	 */
-	public function get_lesson_position( int $lesson_id, int $course_id ): ?int;
+	public function get_lesson_order( int $lesson_id, int $course_id ): ?int;
 
 	/**
 	 * Get the module of a lesson.
