@@ -1625,7 +1625,7 @@ class Sensei_Quiz {
 		$user_id = $user_id ? $user_id : get_current_user_id();
 
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
+		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id ) ?? 0;
 
 		// Check if the user has enrolled in the course.
 		if ( ! Sensei_Course::is_user_enrolled( $course_id, $user_id ) ) {
