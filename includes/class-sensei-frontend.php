@@ -849,7 +849,6 @@ class Sensei_Frontend {
 					}
 
 					$course_progress->complete();
-					Sensei()->course_progress_repository->save( $course_progress );
 
 					$course_metadata = [
 						'percent'  => 100,
@@ -858,6 +857,9 @@ class Sensei_Frontend {
 					foreach ( $course_metadata as $key => $value ) {
 						Sensei_Utils::update_user_data( $key, $sanitized_course_id, $value, $current_user->ID );
 					}
+
+					// Status observers may redirect and end the request during the save.
+					Sensei()->course_progress_repository->save( $course_progress );
 
 					/**
 					 * Fires when a user completes a course.

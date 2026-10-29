@@ -1636,8 +1636,6 @@ class Sensei_Utils {
 			$course_progress->complete();
 		}
 
-		Sensei()->course_progress_repository->save( $course_progress );
-
 		$course_progress_metadata = [
 			// How many lessons have been completed.
 			'complete' => $lessons_completed,
@@ -1647,6 +1645,9 @@ class Sensei_Utils {
 		foreach ( $course_progress_metadata as $key => $value ) {
 			self::update_user_data( $key, intval( $course_id ), $value, $user_id );
 		}
+
+		// Status observers may redirect and end the request during the save.
+		Sensei()->course_progress_repository->save( $course_progress );
 
 		// Allow further actions.
 		if ( 'complete' === $course_progress->get_status() && true === $trigger_completion_action ) {
