@@ -255,7 +255,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$course_id = intval( get_post_meta( $post->ID, '_lesson_course', true ) );
+		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post->ID );
 
 		if ( ! $course_id ) {
 			return;
@@ -344,7 +344,7 @@ class Sensei_Lesson {
 	 * @param WP_Post $post Lesson object.
 	 */
 	public function add_video_meta_box( $post ) {
-		$lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
+		$lesson_course = Sensei()->course_lessons_repository->get_course_id( (int) $post->ID );
 		if ( ! $lesson_course ) {
 			return;
 		}
@@ -604,8 +604,8 @@ class Sensei_Lesson {
 	public function lesson_video_meta_box_content() {
 		$html = '<p>' . esc_html__( 'Control how students progress through the course based on their interactions with lesson video.', 'sensei-lms' ) . '<p>';
 
-		$lesson_course   = get_post_meta( get_the_ID(), '_lesson_course', true );
-		$edit_course_url = get_edit_post_link( $lesson_course );
+		$lesson_course   = Sensei()->course_lessons_repository->get_course_id( (int) get_the_ID() );
+		$edit_course_url = get_edit_post_link( $lesson_course ?? 0 );
 		$html           .= '<p><a href="' . esc_attr( $edit_course_url ) . '">' . esc_html__( 'Customize', 'sensei-lms' ) . '</a>';
 		echo wp_kses( $html, wp_kses_allowed_html( 'post' ) );
 	}
@@ -1169,7 +1169,7 @@ class Sensei_Lesson {
 		// Setup Lesson Meta Data
 		$selected_lesson_course = 0;
 		if ( 0 < $post->ID ) {
-			$selected_lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
+			$selected_lesson_course = Sensei()->course_lessons_repository->get_course_id( (int) $post->ID ) ?? 0;
 		}
 		// Handle preselected course
 		if ( isset( $_GET['course_id'] ) && ( 0 < absint( $_GET['course_id'] ) ) ) {
