@@ -2880,7 +2880,7 @@ class Sensei_Lesson {
 				$lesson_course_id = Sensei()->course_lessons_repository->get_course_id( (int) $id );
 				if ( $lesson_course_id ) {
 					// translators: Placeholder is the item title/name.
-					echo '<a href="' . esc_url( get_edit_post_link( $lesson_course_id ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( $lesson_course_id ) ) ) . '">' . esc_html( get_the_title( $lesson_course_id ) ) . '</a>';
+					echo '<a href="' . esc_url( get_edit_post_link( $lesson_course_id ) ?? '' ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( $lesson_course_id ) ) ) . '">' . esc_html( get_the_title( $lesson_course_id ) ) . '</a>';
 				}
 				break;
 			case 'lesson-prerequisite':

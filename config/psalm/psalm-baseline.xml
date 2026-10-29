@@ -2325,7 +2325,6 @@
       <code><![CDATA[$lesson_id]]></code>
       <code><![CDATA[$post_type->cap->edit_post]]></code>
       <code><![CDATA[$quiz_id]]></code>
-      <code><![CDATA[get_edit_post_link( absint( $lesson_course_id ) )]]></code>
       <code><![CDATA[get_edit_post_link( absint( $lesson_prerequisite_id ) )]]></code>
       <code><![CDATA[get_post_type_object( 'course' )->cap->edit_post]]></code>
       <code><![CDATA[get_post_type_object( 'lesson' )->cap->edit_post]]></code>
