@@ -659,8 +659,8 @@ class Sensei_Course {
 	 */
 	public function update_status_after_lesson_change( $user_id, $lesson_id ) {
 		if ( intval( $user_id ) > 0 && intval( $lesson_id ) > 0 ) {
-			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-			if ( intval( $course_id ) > 0 ) {
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
+			if ( $course_id ) {
 				// Updates the Course status and it's meta data
 				Sensei_Utils::user_complete_course( $course_id, $user_id );
 			}

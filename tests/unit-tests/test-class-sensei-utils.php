@@ -17,6 +17,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
 class Sensei_Utils_Test extends WP_UnitTestCase {
 	use \Sensei_File_System_Helper;
 	use \Sensei_Clock_Helpers;
+	use \Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
 	 * Setup function.
@@ -332,6 +333,23 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertSame( 12.34, $quiz_submission->get_final_grade() );
 	}
 
+	/**
+	 * Starting a lesson also starts its course for the student.
+	 *
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_WhenLessonHadCourse_StartsCourse() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$user_id        = $this->factory->user->create();
+
+		/* Act */
+		Sensei_Utils::sensei_start_lesson( $course_lessons['lesson_ids'][0], $user_id );
+
+		/* Assert */
+		self::assertNotFalse( Sensei_Utils::has_started_course( $course_lessons['course_id'], $user_id ) );
+	}
+
 	public function testIsRestRequest_WhenNotRestRequest_ReturnsFalse() {
 		/* Act. */
 		$is_rest_request = Sensei_Utils::is_rest_request();
@@ -503,6 +521,25 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 			'seconds' => [ 20, '20 seconds ago' ],
 			'date'    => [ 8 * 24 * 60 * 60, null ],
 		];
+	}
+
+	/**
+	 * An enrolled student who has not taken the lesson quiz gets the "not started" status.
+	 *
+	 * @covers Sensei_Utils::sensei_user_quiz_status_message
+	 */
+	public function testSenseiUserQuizStatusMessage_WhenStudentWasEnrolledInLessonCourse_ReturnsNotStartedStatus() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$user_id        = $this->factory->user->create();
+		wp_set_current_user( $user_id );
+		$this->manuallyEnrolStudentInCourse( $user_id, $course_lessons['course_id'] );
+
+		/* Act */
+		$status = Sensei_Utils::sensei_user_quiz_status_message( $course_lessons['lesson_ids'][0], $user_id, true );
+
+		/* Assert */
+		self::assertSame( 'not_started', $status['status'] );
 	}
 
 	public function testUserCountByRole_WhenCalled_ReturnsCorrectNumberOfStudents() {

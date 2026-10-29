@@ -602,7 +602,7 @@ class Sensei_Utils {
 			return false;
 		}
 
-		$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
 		if ( $course_id ) {
 			$is_user_taking_course = self::has_started_course( $course_id, $user_id );
 			if ( ! $is_user_taking_course ) {
@@ -1242,7 +1242,7 @@ class Sensei_Utils {
 
 		if ( $lesson_id > 0 && $user_id > 0 ) {
 			// Course ID.
-			$course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id ) ?? 0;
 
 			// Has user started course.
 			$started_course = Sensei_Course::is_user_enrolled( $course_id, $user_id );

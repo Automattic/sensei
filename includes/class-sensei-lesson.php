@@ -4738,7 +4738,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$lesson_course_id   = get_post_meta( $lesson_id, '_lesson_course', true );
+		$lesson_course_id   = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id ) ?? 0;
 		$user_taking_course = Sensei_Course::is_user_enrolled( $lesson_course_id, $user_id );
 		if ( ! $user_taking_course || ! sensei_can_user_view_lesson( $lesson_id, $user_id ) ) {
 			return;
@@ -5180,7 +5180,7 @@ class Sensei_Lesson {
 
 		$lesson_id                 = empty( $lesson_id ) ? (int) get_the_ID() : $lesson_id;
 		$user_id                   = empty( $user_id ) ? get_current_user_id() : $user_id;
-		$lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
+		$lesson_course_id          = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id ) ?? 0;
 		$quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$has_user_completed_lesson = Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
 

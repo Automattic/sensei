@@ -430,6 +430,26 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Completing the last lesson of a course completes the course for the student.
+	 *
+	 * @covers Sensei_Course::update_status_after_lesson_change
+	 */
+	public function testUpdateStatusAfterLessonChange_WhenLessonHadCourse_CompletesCourse() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$user_id        = $this->factory->user->create();
+		$progress       = Sensei()->lesson_progress_repository->create( $course_lessons['lesson_ids'][0], $user_id );
+		$progress->complete();
+		Sensei()->lesson_progress_repository->save( $progress );
+
+		/* Act */
+		Sensei()->course->update_status_after_lesson_change( $user_id, $course_lessons['lesson_ids'][0] );
+
+		/* Assert */
+		self::assertTrue( Sensei_Utils::user_completed_course( $course_lessons['course_id'], $user_id ) );
+	}
+
+	/**
 	 * Test that the course completed page URL is returned.
 	 *
 	 * @covers Sensei_Course::get_view_results_link
