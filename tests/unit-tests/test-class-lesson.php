@@ -1168,7 +1168,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$output = ob_get_clean();
 
 		/* Assert */
-		self::assertMatchesRegularExpression( '/<option value="' . $course_id . '"\s+selected=.selected./', $output );
+		self::assertMatchesRegularExpression( '/<option(?=[^>]*\svalue="' . $course_id . '")(?=[^>]*\sselected=.selected.)/', $output );
 	}
 
 	/**
@@ -2244,6 +2244,80 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		self::assertSame( '', get_post_meta( $lesson_id, '_lesson_quiz', true ) );
+	}
+
+	/**
+	 * Saving a lesson that belongs to a course seeds its order in that course with the default 0.
+	 *
+	 * @covers Sensei_Lesson::quiz_update
+	 */
+	public function testQuizUpdate_WhenLessonHadCourse_SeedsDefaultLessonOrder(): void {
+		/* Arrange */
+		add_filter( 'sensei_quiz_enable_block_based_editor', '__return_false' );
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		$_POST     = array(
+			'post_type'        => 'lesson',
+			'woo_lesson_nonce' => wp_create_nonce( 'sensei-save-post-meta' ),
+			'lesson_course'    => $course_id,
+		);
+		Sensei()->lesson->meta_box_save( $lesson_id );
+
+		/* Act */
+		Sensei()->lesson->quiz_update( $lesson_id );
+
+		/* Assert */
+		self::assertSame( 0, Sensei()->course_lessons_repository->get_lesson_order( $lesson_id, $course_id ) );
+	}
+
+	/**
+	 * The lessons list course column links to the edit screen of the lesson's course.
+	 *
+	 * @covers Sensei_Lesson::add_column_data
+	 */
+	public function testAddColumnData_WhenLessonHadCourse_OutputsCourseEditLink(): void {
+		/* Arrange */
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'course_args'    => array( 'post_title' => 'Linked course' ),
+			)
+		);
+		$course_id      = $course_lessons['course_id'];
+		$lesson_id      = $course_lessons['lesson_ids'][0];
+
+		/* Act */
+		ob_start();
+		Sensei()->lesson->add_column_data( 'lesson-course', $lesson_id );
+		$actual = ob_get_clean();
+
+		/* Assert */
+		self::assertSame(
+			'<a href="' . admin_url( 'post.php?post=' . $course_id . '&#038;action=edit' ) . '" title="Edit Linked course">Linked course</a>',
+			$actual
+		);
+	}
+
+	/**
+	 * The lessons list course column stays empty for a lesson without a course.
+	 *
+	 * @covers Sensei_Lesson::add_column_data
+	 */
+	public function testAddColumnData_WhenLessonHadNoCourse_OutputsNothing(): void {
+		/* Arrange */
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act */
+		ob_start();
+		Sensei()->lesson->add_column_data( 'lesson-course', $lesson_id );
+		$actual = ob_get_clean();
+
+		/* Assert */
+		self::assertSame( '', $actual );
 	}
 
 	public function testLimitArchiveContent_LockedLessonGivenToAnonymous_ReturnsTheFirst30Words() {

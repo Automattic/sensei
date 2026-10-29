@@ -735,7 +735,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );
+		$course_id = Sensei()->course_lessons_repository->get_course_id( $lesson_id );
 
 		if ( empty( $course_id ) ) {
 			return;
@@ -1035,7 +1035,7 @@ class Sensei_Lesson {
 		}
 
 		// Add default lesson order meta value.
-		$course_id = get_post_meta( $post_id, '_lesson_course', true );
+		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post_id );
 		if ( $course_id ) {
 			if ( ! get_post_meta( $post_id, '_order_' . $course_id, true ) ) {
 				update_post_meta( $post_id, '_order_' . $course_id, 0 );
@@ -2877,10 +2877,10 @@ class Sensei_Lesson {
 				echo esc_html( $id );
 				break;
 			case 'lesson-course':
-				$lesson_course_id = get_post_meta( $id, '_lesson_course', true );
-				if ( 0 < absint( $lesson_course_id ) ) {
+				$lesson_course_id = Sensei()->course_lessons_repository->get_course_id( (int) $id );
+				if ( $lesson_course_id ) {
 					// translators: Placeholder is the item title/name.
-					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_course_id ) ) ) ) . '">' . esc_html( get_the_title( absint( $lesson_course_id ) ) ) . '</a>';
+					echo '<a href="' . esc_url( get_edit_post_link( $lesson_course_id ) ?? '' ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( $lesson_course_id ) ) ) . '">' . esc_html( get_the_title( $lesson_course_id ) ) . '</a>';
 				}
 				break;
 			case 'lesson-prerequisite':
@@ -5308,7 +5308,7 @@ class Sensei_Lesson {
 		);
 
 		// Get course ID if it is set.
-		$lesson_course_id = get_post_meta( $lesson->ID, '_lesson_course', true );
+		$lesson_course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson->ID );
 		if ( $lesson_course_id ) {
 			$event_properties['course_id'] = $lesson_course_id;
 		}
