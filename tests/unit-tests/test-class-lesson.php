@@ -1168,7 +1168,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$output = ob_get_clean();
 
 		/* Assert */
-		self::assertMatchesRegularExpression( '/<option value="' . $course_id . '"\s+selected=.selected./', $output );
+		self::assertMatchesRegularExpression( '/<option(?=[^>]*\svalue="' . $course_id . '")(?=[^>]*\sselected=.selected.)/', $output );
 	}
 
 	/**
