@@ -154,9 +154,9 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	}
 
 	/**
-	 * Get the position of a lesson in a course.
+	 * Get the order of a lesson in a course.
 	 *
-	 * Non-canonical values such as `'3abc'` are read as 3, like `intval()`, so stored positions keep their order.
+	 * Non-canonical values such as `'3abc'` are read as 3, like `intval()`.
 	 *
 	 * @internal
 	 *
@@ -164,12 +164,12 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
-	 * @return int|null Position, or null when the meta is missing or empty.
+	 * @return int|null Order, or null when the meta is missing or empty.
 	 */
-	public function get_lesson_position( int $lesson_id, int $course_id ): ?int {
-		$position = get_post_meta( $lesson_id, '_order_' . $course_id, true );
+	public function get_lesson_order( int $lesson_id, int $course_id ): ?int {
+		$order = get_post_meta( $lesson_id, '_order_' . $course_id, true );
 
-		return '' === $position ? null : (int) $position;
+		return '' === $order ? null : (int) $order;
 	}
 
 	/**
