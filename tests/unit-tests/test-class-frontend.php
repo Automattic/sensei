@@ -37,6 +37,8 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 
 		remove_filter( 'sensei_is_login_required', '__return_false' );
 		remove_filter( 'sensei_can_user_view_lesson', '__return_false' );
+		wp_dequeue_style( 'sensei-frontend' );
+		wp_dequeue_style( 'pages-frontend' );
 
 		parent::tearDown();
 	}
@@ -44,6 +46,45 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
+	}
+
+	/**
+	 * The frontend stylesheet is skipped on a lesson whose course has Learning Mode enabled.
+	 *
+	 * @covers Sensei_Frontend::enqueue_styles
+	 */
+	public function testEnqueueStyles_WhenLessonCourseHadLearningModeEnabled_SkipsFrontendStylesheet() {
+		/* Arrange */
+		$course = $this->createCourseWithLessons( 1 );
+		update_post_meta( $course['course_id'], Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
+		wp_dequeue_style( 'sensei-frontend' );
+
+		/* Act */
+		Sensei()->frontend->enqueue_styles();
+
+		/* Assert */
+		self::assertFalse( wp_style_is( 'sensei-frontend' ) );
+	}
+
+	/**
+	 * The lesson breadcrumb links back to the lesson's course.
+	 *
+	 * @covers Sensei_Frontend::sensei_breadcrumb
+	 */
+	public function testSenseiBreadcrumb_WhenLessonHadCourse_LinksBackToCourse() {
+		/* Arrange */
+		$course    = $this->createCourseWithLessons( 1 );
+		$lesson_id = $course['lesson_ids'][0];
+		$this->go_to( get_permalink( $lesson_id ) );
+
+		/* Act */
+		ob_start();
+		Sensei()->frontend->sensei_breadcrumb( $lesson_id );
+		$output = ob_get_clean();
+
+		/* Assert */
+		self::assertStringContainsString( '<a href="' . esc_url( get_permalink( $course['course_id'] ) ) . '"', $output );
 	}
 
 	/**
@@ -199,6 +240,50 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 			Sensei_Utils::user_completed_lesson( $locked_lesson, $student_id ),
 			'A locked lesson should not be completable even when login is not required.'
 		);
+	}
+
+	/**
+	 * The lesson meta links to the lesson's course.
+	 *
+	 * @covers Sensei_Frontend::sensei_lesson_meta
+	 */
+	public function testSenseiLessonMeta_WhenLessonHadCourse_OutputsCourseLink() {
+		/* Arrange */
+		$course    = $this->createCourseWithLessons( 1 );
+		$lesson_id = $course['lesson_ids'][0];
+		$this->go_to( get_permalink( $lesson_id ) );
+		setup_postdata( $GLOBALS['post'] );
+
+		/* Act */
+		ob_start();
+		Sensei()->frontend->sensei_lesson_meta( $lesson_id );
+		$output = ob_get_clean();
+
+		/* Assert */
+		self::assertStringContainsString( '<a href="' . esc_url( get_permalink( $course['course_id'] ) ) . '"', $output );
+	}
+
+	/**
+	 * A student enrolled in the course sees the preview lesson title without the preview label.
+	 *
+	 * @covers Sensei_Frontend::sensei_lesson_preview_title
+	 */
+	public function testSenseiLessonPreviewTitle_WhenStudentWasEnrolledInLessonCourse_ReturnsTitleUnchanged() {
+		/* Arrange */
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course     = $this->createCourseWithLessons( 1 );
+		$lesson_id  = $course['lesson_ids'][0];
+		update_post_meta( $lesson_id, '_lesson_preview', 'preview' );
+
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course['course_id'] );
+		$this->go_to( get_permalink( $lesson_id ) );
+
+		/* Act */
+		$title = Sensei()->frontend->sensei_lesson_preview_title( 'Lesson', $lesson_id );
+
+		/* Assert */
+		self::assertSame( 'Lesson', $title );
 	}
 
 	/**

@@ -1611,6 +1611,31 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		self::assertStringContainsString( 'Test Lesson', $result );
 	}
 
+	/**
+	 * A student enrolled in the course sees the preview lesson title without the preview label.
+	 *
+	 * @covers Sensei_Lesson::the_title
+	 */
+	public function testTheTitle_WhenStudentWasEnrolledInPreviewLessonCourse_OmitsPreviewLabel(): void {
+		/* Arrange */
+		$this->resetCourseEnrolmentManager();
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course     = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		update_post_meta( $course['lesson_ids'][0], '_lesson_preview', 'preview' );
+
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course['course_id'] );
+		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
+
+		/* Act */
+		ob_start();
+		Sensei_Lesson::the_title();
+		$result = ob_get_clean();
+
+		/* Assert */
+		self::assertStringNotContainsString( 'preview-label', $result );
+	}
+
 	public function testTheLessonThumbnail_WhenCalled_OutputsThumbnail(): void {
 		/* Arrange */
 		$lesson_id = $this->factory->lesson->create();
