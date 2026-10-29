@@ -1469,15 +1469,21 @@ class Sensei_Abilities {
 	/**
 	 * Permission check: user can create courses.
 	 *
-	 * Core maps the course post type's `create_posts` to `edit_courses`, so this
-	 * is the capability the "Add New Course" screen requires. Teachers have it;
-	 * they lack `publish_courses`, which is why the ability only creates drafts.
+	 * Uses the course post type's `create_posts` capability, the one the "Add New
+	 * Course" screen requires. Core maps it to `edit_courses` unless a plugin
+	 * overrides it. Teachers have it; they lack `publish_courses`, which is why the
+	 * ability only creates drafts.
 	 *
 	 * @access private
 	 * @since $$next-version$$
 	 */
 	public static function can_create_courses(): bool {
-		return current_user_can( 'edit_courses' );
+		$post_type_object = get_post_type_object( 'course' );
+		if ( ! $post_type_object ) {
+			return false;
+		}
+
+		return current_user_can( $post_type_object->cap->create_posts );
 	}
 
 	/**
