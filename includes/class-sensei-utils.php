@@ -626,7 +626,7 @@ class Sensei_Utils {
 			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 			$has_questions   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 			if ( $complete && $has_questions ) {
-				update_comment_meta( $lesson_progress->get_id(), 'grade', 0 );
+				self::update_user_data( 'grade', intval( $lesson_id ), 0, $user_id );
 			}
 		}
 
@@ -1636,8 +1636,6 @@ class Sensei_Utils {
 			$course_progress->complete();
 		}
 
-		Sensei()->course_progress_repository->save( $course_progress );
-
 		$course_progress_metadata = [
 			// How many lessons have been completed.
 			'complete' => $lessons_completed,
@@ -1645,8 +1643,11 @@ class Sensei_Utils {
 			'percent'  => self::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons ),
 		];
 		foreach ( $course_progress_metadata as $key => $value ) {
-			update_comment_meta( $course_progress->get_id(), $key, $value );
+			self::update_user_data( $key, intval( $course_id ), $value, $user_id );
 		}
+
+		// Status observers may redirect and end the request during the save.
+		Sensei()->course_progress_repository->save( $course_progress );
 
 		// Allow further actions.
 		if ( 'complete' === $course_progress->get_status() && true === $trigger_completion_action ) {
@@ -2030,9 +2031,10 @@ class Sensei_Utils {
 	public static function update_lesson_status( $user_id, $lesson_id, $status = 'in-progress', $metadata = array() ) {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
+			$user = get_userdata( (int) $user_id );
 			$args = array(
 				'user_id'   => $user_id,
-				'username'  => get_userdata( $user_id )->user_login ?? null,
+				'username'  => $user ? $user->user_login : null,
 				'post_id'   => $lesson_id,
 				'status'    => $status,
 				'type'      => 'sensei_lesson_status', /* FIELD SIZE 20 */
@@ -2703,7 +2705,7 @@ class Sensei_Utils {
 			'complete' => 0,
 		];
 		foreach ( $course_metadata as $key => $value ) {
-			update_comment_meta( $course_progress->get_id(), $key, $value );
+			self::update_user_data( $key, intval( $course_id ), $value, $user_id );
 		}
 
 		/**

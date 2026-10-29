@@ -7,7 +7,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  * @group frontend
  */
 class Sensei_Frontend_Test extends WP_UnitTestCase {
-
+	use Sensei_HPPS_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
@@ -89,26 +89,37 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 
 	/**
 	 * An enrolled student can mark the course as complete.
+	 *
+	 * @covers Sensei_Frontend::sensei_complete_course
 	 */
 	public function testSenseiCompleteCourse_StudentEnrolled_CompletesCourse() {
-		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
-		$course_id  = $this->factory->get_course_with_lessons(
-			array(
-				'lesson_count'   => 2,
-				'question_count' => 0,
-			)
-		)['course_id'];
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+			$course_id  = $this->factory->get_course_with_lessons(
+				array(
+					'lesson_count'   => 2,
+					'question_count' => 0,
+				)
+			)['course_id'];
 
-		wp_set_current_user( $student_id );
-		$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
-		$this->submitCompletion( $course_id );
+			wp_set_current_user( $student_id );
+			$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
+			$this->submitCompletion( $course_id );
 
-		Sensei()->frontend->sensei_complete_course();
+			Sensei()->frontend->sensei_complete_course();
 
-		self::assertTrue(
-			Sensei_Utils::user_completed_course( $course_id, $student_id ),
-			'An enrolled student should be able to complete the course.'
-		);
+			$comment = Sensei_Utils::user_course_status( $course_id, $student_id );
+
+			self::assertTrue(
+				Sensei_Utils::user_completed_course( $course_id, $student_id ),
+				'An enrolled student should be able to complete the course.'
+			);
+			self::assertSame( '100', get_comment_meta( $comment->comment_ID, 'percent', true ), 'The course comment should reflect full completion.' );
+			self::assertSame( '2', get_comment_meta( $comment->comment_ID, 'complete', true ), 'The course comment should contain both completed lessons.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
 	}
 
 	/**

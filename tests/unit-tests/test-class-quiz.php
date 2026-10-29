@@ -7,6 +7,7 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Re
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 
 class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Test_Redirect_Helpers;
 
@@ -695,6 +696,38 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$transient_key  = 'sensei_answers_' . $test_user_id . '_' . $test_lesson_id;
 		$transient_data = get_transient( $transient_key );
 		$this->assertFalse( $transient_data, 'The transient was not reset along with the users saved data. The result should be false.' );
+	}
+
+	/**
+	 * Resetting a completed lesson updates its course comment metadata.
+	 *
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 */
+	public function testResetUserLessonData_CompletedCourseReset_UpdatesCourseCommentMetadata() {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$user_id = $this->factory->user->create();
+			$course  = $this->factory->get_course_with_lessons(
+				array(
+					'lesson_count'   => 2,
+					'question_count' => 0,
+				)
+			);
+			Sensei_Utils::start_user_on_course( $user_id, $course['course_id'] );
+			foreach ( $course['lesson_ids'] as $lesson_id ) {
+				Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+			}
+
+			Sensei()->quiz->reset_user_lesson_data( $course['lesson_ids'][0], $user_id );
+
+			$comment = Sensei_Utils::user_course_status( $course['course_id'], $user_id );
+
+			self::assertSame( '50', get_comment_meta( $comment->comment_ID, 'percent', true ), 'Resetting one lesson should leave the course half complete.' );
+			self::assertSame( '1', get_comment_meta( $comment->comment_ID, 'complete', true ), 'One completed lesson should remain after reset.' );
+			self::assertSame( 'in-progress', Sensei()->course_progress_repository->get( $course['course_id'], $user_id )->get_status(), 'Resetting a lesson should reopen the course.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
 	}
 
 	/**
