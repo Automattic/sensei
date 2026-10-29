@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Report failed and partial student enrollments in Students bulk actions.

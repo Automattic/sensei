@@ -114,11 +114,13 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	/**
 	 * Redirects to the bulk learner management screen and displays a message.
 	 *
-	 * @param string $result The result code or an error message to be displayed.
+	 * @param string     $result The result code or an error message to be displayed.
+	 * @param array|null $enrollment_counts Optional successful and failed enrollment counts.
+	 * @since $$next-version$$ Accepts enrollment counts for failure notices.
 	 *
 	 * @access private
 	 */
-	public function redirect_to_learner_admin_index( $result ) {
+	public function redirect_to_learner_admin_index( $result, $enrollment_counts = null ) {
 		$url = add_query_arg(
 			array(
 				'page'    => $this->get_page_slug(),
@@ -127,6 +129,16 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			),
 			admin_url( 'admin.php' )
 		);
+		if ( null !== $enrollment_counts ) {
+			$url = add_query_arg(
+				[
+					'enrollment_successful' => $enrollment_counts[0],
+					'enrollment_failed'     => $enrollment_counts[1],
+				],
+				$url
+			);
+		}
+
 		wp_safe_redirect( $url );
 		exit;
 	}
@@ -227,17 +239,31 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			}
 		}
 
+		$succeeded = 0;
+		$failed    = 0;
+
 		foreach ( $user_ids as $user_id ) {
 			$user = new WP_User( $user_id );
 
 			if ( $user->exists() ) {
 				foreach ( $course_ids as $course_id ) {
-					$this->do_user_action( $user_id, (int) $course_id, $sensei_bulk_action );
+					if ( false === $this->do_user_action( $user_id, (int) $course_id, $sensei_bulk_action ) ) {
+						++$failed;
+					} else {
+						++$succeeded;
+					}
 				}
+			} else {
+				$failed += self::ENROL_RESTORE_ENROLMENT === $sensei_bulk_action ? count( $course_ids ) : 1;
 			}
 		}
 
-		$this->redirect_to_learner_admin_index( 'action-success' );
+		$result = $failed ? ( $succeeded ? 'action-partial' : 'action-failed' ) : 'action-success';
+		if ( self::ENROL_RESTORE_ENROLMENT === $sensei_bulk_action && $failed ) {
+			$this->redirect_to_learner_admin_index( $result, [ $succeeded, $failed ] );
+			return;
+		}
+		$this->redirect_to_learner_admin_index( $result );
 	}
 
 	/**
@@ -255,13 +281,13 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @param integer $user_id   The user to perform the action on.
 	 * @param integer $course_id The course which the action relates to.
 	 * @param string  $action    The action.
+	 * @return bool|null False if enrollment failed; true or null otherwise.
 	 */
 	private function do_user_action( $user_id, $course_id, $action ) {
 		switch ( $action ) {
 			case self::ENROL_RESTORE_ENROLMENT:
 				$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-				$course_enrolment->enrol( $user_id );
-				break;
+				return $course_enrolment->enrol( $user_id );
 			case self::REMOVE_ENROLMENT:
 				$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 				$course_enrolment->withdraw( $user_id );
@@ -415,7 +441,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of message.
-		$msg       = sensei_request_text( $_GET['message'] );
+		$result    = sensei_request_text( $_GET['message'] );
+		$msg       = $result;
 		$msg_class = 'notice notice-error';
 
 		switch ( $msg ) {
@@ -425,10 +452,39 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			case 'error-invalid-course':
 				$msg = __( 'Invalid Course', 'sensei-lms' );
 				break;
+			case 'action-failed':
+				$msg = __( 'We couldn\'t complete the selected student actions. Check the student list before repeating the action.', 'sensei-lms' );
+				break;
+			case 'action-partial':
+				$msg = __( 'Some student actions couldn\'t be completed. Completed changes were kept. Check the student list before repeating the action.', 'sensei-lms' );
+				break;
 			case 'action-success':
 				$msg_class = 'notice notice-success';
 				$msg       = __( 'Bulk student action succeeded', 'sensei-lms' );
 				break;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Counts are used only for the notice.
+		if ( isset( $_GET['enrollment_successful'], $_GET['enrollment_failed'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$successful = absint( $_GET['enrollment_successful'] );
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$failed = absint( $_GET['enrollment_failed'] );
+			if ( 'action-partial' === $result ) {
+				$msg = sprintf(
+					/* translators: 1: Completed enrollments. 2: Failed enrollments. */
+					_n( '%1$d enrollment completed; %2$d couldn\'t be completed. Successful enrollments were kept. Check the student list before repeating the action.', '%1$d enrollments completed; %2$d couldn\'t be completed. Successful enrollments were kept. Check the student list before repeating the action.', $successful, 'sensei-lms' ),
+					$successful,
+					$failed
+				);
+			} elseif ( 'action-failed' === $result ) {
+				$msg = _n(
+					'We couldn\'t complete this enrollment. Check the student list before repeating the action. Contact your site administrator for help.',
+					'We couldn\'t complete these enrollments. Check the student list before repeating the action. Contact your site administrator for help.',
+					$failed,
+					'sensei-lms'
+				);
+			}
 		}
 
 		?>

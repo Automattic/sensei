@@ -6,6 +6,7 @@ import {
 	render,
 	screen,
 	waitFor,
+	within,
 	cleanup,
 } from '@testing-library/react';
 import nock from 'nock';
@@ -86,6 +87,7 @@ describe( '<StudentModal />', () => {
 			'Select the course(s) you would like to add ';
 
 		beforeEach( () => {
+			onClose.mockClear();
 			render(
 				<StudentModal
 					action="add"
@@ -126,7 +128,11 @@ describe( '<StudentModal />', () => {
 					_locale: 'user',
 				} )
 				.once()
-				.reply( 200, { status: 'ok' } );
+				.reply( 200, {
+					1: { 1: true },
+					2: { 1: true },
+					3: { 1: true },
+				} );
 
 			fireEvent.click( await courseOptionAt( 0 ) );
 
@@ -135,6 +141,103 @@ describe( '<StudentModal />', () => {
 			await waitFor( () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
 			} );
+		} );
+
+		it.each( [
+			[
+				'all enrollments fail',
+				{ 1: { 1: false }, 2: { 1: false }, 3: { 1: false } },
+				"We couldn't finish enrolling the selected students. Check the student list before repeating the action. Contact your site administrator for help.",
+			],
+			[
+				'some enrollments fail',
+				{ 1: { 1: true }, 2: { 1: false }, 3: {} },
+				"1 enrollment completed; 2 couldn't be completed. Successful enrollments were kept. Check the student list before repeating the action.",
+			],
+		] )(
+			'Shows the resolved failure and allows retry when %s',
+			async ( scenario, result, message ) => {
+				nock( NOCK_HOST_URL )
+					.post( '/sensei-internal/v1/course-students/batch' )
+					.query( { _locale: 'user' } )
+					.reply( 200, result );
+				fireEvent.click( await courseOptionAt( 0 ) );
+
+				fireEvent.click( await buttonByLabel( 'Add to Course' ) );
+
+				expect(
+					await within( screen.getByRole( 'dialog' ) ).findByText(
+						message
+					)
+				).toBeInTheDocument();
+				expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+				expect( await buttonByLabel( 'Add to Course' ) ).toBeEnabled();
+				expect( onClose ).not.toHaveBeenCalled();
+
+				nock( NOCK_HOST_URL )
+					.post( '/sensei-internal/v1/course-students/batch', {
+						student_ids: students,
+						course_ids: [ courses.at( 0 ).id ],
+					} )
+					.query( { _locale: 'user' } )
+					.reply( 200, {
+						1: { 1: true },
+						2: { 1: true },
+						3: { 1: true },
+					} );
+
+				fireEvent.click( await buttonByLabel( 'Add to Course' ) );
+
+				await waitFor( () =>
+					expect( onClose ).toHaveBeenCalledWith( true )
+				);
+			}
+		);
+
+		it( 'Counts each course for a missing student in a partial result', async () => {
+			nock( NOCK_HOST_URL )
+				.post( '/sensei-internal/v1/course-students/batch' )
+				.query( { _locale: 'user' } )
+				.reply( 200, {
+					1: { 1: true, 2: true },
+					2: { 1: false, 2: false },
+					3: false,
+				} );
+			fireEvent.click( await courseOptionAt( 0 ) );
+			fireEvent.click( await courseOptionAt( 1 ) );
+
+			fireEvent.click( await buttonByLabel( 'Add to Course' ) );
+
+			expect(
+				await within( screen.getByRole( 'dialog' ) ).findByText(
+					"2 enrollments completed; 4 couldn't be completed. Successful enrollments were kept. Check the student list before repeating the action."
+				)
+			).toBeInTheDocument();
+			expect( await courseOptionAt( 0 ) ).toBeChecked();
+			expect( await courseOptionAt( 1 ) ).toBeChecked();
+			expect( onClose ).not.toHaveBeenCalled();
+		} );
+
+		it( 'Refreshes completed enrollments when a partial result is dismissed', async () => {
+			nock( NOCK_HOST_URL )
+				.post( '/sensei-internal/v1/course-students/batch' )
+				.query( { _locale: 'user' } )
+				.reply( 200, {
+					1: { 1: true },
+					2: { 1: false },
+					3: { 1: true },
+				} );
+			fireEvent.click( await courseOptionAt( 0 ) );
+			fireEvent.click( await buttonByLabel( 'Add to Course' ) );
+			await within( screen.getByRole( 'dialog' ) ).findByText(
+				"2 enrollments completed; 1 couldn't be completed. Successful enrollments were kept. Check the student list before repeating the action."
+			);
+
+			fireEvent.click( await buttonByLabel( 'Close' ) );
+
+			await waitFor( () =>
+				expect( onClose ).toHaveBeenCalledWith( true )
+			);
 		} );
 
 		describe( 'When there is a failure to add the students to the courses', () => {
@@ -358,7 +461,7 @@ describe( '<StudentModal />', () => {
 
 				expect(
 					await findAllByText(
-						'Unable to add student. Please try again.'
+						"We couldn't finish enrolling the selected student. Check the student list before repeating the action. Contact your site administrator for help."
 					)
 				).toBeTruthy();
 			} );
@@ -458,7 +561,7 @@ describe( '<StudentModal />', () => {
 
 				expect(
 					await findAllByText(
-						'Unable to add students. Please try again.'
+						"We couldn't finish enrolling the selected students. Check the student list before repeating the action. Contact your site administrator for help."
 					)
 				).toBeTruthy();
 			} );
