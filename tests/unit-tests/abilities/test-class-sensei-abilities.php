@@ -770,4 +770,34 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 			'administrator' => array( 'administrator', true ),
 		);
 	}
+
+	/**
+	 * The check follows the post type's `create_posts` capability when a plugin overrides it.
+	 *
+	 * @covers Sensei_Abilities::can_create_courses
+	 */
+	public function testCanCreateCourses_CreatePostsCapabilityOverridden_UsesOverriddenCapability() {
+		$post_type_object = get_post_type_object( 'course' );
+		$original_cap     = $post_type_object->cap->create_posts;
+		$teacher          = $this->factory->user->create_and_get( array( 'role' => 'teacher' ) );
+		$granted_teacher  = $this->factory->user->create_and_get( array( 'role' => 'teacher' ) );
+		$granted_teacher->add_cap( 'create_sensei_courses' );
+		$ability = wp_get_ability( 'sensei/course-create' );
+		$input   = array( 'title' => 'Power chords' );
+
+		try {
+			$post_type_object->cap->create_posts = 'create_sensei_courses';
+
+			wp_set_current_user( $teacher->ID );
+			$without_cap = $ability->check_permissions( $input );
+
+			wp_set_current_user( $granted_teacher->ID );
+			$with_cap = $ability->check_permissions( $input );
+		} finally {
+			$post_type_object->cap->create_posts = $original_cap;
+		}
+
+		$this->assertFalse( $without_cap, 'A teacher without the overridden capability should be denied.' );
+		$this->assertTrue( $with_cap, 'A user with the overridden capability should be allowed.' );
+	}
 }
