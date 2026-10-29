@@ -5005,7 +5005,7 @@ class Sensei_Lesson {
 
 		global $post, $current_user;
 
-		$course_id  = get_post_meta( $post->ID, '_lesson_course', true );
+		$course_id  = Sensei()->course_lessons_repository->get_course_id( (int) $post->ID ) ?? 0;
 		$is_preview = isset( $post->ID )
 			&& Sensei_Utils::is_preview_lesson( $post->ID )
 			&& ! Sensei_Course::is_user_enrolled( $course_id, $current_user->ID );

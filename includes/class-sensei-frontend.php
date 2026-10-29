@@ -178,7 +178,7 @@ class Sensei_Frontend {
 
 		// Don't load frontend.css in Learning Mode as it's not needed and negatively impacts button styles.
 		if ( 'lesson' === $post_type ) {
-			$course_id                = intval( get_post_meta( $post->ID, '_lesson_course', true ) );
+			$course_id                = Sensei()->course_lessons_repository->get_course_id( (int) $post->ID ) ?? 0;
 			$is_learning_mode_enabled = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
 		}
 
@@ -572,7 +572,7 @@ class Sensei_Frontend {
 		$html = '<section class="sensei-breadcrumb">' . esc_html( $sensei_breadcrumb_prefix );
 		// Lesson.
 		if ( is_singular( 'lesson' ) && 0 < intval( $id ) ) {
-			$course_id = intval( get_post_meta( $id, '_lesson_course', true ) );
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $id );
 			if ( ! $course_id ) {
 				return;
 			}
@@ -1226,7 +1226,7 @@ class Sensei_Frontend {
 
 	public function sensei_lesson_meta( $post_id = 0 ) {
 		if ( 0 < intval( $post_id ) ) {
-			$lesson_course_id = absint( get_post_meta( $post_id, '_lesson_course', true ) );
+			$lesson_course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post_id ) ?? 0;
 			?>
 		<section class="entry">
 			<p class="sensei-course-meta">
@@ -1287,7 +1287,7 @@ class Sensei_Frontend {
 			if ( is_main_query() ) {
 
 				// Get the course ID.
-				$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+				$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post->ID ) ?? 0;
 
 				// Check if the user is taking the course.
 				if ( is_singular( 'lesson' ) && Sensei_Utils::is_preview_lesson( $post->ID ) && ! Sensei_Course::is_user_enrolled( $course_id ) && $post->ID == $id ) {
