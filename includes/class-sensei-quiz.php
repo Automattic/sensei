@@ -307,6 +307,24 @@ class Sensei_Quiz {
 	}
 
 	/**
+	 * Shows progress errors using the current quiz layout's notice template.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $title   Error heading.
+	 * @param string $message Supporting text.
+	 */
+	private function add_progress_failure_notice( string $title, string $message ) {
+		$course_id = Sensei_Utils::get_current_course();
+		if ( $course_id && Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-progress-failure', $message, $title );
+			return;
+		}
+
+		Sensei()->notices->add_notice( $title . '. ' . $message, 'alert' );
+	}
+
+	/**
 	 * This function hooks into the quiz page and accepts the answer form save post.
 	 *
 	 * @since 1.7.3
@@ -345,7 +363,10 @@ class Sensei_Quiz {
 			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-save', $message );
 		} else {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
-			Sensei()->notices->add_notice( __( 'We couldn\'t save your answers. Your text answers are still shown below. Copy them somewhere safe before leaving this page. You may need to select file uploads again. Contact your instructor for help.', 'sensei-lms' ), 'alert' );
+			$this->add_progress_failure_notice(
+				__( 'Unable to save your answers', 'sensei-lms' ),
+				__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+			);
 		}
 
 		// remove the hook as it should only fire once per click
@@ -558,7 +579,10 @@ class Sensei_Quiz {
 
 		// reset all user data
 		if ( false === $this->reset_user_lesson_data( $lesson_id, get_current_user_id() ) ) {
-			Sensei()->notices->add_notice( __( 'We couldn\'t finish resetting this quiz. Reload this page and check its status. Try Reset Quiz again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
+			$this->add_progress_failure_notice(
+				__( 'Unable to restart the quiz', 'sensei-lms' ),
+				__( 'Reload this page and check its status. Use Restart Quiz if available, or contact your instructor for help.', 'sensei-lms' )
+			);
 			return;
 		}
 
@@ -611,7 +635,10 @@ class Sensei_Quiz {
 
 		if ( false === self::submit_answers_for_grading( $answers, $_FILES, $lesson_id, $user_id ) ) {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
-			Sensei()->notices->add_notice( __( 'We couldn\'t submit your answers for grading. Your text answers are still shown below. Copy them somewhere safe before leaving this page. You may need to select file uploads again. Contact your instructor for help.', 'sensei-lms' ), 'alert' );
+			$this->add_progress_failure_notice(
+				__( 'Unable to submit your answers', 'sensei-lms' ),
+				__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+			);
 			return;
 		}
 
@@ -679,7 +706,10 @@ class Sensei_Quiz {
 
 			if ( false === self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id ) ) {
 				$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
-				Sensei()->notices->add_notice( __( 'We couldn\'t save your answers before changing quiz pages. Your text answers are still shown below. Copy them somewhere safe before leaving this page. You may need to select file uploads again. Contact your instructor for help.', 'sensei-lms' ), 'alert' );
+				$this->add_progress_failure_notice(
+					__( 'Unable to change quiz pages', 'sensei-lms' ),
+					__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+				);
 				return;
 			}
 		}
