@@ -61,7 +61,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$actual = ob_get_clean();
 
 		/* Assert. */
-		self::assertStringContainsString( '<option value="' . $module->term_id . '" selected="selected">' . $module->name . '</option>', $actual );
+		self::assertMatchesRegularExpression( '/<option value="' . $module->term_id . '" selected=["\']selected["\']>' . preg_quote( $module->name, '/' ) . '<\/option>/', $actual );
 	}
 
 	/**
