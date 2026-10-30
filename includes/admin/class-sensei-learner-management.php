@@ -251,6 +251,7 @@ class Sensei_Learner_Management {
 			'modify_user_post_nonce'     => wp_create_nonce( 'modify_user_post_nonce' ),
 			'search_users_nonce'         => wp_create_nonce( 'search-users' ),
 			'edit_date_nonce'            => wp_create_nonce( 'edit_date_nonce' ),
+			'edit_date_error'            => __( 'We couldn\'t save this start date. Try again. If it still doesn\'t work, contact your site administrator.', 'sensei-lms' ),
 			'course_category_nonce'      => wp_create_nonce( 'course_category_nonce' ),
 			'selectplaceholder'          => __( 'Select students to manually enroll...', 'sensei-lms' ),
 		);
