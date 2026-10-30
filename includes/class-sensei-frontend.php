@@ -731,7 +731,7 @@ class Sensei_Frontend {
 		switch ( $sanitized_submit ) {
 			case 'lesson-complete':
 				if ( false === Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true ) ) {
-					Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this lesson as complete. Reload this page and try again. If only Reset Lesson is shown, reset the lesson before completing it again. Contact your instructor if you still need help.', 'sensei-lms' ), 'alert' );
+					Sensei()->notices->add_notice( __( 'Unable to complete the lesson. Reload this page to check its status, or contact your instructor for help.', 'sensei-lms' ), 'alert' );
 					return;
 				}
 				$this->maybe_redirect_to_next_lesson( $lesson_id );
@@ -740,7 +740,7 @@ class Sensei_Frontend {
 
 			case 'lesson-reset':
 				if ( false === Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $current_user->ID ) ) {
-					Sensei()->notices->add_notice( __( 'We couldn\'t finish resetting this lesson. Reload this page and check its status. Try Reset Lesson again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
+					Sensei()->notices->add_notice( __( 'Unable to reset the lesson. Reload this page to check its status, or contact your instructor for help.', 'sensei-lms' ), 'alert' );
 					return;
 				}
 
