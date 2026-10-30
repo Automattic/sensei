@@ -1,6 +1,9 @@
 <?php
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
 class Sensei_Class_Course_Test extends WP_UnitTestCase {
+	use Sensei_Progress_Insert_Failure_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
@@ -447,6 +450,129 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		self::assertTrue( Sensei_Utils::user_completed_course( $course_lessons['course_id'], $user_id ) );
+	}
+
+	/**
+	 * Existing course subclasses can keep their two-argument callbacks.
+	 *
+	 * @covers Sensei_Course::update_status_after_lesson_change
+	 * @covers Sensei_Course::update_status_after_quiz_submission
+	 */
+	public function testUpdateStatusAfterLessonChange_ExistingSubclassOverrides_LoadsAndRuns(): void {
+		$extension = new class() extends Sensei_Course {
+			/**
+			 * Construct without registering the extension's hooks.
+			 */
+			public function __construct() {}
+
+			/**
+			 * @inheritDoc
+			 */
+			public function update_status_after_lesson_change( $user_id, $lesson_id ) {
+				return 'extension lesson';
+			}
+
+			/**
+			 * @inheritDoc
+			 */
+			public function update_status_after_quiz_submission( $user_id, $quiz_id ) {
+				return 'extension quiz';
+			}
+		};
+
+		$lesson = $extension->update_status_after_lesson_change( 1, 2 );
+		$quiz   = $extension->update_status_after_quiz_submission( 1, 3 );
+
+		self::assertSame( 'extension lesson', $lesson, 'The original lesson callback override must remain compatible.' );
+		self::assertSame( 'extension quiz', $quiz, 'The original quiz callback override must remain compatible.' );
+	}
+
+	/**
+	 * Existing callers can continue after course progress creation fails.
+	 *
+	 * @dataProvider course_status_callers
+	 * @covers Sensei_Course::update_status_after_lesson_change
+	 * @covers Sensei_Course::update_status_after_quiz_submission
+	 */
+	public function testUpdateStatusAfterLessonChange_InsertFailedOutsideBoundary_DoesNotInterruptCaller( string $mode, string $caller ): void {
+		$data     = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$user_id  = $this->factory->user->create();
+		$quiz_id  = $data['quiz_ids'][0];
+		$observed = false;
+		$observer = static function () use ( &$observed ) {
+			$observed = true;
+		};
+		$is_hook  = 0 === strpos( $caller, 'sensei_' );
+		update_post_meta( $quiz_id, '_quiz_lesson', $data['lesson_ids'][0] );
+		if ( $is_hook ) {
+			add_action( $caller, $observer, 20 );
+		}
+
+		try {
+			$this->with_failed_progress_insert(
+				$mode,
+				'course',
+				function () use ( $caller, $is_hook, $data, $user_id, $quiz_id ) {
+					$id = false !== strpos( $caller, 'quiz' ) ? $quiz_id : $data['lesson_ids'][0];
+					if ( 'sensei_user_quiz_grade' === $caller ) {
+						do_action( $caller, $user_id, $id, 100, 50, 'auto' );
+					} elseif ( $is_hook ) {
+						do_action( $caller, $user_id, $id );
+					} else {
+						Sensei()->course->$caller( $user_id, $id );
+					}
+
+					self::assertNull( Sensei()->course_progress_repository->get( $data['course_id'], $user_id ), 'Failed creation must not leave course progress.' );
+				}
+			);
+			if ( $is_hook ) {
+				self::assertTrue( $observed, 'Existing hook emitters must still reach later callbacks.' );
+			}
+		} finally {
+			if ( $is_hook ) {
+				remove_action( $caller, $observer, 20 );
+			}
+		}
+	}
+
+	/**
+	 * Guarded quiz hook emitters receive failures without changing hook arguments.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Course::update_status_after_quiz_submission
+	 */
+	public function testUpdateStatusAfterQuizSubmission_InsertFailedWithinBoundary_Throws( string $mode ): void {
+		$data    = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$user_id = $this->factory->user->create();
+		update_post_meta( $data['quiz_ids'][0], '_quiz_lesson', $data['lesson_ids'][0] );
+
+		$this->expectException( \Sensei\Internal\Persistence_Exception::class );
+		$this->with_failed_progress_insert(
+			$mode,
+			'course',
+			static function () use ( $data, $user_id ) {
+				\Sensei\Internal\Persistence_Exception_Boundary::run(
+					static function () use ( $data, $user_id ) {
+						do_action( 'sensei_user_quiz_grade', $user_id, $data['quiz_ids'][0], 100, 50, 'auto' );
+					}
+				);
+			}
+		);
+	}
+
+	/**
+	 * Existing direct callers and hook emitters across progress storage modes.
+	 *
+	 * @return array
+	 */
+	public static function course_status_callers(): array {
+		$cases = array();
+		foreach ( self::progress_storage_modes() as $name => $arguments ) {
+			foreach ( array( 'update_status_after_lesson_change', 'update_status_after_quiz_submission', 'sensei_user_lesson_end', 'sensei_user_lesson_reset', 'sensei_user_quiz_grade' ) as $caller ) {
+				$cases[ $name . ' ' . $caller ] = array( $arguments[0], $caller );
+			}
+		}
+		return $cases;
 	}
 
 	/**

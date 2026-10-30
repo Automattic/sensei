@@ -413,6 +413,32 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Start listeners can initialize progress before the lesson is created.
+	 *
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_NewLessonStarted_FiresStartBeforeProgressCreation(): void {
+		$this->maybe_enable_hpps_tables_repository();
+		$lesson_id = $this->factory->lesson->create();
+		$user_id   = $this->factory->user->create();
+		$started   = null;
+		$observer  = static function ( $student_id, $started_lesson_id ) use ( &$started ) {
+			$started = Sensei_Utils::user_started_lesson( $started_lesson_id, $student_id );
+		};
+		add_action( 'sensei_user_lesson_start', $observer, 10, 2 );
+
+		try {
+			$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+			self::assertNotFalse( $result, 'The lesson should start successfully.' );
+			self::assertFalse( $started, 'Start listeners must still observe that lesson progress does not exist yet.' );
+		} finally {
+			remove_action( 'sensei_user_lesson_start', $observer, 10 );
+			$this->maybe_reset_hpps_repository();
+		}
+	}
+
+	/**
 	 * Course failures stop lesson creation and preserve the failure return.
 	 *
 	 * @dataProvider progress_storage_modes
@@ -705,6 +731,26 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 				self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'The failed course must not announce completion.' );
 			}
 		);
+	}
+
+	/**
+	 * Existing subclasses can keep their original completion override.
+	 *
+	 * @covers Sensei_Utils::user_complete_course
+	 */
+	public function testUserCompleteCourse_ExistingSubclassOverride_LoadsAndRuns(): void {
+		$extension = new class() extends Sensei_Utils {
+			/**
+			 * @inheritDoc
+			 */
+			public static function user_complete_course( $course_id = 0, $user_id = 0, $trigger_completion_action = true ) {
+				return 'extension completion';
+			}
+		};
+
+		$result = $extension::user_complete_course();
+
+		self::assertSame( 'extension completion', $result );
 	}
 
 	/**
