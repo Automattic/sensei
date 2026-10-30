@@ -4513,11 +4513,13 @@ class Sensei_Lesson {
 
 		// setup the values for all meta fields
 		$data = array();
-		foreach ( $this->meta_fields as $field ) {
+		foreach ( array_diff( $this->meta_fields, array( 'lesson_course' ) ) as $field ) {
 
 			$data[ $field ] = get_post_meta( $post_id, '_' . $field, true );
 
 		}
+		// The quick edit script selects option[value="…"], so a lesson without a course needs the empty string, not null.
+		$data['lesson_course'] = Sensei()->course_lessons_repository->get_course_id( (int) $post_id ) ?? '';
 		// add quiz meta fields
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $post_id );
 		foreach ( Sensei()->quiz->meta_fields as $field ) {
