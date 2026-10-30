@@ -41,6 +41,30 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The module meta box of a lesson lists its course modules with the lesson module selected.
+	 *
+	 * @covers Sensei_Core_Modules::lesson_module_metabox
+	 */
+	public function testLessonModuleMetabox_WhenLessonCourseHadModules_OutputsLessonModuleSelected() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module         = get_term( $course_lessons['modules'][0], 'module' );
+
+		/* Act. */
+		ob_start();
+		Sensei()->modules->lesson_module_metabox( get_post( $course_lessons['lesson_ids'][0] ) );
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		self::assertStringContainsString( '<option value="' . $module->term_id . '" selected="selected">' . $module->name . '</option>', $actual );
+	}
+
+	/**
 	 * The module assigned to a lesson is returned by its term ID.
 	 *
 	 * @covers Sensei_Core_Modules::get_lesson_module_if_exists
@@ -72,6 +96,32 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( 0, $actual );
+	}
+
+	/**
+	 * Completing the only lesson of a module saves the full module progress of the student in the lesson course.
+	 *
+	 * @covers Sensei_Core_Modules::save_lesson_module_progress
+	 */
+	public function testSaveLessonModuleProgress_WhenLessonCourseHadModule_SavesModuleProgress() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$user_id        = $this->factory->user->create();
+		$progress       = Sensei()->lesson_progress_repository->create( $course_lessons['lesson_ids'][0], $user_id );
+		$progress->complete();
+		Sensei()->lesson_progress_repository->save( $progress );
+
+		/* Act. */
+		Sensei()->modules->save_lesson_module_progress( $user_id, $course_lessons['lesson_ids'][0] );
+
+		/* Assert. */
+		$module_progress_key = '_module_progress_' . $course_lessons['course_id'] . '_' . $course_lessons['modules'][0];
+		self::assertSame( '100', get_user_meta( $user_id, $module_progress_key, true ) );
 	}
 
 	/**
@@ -195,6 +245,27 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertFalse( $actual );
+	}
+
+	/**
+	 * The module of a lesson in a course with that module links to the module page for that course.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module
+	 */
+	public function testGetLessonModule_WhenLessonCourseHadModule_ReturnsModuleUrlWithCourse() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module( $course_lessons['lesson_ids'][0] );
+
+		/* Assert. */
+		self::assertStringEndsWith( 'course_id=' . $course_lessons['course_id'], $actual->url );
 	}
 
 	/**
