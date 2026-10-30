@@ -101,6 +101,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 
 		$_POST = array();
+		wp_deregister_script( 'sensei-lesson-quick-edit' );
 
 		global $current_screen, $taxnow, $typenow, $post_type;
 		$current_screen = $this->initial_screen;
@@ -1795,6 +1796,24 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Reset */
 		$wp_scripts = $old_wp_scripts;
+	}
+
+	/**
+	 * The quick edit defaults keep an empty course value for a lesson without a course.
+	 *
+	 * @covers Sensei_Lesson::set_quick_edit_admin_defaults
+	 */
+	public function testSetQuickEditAdminDefaults_WhenLessonHadNoCourse_LocalizesEmptyCourse(): void {
+		// Arrange.
+		$lesson_id = $this->factory->lesson->create();
+		wp_register_script( 'sensei-lesson-quick-edit', 'quick-edit.js', array(), '1', true );
+
+		// Act.
+		Sensei()->lesson->set_quick_edit_admin_defaults( 'lesson-course', $lesson_id );
+
+		// Assert.
+		$data = wp_scripts()->get_data( 'sensei-lesson-quick-edit', 'data' );
+		self::assertStringContainsString( '"lesson_course":""', $data );
 	}
 
 	public function testMetaBoxSave_PostIdGiven_UpdatesPostMeta(): void {
