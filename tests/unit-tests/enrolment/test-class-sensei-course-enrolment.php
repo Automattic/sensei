@@ -1,5 +1,7 @@
 <?php
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
 /**
  * Tests for Sensei_Course_Enrolment class.
  *
@@ -7,6 +9,7 @@
  */
 class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_Progress_Insert_Failure_Helpers;
 	use Sensei_Scheduler_Test_Helpers;
 
 	/**
@@ -58,6 +61,36 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
 		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ) );
+	}
+
+	/**
+	 * Automatic access checks must retry enrollment after required progress persistence fails.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Course_Enrolment::is_enrolled
+	 */
+	public function testIsEnrolled_CourseInsertFailed_RetriesOnNormalAccessCheck( string $mode ): void {
+		$course_id = $this->getSimpleCourse();
+		$user_id   = $this->createStandardStudent();
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'course',
+			function ( $fault_filter ) use ( $course_enrolment, $course_id, $user_id ) {
+				$first_check = $course_enrolment->is_enrolled( $user_id );
+				remove_filter( 'query', $fault_filter );
+				$retry_check = $course_enrolment->is_enrolled( $user_id );
+
+				self::assertFalse( $first_check, 'Required progress failure must reject the initial access check.' );
+				self::assertTrue( $retry_check, 'A normal access check must retry after the fault is resolved.' );
+				self::assertNotNull( Sensei()->course_progress_repository->get( $course_id, $user_id ), 'Recovery must persist course progress.' );
+				$term = Sensei_Learner::get_learner_term( $user_id );
+				self::assertTrue( has_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'Recovery must persist taxonomy access.' );
+			}
+		);
 	}
 
 	/**

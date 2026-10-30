@@ -1,4 +1,7 @@
 <?php
+
+use Sensei\Internal\Course_Status_Updates;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Services\Grading_Listing_Service_Interface;
 use Sensei\Internal\Services\Grading_Stats_Service_Interface;
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
@@ -41,6 +44,13 @@ class Sensei_Grading {
 	 * @var Grading_Stats_Service_Interface|null
 	 */
 	private static ?Grading_Stats_Service_Interface $grading_stats_service = null;
+
+	/**
+	 * Whether progress creation failed during this grading request.
+	 *
+	 * @var bool
+	 */
+	private $progress_save_failed = false;
 
 	public $file;
 	public $page_slug;
@@ -849,7 +859,7 @@ class Sensei_Grading {
 		$quiz_id = absint( $_GET['quiz_id'] );
 		$user_id = isset( $_GET['user'] ) ? absint( $_GET['user'] ) : 0;
 
-		$quiz_lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$quiz_lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
 
 		// No lesson means there is nothing to grade against.
 		if ( ! $quiz_lesson_id ) {
@@ -865,131 +875,154 @@ class Sensei_Grading {
 			return false;
 		}
 
-		$questions            = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
-		$quiz_grade           = 0;
-		$quiz_grade_total     = isset( $_POST['quiz_grade_total'] ) ? absint( wp_unslash( $_POST['quiz_grade_total'] ) ) : 0;
-		$all_question_grades  = array();
-		$all_answers_feedback = array();
+		try {
+			$course_id = Sensei()->course_lessons_repository->get_course_id( $quiz_lesson_id );
+			if ( $course_id && false === Sensei_Utils::user_start_course( $user_id, $course_id ) ) {
+				$this->progress_save_failed = true;
+				return false;
+			}
 
-		foreach ( $questions as $question ) {
+			$lesson_progress = Sensei()->lesson_progress_repository->get( $quiz_lesson_id, $user_id );
+			if ( ! $lesson_progress ) {
+				$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
+			}
 
-			$question_id = $question->ID;
+			$questions            = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+			$quiz_grade           = 0;
+			$quiz_grade_total     = isset( $_POST['quiz_grade_total'] ) ? absint( wp_unslash( $_POST['quiz_grade_total'] ) ) : 0;
+			$all_question_grades  = array();
+			$all_answers_feedback = array();
 
-			if ( isset( $_POST[ 'question_' . $question_id . '_grade' ] ) ) {
+			foreach ( $questions as $question ) {
 
-				$question_grade = absint( wp_unslash( $_POST[ 'question_' . $question_id . '_grade' ] ) ) ?? 0;
+				$question_id = $question->ID;
 
-				// add data to the array that will, after the loop, be stored on the lesson status
-				$all_question_grades[ $question_id ] = $question_grade;
+				if ( isset( $_POST[ 'question_' . $question_id . '_grade' ] ) ) {
 
-				// tally up the total quiz grade
-				$quiz_grade += $question_grade;
+					$question_grade = absint( wp_unslash( $_POST[ 'question_' . $question_id . '_grade' ] ) ) ?? 0;
 
-			} // endif
+					// add data to the array that will, after the loop, be stored on the lesson status
+					$all_question_grades[ $question_id ] = $question_grade;
 
-			// Question answer feedback / notes
-			$question_feedback = '';
-			if ( isset( $_POST['questions_feedback'][ $question_id ] ) ) {
+					// tally up the total quiz grade
+					$quiz_grade += $question_grade;
 
-				$question_feedback = wp_kses_post( wp_unslash( is_array( $_POST['questions_feedback'][ $question_id ] ) ? '' : $_POST['questions_feedback'][ $question_id ] ) );
+				} // endif
+
+				// Question answer feedback / notes
+				$question_feedback = '';
+				if ( isset( $_POST['questions_feedback'][ $question_id ] ) ) {
+
+					$question_feedback = wp_kses_post( wp_unslash( is_array( $_POST['questions_feedback'][ $question_id ] ) ? '' : $_POST['questions_feedback'][ $question_id ] ) );
+
+				}
+				$all_answers_feedback[ $question_id ] = $question_feedback;
 
 			}
-			$all_answers_feedback[ $question_id ] = $question_feedback;
 
-		}
+			// store all question grades on the lesson status
+			Sensei()->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id, $user_id );
 
-		// store all question grades on the lesson status
-		Sensei()->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id, $user_id );
+			// store the feedback from grading
+			Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id );
 
-		// store the feedback from grading
-		Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id );
+			$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+			if ( ! $quiz_progress ) {
+				$this->progress_save_failed = true;
+				return false;
+			}
 
-		$lesson_progress = Sensei()->lesson_progress_repository->get( $quiz_lesson_id, $user_id );
-		if ( ! $lesson_progress ) {
-			$lesson_progress = Sensei()->lesson_progress_repository->create( $quiz_lesson_id, $user_id );
-		}
+			$lesson_metadata = array();
+			$quiz_progress->ungrade();
 
-		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
-		if ( ! $quiz_progress ) {
-			return false;
-		}
+			// $_POST['all_questions_graded'] is set when all questions have been graded
+			// in the class sensei grading user quiz -> display()
+			if ( isset( $_POST['all_questions_graded'] ) && 'yes' == $_POST['all_questions_graded'] ) {
 
-		$lesson_metadata = array();
-		$quiz_progress->ungrade();
+				// Set the users total quiz grade.
+				$grade = Sensei_Utils::quotient_as_absolute_rounded_percentage( $quiz_grade, $quiz_grade_total, 2 );
+				if ( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )
+					&& ! Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id ) ) {
+					$this->progress_save_failed = true;
+					return false;
+				}
 
-		// $_POST['all_questions_graded'] is set when all questions have been graded
-		// in the class sensei grading user quiz -> display()
-		if ( isset( $_POST['all_questions_graded'] ) && 'yes' == $_POST['all_questions_graded'] ) {
+				// Duplicating what Frontend->sensei_complete_quiz() does.
+				$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+				$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
 
-			// Set the users total quiz grade.
-			$grade = Sensei_Utils::quotient_as_absolute_rounded_percentage( $quiz_grade, $quiz_grade_total, 2 );
-			Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
+				if ( $pass_required ) {
+					// Student has reached the pass mark and lesson is complete.
+					if ( $quiz_passmark <= $grade ) {
+						// Due to our internal logic, we need to complete the lesson first.
+						// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
+						$lesson_progress->complete();
+						$quiz_progress->pass();
+					} else {
+						$quiz_progress->fail();
+					}
+				}
 
-			// Duplicating what Frontend->sensei_complete_quiz() does.
-			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
-			$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
-
-			if ( $pass_required ) {
-				// Student has reached the pass mark and lesson is complete.
-				if ( $quiz_passmark <= $grade ) {
-					// Due to our internal logic, we need to complete the lesson first.
-					// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
+				// Student only has to partake the quiz.
+				else {
 					$lesson_progress->complete();
-					$quiz_progress->pass();
-				} else {
-					$quiz_progress->fail();
+					$quiz_progress->grade();
 				}
 			}
 
-			// Student only has to partake the quiz.
-			else {
-				$lesson_progress->complete();
-				$quiz_progress->grade();
+			// Due to our internal logic, we need to save the lesson progress first.
+			// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
+			// And in this context the quiz status should be preserved in the comments-based version.
+			// For the tables-based version the order does not matter.
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
+			Sensei()->quiz_progress_repository->save( $quiz_progress );
+			if ( count( $lesson_metadata ) ) {
+				foreach ( $lesson_metadata as $key => $value ) {
+					update_comment_meta( $quiz_progress->get_id(), $key, $value );
+				}
 			}
-		}
 
-		// Due to our internal logic, we need to save the lesson progress first.
-		// This is because in the comments-based version the lesson status is used for both the lesson and the quiz.
-		// And in this context the quiz status should be preserved in the comments-based version.
-		// For the tables-based version the order does not matter.
-		Sensei()->lesson_progress_repository->save( $lesson_progress );
-		Sensei()->quiz_progress_repository->save( $quiz_progress );
-		if ( count( $lesson_metadata ) ) {
-			foreach ( $lesson_metadata as $key => $value ) {
-				update_comment_meta( $quiz_progress->get_id(), $key, $value );
+			if ( $lesson_progress->is_complete() ) {
+				/**
+				 * Fires when a user completes a lesson.
+				 * Here as part of grading a quiz.
+				 *
+				 * @hook sensei_user_lesson_end
+				 *
+				 * @param {int} $user_id The user ID.
+				 * @param {int} $lesson_id The lesson ID.
+				 */
+				if ( ! Course_Status_Updates::run(
+					static function () use ( $user_id, $quiz_lesson_id ) {
+						do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
+					}
+				) ) {
+					$this->progress_save_failed = true;
+					return false;
+				}
 			}
+
+			if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( sensei_request_text( $_POST['sensei_grade_next_learner'] ) ) > 0 ) {
+
+				$load_url = add_query_arg( array( 'message' => 'graded' ) );
+
+			} elseif ( isset( $_POST['_wp_http_referer'] ) ) {
+
+				$load_url = add_query_arg( array( 'message' => 'graded' ), esc_url_raw( wp_unslash( is_array( $_POST['_wp_http_referer'] ) ? '' : $_POST['_wp_http_referer'] ) ) );
+
+			} else {
+
+				$load_url = add_query_arg( array( 'message' => 'graded' ) );
+
+			}
+
+			wp_safe_redirect( esc_url_raw( $load_url ) );
+			exit;
+		} catch ( Persistence_Exception $exception ) {
+			$exception->log();
+			$this->progress_save_failed = true;
+			return false;
 		}
-
-		if ( $lesson_progress->is_complete() ) {
-			/**
-			 * Fires when a user completes a lesson.
-			 * Here as part of grading a quiz.
-			 *
-			 * @hook sensei_user_lesson_end
-			 *
-			 * @param {int} $user_id The user ID.
-			 * @param {int} $lesson_id The lesson ID.
-			 */
-			do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
-
-		}
-
-		if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( sensei_request_text( $_POST['sensei_grade_next_learner'] ) ) > 0 ) {
-
-			$load_url = add_query_arg( array( 'message' => 'graded' ) );
-
-		} elseif ( isset( $_POST['_wp_http_referer'] ) ) {
-
-			$load_url = add_query_arg( array( 'message' => 'graded' ), esc_url_raw( wp_unslash( is_array( $_POST['_wp_http_referer'] ) ? '' : $_POST['_wp_http_referer'] ) ) );
-
-		} else {
-
-			$load_url = add_query_arg( array( 'message' => 'graded' ) );
-
-		}
-
-		wp_safe_redirect( esc_url_raw( $load_url ) );
-		exit;
 	}
 
 	public function get_redirect_url() {
@@ -1071,6 +1104,11 @@ class Sensei_Grading {
 	}
 
 	public function add_grading_notices() {
+		if ( $this->progress_save_failed ) {
+			wp_admin_notice( __( 'We couldn\'t save these grading changes. Keep this page open and copy any feedback before reloading. Contact your site administrator for help.', 'sensei-lms' ), array( 'type' => 'error' ) );
+			return;
+		}
+
 		$page    = isset( $_GET['page'] ) ? sensei_request_text( $_GET['page'] ) : false;
 		$message = isset( $_GET['message'] ) ? sensei_request_text( $_GET['message'] ) : false;
 
@@ -1112,7 +1150,7 @@ class Sensei_Grading {
 	 * @param  integer $total_questions Total questions in quiz (not used)
 	 * @param string  $quiz_grade_type Optional defaults to auto
 	 *
-	 * @return int $quiz_grade total sum of all question grades
+	 * @return int|float|false|WP_Error Quiz grade, false for invalid input, or an error when grading cannot complete.
 	 */
 	public static function grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
 
@@ -1165,8 +1203,10 @@ class Sensei_Grading {
 		if ( $quiz_autogradable ) {
 			$quiz_total = Sensei_Utils::sensei_get_quiz_total( $quiz_id );
 			$grade      = Sensei_Utils::quotient_as_absolute_rounded_percentage( $grade_total, $quiz_total, 2 );
-			Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
-
+			if ( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )
+				&& ! Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type ) ) {
+				return new WP_Error( 'sensei_progress_save_failed', __( 'The quiz grade could not be saved.', 'sensei-lms' ) );
+			}
 		} else {
 
 			$grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'sensei-lms' ) );

@@ -8,6 +8,8 @@
  * @since 1.3.0
  */
 
+use Sensei\Internal\Persistence_Exception;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -728,13 +730,19 @@ class Sensei_Frontend {
 
 		switch ( $sanitized_submit ) {
 			case 'lesson-complete':
-				Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true );
+				if ( false === Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true ) ) {
+					Sensei()->notices->add_notice( __( 'Unable to complete the lesson. Reload this page to check its status, or contact your instructor for help.', 'sensei-lms' ), 'alert' );
+					return;
+				}
 				$this->maybe_redirect_to_next_lesson( $lesson_id );
 
 				break;
 
 			case 'lesson-reset':
-				Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $current_user->ID );
+				if ( false === Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $current_user->ID ) ) {
+					Sensei()->notices->add_notice( __( 'Unable to reset the lesson. Reload this page to check its status, or contact your instructor for help.', 'sensei-lms' ), 'alert' );
+					return;
+				}
 
 				$this->messages = '<div class="sensei-message note">' . __( 'Lesson Reset Successfully.', 'sensei-lms' ) . '</div>';
 				break;
@@ -840,12 +848,21 @@ class Sensei_Frontend {
 
 					$course_progress = Sensei()->course_progress_repository->get( $sanitized_course_id, $current_user->ID );
 					if ( null === $course_progress ) {
-						$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
+						try {
+							$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
+						} catch ( Persistence_Exception $exception ) {
+							$exception->log();
+							Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this course as complete. Reload this page and check its status. Try Mark as Complete again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
+							return;
+						}
 					}
 
 					$course_lesson_ids = Sensei()->course->course_lessons( $sanitized_course_id, 'any', 'ids' );
 					foreach ( $course_lesson_ids as $lesson_id ) {
-						Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true );
+						if ( false === Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true ) ) {
+							Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this course as complete. Reload this page and check its status. Try Mark as Complete again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
+							return;
+						}
 					}
 
 					$course_progress->complete();
@@ -859,7 +876,13 @@ class Sensei_Frontend {
 					}
 
 					// Status observers may redirect and end the request during the save.
-					Sensei()->course_progress_repository->save( $course_progress );
+					try {
+						Sensei()->course_progress_repository->save( $course_progress );
+					} catch ( Persistence_Exception $exception ) {
+						$exception->log();
+						Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this course as complete. Reload this page and check its status. Try Mark as Complete again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
+						return;
+					}
 
 					/**
 					 * Fires when a user completes a course.
@@ -1359,6 +1382,7 @@ class Sensei_Frontend {
 		$this->data                        = new stdClass();
 		$this->data->is_user_taking_course = false;
 		if ( ! $student_enrolled ) {
+			Sensei()->notices->add_notice( __( 'We couldn\'t finish enrolling you in this course. Contact the course instructor if you still can\'t access it.', 'sensei-lms' ), 'alert' );
 			return;
 		}
 

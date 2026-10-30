@@ -9,6 +9,8 @@
  * @since 1.3.0
  */
 
+use Sensei\Internal\Persistence_Exception;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -249,6 +251,7 @@ class Sensei_Learner_Management {
 			'modify_user_post_nonce'     => wp_create_nonce( 'modify_user_post_nonce' ),
 			'search_users_nonce'         => wp_create_nonce( 'search-users' ),
 			'edit_date_nonce'            => wp_create_nonce( 'edit_date_nonce' ),
+			'edit_date_error'            => __( 'We couldn\'t save this start date. Try again. If it still doesn\'t work, contact your site administrator.', 'sensei-lms' ),
 			'course_category_nonce'      => wp_create_nonce( 'course_category_nonce' ),
 			'selectplaceholder'          => __( 'Select students to manually enroll...', 'sensei-lms' ),
 		);
@@ -546,7 +549,12 @@ class Sensei_Learner_Management {
 			 *
 			 * @psalm-suppress PossiblyInvalidArgument
 			 */
-			$repository->save( $progress );
+			try {
+				$repository->save( $progress );
+			} catch ( Persistence_Exception $exception ) {
+				$exception->log();
+				wp_die( esc_html__( 'We couldn\'t save this start date. Reload this page and try again. If it still doesn\'t work, contact your site administrator.', 'sensei-lms' ), '', array( 'response' => 500 ) );
+			}
 		}
 
 		/**
@@ -901,7 +909,7 @@ class Sensei_Learner_Management {
 						&& 'yes' === $_POST['add_complete_course']
 						&& ! Sensei_Utils::user_completed_course( $course_id, $user_id )
 					) {
-						Sensei_Utils::force_complete_user_course( $user_id, $course_id );
+						$result = false !== Sensei_Utils::force_complete_user_course( $user_id, $course_id );
 					}
 
 					break;

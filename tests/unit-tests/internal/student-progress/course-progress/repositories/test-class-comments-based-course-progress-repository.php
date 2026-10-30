@@ -5,13 +5,16 @@ namespace SenseiTest\Internal\Student_Progress\Course_Progress\Repositories;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+
+require_once __DIR__ . '/test-class-course-progress-repository.php';
 
 /**
  * Tests for the Comments_Based_Course_Progress_Repository_Test class.
  *
  * @covers \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository
  */
-class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
+class Comments_Based_Course_Progress_Repository_Test extends Course_Progress_Repository_Test {
 	protected $factory;
 
 	public function setUp(): void {
@@ -279,5 +282,23 @@ class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 			'course_id' => $progress->get_course_id(),
 			'status'    => $progress->get_status(),
 		];
+	}
+
+	/**
+	 * Construct the comments-backed repository.
+	 *
+	 * @return Course_Progress_Repository_Interface The repository.
+	 */
+	protected function get_repository(): Course_Progress_Repository_Interface {
+		return new Comments_Based_Course_Progress_Repository();
+	}
+
+	/**
+	 * Identify the progress insertion table.
+	 *
+	 * @return string Table name.
+	 */
+	protected function get_insert_table(): string {
+		return $GLOBALS['wpdb']->comments;
 	}
 }
