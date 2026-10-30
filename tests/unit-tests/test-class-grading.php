@@ -77,6 +77,28 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The Course column links to the grading list of the lesson's course.
+	 *
+	 * @covers Sensei_Grading_Main::get_row_data
+	 */
+	public function testGetRowData_WhenLessonHadCourse_LinksCourseColumnToCourse(): void {
+		/* Arrange. */
+		$course       = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$user_id      = $this->factory->user->create();
+		$grading_main = new Sensei_Grading_Main( array( 'view' => 'ungraded' ) );
+		$item         = new \Sensei\Internal\Services\Grading_Item( 'ungraded', $user_id, $course['lesson_ids'][0], current_time( 'mysql' ), null );
+		$method       = new ReflectionMethod( Sensei_Grading_Main::class, 'get_row_data' );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
+
+		/* Act. */
+		$row = $method->invoke( $grading_main, $item );
+
+		/* Assert. */
+		$expected = '<a href="' . admin_url( 'admin.php' ) . '?page=sensei_grading&amp;course_id=' . $course['course_id'] . '">' . get_the_title( $course['course_id'] ) . '</a>';
+		$this->assertEqualHTML( $expected, $row['course'] );
+	}
+
+	/**
 	 * Tests that prepare_items() applies sensei_count_statuses_args
 	 * restrictions to listing rows for tables-based storage.
 	 *
@@ -285,6 +307,52 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		if ( self::is_hpps_tables_mode() ) {
 			$this->reset_hpps_repository();
 		}
+	}
+
+	/**
+	 * The quiz grading title links back to the grading list of the lesson's course.
+	 *
+	 * @covers Sensei_Grading::grading_user_quiz_nav
+	 */
+	public function testGradingUserQuizNav_WhenLessonHadCourse_LinksToCourseGrading(): void {
+		/* Arrange. */
+		$course  = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$quiz_id = $course['quiz_ids'][0];
+		update_post_meta( $quiz_id, '_quiz_lesson', $course['lesson_ids'][0] );
+		$_GET['quiz_id'] = $quiz_id;
+
+		/* Act. */
+		ob_start();
+		Sensei()->grading->grading_user_quiz_nav();
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		$expected = '<h2>
+			Grading&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_grading&amp;course_id=' . $course['course_id'] . '">' . get_the_title( $course['course_id'] ) . '</a></span>&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_grading&amp;lesson_id=' . $course['lesson_ids'][0] . '">' . get_the_title( $course['lesson_ids'][0] ) . '</a></span>			</h2>';
+		$this->assertEqualHTML( $expected, trim( $actual ) );
+	}
+
+	/**
+	 * The quiz grading title of a lesson without a course links to the grading list with an empty course ID.
+	 *
+	 * @covers Sensei_Grading::grading_user_quiz_nav
+	 */
+	public function testGradingUserQuizNav_WhenLessonHadNoCourse_LinksWithEmptyCourseId(): void {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
+		$_GET['quiz_id'] = $quiz_id;
+
+		/* Act. */
+		ob_start();
+		Sensei()->grading->grading_user_quiz_nav();
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		$expected = '<h2>
+			Grading&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_grading&amp;course_id"></a></span>&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_grading&amp;lesson_id=' . $lesson_id . '">' . get_the_title( $lesson_id ) . '</a></span>			</h2>';
+		$this->assertEqualHTML( $expected, trim( $actual ) );
 	}
 
 	/**
