@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Use the selected students when opening bulk actions regardless of script initialization order.
+Fix bulk student actions failing with an empty student list despite students being selected on the Students page.
