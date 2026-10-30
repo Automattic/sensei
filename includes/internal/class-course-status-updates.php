@@ -17,6 +17,9 @@ final class Course_Status_Updates {
 	/**
 	 * Failure in the current dispatch, or null outside a guarded action.
 	 *
+	 * WordPress ignores action callback return values. This flag reports a failed
+	 * course update without changing hook timing or interrupting other callbacks.
+	 *
 	 * @var bool|null
 	 */
 	private static $failed;
