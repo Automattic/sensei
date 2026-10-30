@@ -53,7 +53,7 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Quiz_Submitted', false ) ) :
 				return;
 			}
 
-			$course_id     = get_post_meta( $lesson_id, '_lesson_course', true );
+			$course_id     = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
 			$teacher_id    = get_post_field( 'post_author', $course_id, 'raw' );
 			$this->teacher = new WP_User( $teacher_id );
 
