@@ -1,6 +1,7 @@
 <?php
 
 use Sensei\Internal\Persistence_Exception;
+use Sensei\Internal\Persistence_Exception_Boundary;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -496,7 +497,11 @@ class Sensei_Utils {
 			 * @param {int}    $quiz_passmark   Passmark for quiz.
 			 * @param {string} $quiz_grade_type Type of grading.
 			 */
-			do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
+			Persistence_Exception_Boundary::run(
+				static function () use ( $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type ) {
+					do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
+				}
+			);
 
 			return true;
 		} catch ( Persistence_Exception $exception ) {
@@ -629,6 +634,17 @@ class Sensei_Utils {
 		}
 
 		try {
+			/**
+			 * Fires when a user starts a lesson.
+			 * When this action runs the lesson status may not yet exist.
+			 *
+			 * @hook sensei_user_lesson_start
+			 *
+			 * @param {int} $user_id ID of user starting lesson.
+			 * @param {int} $lesson_id ID of lesson being started.
+			 */
+			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
+
 			$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 			if ( ! $lesson_progress ) {
 				$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
@@ -637,17 +653,6 @@ class Sensei_Utils {
 					self::update_user_data( 'grade', intval( $lesson_id ), 0, $user_id );
 				}
 			}
-
-			/**
-			 * Fires after lesson progress has been created successfully.
-			 *
-			 * @hook sensei_user_lesson_start
-			 * @since $$next-version$$ Fires only after progress creation succeeds.
-			 *
-			 * @param {int} $user_id ID of user starting lesson.
-			 * @param {int} $lesson_id ID of lesson being started.
-			 */
-			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
 
 			if ( $complete && ! $lesson_progress->is_complete() ) {
 				$lesson_progress->complete();
@@ -668,7 +673,11 @@ class Sensei_Utils {
 				 * @param {int} $user_id The user ID.
 				 * @param {int} $lesson_id The lesson ID.
 				 */
-				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
+				Persistence_Exception_Boundary::run(
+					static function () use ( $user_id, $lesson_id ) {
+						do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
+					}
+				);
 			}
 
 			return $lesson_progress->get_id();
@@ -724,7 +733,11 @@ class Sensei_Utils {
 			 * @param {int} $lesson_id The lesson ID.
 			 */
 			try {
-				do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
+				Persistence_Exception_Boundary::run(
+					static function () use ( $user_id, $lesson_id ) {
+						do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
+					}
+				);
 			} catch ( Persistence_Exception $exception ) {
 				$exception->log();
 				return false;
@@ -1624,12 +1637,9 @@ class Sensei_Utils {
 	 * @param  integer $course_id Course ID
 	 * @param  integer $user_id   User ID
 	 * @param bool    $trigger_completion_action Whether to fire the course completion action.
-	 * @param bool    $throw_on_failure Whether to propagate persistence failures to an enclosing operation.
-	 * @since $$next-version$$ Added the $throw_on_failure argument.
-	 * @throws Persistence_Exception If progress creation fails and $throw_on_failure is true.
 	 * @return mixed boolean or comment_ID
 	 */
-	public static function user_complete_course( $course_id = 0, $user_id = 0, $trigger_completion_action = true, $throw_on_failure = false ) {
+	public static function user_complete_course( $course_id = 0, $user_id = 0, $trigger_completion_action = true ) {
 		if ( ! $course_id ) {
 			return false;
 		}
@@ -1691,7 +1701,7 @@ class Sensei_Utils {
 			Sensei()->course_progress_repository->save( $course_progress );
 
 		} catch ( Persistence_Exception $exception ) {
-			if ( $throw_on_failure ) {
+			if ( Persistence_Exception_Boundary::is_active() ) {
 				throw $exception;
 			}
 			$exception->log();

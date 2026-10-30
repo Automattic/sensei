@@ -1,6 +1,7 @@
 <?php
 
 use Sensei\Internal\Persistence_Exception;
+use Sensei\Internal\Persistence_Exception_Boundary;
 use Sensei\Internal\Services\Grading_Listing_Service_Interface;
 use Sensei\Internal\Services\Grading_Stats_Service_Interface;
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
@@ -990,7 +991,11 @@ class Sensei_Grading {
 				 * @param {int} $user_id The user ID.
 				 * @param {int} $lesson_id The lesson ID.
 				 */
-				do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
+				Persistence_Exception_Boundary::run(
+					static function () use ( $user_id, $quiz_lesson_id ) {
+						do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
+					}
+				);
 
 			}
 

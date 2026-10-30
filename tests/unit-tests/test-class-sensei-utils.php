@@ -406,7 +406,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 				self::assertFalse( $result, 'Lesson creation must report failure.' );
 				self::assertNull( Sensei()->lesson_progress_repository->get( $lesson_id, $user_id ), 'No lesson progress may be returned.' );
-				self::assertSame( $started, did_action( 'sensei_user_lesson_start' ), 'The failed lesson must not announce a start.' );
+				self::assertSame( $started + 1, did_action( 'sensei_user_lesson_start' ), 'The start hook must retain its position before progress creation.' );
 				self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'The failed lesson must not announce completion.' );
 			}
 		);
