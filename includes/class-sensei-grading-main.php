@@ -367,7 +367,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				break;
 		}
 
-		$course_id    = get_post_meta( $lesson_id, '_lesson_course', true );
+		$course_id    = Sensei()->course_lessons_repository->get_course_id( $lesson_id ) ?? 0;
 		$course_title = '';
 
 		if ( ! empty( $course_id ) ) {

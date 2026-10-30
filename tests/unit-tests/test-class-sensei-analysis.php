@@ -13,11 +13,19 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 	private static $initial_hook_suffix;
 
 	/**
+	 * Sensei factory.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
+
+	/**
 	 * Setup method.
 	 */
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
 
 		// Disable `wp_die`.
@@ -91,6 +99,29 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 		$expected = '<h1>
 			<a href="' . admin_url( 'admin.php' ) . '?page=sensei_reports">Reports</a>&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_reports&#038;user_id=1">admin</a></span>			</h1>';
 
+		$this->assertEqualHTML( $expected, $actual );
+	}
+
+	/**
+	 * The lesson report title links back to the report of the lesson's course.
+	 *
+	 * @covers Sensei_Analysis::analysis_lesson_users_nav
+	 */
+	public function testAnalysisLessonUsersNav_WhenLessonHadCourse_LinksToCourseReport() {
+		/* Arrange */
+		$analysis          = $this->create_analysis();
+		$course            = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$lesson_id         = $course['lesson_ids'][0];
+		$_GET['lesson_id'] = $lesson_id;
+
+		/* Act */
+		ob_start();
+		$analysis->analysis_lesson_users_nav();
+		$actual = trim( ob_get_clean() );
+
+		/* Assert */
+		$expected = '<h1>
+			<a href="' . admin_url( 'admin.php' ) . '?page=sensei_reports">Reports</a>&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_reports&amp;course_id=' . $course['course_id'] . '">' . get_the_title( $course['course_id'] ) . '</a></span>&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_reports&amp;lesson_id=' . $lesson_id . '">' . get_the_title( $lesson_id ) . '</a></span>			</h1>';
 		$this->assertEqualHTML( $expected, $actual );
 	}
 
