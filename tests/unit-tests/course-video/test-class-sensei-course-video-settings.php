@@ -56,38 +56,31 @@ class Test_Sensei_Course_Video_Settings extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Each course video setting of the current lesson is read from the lesson's course.
+	 * The course video settings printed for a lesson are read from the lesson's course.
 	 *
-	 * @covers Sensei_Course_Video_Settings::is_autocomplete_enabled
-	 * @covers Sensei_Course_Video_Settings::is_autopause_enabled
-	 * @covers Sensei_Course_Video_Settings::is_required
-	 * @dataProvider providerCourseVideoSetting_WhenLessonCourseHadSettingEnabled_ReturnsCourseSetting
-	 *
-	 * @param string $meta_key The course setting meta key.
-	 * @param string $method   The settings method that reads it.
+	 * @covers Sensei_Course_Video_Settings::enqueue_frontend_scripts
 	 */
-	public function testCourseVideoSetting_WhenLessonCourseHadSettingEnabled_ReturnsCourseSetting( $meta_key, $method ) {
+	public function testEnqueueFrontendScripts_WhenLessonCourseHadVideoSettingsEnabled_AddsCourseSettings() {
 		/* Arrange */
 		$course          = $this->factory->get_course_with_lessons(
 			array(
 				'question_count' => 0,
-				'course_args'    => array( 'meta_input' => array( $meta_key => true ) ),
+				'course_args'    => array(
+					'meta_input' => array(
+						Sensei_Course_Video_Settings::COURSE_VIDEO_AUTOCOMPLETE => true,
+						Sensei_Course_Video_Settings::COURSE_VIDEO_AUTOPAUSE    => true,
+						Sensei_Course_Video_Settings::COURSE_VIDEO_REQUIRED     => true,
+					),
+				),
 			)
 		);
 		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
 
 		/* Act */
-		$result = Sensei_Course_Video_Settings::instance()->$method();
+		Sensei_Course_Video_Settings::instance()->enqueue_frontend_scripts();
 
 		/* Assert */
-		self::assertSame( '1', $result );
-	}
-
-	public function providerCourseVideoSetting_WhenLessonCourseHadSettingEnabled_ReturnsCourseSetting(): array {
-		return array(
-			'autocomplete' => array( Sensei_Course_Video_Settings::COURSE_VIDEO_AUTOCOMPLETE, 'is_autocomplete_enabled' ),
-			'autopause'    => array( Sensei_Course_Video_Settings::COURSE_VIDEO_AUTOPAUSE, 'is_autopause_enabled' ),
-			'required'     => array( Sensei_Course_Video_Settings::COURSE_VIDEO_REQUIRED, 'is_required' ),
-		);
+		$inline_script = wp_scripts()->get_inline_script_data( 'sensei-course-video-blocks-extension', 'before' );
+		self::assertStringContainsString( '{"courseVideoAutoComplete":true,"courseVideoAutoPause":true,"courseVideoRequired":true}', $inline_script );
 	}
 }
