@@ -172,7 +172,7 @@ class Sensei_Course_Video_Settings {
 	 * @return mixed
 	 */
 	public function is_autocomplete_enabled() {
-		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );
+		$lesson_course = Sensei()->course_lessons_repository->get_course_id( (int) get_the_ID() ) ?? 0;
 		return get_post_meta( $lesson_course, self::COURSE_VIDEO_AUTOCOMPLETE, true );
 	}
 
@@ -182,7 +182,7 @@ class Sensei_Course_Video_Settings {
 	 * @return mixed
 	 */
 	public function is_autopause_enabled() {
-		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );
+		$lesson_course = Sensei()->course_lessons_repository->get_course_id( (int) get_the_ID() ) ?? 0;
 		return get_post_meta( $lesson_course, self::COURSE_VIDEO_AUTOPAUSE, true );
 	}
 
@@ -192,7 +192,7 @@ class Sensei_Course_Video_Settings {
 	 * @return mixed
 	 */
 	public function is_required() {
-		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );
+		$lesson_course = Sensei()->course_lessons_repository->get_course_id( (int) get_the_ID() ) ?? 0;
 		return get_post_meta( $lesson_course, self::COURSE_VIDEO_REQUIRED, true );
 	}
 }
