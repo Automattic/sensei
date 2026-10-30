@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import nock from 'nock';
 
 /**
  * WordPress dependencies
@@ -135,14 +136,82 @@ describe( '<StudentBulkActionButton />', () => {
 			)
 		).toBeInTheDocument();
 	} );
+
+	it.each( [
+		[ 'multiple students', [ 1, 3 ], '2 students' ],
+		[ 'one student', [ 2 ], 'Student 2' ],
+	] )(
+		'Submits the students selected in the table for %s',
+		async ( scenario, studentIds, description ) => {
+			setupSelector(
+				[ { value: 'enrol_restore_enrolment', selected: true } ],
+				studentIds
+			);
+			const request = nock( 'http://localhost' )
+				.post( '/sensei-internal/v1/course-students/batch', {
+					student_ids: studentIds,
+					course_ids: [ 1 ],
+				} )
+				.query( { _locale: 'user' } )
+				.reply( 200, {
+					1: { 1: true },
+					2: { 1: true },
+					3: { 1: true },
+				} );
+			render( <StudentBulkActionButton isDisabled={ false } /> );
+
+			fireEvent.click(
+				screen.getByRole( 'button', { name: 'Select Action' } )
+			);
+
+			expect(
+				screen.getByText(
+					ignoreInlineTags(
+						`Select the course(s) you would like to add ${ description } to:`
+					)
+				)
+			).toBeInTheDocument();
+
+			fireEvent.click( await screen.findByLabelText( 'My Course' ) );
+			fireEvent.click(
+				screen.getByRole( 'button', { name: 'Add to Course' } )
+			);
+
+			await waitFor( () => expect( request.isDone() ).toBe( true ) );
+		}
+	);
 } );
 
 /**
  *  Create selector element with options that are passed to the function.
  *
- * @param {Array} options Options to created selector with.
+ * @param {Array} options    Options to created selector with.
+ * @param {Array} studentIds Selected student IDs.
  */
-const setupSelector = ( options ) => {
+const setupSelector = ( options, studentIds = [ 1, 2, 3 ] ) => {
+	render(
+		<table>
+			<tbody>
+				{ [ 1, 2, 3 ].map( ( id ) => (
+					<tr key={ id }>
+						<td>
+							<input
+								type="checkbox"
+								className="sensei_user_select_id"
+								value={ id }
+								defaultChecked={ studentIds.includes( id ) }
+							/>
+							<span
+								className="student-action-menu"
+								data-user-display-name={ `Student ${ id }` }
+							/>
+						</td>
+					</tr>
+				) ) }
+			</tbody>
+		</table>
+	);
+
 	const mockSelector = document.createElement( 'select' );
 	mockSelector.id = 'bulk-action-selector-top';
 	options.forEach( ( option ) => {
@@ -156,13 +225,7 @@ const setupSelector = ( options ) => {
 		mockSelector.appendChild( optionElement );
 	} );
 
-	const mockStudentIdContainer = document.createElement( 'input' );
-	mockStudentIdContainer.id = 'bulk-action-user-ids';
-	mockStudentIdContainer.value = '[1,2,3]';
-
 	spy.mockImplementation( ( elementId ) => {
-		return 'bulk-action-selector-top' === elementId
-			? mockSelector
-			: mockStudentIdContainer;
+		return 'bulk-action-selector-top' === elementId ? mockSelector : null;
 	} );
 };

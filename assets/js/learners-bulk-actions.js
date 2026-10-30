@@ -40,9 +40,6 @@ jQuery( document ).ready( function () {
 
 				return this;
 			},
-			getUserIds() {
-				return selectedUserIds;
-			},
 			setAction( ac ) {
 				bulkAction = ac;
 				return this;
@@ -124,8 +121,7 @@ jQuery( document ).ready( function () {
 
 	( function () {
 		const { __ } = wp.i18n;
-		const $hiddenSelectedUserIdsField = $( '#bulk-action-user-ids' ),
-			$actionSelector = $( '#bulk-action-selector-top' ),
+		const $actionSelector = $( '#bulk-action-selector-top' ),
 			$courseSelect = $( '.sensei-course-select' ),
 			$bulkActionSelect = $( '.sensei-bulk-action-select' ),
 			$selectUserCheckboxes = $( '.sensei_user_select_id' ),
@@ -166,9 +162,6 @@ jQuery( document ).ready( function () {
 							selectedUserIdsValidationResult.isValid,
 					},
 				} )
-			);
-			$hiddenSelectedUserIdsField.val(
-				JSON.stringify( bulkUserActions.getUserIds() )
 			);
 		};
 

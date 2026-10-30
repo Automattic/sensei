@@ -64,32 +64,25 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 			'bulk-action-selector-top'
 		);
 
-		const hiddenSelectedUserIdsField = document.getElementById(
-			'bulk-action-user-ids'
+		const selectedStudents = Array.from(
+			document.querySelectorAll( 'input.sensei_user_select_id:checked' )
+		);
+		const selectedStudentIds = selectedStudents.map( ( student ) =>
+			Number( student.value )
 		);
 
 		if ( hiddenSenseiBulkAction ) {
 			setActionValue( hiddenSenseiBulkAction.value );
 		}
 
-		if ( hiddenSelectedUserIdsField ) {
-			try {
-				const parsedStudentIds = JSON.parse(
-					hiddenSelectedUserIdsField.value
-				);
-				setStudentIds( parsedStudentIds );
-				if ( parsedStudentIds.length === 1 ) {
-					setStudentName(
-						document
-							.querySelector(
-								'input.sensei_user_select_id:checked'
-							)
-							.closest( 'tr' )
-							.querySelector( '.student-action-menu' )
-							.getAttribute( 'data-user-display-name' )
-					);
-				}
-			} catch {}
+		setStudentIds( selectedStudentIds );
+		if ( selectedStudents.length === 1 ) {
+			setStudentName(
+				selectedStudents[ 0 ]
+					.closest( 'tr' )
+					.querySelector( '.student-action-menu' )
+					.getAttribute( 'data-user-display-name' )
+			);
 		}
 
 		setIsModalOpen( true );
@@ -136,7 +129,6 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 			>
 				{ __( 'Select Action', 'sensei-lms' ) }
 			</Button>
-			<input type="hidden" id="bulk-action-user-ids" />
 			{ isModalOpen && modal }
 		</>
 	);

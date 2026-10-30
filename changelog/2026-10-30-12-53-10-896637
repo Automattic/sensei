@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix bulk student actions failing with an empty student list despite students being selected on the Students page.
