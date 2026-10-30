@@ -422,6 +422,20 @@ class Sensei_Quiz {
 			return false;
 		}
 
+		// Quiz submissions still require a lesson comment when HPPS reads from tables.
+		if ( ! Sensei_Utils::user_lesson_status( $lesson_id, $user_id ) ) {
+			try {
+				$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+				if ( ! $lesson_progress ) {
+					return false;
+				}
+				Sensei()->lesson_progress_repository->save( $lesson_progress );
+			} catch ( Persistence_Exception $exception ) {
+				$exception->log();
+				return false;
+			}
+		}
+
 		// prepare the answers
 		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers, $files );
 		if ( ! $prepared_answers ) {
