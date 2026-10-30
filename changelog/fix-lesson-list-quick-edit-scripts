@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix the lesson Quick Edit fields not showing the lesson's current values on the lessons list.
