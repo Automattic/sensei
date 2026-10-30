@@ -413,6 +413,42 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Extension completion calls retain failure returns inside Sensei's hook dispatch.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 * @covers Sensei_Utils::user_complete_course
+	 */
+	public function testUserCompleteCourse_ExtensionCalledDuringLessonHook_ReturnsFalseWithoutInterruptingCallback( string $mode ): void {
+		$lesson_id        = $this->factory->lesson->create();
+		$course_id        = $this->factory->course->create();
+		$user_id          = $this->factory->user->create();
+		$extension_result = null;
+		$continued        = false;
+		$observer         = static function () use ( $course_id, $user_id, &$extension_result, &$continued ) {
+			$extension_result = Sensei_Utils::user_complete_course( $course_id, $user_id );
+			$continued        = true;
+		};
+		add_action( 'sensei_user_lesson_end', $observer, 20 );
+
+		try {
+			$result = $this->with_failed_progress_insert(
+				$mode,
+				'course',
+				static function () use ( $lesson_id, $user_id ) {
+					return Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+				}
+			);
+
+			self::assertNotFalse( $result, 'An unrelated extension operation must not fail the lesson action.' );
+			self::assertFalse( $extension_result, 'The extension must receive the ordinary failure return.' );
+			self::assertTrue( $continued, 'The extension must be able to finish its callback.' );
+		} finally {
+			remove_action( 'sensei_user_lesson_end', $observer, 20 );
+		}
+	}
+
+	/**
 	 * Start listeners can initialize progress before the lesson is created.
 	 *
 	 * @covers Sensei_Utils::sensei_start_lesson

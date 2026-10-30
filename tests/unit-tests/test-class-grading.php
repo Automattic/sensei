@@ -980,6 +980,60 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Course-status failures during completion must still produce the grading error notice.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 * @covers Sensei_Grading::add_grading_notices
+	 */
+	public function testAdminProcessGradingSubmission_CourseInsertFailedDuringCompletion_ShowsError( string $mode ): void {
+		$owner   = $this->get_user_by_role( 'teacher' );
+		$user_id = $this->factory->user->create();
+		$data    = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 1,
+				'course_args'    => array( 'post_author' => $owner ),
+				'lesson_args'    => array( 'post_author' => $owner ),
+			)
+		);
+		update_post_meta( $data['quiz_ids'][0], '_pass_required', '' );
+		$this->login_as( $owner );
+		$this->setGradingSubmissionGlobals( $data['quiz_ids'][0], $user_id );
+		$this->prevent_wp_redirect();
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'course',
+			function ( $fault ) use ( $data, $user_id ) {
+				remove_filter( 'query', $fault );
+				Sensei_Utils::user_start_course( $user_id, $data['course_id'] );
+				Sensei_Utils::sensei_start_lesson( $data['lesson_ids'][0], $user_id );
+				if ( ! Sensei()->quiz_progress_repository->get( $data['quiz_ids'][0], $user_id ) ) {
+					Sensei()->quiz_progress_repository->create( $data['quiz_ids'][0], $user_id );
+				}
+				add_filter( 'query', $fault );
+				$remove_progress = static function () use ( $data, $user_id ) {
+					$repository = Sensei()->course_progress_repository;
+					$repository->delete( $repository->get( $data['course_id'], $user_id ) );
+				};
+				add_action( 'sensei_user_lesson_end', $remove_progress, 9 );
+
+				try {
+					$result = Sensei()->grading->admin_process_grading_submission();
+					ob_start();
+					Sensei()->grading->add_grading_notices();
+					$notice = ob_get_clean();
+
+					self::assertFalse( $result, 'The failed course-status update must prevent grading success.' );
+					self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The failure must be visible to the grader.' );
+				} finally {
+					remove_action( 'sensei_user_lesson_end', $remove_progress, 9 );
+				}
+			}
+		);
+	}
+
+	/**
 	 * Creates a manual, pass-required quiz authored by (and whose lesson is authored by)
 	 * the given teacher.
 	 *
