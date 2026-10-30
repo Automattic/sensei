@@ -50,7 +50,7 @@ class Sensei_Core_Lesson_Modules {
 		if ( $course_id ) {
 			$course_id = intval( $course_id );
 		} else {
-			$course_id = get_post_meta( $this->lesson_id, '_lesson_course', true );
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $this->lesson_id );
 		}
 
 		// Does the incoming module belong to the course?
