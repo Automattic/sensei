@@ -226,8 +226,6 @@ const setupSelector = ( options, studentIds = [ 1, 2, 3 ] ) => {
 	} );
 
 	spy.mockImplementation( ( elementId ) => {
-		return 'bulk-action-selector-top' === elementId
-			? mockSelector
-			: null;
+		return 'bulk-action-selector-top' === elementId ? mockSelector : null;
 	} );
 };
