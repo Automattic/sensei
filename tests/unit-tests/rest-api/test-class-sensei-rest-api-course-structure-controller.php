@@ -353,6 +353,39 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 	}
 
 	/**
+	 * A module id owned by another teacher is refused before anything is saved.
+	 */
+	public function testPost_ModuleIdOwnedByAnotherTeacherGiven_Returns403() {
+		$teacher_a_id = $this->get_user_by_role( 'teacher' );
+		$module_id    = $this->factory->term->create(
+			array(
+				'taxonomy' => 'module',
+				'name'     => 'Teacher A module',
+				'slug'     => $teacher_a_id . '-teacher-a-module',
+			)
+		);
+		add_term_meta( $module_id, 'module_author', $teacher_a_id, true );
+
+		$this->login_as_teacher_b();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'id'      => $module_id,
+				'title'   => 'Hijacked',
+				'lessons' => array(),
+			),
+		);
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertSame( 'Teacher A module', get_term( $module_id, 'module' )->name, 'The module should be untouched.' );
+	}
+	/**
 	 * Tests to make sure an guest cannot edit course structure with `POST /sensei-internal/v1/course-structure/{course_id}`.
 	 */
 	public function testPostGuest() {
@@ -902,5 +935,79 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		/* Assert */
 		$response_status = $response->get_status();
 		$this->assertEquals( 403, $response_status );
+	}
+
+	/**
+	 * The outline still saves when a teacher change replaced its module term before the editor submitted it.
+	 *
+	 * Sensei_Teacher::update_course_modules_author() moves modules to the new teacher's slug and
+	 * deletes the old term when the term meta still names the previous teacher, which is the
+	 * case when it runs before the course author is updated.
+	 */
+	public function testPost_ModuleIdReplacedByTeacherChangeGiven_SavesWithReplacementModule() {
+		$this->login_as_teacher_b();
+		$teacher_b_id = get_current_user_id();
+		$this->login_as_admin();
+		$teacher_a_id = $this->get_user_by_role( 'teacher' );
+		$course_id    = $this->factory->course->create( array( 'post_author' => $teacher_a_id ) );
+		$saved        = Sensei_Course_Structure::instance( $course_id )->save(
+			array(
+				array(
+					'type'    => 'module',
+					'title'   => 'Basics',
+					'lessons' => array(
+						array(
+							'type'  => 'lesson',
+							'title' => 'Welcome',
+						),
+					),
+				),
+			)
+		);
+		$this->assertTrue( $saved );
+		$before        = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+		$old_module_id = $before[0]['id'];
+		$lesson_id     = $before[0]['lessons'][0]['id'];
+
+		Sensei_Teacher::update_course_modules_author( $course_id, $teacher_b_id );
+		wp_update_post(
+			array(
+				'ID'          => $course_id,
+				'post_author' => $teacher_b_id,
+			)
+		);
+		$this->assertNotInstanceOf( WP_Term::class, get_term( $old_module_id, 'module' ), 'The teacher change should have replaced the module term.' );
+		$replacement = get_term_by( 'slug', $teacher_b_id . '-basics', 'module' );
+		$this->assertInstanceOf( WP_Term::class, $replacement );
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_body(
+			wp_json_encode(
+				array(
+					'structure' => array(
+						array(
+							'type'      => 'module',
+							'id'        => $old_module_id,
+							'title'     => 'Basics',
+							'lastTitle' => 'Basics',
+							'teacherId' => $teacher_b_id,
+							'lessons'   => array(
+								array(
+									'type'  => 'lesson',
+									'id'    => $lesson_id,
+									'title' => 'Welcome back',
+								),
+							),
+						),
+					),
+				)
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( $replacement->term_id, $response->get_data()[0]['id'], 'The outline should be saved to the replacement module.' );
+		$this->assertSame( 'Welcome back', get_post( $lesson_id )->post_title );
 	}
 }
