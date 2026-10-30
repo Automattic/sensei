@@ -41,8 +41,8 @@ const getAction = ( action, studentCount, studentDisplayName ) => {
 			buttonLabel: __( 'Add to Course', 'sensei-lms' ),
 			errorMessage: ( students ) =>
 				_n(
-					"We couldn't finish enrolling the selected student. Check the student list before repeating the action. Contact your site administrator for help.",
-					"We couldn't finish enrolling the selected students. Check the student list before repeating the action. Contact your site administrator for help.",
+					"We couldn't finish enrolling the selected student. You can repeat the enrollment action. If the problem continues, contact your site administrator for help.",
+					"We couldn't finish enrolling the selected students. You can repeat the enrollment action. If the problem continues, contact your site administrator for help.",
 					students.length,
 					'sensei-lms'
 				),
@@ -172,27 +172,33 @@ export const StudentModal = ( {
 				selectedCourses.map( ( course ) => course.id ),
 				{ signal: getSignal() }
 			);
+
 			if ( action === 'add' ) {
+				// A completed request can contain failed or missing student/course results.
 				const outcomes = students.flatMap( ( studentId ) =>
 					selectedCourses.map(
 						( course ) =>
 							result?.[ studentId ]?.[ course.id ] === true
 					)
 				);
+
 				if ( outcomes.includes( false ) ) {
 					const successful = outcomes.filter( Boolean ).length;
 					const failed = outcomes.length - successful;
 					const hasSuccess = successful > 0;
+
 					if ( hasSuccess ) {
+						// Show saved enrollments when the modal is dismissed.
 						setNeedsReload( true );
 					}
+
 					setError(
 						hasSuccess
 							? sprintf(
 									// Translators: %1$d is completed enrollments; %2$d is failed enrollments.
 									_n(
-										"%1$d enrollment completed; %2$d couldn't be completed. Successful enrollments were kept. Check the student list before repeating the action.",
-										"%1$d enrollments completed; %2$d couldn't be completed. Successful enrollments were kept. Check the student list before repeating the action.",
+										"%1$d enrollment completed; %2$d couldn't be completed. Successful enrollments were kept. You can repeat the action to retry the failed enrollments.",
+										"%1$d enrollments completed; %2$d couldn't be completed. Successful enrollments were kept. You can repeat the action to retry the failed enrollments.",
 										successful,
 										'sensei-lms'
 									),
@@ -202,9 +208,12 @@ export const StudentModal = ( {
 							: errorMessage( students )
 					);
 					setIsSending( false );
+
+					// Keep the modal and selection available for retry.
 					return;
 				}
 			}
+
 			onClose( true );
 		} catch {
 			if ( ! getSignal().aborted ) {

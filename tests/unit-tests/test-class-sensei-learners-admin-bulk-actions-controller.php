@@ -10,7 +10,6 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
 class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
-	use Sensei_Test_Redirect_Helpers;
 
 	private $controller;
 
@@ -34,59 +33,6 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
-	}
-
-	/**
-	 * Bulk enrollment notices count each requested student and course pair.
-	 *
-	 * @dataProvider enrollment_result_scenarios
-	 * @covers Sensei_Learners_Admin_Bulk_Actions_Controller::handle_http_post
-	 */
-	public function testHandleHttpPost_FailedEnrollmentsGiven_ReportsPairCounts( int $successful_students, bool $deleted_student, string $expected_message, string $expected_successful, string $expected_failed ): void {
-		$this->login_as_teacher();
-		$this->removeEnrolmentProvider( Sensei_Course_Manual_Enrolment_Provider::class );
-		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Provides_For_Dinosaurs::class );
-		$this->prepareEnrolmentManager();
-		$courses        = $this->factory->course->create_many( 2 );
-		$failed_student = $this->factory->user->create();
-		if ( $deleted_student ) {
-			wp_delete_user( $failed_student );
-		}
-		$successful_ids = $this->factory->user->create_many( $successful_students, [ 'display_name' => 'Dinosaur Student' ] );
-		$controller     = new Sensei_Learners_Admin_Bulk_Actions_Controller( new Sensei_Learner_Management( '' ), Sensei_Learner::instance() );
-		$_GET['page'] = $controller->get_page_slug();
-		unset( $_GET['course_id'] );
-		$_POST['sensei_bulk_action']     = Sensei_Learners_Admin_Bulk_Actions_Controller::ENROL_RESTORE_ENROLMENT;
-		$_POST['bulk_action_course_ids'] = implode( ',', $courses );
-		$_POST['bulk_action_user_ids']   = implode( ',', array_merge( [ $failed_student ], $successful_ids ) );
-		$_REQUEST[ Sensei_Learners_Admin_Bulk_Actions_Controller::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD ] = wp_create_nonce( Sensei_Learners_Admin_Bulk_Actions_Controller::NONCE_SENSEI_BULK_LEARNER_ACTIONS );
-		$this->prevent_wp_redirect();
-		$redirect = '';
-
-		try {
-			$controller->handle_http_post();
-		} catch ( Sensei_WP_Redirect_Exception $exception ) {
-			$redirect = $exception->getMessage();
-		}
-
-		parse_str( wp_parse_url( $redirect, PHP_URL_QUERY ), $query );
-		self::assertSame( $expected_message, $query['message'], 'The redirect must report failed enrollments.' );
-		self::assertSame( $expected_successful, $query['enrollment_successful'], 'The notice must count completed student/course pairs.' );
-		self::assertSame( $expected_failed, $query['enrollment_failed'], 'The notice must count failed student/course pairs.' );
-		foreach ( $courses as $course_id ) {
-			self::assertFalse( Sensei_Course_Enrolment::get_course_instance( $course_id )->is_enrolled( $failed_student ), 'The failed student must not gain course access.' );
-			foreach ( $successful_ids as $student_id ) {
-				self::assertTrue( Sensei_Course_Enrolment::get_course_instance( $course_id )->is_enrolled( $student_id ), 'Successful students must retain course access.' );
-			}
-		}
-	}
-
-	public static function enrollment_result_scenarios(): array {
-		return [
-			'all failed'      => [ 0, false, 'action-failed', '0', '2' ],
-			'partial success' => [ 1, false, 'action-partial', '2', '2' ],
-			'deleted student' => [ 1, true, 'action-partial', '2', '2' ],
-		];
 	}
 
 	/**

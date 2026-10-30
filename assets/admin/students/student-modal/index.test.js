@@ -88,6 +88,7 @@ describe( '<StudentModal />', () => {
 
 		beforeEach( () => {
 			onClose.mockClear();
+
 			render(
 				<StudentModal
 					action="add"
@@ -147,12 +148,12 @@ describe( '<StudentModal />', () => {
 			[
 				'all enrollments fail',
 				{ 1: { 1: false }, 2: { 1: false }, 3: { 1: false } },
-				"We couldn't finish enrolling the selected students. Check the student list before repeating the action. Contact your site administrator for help.",
+				"We couldn't finish enrolling the selected students. You can repeat the enrollment action. If the problem continues, contact your site administrator for help.",
 			],
 			[
 				'some enrollments fail',
 				{ 1: { 1: true }, 2: { 1: false }, 3: {} },
-				"1 enrollment completed; 2 couldn't be completed. Successful enrollments were kept. Check the student list before repeating the action.",
+				"1 enrollment completed; 2 couldn't be completed. Successful enrollments were kept. You can repeat the action to retry the failed enrollments.",
 			],
 		] )(
 			'Shows the resolved failure and allows retry when %s',
@@ -161,6 +162,7 @@ describe( '<StudentModal />', () => {
 					.post( '/sensei-internal/v1/course-students/batch' )
 					.query( { _locale: 'user' } )
 					.reply( 200, result );
+
 				fireEvent.click( await courseOptionAt( 0 ) );
 
 				fireEvent.click( await buttonByLabel( 'Add to Course' ) );
@@ -203,6 +205,7 @@ describe( '<StudentModal />', () => {
 					2: { 1: false, 2: false },
 					3: false,
 				} );
+
 			fireEvent.click( await courseOptionAt( 0 ) );
 			fireEvent.click( await courseOptionAt( 1 ) );
 
@@ -210,7 +213,7 @@ describe( '<StudentModal />', () => {
 
 			expect(
 				await within( screen.getByRole( 'dialog' ) ).findByText(
-					"2 enrollments completed; 4 couldn't be completed. Successful enrollments were kept. Check the student list before repeating the action."
+					"2 enrollments completed; 4 couldn't be completed. Successful enrollments were kept. You can repeat the action to retry the failed enrollments."
 				)
 			).toBeInTheDocument();
 			expect( await courseOptionAt( 0 ) ).toBeChecked();
@@ -227,10 +230,11 @@ describe( '<StudentModal />', () => {
 					2: { 1: false },
 					3: { 1: true },
 				} );
+
 			fireEvent.click( await courseOptionAt( 0 ) );
 			fireEvent.click( await buttonByLabel( 'Add to Course' ) );
 			await within( screen.getByRole( 'dialog' ) ).findByText(
-				"2 enrollments completed; 1 couldn't be completed. Successful enrollments were kept. Check the student list before repeating the action."
+				"2 enrollments completed; 1 couldn't be completed. Successful enrollments were kept. You can repeat the action to retry the failed enrollments."
 			);
 
 			fireEvent.click( await buttonByLabel( 'Close' ) );
@@ -461,7 +465,7 @@ describe( '<StudentModal />', () => {
 
 				expect(
 					await findAllByText(
-						"We couldn't finish enrolling the selected student. Check the student list before repeating the action. Contact your site administrator for help."
+						"We couldn't finish enrolling the selected student. You can repeat the enrollment action. If the problem continues, contact your site administrator for help."
 					)
 				).toBeTruthy();
 			} );
@@ -561,7 +565,7 @@ describe( '<StudentModal />', () => {
 
 				expect(
 					await findAllByText(
-						"We couldn't finish enrolling the selected students. Check the student list before repeating the action. Contact your site administrator for help."
+						"We couldn't finish enrolling the selected students. You can repeat the enrollment action. If the problem continues, contact your site administrator for help."
 					)
 				).toBeTruthy();
 			} );
