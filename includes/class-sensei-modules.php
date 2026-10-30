@@ -300,7 +300,7 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function lesson_module_metabox( $post ) {
-		$course_id = (int) get_post_meta( $post->ID, '_lesson_course', true );
+		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post->ID ) ?? 0;
 
 		$this->output_lesson_module_metabox( $post, $course_id );
 	}
@@ -1135,7 +1135,7 @@ class Sensei_Core_Modules {
 	 */
 	public function save_lesson_module_progress( $user_id = 0, $lesson_id = 0 ) {
 		$module    = $this->get_lesson_module( $lesson_id );
-		$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
 		if ( $module && $course_id ) {
 			$this->save_user_module_progress( intval( $module->term_id ), intval( $course_id ), intval( $user_id ) );
 		}
@@ -1852,7 +1852,7 @@ class Sensei_Core_Modules {
 		}
 
 		$module->url = get_term_link( $module, $this->taxonomy );
-		$course_id   = intval( get_post_meta( intval( $lesson_id ), '_lesson_course', true ) );
+		$course_id   = Sensei()->course_lessons_repository->get_course_id( $lesson_id );
 		if ( isset( $course_id ) && 0 < $course_id ) {
 
 			// the course should contain the same module taxonomy term for this to be valid
