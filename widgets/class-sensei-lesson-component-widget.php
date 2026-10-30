@@ -198,7 +198,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 				$user_info           = get_userdata( absint( $post_item->post_author ) );
 				$author_link         = get_author_posts_url( absint( $post_item->post_author ) );
 				$author_display_name = $user_info->display_name;
-				$lesson_course_id    = get_post_meta( $post_id, '_lesson_course', true );
+				$lesson_course_id    = Sensei()->course_lessons_repository->get_course_id( $post_id );
 				?>
 				<li class="fix">
 					<?php do_action( 'sensei_lesson_image', $post_id, '100', '100', false, true ); ?>
