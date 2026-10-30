@@ -56,68 +56,38 @@ class Test_Sensei_Course_Video_Settings extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The autocomplete setting is read from the course of the current lesson.
+	 * Each course video setting of the current lesson is read from the lesson's course.
 	 *
 	 * @covers Sensei_Course_Video_Settings::is_autocomplete_enabled
-	 */
-	public function testIsAutocompleteEnabled_WhenLessonCourseHadAutocompleteEnabled_ReturnsCourseSetting() {
-		/* Arrange */
-		$course          = $this->factory->get_course_with_lessons(
-			array(
-				'question_count' => 0,
-				'course_args'    => array( 'meta_input' => array( Sensei_Course_Video_Settings::COURSE_VIDEO_AUTOCOMPLETE => true ) ),
-			)
-		);
-		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
-
-		/* Act */
-		$result = Sensei_Course_Video_Settings::instance()->is_autocomplete_enabled();
-
-		/* Assert */
-		self::assertSame( '1', $result );
-	}
-
-	/**
-	 * The autopause setting is read from the course of the current lesson.
-	 *
 	 * @covers Sensei_Course_Video_Settings::is_autopause_enabled
+	 * @covers Sensei_Course_Video_Settings::is_required
+	 * @dataProvider providerCourseVideoSetting_WhenLessonCourseHadSettingEnabled_ReturnsCourseSetting
+	 *
+	 * @param string $meta_key The course setting meta key.
+	 * @param string $method   The settings method that reads it.
 	 */
-	public function testIsAutopauseEnabled_WhenLessonCourseHadAutopauseEnabled_ReturnsCourseSetting() {
+	public function testCourseVideoSetting_WhenLessonCourseHadSettingEnabled_ReturnsCourseSetting( $meta_key, $method ) {
 		/* Arrange */
 		$course          = $this->factory->get_course_with_lessons(
 			array(
 				'question_count' => 0,
-				'course_args'    => array( 'meta_input' => array( Sensei_Course_Video_Settings::COURSE_VIDEO_AUTOPAUSE => true ) ),
+				'course_args'    => array( 'meta_input' => array( $meta_key => true ) ),
 			)
 		);
 		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
 
 		/* Act */
-		$result = Sensei_Course_Video_Settings::instance()->is_autopause_enabled();
+		$result = Sensei_Course_Video_Settings::instance()->$method();
 
 		/* Assert */
 		self::assertSame( '1', $result );
 	}
 
-	/**
-	 * The required video setting is read from the course of the current lesson.
-	 *
-	 * @covers Sensei_Course_Video_Settings::is_required
-	 */
-	public function testIsRequired_WhenLessonCourseHadVideoRequired_ReturnsCourseSetting() {
-		/* Arrange */
-		$course          = $this->factory->get_course_with_lessons(
-			array(
-				'question_count' => 0,
-				'course_args'    => array( 'meta_input' => array( Sensei_Course_Video_Settings::COURSE_VIDEO_REQUIRED => true ) ),
-			)
+	public function providerCourseVideoSetting_WhenLessonCourseHadSettingEnabled_ReturnsCourseSetting(): array {
+		return array(
+			'autocomplete' => array( Sensei_Course_Video_Settings::COURSE_VIDEO_AUTOCOMPLETE, 'is_autocomplete_enabled' ),
+			'autopause'    => array( Sensei_Course_Video_Settings::COURSE_VIDEO_AUTOPAUSE, 'is_autopause_enabled' ),
+			'required'     => array( Sensei_Course_Video_Settings::COURSE_VIDEO_REQUIRED, 'is_required' ),
 		);
-		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
-
-		/* Act */
-		$result = Sensei_Course_Video_Settings::instance()->is_required();
-
-		/* Assert */
-		self::assertSame( '1', $result );
 	}
 }
