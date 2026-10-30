@@ -1,6 +1,4 @@
 <?php
-
-use Sensei\Internal\Persistence_Exception;
 /**
  * Learner Management
  *
@@ -10,6 +8,8 @@ use Sensei\Internal\Persistence_Exception;
  * @package Sensei\Learner\Management
  * @since 1.3.0
  */
+
+use Sensei\Internal\Persistence_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -552,7 +552,7 @@ class Sensei_Learner_Management {
 				$repository->save( $progress );
 			} catch ( Persistence_Exception $exception ) {
 				$exception->log();
-				wp_die( esc_html__( 'We couldn\'t save this start date. Reload this page and try again. If it still doesn\'t work, contact your site administrator.', 'sensei-lms' ), '', [ 'response' => 500 ] );
+				wp_die( esc_html__( 'We couldn\'t save this start date. Reload this page and try again. If it still doesn\'t work, contact your site administrator.', 'sensei-lms' ), '', array( 'response' => 500 ) );
 			}
 		}
 

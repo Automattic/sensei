@@ -109,8 +109,9 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				'%s',
 			]
 		);
-		$id = (int) $this->wpdb->insert_id;
+		$id               = (int) $this->wpdb->insert_id;
 		if ( false === $result || $id <= 0 ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
 			throw new Persistence_Exception( 'lesson', 'tables', $lesson_id, $user_id, false === $result ? 'insert_failed' : 'invalid_insert_id' );
 		}
 
@@ -125,7 +126,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			$current_datetime
 		);
 
-		if ( $id && Progress_Storage_Settings::is_cache_enabled() ) {
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_set( self::get_prefixed_key( $this->get_cache_key( $lesson_id, $user_id ), self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
 		}
 

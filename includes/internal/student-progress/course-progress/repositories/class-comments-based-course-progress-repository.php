@@ -57,11 +57,13 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		];
 		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, Course_Progress_Interface::STATUS_IN_PROGRESS, $metadata );
 		if ( ! $comment_id ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
 			throw new Persistence_Exception( 'course', 'comments', $course_id, $user_id, 'insert_failed' );
 		}
 
 		$comment = get_comment( $comment_id );
 		if ( ! $comment ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
 			throw new Persistence_Exception( 'course', 'comments', $course_id, $user_id, 'created_progress_not_found' );
 		}
 

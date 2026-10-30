@@ -858,7 +858,7 @@ class Sensei_Grading {
 		$quiz_id = absint( $_GET['quiz_id'] );
 		$user_id = isset( $_GET['user'] ) ? absint( $_GET['user'] ) : 0;
 
-		$quiz_lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$quiz_lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
 
 		// No lesson means there is nothing to grade against.
 		if ( ! $quiz_lesson_id ) {
@@ -1015,7 +1015,6 @@ class Sensei_Grading {
 			$this->progress_save_failed = true;
 			return false;
 		}
-
 	}
 
 	public function get_redirect_url() {
@@ -1098,7 +1097,7 @@ class Sensei_Grading {
 
 	public function add_grading_notices() {
 		if ( $this->progress_save_failed ) {
-			wp_admin_notice( __( 'We couldn\'t save these grading changes. Keep this page open and copy any feedback before reloading. Contact your site administrator for help.', 'sensei-lms' ), [ 'type' => 'error' ] );
+			wp_admin_notice( __( 'We couldn\'t save these grading changes. Keep this page open and copy any feedback before reloading. Contact your site administrator for help.', 'sensei-lms' ), array( 'type' => 'error' ) );
 			return;
 		}
 
@@ -1143,7 +1142,7 @@ class Sensei_Grading {
 	 * @param  integer $total_questions Total questions in quiz (not used)
 	 * @param string  $quiz_grade_type Optional defaults to auto
 	 *
-	 * @return int $quiz_grade total sum of all question grades
+	 * @return int|float|WP_Error Quiz grade or an error when grading cannot complete.
 	 */
 	public static function grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
 
@@ -1200,7 +1199,6 @@ class Sensei_Grading {
 				&& ! Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type ) ) {
 				return new WP_Error( 'sensei_progress_save_failed', __( 'The quiz grade could not be saved.', 'sensei-lms' ) );
 			}
-
 		} else {
 
 			$grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'sensei-lms' ) );

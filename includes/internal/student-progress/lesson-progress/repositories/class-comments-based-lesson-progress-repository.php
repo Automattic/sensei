@@ -56,11 +56,13 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		];
 		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, Lesson_Progress_Interface::STATUS_IN_PROGRESS, $metadata );
 		if ( ! $comment_id ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
 			throw new Persistence_Exception( 'lesson', 'comments', $lesson_id, $user_id, 'insert_failed' );
 		}
 
 		$comment = get_comment( $comment_id );
 		if ( ! $comment ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
 			throw new Persistence_Exception( 'lesson', 'comments', $lesson_id, $user_id, 'created_progress_not_found' );
 		}
 

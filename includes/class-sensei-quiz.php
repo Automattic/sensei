@@ -24,7 +24,7 @@ class Sensei_Quiz {
 	 *
 	 * @var array
 	 */
-	private $unsaved_answers = [];
+	private $unsaved_answers = array();
 
 	/**
 	 * The CPT token.
@@ -966,7 +966,6 @@ class Sensei_Quiz {
 			$exception->log();
 			return false;
 		}
-
 	}
 
 	/**
@@ -1035,8 +1034,11 @@ class Sensei_Quiz {
 				return false;
 			}
 
-			// Save Quiz Answers for grading, the save function also calls the sensei_start_lesson.
-			if ( false === self::save_user_answers( $quiz_answers, $files, $lesson_id, $user_id ) ) {
+			// Empty submissions still need progress, even though there are no answers to save.
+			$answers_saved = empty( $quiz_answers )
+				? Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id )
+				: self::save_user_answers( $quiz_answers, $files, $lesson_id, $user_id );
+			if ( false === $answers_saved ) {
 				return false;
 			}
 
@@ -1117,7 +1119,6 @@ class Sensei_Quiz {
 			$exception->log();
 			return false;
 		}
-
 	}
 
 	/**

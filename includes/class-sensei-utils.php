@@ -469,7 +469,7 @@ class Sensei_Utils {
 			return false;
 		}
 
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
 		$course_id = Sensei()->course_lessons_repository->get_course_id( $lesson_id );
 		if ( $course_id && false === self::user_start_course( $user_id, $course_id ) ) {
 			return false;
@@ -503,7 +503,6 @@ class Sensei_Utils {
 			$exception->log();
 			return false;
 		}
-
 	}
 
 	/**
@@ -633,7 +632,7 @@ class Sensei_Utils {
 			$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 			if ( ! $lesson_progress ) {
 				$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
-				$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
+				$has_questions   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 				if ( $complete && $has_questions ) {
 					self::update_user_data( 'grade', intval( $lesson_id ), 0, $user_id );
 				}
@@ -677,7 +676,6 @@ class Sensei_Utils {
 			$exception->log();
 			return false;
 		}
-
 	}
 
 	/**
@@ -1625,8 +1623,8 @@ class Sensei_Utils {
 	 * @since  1.7.0
 	 * @param  integer $course_id Course ID
 	 * @param  integer $user_id   User ID
-	 * @param bool $trigger_completion_action Whether to fire the course completion action.
-	 * @param bool $throw_on_failure Whether to propagate persistence failures to an enclosing operation.
+	 * @param bool    $trigger_completion_action Whether to fire the course completion action.
+	 * @param bool    $throw_on_failure Whether to propagate persistence failures to an enclosing operation.
 	 * @since $$next-version$$ Added the $throw_on_failure argument.
 	 * @throws Persistence_Exception If progress creation fails and $throw_on_failure is true.
 	 * @return mixed boolean or comment_ID
@@ -2330,7 +2328,6 @@ class Sensei_Utils {
 			if ( false === self::$start_function( $user_id, $post_id ) ) {
 				return false;
 			}
-
 		}
 
 		if ( 'course' === $post_type ) {
