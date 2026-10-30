@@ -28,22 +28,25 @@ abstract class Course_Progress_Repository_Test extends \WP_UnitTestCase {
 	 */
 	public function testCreate_InsertFailed_ThrowsWithoutInvalidProgress(): void {
 		global $wpdb;
-		$course_id  = self::factory()->post->create( [ 'post_type' => 'course' ] );
+		$course_id  = self::factory()->post->create( array( 'post_type' => 'course' ) );
 		$user_id    = self::factory()->user->create();
 		$repository = $this->get_repository();
 
-		$this->with_failed_cached_insert( $this->get_insert_table(), function () use ( $wpdb, $repository, $course_id, $user_id ) {
-			$failure = null;
-			try {
-				$repository->create( $course_id, $user_id );
-			} catch ( Persistence_Exception $exception ) {
-				$failure = $exception;
-			}
+		$this->with_failed_cached_insert(
+			$this->get_insert_table(),
+			function () use ( $wpdb, $repository, $course_id, $user_id ) {
+				$failure = null;
+				try {
+					$repository->create( $course_id, $user_id );
+				} catch ( Persistence_Exception $exception ) {
+					$failure = $exception;
+				}
 
-			self::assertInstanceOf( Persistence_Exception::class, $failure, 'A failed insert must report a persistence failure.' );
-			self::assertNull( ( new Tables_Based_Course_Progress_Repository( $wpdb ) )->get( $course_id, $user_id ), 'A failed operation must leave no table model or cached model.' );
-			self::assertNull( ( new Comments_Based_Course_Progress_Repository() )->get( $course_id, $user_id ), 'A failed insert must leave no comments progress.' );
-		} );
+				self::assertInstanceOf( Persistence_Exception::class, $failure, 'A failed insert must report a persistence failure.' );
+				self::assertNull( ( new Tables_Based_Course_Progress_Repository( $wpdb ) )->get( $course_id, $user_id ), 'A failed operation must leave no table model or cached model.' );
+				self::assertNull( ( new Comments_Based_Course_Progress_Repository() )->get( $course_id, $user_id ), 'A failed insert must leave no comments progress.' );
+			}
+		);
 	}
 
 	/**
@@ -59,5 +62,4 @@ abstract class Course_Progress_Repository_Test extends \WP_UnitTestCase {
 	 * @return string Table name.
 	 */
 	abstract protected function get_insert_table(): string;
-
 }

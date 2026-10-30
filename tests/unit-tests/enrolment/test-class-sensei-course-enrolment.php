@@ -76,17 +76,21 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->prepareEnrolmentManager();
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$this->with_failed_progress_insert( $mode, 'course', function ( $fault_filter ) use ( $course_enrolment, $course_id, $user_id ) {
-			$first_check = $course_enrolment->is_enrolled( $user_id );
-			remove_filter( 'query', $fault_filter );
-			$retry_check = $course_enrolment->is_enrolled( $user_id );
+		$this->with_failed_progress_insert(
+			$mode,
+			'course',
+			function ( $fault_filter ) use ( $course_enrolment, $course_id, $user_id ) {
+				$first_check = $course_enrolment->is_enrolled( $user_id );
+				remove_filter( 'query', $fault_filter );
+				$retry_check = $course_enrolment->is_enrolled( $user_id );
 
-			self::assertFalse( $first_check, 'Required progress failure must reject the initial access check.' );
-			self::assertTrue( $retry_check, 'A normal access check must retry after the fault is resolved.' );
-			self::assertNotNull( Sensei()->course_progress_repository->get( $course_id, $user_id ), 'Recovery must persist course progress.' );
-			$term = Sensei_Learner::get_learner_term( $user_id );
-			self::assertTrue( has_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'Recovery must persist taxonomy access.' );
-		} );
+				self::assertFalse( $first_check, 'Required progress failure must reject the initial access check.' );
+				self::assertTrue( $retry_check, 'A normal access check must retry after the fault is resolved.' );
+				self::assertNotNull( Sensei()->course_progress_repository->get( $course_id, $user_id ), 'Recovery must persist course progress.' );
+				$term = Sensei_Learner::get_learner_term( $user_id );
+				self::assertTrue( has_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'Recovery must persist taxonomy access.' );
+			}
+		);
 	}
 
 	/**

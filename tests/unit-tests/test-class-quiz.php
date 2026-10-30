@@ -239,16 +239,20 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 */
 	public function testSaveUserAnswers_PrimaryLessonInsertFailed_DoesNotSaveSubmission( string $mode ): void {
 		$lesson_id = $this->factory->get_random_lesson_id();
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
-		$user_id = $this->factory->user->create();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$answers   = $this->factory->generate_user_quiz_answers( $quiz_id );
+		$user_id   = $this->factory->user->create();
 
-		$this->with_failed_progress_insert( $mode, 'lesson', function () use ( $lesson_id, $quiz_id, $answers, $user_id ) {
-			$result = Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, $user_id );
+		$this->with_failed_progress_insert(
+			$mode,
+			'lesson',
+			function () use ( $lesson_id, $quiz_id, $answers, $user_id ) {
+				$result = Sensei_Quiz::save_user_answers( $answers, array(), $lesson_id, $user_id );
 
-			self::assertFalse( $result, 'Failed progress must stop answer processing.' );
-			self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'No dependent submission may be created.' );
-		} );
+				self::assertFalse( $result, 'Failed progress must stop answer processing.' );
+				self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'No dependent submission may be created.' );
+			}
+		);
 	}
 
 	/**
@@ -657,31 +661,46 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Quiz::reset_user_lesson_data
 	 */
 	public function testResetUserLessonData_RequiredLessonInsertFailed_PreservesAnswers( string $mode, string $failed_store ): void {
-		$data = $this->factory->get_course_with_lessons( [ 'question_count' => 1 ] );
+		$data      = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
 		$lesson_id = $data['lesson_ids'][0];
-		$quiz_id = $data['quiz_ids'][0];
-		$user_id = $this->factory->user->create();
-		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
+		$quiz_id   = $data['quiz_ids'][0];
+		$user_id   = $this->factory->user->create();
+		$answers   = $this->factory->generate_user_quiz_answers( $quiz_id );
 
-		$this->with_failed_progress_insert( $mode, 'lesson', function ( $fault_filter ) use ( $mode, $lesson_id, $quiz_id, $user_id, $answers ) {
-			remove_filter( 'query', $fault_filter );
-			Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, $user_id );
-			$factory = Sensei()->lesson_progress_repository_factory;
-			$secondary = 'tables' === $mode ? $factory->create_comments_based_repository() : new \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository( $GLOBALS['wpdb'] );
-			$secondary->delete( $secondary->get( $lesson_id, $user_id ) );
-			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-			$before = array_map( static function ( $answer ) {
-				return $answer->get_value();
-			}, Sensei()->quiz_answer_repository->get_all( $submission->get_id() ) );
-			add_filter( 'query', $fault_filter );
+		$this->with_failed_progress_insert(
+			$mode,
+			'lesson',
+			function ( $fault_filter ) use ( $mode, $lesson_id, $quiz_id, $user_id, $answers ) {
+				remove_filter( 'query', $fault_filter );
+				Sensei_Quiz::save_user_answers( $answers, array(), $lesson_id, $user_id );
+				$factory   = Sensei()->lesson_progress_repository_factory;
+				$secondary = 'tables' === $mode ? $factory->create_comments_based_repository() : new \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository( $GLOBALS['wpdb'] );
+				$secondary->delete( $secondary->get( $lesson_id, $user_id ) );
+				$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+				$before     = array_map(
+					static function ( $answer ) {
+						return $answer->get_value();
+					},
+					Sensei()->quiz_answer_repository->get_all( $submission->get_id() )
+				);
+				add_filter( 'query', $fault_filter );
 
-			$result = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+				$result = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
-			self::assertFalse( $result, 'Reset must report the required progress failure.' );
-			self::assertSame( $before, array_map( static function ( $answer ) {
-				return $answer->get_value();
-			}, Sensei()->quiz_answer_repository->get_all( $submission->get_id() ) ), 'A failed progress save must not delete the existing answers.' );
-		}, $failed_store );
+				self::assertFalse( $result, 'Reset must report the required progress failure.' );
+				self::assertSame(
+					$before,
+					array_map(
+						static function ( $answer ) {
+							return $answer->get_value();
+						},
+						Sensei()->quiz_answer_repository->get_all( $submission->get_id() )
+					),
+					'A failed progress save must not delete the existing answers.'
+				);
+			},
+			$failed_store
+		);
 	}
 
 	/**
@@ -916,18 +935,22 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Quiz::get_user_answers
 	 */
 	public function testUserSaveQuizAnswersListener_LessonInsertFailed_RetainsSubmittedAnswer( string $mode ): void {
-		$ids = $this->setup_save_quiz_answers_request();
+		$ids      = $this->setup_save_quiz_answers_request();
 		$comments = Sensei()->lesson_progress_repository_factory->create_comments_based_repository();
 		$comments->delete( $comments->get( $ids['lesson_id'], $ids['user_id'] ) );
 
-		$this->with_failed_progress_insert( $mode, 'lesson', function () use ( $ids ) {
-			$submission_before = Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] );
+		$this->with_failed_progress_insert(
+			$mode,
+			'lesson',
+			function () use ( $ids ) {
+				$submission_before = Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] );
 
-			Sensei()->quiz->user_save_quiz_answers_listener();
+				Sensei()->quiz->user_save_quiz_answers_listener();
 
-			self::assertSame( [ $ids['question_id'] => 'Rewritten answer' ], Sensei()->quiz->get_user_answers( $ids['lesson_id'], $ids['user_id'] ), 'The form must retain the submitted text for retry.' );
-			self::assertEquals( $submission_before, Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] ), 'Retaining input must not change the persisted submission.' );
-		} );
+				self::assertSame( array( $ids['question_id'] => 'Rewritten answer' ), Sensei()->quiz->get_user_answers( $ids['lesson_id'], $ids['user_id'] ), 'The form must retain the submitted text for retry.' );
+				self::assertEquals( $submission_before, Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] ), 'Retaining input must not change the persisted submission.' );
+			}
+		);
 	}
 
 	public function testUserSaveQuizAnswersListener_QuizCompleted_KeepsTheSavedAnswer() {
@@ -1030,16 +1053,20 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 */
 	public function testSubmitAnswersForGrading_PrimaryLessonInsertFailed_DoesNotSaveSubmission( string $mode ): void {
 		$lesson_id = $this->factory->get_random_lesson_id();
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
-		$user_id = $this->factory->user->create();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$answers   = $this->factory->generate_user_quiz_answers( $quiz_id );
+		$user_id   = $this->factory->user->create();
 
-		$this->with_failed_progress_insert( $mode, 'lesson', function () use ( $lesson_id, $quiz_id, $answers, $user_id ) {
-			$result = Sensei_Quiz::submit_answers_for_grading( $answers, [], $lesson_id, $user_id );
+		$this->with_failed_progress_insert(
+			$mode,
+			'lesson',
+			function () use ( $lesson_id, $quiz_id, $answers, $user_id ) {
+				$result = Sensei_Quiz::submit_answers_for_grading( $answers, array(), $lesson_id, $user_id );
 
-			self::assertFalse( $result, 'Failed progress must stop answer processing.' );
-			self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'No dependent submission may be created.' );
-		} );
+				self::assertFalse( $result, 'Failed progress must stop answer processing.' );
+				self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'No dependent submission may be created.' );
+			}
+		);
 	}
 
 	/**

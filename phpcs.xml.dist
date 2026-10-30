@@ -57,6 +57,8 @@
 				<element value="Grading_Stats_Service_Test" />
 				<element value="Progress_Aggregation_Service_Test" />
 				<element value="Reports_Listing_Service_Test" />
+				<element value="SenseiTest\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Test" />
+				<element value="SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Test" />
 			</property>
 		</properties>
 	</rule>

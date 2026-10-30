@@ -130,9 +130,13 @@ class Tables_Based_Course_Progress_Repository_Test extends Course_Progress_Repos
 		$this->expectExceptionMessage( 'diagnostic=invalid_insert_id' );
 
 		// SELECT 1 succeeds without inserting a row, leaving no valid insert ID.
-		$this->with_failed_cached_insert( $this->get_insert_table(), function () use ( $repository ) {
-			$repository->create( 123, 456 );
-		}, 'SELECT 1' );
+		$this->with_failed_cached_insert(
+			$this->get_insert_table(),
+			function () use ( $repository ) {
+				$repository->create( 123, 456 );
+			},
+			'SELECT 1'
+		);
 	}
 
 	public function testGet_NotFound_ReturnsNull(): void {
