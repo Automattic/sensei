@@ -85,6 +85,9 @@ class Sensei_Lesson {
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
 			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
 
+			// Admin scripts, including the lessons list quick edit script.
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
 			// Lesson Featured Video Thumbnail Creation.
 			add_action( 'save_post', array( $this, 'save_lesson_featured_video_thumbnail' ) );
 
@@ -328,9 +331,6 @@ class Sensei_Lesson {
 
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
-
-		// Add JS scripts.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Add CSS.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
@@ -2765,7 +2765,6 @@ class Sensei_Lesson {
 	private function enqueue_lesson_edit_scripts() {
 		// Load the quick edit screen script.
 		Sensei()->assets->enqueue( 'sensei-lesson-quick-edit', 'js/admin/lesson-quick-edit.js', array( 'jquery' ), true );
-		Sensei()->assets->enqueue( 'sensei-lesson-bulk-edit', 'js/admin/lesson-bulk-edit.js', array( 'jquery' ), true );
 	}
 
 	/**

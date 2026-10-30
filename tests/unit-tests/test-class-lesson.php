@@ -65,6 +65,13 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	private $initial_typenow;
 
 	/**
+	 * Keep initial state of global $post_type.
+	 *
+	 * @var mixed|string
+	 */
+	private $initial_post_type;
+
+	/**
 	 * setup function
 	 *
 	 * This function sets up the lessons, quizes and their questions. This function runs before
@@ -76,10 +83,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
 
-		global $current_screen, $taxnow, $typenow;
-		$this->initial_screen  = $current_screen;
-		$this->initial_taxnow  = $taxnow;
-		$this->initial_typenow = $typenow;
+		global $current_screen, $taxnow, $typenow, $post_type;
+		$this->initial_screen    = $current_screen;
+		$this->initial_taxnow    = $taxnow;
+		$this->initial_typenow   = $typenow;
+		$this->initial_post_type = $post_type;
 
 		$this->initial_course   = Sensei()->course;
 		$this->initial_lesson   = Sensei()->lesson;
@@ -94,10 +102,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		$_POST = array();
 
-		global $current_screen, $taxnow, $typenow;
+		global $current_screen, $taxnow, $typenow, $post_type;
 		$current_screen = $this->initial_screen;
 		$taxnow         = $this->initial_taxnow;
 		$typenow        = $this->initial_typenow;
+		$post_type      = $this->initial_post_type;
 
 		Sensei()->course   = $this->initial_course;
 		Sensei()->lesson   = $this->initial_lesson;
@@ -923,6 +932,27 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				'term',
 			],
 		];
+	}
+
+	/**
+	 * The lessons list loads the quick edit script that fills the Quick Edit fields with the lesson values.
+	 *
+	 * @covers Sensei_Lesson::enqueue_scripts
+	 */
+	public function testEnqueueScripts_WhenAdminEnqueuedScriptsOnLessonsList_EnqueuesQuickEditScript(): void {
+		/* Arrange */
+		$GLOBALS['post_type'] = 'lesson';
+		set_current_screen( 'edit-lesson' );
+		new Sensei_Lesson();
+
+		/* Act */
+		do_action( 'admin_enqueue_scripts', 'edit.php' );
+
+		/* Assert */
+		self::assertTrue( wp_script_is( 'sensei-lesson-quick-edit', 'enqueued' ) );
+
+		/* Reset */
+		wp_dequeue_script( 'sensei-lesson-quick-edit' );
 	}
 
 	/**
