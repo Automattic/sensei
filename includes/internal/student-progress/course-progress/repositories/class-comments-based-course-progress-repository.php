@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use DateTime;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
@@ -34,7 +35,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Interface The course progress.
-	 * @throws \RuntimeException If the course progress could not be created.
+	 * @throws Persistence_Exception If required progress creation fails.
 	 */
 	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
 		/**
@@ -56,12 +57,12 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		];
 		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, Course_Progress_Interface::STATUS_IN_PROGRESS, $metadata );
 		if ( ! $comment_id ) {
-			throw new \RuntimeException( "Can't create a course progress" );
+			throw new Persistence_Exception( 'course', 'comments', $course_id, $user_id, 'insert_failed' );
 		}
 
 		$comment = get_comment( $comment_id );
 		if ( ! $comment ) {
-			throw new \RuntimeException( 'Created course progress not found' );
+			throw new Persistence_Exception( 'course', 'comments', $course_id, $user_id, 'created_progress_not_found' );
 		}
 
 		return $this->create_progress_from_comment( $comment );

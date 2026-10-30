@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use DateTimeImmutable;
 use DateTimeZone;
 use Sensei\Internal\Cache_Prefix;
@@ -64,6 +65,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Interface The course progress.
+	 * @throws Persistence_Exception If required progress creation fails.
 	 */
 	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
 		/**
@@ -80,7 +82,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
-		$this->wpdb->insert(
+		$result           = $this->wpdb->insert(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'post_id'        => $course_id,
@@ -106,6 +108,9 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			]
 		);
 		$id = (int) $this->wpdb->insert_id;
+		if ( false === $result || $id <= 0 ) {
+			throw new Persistence_Exception( 'course', 'tables', $course_id, $user_id, false === $result ? 'insert_failed' : 'invalid_insert_id' );
+		}
 
 		$progress = new Tables_Based_Course_Progress(
 			$id,

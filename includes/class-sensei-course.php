@@ -641,6 +641,7 @@ class Sensei_Course {
 	/**
 	 * Fires when a quiz has been graded to check if the Course status needs changing
 	 *
+	 * @throws \Sensei\Internal\Persistence_Exception If required course progress cannot be persisted.
 	 * @param type $user_id
 	 * @param type $quiz_id
 	 */
@@ -654,6 +655,7 @@ class Sensei_Course {
 	/**
 	 * Fires when a lesson has changed to check if the Course status needs changing
 	 *
+	 * @throws \Sensei\Internal\Persistence_Exception If required course progress cannot be persisted.
 	 * @param int $user_id
 	 * @param int $lesson_id
 	 */
@@ -662,7 +664,7 @@ class Sensei_Course {
 			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
 			if ( $course_id ) {
 				// Updates the Course status and it's meta data
-				Sensei_Utils::user_complete_course( $course_id, $user_id );
+				Sensei_Utils::user_complete_course( $course_id, $user_id, true, true );
 			}
 		}
 	}
