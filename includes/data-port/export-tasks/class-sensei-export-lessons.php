@@ -36,7 +36,6 @@ class Sensei_Export_Lessons
 	protected function get_post_fields( $post ) {
 		$meta           = [];
 		$meta_keys      = [
-			'_lesson_course',
 			'_lesson_prerequisite',
 			'_lesson_preview',
 			'_lesson_length',
