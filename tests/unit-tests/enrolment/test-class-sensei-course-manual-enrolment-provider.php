@@ -4,8 +4,11 @@
  *
  * @group course-enrolment
  */
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
 class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use Sensei_Progress_Insert_Failure_Helpers;
 
 	/**
 	 * Setup function.
@@ -50,6 +53,64 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 		$provider  = $this->getManualEnrolmentProvider();
 
 		$this->assertTrue( $provider->handles_enrolment( $course_id ), 'Manual provider should handle enrolment for all courses' );
+	}
+
+	/**
+	 * Failed course progress must not report successful manual enrollment.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Course_Manual_Enrolment_Provider::enrol_learner
+	 */
+	public function testEnrolLearner_CourseInsertFailed_ReturnsFalseAndCanRetry( string $mode ): void {
+		$course_id = $this->getSimpleCourseId();
+		$user_id = $this->getStandardStudentUserId();
+		$provider = $this->getManualEnrolmentProvider();
+
+		$this->with_failed_progress_insert( $mode, 'course', function ( $fault_filter ) use ( $course_id, $user_id, $provider ) {
+			$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+			$course_enrolment->is_enrolled( $user_id );
+			$hook_count = did_action( 'sensei_manual_enrolment_learner_enrolled' );
+			$result = $provider->enrol_learner( $user_id, $course_id );
+
+			self::assertFalse( $result, 'Failed course progress must not report enrollment success.' );
+			self::assertNull( Sensei()->course_progress_repository->get( $course_id, $user_id ), 'No invalid course progress may be returned.' );
+			remove_filter( 'query', $fault_filter );
+			$result = $provider->enrol_learner( $user_id, $course_id );
+
+			self::assertTrue( $result, 'A retry must recover already-saved provider enrollment.' );
+			self::assertNotNull( Sensei()->course_progress_repository->get( $course_id, $user_id ), 'The recovered enrollment must have course progress.' );
+			self::assertTrue( $course_enrolment->is_enrolled( $user_id ), 'Retry must replace a cached negative enrollment result.' );
+			$term = Sensei_Learner::get_learner_term( $user_id );
+			self::assertTrue( has_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'Retry must persist taxonomy access.' );
+			self::assertSame( $hook_count + 1, did_action( 'sensei_manual_enrolment_learner_enrolled' ), 'Recovered enrollment must announce success once.' );
+		} );
+	}
+
+	/**
+	 * An ordinary access check must recover saved manual enrollment after an insert fault.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Course_Manual_Enrolment_Provider::enrol_learner
+	 */
+	public function testEnrolLearner_CourseInsertFailed_InvalidatesCachedAccessResult( string $mode ): void {
+		$course_id = $this->getSimpleCourseId();
+		$user_id   = $this->getStandardStudentUserId();
+		$provider  = $this->getManualEnrolmentProvider();
+
+		$this->with_failed_progress_insert( $mode, 'course', function ( $fault_filter ) use ( $course_id, $user_id, $provider ) {
+			$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+			$initial_access   = $course_enrolment->is_enrolled( $user_id );
+
+			$result = $provider->enrol_learner( $user_id, $course_id );
+			remove_filter( 'query', $fault_filter );
+			$recovered_access = $course_enrolment->is_enrolled( $user_id );
+
+			self::assertFalse( $initial_access, 'The initial ordinary check must cache denied access.' );
+			self::assertFalse( $result, 'The failed insert must reject the manual enrollment operation.' );
+			self::assertTrue( $provider->is_enrolled( $user_id, $course_id ), 'The separately saved manual provider status must remain available.' );
+			self::assertTrue( $recovered_access, 'The next ordinary access check must recover without a second manual enrollment.' );
+			self::assertNotNull( Sensei()->course_progress_repository->get( $course_id, $user_id ), 'Access recovery must create the required course progress.' );
+		} );
 	}
 
 	/**

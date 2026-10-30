@@ -1,6 +1,9 @@
 <?php
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
 class Sensei_Class_Grading_Test extends WP_UnitTestCase {
+	use Sensei_Progress_Insert_Failure_Helpers;
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Test_Redirect_Helpers;
 	use Sensei_HPPS_Helpers;
@@ -893,6 +896,73 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			Sensei()->quiz_progress_repository->get( $quiz_id, $student )->get_status(),
 			'The owning teacher should be able to change the quiz status from passed to failed.'
 		);
+	}
+
+	/**
+	 * Failed lesson creation must stop grading before changing submission data.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 */
+	public function testAdminProcessGradingSubmission_PrimaryLessonInsertFailed_DoesNotGrade( string $mode ): void {
+		$owner = $this->get_user_by_role( 'teacher' );
+		$user_id = $this->factory->user->create();
+		list( $quiz_id, $lesson_id ) = $this->createOwnedPassRequiredQuiz( $owner );
+		$this->login_as( $owner );
+		$this->setGradingSubmissionGlobals( $quiz_id, $user_id );
+
+		$this->with_failed_progress_insert( $mode, 'lesson', function () use ( $quiz_id, $user_id ) {
+			$result = Sensei()->grading->admin_process_grading_submission();
+
+			self::assertFalse( $result, 'Grading must report the failed progress creation.' );
+			ob_start();
+			Sensei()->grading->add_grading_notices();
+			$notice = ob_get_clean();
+			self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The grading page must explain the failure.' );
+			self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'No grade submission may be created after progress failure.' );
+		} );
+	}
+
+	/**
+	 * Partial quiz data must not permit grading when required course progress cannot be created.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 */
+	public function testAdminProcessGradingSubmission_CourseInsertFailed_PreservesExistingSubmission( string $mode ): void {
+		$owner = $this->get_user_by_role( 'teacher' );
+		$user_id = $this->factory->user->create();
+		$data = $this->factory->get_course_with_lessons( [ 'question_count' => 1, 'course_args' => [ 'post_author' => $owner ], 'lesson_args' => [ 'post_author' => $owner ] ] );
+		$lesson_id = $data['lesson_ids'][0];
+		$quiz_id = $data['quiz_ids'][0];
+		$question_ids = wp_list_pluck( Sensei()->lesson->lesson_quiz_questions( $quiz_id ), 'ID' );
+		$this->login_as( $owner );
+		$this->setGradingSubmissionGlobals( $quiz_id, $user_id );
+		$this->prevent_wp_redirect();
+
+		$this->with_failed_progress_insert( $mode, 'course', function () use ( $lesson_id, $quiz_id, $user_id, $question_ids ) {
+			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			$comments = Sensei()->lesson_progress_repository_factory->create_comments_based_repository()->get( $lesson_id, $user_id );
+			update_comment_meta( $comments->get_id(), 'questions_asked', implode( ',', $question_ids ) );
+			if ( ! Sensei()->quiz_progress_repository->get( $quiz_id, $user_id ) ) {
+				Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+			}
+			$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+			$submission->set_final_grade( 75 );
+			Sensei()->quiz_submission_repository->save( $submission );
+			$redirected = false;
+			$result = null;
+
+			try {
+				$result = Sensei()->grading->admin_process_grading_submission();
+			} catch ( Sensei_WP_Redirect_Exception $exception ) {
+				$redirected = true;
+			}
+
+			self::assertFalse( $redirected, 'Failed required course progress must prevent grading success redirect.' );
+			self::assertFalse( $result, 'Grading must report required course creation failure.' );
+			self::assertEquals( 75, Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'Existing submission grade must not change.' );
+		} );
 	}
 
 	/**
