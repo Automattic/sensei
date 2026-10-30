@@ -565,15 +565,15 @@ class Sensei_Grading {
 		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id   = intval( $_GET['quiz_id'] );
 			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
-			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
 			$url       = add_query_arg(
 				array(
 					'page'      => $this->page_slug,
-					'course_id' => $course_id,
+					'course_id' => $course_id ?? '',
 				),
 				admin_url( 'admin.php' )
 			);
-			$title    .= sprintf( '&amp;nbsp;&amp;nbsp;&lt;span class="course-title">&amp;gt;&amp;nbsp;&amp;nbsp;&lt;a href="%s">%s&lt;/a>&lt;/span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
+			$title    .= sprintf( '&amp;nbsp;&amp;nbsp;&lt;span class="course-title">&amp;gt;&amp;nbsp;&amp;nbsp;&lt;a href="%s">%s&lt;/a>&lt;/span>', esc_url( $url ), esc_html( get_the_title( $course_id ?? 0 ) ) );
 
 			$url    = add_query_arg(
 				array(
