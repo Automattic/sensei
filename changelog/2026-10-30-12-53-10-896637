@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Use the selected students when opening bulk actions regardless of script initialization order.
