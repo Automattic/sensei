@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
 use RuntimeException;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
@@ -69,6 +70,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 * @return Quiz_Progress_Interface The quiz progress.
+	 * @throws Persistence_Exception If required lesson progress creation fails.
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		// We don't try to create comments-based quiz progress: it is part of lesson progress.
@@ -112,6 +114,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress The quiz progress.
 	 * @throws RuntimeException If the comments based quiz progress is not found.
+	 * @throws Persistence_Exception If required lesson progress creation fails.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->tables_based_repository->save( $quiz_progress );
