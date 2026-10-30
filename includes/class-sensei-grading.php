@@ -928,6 +928,7 @@ class Sensei_Grading {
 
 			$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 			if ( ! $quiz_progress ) {
+				$this->progress_save_failed = true;
 				return false;
 			}
 
