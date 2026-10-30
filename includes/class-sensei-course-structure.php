@@ -59,7 +59,9 @@ class Sensei_Course_Structure {
 	 * Shared by the course structure REST controller and the `sensei/course-structure-set`
 	 * ability. Items without an id stand for lessons or modules that do not exist yet, so
 	 * they are always allowed; items with an id need `edit_post` on the lesson or
-	 * `edit_term` on the module, which limits teachers to their own content.
+	 * `edit_term` on the module, which limits teachers to their own content. A module id
+	 * that no longer exists is resolved the way save() resolves it, through the editor's
+	 * `lastTitle`; when nothing resolves there is no module to protect and save() reports it.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -79,6 +81,8 @@ class Sensei_Course_Structure {
 			return false;
 		}
 
+		$structure = self::instance( $course->ID );
+
 		foreach ( $raw_structure as $item ) {
 			if ( ! is_array( $item ) ) {
 				continue;
@@ -91,7 +95,8 @@ class Sensei_Course_Structure {
 			}
 
 			if ( 'module' === $type ) {
-				if ( ! self::can_current_user_edit_item( 'edit_term', $item ) ) {
+				$module_id = $structure->get_module_id_to_authorize( $item );
+				if ( $module_id && ! current_user_can( 'edit_term', $module_id ) ) {
 					return false;
 				}
 
@@ -107,9 +112,37 @@ class Sensei_Course_Structure {
 	}
 
 	/**
-	 * Check whether the current user may edit the lesson or module a structure item refers to.
+	 * Find the module term a structure item will act on, for the permission check.
 	 *
-	 * @param string $capability Meta capability to check against the item id: `edit_post` or `edit_term`.
+	 * Changing a course's teacher can delete a module term before the editor saves its
+	 * outline; sanitize_item() then falls back to the module created for the previous
+	 * title, so the permission check has to look at that module too.
+	 *
+	 * @param array $item Raw module item.
+	 *
+	 * @return int|null Term ID to check `edit_term` on, or null when the item refers to no existing module.
+	 */
+	private function get_module_id_to_authorize( array $item ): ?int {
+		$module_id = (int) ( $item['id'] ?? 0 );
+		if ( ! $module_id ) {
+			return null;
+		}
+
+		if ( get_term( $module_id, 'module' ) instanceof WP_Term ) {
+			return $module_id;
+		}
+
+		if ( ! empty( $item['lastTitle'] ) && is_string( $item['lastTitle'] ) ) {
+			return $this->get_existing_module( $item['lastTitle'] );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Check whether the current user may edit the lesson a structure item refers to.
+	 *
+	 * @param string $capability Meta capability to check against the item id, such as `edit_post`.
 	 * @param mixed  $item       Structure item.
 	 *
 	 * @return bool True when the item has no id, or the user has the capability for it.

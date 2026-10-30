@@ -577,6 +577,20 @@ class Sensei_Abilities {
 			'additionalProperties' => false,
 		);
 
+		$ignored_description = __( 'Returned by sensei/course-structure-get and ignored here, so a returned structure can be sent back as is.', 'sensei-lms' );
+		foreach ( array( 'draft', 'preview' ) as $key ) {
+			$lesson_item_schema['properties'][ $key ] = array(
+				'type'        => 'boolean',
+				'readonly'    => true,
+				'description' => $ignored_description,
+			);
+		}
+		$lesson_item_schema['properties']['initialContent'] = array(
+			'type'        => 'string',
+			'readonly'    => true,
+			'description' => $ignored_description,
+		);
+
 		$module_item_schema = array(
 			'type'                 => 'object',
 			'required'             => array( 'type', 'title', 'lessons' ),
@@ -606,12 +620,24 @@ class Sensei_Abilities {
 			),
 			'additionalProperties' => false,
 		);
+		foreach ( array( 'teacher', 'lastTitle', 'slug' ) as $key ) {
+			$module_item_schema['properties'][ $key ] = array(
+				'type'        => 'string',
+				'readonly'    => true,
+				'description' => $ignored_description,
+			);
+		}
+		$module_item_schema['properties']['teacherId'] = array(
+			'type'        => 'integer',
+			'readonly'    => true,
+			'description' => $ignored_description,
+		);
 
 		wp_register_ability(
 			'sensei/course-structure-set',
 			array(
 				'label'               => __( 'Set course structure', 'sensei-lms' ),
-				'description'         => __( 'Replace the modules and lessons of a Sensei course, in order. Lessons without an id are created as drafts, each with an empty quiz. Modules without an id reuse an existing module of the same name by the same teacher. Lessons and modules left out are detached from the course, not deleted. Pass the ids this ability returns to update items in place; repeating a call with id-less items creates duplicates.', 'sensei-lms' ),
+				'description'         => __( 'Replace the modules and lessons of a Sensei course, in order: modules first, then lessons outside any module, which Sensei shows after the modules. Lessons without an id are created as drafts, each with an empty quiz. Modules without an id reuse an existing module of the same name by the same teacher. Lessons and modules left out are detached from the course, not deleted. Pass the ids this ability returns to update items in place; repeating a call with id-less items creates duplicates. The structure sensei/course-structure-get returns can be sent back as is.', 'sensei-lms' ),
 				'category'            => self::CATEGORY_SLUG,
 				'input_schema'        => array(
 					'type'                 => 'object',
@@ -623,7 +649,7 @@ class Sensei_Abilities {
 						),
 						'structure' => array(
 							'type'        => 'array',
-							'description' => __( 'Modules and top-level lessons, in order.', 'sensei-lms' ),
+							'description' => __( 'Modules first, then lessons outside any module, each list in order.', 'sensei-lms' ),
 							'items'       => array(
 								'oneOf' => array( $module_item_schema, $lesson_item_schema ),
 							),
@@ -1177,7 +1203,12 @@ class Sensei_Abilities {
 			return new WP_Error( 'sensei_course_not_found', __( 'No course exists with the given ID.', 'sensei-lms' ) );
 		}
 
-		$structure = is_array( $input['structure'] ?? null ) ? $input['structure'] : array();
+		$structure = self::strip_structure_bookkeeping( is_array( $input['structure'] ?? null ) ? $input['structure'] : array() );
+
+		$order_error = self::find_structure_order_error( $structure );
+		if ( $order_error ) {
+			return $order_error;
+		}
 
 		$result = Sensei_Course_Structure::instance( $course->ID )->save( $structure );
 
@@ -1193,6 +1224,76 @@ class Sensei_Abilities {
 		}
 
 		return self::prepare_course_structure( $course, (bool) wp_using_ext_object_cache() );
+	}
+
+	/**
+	 * Drop the keys a returned structure carries that are not input.
+	 *
+	 * `sensei/course-structure-get` returns the editor's bookkeeping (`lastTitle`, `slug`,
+	 * `teacherId`, `initialContent`, …) so the output matches the REST route. The input
+	 * schema accepts those keys so a returned structure can be sent back, but only the
+	 * documented keys reach Sensei_Course_Structure::save().
+	 *
+	 * @param array $structure Structure as given to the ability.
+	 *
+	 * @return array Structure with only `type`, `id`, `title`, `description` and `lessons`.
+	 */
+	private static function strip_structure_bookkeeping( array $structure ): array {
+		$stripped = array();
+
+		foreach ( $structure as $item ) {
+			if ( ! is_array( $item ) ) {
+				$stripped[] = $item;
+				continue;
+			}
+
+			$keys = 'module' === ( $item['type'] ?? null )
+				? array( 'type', 'id', 'title', 'description', 'lessons' )
+				: array( 'type', 'id', 'title' );
+			$kept = array_intersect_key( $item, array_flip( $keys ) );
+
+			if ( isset( $kept['lessons'] ) && is_array( $kept['lessons'] ) ) {
+				$kept['lessons'] = self::strip_structure_bookkeeping( $kept['lessons'] );
+			}
+
+			$stripped[] = $kept;
+		}
+
+		return $stripped;
+	}
+
+	/**
+	 * Check that no module follows a lesson outside a module.
+	 *
+	 * Sensei stores module order and top-level lesson order separately and always shows
+	 * the modules first, so a mixed order could not be kept. Rejecting it is better than
+	 * silently reordering what the caller asked for.
+	 *
+	 * @param array $structure Structure as given to the ability.
+	 *
+	 * @return WP_Error|null Error naming the misplaced module, or null when the order can be kept.
+	 */
+	private static function find_structure_order_error( array $structure ): ?WP_Error {
+		$lesson_seen = false;
+
+		foreach ( $structure as $item ) {
+			$type = is_array( $item ) ? ( $item['type'] ?? null ) : null;
+
+			if ( 'lesson' === $type ) {
+				$lesson_seen = true;
+			} elseif ( 'module' === $type && $lesson_seen ) {
+				return new WP_Error(
+					'sensei_course_structure_module_after_lesson',
+					sprintf(
+						/* translators: %s: module title. */
+						__( 'Modules must come before lessons outside modules, because Sensei shows all modules first. Move the module "%s" before the top-level lessons.', 'sensei-lms' ),
+						(string) ( $item['title'] ?? '' )
+					)
+				);
+			}
+		}
+
+		return null;
 	}
 
 	/**

@@ -1159,4 +1159,55 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->assertFalse( $without_cap, 'A teacher without the overridden capability should be denied.' );
 		$this->assertTrue( $with_cap, 'A user with the overridden capability should be allowed.' );
 	}
+
+	/**
+	 * The structure course-structure-get returns is valid input for course-structure-set and changes nothing.
+	 *
+	 * @covers Sensei_Abilities::execute_course_structure_set
+	 */
+	public function testExecuteCourseStructureSet_ReturnedStructureResent_ValidatesAndKeepsIds() {
+		list( $teacher, $course_id, $structure ) = $this->createTeacherCourseWithStructureInput();
+		wp_set_current_user( $teacher );
+		$set = wp_get_ability( 'sensei/course-structure-set' );
+		$set->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => $structure,
+			)
+		);
+		$returned = wp_get_ability( 'sensei/course-structure-get' )->execute( array( 'course' => $course_id ) );
+		$this->assertArrayHasKey( 'lastTitle', $returned['structure'][0], 'The returned module should carry the editor bookkeeping this test resends.' );
+
+		$result = $set->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => $returned['structure'],
+			)
+		);
+
+		$this->assertNotWPError( $result, 'The returned structure should pass input validation and save.' );
+		$this->assertSame( $returned['structure'], $result['structure'], 'Resending the structure should change nothing.' );
+		$this->assertSame( 3, $this->countCourseLessons( $course_id ), 'No lessons should be duplicated.' );
+	}
+
+	/**
+	 * A module after a top-level lesson is rejected before anything is written, since Sensei shows modules first.
+	 *
+	 * @covers Sensei_Abilities::execute_course_structure_set
+	 */
+	public function testExecuteCourseStructureSet_ModuleAfterTopLevelLessonGiven_ReturnsErrorWithoutWriting() {
+		list( $teacher, $course_id, $structure ) = $this->createTeacherCourseWithStructureInput();
+		wp_set_current_user( $teacher );
+
+		$result = wp_get_ability( 'sensei/course-structure-set' )->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => array_reverse( $structure ),
+			)
+		);
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'sensei_course_structure_module_after_lesson', $result->get_error_code() );
+		$this->assertSame( 0, $this->countCourseLessons( $course_id ), 'Nothing should be written.' );
+	}
 }
