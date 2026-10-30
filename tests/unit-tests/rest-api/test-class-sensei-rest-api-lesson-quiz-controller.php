@@ -972,6 +972,29 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * A question without a title fails the request before the quiz is created.
+	 */
+	public function testSaveQuiz_QuestionWithoutTitleGiven_CreatesNoQuiz() {
+		$this->login_as_teacher();
+		$lesson_id = $this->factory->lesson->create();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			array(
+				'options'   => array(),
+				'questions' => array(
+					array(
+						'title' => '',
+						'type'  => 'multi-line',
+					),
+				),
+			)
+		);
+
+		$this->assertSame( 'sensei_lesson_quiz_question_missing_title', $response->get_data()['code'] );
+		$this->assertNull( Sensei()->lesson->lesson_quizzes( $lesson_id ), 'No quiz should be created.' );
+	}
+	/**
 	 * Tests that invalid question data are validated.
 	 */
 	public function testQuestionValidationFails() {

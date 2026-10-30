@@ -72,6 +72,7 @@ class Sensei_Abilities {
 		self::register_course_create_ability();
 		self::register_course_structure_get_ability();
 		self::register_course_structure_set_ability();
+		self::register_quiz_questions_set_ability();
 	}
 
 	/**
@@ -675,6 +676,76 @@ class Sensei_Abilities {
 		);
 	}
 
+	/**
+	 * Register the `sensei/quiz-questions-set` ability.
+	 *
+	 * @since $$next-version$$
+	 */
+	private static function register_quiz_questions_set_ability(): void {
+		$saver = new Sensei_Lesson_Quiz_Saver();
+
+		$options_schema = $saver->get_options_schema();
+		unset( $options_schema['properties']['pagination']['required'] );
+		$options_schema['description'] = __( 'Quiz settings. Settings left out keep their current value, or the default for a new quiz.', 'sensei-lms' );
+
+		wp_register_ability(
+			'sensei/quiz-questions-set',
+			array(
+				'label'               => __( 'Set quiz questions', 'sensei-lms' ),
+				'description'         => __( 'Replace the settings and questions of a Sensei lesson\'s quiz, creating the quiz if the lesson has none. Questions without an id are created; questions left out are removed from the quiz but kept in the question bank, except category-question placeholders, which are deleted. Settings you omit keep their current values. Pass the ids this ability returns to update questions in place.', 'sensei-lms' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => array(
+					'type'                 => 'object',
+					'required'             => array( 'lesson', 'questions' ),
+					'properties'           => array(
+						'lesson'    => array(
+							'type'        => 'integer',
+							'description' => __( 'Lesson ID.', 'sensei-lms' ),
+						),
+						'options'   => $options_schema,
+						'questions' => array(
+							'type'        => 'array',
+							'description' => __( 'Questions in order. Each has a type (multiple-choice, boolean, gap-fill, single-line, multi-line, file-upload or category-question), a title, an optional description and type-specific answer and options.', 'sensei-lms' ),
+							'items'       => $saver->get_single_question_schema(),
+						),
+					),
+					'additionalProperties' => false,
+				),
+				'output_schema'       => array(
+					'type'       => 'object',
+					'properties' => array(
+						'lesson'    => array(
+							'type'       => 'object',
+							'properties' => array(
+								'id'     => array( 'type' => 'integer' ),
+								'title'  => array( 'type' => 'string' ),
+								'status' => array( 'type' => 'string' ),
+							),
+						),
+						'quiz_id'   => array( 'type' => 'integer' ),
+						'options'   => array( 'type' => 'object' ),
+						'questions' => array(
+							'type'  => 'array',
+							'items' => array( 'type' => 'object' ),
+						),
+					),
+				),
+				'execute_callback'    => array( __CLASS__, 'execute_quiz_questions_set' ),
+				'permission_callback' => array( __CLASS__, 'can_set_quiz_questions' ),
+				'meta'                => array(
+					'annotations'  => array(
+						'readonly'    => false,
+						'destructive' => true,
+						'idempotent'  => false,
+					),
+					'show_in_rest' => true,
+					'mcp'          => array(
+						'public' => true,
+					),
+				),
+			)
+		);
+	}
 	/**
 	 * Output schema shared by the course structure abilities.
 	 *
@@ -1333,6 +1404,69 @@ class Sensei_Abilities {
 	}
 
 	/**
+	 * Execute the quiz questions set ability.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param array $input Ability input.
+	 * @return array|WP_Error
+	 */
+	public static function execute_quiz_questions_set( $input ) {
+		$lesson = get_post( (int) ( $input['lesson'] ?? 0 ) );
+		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
+			return new WP_Error( 'sensei_lesson_not_found', __( 'No lesson exists with the given ID.', 'sensei-lms' ) );
+		}
+
+		$saver = new Sensei_Lesson_Quiz_Saver();
+
+		// The Abilities API validates input against the schema but does not sanitize it.
+		$questions = is_array( $input['questions'] ?? null ) ? $input['questions'] : array();
+		$valid     = $saver->validate_questions( $questions );
+		if ( is_wp_error( $valid ) ) {
+			return $valid;
+		}
+		$questions = $saver->sanitize_questions( $questions );
+		if ( is_wp_error( $questions ) ) {
+			return $questions;
+		}
+
+		$options = is_array( $input['options'] ?? null ) ? $input['options'] : array();
+		$options = rest_sanitize_value_from_schema( $options, $saver->get_options_schema() );
+		if ( ! is_array( $options ) ) {
+			return new WP_Error( 'sensei_quiz_invalid_options', __( 'The quiz options could not be sanitized.', 'sensei-lms' ) );
+		}
+
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+		$quiz    = $quiz_id ? get_post( $quiz_id ) : null;
+		$options = $saver->get_options_for_update( $quiz instanceof WP_Post ? $quiz : null, $options );
+
+		$quiz_id = $saver->save(
+			$lesson,
+			array(
+				'options'   => $options,
+				'questions' => $questions,
+			)
+		);
+		if ( is_wp_error( $quiz_id ) ) {
+			return $quiz_id;
+		}
+
+		$quiz_data = $saver->get_quiz_data( get_post( $quiz_id ), $lesson );
+
+		return array(
+			'lesson'    => array(
+				'id'     => $lesson->ID,
+				'title'  => $lesson->post_title,
+				'status' => $lesson->post_status,
+			),
+			'quiz_id'   => $quiz_id,
+			'options'   => $quiz_data['options'],
+			'questions' => $quiz_data['questions'],
+		);
+	}
+
+	/**
 	 * Permission check: user can edit courses.
 	 *
 	 * Mirrors the Courses admin screen capability.
@@ -1483,5 +1617,20 @@ class Sensei_Abilities {
 		$structure = is_array( $input['structure'] ?? null ) ? $input['structure'] : array();
 
 		return Sensei_Course_Structure::can_current_user_save( (int) ( $input['course'] ?? 0 ), $structure );
+	}
+
+	/**
+	 * Permission check: user can save the quiz of the given lesson.
+	 *
+	 * Shares the check with the lesson-quiz REST endpoint: the lesson must exist and
+	 * the user must be able to edit it, which limits teachers to their own lessons.
+	 *
+	 * @access private
+	 * @since $$next-version$$
+	 *
+	 * @param array $input Ability input.
+	 */
+	public static function can_set_quiz_questions( $input = array() ): bool {
+		return Sensei_Lesson_Quiz_Saver::can_current_user_save( (int) ( $input['lesson'] ?? 0 ) );
 	}
 }

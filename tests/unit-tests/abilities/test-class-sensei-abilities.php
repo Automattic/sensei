@@ -1131,6 +1131,292 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Create a teacher and a lesson they own.
+	 *
+	 * @return array{0:int,1:int} Teacher id and lesson id.
+	 */
+	private function createTeacherLesson(): array {
+		$factory   = new Sensei_Factory();
+		$teacher   = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$lesson_id = $factory->lesson->create( array( 'post_author' => $teacher ) );
+
+		return array( $teacher, $lesson_id );
+	}
+
+	/**
+	 * The questions used by the quiz ability tests, one per editor question type.
+	 *
+	 * @return array[]
+	 */
+	private function getQuizQuestionsInput(): array {
+		return array(
+			array(
+				'type'    => 'multiple-choice',
+				'title'   => 'What are power chords?',
+				'answer'  => array(
+					'answers' => array(
+						array(
+							'label'   => 'Root and fifth',
+							'correct' => true,
+						),
+						array(
+							'label'   => 'Any chord',
+							'correct' => false,
+						),
+					),
+				),
+				'options' => array(
+					'grade'          => 2,
+					'answerFeedback' => 'Root and fifth.',
+				),
+			),
+			array(
+				'type'   => 'boolean',
+				'title'  => 'A power chord has a third.',
+				'answer' => array( 'correct' => false ),
+			),
+			array(
+				'type'   => 'gap-fill',
+				'title'  => 'Fill the gap',
+				'answer' => array(
+					'before' => 'The root and the',
+					'gap'    => array( 'fifth', '5th' ),
+					'after'  => '.',
+				),
+			),
+			array(
+				'type'    => 'single-line',
+				'title'   => 'Paste the link to your recording.',
+				'options' => array( 'teacherNotes' => 'Check the link opens.' ),
+			),
+			array(
+				'type'  => 'multi-line',
+				'title' => 'Describe your project.',
+			),
+			array(
+				'type'    => 'file-upload',
+				'title'   => 'Upload your tab.',
+				'options' => array( 'studentHelp' => 'PDF only.' ),
+			),
+		);
+	}
+
+	/**
+	 * Every editor question type is created, in order, and comes back with an id.
+	 *
+	 * @covers Sensei_Abilities::execute_quiz_questions_set
+	 */
+	public function testExecuteQuizQuestionsSet_NewQuizGiven_CreatesQuestionsInOrderAndReturnsIds() {
+		list( $teacher, $lesson_id ) = $this->createTeacherLesson();
+		wp_set_current_user( $teacher );
+		$input = $this->getQuizQuestionsInput();
+
+		$result = wp_get_ability( 'sensei/quiz-questions-set' )->execute(
+			array(
+				'lesson'    => $lesson_id,
+				'options'   => array(
+					'pass_required' => true,
+					'quiz_passmark' => 70,
+				),
+				'questions' => $input,
+			)
+		);
+
+		$this->assertIsArray( $result, 'The ability should return the saved quiz.' );
+		$this->assertSame( $lesson_id, $result['lesson']['id'] );
+		$this->assertSame( 'quiz', get_post_type( $result['quiz_id'] ), 'The quiz should be created.' );
+		$this->assertTrue( $result['options']['pass_required'] );
+		$this->assertSame( 70, $result['options']['quiz_passmark'] );
+		$this->assertSame( wp_list_pluck( $input, 'title' ), wp_list_pluck( $result['questions'], 'title' ), 'The questions should come back in order.' );
+		$this->assertSame( wp_list_pluck( $input, 'type' ), wp_list_pluck( $result['questions'], 'type' ), 'Every type should be stored.' );
+		$this->assertCount( 6, array_filter( wp_list_pluck( $result['questions'], 'id' ) ), 'Every question should have an id.' );
+		$this->assertSame( 2, $result['questions'][0]['options']['grade'], 'Question options should be stored.' );
+		$this->assertFalse( $result['questions'][1]['answer']['correct'], 'The boolean answer should be stored.' );
+		$this->assertSame( array( 'fifth', '5th' ), $result['questions'][2]['answer']['gap'], 'The gap-fill answer should be stored.' );
+		$this->assertSame( $teacher, (int) get_post( $result['questions'][0]['id'] )->post_author, 'The teacher should own the questions.' );
+	}
+
+	/**
+	 * Settings left out keep the values the quiz already has.
+	 *
+	 * @covers Sensei_Abilities::execute_quiz_questions_set
+	 */
+	public function testExecuteQuizQuestionsSet_OptionsOmittedOnExistingQuiz_KeepsCurrentValues() {
+		list( $teacher, $lesson_id ) = $this->createTeacherLesson();
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/quiz-questions-set' );
+		$ability->execute(
+			array(
+				'lesson'    => $lesson_id,
+				'options'   => array(
+					'pass_required' => true,
+					'quiz_passmark' => 70,
+					'allow_retakes' => false,
+				),
+				'questions' => array(),
+			)
+		);
+
+		$result = $ability->execute(
+			array(
+				'lesson'    => $lesson_id,
+				'questions' => array(
+					array(
+						'type'  => 'multi-line',
+						'title' => 'Describe your project.',
+					),
+				),
+			)
+		);
+
+		$this->assertTrue( $result['options']['pass_required'], 'The pass requirement should be kept.' );
+		$this->assertSame( 70, $result['options']['quiz_passmark'], 'The passmark should be kept.' );
+		$this->assertFalse( $result['options']['allow_retakes'], 'The retake setting should be kept.' );
+		$this->assertCount( 1, $result['questions'] );
+	}
+
+	/**
+	 * The output can be sent back as input: readonly keys are tolerated and ids update in place.
+	 *
+	 * @covers Sensei_Abilities::execute_quiz_questions_set
+	 */
+	public function testExecuteQuizQuestionsSet_ReturnedQuestionsResent_UpdatesInPlace() {
+		list( $teacher, $lesson_id ) = $this->createTeacherLesson();
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/quiz-questions-set' );
+		$first   = $ability->execute(
+			array(
+				'lesson'    => $lesson_id,
+				'questions' => $this->getQuizQuestionsInput(),
+			)
+		);
+
+		$questions             = $first['questions'];
+		$questions[0]['title'] = 'What are power chords, really?';
+		$second                = $ability->execute(
+			array(
+				'lesson'    => $lesson_id,
+				'questions' => $questions,
+			)
+		);
+
+		$this->assertIsArray( $second, 'Resending the output should be accepted.' );
+		$this->assertSame( wp_list_pluck( $first['questions'], 'id' ), wp_list_pluck( $second['questions'], 'id' ), 'The question ids should be unchanged.' );
+		$this->assertSame( 'What are power chords, really?', $second['questions'][0]['title'] );
+		$this->assertCount(
+			6,
+			get_posts(
+				array(
+					'post_type'   => 'question',
+					'post_status' => 'any',
+					'numberposts' => -1,
+					'fields'      => 'ids',
+				)
+			),
+			'No question should be duplicated.'
+		);
+	}
+
+	/**
+	 * A question left out is removed from the quiz but stays in the question bank.
+	 *
+	 * @covers Sensei_Abilities::execute_quiz_questions_set
+	 */
+	public function testExecuteQuizQuestionsSet_QuestionOmitted_RemovesFromQuizButKeepsQuestion() {
+		list( $teacher, $lesson_id ) = $this->createTeacherLesson();
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/quiz-questions-set' );
+		$first   = $ability->execute(
+			array(
+				'lesson'    => $lesson_id,
+				'questions' => array_slice( $this->getQuizQuestionsInput(), 0, 2 ),
+			)
+		);
+		$omitted = $first['questions'][1]['id'];
+
+		$second = $ability->execute(
+			array(
+				'lesson'    => $lesson_id,
+				'questions' => array( $first['questions'][0] ),
+			)
+		);
+
+		$this->assertSame( array( $first['questions'][0]['id'] ), wp_list_pluck( $second['questions'], 'id' ), 'Only the kept question should remain in the quiz.' );
+		$this->assertSame( 'publish', get_post_status( $omitted ), 'The omitted question should still exist.' );
+	}
+
+	/**
+	 * The execute callback re-checks the post type.
+	 *
+	 * @covers Sensei_Abilities::execute_quiz_questions_set
+	 */
+	public function testExecuteQuizQuestionsSet_PageIdGiven_ReturnsLessonNotFound() {
+		$this->login_as_admin();
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+
+		$result = Sensei_Abilities::execute_quiz_questions_set(
+			array(
+				'lesson'    => $page_id,
+				'questions' => array(),
+			)
+		);
+
+		$this->assertSame( 'sensei_lesson_not_found', $result->get_error_code() );
+	}
+
+	/**
+	 * Questions are validated against the schema of their type.
+	 *
+	 * @covers Sensei_Abilities::execute_quiz_questions_set
+	 */
+	public function testExecuteQuizQuestionsSet_InvalidAnswerGiven_ReturnsError() {
+		list( $teacher, $lesson_id ) = $this->createTeacherLesson();
+		wp_set_current_user( $teacher );
+
+		$result = wp_get_ability( 'sensei/quiz-questions-set' )->execute(
+			array(
+				'lesson'    => $lesson_id,
+				'questions' => array(
+					array(
+						'type'   => 'boolean',
+						'title'  => 'Will it blend?',
+						'answer' => 'A string',
+					),
+				),
+			)
+		);
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertNull( Sensei()->lesson->lesson_quizzes( $lesson_id ), 'No quiz should be created.' );
+	}
+
+	/**
+	 * A teacher can set their own lesson's quiz; another teacher's lesson and guests are refused.
+	 *
+	 * @covers Sensei_Abilities::can_set_quiz_questions
+	 */
+	public function testCanSetQuizQuestions_LessonOwnershipGiven_MatchesEditLesson() {
+		list( $teacher, $lesson_id ) = $this->createTeacherLesson();
+		$ability                     = wp_get_ability( 'sensei/quiz-questions-set' );
+		$input                       = array(
+			'lesson'    => $lesson_id,
+			'questions' => array(),
+		);
+
+		wp_set_current_user( $teacher );
+		$this->assertTrue( $ability->check_permissions( $input ), 'The owner should be allowed.' );
+
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'teacher' ) ) );
+		$this->assertFalse( $ability->check_permissions( $input ), 'Another teacher should be refused.' );
+
+		$this->login_as_admin();
+		$this->assertTrue( $ability->check_permissions( $input ), 'An administrator should be allowed.' );
+
+		wp_set_current_user( 0 );
+		$this->assertFalse( $ability->check_permissions( $input ), 'A guest should be refused.' );
+	}
+
+	/**
 	 * The check follows the post type's `create_posts` capability when a plugin overrides it.
 	 *
 	 * @covers Sensei_Abilities::can_create_courses
