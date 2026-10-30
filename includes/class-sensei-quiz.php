@@ -1,7 +1,7 @@
 <?php
 
+use Sensei\Internal\Course_Status_Updates;
 use Sensei\Internal\Persistence_Exception;
-use Sensei\Internal\Persistence_Exception_Boundary;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -957,11 +957,13 @@ class Sensei_Quiz {
 			 * @param {int} $user_id   The user ID.
 			 * @param {int} $lesson_id The lesson ID.
 			 */
-			Persistence_Exception_Boundary::run(
+			if ( ! Course_Status_Updates::run(
 				static function () use ( $user_id, $lesson_id ) {
 					do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
 				}
-			);
+			) ) {
+				return false;
+			}
 			if ( ! is_admin() ) {
 				Sensei()->notices->add_notice( __( 'Lesson Reset Successfully.', 'sensei-lms' ), 'info' );
 			}
@@ -1097,11 +1099,13 @@ class Sensei_Quiz {
 				 * @param {int} $user_id The user ID.
 				 * @param {int} $lesson_id The lesson ID.
 				 */
-				Persistence_Exception_Boundary::run(
+				if ( ! Course_Status_Updates::run(
 					static function () use ( $user_id, $lesson_id ) {
 						do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 					}
-				);
+				) ) {
+					return false;
+				}
 
 			}
 

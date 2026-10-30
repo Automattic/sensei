@@ -1,7 +1,7 @@
 <?php
 
+use Sensei\Internal\Course_Status_Updates;
 use Sensei\Internal\Persistence_Exception;
-use Sensei\Internal\Persistence_Exception_Boundary;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -497,11 +497,13 @@ class Sensei_Utils {
 			 * @param {int}    $quiz_passmark   Passmark for quiz.
 			 * @param {string} $quiz_grade_type Type of grading.
 			 */
-			Persistence_Exception_Boundary::run(
+			if ( ! Course_Status_Updates::run(
 				static function () use ( $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type ) {
 					do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
 				}
-			);
+			) ) {
+				return false;
+			}
 
 			return true;
 		} catch ( Persistence_Exception $exception ) {
@@ -673,11 +675,13 @@ class Sensei_Utils {
 				 * @param {int} $user_id The user ID.
 				 * @param {int} $lesson_id The lesson ID.
 				 */
-				Persistence_Exception_Boundary::run(
+				if ( ! Course_Status_Updates::run(
 					static function () use ( $user_id, $lesson_id ) {
 						do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 					}
-				);
+				) ) {
+					return false;
+				}
 			}
 
 			return $lesson_progress->get_id();
@@ -733,11 +737,13 @@ class Sensei_Utils {
 			 * @param {int} $lesson_id The lesson ID.
 			 */
 			try {
-				Persistence_Exception_Boundary::run(
+				if ( ! Course_Status_Updates::run(
 					static function () use ( $user_id, $lesson_id ) {
 						do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
 					}
-				);
+				) ) {
+					return false;
+				}
 			} catch ( Persistence_Exception $exception ) {
 				$exception->log();
 				return false;
@@ -1701,9 +1707,6 @@ class Sensei_Utils {
 			Sensei()->course_progress_repository->save( $course_progress );
 
 		} catch ( Persistence_Exception $exception ) {
-			if ( Persistence_Exception_Boundary::is_active() ) {
-				throw $exception;
-			}
 			$exception->log();
 			return false;
 		}

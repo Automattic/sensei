@@ -492,13 +492,13 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Course failures inside completion hooks must reach the enclosing lesson operation.
+	 * Course failures reach the lesson operation without interrupting extension callbacks.
 	 *
 	 * @dataProvider dual_write_storage_modes
 	 * @covers Sensei_Utils::sensei_start_lesson
 	 * @covers Sensei_Course::update_status_after_lesson_change
 	 */
-	public function testSenseiStartLesson_CourseSynchronizationInsertFailed_StopsFollowingObservers( string $mode, string $failed_store ): void {
+	public function testSenseiStartLesson_CourseSynchronizationInsertFailed_PreservesFollowingObservers( string $mode, string $failed_store ): void {
 		$data      = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
 		$course_id = $data['course_id'];
 		$lesson_id = $data['lesson_ids'][0];
@@ -521,7 +521,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 					$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
 
 					self::assertFalse( $result, 'Nested course persistence failure must reach the lesson boundary.' );
-					self::assertFalse( $observed, 'Later completion observers must not announce a failed operation.' );
+					self::assertTrue( $observed, 'Existing completion callbacks must still be allowed to finish.' );
 				},
 				$failed_store
 			);

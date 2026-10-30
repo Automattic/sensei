@@ -1,7 +1,7 @@
 <?php
 
+use Sensei\Internal\Course_Status_Updates;
 use Sensei\Internal\Persistence_Exception;
-use Sensei\Internal\Persistence_Exception_Boundary;
 use Sensei\Internal\Services\Grading_Listing_Service_Interface;
 use Sensei\Internal\Services\Grading_Stats_Service_Interface;
 use Sensei\Internal\Services\Progress_Aggregation_Service_Interface;
@@ -991,11 +991,14 @@ class Sensei_Grading {
 				 * @param {int} $user_id The user ID.
 				 * @param {int} $lesson_id The lesson ID.
 				 */
-				Persistence_Exception_Boundary::run(
+				if ( ! Course_Status_Updates::run(
 					static function () use ( $user_id, $quiz_lesson_id ) {
 						do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
 					}
-				);
+				) ) {
+					$this->progress_save_failed = true;
+					return false;
+				}
 
 			}
 
@@ -1147,7 +1150,7 @@ class Sensei_Grading {
 	 * @param  integer $total_questions Total questions in quiz (not used)
 	 * @param string  $quiz_grade_type Optional defaults to auto
 	 *
-	 * @return int|float|WP_Error Quiz grade or an error when grading cannot complete.
+	 * @return int|float|false|WP_Error Quiz grade, false for invalid input, or an error when grading cannot complete.
 	 */
 	public static function grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
 

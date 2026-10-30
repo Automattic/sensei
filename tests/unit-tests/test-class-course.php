@@ -466,14 +466,14 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			public function __construct() {}
 
 			/**
-			 * @inheritDoc
+			 * Override lesson updates with the existing signature.
 			 */
 			public function update_status_after_lesson_change( $user_id, $lesson_id ) {
 				return 'extension lesson';
 			}
 
 			/**
-			 * @inheritDoc
+			 * Override quiz updates with the existing signature.
 			 */
 			public function update_status_after_quiz_submission( $user_id, $quiz_id ) {
 				return 'extension quiz';
@@ -494,7 +494,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Course::update_status_after_lesson_change
 	 * @covers Sensei_Course::update_status_after_quiz_submission
 	 */
-	public function testUpdateStatusAfterLessonChange_InsertFailedOutsideBoundary_DoesNotInterruptCaller( string $mode, string $caller ): void {
+	public function testUpdateStatusAfterLessonChange_InsertFailedWithoutGuard_DoesNotInterruptCaller( string $mode, string $caller ): void {
 		$data     = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
 		$user_id  = $this->factory->user->create();
 		$quiz_id  = $data['quiz_ids'][0];
@@ -536,28 +536,29 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Guarded quiz hook emitters receive failures without changing hook arguments.
+	 * Guarded quiz actions receive failure results without changing hook arguments.
 	 *
 	 * @dataProvider progress_storage_modes
 	 * @covers Sensei_Course::update_status_after_quiz_submission
 	 */
-	public function testUpdateStatusAfterQuizSubmission_InsertFailedWithinBoundary_Throws( string $mode ): void {
+	public function testUpdateStatusAfterQuizSubmission_InsertFailedWithinGuard_ReportsFailure( string $mode ): void {
 		$data    = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
 		$user_id = $this->factory->user->create();
 		update_post_meta( $data['quiz_ids'][0], '_quiz_lesson', $data['lesson_ids'][0] );
 
-		$this->expectException( \Sensei\Internal\Persistence_Exception::class );
-		$this->with_failed_progress_insert(
+		$result = $this->with_failed_progress_insert(
 			$mode,
 			'course',
 			static function () use ( $data, $user_id ) {
-				\Sensei\Internal\Persistence_Exception_Boundary::run(
+				return \Sensei\Internal\Course_Status_Updates::run(
 					static function () use ( $data, $user_id ) {
 						do_action( 'sensei_user_quiz_grade', $user_id, $data['quiz_ids'][0], 100, 50, 'auto' );
 					}
 				);
 			}
 		);
+
+		self::assertFalse( $result );
 	}
 
 	/**
