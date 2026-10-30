@@ -531,7 +531,7 @@ class Sensei_Course_Theme {
 		}
 
 		$lesson      = $result[0];
-		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
+		$course_id   = Sensei()->course_lessons_repository->get_course_id( $lesson->ID );
 		$preview_url = '/?p=' . $lesson->ID;
 
 		if ( ! $course_id ) {
