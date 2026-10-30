@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Return a 404 on the course results page when the course is not published and the user cannot read it.
