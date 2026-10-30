@@ -78,24 +78,43 @@ class Sensei_Block_Patterns {
 	 * @access private
 	 */
 	public function register_block_patterns( $current_screen ) {
-		$post_type      = $current_screen->post_type;
-		$block_patterns = [];
+		$post_type = (string) $current_screen->post_type;
 
+		foreach ( self::get_pattern_names( $post_type ) as $block_pattern ) {
+			register_block_pattern(
+				'sensei-lms/' . $block_pattern,
+				require __DIR__ . "/{$post_type}/{$block_pattern}.php"
+			);
+		}
+	}
+
+	/**
+	 * Get the names of the patterns Sensei provides for a post type.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $post_type Post type (`course`, `lesson` or `page`).
+	 *
+	 * @return string[] Pattern names without the `sensei-lms/` prefix.
+	 */
+	private static function get_pattern_names( string $post_type ): array {
 		if ( 'course' === $post_type ) {
-			$block_patterns = [
+			return array(
 				'course-default',
 				'video-hero',
 				'long-sales-page',
 				'life-coach',
-			];
-		} elseif ( 'lesson' === $post_type ) {
-			$block_patterns = [
+			);
+		}
+
+		if ( 'lesson' === $post_type ) {
+			$block_patterns = array(
 				'default',
 				'video-lesson',
 				'default-with-quiz',
 				'zoom-meeting',
 				'files-to-download',
-			];
+			);
 
 			if (
 				WP_Block_Type_Registry::get_instance()->is_registered( 'core/comments-query-loop' )
@@ -103,18 +122,122 @@ class Sensei_Block_Patterns {
 			) {
 				$block_patterns[] = 'discussion-question';
 			}
-		} elseif ( 'page' === $post_type ) {
-			$block_patterns = [
-				'landing-page',
-			];
+
+			return $block_patterns;
 		}
 
-		foreach ( $block_patterns as $block_pattern ) {
-			register_block_pattern(
-				'sensei-lms/' . $block_pattern,
-				require __DIR__ . "/{$post_type}/{$block_pattern}.php"
+		if ( 'page' === $post_type ) {
+			return array(
+				'landing-page',
 			);
 		}
+
+		return array();
+	}
+
+	/**
+	 * Get the block markup of a Sensei pattern.
+	 *
+	 * Patterns are only registered on `current_screen`, so code that runs outside the
+	 * editor (REST, WP-CLI, abilities) reads the pattern file instead of the registry.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $post_type Post type the pattern belongs to (`course`, `lesson` or `page`).
+	 * @param string $name      Pattern name without the `sensei-lms/` prefix.
+	 *
+	 * @return string|null Block markup, or null when Sensei has no such pattern.
+	 */
+	public static function get_pattern_content( string $post_type, string $name ): ?string {
+		if ( ! in_array( $name, self::get_pattern_names( $post_type ), true ) ) {
+			return null;
+		}
+
+		/**
+		 * The path is built from the allow-list above, so the include is safe.
+		 *
+		 * @psalm-suppress UnresolvableInclude
+		 */
+		$pattern = require __DIR__ . "/{$post_type}/{$name}.php";
+
+		return $pattern['content'] ?? null;
+	}
+
+	/**
+	 * Fill placeholder paragraphs in pattern markup.
+	 *
+	 * Server-side counterpart of `replacePlaceholders` in the editor wizard: every block
+	 * without inner blocks whose className contains a key of `$replaces` gets that value
+	 * as its content. The block's wrapper element is kept, so styled paragraphs keep
+	 * the markup their attributes describe. Values are inserted as-is, so the caller
+	 * escapes them.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $content  Block markup.
+	 * @param array  $replaces Map of className placeholder to escaped content.
+	 *
+	 * @return string Block markup with the placeholders filled.
+	 */
+	public static function replace_placeholders( string $content, array $replaces ): string {
+		$blocks = self::replace_placeholders_in_blocks( parse_blocks( $content ), $replaces );
+
+		return serialize_blocks( $blocks );
+	}
+
+	/**
+	 * Fill placeholders in parsed blocks, recursing into inner blocks.
+	 *
+	 * @param array $blocks   Parsed blocks.
+	 * @param array $replaces Map of className placeholder to escaped content.
+	 *
+	 * @return array Parsed blocks with the placeholders filled.
+	 */
+	private static function replace_placeholders_in_blocks( array $blocks, array $replaces ): array {
+		foreach ( $blocks as &$block ) {
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$block['innerBlocks'] = self::replace_placeholders_in_blocks( $block['innerBlocks'], $replaces );
+				continue;
+			}
+
+			$class_name = $block['attrs']['className'] ?? '';
+			if ( ! is_string( $class_name ) || '' === $class_name ) {
+				continue;
+			}
+
+			foreach ( $replaces as $placeholder => $value ) {
+				if ( false === strpos( $class_name, $placeholder ) ) {
+					continue;
+				}
+
+				$html = self::replace_element_content( (string) ( $block['innerHTML'] ?? '' ), $value );
+				if ( null === $html ) {
+					continue;
+				}
+
+				$block['innerHTML']    = $html;
+				$block['innerContent'] = array( $html );
+			}
+		}
+		unset( $block );
+
+		return $blocks;
+	}
+
+	/**
+	 * Replace the content of a block's wrapper element, keeping the element itself.
+	 *
+	 * @param string $html  Block inner HTML, a single element such as `<p class="…" style="…">…</p>`.
+	 * @param string $value Escaped content to put inside the element.
+	 *
+	 * @return string|null The HTML with the new content, or null when it is not a single element.
+	 */
+	private static function replace_element_content( string $html, string $value ): ?string {
+		if ( ! preg_match( '/^(\s*<([a-z][a-z0-9]*)\b[^>]*>).*(<\/\2>\s*)$/is', $html, $matches ) ) {
+			return null;
+		}
+
+		return $matches[1] . $value . $matches[3];
 	}
 
 	/**

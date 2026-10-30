@@ -69,6 +69,7 @@ class Sensei_Abilities {
 		self::register_lessons_list_ability();
 		self::register_questions_list_ability();
 		self::register_students_list_ability();
+		self::register_course_create_ability();
 	}
 
 	/**
@@ -452,6 +453,61 @@ class Sensei_Abilities {
 	}
 
 	/**
+	 * Register the sensei/course-create ability.
+	 *
+	 * @since $$next-version$$
+	 */
+	private static function register_course_create_ability(): void {
+		wp_register_ability(
+			'sensei/course-create',
+			array(
+				'label'               => __( 'Create course', 'sensei-lms' ),
+				'description'         => __( 'Create a draft Sensei course with the default course layout: description, Take Course button, progress bar and course outline. The course has no modules or lessons yet. Publishing is left to a person.', 'sensei-lms' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => array(
+					'type'                 => 'object',
+					'required'             => array( 'title' ),
+					'properties'           => array(
+						'title'       => array(
+							'type'        => 'string',
+							'description' => __( 'Course title.', 'sensei-lms' ),
+							'minLength'   => 1,
+						),
+						'description' => array(
+							'type'        => 'string',
+							'description' => __( 'Short plain-text description. Stored as the course excerpt and shown in the description paragraph of the course page.', 'sensei-lms' ),
+						),
+					),
+					'additionalProperties' => false,
+				),
+				'output_schema'       => array(
+					'type'       => 'object',
+					'properties' => array(
+						'id'        => array( 'type' => 'integer' ),
+						'title'     => array( 'type' => 'string' ),
+						'status'    => array( 'type' => 'string' ),
+						'link'      => array( 'type' => 'string' ),
+						'edit_link' => array( 'type' => 'string' ),
+					),
+				),
+				'execute_callback'    => array( __CLASS__, 'execute_course_create' ),
+				'permission_callback' => array( __CLASS__, 'can_create_courses' ),
+				'meta'                => array(
+					'annotations'  => array(
+						'readonly'    => false,
+						'destructive' => false,
+						'idempotent'  => false,
+					),
+					'show_in_rest' => true,
+					'mcp'          => array(
+						'public' => true,
+					),
+				),
+			)
+		);
+	}
+
+	/**
 	 * Determine a student's progress state on a course.
 	 *
 	 * Returns null when the student has no progress record for the course
@@ -811,6 +867,90 @@ class Sensei_Abilities {
 	}
 
 	/**
+	 * Execute the sensei/course-create ability.
+	 *
+	 * The course is always a draft: the ability never publishes, so a teacher
+	 * cannot reach through it what the editor would not let them publish.
+	 *
+	 * @access private
+	 * @since $$next-version$$
+	 *
+	 * @param array $input Ability input.
+	 *
+	 * @return array|WP_Error
+	 */
+	public static function execute_course_create( $input ) {
+		$title = trim( sanitize_text_field( $input['title'] ?? '' ) );
+		if ( '' === $title ) {
+			return new WP_Error( 'sensei_course_missing_title', __( 'A course title is required.', 'sensei-lms' ) );
+		}
+
+		$description = trim( sanitize_textarea_field( $input['description'] ?? '' ) );
+
+		// wp_insert_post() expects slashed data; ability input is not slashed.
+		$course_id = wp_insert_post(
+			wp_slash(
+				array(
+					'post_type'    => 'course',
+					'post_status'  => 'draft',
+					'post_title'   => $title,
+					'post_excerpt' => $description,
+					'post_content' => self::get_default_course_content( $description ),
+					'post_author'  => get_current_user_id(),
+				)
+			),
+			true
+		);
+
+		if ( is_wp_error( $course_id ) ) {
+			return $course_id;
+		}
+
+		$course = get_post( $course_id );
+
+		return array(
+			'id'        => $course->ID,
+			'title'     => $course->post_title,
+			'status'    => $course->post_status,
+			'link'      => (string) get_permalink( $course ),
+			'edit_link' => (string) get_edit_post_link( $course, 'raw' ),
+		);
+	}
+
+	/**
+	 * Get the content the editor gives a new course: the default course pattern
+	 * with the description placeholder filled in.
+	 *
+	 * Honours a Sensei pattern set through `sensei_course_block_template`, and
+	 * falls back to `course-default` when the template points elsewhere.
+	 *
+	 * @param string $description Sanitized plain-text description, may be empty.
+	 *
+	 * @return string Block markup.
+	 */
+	private static function get_default_course_content( string $description ): string {
+		$pattern_name  = 'course-default';
+		$post_type     = get_post_type_object( 'course' );
+		$template_slug = $post_type->template[0][1]['slug'] ?? '';
+		if ( is_string( $template_slug ) && 0 === strpos( $template_slug, 'sensei-lms/' ) ) {
+			$pattern_name = substr( $template_slug, strlen( 'sensei-lms/' ) );
+		}
+
+		$content = Sensei_Block_Patterns::get_pattern_content( 'course', $pattern_name )
+			?? Sensei_Block_Patterns::get_pattern_content( 'course', 'course-default' )
+			?? '';
+
+		if ( '' === $description ) {
+			return $content;
+		}
+
+		return Sensei_Block_Patterns::replace_placeholders(
+			$content,
+			array( 'sensei-content-description' => esc_html( $description ) )
+		);
+	}
+
+	/**
 	 * Permission check: user can edit courses.
 	 *
 	 * Mirrors the Courses admin screen capability.
@@ -909,5 +1049,25 @@ class Sensei_Abilities {
 		}
 		return current_user_can( $post_type->cap->edit_post, $course->ID )
 			|| current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * Permission check: user can create courses.
+	 *
+	 * Uses the course post type's `create_posts` capability, the one the "Add New
+	 * Course" screen requires. Core maps it to `edit_courses` unless a plugin
+	 * overrides it. Teachers have it; they lack `publish_courses`, which is why the
+	 * ability only creates drafts.
+	 *
+	 * @access private
+	 * @since $$next-version$$
+	 */
+	public static function can_create_courses(): bool {
+		$post_type_object = get_post_type_object( 'course' );
+		if ( ! $post_type_object ) {
+			return false;
+		}
+
+		return current_user_can( $post_type_object->cap->create_posts );
 	}
 }

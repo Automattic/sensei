@@ -622,4 +622,182 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 
 		$factory->tearDown();
 	}
+
+	/**
+	 * A teacher creating a course gets a draft they own, with the default course layout and the description filled in.
+	 *
+	 * @covers Sensei_Abilities::execute_course_create
+	 */
+	public function testExecuteCourseCreate_TeacherGiven_CreatesDraftOwnedByTeacher() {
+		$teacher = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/course-create' );
+
+		$result = $ability->execute(
+			array(
+				'title'       => 'Power chords',
+				'description' => 'Root and fifth.',
+			)
+		);
+
+		$this->assertIsArray( $result, 'The ability should return the created course.' );
+		$course = get_post( $result['id'] );
+		$this->assertSame( 'course', $course->post_type, 'A course post should be created.' );
+		$this->assertSame( 'draft', $course->post_status, 'The course should be a draft.' );
+		$this->assertSame( $teacher, (int) $course->post_author, 'The teacher should own the course.' );
+		$this->assertSame( 'Power chords', $course->post_title, 'The title should be stored.' );
+		$this->assertSame( 'Root and fifth.', $course->post_excerpt, 'The description should be stored as the excerpt.' );
+		$this->assertStringContainsString( '<!-- wp:sensei-lms/course-outline /-->', $course->post_content, 'The default course pattern should be applied.' );
+		$this->assertStringContainsString( '<p class="sensei-content-description">Root and fifth.</p>', $course->post_content, 'The description placeholder should be filled.' );
+		$this->assertSame( '', get_post_meta( $course->ID, '_new_post', true ), 'The editor wizard flag should not be set.' );
+		$this->assertSame( 'draft', $result['status'], 'The result should report the draft status.' );
+		$this->assertStringContainsString( 'post=' . $course->ID, $result['edit_link'], 'The result should include the edit link.' );
+	}
+
+	/**
+	 * Without a description the pattern's empty placeholder paragraph is kept, as the editor wizard does.
+	 *
+	 * @covers Sensei_Abilities::execute_course_create
+	 */
+	public function testExecuteCourseCreate_DescriptionOmitted_LeavesPlaceholderEmpty() {
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/course-create' );
+
+		$result = $ability->execute( array( 'title' => 'Power chords' ) );
+
+		$course = get_post( $result['id'] );
+		$this->assertSame( '', $course->post_excerpt, 'The excerpt should be empty.' );
+		$this->assertStringContainsString( '<p class="sensei-content-description"></p>', $course->post_content, 'The placeholder paragraph should stay empty.' );
+	}
+
+	/**
+	 * Backslashes in the input survive wp_insert_post(), which unslashes its data.
+	 *
+	 * @covers Sensei_Abilities::execute_course_create
+	 */
+	public function testExecuteCourseCreate_BackslashesGiven_KeepsBackslashes() {
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/course-create' );
+
+		$result = $ability->execute(
+			array(
+				'title'       => 'Regex \\d+ basics',
+				'description' => 'Match C:\\temp with \\\\ escapes.',
+			)
+		);
+
+		$course = get_post( $result['id'] );
+		$this->assertSame( 'Regex \\d+ basics', $course->post_title, 'The title should keep its backslash.' );
+		$this->assertSame( 'Match C:\\temp with \\\\ escapes.', $course->post_excerpt, 'The excerpt should keep its backslashes.' );
+		$this->assertStringContainsString( 'Match C:\\temp with \\\\ escapes.', $course->post_content, 'The description paragraph should keep its backslashes.' );
+	}
+
+	/**
+	 * Even an administrator only gets a draft: publishing is left to a person.
+	 *
+	 * @covers Sensei_Abilities::execute_course_create
+	 */
+	public function testExecuteCourseCreate_AdminGiven_CreatesDraft() {
+		$this->login_as_admin();
+		$ability = wp_get_ability( 'sensei/course-create' );
+
+		$result = $ability->execute( array( 'title' => 'Power chords' ) );
+
+		$this->assertSame( 'draft', get_post_status( $result['id'] ), 'The course should be a draft.' );
+	}
+
+	/**
+	 * A blank title is rejected without creating a course.
+	 *
+	 * @covers Sensei_Abilities::execute_course_create
+	 */
+	public function testExecuteCourseCreate_BlankTitleGiven_ReturnsError() {
+		$this->login_as_admin();
+		$courses_before = count(
+			get_posts(
+				array(
+					'post_type'   => 'course',
+					'post_status' => 'any',
+					'fields'      => 'ids',
+				)
+			)
+		);
+
+		$result = Sensei_Abilities::execute_course_create( array( 'title' => '   ' ) );
+
+		$this->assertInstanceOf( WP_Error::class, $result, 'A blank title should return an error.' );
+		$this->assertSame( 'sensei_course_missing_title', $result->get_error_code(), 'The error code should identify the missing title.' );
+		$courses_after = count(
+			get_posts(
+				array(
+					'post_type'   => 'course',
+					'post_status' => 'any',
+					'fields'      => 'ids',
+				)
+			)
+		);
+		$this->assertSame( $courses_before, $courses_after, 'No course should be created.' );
+	}
+
+	/**
+	 * Creating courses requires the same capability as the Add New Course screen.
+	 *
+	 * @covers Sensei_Abilities::can_create_courses
+	 * @dataProvider providerCanCreateCourses
+	 *
+	 * @param string|null $role     Role of the caller, or null when logged out.
+	 * @param bool        $expected Whether the caller may create courses.
+	 */
+	public function testCanCreateCourses_RoleGiven_MatchesEditCoursesCapability( ?string $role, bool $expected ) {
+		wp_set_current_user( $role ? $this->factory->user->create( array( 'role' => $role ) ) : 0 );
+		$ability = wp_get_ability( 'sensei/course-create' );
+
+		$actual = $ability->check_permissions( array( 'title' => 'Power chords' ) );
+
+		$this->assertSame( $expected, $actual );
+	}
+
+	/**
+	 * Roles and whether they may create courses.
+	 *
+	 * @return array[]
+	 */
+	public function providerCanCreateCourses(): array {
+		return array(
+			'logged out'    => array( null, false ),
+			'subscriber'    => array( 'subscriber', false ),
+			'teacher'       => array( 'teacher', true ),
+			'administrator' => array( 'administrator', true ),
+		);
+	}
+
+	/**
+	 * The check follows the post type's `create_posts` capability when a plugin overrides it.
+	 *
+	 * @covers Sensei_Abilities::can_create_courses
+	 */
+	public function testCanCreateCourses_CreatePostsCapabilityOverridden_UsesOverriddenCapability() {
+		$post_type_object = get_post_type_object( 'course' );
+		$original_cap     = $post_type_object->cap->create_posts;
+		$teacher          = $this->factory->user->create_and_get( array( 'role' => 'teacher' ) );
+		$granted_teacher  = $this->factory->user->create_and_get( array( 'role' => 'teacher' ) );
+		$granted_teacher->add_cap( 'create_sensei_courses' );
+		$ability = wp_get_ability( 'sensei/course-create' );
+		$input   = array( 'title' => 'Power chords' );
+
+		try {
+			$post_type_object->cap->create_posts = 'create_sensei_courses';
+
+			wp_set_current_user( $teacher->ID );
+			$without_cap = $ability->check_permissions( $input );
+
+			wp_set_current_user( $granted_teacher->ID );
+			$with_cap = $ability->check_permissions( $input );
+		} finally {
+			$post_type_object->cap->create_posts = $original_cap;
+		}
+
+		$this->assertFalse( $without_cap, 'A teacher without the overridden capability should be denied.' );
+		$this->assertTrue( $with_cap, 'A user with the overridden capability should be allowed.' );
+	}
 }
