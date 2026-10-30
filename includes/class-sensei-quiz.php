@@ -1106,7 +1106,6 @@ class Sensei_Quiz {
 				) ) {
 					return false;
 				}
-
 			}
 
 			/**

@@ -999,7 +999,6 @@ class Sensei_Grading {
 					$this->progress_save_failed = true;
 					return false;
 				}
-
 			}
 
 			if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( sensei_request_text( $_POST['sensei_grade_next_learner'] ) ) > 0 ) {
