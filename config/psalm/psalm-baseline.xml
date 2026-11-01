@@ -4450,13 +4450,6 @@
       <code><![CDATA[self::$instance]]></code>
     </DocblockTypeContradiction>
   </file>
-  <file src="includes/email-signup/template.php">
-    <DeprecatedClass>
-      <code><![CDATA[Sensei_Email_Signup_Form::GDPR_EMAIL_FIELD_ID]]></code>
-      <code><![CDATA[Sensei_Email_Signup_Form::MC_LIST_ID]]></code>
-      <code><![CDATA[Sensei_Email_Signup_Form::MC_USER_ID]]></code>
-    </DeprecatedClass>
-  </file>
   <file src="includes/emails/class-sensei-email-learner-completed-course.php">
     <InvalidGlobal>
       <code><![CDATA[global  $sensei_email_data;]]></code>
