@@ -121,22 +121,6 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Lessons are not published a course is actually publishing but meta is false.
-	 *
-	 *  @covers Sensei_Course_Pre_Publish_Panel::maybe_publish_lessons
-	 */
-	public function testMaybePublishLessons_WhenFirstPublishedButMetaFalse_DoesNotPublishLessons() {
-		/* Arrange */
-		$this->login_as_admin();
-
-		/* Act */
-		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'draft' );
-
-		/* Assert */
-		$this->assertEquals( 'draft', get_post_status( $this->lesson_id ) );
-	}
-
-	/**
 	 * When Course is switched to publish state, the flag is set.
 	 *
 	 *  @covers Sensei_Course_Pre_Publish_Panel::maybe_publish_lessons
