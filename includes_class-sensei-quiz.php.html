@@ -1633,7 +1633,7 @@ class Sensei_Quiz {
 		}
 
 		// Check if there is a lesson prerequisite and if the user has completed it.
-		$prerequisite_id = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+		$prerequisite_id = Sensei()->course_lessons_repository->get_lesson_prerequisite_id( (int) $lesson_id );
 		if (
 			$prerequisite_id
 			&amp;&amp; ! Sensei_Utils::user_completed_lesson( $prerequisite_id, $user_id )
