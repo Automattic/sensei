@@ -519,7 +519,7 @@ class Sensei_Lesson {
 		$posts_array = $course_id ? $this->get_prerequisites( $lesson_id, $course_id ) : array();
 
 		// Get the currently selected prerequisite.
-		$selected_prerequisite = get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+		$selected_prerequisite = Sensei()->course_lessons_repository->get_lesson_prerequisite_id( $lesson_id );
 
 		// Build the HTML to Output.
 		$input_name = 'lesson_prerequisite';
@@ -2916,7 +2916,7 @@ class Sensei_Lesson {
 				}
 				break;
 			case 'lesson-prerequisite':
-				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true );
+				$lesson_prerequisite_id = Sensei()->course_lessons_repository->get_lesson_prerequisite_id( (int) $id );
 				if ( 0 &lt; absint( $lesson_prerequisite_id ) ) {
 					$lesson_prerequisite_post = get_post( $lesson_prerequisite_id );
 					// translators: Placeholder is the item title/name.
@@ -4513,11 +4513,12 @@ class Sensei_Lesson {
 
 		// setup the values for all meta fields
 		$data = array();
-		foreach ( array_diff( $this->meta_fields, array( 'lesson_course' ) ) as $field ) {
+		foreach ( array_diff( $this->meta_fields, array( 'lesson_course', 'lesson_prerequisite' ) ) as $field ) {
 
 			$data[ $field ] = get_post_meta( $post_id, '_' . $field, true );
 
 		}
+		$data['lesson_prerequisite'] = Sensei()->course_lessons_repository->get_lesson_prerequisite_id( (int) $post_id ) ?? '';
 		// The quick edit script selects option[value="…"], so a lesson without a course needs the empty string, not null.
 		$data['lesson_course'] = Sensei()->course_lessons_repository->get_course_id( (int) $post_id ) ?? '';
 		// add quiz meta fields
