@@ -1187,8 +1187,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testLessonPrerequisiteMetaBoxContent_WhenLessonHadPrerequisite_SelectsIt(): void {
 		/* Arrange */
 		global $post;
-		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
-		wp_set_current_user( $admin_id );
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
 		$course_lessons  = $this->factory->get_course_with_lessons(
 			array(
 				'lesson_count'   => 2,
@@ -2435,8 +2434,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	 */
 	public function testAddColumnData_WhenLessonHadPrerequisite_OutputsPrerequisiteEditLink(): void {
 		/* Arrange */
-		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
-		wp_set_current_user( $admin_id );
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
 		$prerequisite_id = $this->factory->lesson->create( array( 'post_title' => 'Prerequisite lesson' ) );
 		$lesson_id       = $this->factory->lesson->create();
 		$_POST           = array(
