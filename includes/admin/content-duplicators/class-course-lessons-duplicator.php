@@ -88,7 +88,7 @@ class Course_Lessons_Duplicator {
 	private function update_lesson_prerequisite_ids( array $lessons_to_update, array $new_lesson_id_lookup ): void {
 		foreach ( $lessons_to_update as $lesson_to_update ) {
 			$old_prerequisite_id = $lesson_to_update['old_prerequisite_id'];
-			$new_prerequisite_id = $new_lesson_id_lookup[ $old_prerequisite_id ];
+			$new_prerequisite_id = $new_lesson_id_lookup[ $old_prerequisite_id ] ?? null;
 			if ( null !== $new_prerequisite_id ) {
 				Sensei()->course_lessons_repository->set_lesson_prerequisite( $lesson_to_update['lesson_id'], $new_prerequisite_id );
 			}
