@@ -14,6 +14,29 @@ This skill verifies that a change actually behaves correctly from a user's persp
 - Browser tools are available, such as Chrome DevTools MCP or the harness's browser automation tools. Read their usage instructions before driving the browser. If none are available, report that agent-driven browser verification is unavailable and provide manual steps.
 - For PHP changes that touch built assets, run `npm run build:assets` first. For changes that affect the scoped vendor tree, run `make build`.
 
+## Learning Mode coverage
+
+Every E2E run must include the affected flows with Learning Mode enabled, whether
+using browser tools or targeted Playwright specs. Use Learning Mode-enabled
+course fixtures for admin checks too. Checks with Learning Mode disabled may
+supplement this coverage, but do not replace it.
+
+Enable Learning Mode on the test course in the editor, or set its
+`_course_theme` meta to `sensei-theme` in the isolated environment. Confirm
+`Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id )` returns true
+and open a lesson as the test student to verify the Learning Mode layout and
+controls. If instrumenting the request, `should_use_learning_mode()` must be
+checked during that lesson request, not in an unrelated WP-CLI context. The
+active WordPress Course theme alone is not proof that Learning Mode is enabled.
+
+Keep Learning Mode enabled across each storage configuration being tested.
+Exercise the affected success and failure/retry flows in that mode; report the
+actual controls, persisted state and redirects without assuming recovery.
+Record the course, storage mode and activation evidence in the test report.
+If Learning Mode cannot be exercised, report that coverage as blocked rather
+than claiming the E2E verification is complete. Restore any pre-existing course
+or site settings changed for the run.
+
 ## Sensei surface map
 
 The most common surfaces ranked by what a Sensei change typically touches:
@@ -72,6 +95,7 @@ New linked-worktree environments automatically copy data from `sensei-lms` when 
 ```bash
 make wp CMD="post create --post_type=course --post_title='Sensei E2E' --post_status=publish --porcelain"
 # capture COURSE_ID
+make wp CMD="post meta update COURSE_ID _course_theme sensei-theme"
 make wp CMD="post create --post_type=lesson --post_title='Lesson 1' --post_status=publish --porcelain"
 # capture LESSON_ID
 make wp CMD="post meta add LESSON_ID _lesson_course COURSE_ID"
@@ -134,7 +158,10 @@ Reference saved screenshots in the PR description if useful.
 
 - Pure refactor with full unit-test coverage and no behavior change.
 - Documentation, changelog, or build-only changes.
-- Changes already covered by a targeted Playwright spec — run that spec instead:
+- Changes already covered by a targeted Playwright spec — run that spec instead,
+  ensuring the selected scenarios meet the Learning Mode coverage requirement above.
+  If they only cover Learning Mode off, add the relevant enabled variant or perform
+  the enabled browser check:
   ```bash
   npm run test:e2e -- tests/e2e-playwright/specs/<spec>.spec.ts
   ```
