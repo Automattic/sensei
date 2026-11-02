@@ -75,7 +75,7 @@ test.describe.serial( 'Students Management', () => {
 		await date.fill( enteredDate );
 		await update.click();
 
-		await expect( page.getByRole( 'alert' ) ).toContainText( "We couldn't save this start date. Try again." );
+		await expect( page.getByRole( 'alert' ) ).toContainText( 'Unable to save this start date.' );
 		await expect( page.locator( '.sensei-edit-date-error + table' ) ).toContainText( student.username );
 		await expect( date ).toHaveValue( enteredDate );
 		await expect( update ).toBeEnabled();
