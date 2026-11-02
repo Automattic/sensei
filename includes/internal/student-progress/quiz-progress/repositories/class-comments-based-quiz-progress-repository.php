@@ -152,7 +152,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @internal
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
-	 * @throws Persistence_Exception If a required progress comment cannot be inserted.
+	 * @throws Persistence_Exception If a required lesson progress comment cannot be inserted.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->assert_comments_based_quiz_progress( $quiz_progress );

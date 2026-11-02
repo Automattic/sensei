@@ -98,7 +98,7 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 * @internal
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress The quiz progress.
-	 * @throws Persistence_Exception If required lesson progress creation fails.
+	 * @throws Persistence_Exception If a required lesson progress comment cannot be inserted.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->comments_based_repository->save( $quiz_progress );

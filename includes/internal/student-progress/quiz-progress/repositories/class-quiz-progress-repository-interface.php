@@ -61,7 +61,7 @@ interface Quiz_Progress_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
-	 * @throws Persistence_Exception If required lesson progress creation fails.
+	 * @throws Persistence_Exception If a required lesson progress comment cannot be inserted.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void;
 
