@@ -241,7 +241,7 @@ class Comments_Based_Course_Progress_Repository_Test extends Course_Progress_Rep
 					'Failed status inserts must not notify observers.'
 				);
 
-				$wpdb         = $GLOBALS['wpdb'];
+				$wpdb = $GLOBALS['wpdb'];
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Inspect persisted rows after an injected insert failure.
 				$saved_status = $wpdb->get_var(
 					$wpdb->prepare(
