@@ -99,4 +99,14 @@ interface Course_Lessons_Repository_Interface {
 	 * @param int $lesson_id Lesson ID.
 	 */
 	public function delete_lesson_prerequisite( int $lesson_id ): void;
+
+	/**
+	 * Get the IDs of the lessons that have the given lesson as their prerequisite.
+	 *
+	 * @internal
+	 *
+	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
+	 * @return int[] Lesson IDs, in no particular order. Trashed lessons are left out.
+	 */
+	public function get_lesson_ids_with_prerequisite( int $prerequisite_lesson_id ): array;
 }

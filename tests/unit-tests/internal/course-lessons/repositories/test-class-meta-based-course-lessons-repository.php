@@ -371,4 +371,28 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertFalse( metadata_exists( 'post', $lesson_id, '_lesson_prerequisite' ) );
 	}
+
+	/**
+	 * Only the lessons that require the given lesson are returned, and trashed ones are left out.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_ids_with_prerequisite
+	 */
+	public function testGetLessonIdsWithPrerequisite_LessonsRequiringItGiven_ReturnsTheirIds(): void {
+		/* Arrange. */
+		$prerequisite_id       = $this->factory->lesson->create();
+		$other_prerequisite_id = $this->factory->lesson->create();
+		$dependent_id          = $this->factory->lesson->create( array( 'post_status' => 'draft' ) );
+		$trashed_id            = $this->factory->lesson->create();
+		$other_id              = $this->factory->lesson->create();
+		$this->repository->set_lesson_prerequisite( $dependent_id, $prerequisite_id );
+		$this->repository->set_lesson_prerequisite( $trashed_id, $prerequisite_id );
+		$this->repository->set_lesson_prerequisite( $other_id, $other_prerequisite_id );
+		wp_trash_post( $trashed_id );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_ids_with_prerequisite( $prerequisite_id );
+
+		/* Assert. */
+		self::assertSame( array( $dependent_id ), $actual );
+	}
 }

@@ -227,4 +227,31 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	public function delete_lesson_prerequisite( int $lesson_id ): void {
 		delete_post_meta( $lesson_id, '_lesson_prerequisite' );
 	}
+
+	/**
+	 * Get the IDs of the lessons that have the given lesson as their prerequisite.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
+	 * @return int[] Lesson IDs, in no particular order. Trashed lessons are left out.
+	 */
+	public function get_lesson_ids_with_prerequisite( int $prerequisite_lesson_id ): array {
+		$lesson_ids = get_posts(
+			array(
+				'post_type'        => 'lesson',
+				'post_status'      => 'any',
+				'posts_per_page'   => -1,
+				'fields'           => 'ids',
+				'orderby'          => 'none',
+				'suppress_filters' => true,
+				'meta_key'         => '_lesson_prerequisite', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Prerequisites are stored in a meta.
+				'meta_value'       => $prerequisite_lesson_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+			)
+		);
+
+		return array_map( 'intval', $lesson_ids );
+	}
 }
