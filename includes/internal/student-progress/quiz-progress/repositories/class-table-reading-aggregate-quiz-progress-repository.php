@@ -115,6 +115,8 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 * @param Quiz_Progress_Interface $quiz_progress The quiz progress.
 	 * @throws Persistence_Exception If required lesson progress creation fails.
 	 * @throws RuntimeException If secondary quiz progress is still missing.
+	 *
+	 * phpcs:ignore Squiz.Commenting.FunctionCommentThrowTag.WrongNumber -- Includes the persistence exception propagated by lesson creation.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->tables_based_repository->save( $quiz_progress );
