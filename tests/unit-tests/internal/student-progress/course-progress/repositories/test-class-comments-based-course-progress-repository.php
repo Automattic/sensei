@@ -212,41 +212,26 @@ class Comments_Based_Course_Progress_Repository_Test extends Course_Progress_Rep
 		$course_id = $this->factory->course->create();
 		$user_id   = $this->factory->user->create();
 
-		$this->with_failed_progress_insert(
+		$this->with_progress_storage_mode(
 			$mode,
-			'course',
-			function ( $fault_filter ) use ( $course_id, $user_id, $table_status ) {
-				remove_filter( 'query', $fault_filter );
+			function () use ( $course_id, $user_id, $table_status ) {
 				$repository = \Sensei()->course_progress_repository;
 				$progress   = $repository->create( $course_id, $user_id );
-				$activity   = array(
-					'post_id' => $course_id,
-					'user_id' => $user_id,
-					'type'    => 'sensei_course_status',
-				);
-				$comment = \Sensei_Utils::sensei_check_for_activity( $activity, true );
-
-				$remove_comment = static function ( $args ) use ( $comment, $course_id, $user_id ) {
-					if ( 'sensei_course_status' === $args['type']
-						&& $course_id === $args['post_id']
-						&& $user_id === $args['user_id'] ) {
-						wp_delete_comment( $comment->comment_ID, true );
-					}
-				};
-
 				$progress->complete();
 				$events_before = did_action( 'sensei_course_status_updated' );
 				$failure       = null;
 
-				add_action( 'sensei_log_activity_before', $remove_comment );
-				add_filter( 'query', $fault_filter );
-
 				try {
-					$repository->save( $progress );
+					$this->with_failed_progress_comment_insert(
+						'course',
+						$course_id,
+						$user_id,
+						static function () use ( $repository, $progress ) {
+							$repository->save( $progress );
+						}
+					);
 				} catch ( Persistence_Exception $exception ) {
 					$failure = $exception;
-				} finally {
-					remove_action( 'sensei_log_activity_before', $remove_comment );
 				}
 
 				self::assertInstanceOf( Persistence_Exception::class, $failure, 'A missing comment insert must report failure.' );
@@ -255,7 +240,6 @@ class Comments_Based_Course_Progress_Repository_Test extends Course_Progress_Rep
 					did_action( 'sensei_course_status_updated' ),
 					'Failed status inserts must not notify observers.'
 				);
-				self::assertSame( 0, \Sensei_Utils::sensei_check_for_activity( $activity ), 'No comment should be persisted after failure.' );
 
 				$wpdb         = $GLOBALS['wpdb'];
 				$saved_status = $wpdb->get_var(
@@ -268,15 +252,13 @@ class Comments_Based_Course_Progress_Repository_Test extends Course_Progress_Rep
 				);
 				self::assertSame( $table_status, $saved_status, 'Writes before the failure must be retained; dependent writes must stop.' );
 
-				remove_filter( 'query', $fault_filter );
 				$repository->save( $progress );
 				self::assertSame(
 					'complete',
 					$repository->get( $course_id, $user_id )->get_status(),
 					'Retry should persist the requested status.'
 				);
-			},
-			'comments'
+			}
 		);
 	}
 

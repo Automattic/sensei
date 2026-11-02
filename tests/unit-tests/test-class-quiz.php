@@ -1058,32 +1058,25 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		update_post_meta( $quiz_id, '_quiz_grade_type', 'manual' );
 		$submitted = did_action( 'sensei_user_quiz_submitted' );
 
-		$this->with_failed_progress_insert(
+		$this->with_progress_storage_mode(
 			$mode,
-			'lesson',
-			function ( $fault_filter ) use ( $lesson_id, $quiz_id, $user_id, $submitted ) {
-				remove_filter( 'query', $fault_filter );
+			function () use ( $lesson_id, $quiz_id, $user_id, $submitted ) {
 				Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 				Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
-				$comment        = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status' ), true );
-				$remove_comment = static function ( $args ) use ( $comment ) {
-					if ( 'sensei_lesson_status' === $args['type'] && 'ungraded' === $args['status'] ) {
-						wp_delete_comment( $comment->comment_ID, true );
-					}
-				};
-				add_action( 'sensei_log_activity_before', $remove_comment );
-				add_filter( 'query', $fault_filter );
 
-				try {
-					$result = Sensei_Quiz::submit_answers_for_grading( array(), array(), $lesson_id, $user_id );
-				} finally {
-					remove_action( 'sensei_log_activity_before', $remove_comment );
-				}
+				$result = $this->with_failed_progress_comment_insert(
+					'lesson',
+					$lesson_id,
+					$user_id,
+					static function () use ( $lesson_id, $user_id ) {
+						return Sensei_Quiz::submit_answers_for_grading( array(), array(), $lesson_id, $user_id );
+					},
+					'ungraded'
+				);
 
 				self::assertFalse( $result, 'The quiz caller must report the required insert failure.' );
 				self::assertSame( $submitted, did_action( 'sensei_user_quiz_submitted' ), 'Failed quiz progress must not announce submission.' );
-			},
-			'comments'
+			}
 		);
 	}
 

@@ -5,73 +5,60 @@
  * @package sensei-tests
  */
 
-use Sensei\Internal\Services\Progress_Storage_Configuration;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 
 /**
  * Inject progress insert failures and restore test state afterward.
  */
 trait Sensei_Progress_Insert_Failure_Helpers {
-	/**
-	 * Configurations used by required-write caller regressions.
-	 *
-	 * @return array
-	 */
-	public static function progress_storage_modes(): array {
-		return array(
-			'comments only'    => array( 'comments-only' ),
-			'comments primary' => array( 'comments' ),
-			'tables primary'   => array( 'tables' ),
-		);
-	}
-
-	/**
-	 * Dual-write configurations and their other store.
-	 *
-	 * @return array
-	 */
-	public static function dual_write_storage_modes(): array {
-		return array(
-			'comments primary' => array( 'comments', 'tables' ),
-			'tables primary'   => array( 'tables', 'comments' ),
-		);
-	}
+	use Sensei_HPPS_Helpers;
 
 	protected function with_failed_progress_insert( string $mode, string $entity, callable $operation, ?string $failed_store = null ) {
-		global $wpdb;
-		$original      = array();
-		$configuration = Progress_Storage_Configuration::resolve(
-			array(
-				'experimental_progress_storage'            => true,
-				'experimental_progress_storage_synchronization' => 'comments-only' !== $mode,
-				'experimental_progress_storage_repository' => 'tables' === $mode ? Progress_Storage_Settings::TABLES_STORAGE : Progress_Storage_Settings::COMMENTS_STORAGE,
-			)
-		);
-		$factories     = array(
-			'course_progress' => \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory::class,
-			'lesson_progress' => \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory::class,
-			'quiz_progress'   => \Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory::class,
-			'quiz_submission' => \Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory::class,
-			'quiz_answer'     => \Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory::class,
-			'quiz_grade'      => \Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory::class,
-		);
-		foreach ( array( 'course_progress', 'lesson_progress', 'quiz_progress', 'quiz_submission', 'quiz_answer', 'quiz_grade' ) as $property ) {
-			$original[ $property . '_repository' ] = Sensei()->{$property . '_repository'};
-			$factory_class                         = $factories[ $property ];
-			Sensei()->{$property . '_repository'}  = ( new $factory_class( $configuration ) )->create();
-		}
-		$original_configuration                  = Sensei()->progress_storage_configuration;
-		Sensei()->progress_storage_configuration = $configuration;
-		$failed_store                            = $failed_store ?? $mode;
-		$table                                   = 'tables' === $failed_store ? $wpdb->prefix . 'sensei_lms_progress' : $wpdb->comments;
-		$type                                    = 'tables' === $failed_store ? "'" . $entity . "'" : 'sensei_' . $entity . '_status';
-		try {
-			return $this->with_failed_insert( $table, $operation, null, $type );
-		} finally {
-			foreach ( $original as $property => $repository ) {
-				Sensei()->$property = $repository;
+		return $this->with_progress_storage_mode(
+			$mode,
+			function () use ( $mode, $entity, $operation, $failed_store ) {
+				$wpdb         = $GLOBALS['wpdb'];
+				$failed_store = $failed_store ?? $mode;
+				$table        = 'tables' === $failed_store ? $wpdb->prefix . 'sensei_lms_progress' : $wpdb->comments;
+				$type         = 'tables' === $failed_store ? "'" . $entity . "'" : 'sensei_' . $entity . '_status';
+
+				return $this->with_failed_insert( $table, $operation, null, $type );
 			}
-			Sensei()->progress_storage_configuration = $original_configuration;
+		);
+	}
+
+	/**
+	 * Remove an already-read comment during save and fail its replacement insert.
+	 *
+	 * @param string      $entity Course or lesson comment type.
+	 * @param int         $post_id Course or lesson ID.
+	 * @param int         $user_id Student ID.
+	 * @param callable    $operation Save operation to exercise.
+	 * @param string|null $status Optional status at which to remove the comment.
+	 * @return mixed Operation result.
+	 */
+	protected function with_failed_progress_comment_insert( string $entity, int $post_id, int $user_id, callable $operation, ?string $status = null ) {
+		$type    = 'sensei_' . $entity . '_status';
+		$comment = Sensei_Utils::sensei_check_for_activity(
+			array(
+				'post_id' => $post_id,
+				'user_id' => $user_id,
+				'type'    => $type,
+			),
+			true
+		);
+		$remove_comment = static function ( $args ) use ( $comment, $post_id, $user_id, $type, $status ) {
+			if ( $type === $args['type'] && $post_id === $args['post_id'] && $user_id === $args['user_id']
+				&& ( null === $status || $status === $args['status'] ) ) {
+				wp_delete_comment( $comment->comment_ID, true );
+			}
+		};
+		add_action( 'sensei_log_activity_before', $remove_comment );
+
+		try {
+			return $this->with_failed_insert( $GLOBALS['wpdb']->comments, $operation, null, $type );
+		} finally {
+			remove_action( 'sensei_log_activity_before', $remove_comment );
 		}
 	}
 

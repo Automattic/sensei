@@ -28,46 +28,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Sensei_HPPS_Helpers {
 	/**
-	 * Course progress repository.
+	 * Repositories to restore after enabling HPPS.
 	 *
-	 * @var \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface
+	 * @var array
 	 */
-	private $_course_progress_repository;
-
-	/**
-	 * Lesson progress repository.
-	 *
-	 * @var \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface
-	 */
-	private $_lesson_progress_repository;
-
-	/**
-	 * Quiz repository.
-	 *
-	 * @var \Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface
-	 */
-	private $_quiz_progress_repository;
-
-	/**
-	 * Submission repository.
-	 *
-	 * @var \Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface
-	 */
-	private $_quiz_submission_repository;
-
-	/**
-	 * Answer repository.
-	 *
-	 * @var \Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface
-	 */
-	private $_quiz_answer_repository;
-
-	/**
-	 * Grade repository.
-	 *
-	 * @var \Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface
-	 */
-	private $_quiz_grade_repository;
+	private $_original_progress_repositories;
 
 	private function enable_hpps_tables_repository() {
 		Sensei()->settings->settings['experimental_progress_storage_repository'] = Progress_Storage_Settings::TABLES_STORAGE;
@@ -78,33 +43,94 @@ trait Sensei_HPPS_Helpers {
 				'experimental_progress_storage_synchronization' => true,
 			)
 		);
-		Sensei()->progress_storage_configuration = $storage_configuration;
-
-		$this->_course_progress_repository = Sensei()->course_progress_repository;
-		$this->_lesson_progress_repository = Sensei()->lesson_progress_repository;
-		$this->_quiz_progress_repository   = Sensei()->quiz_progress_repository;
-		$this->_quiz_submission_repository = Sensei()->quiz_submission_repository;
-		$this->_quiz_answer_repository     = Sensei()->quiz_answer_repository;
-		$this->_quiz_grade_repository      = Sensei()->quiz_grade_repository;
-
-		Sensei()->course_progress_repository = ( new Course_Progress_Repository_Factory( $storage_configuration ) )->create();
-		Sensei()->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory( $storage_configuration ) )->create();
-		Sensei()->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory( $storage_configuration ) )->create();
-		Sensei()->quiz_submission_repository = ( new Submission_Repository_Factory( $storage_configuration ) )->create();
-		Sensei()->quiz_answer_repository     = ( new Answer_Repository_Factory( $storage_configuration ) )->create();
-		Sensei()->quiz_grade_repository      = ( new Grade_Repository_Factory( $storage_configuration ) )->create();
+		$this->_original_progress_repositories = $this->set_progress_repositories( $storage_configuration );
 	}
 
 	private function reset_hpps_repository() {
 		Sensei()->settings->settings['experimental_progress_storage_repository'] = Progress_Storage_Settings::COMMENTS_STORAGE;
 		Sensei()->progress_storage_configuration                                 = Progress_Storage_Configuration::resolve( Sensei()->settings->settings );
 
-		Sensei()->course_progress_repository = $this->_course_progress_repository;
-		Sensei()->lesson_progress_repository = $this->_lesson_progress_repository;
-		Sensei()->quiz_progress_repository   = $this->_quiz_progress_repository;
-		Sensei()->quiz_submission_repository = $this->_quiz_submission_repository;
-		Sensei()->quiz_answer_repository     = $this->_quiz_answer_repository;
-		Sensei()->quiz_grade_repository      = $this->_quiz_grade_repository;
+		foreach ( $this->_original_progress_repositories as $property => $repository ) {
+			Sensei()->$property = $repository;
+		}
+	}
+
+	/**
+	 * Configurations used by required-write caller regressions.
+	 *
+	 * @return array
+	 */
+	public static function progress_storage_modes(): array {
+		return array(
+			'comments only'    => array( 'comments-only' ),
+			'comments primary' => array( 'comments' ),
+			'tables primary'   => array( 'tables' ),
+		);
+	}
+
+	/**
+	 * Dual-write configurations and their other store.
+	 *
+	 * @return array
+	 */
+	public static function dual_write_storage_modes(): array {
+		return array(
+			'comments primary' => array( 'comments', 'tables' ),
+			'tables primary'   => array( 'tables', 'comments' ),
+		);
+	}
+
+	/**
+	 * Select progress repositories for an operation and restore them afterward.
+	 *
+	 * @param string   $mode Storage configuration.
+	 * @param callable $operation Operation to run.
+	 * @return mixed Operation result.
+	 */
+	protected function with_progress_storage_mode( string $mode, callable $operation ) {
+		$configuration = Progress_Storage_Configuration::resolve(
+			array(
+				'experimental_progress_storage'            => true,
+				'experimental_progress_storage_synchronization' => 'comments-only' !== $mode,
+				'experimental_progress_storage_repository' => 'tables' === $mode ? Progress_Storage_Settings::TABLES_STORAGE : Progress_Storage_Settings::COMMENTS_STORAGE,
+			)
+		);
+		$original_configuration = Sensei()->progress_storage_configuration;
+		$original               = $this->set_progress_repositories( $configuration );
+
+		try {
+			return $operation();
+		} finally {
+			foreach ( $original as $property => $repository ) {
+				Sensei()->$property = $repository;
+			}
+			Sensei()->progress_storage_configuration = $original_configuration;
+		}
+	}
+
+	/**
+	 * Replace progress repositories using one configuration, returning the originals.
+	 *
+	 * @param Progress_Storage_Configuration $configuration Storage configuration.
+	 * @return array Original repositories keyed by plugin property.
+	 */
+	private function set_progress_repositories( Progress_Storage_Configuration $configuration ): array {
+		$factories = array(
+			'course_progress_repository' => Course_Progress_Repository_Factory::class,
+			'lesson_progress_repository' => Lesson_Progress_Repository_Factory::class,
+			'quiz_progress_repository'   => Quiz_Progress_Repository_Factory::class,
+			'quiz_submission_repository' => Submission_Repository_Factory::class,
+			'quiz_answer_repository'     => Answer_Repository_Factory::class,
+			'quiz_grade_repository'      => Grade_Repository_Factory::class,
+		);
+		$original = array();
+		foreach ( $factories as $property => $factory_class ) {
+			$original[ $property ] = Sensei()->$property;
+			Sensei()->$property    = ( new $factory_class( $configuration ) )->create();
+		}
+		Sensei()->progress_storage_configuration = $configuration;
+
+		return $original;
 	}
 
 	/**

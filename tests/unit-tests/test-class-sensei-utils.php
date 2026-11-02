@@ -379,31 +379,24 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$user_id   = $this->factory->user->create();
 		$completed = did_action( 'sensei_user_lesson_end' );
 
-		$this->with_failed_progress_insert(
+		$this->with_progress_storage_mode(
 			$mode,
-			'lesson',
-			function ( $fault_filter ) use ( $lesson_id, $user_id, $completed ) {
-				remove_filter( 'query', $fault_filter );
+			function () use ( $lesson_id, $user_id, $completed ) {
 				Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
-				$comment        = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status' ), true );
-				$remove_comment = static function ( $args ) use ( $comment ) {
-					if ( 'sensei_lesson_status' === $args['type'] && 'complete' === $args['status'] ) {
-						wp_delete_comment( $comment->comment_ID, true );
-					}
-				};
-				add_action( 'sensei_log_activity_before', $remove_comment );
-				add_filter( 'query', $fault_filter );
 
-				try {
-					$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
-				} finally {
-					remove_action( 'sensei_log_activity_before', $remove_comment );
-				}
+				$result = $this->with_failed_progress_comment_insert(
+					'lesson',
+					$lesson_id,
+					$user_id,
+					static function () use ( $lesson_id, $user_id ) {
+						return Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+					},
+					'complete'
+				);
 
 				self::assertFalse( $result, 'The caller must report the required insert failure.' );
 				self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'Completion must not be announced after failure.' );
-			},
-			'comments'
+			}
 		);
 	}
 
@@ -796,31 +789,24 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$user_id   = $this->factory->user->create();
 		$completed = did_action( 'sensei_user_course_end' );
 
-		$this->with_failed_progress_insert(
+		$this->with_progress_storage_mode(
 			$mode,
-			'course',
-			function ( $fault_filter ) use ( $course_id, $user_id, $completed ) {
-				remove_filter( 'query', $fault_filter );
+			function () use ( $course_id, $user_id, $completed ) {
 				Sensei()->course_progress_repository->create( $course_id, $user_id );
-				$comment        = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_status' ), true );
-				$remove_comment = static function ( $args ) use ( $comment ) {
-					if ( 'sensei_course_status' === $args['type'] && 'complete' === $args['status'] ) {
-						wp_delete_comment( $comment->comment_ID, true );
-					}
-				};
-				add_action( 'sensei_log_activity_before', $remove_comment );
-				add_filter( 'query', $fault_filter );
 
-				try {
-					$result = Sensei_Utils::user_complete_course( $course_id, $user_id );
-				} finally {
-					remove_action( 'sensei_log_activity_before', $remove_comment );
-				}
+				$result = $this->with_failed_progress_comment_insert(
+					'course',
+					$course_id,
+					$user_id,
+					static function () use ( $course_id, $user_id ) {
+						return Sensei_Utils::user_complete_course( $course_id, $user_id );
+					},
+					'complete'
+				);
 
 				self::assertFalse( $result, 'The caller must report the required insert failure.' );
 				self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'Completion must not be announced after failure.' );
-			},
-			'comments'
+			}
 		);
 	}
 

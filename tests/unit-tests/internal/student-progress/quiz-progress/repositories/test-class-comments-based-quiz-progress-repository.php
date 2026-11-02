@@ -45,42 +45,27 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$quiz_id   = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
 		$user_id   = $this->factory->user->create();
 
-		$this->with_failed_progress_insert(
+		$this->with_progress_storage_mode(
 			$mode,
-			'lesson',
-			function ( $fault_filter ) use ( $quiz_id, $lesson_id, $user_id, $table_status ) {
-				remove_filter( 'query', $fault_filter );
+			function () use ( $quiz_id, $lesson_id, $user_id, $table_status ) {
 				\Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 				$repository = \Sensei()->quiz_progress_repository;
 				$progress   = $repository->create( $quiz_id, $user_id );
-				$activity   = array(
-					'post_id' => $lesson_id,
-					'user_id' => $user_id,
-					'type'    => 'sensei_lesson_status',
-				);
-				$comment = \Sensei_Utils::sensei_check_for_activity( $activity, true );
-
-				$remove_comment = static function ( $args ) use ( $comment, $lesson_id, $user_id ) {
-					if ( 'sensei_lesson_status' === $args['type']
-						&& $lesson_id === $args['post_id']
-						&& $user_id === $args['user_id'] ) {
-						wp_delete_comment( $comment->comment_ID, true );
-					}
-				};
-
 				$progress->pass();
 				$events_before = did_action( 'sensei_lesson_status_updated' );
 				$failure       = null;
 
-				add_action( 'sensei_log_activity_before', $remove_comment );
-				add_filter( 'query', $fault_filter );
-
 				try {
-					$repository->save( $progress );
+					$this->with_failed_progress_comment_insert(
+						'lesson',
+						$lesson_id,
+						$user_id,
+						static function () use ( $repository, $progress ) {
+							$repository->save( $progress );
+						}
+					);
 				} catch ( Persistence_Exception $exception ) {
 					$failure = $exception;
-				} finally {
-					remove_action( 'sensei_log_activity_before', $remove_comment );
 				}
 
 				self::assertInstanceOf( Persistence_Exception::class, $failure, 'A missing comment insert must report failure.' );
@@ -89,7 +74,6 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 					did_action( 'sensei_lesson_status_updated' ),
 					'Failed status inserts must not notify observers.'
 				);
-				self::assertSame( 0, \Sensei_Utils::sensei_check_for_activity( $activity ), 'No comment should be persisted after failure.' );
 
 				$wpdb         = $GLOBALS['wpdb'];
 				$saved_status = $wpdb->get_var(
@@ -102,11 +86,9 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 				);
 				self::assertSame( $table_status, $saved_status, 'Writes before the failure must be retained; dependent writes must stop.' );
 
-				remove_filter( 'query', $fault_filter );
 				$repository->save( $progress );
 				self::assertSame( 'passed', $repository->get( $quiz_id, $user_id )->get_status(), 'Retry should persist the requested status.' );
-			},
-			'comments'
+			}
 		);
 	}
 
