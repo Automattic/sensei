@@ -200,4 +200,18 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 
 		return $term instanceof WP_Term ? $term : null;
 	}
+
+	/**
+	 * Set the prerequisite of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id              Lesson ID.
+	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
+	 */
+	public function set_lesson_prerequisite( int $lesson_id, int $prerequisite_lesson_id ): void {
+		update_post_meta( $lesson_id, '_lesson_prerequisite', $prerequisite_lesson_id );
+	}
 }
