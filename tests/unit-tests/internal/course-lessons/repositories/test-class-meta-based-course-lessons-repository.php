@@ -351,6 +351,6 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 		$this->repository->set_lesson_prerequisite( $lesson_id, $new_prerequisite_id );
 
 		/* Assert. */
-		self::assertSame( array( (string) $new_prerequisite_id ), get_post_meta( $lesson_id, '_lesson_prerequisite' ) );
+		self::assertSame( array( (string) $new_prerequisite_id ), get_post_meta( $lesson_id, '_lesson_prerequisite', false ) );
 	}
 }
