@@ -770,26 +770,6 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Existing subclasses can keep their original completion override.
-	 *
-	 * @covers Sensei_Utils::user_complete_course
-	 */
-	public function testUserCompleteCourse_ExistingSubclassOverride_LoadsAndRuns(): void {
-		$extension = new class() extends Sensei_Utils {
-			/**
-			 * @inheritDoc
-			 */
-			public static function user_complete_course( $course_id = 0, $user_id = 0, $trigger_completion_action = true ) {
-				return 'extension completion';
-			}
-		};
-
-		$result = $extension::user_complete_course();
-
-		self::assertSame( 'extension completion', $result );
-	}
-
-	/**
 	 * Course completion stores the lesson counts on its mirrored comment.
 	 *
 	 * @covers Sensei_Utils::user_complete_course

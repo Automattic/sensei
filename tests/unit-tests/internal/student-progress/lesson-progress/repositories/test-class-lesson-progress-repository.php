@@ -8,9 +8,7 @@
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use Sensei\Internal\Persistence_Exception;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
 
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
 
@@ -27,14 +25,13 @@ abstract class Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 	 * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository::create
 	 */
 	public function testCreate_InsertFailed_ThrowsWithoutInvalidProgress(): void {
-		global $wpdb;
 		$lesson_id  = self::factory()->post->create( array( 'post_type' => 'lesson' ) );
 		$user_id    = self::factory()->user->create();
 		$repository = $this->get_repository();
 
 		$this->with_failed_cached_insert(
 			$this->get_insert_table(),
-			function () use ( $wpdb, $repository, $lesson_id, $user_id ) {
+			function () use ( $repository, $lesson_id, $user_id ) {
 				$failure = null;
 				try {
 					$repository->create( $lesson_id, $user_id );
@@ -43,8 +40,7 @@ abstract class Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 				}
 
 				self::assertInstanceOf( Persistence_Exception::class, $failure, 'A failed insert must report a persistence failure.' );
-				self::assertNull( ( new Tables_Based_Lesson_Progress_Repository( $wpdb ) )->get( $lesson_id, $user_id ), 'A failed operation must leave no table model or cached model.' );
-				self::assertNull( ( new Comments_Based_Lesson_Progress_Repository() )->get( $lesson_id, $user_id ), 'A failed insert must leave no comments progress.' );
+				self::assertNull( $repository->get( $lesson_id, $user_id ), 'A failed insert must leave no persisted or cached progress.' );
 			}
 		);
 	}

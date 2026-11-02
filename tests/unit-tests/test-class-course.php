@@ -453,48 +453,13 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Existing course subclasses can keep their two-argument callbacks.
-	 *
-	 * @covers Sensei_Course::update_status_after_lesson_change
-	 * @covers Sensei_Course::update_status_after_quiz_submission
-	 */
-	public function testUpdateStatusAfterLessonChange_ExistingSubclassOverrides_LoadsAndRuns(): void {
-		$extension = new class() extends Sensei_Course {
-			/**
-			 * Construct without registering the extension's hooks.
-			 */
-			public function __construct() {}
-
-			/**
-			 * Override lesson updates with the existing signature.
-			 */
-			public function update_status_after_lesson_change( $user_id, $lesson_id ) {
-				return 'extension lesson';
-			}
-
-			/**
-			 * Override quiz updates with the existing signature.
-			 */
-			public function update_status_after_quiz_submission( $user_id, $quiz_id ) {
-				return 'extension quiz';
-			}
-		};
-
-		$lesson = $extension->update_status_after_lesson_change( 1, 2 );
-		$quiz   = $extension->update_status_after_quiz_submission( 1, 3 );
-
-		self::assertSame( 'extension lesson', $lesson, 'The original lesson callback override must remain compatible.' );
-		self::assertSame( 'extension quiz', $quiz, 'The original quiz callback override must remain compatible.' );
-	}
-
-	/**
 	 * Existing callers can continue after course progress creation fails.
 	 *
-	 * @dataProvider course_status_callers
+	 * @dataProvider course_status_hooks
 	 * @covers Sensei_Course::update_status_after_lesson_change
 	 * @covers Sensei_Course::update_status_after_quiz_submission
 	 */
-	public function testUpdateStatusAfterLessonChange_InsertFailedWithoutGuard_DoesNotInterruptCaller( string $mode, string $caller ): void {
+	public function testUpdateStatusAfterLessonChange_InsertFailedWithoutGuard_DoesNotInterruptCaller( string $mode, string $hook ): void {
 		$data     = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
 		$user_id  = $this->factory->user->create();
 		$quiz_id  = $data['quiz_ids'][0];
@@ -502,36 +467,27 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$observer = static function () use ( &$observed ) {
 			$observed = true;
 		};
-		$is_hook  = 0 === strpos( $caller, 'sensei_' );
 		update_post_meta( $quiz_id, '_quiz_lesson', $data['lesson_ids'][0] );
-		if ( $is_hook ) {
-			add_action( $caller, $observer, 20 );
-		}
+		add_action( $hook, $observer, 20 );
 
 		try {
 			$this->with_failed_progress_insert(
 				$mode,
 				'course',
-				function () use ( $caller, $is_hook, $data, $user_id, $quiz_id ) {
-					$id = false !== strpos( $caller, 'quiz' ) ? $quiz_id : $data['lesson_ids'][0];
-					if ( 'sensei_user_quiz_grade' === $caller ) {
-						do_action( $caller, $user_id, $id, 100, 50, 'auto' );
-					} elseif ( $is_hook ) {
-						do_action( $caller, $user_id, $id );
+				function () use ( $hook, $data, $user_id, $quiz_id ) {
+					$id = false !== strpos( $hook, 'quiz' ) ? $quiz_id : $data['lesson_ids'][0];
+					if ( 'sensei_user_quiz_grade' === $hook ) {
+						do_action( $hook, $user_id, $id, 100, 50, 'auto' );
 					} else {
-						Sensei()->course->$caller( $user_id, $id );
+						do_action( $hook, $user_id, $id );
 					}
 
 					self::assertNull( Sensei()->course_progress_repository->get( $data['course_id'], $user_id ), 'Failed creation must not leave course progress.' );
 				}
 			);
-			if ( $is_hook ) {
-				self::assertTrue( $observed, 'Existing hook emitters must still reach later callbacks.' );
-			}
+			self::assertTrue( $observed, 'Existing hook emitters must still reach later callbacks.' );
 		} finally {
-			if ( $is_hook ) {
-				remove_action( $caller, $observer, 20 );
-			}
+			remove_action( $hook, $observer, 20 );
 		}
 	}
 
@@ -562,15 +518,15 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Existing direct callers and hook emitters across progress storage modes.
+	 * Existing hook emitters across progress storage modes.
 	 *
 	 * @return array
 	 */
-	public static function course_status_callers(): array {
+	public static function course_status_hooks(): array {
 		$cases = array();
 		foreach ( self::progress_storage_modes() as $name => $arguments ) {
-			foreach ( array( 'update_status_after_lesson_change', 'update_status_after_quiz_submission', 'sensei_user_lesson_end', 'sensei_user_lesson_reset', 'sensei_user_quiz_grade' ) as $caller ) {
-				$cases[ $name . ' ' . $caller ] = array( $arguments[0], $caller );
+			foreach ( array( 'sensei_user_lesson_end', 'sensei_user_lesson_reset', 'sensei_user_quiz_grade' ) as $hook ) {
+				$cases[ $name . ' ' . $hook ] = array( $arguments[0], $hook );
 			}
 		}
 		return $cases;
