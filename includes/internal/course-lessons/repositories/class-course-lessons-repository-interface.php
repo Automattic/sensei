@@ -80,4 +80,14 @@ interface Course_Lessons_Repository_Interface {
 	 * @return \WP_Term|null The module term, or null when the lesson has none or a filter returns no term.
 	 */
 	public function get_lesson_module( int $lesson_id ): ?\WP_Term;
+
+	/**
+	 * Set or clear the prerequisite of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @param int      $lesson_id              Lesson ID.
+	 * @param int|null $prerequisite_lesson_id Prerequisite lesson ID, or null to clear it.
+	 */
+	public function set_lesson_prerequisite( int $lesson_id, ?int $prerequisite_lesson_id ): void;
 }
