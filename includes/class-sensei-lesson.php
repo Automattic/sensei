@@ -5124,7 +5124,7 @@ class Sensei_Lesson {
 
 		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
-		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+		$lesson_prerequisite = Sensei()->course_lessons_repository->get_lesson_prerequisite_id( $lesson_id );
 
 		if ( $lesson_prerequisite > 0 ) {
 
