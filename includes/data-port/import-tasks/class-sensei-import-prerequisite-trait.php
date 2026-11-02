@@ -68,7 +68,11 @@ trait Sensei_Import_Prerequisite_Trait {
 			return;
 		}
 
-		update_post_meta( $post_id, $meta_field, $reference_post_id );
+		if ( Sensei_Data_Port_Lesson_Schema::POST_TYPE === $post_type ) {
+			Sensei()->course_lessons_repository->set_lesson_prerequisite( $post_id, (int) $reference_post_id );
+		} else {
+			update_post_meta( $post_id, $meta_field, $reference_post_id );
+		}
 	}
 
 	/**
