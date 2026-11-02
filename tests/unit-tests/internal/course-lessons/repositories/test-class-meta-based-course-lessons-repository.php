@@ -334,4 +334,23 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertNull( $actual );
 	}
+
+	/**
+	 * Setting a prerequisite replaces the one the lesson had.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::set_lesson_prerequisite
+	 */
+	public function testSetLessonPrerequisite_LessonHadPrerequisite_ReplacesIt(): void {
+		/* Arrange. */
+		$old_prerequisite_id = $this->factory->lesson->create();
+		$new_prerequisite_id = $this->factory->lesson->create();
+		$lesson_id           = $this->factory->lesson->create();
+		$this->repository->set_lesson_prerequisite( $lesson_id, $old_prerequisite_id );
+
+		/* Act. */
+		$this->repository->set_lesson_prerequisite( $lesson_id, $new_prerequisite_id );
+
+		/* Assert. */
+		self::assertSame( array( (string) $new_prerequisite_id ), get_post_meta( $lesson_id, '_lesson_prerequisite' ) );
+	}
 }
