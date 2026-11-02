@@ -353,4 +353,22 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( array( (string) $new_prerequisite_id ), get_post_meta( $lesson_id, '_lesson_prerequisite', false ) );
 	}
+
+	/**
+	 * Deleting a prerequisite removes the stored value instead of storing an empty one.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::delete_lesson_prerequisite
+	 */
+	public function testDeleteLessonPrerequisite_LessonHadPrerequisite_DeletesIt(): void {
+		/* Arrange. */
+		$prerequisite_id = $this->factory->lesson->create();
+		$lesson_id       = $this->factory->lesson->create();
+		$this->repository->set_lesson_prerequisite( $lesson_id, $prerequisite_id );
+
+		/* Act. */
+		$this->repository->delete_lesson_prerequisite( $lesson_id );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_lesson_prerequisite' ) );
+	}
 }

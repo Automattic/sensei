@@ -90,4 +90,13 @@ interface Course_Lessons_Repository_Interface {
 	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
 	 */
 	public function set_lesson_prerequisite( int $lesson_id, int $prerequisite_lesson_id ): void;
+
+	/**
+	 * Delete the prerequisite of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_lesson_prerequisite( int $lesson_id ): void;
 }

@@ -81,6 +81,31 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * An empty prerequisite column clears the prerequisite of an existing lesson.
+	 *
+	 * @covers Sensei_Import_Lesson_Model::sync_post
+	 */
+	public function testSyncPost_WhenPrerequisiteColumnWasEmpty_ClearsLessonPrerequisite(): void {
+		/* Arrange */
+		$prerequisite_id = $this->factory->lesson->create();
+		$lesson_id       = $this->factory->lesson->create( array( 'post_name' => 'lesson-with-prerequisite' ) );
+		Sensei()->course_lessons_repository->set_lesson_prerequisite( $lesson_id, $prerequisite_id );
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$data  = array(
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Lesson with prerequisite',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG  => 'lesson-with-prerequisite',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE => '',
+		);
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $data, new Sensei_Data_Port_Lesson_Schema(), $task );
+
+		/* Act */
+		$model->sync_post();
+
+		/* Assert */
+		self::assertNull( Sensei()->course_lessons_repository->get_lesson_prerequisite_id( $lesson_id ) );
+	}
+
+	/**
 	 * Tests that an external image URL is queued for download as a post-process task rather than
 	 * downloaded inline while the line is processed.
 	 */
