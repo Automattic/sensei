@@ -202,21 +202,16 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	}
 
 	/**
-	 * Set or clear the prerequisite of a lesson.
+	 * Set the prerequisite of a lesson.
 	 *
 	 * @internal
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int      $lesson_id              Lesson ID.
-	 * @param int|null $prerequisite_lesson_id Prerequisite lesson ID, or null to clear it.
+	 * @param int $lesson_id              Lesson ID.
+	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
 	 */
-	public function set_lesson_prerequisite( int $lesson_id, ?int $prerequisite_lesson_id ): void {
-		if ( null === $prerequisite_lesson_id ) {
-			delete_post_meta( $lesson_id, '_lesson_prerequisite' );
-			return;
-		}
-
+	public function set_lesson_prerequisite( int $lesson_id, int $prerequisite_lesson_id ): void {
 		update_post_meta( $lesson_id, '_lesson_prerequisite', $prerequisite_lesson_id );
 	}
 }

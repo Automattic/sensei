@@ -82,12 +82,12 @@ interface Course_Lessons_Repository_Interface {
 	public function get_lesson_module( int $lesson_id ): ?\WP_Term;
 
 	/**
-	 * Set or clear the prerequisite of a lesson.
+	 * Set the prerequisite of a lesson.
 	 *
 	 * @internal
 	 *
-	 * @param int      $lesson_id              Lesson ID.
-	 * @param int|null $prerequisite_lesson_id Prerequisite lesson ID, or null to clear it.
+	 * @param int $lesson_id              Lesson ID.
+	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
 	 */
-	public function set_lesson_prerequisite( int $lesson_id, ?int $prerequisite_lesson_id ): void;
+	public function set_lesson_prerequisite( int $lesson_id, int $prerequisite_lesson_id ): void;
 }
