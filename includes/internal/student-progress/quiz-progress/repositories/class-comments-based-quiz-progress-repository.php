@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
 use DateTime;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei_Utils;
@@ -151,6 +152,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @internal
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
+	 * @throws Persistence_Exception If a required progress comment cannot be inserted.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->assert_comments_based_quiz_progress( $quiz_progress );
@@ -165,7 +167,10 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 
 		$status = (string) $quiz_progress->get_raw_status();
 
-		Sensei_Utils::update_lesson_status( $quiz_progress->get_user_id(), $lesson_id, $status, $metadata );
+		$comment_id = Sensei_Utils::update_lesson_status( $quiz_progress->get_user_id(), $lesson_id, $status, $metadata );
+		if ( ! $comment_id ) {
+			throw new Persistence_Exception( 'lesson', 'comments', $lesson_id, $quiz_progress->get_user_id() );
+		}
 	}
 
 	/**

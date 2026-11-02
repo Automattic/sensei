@@ -37,7 +37,7 @@ trait Sensei_Progress_Insert_Failure_Helpers {
 		);
 	}
 
-	private function with_failed_progress_insert( string $mode, string $entity, callable $operation, ?string $failed_store = null ) {
+	protected function with_failed_progress_insert( string $mode, string $entity, callable $operation, ?string $failed_store = null ) {
 		global $wpdb;
 		$original      = array();
 		$configuration = Progress_Storage_Configuration::resolve(

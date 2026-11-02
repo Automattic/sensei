@@ -2,6 +2,7 @@
 
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
@@ -25,6 +26,64 @@ class Comments_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Rep
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+	}
+
+	/**
+	 * A missing status comment must be persisted before save can succeed.
+	 *
+	 * @dataProvider missing_comment_save_modes
+	 * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository::save
+	 */
+	public function testSave_MissingCommentInsertFailed_ThrowsAndRetries( string $mode, ?string $table_status ): void {
+		$lesson_id = $this->factory->lesson->create();
+		$user_id   = $this->factory->user->create();
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'lesson',
+			function ( $fault_filter ) use ( $lesson_id, $user_id, $table_status ) {
+				remove_filter( 'query', $fault_filter );
+				$repository = \Sensei()->lesson_progress_repository;
+				$progress   = $repository->create( $lesson_id, $user_id );
+				$comment    = \Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status' ), true );
+				wp_delete_comment( $comment->comment_ID, true );
+				$progress->complete();
+				$events_before = did_action( 'sensei_lesson_status_updated' );
+				add_filter( 'query', $fault_filter );
+				$failure = null;
+
+				try {
+					$repository->save( $progress );
+				} catch ( Persistence_Exception $exception ) {
+					$failure = $exception;
+				}
+
+				self::assertInstanceOf( Persistence_Exception::class, $failure, 'A missing comment insert must report failure.' );
+				self::assertSame( $events_before, did_action( 'sensei_lesson_status_updated' ), 'Failed status inserts must not notify observers.' );
+				self::assertSame( 0, \Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status' ) ), 'No comment should be persisted after failure.' );
+
+				$wpdb = $GLOBALS['wpdb'];
+				self::assertSame( $table_status, $wpdb->get_var( $wpdb->prepare( "SELECT status FROM {$wpdb->prefix}sensei_lms_progress WHERE post_id = %d AND user_id = %d AND type = %s", $lesson_id, $user_id, 'lesson' ) ), 'Writes before the failure must be retained; dependent writes must stop.' );
+
+				remove_filter( 'query', $fault_filter );
+				$repository->save( $progress );
+				self::assertSame( 'complete', $repository->get( $lesson_id, $user_id )->get_status(), 'Retry should persist the requested status.' );
+			},
+			'comments'
+		);
+	}
+
+	/**
+	 * Storage modes and the table state retained after a failed comment insert.
+	 *
+	 * @return array
+	 */
+	public static function missing_comment_save_modes(): array {
+		return array(
+			'comments only'    => array( 'comments-only', null ),
+			'comments primary' => array( 'comments', 'in-progress' ),
+			'tables primary'   => array( 'tables', 'complete' ),
+		);
 	}
 
 	public function testSave_DatesInDifferentTimezone_StoresCommentDatesInSiteTimezone(): void {

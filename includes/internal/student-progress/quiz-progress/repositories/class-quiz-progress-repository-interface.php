@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -60,6 +61,7 @@ interface Quiz_Progress_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
+	 * @throws Persistence_Exception If required lesson progress creation fails.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void;
 

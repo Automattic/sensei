@@ -150,6 +150,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If a required progress comment cannot be inserted.
 	 */
 	public function save( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->assert_comments_based_lesson_progress( $lesson_progress );
@@ -169,6 +170,10 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			$status,
 			$metadata
 		);
+
+		if ( ! $comment_id ) {
+			throw new Persistence_Exception( 'lesson', 'comments', $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() );
+		}
 
 		$completed_at = $lesson_progress->get_completed_at();
 		if ( $lesson_progress->is_complete() && $comment_id && $completed_at ) {

@@ -369,6 +369,45 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A comment lost after progress was read must not produce completion success.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_CommentInsertFailedDuringSave_ReturnsFalseWithoutCompletion( string $mode ): void {
+		$lesson_id = $this->factory->lesson->create();
+		$user_id   = $this->factory->user->create();
+		$completed = did_action( 'sensei_user_lesson_end' );
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'lesson',
+			function ( $fault_filter ) use ( $lesson_id, $user_id, $completed ) {
+				remove_filter( 'query', $fault_filter );
+				Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+				$comment        = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status' ), true );
+				$remove_comment = static function ( $args ) use ( $comment ) {
+					if ( 'sensei_lesson_status' === $args['type'] && 'complete' === $args['status'] ) {
+						wp_delete_comment( $comment->comment_ID, true );
+					}
+				};
+				add_action( 'sensei_log_activity_before', $remove_comment );
+				add_filter( 'query', $fault_filter );
+
+				try {
+					$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+				} finally {
+					remove_action( 'sensei_log_activity_before', $remove_comment );
+				}
+
+				self::assertFalse( $result, 'The caller must report the required insert failure.' );
+				self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'Completion must not be announced after failure.' );
+			},
+			'comments'
+		);
+	}
+
+	/**
 	 * Starting a lesson also starts its course for the student.
 	 *
 	 * @covers Sensei_Utils::sensei_start_lesson
@@ -744,6 +783,45 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		Sensei()->quiz_answer_repository     = $quiz_answer_repository;
 		Sensei()->quiz_grade_repository      = $quiz_grade_repository;
 		Sensei()->quiz_submission_repository = $quiz_submission_repository;
+	}
+
+	/**
+	 * A comment lost after progress was read must not produce completion success.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::user_complete_course
+	 */
+	public function testUserCompleteCourse_CommentInsertFailedDuringSave_ReturnsFalseWithoutCompletion( string $mode ): void {
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+		$completed = did_action( 'sensei_user_course_end' );
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'course',
+			function ( $fault_filter ) use ( $course_id, $user_id, $completed ) {
+				remove_filter( 'query', $fault_filter );
+				Sensei()->course_progress_repository->create( $course_id, $user_id );
+				$comment        = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_status' ), true );
+				$remove_comment = static function ( $args ) use ( $comment ) {
+					if ( 'sensei_course_status' === $args['type'] && 'complete' === $args['status'] ) {
+						wp_delete_comment( $comment->comment_ID, true );
+					}
+				};
+				add_action( 'sensei_log_activity_before', $remove_comment );
+				add_filter( 'query', $fault_filter );
+
+				try {
+					$result = Sensei_Utils::user_complete_course( $course_id, $user_id );
+				} finally {
+					remove_action( 'sensei_log_activity_before', $remove_comment );
+				}
+
+				self::assertFalse( $result, 'The caller must report the required insert failure.' );
+				self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'Completion must not be announced after failure.' );
+			},
+			'comments'
+		);
 	}
 
 	/**
