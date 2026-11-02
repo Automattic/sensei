@@ -36,7 +36,7 @@ trait Sensei_HPPS_Helpers {
 
 	private function enable_hpps_tables_repository() {
 		Sensei()->settings->settings['experimental_progress_storage_repository'] = Progress_Storage_Settings::TABLES_STORAGE;
-		$storage_configuration                   = Progress_Storage_Configuration::resolve(
+		$storage_configuration                 = Progress_Storage_Configuration::resolve(
 			array(
 				'experimental_progress_storage'            => true,
 				'experimental_progress_storage_repository' => Progress_Storage_Settings::TABLES_STORAGE,
@@ -88,7 +88,7 @@ trait Sensei_HPPS_Helpers {
 	 * @return mixed Operation result.
 	 */
 	protected function with_progress_storage_mode( string $mode, callable $operation ) {
-		$configuration = Progress_Storage_Configuration::resolve(
+		$configuration          = Progress_Storage_Configuration::resolve(
 			array(
 				'experimental_progress_storage'            => true,
 				'experimental_progress_storage_synchronization' => 'comments-only' !== $mode,
@@ -123,7 +123,7 @@ trait Sensei_HPPS_Helpers {
 			'quiz_answer_repository'     => Answer_Repository_Factory::class,
 			'quiz_grade_repository'      => Grade_Repository_Factory::class,
 		);
-		$original = array();
+		$original  = array();
 		foreach ( $factories as $property => $factory_class ) {
 			$original[ $property ] = Sensei()->$property;
 			Sensei()->$property    = ( new $factory_class( $configuration ) )->create();

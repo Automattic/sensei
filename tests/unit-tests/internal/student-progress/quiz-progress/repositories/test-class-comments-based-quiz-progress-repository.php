@@ -76,6 +76,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 				);
 
 				$wpdb         = $GLOBALS['wpdb'];
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Inspect persisted rows after an injected insert failure.
 				$saved_status = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT status FROM {$wpdb->prefix}sensei_lms_progress WHERE post_id = %d AND user_id = %d AND type = %s",

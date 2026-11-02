@@ -38,8 +38,8 @@ trait Sensei_Progress_Insert_Failure_Helpers {
 	 * @return mixed Operation result.
 	 */
 	protected function with_failed_progress_comment_insert( string $entity, int $post_id, int $user_id, callable $operation, ?string $status = null ) {
-		$type    = 'sensei_' . $entity . '_status';
-		$comment = Sensei_Utils::sensei_check_for_activity(
+		$type           = 'sensei_' . $entity . '_status';
+		$comment        = Sensei_Utils::sensei_check_for_activity(
 			array(
 				'post_id' => $post_id,
 				'user_id' => $user_id,

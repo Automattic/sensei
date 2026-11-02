@@ -172,11 +172,12 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		);
 
 		if ( ! $comment_id ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
 			throw new Persistence_Exception( 'lesson', 'comments', $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() );
 		}
 
 		$completed_at = $lesson_progress->get_completed_at();
-		if ( $lesson_progress->is_complete() && $comment_id && $completed_at ) {
+		if ( $lesson_progress->is_complete() && $completed_at ) {
 			$comment = [
 				'comment_ID'   => $comment_id,
 				// Comment dates are stored in the site timezone.
