@@ -128,6 +128,7 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 	public function testMaybePublishLessons_WhenFirstPublishedButMetaFalse_DoesNotPublishLessons() {
 		/* Arrange */
 		$this->login_as_admin();
+		update_post_meta( $this->course_id, 'sensei_course_publish_lessons', false );
 
 		/* Act */
 		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'draft' );
