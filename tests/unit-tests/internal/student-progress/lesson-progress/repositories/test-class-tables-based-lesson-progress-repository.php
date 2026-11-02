@@ -3,18 +3,22 @@
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTimeImmutable;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Course_Lessons\Repositories\Course_Lessons_Repository_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use wpdb;
+
+require_once __DIR__ . '/test-class-lesson-progress-repository.php';
 
 /**
  * Tests for Tables_Based_Lesson_Progress_Repository.
  *
  * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository
  */
-class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
+class Tables_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Repository_Test {
 	/**
 	 * Sensei factory.
 	 *
@@ -38,8 +42,9 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_ParamsGiven_InsertsToWpdb(): void {
 		/* Arrange. */
-		$wpdb       = $this->createMock( wpdb::class );
-		$repository = new Tables_Based_Lesson_Progress_Repository( $wpdb );
+		$wpdb            = $this->createMock( wpdb::class );
+		$wpdb->insert_id = 1;
+		$repository      = new Tables_Based_Lesson_Progress_Repository( $wpdb );
 
 		/* Expect & Act. */
 		$wpdb
@@ -90,6 +95,26 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 			'status'    => 'in-progress',
 		];
 		self::assertSame( $expected, $this->export_progress( $progress ) );
+	}
+
+	/**
+	 * An insert response without a positive ID must not create a model.
+	 *
+	 * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository::create
+	 */
+	public function testCreate_InsertReturnedWithoutId_Throws(): void {
+		$repository = $this->get_repository();
+		$this->expectException( Persistence_Exception::class );
+		$this->expectExceptionMessage( 'diagnostic=invalid_insert_id' );
+
+		// SELECT 1 succeeds without inserting a row, leaving no valid insert ID.
+		$this->with_failed_cached_insert(
+			$this->get_insert_table(),
+			function () use ( $repository ) {
+				$repository->create( 123, 456 );
+			},
+			'SELECT 1'
+		);
 	}
 
 	public function testGet_NotFound_ReturnsNull(): void {
@@ -781,5 +806,23 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 			'started_at'   => $progress->get_started_at()->format( 'Y-m-d H:i:s' ),
 			'completed_at' => $progress->get_completed_at()->format( 'Y-m-d H:i:s' ),
 		];
+	}
+
+	/**
+	 * Construct the tables-backed repository.
+	 *
+	 * @return Lesson_Progress_Repository_Interface The repository.
+	 */
+	protected function get_repository(): Lesson_Progress_Repository_Interface {
+		return new Tables_Based_Lesson_Progress_Repository( $GLOBALS['wpdb'] );
+	}
+
+	/**
+	 * Identify the progress insertion table.
+	 *
+	 * @return string Table name.
+	 */
+	protected function get_insert_table(): string {
+		return $GLOBALS['wpdb']->prefix . 'sensei_lms_progress';
 	}
 }

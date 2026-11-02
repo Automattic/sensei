@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
+
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
@@ -56,6 +58,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository implements Course_Progr
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Interface The course progress.
+	 * @throws Persistence_Exception If required progress creation fails.
 	 */
 	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
 		$this->comments_based_repository->create( $course_id, $user_id );
@@ -88,6 +91,7 @@ class Table_Reading_Aggregate_Course_Progress_Repository implements Course_Progr
 	 * Save course progress.
 	 *
 	 * @param Course_Progress_Interface $course_progress The course progress.
+	 * @throws Persistence_Exception If required progress creation fails.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {
 		$this->tables_based_repository->save( $course_progress );

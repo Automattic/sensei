@@ -1,6 +1,9 @@
 <?php
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
 class Sensei_Class_Course_Test extends WP_UnitTestCase {
+	use Sensei_Progress_Insert_Failure_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
@@ -447,6 +450,86 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		self::assertTrue( Sensei_Utils::user_completed_course( $course_lessons['course_id'], $user_id ) );
+	}
+
+	/**
+	 * Existing callers can continue after course progress creation fails.
+	 *
+	 * @dataProvider course_status_hooks
+	 * @covers Sensei_Course::update_status_after_lesson_change
+	 * @covers Sensei_Course::update_status_after_quiz_submission
+	 */
+	public function testUpdateStatusAfterLessonChange_InsertFailedWithoutGuard_DoesNotInterruptCaller( string $mode, string $hook ): void {
+		$data     = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$user_id  = $this->factory->user->create();
+		$quiz_id  = $data['quiz_ids'][0];
+		$observed = false;
+		$observer = static function () use ( &$observed ) {
+			$observed = true;
+		};
+		update_post_meta( $quiz_id, '_quiz_lesson', $data['lesson_ids'][0] );
+		add_action( $hook, $observer, 20 );
+
+		try {
+			$this->with_failed_progress_insert(
+				$mode,
+				'course',
+				function () use ( $hook, $data, $user_id, $quiz_id ) {
+					$id = false !== strpos( $hook, 'quiz' ) ? $quiz_id : $data['lesson_ids'][0];
+					if ( 'sensei_user_quiz_grade' === $hook ) {
+						do_action( $hook, $user_id, $id, 100, 50, 'auto' );
+					} else {
+						do_action( $hook, $user_id, $id );
+					}
+
+					self::assertNull( Sensei()->course_progress_repository->get( $data['course_id'], $user_id ), 'Failed creation must not leave course progress.' );
+				}
+			);
+			self::assertTrue( $observed, 'Existing hook emitters must still reach later callbacks.' );
+		} finally {
+			remove_action( $hook, $observer, 20 );
+		}
+	}
+
+	/**
+	 * Guarded quiz actions receive failure results without changing hook arguments.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Course::update_status_after_quiz_submission
+	 */
+	public function testUpdateStatusAfterQuizSubmission_InsertFailedWithinGuard_ReportsFailure( string $mode ): void {
+		$data    = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$user_id = $this->factory->user->create();
+		update_post_meta( $data['quiz_ids'][0], '_quiz_lesson', $data['lesson_ids'][0] );
+
+		$result = $this->with_failed_progress_insert(
+			$mode,
+			'course',
+			static function () use ( $data, $user_id ) {
+				return \Sensei\Internal\Course_Status_Updates::run(
+					static function () use ( $data, $user_id ) {
+						do_action( 'sensei_user_quiz_grade', $user_id, $data['quiz_ids'][0], 100, 50, 'auto' );
+					}
+				);
+			}
+		);
+
+		self::assertFalse( $result );
+	}
+
+	/**
+	 * Existing hook emitters across progress storage modes.
+	 *
+	 * @return array
+	 */
+	public static function course_status_hooks(): array {
+		$cases = array();
+		foreach ( self::progress_storage_modes() as $name => $arguments ) {
+			foreach ( array( 'sensei_user_lesson_end', 'sensei_user_lesson_reset', 'sensei_user_quiz_grade' ) as $hook ) {
+				$cases[ $name . ' ' . $hook ] = array( $arguments[0], $hook );
+			}
+		}
+		return $cases;
 	}
 
 	/**
