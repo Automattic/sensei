@@ -876,6 +876,7 @@ class Sensei_Grading {
 		}
 
 		try {
+			// Check before saving question grades or feedback; sensei_grade_quiz() runs after those writes.
 			$course_id = Sensei()->course_lessons_repository->get_course_id( $quiz_lesson_id );
 			if ( $course_id && false === Sensei_Utils::user_start_course( $user_id, $course_id ) ) {
 				$this->progress_save_failed = true;

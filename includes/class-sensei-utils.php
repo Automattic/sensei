@@ -470,6 +470,7 @@ class Sensei_Utils {
 			return false;
 		}
 
+		// Direct callers also need this check; user_start_course() reuses existing progress.
 		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
 		$course_id = Sensei()->course_lessons_repository->get_course_id( $lesson_id );
 		if ( $course_id && false === self::user_start_course( $user_id, $course_id ) ) {
