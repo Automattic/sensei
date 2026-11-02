@@ -167,7 +167,13 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 
 		$status = (string) $quiz_progress->get_raw_status();
 
-		$comment_id = Sensei_Utils::update_lesson_status( $quiz_progress->get_user_id(), $lesson_id, $status, $metadata );
+		$comment_id = Sensei_Utils::update_lesson_status(
+			$quiz_progress->get_user_id(),
+			$lesson_id,
+			$status,
+			$metadata
+		);
+
 		if ( ! $comment_id ) {
 			throw new Persistence_Exception( 'lesson', 'comments', $lesson_id, $quiz_progress->get_user_id() );
 		}

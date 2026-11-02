@@ -219,7 +219,14 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			// Comment dates are stored in the site timezone.
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
-		$comment_id = Sensei_Utils::update_course_status( $course_progress->get_user_id(), $course_progress->get_course_id(), $course_progress->get_status(), $metadata );
+
+		$comment_id = Sensei_Utils::update_course_status(
+			$course_progress->get_user_id(),
+			$course_progress->get_course_id(),
+			$course_progress->get_status(),
+			$metadata
+		);
+
 		if ( ! $comment_id ) {
 			throw new Persistence_Exception( 'course', 'comments', $course_progress->get_course_id(), $course_progress->get_user_id() );
 		}
