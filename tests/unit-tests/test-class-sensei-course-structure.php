@@ -1110,6 +1110,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->assertEquals( null, get_post_meta( $lesson_ids[1], '_lesson_course', true ), 'Course lesson meta should have been cleared' );
 		$this->assertEquals( null, get_post_meta( $lesson_ids[0], '_order_' . $course_id, true ), 'Course lesson order meta should have been cleared' );
 		$this->assertEquals( null, get_post_meta( $lesson_ids[0], '_order_module_' . $modified_structure[0]['id'], true ), 'Course lesson order meta should have been cleared' );
+		$this->assertNull( Sensei()->course_lessons_repository->get_lesson_module( $lesson_ids[0] ), 'The lesson should have been removed from its module' );
 	}
 
 	/**
