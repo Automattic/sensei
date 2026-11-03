@@ -45,6 +45,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * Tear down.
 	 */
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
 
@@ -1058,26 +1061,17 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		update_post_meta( $quiz_id, '_quiz_grade_type', 'manual' );
 		$submitted = did_action( 'sensei_user_quiz_submitted' );
 
-		$this->with_progress_storage_mode(
-			$mode,
-			function () use ( $lesson_id, $quiz_id, $user_id, $submitted ) {
-				Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-				Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+		$this->set_progress_storage_mode( $mode );
 
-				$result = $this->with_failed_progress_comment_insert(
-					'lesson',
-					$lesson_id,
-					$user_id,
-					static function () use ( $lesson_id, $user_id ) {
-						return Sensei_Quiz::submit_answers_for_grading( array(), array(), $lesson_id, $user_id );
-					},
-					'ungraded'
-				);
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
 
-				self::assertFalse( $result, 'The quiz caller must report the required insert failure.' );
-				self::assertSame( $submitted, did_action( 'sensei_user_quiz_submitted' ), 'Failed quiz progress must not announce submission.' );
-			}
-		);
+		$this->fail_progress_comment_insert( 'lesson', $lesson_id, $user_id, 'ungraded' );
+
+		$result = Sensei_Quiz::submit_answers_for_grading( array(), array(), $lesson_id, $user_id );
+
+		self::assertFalse( $result, 'The quiz caller must report the required insert failure.' );
+		self::assertSame( $submitted, did_action( 'sensei_user_quiz_submitted' ), 'Failed quiz progress must not announce submission.' );
 	}
 
 	/**

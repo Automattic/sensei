@@ -40,6 +40,9 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -379,25 +382,16 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$user_id   = $this->factory->user->create();
 		$completed = did_action( 'sensei_user_lesson_end' );
 
-		$this->with_progress_storage_mode(
-			$mode,
-			function () use ( $lesson_id, $user_id, $completed ) {
-				Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+		$this->set_progress_storage_mode( $mode );
 
-				$result = $this->with_failed_progress_comment_insert(
-					'lesson',
-					$lesson_id,
-					$user_id,
-					static function () use ( $lesson_id, $user_id ) {
-						return Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
-					},
-					'complete'
-				);
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 
-				self::assertFalse( $result, 'The caller must report the required insert failure.' );
-				self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'Completion must not be announced after failure.' );
-			}
-		);
+		$this->fail_progress_comment_insert( 'lesson', $lesson_id, $user_id, 'complete' );
+
+		$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+
+		self::assertFalse( $result, 'The caller must report the required insert failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'Completion must not be announced after failure.' );
 	}
 
 	/**
@@ -789,25 +783,16 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$user_id   = $this->factory->user->create();
 		$completed = did_action( 'sensei_user_course_end' );
 
-		$this->with_progress_storage_mode(
-			$mode,
-			function () use ( $course_id, $user_id, $completed ) {
-				Sensei()->course_progress_repository->create( $course_id, $user_id );
+		$this->set_progress_storage_mode( $mode );
 
-				$result = $this->with_failed_progress_comment_insert(
-					'course',
-					$course_id,
-					$user_id,
-					static function () use ( $course_id, $user_id ) {
-						return Sensei_Utils::user_complete_course( $course_id, $user_id );
-					},
-					'complete'
-				);
+		Sensei()->course_progress_repository->create( $course_id, $user_id );
 
-				self::assertFalse( $result, 'The caller must report the required insert failure.' );
-				self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'Completion must not be announced after failure.' );
-			}
-		);
+		$this->fail_progress_comment_insert( 'course', $course_id, $user_id, 'complete' );
+
+		$result = Sensei_Utils::user_complete_course( $course_id, $user_id );
+
+		self::assertFalse( $result, 'The caller must report the required insert failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'Completion must not be announced after failure.' );
 	}
 
 	/**

@@ -24,6 +24,9 @@ class Comments_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Rep
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -38,54 +41,47 @@ class Comments_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Rep
 		$lesson_id = $this->factory->lesson->create();
 		$user_id   = $this->factory->user->create();
 
-		$this->with_progress_storage_mode(
-			$mode,
-			function () use ( $lesson_id, $user_id, $table_status ) {
-				$repository = \Sensei()->lesson_progress_repository;
-				$progress   = $repository->create( $lesson_id, $user_id );
-				$progress->complete();
-				$events_before = did_action( 'sensei_lesson_status_updated' );
-				$failure       = null;
+		$this->set_progress_storage_mode( $mode );
 
-				try {
-					$this->with_failed_progress_comment_insert(
-						'lesson',
-						$lesson_id,
-						$user_id,
-						static function () use ( $repository, $progress ) {
-							$repository->save( $progress );
-						}
-					);
-				} catch ( Persistence_Exception $exception ) {
-					$failure = $exception;
-				}
+		$repository = \Sensei()->lesson_progress_repository;
+		$progress   = $repository->create( $lesson_id, $user_id );
+		$progress->complete();
+		$events_before = did_action( 'sensei_lesson_status_updated' );
+		$failure       = null;
 
-				self::assertInstanceOf( Persistence_Exception::class, $failure, 'A missing comment insert must report failure.' );
-				self::assertSame(
-					$events_before,
-					did_action( 'sensei_lesson_status_updated' ),
-					'Failed status inserts must not notify observers.'
-				);
+		$this->fail_progress_comment_insert( 'lesson', $lesson_id, $user_id );
 
-				$wpdb = $GLOBALS['wpdb'];
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Inspect persisted rows after an injected insert failure.
-				$saved_status = $wpdb->get_var(
-					$wpdb->prepare(
-						"SELECT status FROM {$wpdb->prefix}sensei_lms_progress WHERE post_id = %d AND user_id = %d AND type = %s",
-						$lesson_id,
-						$user_id,
-						'lesson'
-					)
-				);
-				self::assertSame( $table_status, $saved_status, 'Writes before the failure must be retained; dependent writes must stop.' );
+		try {
+			$repository->save( $progress );
+		} catch ( Persistence_Exception $exception ) {
+			$failure = $exception;
+		}
 
-				$repository->save( $progress );
-				self::assertSame(
-					'complete',
-					$repository->get( $lesson_id, $user_id )->get_status(),
-					'Retry should persist the requested status.'
-				);
-			}
+		self::assertInstanceOf( Persistence_Exception::class, $failure, 'A missing comment insert must report failure.' );
+		self::assertSame(
+			$events_before,
+			did_action( 'sensei_lesson_status_updated' ),
+			'Failed status inserts must not notify observers.'
+		);
+
+		$wpdb = $GLOBALS['wpdb'];
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Inspect persisted rows after an injected insert failure.
+		$saved_status = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT status FROM {$wpdb->prefix}sensei_lms_progress WHERE post_id = %d AND user_id = %d AND type = %s",
+				$lesson_id,
+				$user_id,
+				'lesson'
+			)
+		);
+		self::assertSame( $table_status, $saved_status, 'Writes before the failure must be retained; dependent writes must stop.' );
+
+		$this->restore_progress_insert_failure();
+		$repository->save( $progress );
+		self::assertSame(
+			'complete',
+			$repository->get( $lesson_id, $user_id )->get_status(),
+			'Retry should persist the requested status.'
 		);
 	}
 
