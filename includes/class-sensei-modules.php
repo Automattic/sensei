@@ -1595,8 +1595,7 @@ class Sensei_Core_Modules {
 	 */
 	public function add_lesson_column_content( $column = '', $lesson_id = 0 ) {
 		if ( 'modules' === $column ) {
-			$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
-			$module  = $modules && is_array( $modules ) ? $modules[0] : null;
+			$module = Sensei()->course_lessons_repository->get_lesson_module( (int) $lesson_id );
 
 			if ( $module ) {
 				printf(
@@ -1767,13 +1766,10 @@ class Sensei_Core_Modules {
 		_deprecated_function( __METHOD__, '4.3.0' );
 
 		if ( isset( $_GET['view'] ) && 'lessons' == $_GET['view'] ) {
-			$lesson_module      = '';
-			$lesson_module_list = wp_get_post_terms( $lesson->ID, $this->taxonomy );
-			if ( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
-				foreach ( $lesson_module_list as $single_module ) {
-					$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
-					break;
-				}
+			$lesson_module = '';
+			$single_module = Sensei()->course_lessons_repository->get_lesson_module( (int) $lesson->ID );
+			if ( $single_module ) {
+				$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
 			}
 
 			$columns['lesson_module'] = $lesson_module;
@@ -1812,13 +1808,10 @@ class Sensei_Core_Modules {
 		}
 
 		if ( isset( $_GET['course_id'] ) ) {
-			$lesson_module      = '';
-			$lesson_module_list = wp_get_post_terms( $lesson->ID, $this->taxonomy );
-			if ( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
-				foreach ( $lesson_module_list as $single_module ) {
-					$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
-					break;
-				}
+			$lesson_module = '';
+			$single_module = Sensei()->course_lessons_repository->get_lesson_module( (int) $lesson->ID );
+			if ( $single_module ) {
+				$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
 			}
 
 			$columns['lesson_module'] = $lesson_module;
