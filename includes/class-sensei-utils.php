@@ -508,7 +508,7 @@ class Sensei_Utils {
 
 			return true;
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( 'grading a quiz' );
 			return false;
 		}
 	}
@@ -687,7 +687,7 @@ class Sensei_Utils {
 
 			return $lesson_progress->get_id();
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( $complete ? 'completing a lesson' : 'starting a lesson' );
 			return false;
 		}
 	}
@@ -746,7 +746,7 @@ class Sensei_Utils {
 					return false;
 				}
 			} catch ( Persistence_Exception $exception ) {
-				$exception->log();
+				$exception->log( 'removing lesson progress' );
 				return false;
 			}
 		}
@@ -1708,7 +1708,7 @@ class Sensei_Utils {
 			Sensei()->course_progress_repository->save( $course_progress );
 
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( 'recalculating course progress' );
 			return false;
 		}
 
@@ -2778,7 +2778,7 @@ class Sensei_Utils {
 		try {
 			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( 'starting a course' );
 			return false;
 		}
 

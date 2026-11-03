@@ -851,7 +851,7 @@ class Sensei_Frontend {
 						try {
 							$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
 						} catch ( Persistence_Exception $exception ) {
-							$exception->log();
+							$exception->log( 'completing a course' );
 							Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this course as complete. Reload this page and check its status. Try Mark as Complete again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
 							return;
 						}
@@ -879,7 +879,7 @@ class Sensei_Frontend {
 					try {
 						Sensei()->course_progress_repository->save( $course_progress );
 					} catch ( Persistence_Exception $exception ) {
-						$exception->log();
+						$exception->log( 'completing a course' );
 						Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this course as complete. Reload this page and check its status. Try Mark as Complete again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
 						return;
 					}

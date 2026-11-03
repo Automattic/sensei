@@ -1020,7 +1020,7 @@ class Sensei_Grading {
 			wp_safe_redirect( esc_url_raw( $load_url ) );
 			exit;
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( 'manually grading a quiz' );
 			$this->progress_save_failed = true;
 			return false;
 		}

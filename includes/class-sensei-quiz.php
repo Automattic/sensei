@@ -1000,7 +1000,7 @@ class Sensei_Quiz {
 
 			return true;
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( 'resetting a lesson' );
 			return false;
 		}
 	}
@@ -1158,7 +1158,7 @@ class Sensei_Quiz {
 			return $answers_submitted;
 
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( 'submitting a quiz' );
 			return false;
 		}
 	}

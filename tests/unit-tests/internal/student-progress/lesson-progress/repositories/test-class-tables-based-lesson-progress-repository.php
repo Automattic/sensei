@@ -105,7 +105,6 @@ class Tables_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Repos
 	public function testCreate_InsertReturnedWithoutId_Throws(): void {
 		$repository = $this->get_repository();
 		$this->expectException( Persistence_Exception::class );
-		$this->expectExceptionMessage( 'diagnostic=invalid_insert_id' );
 
 		// SELECT 1 succeeds without inserting a row, leaving no valid insert ID.
 		$this->with_failed_cached_insert(

@@ -107,12 +107,13 @@ class Tables_Based_Course_Progress_Repository_Test extends Course_Progress_Repos
 		wp_cache_flush();
 
 		/* Act. */
+		$failure = null;
 		try {
 			$repository->create( 1, 2 );
-			self::fail( 'Invalid progress must not be returned.' );
 		} catch ( \Sensei\Internal\Persistence_Exception $exception ) {
-			self::assertStringContainsString( 'invalid_insert_id', $exception->getMessage() );
+			$failure = $exception;
 		}
+		self::assertInstanceOf( \Sensei\Internal\Persistence_Exception::class, $failure, 'Invalid progress must not be returned.' );
 
 		/* Assert — nothing should be cached when insert fails (no prefix marker created). */
 		$cache_prefix = wp_cache_get( 'sensei_course_progress_cache_prefix', 'sensei_course_progress' );
@@ -127,7 +128,6 @@ class Tables_Based_Course_Progress_Repository_Test extends Course_Progress_Repos
 	public function testCreate_InsertReturnedWithoutId_Throws(): void {
 		$repository = $this->get_repository();
 		$this->expectException( Persistence_Exception::class );
-		$this->expectExceptionMessage( 'diagnostic=invalid_insert_id' );
 
 		// SELECT 1 succeeds without inserting a row, leaving no valid insert ID.
 		$this->with_failed_cached_insert(

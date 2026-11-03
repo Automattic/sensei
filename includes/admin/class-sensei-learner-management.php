@@ -552,7 +552,7 @@ class Sensei_Learner_Management {
 			try {
 				$repository->save( $progress );
 			} catch ( Persistence_Exception $exception ) {
-				$exception->log();
+				$exception->log( 'changing a progress start date' );
 				wp_die( '', '', array( 'response' => 500 ) );
 			}
 		}
