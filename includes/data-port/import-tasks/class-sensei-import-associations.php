@@ -173,7 +173,7 @@ class Sensei_Import_Associations
 				update_post_meta( $lesson_id, '_order_module_' . $module_term_id, $module_indices[ $module_term_id ] );
 			} else {
 				$lesson_order[] = $lesson_id;
-				update_post_meta( $lesson_id, '_order_' . $course_id, $order_index );
+				Sensei()->course_lessons_repository->set_lesson_order( $lesson_id, $course_id, $order_index );
 
 				$order_index++;
 			}
@@ -181,7 +181,7 @@ class Sensei_Import_Associations
 			$all_lessons[] = $lesson_id;
 		}
 
-		update_post_meta( $course_id, '_lesson_order', implode( ',', $lesson_order ) );
+		Sensei()->course_lessons_repository->set_root_lesson_order( $course_id, $lesson_order );
 
 		// Remove lessons on the course that weren't included in the course import.
 		$old_lessons = array_diff( $current_lessons, $all_lessons );
