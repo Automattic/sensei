@@ -150,9 +150,15 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If a required progress comment cannot be inserted.
 	 */
 	public function save( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->assert_comments_based_lesson_progress( $lesson_progress );
+
+		$status = (string) $lesson_progress->get_raw_status();
+		if ( empty( $status ) ) {
+			return;
+		}
 
 		$metadata   = [];
 		$started_at = $lesson_progress->get_started_at();
@@ -161,8 +167,6 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
 
-		$status = (string) $lesson_progress->get_raw_status();
-
 		$comment_id = (int) Sensei_Utils::update_lesson_status(
 			$lesson_progress->get_user_id(),
 			$lesson_progress->get_lesson_id(),
@@ -170,8 +174,13 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 			$metadata
 		);
 
+		if ( ! $comment_id ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'lesson', 'comments', $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() );
+		}
+
 		$completed_at = $lesson_progress->get_completed_at();
-		if ( $lesson_progress->is_complete() && $comment_id && $completed_at ) {
+		if ( $lesson_progress->is_complete() && $completed_at ) {
 			$comment = [
 				'comment_ID'   => $comment_id,
 				// Comment dates are stored in the site timezone.

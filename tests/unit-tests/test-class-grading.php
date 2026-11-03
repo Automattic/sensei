@@ -30,6 +30,9 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -1045,6 +1048,37 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 				self::assertEquals( 75, Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'Existing submission grade must not change.' );
 			}
 		);
+	}
+
+	/**
+	 * A failed quiz save must stop grading before completion or a success redirect.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 * @covers Sensei_Grading::add_grading_notices
+	 */
+	public function testAdminProcessGradingSubmission_CommentInsertFailedDuringSave_ShowsErrorWithoutCompletion( string $mode ): void {
+		$owner                       = $this->get_user_by_role( 'teacher' );
+		$user_id                     = $this->factory->user->create();
+		list( $quiz_id, $lesson_id ) = $this->createOwnedPassRequiredQuiz( $owner );
+		update_post_meta( $quiz_id, '_pass_required', '' );
+		$this->login_as( $owner );
+		$this->setGradingSubmissionGlobals( $quiz_id, $user_id );
+		$this->prevent_wp_redirect();
+		$this->set_progress_storage_mode( $mode );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+		$completed = did_action( 'sensei_user_lesson_end' );
+		$this->fail_progress_comment_insert( 'lesson', $lesson_id, $user_id, 'graded' );
+
+		$result = Sensei()->grading->admin_process_grading_submission();
+		ob_start();
+		Sensei()->grading->add_grading_notices();
+		$notice = ob_get_clean();
+
+		self::assertFalse( $result, 'A failed quiz save must report grading failure.' );
+		self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The grader must see the save failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'A failed quiz save must not announce lesson completion.' );
 	}
 
 	/**

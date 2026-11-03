@@ -45,6 +45,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * Tear down.
 	 */
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
 
@@ -683,11 +686,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 					},
 					Sensei()->quiz_answer_repository->get_all( $submission->get_id() )
 				);
+				$reset      = did_action( 'sensei_user_lesson_reset' );
 				add_filter( 'query', $fault_filter );
 
 				$result = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
 				self::assertFalse( $result, 'Reset must report the required progress failure.' );
+				self::assertSame( $reset, did_action( 'sensei_user_lesson_reset' ), 'A failed reset must not announce success.' );
 				self::assertSame(
 					$before,
 					array_map(
@@ -1043,6 +1048,35 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 				'The file type question returns nothing, it should return an attachment ID'
 			);
 		}
+	}
+
+	/**
+	 * A failed lesson-comment insert during quiz save must stop completion and submission events.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Quiz::submit_answers_for_grading
+	 */
+	public function testSubmitAnswersForGrading_CommentInsertFailedDuringSave_DoesNotAnnounceCompletionOrSubmission( string $mode ): void {
+		$lesson_id = $this->factory->get_random_lesson_id();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$user_id   = $this->factory->user->create();
+		update_post_meta( $quiz_id, '_quiz_grade_type', 'auto' );
+		update_post_meta( $quiz_id, '_pass_required', '' );
+		$submitted = did_action( 'sensei_user_quiz_submitted' );
+		$completed = did_action( 'sensei_user_lesson_end' );
+
+		$this->set_progress_storage_mode( $mode );
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+
+		$this->fail_progress_comment_insert( 'lesson', $lesson_id, $user_id, 'graded' );
+
+		$result = Sensei_Quiz::submit_answers_for_grading( array(), array(), $lesson_id, $user_id );
+
+		self::assertFalse( $result, 'The quiz caller must report the required insert failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'Failed quiz progress must not announce lesson completion.' );
+		self::assertSame( $submitted, did_action( 'sensei_user_quiz_submitted' ), 'Failed quiz progress must not announce submission.' );
 	}
 
 	/**

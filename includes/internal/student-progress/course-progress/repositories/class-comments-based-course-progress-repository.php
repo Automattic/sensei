@@ -209,16 +209,34 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @internal
 	 *
 	 * @param Course_Progress_Interface $course_progress The course progress.
+	 * @throws Persistence_Exception If a required progress comment cannot be inserted.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {
 		$this->assert_comments_based_course_progress( $course_progress );
+
+		$status = $course_progress->get_status();
+		if ( empty( $status ) ) {
+			return;
+		}
+
 		$metadata   = [];
 		$started_at = $course_progress->get_started_at();
 		if ( $started_at ) {
 			// Comment dates are stored in the site timezone.
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
-		Sensei_Utils::update_course_status( $course_progress->get_user_id(), $course_progress->get_course_id(), $course_progress->get_status(), $metadata );
+
+		$comment_id = Sensei_Utils::update_course_status(
+			$course_progress->get_user_id(),
+			$course_progress->get_course_id(),
+			$status,
+			$metadata
+		);
+
+		if ( ! $comment_id ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'course', 'comments', $course_progress->get_course_id(), $course_progress->get_user_id() );
+		}
 	}
 
 	/**
