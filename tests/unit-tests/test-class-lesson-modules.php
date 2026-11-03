@@ -102,4 +102,36 @@ class Sensei_Class_Lesson_Modules_Test extends WP_UnitTestCase {
 		$this->assertEquals( wp_get_object_terms( $this->lesson_id, $this->module_taxonomy ), array() );
 	}
 
+	/**
+	 * A lesson added to a module gets order 0 in it when it had no order there.
+	 *
+	 * @covers Sensei_Core_Lesson_Modules::set_module
+	 */
+	public function testSetModule_LessonHadNoModuleOrder_SetsItToZero() {
+		/* Arrange. */
+		wp_set_object_terms( $this->course_id, $this->module_id, $this->module_taxonomy );
+
+		/* Act. */
+		$this->lesson_modules->set_module( $this->module_id, $this->course_id );
+
+		/* Assert. */
+		self::assertSame( 0, Sensei()->course_lessons_repository->get_lesson_module_order( $this->lesson_id, $this->module_id ) );
+	}
+
+	/**
+	 * Saving a lesson in a module keeps the order it already had there.
+	 *
+	 * @covers Sensei_Core_Lesson_Modules::set_module
+	 */
+	public function testSetModule_LessonHadModuleOrder_KeepsIt() {
+		/* Arrange. */
+		wp_set_object_terms( $this->course_id, $this->module_id, $this->module_taxonomy );
+		Sensei()->course_lessons_repository->set_lesson_module_order( $this->lesson_id, $this->module_id, 1 );
+
+		/* Act. */
+		$this->lesson_modules->set_module( $this->module_id, $this->course_id );
+
+		/* Assert. */
+		self::assertSame( 1, Sensei()->course_lessons_repository->get_lesson_module_order( $this->lesson_id, $this->module_id ) );
+	}
 }
