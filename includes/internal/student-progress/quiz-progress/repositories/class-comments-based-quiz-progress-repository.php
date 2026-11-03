@@ -157,6 +157,11 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->assert_comments_based_quiz_progress( $quiz_progress );
 
+		$status = (string) $quiz_progress->get_raw_status();
+		if ( empty( $status ) ) {
+			return;
+		}
+
 		$lesson_id  = (int) Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
 		$metadata   = [];
 		$started_at = $quiz_progress->get_started_at();
@@ -164,8 +169,6 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			// Comment dates are stored in the site timezone.
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
-
-		$status = (string) $quiz_progress->get_raw_status();
 
 		$comment_id = Sensei_Utils::update_lesson_status(
 			$quiz_progress->get_user_id(),

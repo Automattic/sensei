@@ -213,6 +213,12 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {
 		$this->assert_comments_based_course_progress( $course_progress );
+
+		$status = $course_progress->get_status();
+		if ( empty( $status ) ) {
+			return;
+		}
+
 		$metadata   = [];
 		$started_at = $course_progress->get_started_at();
 		if ( $started_at ) {
@@ -223,7 +229,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		$comment_id = Sensei_Utils::update_course_status(
 			$course_progress->get_user_id(),
 			$course_progress->get_course_id(),
-			$course_progress->get_status(),
+			$status,
 			$metadata
 		);
 

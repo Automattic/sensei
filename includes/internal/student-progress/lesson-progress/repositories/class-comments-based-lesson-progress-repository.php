@@ -155,14 +155,17 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	public function save( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->assert_comments_based_lesson_progress( $lesson_progress );
 
+		$status = (string) $lesson_progress->get_raw_status();
+		if ( empty( $status ) ) {
+			return;
+		}
+
 		$metadata   = [];
 		$started_at = $lesson_progress->get_started_at();
 		if ( $started_at ) {
 			// Comment dates are stored in the site timezone.
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
-
-		$status = (string) $lesson_progress->get_raw_status();
 
 		$comment_id = (int) Sensei_Utils::update_lesson_status(
 			$lesson_progress->get_user_id(),
