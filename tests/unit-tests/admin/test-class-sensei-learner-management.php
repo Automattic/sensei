@@ -224,7 +224,7 @@ class Sensei_Learner_Management_Test extends WP_UnitTestCase {
 		$factory_class    = get_class( $original_factory );
 
 		Sensei()->{$factory_property} = new $factory_class( Sensei()->progress_storage_configuration );
-		$updated                     = did_filter( 'sensei_students_row_updated' );
+		$updated                      = did_filter( 'sensei_students_row_updated' );
 		$this->fail_progress_comment_insert( $post_type, $post_id, $user_id, 'in-progress' );
 
 		try {

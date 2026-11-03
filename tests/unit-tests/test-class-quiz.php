@@ -686,7 +686,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 					},
 					Sensei()->quiz_answer_repository->get_all( $submission->get_id() )
 				);
-				$reset = did_action( 'sensei_user_lesson_reset' );
+				$reset      = did_action( 'sensei_user_lesson_reset' );
 				add_filter( 'query', $fault_filter );
 
 				$result = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
