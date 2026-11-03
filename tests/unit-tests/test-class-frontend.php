@@ -1,5 +1,6 @@
 <?php
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
 
 /**
  * Tests for Sensei_Frontend.
@@ -8,6 +9,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  */
 class Sensei_Frontend_Test extends WP_UnitTestCase {
 	use Sensei_HPPS_Helpers;
+	use Sensei_Progress_Insert_Failure_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
@@ -27,6 +29,9 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		unset(
 			$_POST['course_complete'],
 			$_POST['course_complete_id'],
@@ -120,6 +125,38 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 		} finally {
 			$this->maybe_reset_hpps_repository();
 		}
+	}
+
+	/**
+	 * A failed course save must show an error without announcing completion.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Frontend::sensei_complete_course
+	 */
+	public function testSenseiCompleteCourse_CommentInsertFailedDuringSave_ShowsErrorWithoutCompletion( string $mode ): void {
+		$this->set_progress_storage_mode( $mode );
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course_id  = $this->factory->course->create();
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
+		Sensei_Utils::user_start_course( $student_id, $course_id );
+		$this->submitCompletion( $course_id );
+		$completed = did_action( 'sensei_user_course_end' );
+		$messages  = Sensei()->frontend->messages;
+		Sensei()->notices->clear_notices();
+		$this->fail_progress_comment_insert( 'course', $course_id, $student_id, 'complete' );
+
+		ob_start();
+		try {
+			Sensei()->frontend->sensei_complete_course();
+			Sensei()->notices->maybe_print_notices();
+		} finally {
+			$notice = ob_get_clean();
+		}
+
+		self::assertStringContainsString( "We couldn't finish marking this course as complete.", $notice, 'The student must see the save failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'A failed save must not announce course completion.' );
+		self::assertSame( $messages, Sensei()->frontend->messages, 'A failed save must not add a completion message.' );
 	}
 
 	/**
