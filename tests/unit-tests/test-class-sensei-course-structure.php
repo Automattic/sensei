@@ -1238,6 +1238,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $modified_structure ) );
 		$this->assertExpectedStructure( $modified_structure, $course_structure->get( 'edit' ) );
+		$this->assertNull( Sensei()->course_lessons_repository->get_lesson_order( $modified_structure[0]['lessons'][0]['id'], $course_id ), 'A lesson moved into a module should lose its course lesson order' );
 	}
 
 	/**
