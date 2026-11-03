@@ -1037,8 +1037,8 @@ class Sensei_Lesson {
 		// Add default lesson order meta value.
 		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post_id );
 		if ( $course_id ) {
-			if ( ! get_post_meta( $post_id, '_order_' . $course_id, true ) ) {
-				update_post_meta( $post_id, '_order_' . $course_id, 0 );
+			if ( ! Sensei()->course_lessons_repository->get_lesson_order( (int) $post_id, $course_id ) ) {
+				Sensei()->course_lessons_repository->set_lesson_order( (int) $post_id, $course_id, 0 );
 			}
 		}
 		// Add reference back to the Quiz.
@@ -5316,9 +5316,9 @@ class Sensei_Lesson {
 		}
 
 		// Get module ID if it is set.
-		$modules = wp_get_post_terms( $lesson->ID, 'module' );
-		if ( is_array( $modules ) && count( $modules ) > 0 ) {
-			$event_properties['module_id'] = $modules[0]->term_id;
+		$module = Sensei()->course_lessons_repository->get_lesson_module( (int) $lesson->ID );
+		if ( $module ) {
+			$event_properties['module_id'] = $module->term_id;
 		}
 
 		sensei_log_event( 'lesson_publish', $event_properties );

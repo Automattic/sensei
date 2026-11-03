@@ -1173,4 +1173,30 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			'empty string' => array( '' ),
 		);
 	}
+
+	/**
+	 * The legacy single course page lists the lessons in the stored root lesson order.
+	 *
+	 * @covers Sensei_Course::load_single_course_lessons_query
+	 */
+	public function testLoadSingleCourseLessonsQuery_RootLessonOrderStored_QueriesTheLessonsInThatOrder() {
+		/* Arrange. */
+		global $post, $wp_query;
+		$course       = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 3,
+				'question_count' => 0,
+			)
+		);
+		$lesson_order = array_reverse( $course['lesson_ids'] );
+		Sensei()->course_lessons_repository->set_root_lesson_order( $course['course_id'], $lesson_order );
+		$post = get_post( $course['course_id'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		/* Act. */
+		Sensei_Course::load_single_course_lessons_query();
+		$actual = wp_list_pluck( $wp_query->posts, 'ID' );
+
+		/* Assert. */
+		self::assertSame( $lesson_order, $actual );
+	}
 }

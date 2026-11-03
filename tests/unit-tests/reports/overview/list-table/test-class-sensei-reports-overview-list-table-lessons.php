@@ -291,6 +291,30 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The lessons report export names the module of each lesson.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
+	 */
+	public function testGenerateReport_LessonHadModule_ExportsTheModuleName(): void {
+		/* Arrange. */
+		$created               = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module                = get_term( $created['modules'][0], 'module' );
+		$_GET['course_filter'] = $created['course_id'];
+		$table                 = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course ) );
+
+		/* Act. */
+		$csv = $table->generate_report();
+
+		/* Assert. */
+		self::assertSame( $module->name, $csv[1]['lesson_module'] );
+	}
+
+	/**
 	 * Tests that we are getting right data for Completion Rate column.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
