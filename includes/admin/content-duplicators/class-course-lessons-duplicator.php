@@ -56,7 +56,7 @@ class Course_Lessons_Duplicator {
 				continue;
 			}
 
-			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
+			Sensei()->course_lessons_repository->attach_lesson( $new_lesson->ID, $new_course_id );
 
 			$update_prerequisite_object = $this->get_prerequisite_update_object( $lesson->ID, $new_lesson->ID );
 
