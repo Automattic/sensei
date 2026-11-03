@@ -170,7 +170,7 @@ class Sensei_Import_Associations
 					$module_indices[ $module_term_id ]++;
 				}
 
-				update_post_meta( $lesson_id, '_order_module_' . $module_term_id, $module_indices[ $module_term_id ] );
+				Sensei()->course_lessons_repository->set_lesson_module_order( $lesson_id, $module_term_id, $module_indices[ $module_term_id ] );
 			} else {
 				$lesson_order[] = $lesson_id;
 				Sensei()->course_lessons_repository->set_lesson_order( $lesson_id, $course_id, $order_index );
@@ -291,7 +291,7 @@ class Sensei_Import_Associations
 			return false;
 		}
 
-		$result = wp_set_object_terms( $lesson_id, [ $term->term_id ], 'module' );
+		$result = Sensei()->course_lessons_repository->set_lesson_module( $lesson_id, $term->term_id );
 		if ( is_wp_error( $result ) ) {
 			$add_warning_helper( $result->get_error_message(), $result->get_error_code() );
 
