@@ -165,6 +165,10 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 			get_post_meta( $duplicated_lesson2->ID, "_order_$duplicated_course->ID", true ),
 			'Duplicated lesson order on second lesson differs from the original order'
 		);
+		$this->assertNull(
+			Sensei()->course_lessons_repository->get_lesson_order( $duplicated_lesson1->ID, $course_id ),
+			'Duplicated lesson kept its order in the original course'
+		);
 	}
 
 	/**
