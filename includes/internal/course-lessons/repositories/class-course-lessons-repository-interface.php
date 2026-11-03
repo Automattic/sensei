@@ -140,4 +140,14 @@ interface Course_Lessons_Repository_Interface {
 	 * @param int[] $lesson_ids Lesson IDs, in order.
 	 */
 	public function set_root_lesson_order( int $course_id, array $lesson_ids ): void;
+
+	/**
+	 * Get the order of the lessons that are not in a module of a course.
+	 *
+	 * @internal
+	 *
+	 * @param int $course_id Course ID.
+	 * @return int[] Lesson IDs, in order. Empty when none is stored.
+	 */
+	public function get_root_lesson_order( int $course_id ): array;
 }
