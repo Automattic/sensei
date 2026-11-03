@@ -82,6 +82,17 @@ interface Course_Lessons_Repository_Interface {
 	public function get_lesson_module( int $lesson_id ): ?\WP_Term;
 
 	/**
+	 * Whether a lesson is in the given module.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return bool
+	 */
+	public function has_lesson_module( int $lesson_id, int $term_id ): bool;
+
+	/**
 	 * Set the prerequisite of a lesson.
 	 *
 	 * @internal
@@ -150,4 +161,77 @@ interface Course_Lessons_Repository_Interface {
 	 * @return int[] Lesson IDs, in order. Empty when none is stored.
 	 */
 	public function get_root_lesson_order( int $course_id ): array;
+
+	/**
+	 * Set the module of a lesson, replacing any module it had.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 */
+	public function set_lesson_module( int $lesson_id, int $term_id ): void;
+
+	/**
+	 * Remove a lesson from its module.
+	 *
+	 * Fires the term relationship deletion hooks only; see `unset_lesson_module()`.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_lesson_module( int $lesson_id ): void;
+
+	/**
+	 * Remove a lesson from its module by setting its modules to none.
+	 *
+	 * Same result as `delete_lesson_module()`, but the `set_object_terms` action fires as well.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function unset_lesson_module( int $lesson_id ): void;
+
+	/**
+	 * Get the order of a lesson in a module.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return int|null Order, or null when none is stored for that module.
+	 */
+	public function get_lesson_module_order( int $lesson_id, int $term_id ): ?int;
+
+	/**
+	 * Set the order of a lesson in a module.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @param int $order     Order.
+	 */
+	public function set_lesson_module_order( int $lesson_id, int $term_id, int $order ): void;
+
+	/**
+	 * Delete the order of a lesson in a module.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 */
+	public function delete_lesson_module_order( int $lesson_id, int $term_id ): void;
+
+	/**
+	 * Delete the order of a lesson in each module it is in.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_all_lesson_module_orders( int $lesson_id ): void;
 }
