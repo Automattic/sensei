@@ -451,4 +451,35 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 			delete_post_meta( $lesson_id, '_order_module_' . $module->term_id );
 		}
 	}
+
+	/**
+	 * Attach a lesson to a course, replacing the course it had.
+	 *
+	 * Writes `_lesson_course` only; orders, module and prerequisite are left as they are.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 */
+	public function attach_lesson( int $lesson_id, int $course_id ): void {
+		update_post_meta( $lesson_id, '_lesson_course', $course_id );
+	}
+
+	/**
+	 * Detach a lesson from its course.
+	 *
+	 * Deletes `_lesson_course` only; orders, module and prerequisite are left as they are.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function detach_lesson( int $lesson_id ): void {
+		delete_post_meta( $lesson_id, '_lesson_course' );
+	}
 }
