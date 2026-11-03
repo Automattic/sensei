@@ -206,7 +206,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 	/**
 	 * Testing Sensei_Teacher::update_course_modules_author
 	 * Test to see if the lessons in the course was assigned to
-	 * a new author.
+	 * a new author and keep their order in the new modules.
 	 *
 	 * @since 1.8.0
 	 */
@@ -253,6 +253,8 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 			wp_set_object_terms( $lesson_id, $test_module_2['term_id'], 'module', false );
 		}
 
+		Sensei()->course_lessons_repository->set_lesson_module_order( $lesson_in_module_1[0], $test_module_1['term_id'], 1 );
+
 		// Do the update changing the author
 		Sensei_Teacher::update_course_modules_author( $test_course_id, $test_teacher_id );
 
@@ -265,6 +267,10 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 			$this->assertEquals( $expected_module_1_slug, $term_after_update[0]->slug, 'Lesson module was not updated, ID: ' . $lesson_id );
 
 		}
+
+		$new_module_1_id = Sensei()->course_lessons_repository->get_lesson_module( $lesson_in_module_1[0] )->term_id;
+		$this->assertSame( 1, Sensei()->course_lessons_repository->get_lesson_module_order( $lesson_in_module_1[0], $new_module_1_id ), 'The lesson should keep its order in the new module.' );
+		$this->assertNull( Sensei()->course_lessons_repository->get_lesson_module_order( $lesson_in_module_1[0], $test_module_1['term_id'] ), 'The lesson order in the old module should have been deleted.' );
 
 		// do the lessons for module 2 group now belong to ta new module term with the new teacher as owner?
 		$expected_module_2_slug = $test_teacher_id . '-' . str_ireplace( ' ', '-', strtolower( trim( 'Lesson Test Module 2' ) ) );
