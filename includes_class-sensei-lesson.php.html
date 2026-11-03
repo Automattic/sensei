@@ -1070,8 +1070,8 @@ class Sensei_Lesson {
 		// Add default lesson order meta value.
 		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post_id );
 		if ( $course_id ) {
-			if ( ! get_post_meta( $post_id, '_order_' . $course_id, true ) ) {
-				update_post_meta( $post_id, '_order_' . $course_id, 0 );
+			if ( ! Sensei()->course_lessons_repository->get_lesson_order( (int) $post_id, $course_id ) ) {
+				Sensei()->course_lessons_repository->set_lesson_order( (int) $post_id, $course_id, 0 );
 			}
 		}
 		// Add reference back to the Quiz.
