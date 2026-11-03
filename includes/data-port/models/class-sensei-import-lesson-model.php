@@ -240,7 +240,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		if ( $prerequisite ) {
 			$this->task->add_prerequisite_task( $post_id, $prerequisite, $this->line_number, $post_args['post_title'] );
 		} elseif ( '' === $prerequisite ) {
-			delete_post_meta( $post_id, '_lesson_prerequisite' );
+			Sensei()->course_lessons_repository->delete_lesson_prerequisite( $post_id );
 		}
 
 		$this->set_lesson_terms( Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS, 'lesson-tag' );

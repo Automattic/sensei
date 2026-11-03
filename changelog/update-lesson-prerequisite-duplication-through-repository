@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix a PHP warning when duplicating a course whose lesson requires a lesson from another course.

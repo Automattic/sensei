@@ -3,6 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+use Sensei\Internal\Course_Status_Updates;
 use Sensei\Internal\Services\Sensei_Pro_Upsell;
 
 /**
@@ -662,7 +663,9 @@ class Sensei_Course {
 			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
 			if ( $course_id ) {
 				// Updates the Course status and it's meta data
-				Sensei_Utils::user_complete_course( $course_id, $user_id );
+				if ( false === Sensei_Utils::user_complete_course( $course_id, $user_id ) ) {
+					Course_Status_Updates::mark_failed();
+				}
 			}
 		}
 	}
@@ -3726,7 +3729,7 @@ class Sensei_Course {
 		}
 
 		// setting lesson order
-		$course_lesson_order = get_post_meta( $course_id, '_lesson_order', true );
+		$course_lesson_order = Sensei()->course_lessons_repository->get_root_lesson_order( $course_id );
 		$all_ids             = get_posts(
 			[
 				'post_type'      => 'lesson',
@@ -3738,7 +3741,7 @@ class Sensei_Course {
 		);
 		if ( ! empty( $course_lesson_order ) ) {
 
-			$course_lesson_query_args['post__in'] = array_merge( explode( ',', $course_lesson_order ), $all_ids );
+			$course_lesson_query_args['post__in'] = array_merge( $course_lesson_order, $all_ids );
 			$course_lesson_query_args['orderby']  = 'post__in';
 			unset( $course_lesson_query_args['order'] );
 

@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use DateTimeImmutable;
 use DateTimeZone;
 use InvalidArgumentException;
@@ -66,6 +67,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @param int $user_id The user ID.
 	 *
 	 * @return Lesson_Progress_Interface The lesson progress.
+	 * @throws Persistence_Exception If required progress creation fails.
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		/**
@@ -82,7 +84,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
-		$this->wpdb->insert(
+		$result           = $this->wpdb->insert(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'post_id'        => $lesson_id,
@@ -107,7 +109,11 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				'%s',
 			]
 		);
-		$id = (int) $this->wpdb->insert_id;
+		$id               = (int) $this->wpdb->insert_id;
+		if ( false === $result || $id <= 0 ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'lesson', 'tables', $lesson_id, $user_id, false === $result ? 'insert_failed' : 'invalid_insert_id' );
+		}
 
 		$progress = new Tables_Based_Lesson_Progress(
 			$id,
@@ -120,7 +126,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			$current_datetime
 		);
 
-		if ( $id && Progress_Storage_Settings::is_cache_enabled() ) {
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_set( self::get_prefixed_key( $this->get_cache_key( $lesson_id, $user_id ), self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
 		}
 

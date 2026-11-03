@@ -80,4 +80,74 @@ interface Course_Lessons_Repository_Interface {
 	 * @return \WP_Term|null The module term, or null when the lesson has none or a filter returns no term.
 	 */
 	public function get_lesson_module( int $lesson_id ): ?\WP_Term;
+
+	/**
+	 * Set the prerequisite of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id              Lesson ID.
+	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
+	 */
+	public function set_lesson_prerequisite( int $lesson_id, int $prerequisite_lesson_id ): void;
+
+	/**
+	 * Delete the prerequisite of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_lesson_prerequisite( int $lesson_id ): void;
+
+	/**
+	 * Get the IDs of the lessons that have the given lesson as their prerequisite.
+	 *
+	 * @internal
+	 *
+	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
+	 * @return int[] Lesson IDs, in no particular order. Trashed lessons are left out.
+	 */
+	public function get_lesson_ids_with_prerequisite( int $prerequisite_lesson_id ): array;
+
+	/**
+	 * Set the order of a lesson in a course.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 * @param int $order     Order.
+	 */
+	public function set_lesson_order( int $lesson_id, int $course_id, int $order ): void;
+
+	/**
+	 * Delete the order of a lesson in a course.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 */
+	public function delete_lesson_order( int $lesson_id, int $course_id ): void;
+
+	/**
+	 * Set the order of the lessons that are not in a module of a course.
+	 *
+	 * @internal
+	 *
+	 * @param int   $course_id  Course ID.
+	 * @param int[] $lesson_ids Lesson IDs, in order.
+	 */
+	public function set_root_lesson_order( int $course_id, array $lesson_ids ): void;
+
+	/**
+	 * Get the order of the lessons that are not in a module of a course.
+	 *
+	 * @internal
+	 *
+	 * @param int $course_id Course ID.
+	 * @return int[] Lesson IDs, in order. Empty when none is stored.
+	 */
+	public function get_root_lesson_order( int $course_id ): array;
 }

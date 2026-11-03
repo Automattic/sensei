@@ -334,4 +334,99 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertNull( $actual );
 	}
+
+	/**
+	 * Setting a prerequisite replaces the one the lesson had.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::set_lesson_prerequisite
+	 */
+	public function testSetLessonPrerequisite_LessonHadPrerequisite_ReplacesIt(): void {
+		/* Arrange. */
+		$old_prerequisite_id = $this->factory->lesson->create();
+		$new_prerequisite_id = $this->factory->lesson->create();
+		$lesson_id           = $this->factory->lesson->create();
+		$this->repository->set_lesson_prerequisite( $lesson_id, $old_prerequisite_id );
+
+		/* Act. */
+		$this->repository->set_lesson_prerequisite( $lesson_id, $new_prerequisite_id );
+
+		/* Assert. */
+		self::assertSame( array( (string) $new_prerequisite_id ), get_post_meta( $lesson_id, '_lesson_prerequisite', false ) );
+	}
+
+	/**
+	 * Deleting a prerequisite removes the stored value instead of storing an empty one.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::delete_lesson_prerequisite
+	 */
+	public function testDeleteLessonPrerequisite_LessonHadPrerequisite_DeletesIt(): void {
+		/* Arrange. */
+		$prerequisite_id = $this->factory->lesson->create();
+		$lesson_id       = $this->factory->lesson->create();
+		$this->repository->set_lesson_prerequisite( $lesson_id, $prerequisite_id );
+
+		/* Act. */
+		$this->repository->delete_lesson_prerequisite( $lesson_id );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_lesson_prerequisite' ) );
+	}
+
+	/**
+	 * Only the lessons that require the given lesson are returned, and trashed ones are left out.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_ids_with_prerequisite
+	 */
+	public function testGetLessonIdsWithPrerequisite_LessonsRequiringItGiven_ReturnsTheirIds(): void {
+		/* Arrange. */
+		$prerequisite_id       = $this->factory->lesson->create();
+		$other_prerequisite_id = $this->factory->lesson->create();
+		$dependent_id          = $this->factory->lesson->create( array( 'post_status' => 'draft' ) );
+		$trashed_id            = $this->factory->lesson->create();
+		$other_id              = $this->factory->lesson->create();
+		$this->repository->set_lesson_prerequisite( $dependent_id, $prerequisite_id );
+		$this->repository->set_lesson_prerequisite( $trashed_id, $prerequisite_id );
+		$this->repository->set_lesson_prerequisite( $other_id, $other_prerequisite_id );
+		wp_trash_post( $trashed_id );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_ids_with_prerequisite( $prerequisite_id );
+
+		/* Assert. */
+		self::assertSame( array( $dependent_id ), $actual );
+	}
+
+	/**
+	 * Deleting a lesson order removes the stored value instead of storing an empty one.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::delete_lesson_order
+	 */
+	public function testDeleteLessonOrder_LessonHadOrder_DeletesIt(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->set_lesson_order( $lesson_id, $course_id, 2 );
+
+		/* Act. */
+		$this->repository->delete_lesson_order( $lesson_id, $course_id );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_order_' . $course_id ) );
+	}
+
+	/**
+	 * A course without a stored root lesson order has no order, not an order with an empty item.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_root_lesson_order
+	 */
+	public function testGetRootLessonOrder_NoOrderStored_ReturnsNoLessons(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+
+		/* Act. */
+		$actual = $this->repository->get_root_lesson_order( $course_id );
+
+		/* Assert. */
+		self::assertSame( array(), $actual );
+	}
 }

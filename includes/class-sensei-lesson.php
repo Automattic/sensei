@@ -486,7 +486,7 @@ class Sensei_Lesson {
 		$posts_array = $course_id ? $this->get_prerequisites( $lesson_id, $course_id ) : array();
 
 		// Get the currently selected prerequisite.
-		$selected_prerequisite = get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+		$selected_prerequisite = Sensei()->course_lessons_repository->get_lesson_prerequisite_id( $lesson_id );
 
 		// Build the HTML to Output.
 		$input_name = 'lesson_prerequisite';
@@ -1037,8 +1037,8 @@ class Sensei_Lesson {
 		// Add default lesson order meta value.
 		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post_id );
 		if ( $course_id ) {
-			if ( ! get_post_meta( $post_id, '_order_' . $course_id, true ) ) {
-				update_post_meta( $post_id, '_order_' . $course_id, 0 );
+			if ( ! Sensei()->course_lessons_repository->get_lesson_order( (int) $post_id, $course_id ) ) {
+				Sensei()->course_lessons_repository->set_lesson_order( (int) $post_id, $course_id, 0 );
 			}
 		}
 		// Add reference back to the Quiz.
@@ -2883,7 +2883,7 @@ class Sensei_Lesson {
 				}
 				break;
 			case 'lesson-prerequisite':
-				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true );
+				$lesson_prerequisite_id = Sensei()->course_lessons_repository->get_lesson_prerequisite_id( (int) $id );
 				if ( 0 < absint( $lesson_prerequisite_id ) ) {
 					$lesson_prerequisite_post = get_post( $lesson_prerequisite_id );
 					// translators: Placeholder is the item title/name.
@@ -4480,11 +4480,12 @@ class Sensei_Lesson {
 
 		// setup the values for all meta fields
 		$data = array();
-		foreach ( array_diff( $this->meta_fields, array( 'lesson_course' ) ) as $field ) {
+		foreach ( array_diff( $this->meta_fields, array( 'lesson_course', 'lesson_prerequisite' ) ) as $field ) {
 
 			$data[ $field ] = get_post_meta( $post_id, '_' . $field, true );
 
 		}
+		$data['lesson_prerequisite'] = Sensei()->course_lessons_repository->get_lesson_prerequisite_id( (int) $post_id ) ?? '';
 		// The quick edit script selects option[value="…"], so a lesson without a course needs the empty string, not null.
 		$data['lesson_course'] = Sensei()->course_lessons_repository->get_course_id( (int) $post_id ) ?? '';
 		// add quiz meta fields
@@ -5123,7 +5124,7 @@ class Sensei_Lesson {
 
 		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
-		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+		$lesson_prerequisite = Sensei()->course_lessons_repository->get_lesson_prerequisite_id( $lesson_id );
 
 		if ( $lesson_prerequisite > 0 ) {
 
@@ -5315,9 +5316,9 @@ class Sensei_Lesson {
 		}
 
 		// Get module ID if it is set.
-		$modules = wp_get_post_terms( $lesson->ID, 'module' );
-		if ( is_array( $modules ) && count( $modules ) > 0 ) {
-			$event_properties['module_id'] = $modules[0]->term_id;
+		$module = Sensei()->course_lessons_repository->get_lesson_module( (int) $lesson->ID );
+		if ( $module ) {
+			$event_properties['module_id'] = $module->term_id;
 		}
 
 		sensei_log_event( 'lesson_publish', $event_properties );

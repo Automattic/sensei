@@ -1180,6 +1180,39 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The prerequisite meta box preselects the lesson's prerequisite.
+	 *
+	 * @covers Sensei_Lesson::lesson_prerequisite_meta_box_content
+	 */
+	public function testLessonPrerequisiteMetaBoxContent_WhenLessonHadPrerequisite_SelectsIt(): void {
+		/* Arrange */
+		global $post;
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$course_lessons  = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$prerequisite_id = $course_lessons['lesson_ids'][0];
+		$lesson_id       = $course_lessons['lesson_ids'][1];
+		$_POST           = array(
+			'woo_lesson_nonce'    => wp_create_nonce( 'sensei-save-post-meta' ),
+			'lesson_prerequisite' => $prerequisite_id,
+		);
+		Sensei()->lesson->meta_box_save( $lesson_id );
+		$post = get_post( $lesson_id );
+
+		/* Act */
+		ob_start();
+		Sensei()->lesson->lesson_prerequisite_meta_box_content();
+		$output = ob_get_clean();
+
+		/* Assert */
+		self::assertMatchesRegularExpression( '/<option\b(?=[^>]*\bvalue=["\']' . $prerequisite_id . '["\'])(?=[^>]*\bselected\b)[^>]*>/', $output );
+	}
+
+	/**
 	 * The course meta box preselects the lesson's course.
 	 *
 	 * @covers Sensei_Lesson::lesson_course_meta_box_content
@@ -2347,6 +2380,32 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Saving a lesson that already has an order in its course keeps that order.
+	 *
+	 * @covers Sensei_Lesson::quiz_update
+	 */
+	public function testQuizUpdate_WhenLessonHadLessonOrder_KeepsIt(): void {
+		/* Arrange */
+		add_filter( 'sensei_quiz_enable_block_based_editor', '__return_false' );
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+		$course    = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$course_id = $course['course_id'];
+		$lesson_id = $course['lesson_ids'][0];
+		Sensei()->course_lessons_repository->set_lesson_order( $lesson_id, $course_id, 3 );
+		$_POST = array(
+			'post_type'        => 'lesson',
+			'woo_lesson_nonce' => wp_create_nonce( 'sensei-save-post-meta' ),
+		);
+
+		/* Act */
+		Sensei()->lesson->quiz_update( $lesson_id );
+
+		/* Assert */
+		self::assertSame( 3, Sensei()->course_lessons_repository->get_lesson_order( $lesson_id, $course_id ) );
+	}
+
+	/**
 	 * The lessons list course column links to the edit screen of the lesson's course.
 	 *
 	 * @covers Sensei_Lesson::add_column_data
@@ -2392,6 +2451,34 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		self::assertSame( '', $actual );
+	}
+
+	/**
+	 * The lessons list prerequisite column links to the edit screen of the lesson's prerequisite.
+	 *
+	 * @covers Sensei_Lesson::add_column_data
+	 */
+	public function testAddColumnData_WhenLessonHadPrerequisite_OutputsPrerequisiteEditLink(): void {
+		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$prerequisite_id = $this->factory->lesson->create( array( 'post_title' => 'Prerequisite lesson' ) );
+		$lesson_id       = $this->factory->lesson->create();
+		$_POST           = array(
+			'woo_lesson_nonce'    => wp_create_nonce( 'sensei-save-post-meta' ),
+			'lesson_prerequisite' => $prerequisite_id,
+		);
+		Sensei()->lesson->meta_box_save( $lesson_id );
+
+		/* Act */
+		ob_start();
+		Sensei()->lesson->add_column_data( 'lesson-prerequisite', $lesson_id );
+		$actual = ob_get_clean();
+
+		/* Assert */
+		self::assertSame(
+			'<a href="' . admin_url( 'post.php?post=' . $prerequisite_id . '&#038;action=edit' ) . '" title="Edit Prerequisite lesson">Prerequisite lesson</a>',
+			$actual
+		);
 	}
 
 	public function testLimitArchiveContent_LockedLessonGivenToAnonymous_ReturnsTheFirst30Words() {

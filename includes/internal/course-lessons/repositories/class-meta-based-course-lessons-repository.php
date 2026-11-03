@@ -200,4 +200,120 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 
 		return $term instanceof WP_Term ? $term : null;
 	}
+
+	/**
+	 * Set the prerequisite of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id              Lesson ID.
+	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
+	 */
+	public function set_lesson_prerequisite( int $lesson_id, int $prerequisite_lesson_id ): void {
+		update_post_meta( $lesson_id, '_lesson_prerequisite', $prerequisite_lesson_id );
+	}
+
+	/**
+	 * Delete the prerequisite of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_lesson_prerequisite( int $lesson_id ): void {
+		delete_post_meta( $lesson_id, '_lesson_prerequisite' );
+	}
+
+	/**
+	 * Get the IDs of the lessons that have the given lesson as their prerequisite.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
+	 * @return int[] Lesson IDs, in no particular order. Trashed lessons are left out.
+	 */
+	public function get_lesson_ids_with_prerequisite( int $prerequisite_lesson_id ): array {
+		$lesson_ids = get_posts(
+			array(
+				'post_type'        => 'lesson',
+				'post_status'      => 'any',
+				'posts_per_page'   => -1,
+				'fields'           => 'ids',
+				'orderby'          => 'none',
+				'suppress_filters' => true,
+				'meta_key'         => '_lesson_prerequisite', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Prerequisites are stored in a meta.
+				'meta_value'       => $prerequisite_lesson_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+			)
+		);
+
+		return array_map( 'intval', $lesson_ids );
+	}
+
+	/**
+	 * Set the order of a lesson in a course.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 * @param int $order     Order.
+	 */
+	public function set_lesson_order( int $lesson_id, int $course_id, int $order ): void {
+		update_post_meta( $lesson_id, '_order_' . $course_id, $order );
+	}
+
+	/**
+	 * Delete the order of a lesson in a course.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 */
+	public function delete_lesson_order( int $lesson_id, int $course_id ): void {
+		delete_post_meta( $lesson_id, '_order_' . $course_id );
+	}
+
+	/**
+	 * Set the order of the lessons that are not in a module of a course.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int   $course_id  Course ID.
+	 * @param int[] $lesson_ids Lesson IDs, in order.
+	 */
+	public function set_root_lesson_order( int $course_id, array $lesson_ids ): void {
+		update_post_meta( $course_id, '_lesson_order', implode( ',', $lesson_ids ) );
+	}
+
+	/**
+	 * Get the order of the lessons that are not in a module of a course.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $course_id Course ID.
+	 * @return int[] Lesson IDs, in order. Empty when none is stored.
+	 */
+	public function get_root_lesson_order( int $course_id ): array {
+		$lesson_order = get_post_meta( $course_id, '_lesson_order', true );
+		if ( empty( $lesson_order ) ) {
+			return array();
+		}
+
+		return array_map( 'intval', explode( ',', $lesson_order ) );
+	}
 }

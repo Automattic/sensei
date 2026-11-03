@@ -150,7 +150,10 @@ class Sensei_Course_Enrolment {
 			$enrolment_check_results = $this->query_enrolment_providers( $user_id );
 			$is_enrolled             = $enrolment_check_results->is_enrolment_provided();
 
-			$this->save_enrolment( $user_id, $is_enrolled );
+			if ( ! $this->save_enrolment( $user_id, $is_enrolled ) ) {
+				$this->invalidate_learner_result( $user_id );
+				return false;
+			}
 		} catch ( Exception $e ) {
 			$is_enrolled = false;
 		}
@@ -244,7 +247,9 @@ class Sensei_Course_Enrolment {
 			$result = true === wp_remove_object_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 		} else {
 			// If they are enrolled, make sure they have started the course.
-			Sensei_Utils::user_start_course( $user_id, $this->course_id );
+			if ( false === Sensei_Utils::user_start_course( $user_id, $this->course_id ) ) {
+				return false;
+			}
 
 			$save_result = wp_set_post_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
 			$result      = is_array( $save_result ) && ! empty( $save_result );

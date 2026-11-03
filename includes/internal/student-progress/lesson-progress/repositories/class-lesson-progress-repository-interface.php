@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,6 +30,7 @@ interface Lesson_Progress_Repository_Interface {
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 * @return Lesson_Progress_Interface The lesson progress.
+	 * @throws Persistence_Exception If required progress creation fails.
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface;
 
@@ -60,6 +62,7 @@ interface Lesson_Progress_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If required progress creation fails.
 	 */
 	public function save( Lesson_Progress_Interface $lesson_progress ): void;
 

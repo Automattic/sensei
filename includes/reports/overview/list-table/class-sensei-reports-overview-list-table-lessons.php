@@ -261,10 +261,10 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	 * @return string
 	 */
 	private function get_row_module( int $lesson_id ): string {
-		$module        = '';
-		$modules_terms = wp_get_post_terms( $lesson_id, 'module' );
+		$module = '';
+		$term   = Sensei()->course_lessons_repository->get_lesson_module( $lesson_id );
 
-		foreach ( $modules_terms as $term ) {
+		if ( $term ) {
 			if ( $this->csv_output ) {
 				$module = esc_html( $term->name );
 			} else {
@@ -274,8 +274,6 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 					esc_html( $term->name )
 				);
 			}
-
-			break;
 		}
 
 		return $module;

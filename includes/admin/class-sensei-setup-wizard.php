@@ -21,10 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Setup_Wizard {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
-	const MC_LIST_ID                  = '4fa225a515';
-	const MC_USER_ID                  = '7a061a9141b0911d6d9bafe3a';
-	const MC_GDPR_FIELD               = '23563';
-	const MC_URL                      = 'https://senseilms.us19.list-manage.com/subscribe/post-json?u=' . self::MC_USER_ID . '&id=' . self::MC_LIST_ID;
+	const NEWSLETTER_URL              = 'https://senseilms.com/wp-json/senseilms-newsletter/v1/subscribe';
 
 	/**
 	 * Default value for setup wizard user data.
@@ -463,9 +460,8 @@ class Sensei_Setup_Wizard {
 	public function get_mailing_list_form_data() {
 
 		return [
-			'admin_email' => get_option( 'admin_email', '' ),
-			'mc_url'      => self::MC_URL,
-			'gdpr_field'  => self::MC_GDPR_FIELD,
+			'admin_email'    => get_option( 'admin_email', '' ),
+			'newsletter_url' => self::NEWSLETTER_URL,
 		];
 	}
 

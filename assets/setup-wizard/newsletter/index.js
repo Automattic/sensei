@@ -20,14 +20,11 @@ const Newsletter = () => {
 		<>
 			<div className="sensei-setup-wizard__content">
 				<H className="sensei-setup-wizard__step-title">
-					{ __(
-						'Be the first to know about new features',
-						'sensei-lms'
-					) }
+					{ __( 'Get more from Sensei', 'sensei-lms' ) }
 				</H>
 				<p>
 					{ __(
-						'Sensei is growing fast and we’re constantly releasing new features. Join on our mailing list to know first.',
+						'Get course creation tips, helpful resources, and Sensei product updates. After signing up, check your inbox to confirm your subscription.',
 						'sensei-lms'
 					) }
 				</p>

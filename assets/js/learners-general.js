@@ -103,6 +103,9 @@ jQuery( document ).ready( function ( $ ) {
 			new_dates: newDates,
 		};
 
+		const $table = $this.closest( 'table' );
+		$table.prev( '.sensei-edit-date-error' ).remove();
+
 		$.post(
 			ajaxurl,
 			{
@@ -115,7 +118,18 @@ jQuery( document ).ready( function ( $ ) {
 					location.reload();
 				}
 			}
-		);
+		).fail( function () {
+			$( '<div>', {
+				class: 'sensei-edit-date-error notice notice-error',
+				role: 'alert',
+			} )
+				.append(
+					$( '<p>' ).text(
+						window.woo_learners_general_data.edit_date_error
+					)
+				)
+				.insertBefore( $table );
+		} );
 	} );
 
 	jQuery( '.learner-action' ).click( function ( event ) {

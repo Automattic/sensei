@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor, within } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -11,9 +11,11 @@ import SignupForm from './signup-form';
 
 const stepData = {
 	admin_email: 'admin@test.local',
-	mc_url: 'http://external.local/campaign',
-	gdpr_field: 'SDCTZX3',
+	newsletter_url:
+		'https://external.local/wp-json/senseilms-newsletter/v1/subscribe',
 };
+
+const originalFetch = window.fetch;
 
 // Mock features data.
 jest.mock( '../data/use-setup-wizard-step', () => ( {
@@ -33,14 +35,17 @@ const mockStepData = ( mockData = {} ) => {
 describe( '<SignupForm />', () => {
 	beforeEach( () => {
 		window.sensei_log_event = jest.fn();
-		delete window.location;
-		window.location = { assign: jest.fn() };
+		window.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			json: async () => ( { success: true } ),
+		} );
 
 		mockStepData();
 	} );
 
 	afterEach( () => {
 		delete window.sensei_log_event;
+		window.fetch = originalFetch;
 	} );
 
 	it( 'Should log event when clicking to join mailing list', () => {
@@ -62,7 +67,9 @@ describe( '<SignupForm />', () => {
 		const { container } = render( <SignupForm /> );
 
 		const form = container.querySelector( 'form' );
-		expect( form.getAttribute( 'action' ) ).toEqual( stepData.mc_url );
+		expect( form.getAttribute( 'action' ) ).toEqual(
+			stepData.newsletter_url
+		);
 	} );
 
 	it( 'Should have the admin e-mail pre-filled in the sign-up form', () => {
@@ -73,4 +80,53 @@ describe( '<SignupForm />', () => {
 			stepData.admin_email
 		);
 	} );
+
+	it( 'Submits the selected email and explicit consent before continuing', async () => {
+		const onSubmit = jest.fn();
+		const { container } = render( <SignupForm onSubmit={ onSubmit } /> );
+		fireEvent.change( container.querySelector( 'input[type=email]' ), {
+			target: { value: 'subscriber@example.com' },
+		} );
+
+		fireEvent.submit( container.querySelector( 'form' ) );
+
+		await waitFor( () => expect( onSubmit ).toHaveBeenCalledTimes( 1 ) );
+		expect( window.fetch ).toHaveBeenCalledWith( stepData.newsletter_url, {
+			method: 'POST',
+			credentials: 'omit',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: 'email=subscriber%40example.com&consent=1',
+		} );
+	} );
+
+	it.each( [
+		[ 'server rejection', () => Promise.resolve( { ok: false } ) ],
+		[
+			'network failure',
+			() => Promise.reject( new Error( 'Unavailable' ) ),
+		],
+		[
+			'unexpected response',
+			() => Promise.resolve( { ok: true, json: async () => ( {} ) } ),
+		],
+	] )(
+		'Keeps the signup step available after a %s',
+		async ( name, response ) => {
+			const onSubmit = jest.fn();
+			window.fetch.mockImplementation( response );
+			const { container, getByText } = render(
+				<SignupForm onSubmit={ onSubmit } />
+			);
+
+			fireEvent.submit( container.querySelector( 'form' ) );
+
+			await within( container ).findByText(
+				'Failed to connect to the server. Please try again later.'
+			);
+			expect( onSubmit ).not.toHaveBeenCalled();
+			expect( getByText( 'Nice! Sign me up' ).disabled ).toBe( false );
+		}
+	);
 } );
