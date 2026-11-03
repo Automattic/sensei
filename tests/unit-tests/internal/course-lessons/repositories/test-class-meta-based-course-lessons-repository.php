@@ -413,4 +413,20 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertFalse( metadata_exists( 'post', $lesson_id, '_order_' . $course_id ) );
 	}
+
+	/**
+	 * A course without a stored root lesson order has no order, not an order with an empty item.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_root_lesson_order
+	 */
+	public function testGetRootLessonOrder_NoOrderStored_ReturnsNoLessons(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+
+		/* Act. */
+		$actual = $this->repository->get_root_lesson_order( $course_id );
+
+		/* Assert. */
+		self::assertSame( array(), $actual );
+	}
 }

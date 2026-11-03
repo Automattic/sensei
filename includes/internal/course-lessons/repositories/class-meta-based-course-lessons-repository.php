@@ -297,4 +297,23 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	public function set_root_lesson_order( int $course_id, array $lesson_ids ): void {
 		update_post_meta( $course_id, '_lesson_order', implode( ',', $lesson_ids ) );
 	}
+
+	/**
+	 * Get the order of the lessons that are not in a module of a course.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $course_id Course ID.
+	 * @return int[] Lesson IDs, in order. Empty when none is stored.
+	 */
+	public function get_root_lesson_order( int $course_id ): array {
+		$lesson_order = get_post_meta( $course_id, '_lesson_order', true );
+		if ( empty( $lesson_order ) ) {
+			return array();
+		}
+
+		return array_map( 'intval', explode( ',', $lesson_order ) );
+	}
 }
