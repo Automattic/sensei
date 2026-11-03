@@ -1375,6 +1375,11 @@ class Sensei_Abilities {
 	 * @return WP_Post|null The course, or null when the ID is not a course.
 	 */
 	private static function get_course_post( int $course_id ): ?WP_Post {
+		// get_post( 0 ) falls back to the global post, which must never stand in for a course id.
+		if ( $course_id <= 0 ) {
+			return null;
+		}
+
 		$course = get_post( $course_id );
 
 		if ( ! $course instanceof WP_Post || 'course' !== $course->post_type ) {

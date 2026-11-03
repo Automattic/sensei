@@ -57,11 +57,13 @@ class Sensei_Course_Structure {
 	 * Check whether the current user may save a structure for a course.
 	 *
 	 * Shared by the course structure REST controller and the `sensei/course-structure-set`
-	 * ability. Items without an id stand for lessons or modules that do not exist yet, so
-	 * they are always allowed; items with an id need `edit_post` on the lesson or
-	 * `edit_term` on the module, which limits teachers to their own content. A module id
-	 * that no longer exists is resolved the way save() resolves it, through the editor's
-	 * `lastTitle`; when nothing resolves there is no module to protect and save() reports it.
+	 * ability. Lessons without an id do not exist yet, so they are always allowed; lessons
+	 * with an id need `edit_post`. Modules need `edit_term` on every existing module save()
+	 * may write to: the one the id names (or, when that term was deleted by a teacher
+	 * change, the one the editor's `lastTitle` resolves to) and the one the title names,
+	 * which save() reuses for an id-less module and merges a retitled module into. This
+	 * limits teachers to their own content. A module that resolves to nothing has nothing
+	 * to protect and is left for save() to create or report.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -71,6 +73,11 @@ class Sensei_Course_Structure {
 	 * @return bool Whether the user can save the structure.
 	 */
 	public static function can_current_user_save( int $course_id, array $raw_structure ): bool {
+		// get_post( 0 ) falls back to the global post, which must never stand in for a course id.
+		if ( $course_id <= 0 ) {
+			return false;
+		}
+
 		$course = get_post( $course_id );
 		if ( ! $course instanceof WP_Post || 'course' !== $course->post_type ) {
 			return false;
@@ -95,9 +102,10 @@ class Sensei_Course_Structure {
 			}
 
 			if ( 'module' === $type ) {
-				$module_id = $structure->get_module_id_to_authorize( $item );
-				if ( $module_id && ! current_user_can( 'edit_term', $module_id ) ) {
-					return false;
+				foreach ( $structure->get_module_ids_to_authorize( $item ) as $module_id ) {
+					if ( ! current_user_can( 'edit_term', $module_id ) ) {
+						return false;
+					}
 				}
 
 				foreach ( (array) ( $item['lessons'] ?? array() ) as $lesson_item ) {
@@ -112,31 +120,34 @@ class Sensei_Course_Structure {
 	}
 
 	/**
-	 * Find the module term a structure item will act on, for the permission check.
+	 * Find the existing module terms a structure item may write to, for the permission check.
 	 *
-	 * Changing a course's teacher can delete a module term before the editor saves its
-	 * outline; sanitize_item() then falls back to the module created for the previous
-	 * title, so the permission check has to look at that module too.
+	 * The id names one: changing a course's teacher can delete that term before the editor
+	 * saves its outline, and sanitize_item() then falls back to the module created for the
+	 * previous title. The title names another: sanitize_item() reuses it for an id-less
+	 * module, and save_module() merges a module into it when the given module's slug no
+	 * longer matches the title, so its description can be overwritten either way.
 	 *
 	 * @param array $item Raw module item.
 	 *
-	 * @return int|null Term ID to check `edit_term` on, or null when the item refers to no existing module.
+	 * @return int[] Term IDs to check `edit_term` on; empty when the item refers to no existing module.
 	 */
-	private function get_module_id_to_authorize( array $item ): ?int {
-		$module_id = (int) ( $item['id'] ?? 0 );
-		if ( ! $module_id ) {
-			return null;
+	private function get_module_ids_to_authorize( array $item ): array {
+		$module_ids = array();
+		$module_id  = (int) ( $item['id'] ?? 0 );
+
+		if ( $module_id && get_term( $module_id, 'module' ) instanceof WP_Term ) {
+			$module_ids[] = $module_id;
+		} elseif ( $module_id && ! empty( $item['lastTitle'] ) && is_string( $item['lastTitle'] ) ) {
+			$module_ids[] = $this->get_existing_module( $item['lastTitle'] );
 		}
 
-		if ( get_term( $module_id, 'module' ) instanceof WP_Term ) {
-			return $module_id;
+		if ( ! empty( $item['title'] ) && is_string( $item['title'] ) ) {
+			// Same sanitization as sanitize_item(), so the lookup lands on the same term.
+			$module_ids[] = $this->get_existing_module( trim( sanitize_text_field( $item['title'] ) ) );
 		}
 
-		if ( ! empty( $item['lastTitle'] ) && is_string( $item['lastTitle'] ) ) {
-			return $this->get_existing_module( $item['lastTitle'] );
-		}
-
-		return null;
+		return array_values( array_unique( array_filter( $module_ids ) ) );
 	}
 
 	/**
@@ -566,6 +577,20 @@ class Sensei_Course_Structure {
 	}
 
 	/**
+	 * Get a module's slug when it differs from the one Sensei derives from its title.
+	 *
+	 * This is the `slug` prepare_module() reports, so a structure saved without the editor's bookkeeping
+	 * treats the module the way the editor would.
+	 *
+	 * @param WP_Term $module_term Module term.
+	 *
+	 * @return string|null The custom slug, or null when the module uses the default slug.
+	 */
+	private function get_custom_module_slug( WP_Term $module_term ): ?string {
+		return $module_term->slug === $this->get_module_slug( $module_term->name ) ? null : $module_term->slug;
+	}
+
+	/**
 	 * Save module order.
 	 *
 	 * @param array $module_order Module order to save.
@@ -669,7 +694,13 @@ class Sensei_Course_Structure {
 		 */
 		do_action( 'sensei_course_structure_lesson_created', $lesson_id, $this->course_id );
 
-		$this->create_quiz( $lesson_id );
+		if ( ! $this->create_quiz( $lesson_id ) ) {
+			// Reporting the lesson as created would leave it without a quiz for good: a retry with its id
+			// takes the update path, which never creates one. Remove it so the retry recreates both.
+			wp_delete_post( $lesson_id, true );
+
+			return false;
+		}
 
 		return $lesson_id;
 	}
@@ -678,6 +709,8 @@ class Sensei_Course_Structure {
 	 * Create an empty quiz for the lesson.
 	 *
 	 * @param int $lesson_id Lesson ID to create quiz for.
+	 *
+	 * @return int|false Quiz ID, or false when the quiz could not be created.
 	 */
 	private function create_quiz( int $lesson_id ) {
 		$lesson = get_post( $lesson_id );
@@ -695,7 +728,7 @@ class Sensei_Course_Structure {
 
 		$quiz_id = wp_insert_post( wp_slash( $post_args ) );
 		if ( ! $quiz_id ) {
-			return;
+			return false;
 		}
 
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
@@ -725,6 +758,8 @@ class Sensei_Course_Structure {
 		 * @param {int} $lesson_id Course post ID.
 		 */
 		do_action( 'sensei_quiz_create', $quiz_id, $lesson_id );
+
+		return $quiz_id;
 	}
 
 	/**
@@ -899,6 +934,8 @@ class Sensei_Course_Structure {
 		];
 
 		if ( 'module' === $raw_item['type'] ) {
+			$stored_term = null;
+
 			if ( $item['id'] ) {
 				$term = get_term( $item['id'], 'module' );
 				// Because term may get deleted in some cases during the process of changing the course teacher
@@ -916,6 +953,8 @@ class Sensei_Course_Structure {
 						sprintf( __( 'Module with id "%d" was not found', 'sensei-lms' ), $item['id'] )
 					);
 				}
+
+				$stored_term = $term instanceof WP_Term ? $term : get_term( (int) $item['id'], 'module' );
 			} else {
 				// Attempt to find an existing module available to the user.
 				$item['id'] = $this->get_existing_module( $item['title'] );
@@ -925,9 +964,23 @@ class Sensei_Course_Structure {
 			$item['slug']        = ! empty( $raw_item['slug'] ) ? trim( sanitize_text_field( $raw_item['slug'] ) ) : null;
 			$item['lastTitle']   = ! empty( $raw_item['lastTitle'] ) ? trim( sanitize_text_field( $raw_item['lastTitle'] ) ) : null;
 			$item['lessons']     = [];
+			$teacher_id          = absint( $raw_item['teacherId'] ?? 0 );
+
+			// A caller that names a module by id without the editor's bookkeeping keeps the stored custom slug
+			// and teacher: otherwise save_module() would read the missing slug as a retitle and move the
+			// module's lessons to whatever module the default slug names.
+			if ( $stored_term instanceof WP_Term ) {
+				if ( ! $item['slug'] ) {
+					$item['slug'] = $this->get_custom_module_slug( $stored_term );
+				}
+				if ( ! $teacher_id ) {
+					$term_author = Sensei_Core_Modules::get_term_author( $stored_term->slug );
+					$teacher_id  = $term_author instanceof WP_User ? (int) $term_author->ID : 0;
+				}
+			}
 
 			if ( $item['slug'] ) {
-				$in_use_in_other_course = Sensei_Teacher::is_module_in_use_by_different_course_and_teacher( $item['slug'], $this->course_id, absint( $raw_item['teacherId'] ?? 0 ) );
+				$in_use_in_other_course = Sensei_Teacher::is_module_in_use_by_different_course_and_teacher( $item['slug'], $this->course_id, $teacher_id );
 				if ( $in_use_in_other_course ) {
 					return new WP_Error(
 						'module_in_use_in_different_course_by_different_teacher',

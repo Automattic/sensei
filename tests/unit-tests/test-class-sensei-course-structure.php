@@ -2183,4 +2183,132 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ) );
 		$this->assertSame( 'sensei_course_structure_missing_module', Sensei_Course_Structure::instance( $course_id )->save( $structure )->get_error_code() );
 	}
+
+	/**
+	 * An id-less module is authorized against the existing module its title resolves to.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_IdLessModuleMatchingExistingModuleGiven_ChecksThatModule() {
+		$this->login_as_teacher_b();
+		$teacher_b_id = get_current_user_id();
+		$this->login_as_teacher();
+		$teacher_id = get_current_user_id();
+		$course_id  = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$module_id  = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => $teacher_id . '-basics',
+			)
+		);
+		add_term_meta( $module_id, 'module_author', $teacher_b_id, true );
+		$structure = array(
+			array(
+				'type'        => 'module',
+				'title'       => 'Basics',
+				'description' => 'Overwritten',
+				'lessons'     => array(),
+			),
+		);
+
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), 'A module the title resolves to but another teacher owns should be refused.' );
+
+		update_term_meta( $module_id, 'module_author', $teacher_id );
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), 'The owner of that module should be allowed.' );
+	}
+
+	/**
+	 * A course id of 0 is refused instead of resolving to the global post.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_CourseIdZeroGiven_ReturnsFalse() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+
+		$GLOBALS['post'] = get_post( $course_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Reproduces the get_post( 0 ) fallback.
+
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, array() ), 'The course itself should be editable.' );
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( 0, array() ), 'Course 0 must not resolve to the global post.' );
+	}
+
+	/**
+	 * A module named by id keeps its custom slug and lessons when the caller sends no slug.
+	 *
+	 * @covers Sensei_Course_Structure::save
+	 */
+	public function testSave_CustomSlugModuleIdGivenWithoutSlug_UpdatesThatModule() {
+		$this->login_as_admin();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$module_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => 'custom-basics',
+			)
+		);
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'id'      => $module_id,
+				'title'   => 'Basics',
+				'lessons' => array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Welcome',
+					),
+				),
+			),
+		);
+
+		$this->assertTrue( Sensei_Course_Structure::instance( $course_id )->save( $structure ) );
+
+		$saved = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+		$this->assertSame( $module_id, $saved[0]['id'], 'The lessons should stay on the module the id names.' );
+		$this->assertSame( 'custom-basics', $saved[0]['slug'], 'The custom slug should be kept.' );
+		$this->assertFalse( get_term_by( 'slug', 'basics', 'module' ), 'No module with the default slug should be created.' );
+		$this->assertSame( array( $module_id ), wp_get_object_terms( $saved[0]['lessons'][0]['id'], 'module', array( 'fields' => 'ids' ) ) );
+	}
+
+	/**
+	 * A lesson whose quiz cannot be created is removed again and the save fails, so a retry recreates both.
+	 *
+	 * @covers Sensei_Course_Structure::save
+	 */
+	public function testSave_QuizInsertFails_RemovesLessonAndReturnsFalse() {
+		$this->login_as_teacher();
+		$course_id    = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$fail_quizzes = function ( $maybe_empty, $postarr ) {
+			return 'quiz' === ( $postarr['post_type'] ?? '' ) ? true : $maybe_empty;
+		};
+		add_filter( 'wp_insert_post_empty_content', $fail_quizzes, 10, 2 );
+
+		try {
+			$result = Sensei_Course_Structure::instance( $course_id )->save(
+				array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Welcome',
+					),
+				)
+			);
+		} finally {
+			remove_filter( 'wp_insert_post_empty_content', $fail_quizzes, 10 );
+		}
+
+		$this->assertFalse( $result );
+		$this->assertEmpty(
+			get_posts(
+				array(
+					'post_type'   => 'lesson',
+					'post_status' => 'any',
+					'fields'      => 'ids',
+					'meta_key'    => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_value'  => $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				)
+			),
+			'The lesson without a quiz should be removed again.'
+		);
+	}
 }

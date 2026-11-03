@@ -227,6 +227,11 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 	 * @return WP_Post|null
 	 */
 	private function get_course( int $course_id ) {
+		// get_post( 0 ) falls back to the global post, which must never stand in for a course id.
+		if ( $course_id <= 0 ) {
+			return null;
+		}
+
 		$course = get_post( $course_id );
 
 		return $course ? $course : null;

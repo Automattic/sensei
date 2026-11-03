@@ -1496,4 +1496,85 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$this->assertSame( 'sensei_course_structure_module_after_lesson', $result->get_error_code() );
 		$this->assertSame( 0, $this->countCourseLessons( $course_id ), 'Nothing should be written.' );
 	}
+
+	/**
+	 * A course id of 0 is rejected instead of resolving to the global post.
+	 *
+	 * @covers Sensei_Abilities::execute_course_structure_set
+	 * @covers Sensei_Abilities::execute_course_structure_get
+	 * @covers Sensei_Abilities::can_set_course_structure
+	 */
+	public function testExecuteCourseStructure_CourseIdZeroGiven_ReturnsCourseNotFoundWithoutClearingGlobalPost() {
+		list( $teacher, $course_id, $structure ) = $this->createTeacherCourseWithStructureInput();
+		wp_set_current_user( $teacher );
+		$set = wp_get_ability( 'sensei/course-structure-set' );
+		$set->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => $structure,
+			)
+		);
+		$GLOBALS['post'] = get_post( $course_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Reproduces the get_post( 0 ) fallback.
+		$zero            = array(
+			'course'    => 0,
+			'structure' => array(),
+		);
+
+		$this->assertFalse( $set->check_permissions( $zero ) );
+		$this->assertSame( 'sensei_course_not_found', Sensei_Abilities::execute_course_structure_set( $zero )->get_error_code() );
+		$this->assertSame( 'sensei_course_not_found', Sensei_Abilities::execute_course_structure_get( array( 'course' => 0 ) )->get_error_code() );
+		$this->assertSame( 3, $this->countCourseLessons( $course_id ), 'The global post must keep its outline.' );
+	}
+
+	/**
+	 * A module with a custom slug stays the same module when sent back by id, with the bookkeeping stripped.
+	 *
+	 * @covers Sensei_Abilities::execute_course_structure_set
+	 */
+	public function testExecuteCourseStructureSet_CustomSlugModuleSentById_KeepsModule() {
+		$this->login_as_admin();
+		$factory   = new Sensei_Factory();
+		$course_id = $factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$module_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => 'custom-basics',
+			)
+		);
+		$set       = wp_get_ability( 'sensei/course-structure-set' );
+		$set->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => array(
+					array(
+						'type'    => 'module',
+						'id'      => $module_id,
+						'title'   => 'Basics',
+						'lessons' => array(
+							array(
+								'type'  => 'lesson',
+								'title' => 'Welcome',
+							),
+						),
+					),
+				),
+			)
+		);
+		$returned = wp_get_ability( 'sensei/course-structure-get' )->execute( array( 'course' => $course_id ) );
+		$this->assertSame( 'custom-basics', $returned['structure'][0]['slug'] );
+
+		$result = $set->execute(
+			array(
+				'course'    => $course_id,
+				'structure' => $returned['structure'],
+			)
+		);
+
+		$this->assertNotWPError( $result );
+		$this->assertSame( $module_id, $result['structure'][0]['id'], 'The lessons should stay on the module the id names.' );
+		$this->assertSame( 'custom-basics', $result['structure'][0]['slug'], 'The custom slug should be kept.' );
+		$this->assertCount( 1, $result['structure'][0]['lessons'] );
+		$this->assertFalse( get_term_by( 'slug', 'basics', 'module' ), 'No module with the default slug should be created.' );
+	}
 }
