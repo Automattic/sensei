@@ -158,6 +158,7 @@ trait Sensei_Progress_Insert_Failure_Helpers {
 			}
 			return $query;
 		};
+
 		$this->progress_insert_suppress_errors = $GLOBALS['wpdb']->suppress_errors( true );
 		add_filter( 'query', $this->progress_insert_filter );
 	}
