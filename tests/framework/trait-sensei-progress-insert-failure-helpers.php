@@ -8,11 +8,25 @@
 use Sensei\Internal\Services\Progress_Storage_Settings;
 
 /**
- * Inject progress insert failures and restore test state afterward.
+ * Run test operations with deliberately failing database inserts.
+ *
+ * Matching INSERT queries target a nonexistent table by default. Temporary
+ * repositories and filters are restored afterward; completed writes are not undone.
  */
 trait Sensei_Progress_Insert_Failure_Helpers {
 	use Sensei_HPPS_Helpers;
 
+	/**
+	 * Select a storage mode and fail progress inserts while an operation runs.
+	 *
+	 * Repository configuration and query filters are restored even if the operation throws.
+	 *
+	 * @param string      $mode Storage mode: comments-only, comments, or tables.
+	 * @param string      $entity Progress type, such as course or lesson.
+	 * @param callable    $operation Operation receiving the removable query filter.
+	 * @param string|null $failed_store Store to fail: comments or tables; null selects the read store.
+	 * @return mixed Operation result. Exceptions propagate to the test.
+	 */
 	protected function with_failed_progress_insert( string $mode, string $entity, callable $operation, ?string $failed_store = null ) {
 		return $this->with_progress_storage_mode(
 			$mode,
@@ -28,7 +42,11 @@ trait Sensei_Progress_Insert_Failure_Helpers {
 	}
 
 	/**
-	 * Remove an already-read comment during save and fail its replacement insert.
+	 * Remove an existing progress comment just before saving and fail its replacement insert.
+	 *
+	 * Requires an existing comment for the given post and student. Removing it at
+	 * sensei_log_activity_before exercises the save path after progress was read.
+	 * Temporary hooks and query filters are removed even if the operation throws.
 	 *
 	 * @param string      $entity Course or lesson comment type.
 	 * @param int         $post_id Course or lesson ID.
@@ -63,11 +81,13 @@ trait Sensei_Progress_Insert_Failure_Helpers {
 	}
 
 	/**
-	 * Run a repository insert fault with progress caching enabled.
+	 * Enable progress caching and fail matching inserts while an operation runs.
+	 *
+	 * Cache filters and settings are restored afterward, and the object cache is flushed.
 	 *
 	 * @param string      $table Physical table receiving inserts.
-	 * @param callable    $operation Operation to run under the fault.
-	 * @param string|null $replacement Replacement query, or null for a failed insert.
+	 * @param callable    $operation Operation receiving the removable query filter.
+	 * @param string|null $replacement Replacement SQL; null targets a nonexistent table.
 	 * @return mixed Operation result.
 	 */
 	protected function with_failed_cached_insert( string $table, callable $operation, ?string $replacement = null ) {
@@ -83,11 +103,16 @@ trait Sensei_Progress_Insert_Failure_Helpers {
 	}
 
 	/**
-	 * Replace matching inserts and restore the query filter and error settings.
+	 * Replace matching INSERT queries while an operation runs.
+	 *
+	 * By default, the replacement INSERT targets a nonexistent table so wpdb reports
+	 * a real database failure. The callback receives the query filter and may remove
+	 * it to retry. Query filters and database error reporting are restored, and the
+	 * object cache is flushed, even if the operation throws.
 	 *
 	 * @param string      $table Physical table receiving inserts.
-	 * @param callable    $operation Operation receiving the removable fault filter.
-	 * @param string|null $replacement Replacement query, or null for a failed insert.
+	 * @param callable    $operation Operation receiving the removable query filter.
+	 * @param string|null $replacement Replacement SQL; null targets a nonexistent table.
 	 * @param string|null $type Optional entity value to match in the insert.
 	 * @return mixed Operation result.
 	 */

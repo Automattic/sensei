@@ -269,10 +269,13 @@ class Comments_Based_Course_Progress_Repository_Test extends Course_Progress_Rep
 	 * @return array
 	 */
 	public static function missing_comment_save_modes(): array {
+		if ( self::is_hpps_tables_mode() ) {
+			return array( 'tables primary' => array( 'tables', 'complete' ) );
+		}
+
 		return array(
 			'comments only'    => array( 'comments-only', null ),
 			'comments primary' => array( 'comments', 'complete' ),
-			'tables primary'   => array( 'tables', 'complete' ),
 		);
 	}
 

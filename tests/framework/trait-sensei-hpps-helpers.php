@@ -56,28 +56,32 @@ trait Sensei_HPPS_Helpers {
 	}
 
 	/**
-	 * Configurations used by required-write caller regressions.
+	 * Use the environment-selected backend, with comments-primary coverage in the ordinary run.
 	 *
 	 * @return array
 	 */
 	public static function progress_storage_modes(): array {
+		if ( self::is_hpps_tables_mode() ) {
+			return array( 'tables primary' => array( 'tables' ) );
+		}
+
 		return array(
 			'comments only'    => array( 'comments-only' ),
 			'comments primary' => array( 'comments' ),
-			'tables primary'   => array( 'tables' ),
 		);
 	}
 
 	/**
-	 * Dual-write configurations and their other store.
+	 * Select one dual-write configuration per run and identify its other store.
 	 *
 	 * @return array
 	 */
 	public static function dual_write_storage_modes(): array {
-		return array(
-			'comments primary' => array( 'comments', 'tables' ),
-			'tables primary'   => array( 'tables', 'comments' ),
-		);
+		if ( self::is_hpps_tables_mode() ) {
+			return array( 'tables primary' => array( 'tables', 'comments' ) );
+		}
+
+		return array( 'comments primary' => array( 'comments', 'tables' ) );
 	}
 
 	/**

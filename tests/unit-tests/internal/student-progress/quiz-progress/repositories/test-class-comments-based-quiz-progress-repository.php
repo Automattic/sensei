@@ -99,10 +99,13 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 	 * @return array
 	 */
 	public static function missing_comment_save_modes(): array {
+		if ( self::is_hpps_tables_mode() ) {
+			return array( 'tables primary' => array( 'tables', 'passed' ) );
+		}
+
 		return array(
 			'comments only'    => array( 'comments-only', null ),
 			'comments primary' => array( 'comments', 'in-progress' ),
-			'tables primary'   => array( 'tables', 'passed' ),
 		);
 	}
 
