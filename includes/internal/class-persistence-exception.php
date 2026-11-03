@@ -14,15 +14,35 @@ namespace Sensei\Internal;
  * @since $$next-version$$
  */
 class Persistence_Exception extends \RuntimeException {
-	/** @var string Primary backend when the failure occurred. */
+	/**
+	 * Primary backend when the failure occurred.
+	 *
+	 * @var string
+	 */
 	private $primary;
-	/** @var bool Whether synchronization was enabled when the failure occurred. */
+	/**
+	 * Whether synchronization was enabled when the failure occurred.
+	 *
+	 * @var bool
+	 */
 	private $synchronization;
-	/** @var array{entity:string,store:string,post_id:int,user_id:int,diagnostic:string} Safe failure details. */
+	/**
+	 * Safe failure details.
+	 *
+	 * @var array{entity:string,store:string,post_id:int,user_id:int,diagnostic:string}
+	 */
 	private $context;
-	/** @var string Database error text available at the failing write. */
+	/**
+	 * Database error text available at the failing write.
+	 *
+	 * @var string
+	 */
 	private $database_error = 'unavailable';
-	/** @var bool Whether this exception has already been logged. */
+	/**
+	 * Whether this exception has already been logged.
+	 *
+	 * @var bool
+	 */
 	private $logged = false;
 
 	/**
