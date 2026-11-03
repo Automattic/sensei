@@ -254,4 +254,47 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 
 		return array_map( 'intval', $lesson_ids );
 	}
+
+	/**
+	 * Set the order of a lesson in a course.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 * @param int $order     Order.
+	 */
+	public function set_lesson_order( int $lesson_id, int $course_id, int $order ): void {
+		update_post_meta( $lesson_id, '_order_' . $course_id, $order );
+	}
+
+	/**
+	 * Delete the order of a lesson in a course.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 */
+	public function delete_lesson_order( int $lesson_id, int $course_id ): void {
+		delete_post_meta( $lesson_id, '_order_' . $course_id );
+	}
+
+	/**
+	 * Set the order of the lessons that are not in a module of a course.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int   $course_id  Course ID.
+	 * @param int[] $lesson_ids Lesson IDs, in order.
+	 */
+	public function set_root_lesson_order( int $course_id, array $lesson_ids ): void {
+		update_post_meta( $course_id, '_lesson_order', implode( ',', $lesson_ids ) );
+	}
 }
