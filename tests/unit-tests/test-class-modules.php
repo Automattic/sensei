@@ -315,6 +315,30 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The breadcrumb of a lesson in a module ends with the module.
+	 *
+	 * @covers Sensei_Core_Modules::module_breadcrumb_link
+	 */
+	public function testModuleBreadcrumbLink_LessonHadModule_AppendsTheModule() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module         = get_term( $course_lessons['modules'][0], 'module' );
+		$this->go_to( get_permalink( $course_lessons['lesson_ids'][0] ) );
+		$GLOBALS['post'] = get_post( $course_lessons['lesson_ids'][0] );
+
+		/* Act. */
+		$actual = Sensei()->modules->module_breadcrumb_link( 'Course', '&gt;' );
+
+		/* Assert. */
+		self::assertSame( 'Course &gt; ' . $module->name, wp_strip_all_tags( $actual ) );
+	}
+
+	/**
 	 * @covers Sensei_Core_Modules::do_link_to_module
 	 */
 	public function testDoLinkToModuleEmptyDescription() {
@@ -476,6 +500,54 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		}
 
 		$this->assertStringNotContainsString( 'more', $column_output, 'The "more" link shouldn\'t be present.' );
+	}
+
+	/**
+	 * The Module column of the lessons list links to the lesson's module.
+	 *
+	 * @covers Sensei_Core_Modules::add_lesson_column_content
+	 */
+	public function testAddLessonColumnContent_LessonHadModule_PrintsTheModuleLink() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module         = get_term( $course_lessons['modules'][0], 'module' );
+
+		/* Act. */
+		ob_start();
+		Sensei()->modules->add_lesson_column_content( 'modules', $course_lessons['lesson_ids'][0] );
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		self::assertMatchesRegularExpression( '/^<a\b[^>]*>' . preg_quote( $module->name, '/' ) . '<\/a>$/', $actual );
+	}
+
+	/**
+	 * The Module column of the course report links to the lesson's module.
+	 *
+	 * @covers Sensei_Core_Modules::analysis_course_column_data
+	 */
+	public function testAnalysisCourseColumnData_LessonHadModule_ReturnsTheModuleLink() {
+		/* Arrange. */
+		$course_lessons    = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module            = get_term( $course_lessons['modules'][0], 'module' );
+		$_GET['course_id'] = $course_lessons['course_id'];
+
+		/* Act. */
+		$actual = Sensei()->modules->analysis_course_column_data( array(), get_post( $course_lessons['lesson_ids'][0] ) );
+		unset( $_GET['course_id'] );
+
+		/* Assert. */
+		self::assertMatchesRegularExpression( '/^<a\b[^>]*tag_ID=' . $module->term_id . '\b[^>]*>' . preg_quote( $module->name, '/' ) . '<\/a>$/', $actual['lesson_module'] );
 	}
 
 	public function testModuleTeacherMeta_WhenAddedToACourse_TeacherIdGetsAddedToMeta() {
