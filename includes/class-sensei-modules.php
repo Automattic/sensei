@@ -778,14 +778,12 @@ class Sensei_Core_Modules {
 		global $post;
 		// Lesson
 		if ( is_singular( 'lesson' ) ) {
-			if ( has_term( '', $this->taxonomy, $post->ID ) ) {
-				$module = $this->get_lesson_module( $post->ID );
-				if ( $module ) {
-					if ( $this->do_link_to_module( $module ) ) {
-						$html .= ' ' . $separator . ' <a href="' . esc_url( $module->url ) . '" title="' . __( 'Back to the module', 'sensei-lms' ) . '">' . $module->name . '</a>';
-					} else {
-						$html .= ' ' . $separator . ' ' . $module->name;
-					}
+			$module = $this->get_lesson_module( $post->ID );
+			if ( $module ) {
+				if ( $this->do_link_to_module( $module ) ) {
+					$html .= ' ' . $separator . ' <a href="' . esc_url( $module->url ) . '" title="' . __( 'Back to the module', 'sensei-lms' ) . '">' . $module->name . '</a>';
+				} else {
+					$html .= ' ' . $separator . ' ' . $module->name;
 				}
 			}
 		}

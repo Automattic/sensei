@@ -314,6 +314,29 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$this->assertSame( array( $recent_lesson, $older_lesson ), wp_list_pluck( $actual->posts, 'ID' ) );
 	}
 
+	/**
+	 * The breadcrumb of a lesson in a module ends with the module.
+	 *
+	 * @covers Sensei_Core_Modules::module_breadcrumb_link
+	 */
+	public function testModuleBreadcrumbLink_LessonHadModule_AppendsTheModule() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module         = get_term( $course_lessons['modules'][0], 'module' );
+		$this->go_to( get_permalink( $course_lessons['lesson_ids'][0] ) );
+		$GLOBALS['post'] = get_post( $course_lessons['lesson_ids'][0] );
+
+		/* Act. */
+		$actual = Sensei()->modules->module_breadcrumb_link( 'Course', '&gt;' );
+
+		/* Assert. */
+		self::assertSame( 'Course &gt; ' . $module->name, wp_strip_all_tags( $actual ) );
+	}
 
 	/**
 	 * @covers Sensei_Core_Modules::do_link_to_module
