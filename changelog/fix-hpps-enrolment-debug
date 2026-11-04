@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix course progress status and dates in the enrollment debug tool when using HPPS.

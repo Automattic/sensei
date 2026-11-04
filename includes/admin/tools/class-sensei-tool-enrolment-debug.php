@@ -6,6 +6,9 @@
  * @since 3.7.0
  */
 
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -207,23 +210,34 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 			'progress'         => false,
 		];
 
-		$course_progress_id = Sensei_Utils::has_started_course( $course->ID, $user->ID );
-		if ( $course_progress_id ) {
-			$course_progress = get_comment( $course_progress_id );
-			$user_start_date = get_comment_meta( $course_progress_id, 'start', true );
-			$status          = esc_html__( 'In Progress', 'sensei-lms' );
+		$course_progress = Sensei()->course_progress_repository->get( $course->ID, $user->ID );
+		if ( $course_progress ) {
+			$started_at           = $course_progress->get_started_at();
+			$start_time           = $started_at ? $started_at->getTimestamp() : false;
+			$course_activity_time = $course_progress->get_updated_at()->getTimestamp();
+			$status               = esc_html__( 'In Progress', 'sensei-lms' );
 
-			if ( 'complete' === $course_progress->comment_approved ) {
+			if ( $course_progress instanceof Comments_Based_Course_Progress ) {
+				$course_comment = get_comment( $course_progress->get_id() );
+
+				if ( $course_comment ) {
+					// Preserve the debug tool's existing interpretation of legacy comment dates.
+					$start_time           = strtotime( get_comment_meta( $course_comment->comment_ID, 'start', true ) );
+					$course_activity_time = strtotime( $course_comment->comment_date_gmt );
+				}
+			}
+
+			if ( Course_Progress_Interface::STATUS_COMPLETE === $course_progress->get_status() ) {
 				$status           = esc_html__( 'Completed', 'sensei-lms' );
 				$percent_complete = 100;
 			} else {
 				$percent_complete = $this->get_percent_complete( $user->ID, $course->ID );
 			}
 
-			$last_activity_time = $this->get_last_progress_activity_date( $user->ID, $course->ID, $course_progress_id );
+			$last_activity_time = $this->get_last_progress_activity_date( $user->ID, $course->ID, $course_activity_time );
 
 			$debug_results['progress'] = [
-				'start_date'       => self::format_date( strtotime( $user_start_date ) ),
+				'start_date'       => self::format_date( $start_time ),
 				'last_activity'    => $last_activity_time ? self::format_date( $last_activity_time ) : false,
 				'status'           => $status,
 				'percent_complete' => $percent_complete,
@@ -290,21 +304,14 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	/**
 	 * Get the unix timestamp of the last progress activity.
 	 *
-	 * @param int $user_id            User ID.
-	 * @param int $course_id          Course post ID.
-	 * @param int $course_progress_id Course progress comment ID.
+	 * @param int       $user_id              User ID.
+	 * @param int       $course_id            Course post ID.
+	 * @param int|false $course_activity_time Course progress activity timestamp.
 	 *
 	 * @return int|false
 	 */
-	private function get_last_progress_activity_date( $user_id, $course_id, $course_progress_id ) {
-		$dates = [];
-
-		$course_progress = get_comment( $course_progress_id );
-		if ( ! $course_progress ) {
-			return false;
-		}
-
-		$dates[] = strtotime( $course_progress->comment_date_gmt );
+	private function get_last_progress_activity_date( $user_id, $course_id, $course_activity_time ) {
+		$dates = [ $course_activity_time ];
 
 		$course_lessons = Sensei()->course->course_lessons( $course_id );
 
