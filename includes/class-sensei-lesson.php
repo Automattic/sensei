@@ -1155,7 +1155,45 @@ class Sensei_Lesson {
 
 		// update field with the new value
 		if ( -1 != $new_meta_value ) {
+			if ( 'lesson_course' === $post_key ) {
+				$this->save_lesson_course( $post_id, (string) $new_meta_value );
+				return;
+			}
+
+			if ( 'lesson_prerequisite' === $post_key ) {
+				$this->save_lesson_prerequisite( $post_id, (string) $new_meta_value );
+				return;
+			}
+
 			return update_post_meta( $post_id, $meta_key, $new_meta_value );
+		}
+	}
+
+	/**
+	 * Saves the course chosen in a lesson form: an empty value detaches the lesson.
+	 *
+	 * @param int    $lesson_id The lesson ID.
+	 * @param string $course_id The course ID, or an empty string for no course.
+	 */
+	private function save_lesson_course( int $lesson_id, string $course_id ): void {
+		if ( '' === $course_id ) {
+			Sensei()->course_lessons_repository->detach_lesson( $lesson_id );
+		} else {
+			Sensei()->course_lessons_repository->attach_lesson( $lesson_id, (int) $course_id );
+		}
+	}
+
+	/**
+	 * Saves the prerequisite chosen in the lesson meta box: an empty value removes it.
+	 *
+	 * @param int    $lesson_id       The lesson ID.
+	 * @param string $prerequisite_id The prerequisite lesson ID, or an empty string for none.
+	 */
+	private function save_lesson_prerequisite( int $lesson_id, string $prerequisite_id ): void {
+		if ( '' === $prerequisite_id ) {
+			Sensei()->course_lessons_repository->delete_lesson_prerequisite( $lesson_id );
+		} else {
+			Sensei()->course_lessons_repository->set_lesson_prerequisite( $lesson_id, (int) $prerequisite_id );
 		}
 	}
 
@@ -4450,7 +4488,7 @@ class Sensei_Lesson {
 
 			// Update lesson course.
 			if ( '-1' !== $new_course ) {
-				update_post_meta( $lesson_id, '_lesson_course', $new_course );
+				$this->save_lesson_course( $lesson_id, $new_course );
 			}
 
 			// Update lesson complexity.
