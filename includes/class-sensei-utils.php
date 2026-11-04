@@ -1540,21 +1540,21 @@ class Sensei_Utils {
 	 * @since  1.4.8
 	 * @param  integer $user_id   User ID
 	 * @param  integer $course_id Course ID
-	 * @return bool|int False if they haven't started; Comment ID of course progress if they have.
+	 * @return bool|int False if they haven't started; course progress ID from the selected storage backend otherwise.
 	 */
 	public static function user_start_course( $user_id = 0, $course_id = 0 ) {
 
-		$activity_comment_id = false;
+		$course_progress_id = false;
 
 		if ( $user_id && $course_id ) {
 			// Check if user is already on the Course.
-			$activity_comment_id = self::get_course_progress_comment_id( $course_id, $user_id );
-			if ( false === $activity_comment_id ) {
-				$activity_comment_id = self::start_user_on_course( $user_id, $course_id );
+			$course_progress_id = self::get_course_progress_id( $course_id, $user_id );
+			if ( false === $course_progress_id ) {
+				$course_progress_id = self::start_user_on_course( $user_id, $course_id );
 			}
 		}
 
-		return $activity_comment_id;
+		return $course_progress_id;
 	}
 
 	/**
@@ -1579,15 +1579,17 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Get the course progress comment ID, if it exists.
+	 * Get the course progress ID from the selected storage backend, if it exists.
 	 *
-	 * @since 3.0.0
+	 * The ID may belong to a comment or a progress table row, depending on the active repository.
 	 *
-	 * @param int $course_id Course ID.
-	 * @param int $user_id   User ID.
-	 * @return int|false false or comment_ID
+	 * @since $$next-version$$
+	 *
+	 * @param int      $course_id Course ID.
+	 * @param int|null $user_id   User ID. Defaults to the current user when empty.
+	 * @return int|false Course progress ID, or false if no progress exists.
 	 */
-	public static function get_course_progress_comment_id( $course_id, $user_id = null ) {
+	public static function get_course_progress_id( $course_id, $user_id = null ) {
 		if ( empty( $course_id ) ) {
 			return false;
 		}
@@ -1609,16 +1611,32 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Get the course progress ID from the selected storage backend, if it exists.
+	 *
+	 * @since 3.0.0
+	 * @deprecated $$next-version$$ Use Sensei_Utils::get_course_progress_id() instead.
+	 *
+	 * @param int      $course_id Course ID.
+	 * @param int|null $user_id   User ID. Defaults to the current user when empty.
+	 * @return int|false Course progress ID, which is not necessarily a comment ID, or false if no progress exists.
+	 */
+	public static function get_course_progress_comment_id( $course_id, $user_id = null ) {
+		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Utils::get_course_progress_id' );
+
+		return self::get_course_progress_id( $course_id, $user_id );
+	}
+
+	/**
 	 * Check if a user has started a course or not.
 	 *
 	 * @since 3.0.0
 	 *
 	 * @param int $course_id Course ID.
 	 * @param int $user_id   User ID.
-	 * @return int|bool false or comment_ID
+	 * @return int|bool False or a course progress ID from the selected storage backend, subject to filtering.
 	 */
 	public static function has_started_course( $course_id = 0, $user_id = 0 ) {
-		$user_started_course = self::get_course_progress_comment_id( $course_id, $user_id );
+		$user_started_course = self::get_course_progress_id( $course_id, $user_id );
 
 		/**
 		 * Filter the user started course value
@@ -1627,7 +1645,7 @@ class Sensei_Utils {
 		 *
 		 * @hook sensei_user_started_course
 		 *
-		 * @param {bool|int} $user_started_course False if the user has not started the course, otherwise the comment ID of the course progress.
+		 * @param {bool|int} $user_started_course False if the user has not started the course, otherwise the course progress ID from the selected storage backend.
 		 * @param {int}      $course_id           The course ID.
 		 * @param {int}      $user_id             The user ID.
 		 * @return {bool|int} Filtered user started course ID.
