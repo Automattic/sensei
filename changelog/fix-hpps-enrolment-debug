@@ -1,4 +1,4 @@
-Significance: patch
-Type: fixed
+Significance: minor
+Type: changed
 
-Fix course progress status and dates in the enrollment debug tool when using HPPS.
+HPPS: Use the selected progress storage for course status and dates in the enrollment debug tool.
