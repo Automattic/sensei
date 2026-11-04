@@ -217,7 +217,8 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 			$course_activity_time = $course_progress->get_updated_at()->getTimestamp();
 			$status               = esc_html__( 'In Progress', 'sensei-lms' );
 
-			// Migrated zero dates normalize to a year before 1.
+			// When a course has no recorded start date, migration can store 0000-00-00 00:00:00.
+			// PHP reads that as year -1, so omit it from the debug output.
 			if ( $started_at && 0 < (int) $started_at->format( 'Y' ) ) {
 				$start_date = self::format_date( $started_at->getTimestamp() );
 			}
