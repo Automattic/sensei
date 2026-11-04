@@ -793,10 +793,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		);
 
 		if ( $this->course_id ) {
-			$lesson_args['meta_query'][] = array(
-				'key'   => '_lesson_course',
-				'value' => $this->course_id,
-			);
+			$lesson_args['sensei_course'] = $this->course_id;
 		}
 
 		if ( $args['search'] ) {

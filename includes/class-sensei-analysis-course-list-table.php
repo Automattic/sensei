@@ -771,12 +771,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'offset'           => $args['offset'],
 			'order'            => $args['order'],
 			'orderby'          => $args['orderby'],
-			'meta_query'       => array(
-				array(
-					'key'   => '_lesson_course',
-					'value' => intval( $this->course_id ),
-				),
-			),
+			'sensei_course'    => intval( $this->course_id ),
 			'post_status'      => array( 'publish', 'private' ),
 			'suppress_filters' => 0,
 		);
