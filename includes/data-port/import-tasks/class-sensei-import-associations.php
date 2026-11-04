@@ -144,10 +144,10 @@ class Sensei_Import_Associations
 			}
 
 			// Check to see if this lesson was set to multiple courses in the import.
-			$current_lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			$current_lesson_course_id = Sensei()->course_lessons_repository->get_course_id( $lesson_id );
 			if (
 				$current_lesson_course_id
-				&& intval( $current_lesson_course_id ) !== intval( $course_id )
+				&& intval( $course_id ) !== $current_lesson_course_id
 				&& $this->get_job()->was_imported( Sensei_Data_Port_Course_Schema::POST_TYPE, $current_lesson_course_id )
 			) {
 				$add_warning_helper(
@@ -160,7 +160,7 @@ class Sensei_Import_Associations
 			}
 
 			// Add the lesson to the course.
-			update_post_meta( $lesson_id, '_lesson_course', $course_id );
+			Sensei()->course_lessons_repository->attach_lesson( $lesson_id, $course_id );
 
 			$module_term_id = $this->get_lesson_module( $lesson_id );
 			if ( $module_term_id ) {
@@ -186,7 +186,7 @@ class Sensei_Import_Associations
 		// Remove lessons on the course that weren't included in the course import.
 		$old_lessons = array_diff( $current_lessons, $all_lessons );
 		foreach ( $old_lessons as $lesson_id ) {
-			delete_post_meta( $lesson_id, '_lesson_course' );
+			Sensei()->course_lessons_repository->detach_lesson( $lesson_id );
 		}
 	}
 

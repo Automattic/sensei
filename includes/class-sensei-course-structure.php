@@ -642,10 +642,10 @@ class Sensei_Course_Structure {
 			}
 		}
 
-		$current_course = (int) get_post_meta( $lesson->ID, '_lesson_course', true );
+		$current_course = (int) Sensei()->course_lessons_repository->get_course_id( $lesson->ID );
 		if ( $this->course_id !== $current_course ) {
 			$this->clear_lesson_associations( $lesson->ID );
-			update_post_meta( $lesson->ID, '_lesson_course', $this->course_id );
+			Sensei()->course_lessons_repository->attach_lesson( $lesson->ID, $this->course_id );
 		}
 
 		return $lesson->ID;
@@ -657,7 +657,7 @@ class Sensei_Course_Structure {
 	 * @param int $lesson_id Lesson ID.
 	 */
 	private function clear_lesson_associations( int $lesson_id ) {
-		delete_post_meta( $lesson_id, '_lesson_course' );
+		Sensei()->course_lessons_repository->detach_lesson( $lesson_id );
 		Sensei()->course_lessons_repository->delete_all_lesson_module_orders( $lesson_id );
 		Sensei()->course_lessons_repository->unset_lesson_module( $lesson_id );
 	}

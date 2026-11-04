@@ -235,4 +235,23 @@ interface Course_Lessons_Repository_Interface {
 	 * @param int $lesson_id Lesson ID.
 	 */
 	public function delete_all_lesson_module_orders( int $lesson_id ): void;
+
+	/**
+	 * Attach a lesson to a course, replacing the course it had.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 */
+	public function attach_lesson( int $lesson_id, int $course_id ): void;
+
+	/**
+	 * Detach a lesson from its course.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function detach_lesson( int $lesson_id ): void;
 }

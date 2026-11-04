@@ -606,4 +606,41 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 		self::assertFalse( metadata_exists( 'post', $lesson_id, '_order_module_' . $module_ids[0] ), 'The order in the first module should be deleted.' );
 		self::assertFalse( metadata_exists( 'post', $lesson_id, '_order_module_' . $module_ids[1] ), 'The order in the second module should be deleted.' );
 	}
+
+	/**
+	 * Attaching a lesson to a course replaces the course it had.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::attach_lesson
+	 */
+	public function testAttachLesson_LessonHadCourse_ReplacesIt(): void {
+		/* Arrange. */
+		$old_course_id = $this->factory->course->create();
+		$new_course_id = $this->factory->course->create();
+		$lesson_id     = $this->factory->lesson->create();
+		$this->repository->attach_lesson( $lesson_id, $old_course_id );
+
+		/* Act. */
+		$this->repository->attach_lesson( $lesson_id, $new_course_id );
+
+		/* Assert. */
+		self::assertSame( $new_course_id, $this->repository->get_course_id( $lesson_id ) );
+	}
+
+	/**
+	 * Detaching a lesson removes its course instead of storing an empty one.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::detach_lesson
+	 */
+	public function testDetachLesson_LessonHadCourse_DeletesIt(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->attach_lesson( $lesson_id, $course_id );
+
+		/* Act. */
+		$this->repository->detach_lesson( $lesson_id );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_lesson_course' ) );
+	}
 }
