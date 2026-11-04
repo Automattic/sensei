@@ -262,11 +262,13 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			]
 		);
 
-		// Add some lessons to the course.
+		// Add some lessons to the course, and one to another (unpublished) course.
 		$lesson_ids = $this->factory->lesson->create_many( 2 );
 		foreach ( $lesson_ids as $lesson_id ) {
 			add_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
+		$other_course_id = $this->factory->course->create( array( 'post_status' => 'draft' ) );
+		Sensei()->course_lessons_repository->attach_lesson( $this->factory->lesson->create(), $other_course_id );
 
 		// Publish course.
 		wp_update_post(
@@ -1190,6 +1192,12 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		);
 		$lesson_order = array_reverse( $course['lesson_ids'] );
 		Sensei()->course_lessons_repository->set_root_lesson_order( $course['course_id'], $lesson_order );
+		$this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
 		$post = get_post( $course['course_id'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		/* Act. */
@@ -1198,5 +1206,67 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( $lesson_order, $actual );
+	}
+
+	/**
+	 * Without a stored root lesson order, the legacy single course page lists the lessons of that course only.
+	 *
+	 * @covers Sensei_Course::load_single_course_lessons_query
+	 */
+	public function testLoadSingleCourseLessonsQuery_NoRootLessonOrderStored_QueriesTheCourseLessonsOnly() {
+		/* Arrange. */
+		global $post, $wp_query;
+		$course = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		$post = get_post( $course['course_id'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		/* Act. */
+		Sensei_Course::load_single_course_lessons_query();
+		$actual = wp_list_pluck( $wp_query->posts, 'ID' );
+		sort( $actual );
+
+		/* Assert. */
+		$expected = $course['lesson_ids'];
+		sort( $expected );
+		self::assertSame( $expected, $actual );
+	}
+
+	/**
+	 * The preview lesson count of a course ignores the preview lessons of other courses.
+	 *
+	 * @covers Sensei_Course::course_lesson_preview_count
+	 */
+	public function testCourseLessonPreviewCount_PreviewLessonsInTwoCoursesGiven_CountsTheCourseOnes() {
+		/* Arrange. */
+		$course       = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$other_course = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		update_post_meta( $course['lesson_ids'][0], '_lesson_preview', 'preview' );
+		update_post_meta( $other_course['lesson_ids'][0], '_lesson_preview', 'preview' );
+
+		/* Act. */
+		$actual = Sensei()->course->course_lesson_preview_count( $course['course_id'] );
+
+		/* Assert. */
+		self::assertSame( 1, $actual );
 	}
 }
