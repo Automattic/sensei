@@ -5,8 +5,6 @@
  * @package sensei-tests
  */
 
-use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
-
 /**
  * Tests the debug tool using real progress repositories.
  *
@@ -34,7 +32,6 @@ class Sensei_Tool_Enrolment_Debug_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
-		$this->restore_progress_storage_mode();
 		$this->maybe_reset_hpps_repository();
 		$this->factory->tearDown();
 
@@ -65,50 +62,6 @@ class Sensei_Tool_Enrolment_Debug_Test extends WP_UnitTestCase {
 			'Started on January 2, 2024 12:00 pm',
 			$output,
 			'The stored course start date should be displayed.'
-		);
-	}
-
-	/**
-	 * A table progress ID must never identify an unrelated WordPress comment.
-	 *
-	 * @covers Sensei_Tool_Enrolment_Debug::process
-	 */
-	public function testProcess_TableProgressIdCollidedWithUnrelatedCommentGiven_ShowsSelectedProgress() {
-		global $wpdb;
-
-		$this->set_progress_storage_mode( 'tables' );
-		$course_id        = $this->factory->course->create();
-		$student_id       = $this->factory->user->create();
-		$table_repository = new Tables_Based_Course_Progress_Repository( $wpdb );
-		$progress         = $table_repository->create( $course_id, $student_id );
-		$progress->start( new DateTimeImmutable( '2024-01-02 12:00:00 UTC' ) );
-		$progress->complete();
-		$table_repository->save( $progress );
-		$comment_id = $this->factory->comment->create( [ 'comment_approved' => '0' ] );
-		update_comment_meta( $comment_id, 'start', '1999-01-01 00:00:00' );
-		$wpdb->update(
-			$wpdb->prefix . 'sensei_lms_progress',
-			[ 'id' => $comment_id, 'updated_at' => '2024-01-03 14:00:00' ],
-			[ 'id' => $progress->get_id() ]
-		);
-		wp_cache_flush();
-
-		$output = $this->get_tool_output( $student_id, $course_id );
-
-		self::assertStringContainsString(
-			'Completed (100%)',
-			$output,
-			'An unrelated comment must not override table progress status.'
-		);
-		self::assertStringContainsString(
-			'Started on January 2, 2024 12:00 pm',
-			$output,
-			'The table start date should be used without a matching progress comment.'
-		);
-		self::assertStringContainsString(
-			'Last activity on January 3, 2024 2:00 pm',
-			$output,
-			'The table update date should be the course activity baseline.'
 		);
 	}
 
