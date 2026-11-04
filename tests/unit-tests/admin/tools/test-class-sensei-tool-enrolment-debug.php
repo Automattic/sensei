@@ -11,6 +11,7 @@
  * @group tools
  */
 class Sensei_Tool_Enrolment_Debug_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_HPPS_Helpers;
 
 	/**
@@ -24,6 +25,10 @@ class Sensei_Tool_Enrolment_Debug_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+
+		self::resetEnrolmentProviders();
+		$this->prepareEnrolmentManager();
+
 		update_option( 'timezone_string', 'UTC' );
 		update_option( 'date_format', 'F j, Y' );
 		update_option( 'time_format', 'g:i a' );
@@ -34,6 +39,7 @@ class Sensei_Tool_Enrolment_Debug_Test extends WP_UnitTestCase {
 	public function tearDown(): void {
 		$this->maybe_reset_hpps_repository();
 		$this->factory->tearDown();
+		self::resetEnrolmentProviders();
 
 		parent::tearDown();
 	}
