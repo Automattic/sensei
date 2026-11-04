@@ -178,7 +178,10 @@ class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_St
 	 * @return bool
 	 */
 	private function get_legacy_enrolment( $user_id, $course_id ) {
-		$course_progress_comment_id = Sensei_Utils::get_course_progress_comment_id( $course_id, $user_id );
+		// Legacy providers use this ID to read comment metadata, even when tables supply progress.
+		$comments_repository        = Sensei()->course_progress_repository_factory->create_comments_based_repository();
+		$course_progress            = $comments_repository->get( $course_id, $user_id );
+		$course_progress_comment_id = $course_progress ? $course_progress->get_id() : false;
 
 		/**
 		 * Allows other providers to have an opinion about whether or not a user was enrolled pre-3.0.0.
@@ -217,8 +220,8 @@ class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_St
 		}
 
 		// We only migrate people who had course progress.
-		$course_progress_comment_id = Sensei_Utils::get_course_progress_comment_id( $course_id, $user_id );
-		if ( ! $course_progress_comment_id ) {
+		$course_progress_id = Sensei_Utils::get_course_progress_id( $course_id, $user_id );
+		if ( ! $course_progress_id ) {
 			return false;
 		}
 
