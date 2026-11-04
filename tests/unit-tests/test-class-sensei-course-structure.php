@@ -1007,6 +1007,367 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The cleanup of the module left behind by a teacher change must not delete a module
+	 * the current user may not delete, even when the save itself succeeds.
+	 *
+	 * @covers Sensei_Course_Structure::save
+	 */
+	public function testSave_LastTitleNamingAnotherTeachersModuleGiven_DoesNotDeleteThatModule() {
+		$this->login_as_teacher_b();
+		$teacher_b_id = get_current_user_id();
+		$this->login_as_teacher();
+		$teacher_id = get_current_user_id();
+		$course_id  = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$module_id  = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => 'custom-basics',
+			)
+		);
+		add_term_meta( $module_id, 'module_author', $teacher_id, true );
+		$leftover_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => $teacher_id . '-basics',
+			)
+		);
+		add_term_meta( $leftover_id, 'module_author', $teacher_b_id, true );
+		$structure = array(
+			array(
+				'type'      => 'module',
+				'id'        => $module_id,
+				'title'     => 'Basics',
+				'slug'      => 'custom-basics',
+				'lastTitle' => 'Basics',
+				'teacherId' => $teacher_id,
+				'lessons'   => array(),
+			),
+		);
+
+		$saved = Sensei_Course_Structure::instance( $course_id )->save( $structure );
+
+		$this->assertTrue( $saved, 'The save should succeed.' );
+		$this->assertInstanceOf( WP_Term::class, get_term( $leftover_id, 'module' ), "Teacher B's module should not be deleted." );
+	}
+
+	/**
+	 * A teacher may save their own course with items that do not exist yet.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_OwnCourseWithNewItemsGiven_ReturnsTrue() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'title'   => 'Module',
+				'lessons' => array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Lesson',
+					),
+				),
+			),
+			array(
+				'type'  => 'lesson',
+				'title' => 'Top level lesson',
+			),
+		);
+
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ) );
+	}
+
+	/**
+	 * A teacher may not save another teacher's course.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_AnotherTeachersCourseGiven_ReturnsFalse() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+
+		$this->login_as_teacher_b();
+
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( $course_id, array() ) );
+	}
+
+	/**
+	 * An administrator may save a teacher's course.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_AdminOnTeachersCourseGiven_ReturnsTrue() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+
+		$this->login_as_admin();
+
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, array() ) );
+	}
+
+	/**
+	 * Logged-out users may not save.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_LoggedOut_ReturnsFalse() {
+		$course_id = $this->factory->course->create();
+		$this->logout();
+
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( $course_id, array() ) );
+	}
+
+	/**
+	 * Only course posts can have a structure.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_PageIdGiven_ReturnsFalse() {
+		$this->login_as_admin();
+		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( $page_id, array() ) );
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( 0, array() ) );
+	}
+
+	/**
+	 * A lesson id the user cannot edit blocks the save, at the top level and inside a module.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_AnotherTeachersLessonIdGiven_ReturnsFalse() {
+		$this->login_as_teacher();
+		$lesson_id = $this->factory->lesson->create( array( 'post_author' => get_current_user_id() ) );
+
+		$this->login_as_teacher_b();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+
+		$top_level = array(
+			array(
+				'type'  => 'lesson',
+				'id'    => $lesson_id,
+				'title' => 'Stolen',
+			),
+		);
+		$in_module = array(
+			array(
+				'type'    => 'module',
+				'title'   => 'Module',
+				'lessons' => $top_level,
+			),
+		);
+
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( $course_id, $top_level ), 'A top-level lesson of another teacher should be refused.' );
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( $course_id, $in_module ), 'A module lesson of another teacher should be refused.' );
+	}
+
+	/**
+	 * A module id owned by another teacher blocks the save; the owner and administrators pass.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_ModuleIdGiven_RequiresModuleOwnership() {
+		$teacher_a_id = $this->get_user_by_role( 'teacher' );
+		$this->login_as_teacher_b();
+		$teacher_b_id = get_current_user_id();
+		$course_id    = $this->factory->course->create( array( 'post_author' => $teacher_b_id ) );
+		// The slug is teacher B's, as after a teacher change, while the term meta still names teacher A.
+		$module_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => $teacher_b_id . '-basics',
+			)
+		);
+		add_term_meta( $module_id, 'module_author', $teacher_a_id, true );
+		$structure = array(
+			array(
+				'type'        => 'module',
+				'id'          => $module_id,
+				'title'       => 'Basics',
+				'description' => 'Overwritten',
+				'lessons'     => array(),
+			),
+		);
+
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), "Another teacher's module should be refused." );
+
+		update_term_meta( $module_id, 'module_author', $teacher_b_id );
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), 'The owner should be allowed.' );
+
+		update_term_meta( $module_id, 'module_author', $teacher_a_id );
+		$this->login_as_admin();
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), 'An administrator should be allowed.' );
+	}
+
+	/**
+	 * A module the save would delete needs `delete_term`, even when the save only updates a module the user owns.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_LastTitleNamingAnotherTeachersModuleGiven_ReturnsFalse() {
+		$this->login_as_teacher_b();
+		$teacher_b_id = get_current_user_id();
+		$this->login_as_teacher();
+		$teacher_id = get_current_user_id();
+		$course_id  = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$module_id  = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => 'custom-basics',
+			)
+		);
+		add_term_meta( $module_id, 'module_author', $teacher_id, true );
+		$leftover_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => $teacher_id . '-basics',
+			)
+		);
+		add_term_meta( $leftover_id, 'module_author', $teacher_b_id, true );
+		$structure = array(
+			array(
+				'type'      => 'module',
+				'id'        => $module_id,
+				'title'     => 'Basics',
+				'slug'      => 'custom-basics',
+				'lastTitle' => 'Basics',
+				'teacherId' => $teacher_id,
+				'lessons'   => array(),
+			),
+		);
+
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), "Deleting another teacher's leftover module should be refused." );
+
+		update_term_meta( $leftover_id, 'module_author', $teacher_id );
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), 'The owner of the leftover module should be allowed.' );
+	}
+
+	/**
+	 * A module named by id is authorized as itself; the module its title would derive is not consulted.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_CustomSlugModuleIdGivenWhileAnotherTeacherOwnsDefaultSlugModule_ReturnsTrue() {
+		$this->login_as_teacher_b();
+		$teacher_b_id = get_current_user_id();
+		$this->login_as_teacher();
+		$teacher_id = get_current_user_id();
+		$course_id  = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$module_id  = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => 'custom-basics',
+			)
+		);
+		add_term_meta( $module_id, 'module_author', $teacher_id, true );
+		$default_slug_module_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => $teacher_id . '-basics',
+			)
+		);
+		add_term_meta( $default_slug_module_id, 'module_author', $teacher_b_id, true );
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'id'      => $module_id,
+				'title'   => 'Basics',
+				'lessons' => array(),
+			),
+		);
+
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ) );
+	}
+
+	/**
+	 * A module id that no longer exists is reported, without the editor's `lastTitle` key.
+	 *
+	 * @covers Sensei_Course_Structure::save
+	 */
+	public function testSave_UnknownModuleIdWithoutLastTitleGiven_ReturnsMissingModuleError() {
+		$this->login_as_admin();
+		$course_id = $this->factory->course->create();
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'id'      => 999999,
+				'title'   => 'Gone',
+				'lessons' => array(),
+			),
+		);
+
+		$result = Sensei_Course_Structure::instance( $course_id )->save( $structure );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'sensei_course_structure_missing_module', $result->get_error_code() );
+	}
+
+	/**
+	 * A custom module slug saves without the editor's `teacherId` key.
+	 *
+	 * @covers Sensei_Course_Structure::save
+	 */
+	public function testSave_ModuleSlugWithoutTeacherIdGiven_Saves() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'title'   => 'Custom',
+				'slug'    => get_current_user_id() . '-custom-slug',
+				'lessons' => array(),
+			),
+		);
+
+		$result = Sensei_Course_Structure::instance( $course_id )->save( $structure );
+
+		$this->assertTrue( $result );
+		$this->assertSame( get_current_user_id() . '-custom-slug', Sensei_Course_Structure::instance( $course_id )->get( 'edit' )[0]['slug'] );
+	}
+
+	/**
+	 * Backslashes in titles and descriptions survive the save: WordPress unslashes what it stores.
+	 *
+	 * @covers Sensei_Course_Structure::save
+	 */
+	public function testSave_BackslashesGiven_KeepsBackslashes() {
+		$this->login_as_admin();
+		$course_id = $this->factory->course->create();
+		$structure = array(
+			array(
+				'type'        => 'module',
+				'title'       => 'Regex \\d+',
+				'description' => 'Paths like C:\\temp',
+				'lessons'     => array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Escaping \\n',
+					),
+				),
+			),
+		);
+
+		$this->assertTrue( Sensei_Course_Structure::instance( $course_id )->save( $structure ) );
+
+		$saved = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+		$this->assertSame( 'Regex \\d+', $saved[0]['title'], 'The module title should keep its backslash.' );
+		$this->assertSame( 'Paths like C:\\temp', $saved[0]['description'], 'The module description should keep its backslash.' );
+		$this->assertSame( 'Escaping \\n', $saved[0]['lessons'][0]['title'], 'The lesson title should keep its backslash.' );
+
+		// Updating the lesson title keeps the backslash too.
+		$saved[0]['lessons'][0]['title'] = 'Escaping \\t';
+		$this->assertTrue( Sensei_Course_Structure::instance( $course_id )->save( $saved ) );
+		$this->assertSame( 'Escaping \\t', get_post( $saved[0]['lessons'][0]['id'] )->post_title );
+	}
+	/**
 	 * Make sure we can properly reorder modules.
 	 */
 	public function testSaveReorderModules() {
@@ -1892,5 +2253,212 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertTrue( $quiz_created_action_fired );
+	}
+
+	/**
+	 * A module id deleted by a teacher change is authorized against the module `lastTitle` resolves to.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_DeletedModuleIdWithLastTitleGiven_ChecksReplacementModule() {
+		$this->login_as_teacher_b();
+		$teacher_b_id = get_current_user_id();
+		$this->login_as_teacher();
+		$teacher_id = get_current_user_id();
+		$course_id  = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$deleted_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Old module',
+				'slug'     => $teacher_id . '-old-module',
+			)
+		);
+		wp_delete_term( $deleted_id, 'module' );
+		$replacement_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => $teacher_id . '-basics',
+			)
+		);
+		add_term_meta( $replacement_id, 'module_author', $teacher_id, true );
+		$structure = array(
+			array(
+				'type'      => 'module',
+				'id'        => $deleted_id,
+				'title'     => 'Basics',
+				'lastTitle' => 'Basics',
+				'lessons'   => array(),
+			),
+		);
+
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), 'The owner of the replacement module should be allowed.' );
+
+		update_term_meta( $replacement_id, 'module_author', $teacher_b_id );
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), "Another teacher's replacement module should be refused." );
+	}
+
+	/**
+	 * A module id that resolves to nothing is left for save() to report, not refused as a permission error.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_DeletedModuleIdWithoutReplacementGiven_LeavesItToSave() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'id'      => 999999,
+				'title'   => 'Gone',
+				'lessons' => array(),
+			),
+		);
+
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ) );
+		$this->assertSame( 'sensei_course_structure_missing_module', Sensei_Course_Structure::instance( $course_id )->save( $structure )->get_error_code() );
+	}
+
+	/**
+	 * Module titles an id-less module may resolve to.
+	 *
+	 * @return array
+	 */
+	public function idLessModuleTitles(): array {
+		return array(
+			'word title' => array( 'Basics' ),
+			'title "0"'  => array( '0' ),
+		);
+	}
+
+	/**
+	 * An id-less module is authorized against the existing module its title resolves to.
+	 *
+	 * @dataProvider idLessModuleTitles
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 *
+	 * @param string $title Module title.
+	 */
+	public function testCanCurrentUserSave_IdLessModuleMatchingExistingModuleGiven_ChecksThatModule( string $title ) {
+		$this->login_as_teacher_b();
+		$teacher_b_id = get_current_user_id();
+		$this->login_as_teacher();
+		$teacher_id = get_current_user_id();
+		$course_id  = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$module_id  = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => $title,
+				'slug'     => $teacher_id . '-' . sanitize_title( $title ),
+			)
+		);
+		add_term_meta( $module_id, 'module_author', $teacher_b_id, true );
+		$structure = array(
+			array(
+				'type'        => 'module',
+				'title'       => $title,
+				'description' => 'Overwritten',
+				'lessons'     => array(),
+			),
+		);
+
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), 'A module the title resolves to but another teacher owns should be refused.' );
+
+		update_term_meta( $module_id, 'module_author', $teacher_id );
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ), 'The owner of that module should be allowed.' );
+	}
+
+	/**
+	 * A course id of 0 is refused instead of resolving to the global post.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_CourseIdZeroGiven_ReturnsFalse() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+
+		$GLOBALS['post'] = get_post( $course_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Reproduces the get_post( 0 ) fallback.
+
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, array() ), 'The course itself should be editable.' );
+		$this->assertFalse( Sensei_Course_Structure::can_current_user_save( 0, array() ), 'Course 0 must not resolve to the global post.' );
+	}
+
+	/**
+	 * A module named by id keeps its custom slug and lessons when the caller sends no slug.
+	 *
+	 * @covers Sensei_Course_Structure::save
+	 */
+	public function testSave_CustomSlugModuleIdGivenWithoutSlug_UpdatesThatModule() {
+		$this->login_as_admin();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$module_id = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => 'custom-basics',
+			)
+		);
+		$structure = array(
+			array(
+				'type'    => 'module',
+				'id'      => $module_id,
+				'title'   => 'Basics',
+				'lessons' => array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Welcome',
+					),
+				),
+			),
+		);
+
+		$this->assertTrue( Sensei_Course_Structure::instance( $course_id )->save( $structure ) );
+
+		$saved = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+		$this->assertSame( $module_id, $saved[0]['id'], 'The lessons should stay on the module the id names.' );
+		$this->assertSame( 'custom-basics', $saved[0]['slug'], 'The custom slug should be kept.' );
+		$this->assertFalse( get_term_by( 'slug', 'basics', 'module' ), 'No module with the default slug should be created.' );
+		$this->assertSame( array( $module_id ), wp_get_object_terms( $saved[0]['lessons'][0]['id'], 'module', array( 'fields' => 'ids' ) ) );
+	}
+
+	/**
+	 * A lesson whose quiz cannot be created is removed again and the save fails, so a retry recreates both.
+	 *
+	 * @covers Sensei_Course_Structure::save
+	 */
+	public function testSave_QuizInsertFails_RemovesLessonAndReturnsFalse() {
+		$this->login_as_teacher();
+		$course_id    = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$fail_quizzes = function ( $maybe_empty, $postarr ) {
+			return 'quiz' === ( $postarr['post_type'] ?? '' ) ? true : $maybe_empty;
+		};
+		add_filter( 'wp_insert_post_empty_content', $fail_quizzes, 10, 2 );
+
+		try {
+			$result = Sensei_Course_Structure::instance( $course_id )->save(
+				array(
+					array(
+						'type'  => 'lesson',
+						'title' => 'Welcome',
+					),
+				)
+			);
+		} finally {
+			remove_filter( 'wp_insert_post_empty_content', $fail_quizzes, 10 );
+		}
+
+		$this->assertFalse( $result );
+		$this->assertEmpty(
+			get_posts(
+				array(
+					'post_type'   => 'lesson',
+					'post_status' => 'any',
+					'fields'      => 'ids',
+					'meta_key'    => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_value'  => $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				)
+			),
+			'The lesson without a quiz should be removed again.'
+		);
 	}
 }

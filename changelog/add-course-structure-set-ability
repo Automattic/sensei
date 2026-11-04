@@ -1,0 +1,4 @@
+Significance: minor
+Type: added
+
+Add the sensei/course-structure-set and sensei/course-structure-get abilities so AI agents can build and read a course outline, and refuse structure saves that reference another teacher's module.
