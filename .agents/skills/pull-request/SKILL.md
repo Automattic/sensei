@@ -35,7 +35,7 @@ the PR without discarding local work.
 
 If on `trunk`, run `git switch -c <branch>` before committing. This preserves
 current edits and local commits. Choose a descriptive name such as
-`fix/course-navigation`; never use `codex/`. Do not reset local `trunk`. Otherwise,
+`fix/course-navigation`. Do not reset local `trunk`. Otherwise,
 reuse an appropriate feature branch.
 
 ## 2. Prepare the changelog
