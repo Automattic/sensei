@@ -242,12 +242,9 @@ class Sensei_Lesson_Quiz_Saver {
 	 * @param array $questions             The questions.
 	 * @param int[] $existing_question_ids IDs of the questions currently in the quiz.
 	 *
-	 * @return array[]|WP_Error One entry per question: {
-	 *     @type string   $action      `create`, `update`, `keep` or `drop`.
-	 *     @type int|null $id          Question post ID, when given.
-	 *     @type bool     $is_category Whether the question is a category-question placeholder.
-	 *     @type array    $question    The question as given.
-	 * }
+	 * @return array<int, array{action: string, id: int|null, is_category: bool, question: array}>|WP_Error One entry per
+	 *                   question: `action` is `create`, `update`, `keep` or `drop`; `id` the question post ID, when given;
+	 *                   `is_category` whether it is a category-question placeholder; `question` the question as given.
 	 */
 	private function resolve_questions( array $questions, array $existing_question_ids ) {
 		$resolved = array();
