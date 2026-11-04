@@ -80,8 +80,13 @@ Fill it for the final change, removing unused placeholders and inapplicable
 sections as directed by the template. Do not maintain a separate body format in
 this skill.
 
-Lead with the problem and resulting behavior. Keep reviewer instructions
-concrete and distinguish them from checks already performed. Cite only known
+Before presenting a draft with Testing Instructions, confirm that an agent has
+followed every manual step as written and observed each expected result. Reuse
+earlier checks when the setup and steps match and the relevant behavior is
+unchanged. Run any new, changed, or unverified steps first. If a required check
+fails or cannot be run, report it before requesting PR approval.
+
+Lead with the problem and resulting behavior. Cite only known
 issue references; do not imply that a partial fix resolves the whole issue.
 When including screenshots, upload them to a location GitHub can display;
 local file paths will not render. Report unavailable evidence accurately.
