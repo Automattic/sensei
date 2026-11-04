@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Course_Lessons\Repositories;
 
 use wpdb;
+use WP_Error;
 use WP_Term;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -341,9 +342,12 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $term_id   Module term ID.
+	 * @return true|WP_Error True, or the error `wp_set_object_terms()` returned.
 	 */
-	public function set_lesson_module( int $lesson_id, int $term_id ): void {
-		wp_set_object_terms( $lesson_id, array( $term_id ), 'module' );
+	public function set_lesson_module( int $lesson_id, int $term_id ) {
+		$result = wp_set_object_terms( $lesson_id, array( $term_id ), 'module' );
+
+		return is_wp_error( $result ) ? $result : true;
 	}
 
 	/**

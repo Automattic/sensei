@@ -169,8 +169,9 @@ interface Course_Lessons_Repository_Interface {
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $term_id   Module term ID.
+	 * @return true|\WP_Error True, or the error WordPress returned.
 	 */
-	public function set_lesson_module( int $lesson_id, int $term_id ): void;
+	public function set_lesson_module( int $lesson_id, int $term_id );
 
 	/**
 	 * Remove a lesson from its module.
