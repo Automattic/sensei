@@ -1,0 +1,4 @@
+Significance: minor
+Type: changed
+
+HPPS: Use the selected progress storage for course status and dates in the enrollment debug tool.
