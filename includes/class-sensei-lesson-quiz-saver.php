@@ -124,7 +124,7 @@ class Sensei_Lesson_Quiz_Saver {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 		$is_new  = null === $quiz_id;
 
-		$existing_question_ids = $is_new ? array() : array_map( 'intval', wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' ) );
+		$existing_question_ids = $is_new ? array() : array_map( 'intval', wp_list_pluck( Sensei()->quiz->get_questions( (int) $quiz_id ), 'ID' ) );
 
 		$resolved_questions = $this->resolve_questions( $questions, $existing_question_ids );
 		if ( is_wp_error( $resolved_questions ) ) {
@@ -137,7 +137,7 @@ class Sensei_Lesson_Quiz_Saver {
 					return new WP_Error(
 						'sensei_lesson_quiz_question_not_available',
 						// translators: Placeholder is the question ID.
-						sprintf( __( 'Question with id "%d" was not found or cannot be edited.', 'sensei-lms' ), $resolved['id'] ),
+						sprintf( __( 'Question with id "%d" was not found or cannot be edited.', 'sensei-lms' ), (int) $resolved['id'] ),
 						$resolved['id']
 					);
 				}
