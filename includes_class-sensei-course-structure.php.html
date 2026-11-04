@@ -362,8 +362,7 @@ class Sensei_Course_Structure {
 			return false;
 		}
 
-		$lesson_ids       = [];
-		$lesson_order_key = '_order_module_' . $module_id;
+		$lesson_ids = array();
 
 		foreach ( $item['lessons'] as $lesson_item ) {
 			$lesson_id = $this->save_lesson( $lesson_item, $module_id );
@@ -371,8 +370,8 @@ class Sensei_Course_Structure {
 				return false;
 			}
 
-			wp_set_object_terms( $lesson_id, [ $module_id ], 'module' );
-			update_post_meta( $lesson_id, $lesson_order_key, count( $lesson_ids ) );
+			Sensei()->course_lessons_repository->set_lesson_module( $lesson_id, $module_id );
+			Sensei()->course_lessons_repository->set_lesson_module_order( $lesson_id, $module_id, count( $lesson_ids ) );
 			Sensei()->course_lessons_repository->delete_lesson_order( $lesson_id, $this->course_id );
 
 			$lesson_ids[] = $lesson_id;
@@ -533,10 +532,10 @@ class Sensei_Course_Structure {
 
 		if ( $lesson_id ) {
 			if ( ! $module_id ) {
-				$module_id = [];
+				Sensei()->course_lessons_repository->unset_lesson_module( $lesson_id );
+			} else {
+				Sensei()->course_lessons_repository->set_lesson_module( $lesson_id, $module_id );
 			}
-
-			wp_set_object_terms( $lesson_id, $module_id, 'module' );
 		}
 
 		return $lesson_id;
@@ -692,14 +691,8 @@ class Sensei_Course_Structure {
 	 */
 	private function clear_lesson_associations( int $lesson_id ) {
 		delete_post_meta( $lesson_id, '_lesson_course' );
-		$lesson_modules = get_the_terms( $lesson_id, 'module' );
-		if ( is_array( $lesson_modules ) ) {
-			foreach ( $lesson_modules as $module ) {
-				delete_post_meta( $lesson_id, '_order_module_' . $module->term_id );
-			}
-		}
-
-		wp_set_object_terms( $lesson_id, [], 'module' );
+		Sensei()->course_lessons_repository->delete_all_lesson_module_orders( $lesson_id );
+		Sensei()->course_lessons_repository->unset_lesson_module( $lesson_id );
 	}
 
 	/**
