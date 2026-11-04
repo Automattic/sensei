@@ -129,7 +129,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 * @return bool|WP_Error Whether the user can save the quiz. Error if the lesson is not found.
 	 */
 	public function can_user_save_quiz( WP_REST_Request $request ) {
-		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
+		$lesson_id = (int) $request->get_param( 'lesson_id' );
+		// get_post( 0 ) falls back to the global post, which must never stand in for a lesson id.
+		$lesson = $lesson_id > 0 ? get_post( $lesson_id ) : null;
 
 		if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
 			return new WP_Error(

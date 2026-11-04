@@ -1365,6 +1365,68 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A lesson id of 0 is refused instead of resolving to the global post.
+	 *
+	 * @covers Sensei_Abilities::execute_quiz_questions_set
+	 * @covers Sensei_Abilities::can_set_quiz_questions
+	 */
+	public function testExecuteQuizQuestionsSet_LessonIdZeroGiven_ReturnsLessonNotFoundWithoutClearingGlobalPost() {
+		list( $teacher, $lesson_id ) = $this->createTeacherLesson();
+		wp_set_current_user( $teacher );
+		$ability = wp_get_ability( 'sensei/quiz-questions-set' );
+		$first   = $ability->execute(
+			array(
+				'lesson'    => $lesson_id,
+				'questions' => $this->getQuizQuestionsInput(),
+			)
+		);
+
+		$GLOBALS['post'] = get_post( $lesson_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Reproduces the get_post( 0 ) fallback.
+		$zero            = array(
+			'lesson'    => 0,
+			'questions' => array(),
+		);
+
+		$this->assertFalse( $ability->check_permissions( $zero ) );
+		$this->assertSame( 'sensei_lesson_not_found', Sensei_Abilities::execute_quiz_questions_set( $zero )->get_error_code() );
+		$this->assertCount( count( $first['questions'] ), Sensei()->quiz->get_questions( $first['quiz_id'] ), 'The global post must keep its questions.' );
+	}
+
+	/**
+	 * A question id the user cannot edit is reported instead of being dropped, and nothing is written.
+	 *
+	 * @covers Sensei_Abilities::execute_quiz_questions_set
+	 */
+	public function testExecuteQuizQuestionsSet_AnotherTeachersQuestionIdGiven_ReturnsErrorWithoutWriting() {
+		list( $teacher_a ) = $this->createTeacherLesson();
+		wp_set_current_user( $teacher_a );
+		$other_question_id             = ( new Sensei_Factory() )->question->create( array( 'question_type' => 'multi-line' ) );
+		list( $teacher_b, $lesson_id ) = $this->createTeacherLesson();
+		wp_set_current_user( $teacher_b );
+
+		$result = wp_get_ability( 'sensei/quiz-questions-set' )->execute(
+			array(
+				'lesson'    => $lesson_id,
+				'questions' => array(
+					array(
+						'type'  => 'multi-line',
+						'title' => 'Mine',
+					),
+					array(
+						'id'    => $other_question_id,
+						'type'  => 'multi-line',
+						'title' => 'Hijacked',
+					),
+				),
+			)
+		);
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'sensei_lesson_quiz_question_not_available', $result->get_error_code() );
+		$this->assertNull( Sensei()->lesson->lesson_quizzes( $lesson_id ), 'No quiz should be created.' );
+	}
+
+	/**
 	 * Questions are validated against the schema of their type.
 	 *
 	 * @covers Sensei_Abilities::execute_quiz_questions_set

@@ -160,6 +160,74 @@ class Sensei_Lesson_Quiz_Saver_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The same question id twice is rejected before anything is written.
+	 *
+	 * @covers Sensei_Lesson_Quiz_Saver::save
+	 */
+	public function testSave_DuplicateQuestionIdGiven_ReturnsErrorBeforeWriting() {
+		$this->login_as_teacher();
+		$lesson_id   = $this->factory->lesson->create( array( 'post_author' => get_current_user_id() ) );
+		$question_id = $this->factory->question->create( array( 'question_type' => 'multi-line' ) );
+		$question    = array(
+			'id'    => $question_id,
+			'type'  => 'multi-line',
+			'title' => 'Twice',
+		);
+
+		$result = ( new Sensei_Lesson_Quiz_Saver() )->save(
+			get_post( $lesson_id ),
+			array(
+				'options'   => array(),
+				'questions' => array( $question, $question ),
+			)
+		);
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'sensei_lesson_quiz_duplicate_question', $result->get_error_code() );
+		$this->assertNull( Sensei()->lesson->lesson_quizzes( $lesson_id ), 'No quiz should be created.' );
+		$this->assertNotSame( 'Twice', get_post( $question_id )->post_title, 'The question should be untouched.' );
+	}
+
+	/**
+	 * When a question cannot be written, the questions created so far are deleted again and no quiz is left behind.
+	 *
+	 * @covers Sensei_Lesson_Quiz_Saver::save
+	 */
+	public function testSave_QuestionInsertFails_RemovesCreatedQuestionsAndCreatesNoQuiz() {
+		$this->login_as_teacher();
+		$lesson_id   = $this->factory->lesson->create( array( 'post_author' => get_current_user_id() ) );
+		$fail_broken = function ( $maybe_empty, $postarr ) {
+			return 'Broken' === ( $postarr['post_title'] ?? '' ) ? true : $maybe_empty;
+		};
+		add_filter( 'wp_insert_post_empty_content', $fail_broken, 10, 2 );
+
+		try {
+			$result = ( new Sensei_Lesson_Quiz_Saver() )->save(
+				get_post( $lesson_id ),
+				array(
+					'options'   => array(),
+					'questions' => array(
+						array(
+							'type'  => 'multi-line',
+							'title' => 'Fine',
+						),
+						array(
+							'type'  => 'multi-line',
+							'title' => 'Broken',
+						),
+					),
+				)
+			);
+		} finally {
+			remove_filter( 'wp_insert_post_empty_content', $fail_broken, 10 );
+		}
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertNull( Sensei()->lesson->lesson_quizzes( $lesson_id ), 'No quiz should be created.' );
+		$this->assertSame( 0, $this->countPosts( 'question' ), 'The question created before the failure should be removed again.' );
+	}
+
+	/**
 	 * Auto-draft lessons have no quiz to save.
 	 *
 	 * @covers Sensei_Lesson_Quiz_Saver::save
@@ -215,6 +283,99 @@ class Sensei_Lesson_Quiz_Saver_Test extends WP_UnitTestCase {
 		$this->assertIsInt( $quiz_id );
 		$this->assertSame( array( 'Mine' ), wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'post_title' ), "Another teacher's question should not be in the quiz." );
 		$this->assertNotSame( 'Hijacked', get_post( $other_question_id )->post_title, "Another teacher's question should be untouched." );
+	}
+
+	/**
+	 * With rejection on, a question id the user cannot edit and that is not in the quiz fails the save before writing.
+	 *
+	 * @covers Sensei_Lesson_Quiz_Saver::save
+	 */
+	public function testSave_UnavailableQuestionIdGivenWithRejection_ReturnsErrorBeforeWriting() {
+		$this->login_as_teacher();
+		$other_question_id = $this->factory->question->create( array( 'question_type' => 'multi-line' ) );
+
+		$this->login_as_teacher_b();
+		$lesson_id = $this->factory->lesson->create( array( 'post_author' => get_current_user_id() ) );
+
+		$result = ( new Sensei_Lesson_Quiz_Saver() )->save(
+			get_post( $lesson_id ),
+			array(
+				'options'   => array(),
+				'questions' => array(
+					array(
+						'type'  => 'multi-line',
+						'title' => 'Mine',
+					),
+					array(
+						'id'    => $other_question_id,
+						'type'  => 'multi-line',
+						'title' => 'Hijacked',
+					),
+				),
+			),
+			true
+		);
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'sensei_lesson_quiz_question_not_available', $result->get_error_code() );
+		$this->assertSame( $other_question_id, $result->get_error_data(), 'The error should name the question.' );
+		$this->assertNull( Sensei()->lesson->lesson_quizzes( $lesson_id ), 'No quiz should be created.' );
+		$this->assertSame( 1, $this->countPosts( 'question' ), 'No question should be created.' );
+	}
+
+	/**
+	 * With rejection on, a question the user cannot edit stays in the quiz unchanged when it is already there.
+	 *
+	 * @covers Sensei_Lesson_Quiz_Saver::save
+	 */
+	public function testSave_UnavailableQuestionAlreadyInQuizGivenWithRejection_KeepsIt() {
+		$this->login_as_teacher();
+		$shared_question_id = $this->factory->question->create(
+			array(
+				'question_type' => 'multi-line',
+				'post_title'    => 'Shared',
+			)
+		);
+		$this->login_as_teacher_b();
+		$lesson_id = $this->factory->lesson->create( array( 'post_author' => get_current_user_id() ) );
+		$this->login_as_admin();
+		$saver   = new Sensei_Lesson_Quiz_Saver();
+		$quiz_id = $saver->save(
+			get_post( $lesson_id ),
+			array(
+				'options'   => array(),
+				'questions' => array(
+					array(
+						'id'    => $shared_question_id,
+						'type'  => 'multi-line',
+						'title' => 'Shared',
+					),
+				),
+			)
+		);
+		$this->login_as_teacher_b();
+
+		$result = $saver->save(
+			get_post( $lesson_id ),
+			array(
+				'options'   => array(),
+				'questions' => array(
+					array(
+						'id'    => $shared_question_id,
+						'type'  => 'multi-line',
+						'title' => 'Changed',
+					),
+					array(
+						'type'  => 'multi-line',
+						'title' => 'Mine',
+					),
+				),
+			),
+			true
+		);
+
+		$this->assertSame( $quiz_id, $result, 'The save should succeed.' );
+		$this->assertSame( array( 'Shared', 'Mine' ), wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'post_title' ), 'The shared question should be kept unchanged, in place.' );
 	}
 
 	/**
@@ -341,7 +502,8 @@ class Sensei_Lesson_Quiz_Saver_Test extends WP_UnitTestCase {
 		$page_id   = $this->factory->post->create( array( 'post_type' => 'page' ) );
 		$this->assertTrue( Sensei_Lesson_Quiz_Saver::can_current_user_save( $lesson_id ), 'The owner should be allowed.' );
 		$this->assertFalse( Sensei_Lesson_Quiz_Saver::can_current_user_save( $page_id ), 'A page is not a lesson.' );
-		$this->assertFalse( Sensei_Lesson_Quiz_Saver::can_current_user_save( 0 ), 'A missing id is refused.' );
+		$GLOBALS['post'] = get_post( $lesson_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Reproduces the get_post( 0 ) fallback.
+		$this->assertFalse( Sensei_Lesson_Quiz_Saver::can_current_user_save( 0 ), 'Lesson 0 must not resolve to the global post.' );
 
 		$this->login_as_teacher_b();
 		$this->assertFalse( Sensei_Lesson_Quiz_Saver::can_current_user_save( $lesson_id ), 'Another teacher should be refused.' );

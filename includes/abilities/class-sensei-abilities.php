@@ -692,7 +692,7 @@ class Sensei_Abilities {
 			'sensei/quiz-questions-set',
 			array(
 				'label'               => __( 'Set quiz questions', 'sensei-lms' ),
-				'description'         => __( 'Replace the settings and questions of a Sensei lesson\'s quiz, creating the quiz if the lesson has none. Questions without an id are created; questions left out are removed from the quiz but kept in the question bank, except category-question placeholders, which are deleted. Settings you omit keep their current values. Pass the ids this ability returns to update questions in place.', 'sensei-lms' ),
+				'description'         => __( 'Replace the settings and questions of a Sensei lesson\'s quiz, creating the quiz if the lesson has none. Questions without an id are created; questions left out are removed from the quiz but kept in the question bank, except category-question placeholders, which are deleted. Settings you omit keep their current values. Pass the ids this ability returns to update questions in place; an id that does not name a question you can edit is an error.', 'sensei-lms' ),
 				'category'            => self::CATEGORY_SLUG,
 				'input_schema'        => array(
 					'type'                 => 'object',
@@ -1418,7 +1418,9 @@ class Sensei_Abilities {
 	 * @return array|WP_Error
 	 */
 	public static function execute_quiz_questions_set( $input ) {
-		$lesson = get_post( (int) ( $input['lesson'] ?? 0 ) );
+		$lesson_id = (int) ( $input['lesson'] ?? 0 );
+		// get_post( 0 ) falls back to the global post, which must never stand in for a lesson id.
+		$lesson = $lesson_id > 0 ? get_post( $lesson_id ) : null;
 		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
 			return new WP_Error( 'sensei_lesson_not_found', __( 'No lesson exists with the given ID.', 'sensei-lms' ) );
 		}
@@ -1446,12 +1448,14 @@ class Sensei_Abilities {
 		$quiz    = $quiz_id ? get_post( $quiz_id ) : null;
 		$options = $saver->get_options_for_update( $quiz instanceof WP_Post ? $quiz : null, $options );
 
+		// The editor drops a question id the user may not edit; an agent is told instead.
 		$quiz_id = $saver->save(
 			$lesson,
 			array(
 				'options'   => $options,
 				'questions' => $questions,
-			)
+			),
+			true
 		);
 		if ( is_wp_error( $quiz_id ) ) {
 			return $quiz_id;

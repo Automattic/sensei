@@ -35,6 +35,11 @@ class Sensei_Lesson_Quiz_Saver {
 	 * @return bool
 	 */
 	public static function can_current_user_save( int $lesson_id ): bool {
+		// get_post( 0 ) falls back to the global post, which must never stand in for a lesson id.
+		if ( $lesson_id <= 0 ) {
+			return false;
+		}
+
 		$lesson = get_post( $lesson_id );
 
 		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
@@ -94,12 +99,18 @@ class Sensei_Lesson_Quiz_Saver {
 	 * Options not present in `$params['options']` are reset, as the editor always sends all of them;
 	 * see get_options_for_update() to merge over the stored options instead.
 	 *
-	 * @param WP_Post $lesson The lesson.
-	 * @param array   $params Quiz data: `options` and `questions`, as validated and sanitized against the schemas.
+	 * Questions are written before the quiz, and the questions this save created are deleted again
+	 * when a later write fails, so a failed save leaves no quiz behind and no question outside one.
+	 *
+	 * @param WP_Post $lesson                       The lesson.
+	 * @param array   $params                       Quiz data: `options` and `questions`, as validated and sanitized against the schemas.
+	 * @param bool    $reject_unavailable_questions Whether a question id that names no question the user may edit, and is
+	 *                                              not already in the quiz, fails the save. The editor relies on such
+	 *                                              questions being dropped; the ability reports them.
 	 *
 	 * @return int|WP_Error The quiz ID, or an error. Errors carry no HTTP status.
 	 */
-	public function save( WP_Post $lesson, array $params ) {
+	public function save( WP_Post $lesson, array $params, bool $reject_unavailable_questions = false ) {
 		if ( 'auto-draft' === $lesson->post_status ) {
 			return new WP_Error(
 				'sensei_lesson_quiz_lesson_auto_draft',
@@ -110,14 +121,60 @@ class Sensei_Lesson_Quiz_Saver {
 		$options   = is_array( $params['options'] ?? null ) ? $params['options'] : array();
 		$questions = is_array( $params['questions'] ?? null ) ? $params['questions'] : array();
 
-		// Fail before writing anything, so an invalid question does not leave a quiz or earlier questions behind.
-		$question_error = $this->find_question_error( $questions );
-		if ( $question_error ) {
-			return $question_error;
-		}
-
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 		$is_new  = null === $quiz_id;
+
+		$existing_question_ids = $is_new ? array() : array_map( 'intval', wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' ) );
+
+		$resolved_questions = $this->resolve_questions( $questions, $existing_question_ids );
+		if ( is_wp_error( $resolved_questions ) ) {
+			return $resolved_questions;
+		}
+
+		if ( $reject_unavailable_questions ) {
+			foreach ( $resolved_questions as $resolved ) {
+				if ( 'drop' === $resolved['action'] ) {
+					return new WP_Error(
+						'sensei_lesson_quiz_question_not_available',
+						// translators: Placeholder is the question ID.
+						sprintf( __( 'Question with id "%d" was not found or cannot be edited.', 'sensei-lms' ), $resolved['id'] ),
+						$resolved['id']
+					);
+				}
+			}
+		}
+
+		$question_ids         = array();
+		$created_question_ids = array();
+		foreach ( $resolved_questions as $resolved ) {
+			if ( 'drop' === $resolved['action'] ) {
+				continue;
+			}
+
+			if ( 'keep' === $resolved['action'] ) {
+				$question_ids[] = $resolved['id'];
+				continue;
+			}
+
+			$question_id = $resolved['is_category']
+				? $this->save_category_question( $resolved['question'] )
+				: $this->save_question( $resolved['question'] );
+
+			// The helpers return 0, not a WP_Error, when WordPress refuses the post.
+			if ( is_wp_error( $question_id ) || ! $question_id ) {
+				$this->delete_questions( $created_question_ids );
+
+				return is_wp_error( $question_id )
+					? $question_id
+					: new WP_Error( 'sensei_lesson_quiz_question_save_failed', __( 'The question could not be saved.', 'sensei-lms' ) );
+			}
+
+			if ( 'create' === $resolved['action'] ) {
+				$created_question_ids[] = (int) $question_id;
+			}
+
+			$question_ids[] = (int) $question_id;
+		}
 
 		$quiz_id = wp_insert_post(
 			wp_slash(
@@ -135,6 +192,8 @@ class Sensei_Lesson_Quiz_Saver {
 		);
 
 		if ( is_wp_error( $quiz_id ) ) {
+			$this->delete_questions( $created_question_ids );
+
 			return $quiz_id;
 		}
 
@@ -155,45 +214,16 @@ class Sensei_Lesson_Quiz_Saver {
 			do_action( 'sensei_quiz_create', (int) $quiz_id, (int) $lesson->ID );
 		}
 
-		$existing_question_ids = array_map( 'intval', wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' ) );
-
-		$question_ids = array();
-		foreach ( $questions as $question ) {
-			if ( ! is_array( $question ) ) {
-				continue;
-			}
-
-			if ( isset( $question['type'] ) && 'category-question' === $question['type'] ) {
-				$question_id = $this->save_category_question( $question );
-			} else {
-				$question_id = $this->save_question( $question );
-			}
-
-			if ( is_wp_error( $question_id ) ) {
-				if ( 'sensei_lesson_quiz_question_not_available' === $question_id->get_error_code() ) {
-					// Gracefully ignore this error and include it (unchanged) in the quiz if it already exists.
-					$question_id = (int) $question_id->get_error_data();
-
-					if ( ! in_array( $question_id, $existing_question_ids, true ) ) {
-						$question_id = null;
-					}
-				} else {
-					return $question_id;
-				}
-			}
-
-			$question_ids[] = $question_id;
-		}
-
-		Sensei()->quiz->set_questions( $quiz_id, array_filter( $question_ids ) );
+		Sensei()->quiz->set_questions( $quiz_id, $question_ids );
 
 		/**
-		 * Fire action when a the lesson-quiz controller updates the data of the quiz.
+		 * Fires when the questions and options of a lesson quiz have been saved, by the
+		 * lesson-quiz REST controller or the `sensei/quiz-questions-set` ability.
 		 *
 		 * @hook sensei_rest_api_lesson_quiz_update
 		 *
 		 * @param {WP_Post} $lesson         The lesson.
-		 * @param {array}   $request_params The request parameters.
+		 * @param {array}   $request_params The quiz data that was saved: `options` and `questions`.
 		 */
 		do_action( 'sensei_rest_api_lesson_quiz_update', $lesson, $params );
 
@@ -201,37 +231,64 @@ class Sensei_Lesson_Quiz_Saver {
 	}
 
 	/**
-	 * Find the first question that save() would reject, before anything is written.
+	 * Resolve what saving each question does, before anything is written.
 	 *
-	 * Mirrors the checks in save_question() and save_category_question(); questions the
-	 * user may not edit are skipped here because save() keeps or drops them unchanged.
+	 * A question without an id is created. A question whose id names a question of the right
+	 * type that the user may edit is updated. Any other id is kept unchanged when the question is
+	 * already in the quiz and dropped otherwise, as the editor sends back shared questions the
+	 * user may not edit. Questions to create or update are validated here, so an invalid one
+	 * fails the save before the quiz or any earlier question is written.
 	 *
-	 * @param array $questions The questions.
+	 * @param array $questions             The questions.
+	 * @param int[] $existing_question_ids IDs of the questions currently in the quiz.
 	 *
-	 * @return WP_Error|null
+	 * @return array[]|WP_Error One entry per question: {
+	 *     @type string   $action      `create`, `update`, `keep` or `drop`.
+	 *     @type int|null $id          Question post ID, when given.
+	 *     @type bool     $is_category Whether the question is a category-question placeholder.
+	 *     @type array    $question    The question as given.
+	 * }
 	 */
-	private function find_question_error( array $questions ): ?WP_Error {
+	private function resolve_questions( array $questions, array $existing_question_ids ) {
+		$resolved = array();
+		$seen_ids = array();
+
 		foreach ( $questions as $question ) {
 			if ( ! is_array( $question ) ) {
 				continue;
 			}
 
-			$question_id      = $question['id'] ?? null;
-			$is_category      = isset( $question['type'] ) && 'category-question' === $question['type'];
-			$post_type_object = get_post_type_object( $is_category ? 'multiple_question' : 'question' );
+			$question_id = (int) ( $question['id'] ?? 0 );
+			$question_id = $question_id > 0 ? $question_id : null;
+			$is_category = isset( $question['type'] ) && 'category-question' === $question['type'];
+			$post_type   = $is_category ? 'multiple_question' : 'question';
+			$entry       = array(
+				'action'      => $question_id ? 'update' : 'create',
+				'id'          => $question_id,
+				'is_category' => $is_category,
+				'question'    => $question,
+			);
 
-			if ( ! $post_type_object ) {
-				continue;
-			}
+			if ( $question_id ) {
+				if ( in_array( $question_id, $seen_ids, true ) ) {
+					return new WP_Error(
+						'sensei_lesson_quiz_duplicate_question',
+						__( 'A question cannot appear more than once in the same quiz.', 'sensei-lms' ),
+						$question_id
+					);
+				}
+				$seen_ids[] = $question_id;
 
-			if (
-				$question_id
-				&& (
-					get_post_type( $question_id ) !== $post_type_object->name
+				$post_type_object = get_post_type_object( $post_type );
+				if (
+					get_post_type( $question_id ) !== $post_type
+					|| ! $post_type_object
 					|| ! current_user_can( $post_type_object->cap->edit_post, $question_id )
-				)
-			) {
-				continue;
+				) {
+					$entry['action'] = in_array( $question_id, $existing_question_ids, true ) ? 'keep' : 'drop';
+					$resolved[]      = $entry;
+					continue;
+				}
 			}
 
 			if ( $is_category ) {
@@ -245,9 +302,22 @@ class Sensei_Lesson_Quiz_Saver {
 					__( 'Please ensure all questions have a title before saving.', 'sensei-lms' )
 				);
 			}
+
+			$resolved[] = $entry;
 		}
 
-		return null;
+		return $resolved;
+	}
+
+	/**
+	 * Delete the questions a failed save created, so a retry does not leave them behind.
+	 *
+	 * @param int[] $question_ids Question post IDs.
+	 */
+	private function delete_questions( array $question_ids ): void {
+		foreach ( $question_ids as $question_id ) {
+			wp_delete_post( $question_id, true );
+		}
 	}
 
 	/**
