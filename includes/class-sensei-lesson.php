@@ -4488,7 +4488,7 @@ class Sensei_Lesson {
 
 			// Update lesson course.
 			if ( '-1' !== $new_course ) {
-				update_post_meta( $lesson_id, '_lesson_course', $new_course );
+				$this->save_lesson_course( $lesson_id, $new_course );
 			}
 
 			// Update lesson complexity.

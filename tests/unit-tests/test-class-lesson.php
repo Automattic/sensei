@@ -2371,6 +2371,60 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Choosing "None" as the course in Quick Edit or Bulk Edit detaches the lesson.
+	 *
+	 * @covers Sensei_Lesson::save_all_lessons_edit_fields
+	 */
+	public function testSaveAllLessonsEditFields_NoneGiven_DetachesTheLesson(): void {
+		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		$lesson_id      = $course_lessons['lesson_ids'][0];
+		$data           = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => '',
+		);
+
+		/* Act */
+		Sensei()->lesson->save_all_lessons_edit_fields( array( $lesson_id ), $data );
+
+		/* Assert */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_lesson_course' ) );
+	}
+
+	/**
+	 * A "no change" course value in Bulk Edit leaves the lesson's course untouched.
+	 *
+	 * @covers Sensei_Lesson::save_all_lessons_edit_fields
+	 */
+	public function testSaveAllLessonsEditFields_NoChangeGiven_KeepsTheLessonCourse(): void {
+		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		$lesson_id      = $course_lessons['lesson_ids'][0];
+		$data           = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => '-1',
+		);
+
+		/* Act */
+		Sensei()->lesson->save_all_lessons_edit_fields( array( $lesson_id ), $data );
+
+		/* Assert */
+		self::assertSame( $course_lessons['course_id'], Sensei()->course_lessons_repository->get_course_id( $lesson_id ) );
+	}
+
+	/**
 	 * A quiz ID coming from the request must never become the write target: the handler only
 	 * ever writes to the quiz that belongs to the lesson the save_post hook fired for.
 	 *
