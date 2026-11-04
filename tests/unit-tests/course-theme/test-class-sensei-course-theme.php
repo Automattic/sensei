@@ -85,6 +85,34 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 		$this->assertFalse( $allowed, 'Should not allow preview if preview query id is not current course page.' );
 	}
 
+	/**
+	 * The customizer URL previews the last modified lesson in its course.
+	 *
+	 * @covers Sensei_Course_Theme::get_learning_mode_customizer_url
+	 */
+	public function testGetLearningModeCustomizerUrl_WhenLessonCourseHadLearningModeOff_ReturnsLessonPreviewUrlForCourse() {
+		// Arrange.
+		add_filter( 'sensei_course_learning_mode_enabled', '__return_false' );
+		$course_info = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		$course_id   = $course_info['course_id'];
+		$lesson_id   = $course_info['lesson_ids'][0];
+		$this->setExpectedDeprecated( 'Sensei_Course_Theme::get_learning_mode_customizer_url' );
+
+		// Act.
+		$url = Sensei_Course_Theme::get_learning_mode_customizer_url();
+
+		// Assert.
+		self::assertSame(
+			'/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( '/?p=' . $lesson_id . '&sensei_theme_preview=' . $course_id ),
+			$url
+		);
+	}
+
 	public function testAddLessonVideoToContentAddsOnlyOnceEvenIfCalledMultipleTimes() {
 		$course_info = $this->factory->get_course_with_lessons();
 		$course_id   = $course_info['course_id'];

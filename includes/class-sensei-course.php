@@ -3,6 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+use Sensei\Internal\Course_Status_Updates;
 use Sensei\Internal\Services\Sensei_Pro_Upsell;
 
 /**
@@ -659,10 +660,12 @@ class Sensei_Course {
 	 */
 	public function update_status_after_lesson_change( $user_id, $lesson_id ) {
 		if ( intval( $user_id ) > 0 && intval( $lesson_id ) > 0 ) {
-			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-			if ( intval( $course_id ) > 0 ) {
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
+			if ( $course_id ) {
 				// Updates the Course status and it's meta data
-				Sensei_Utils::user_complete_course( $course_id, $user_id );
+				if ( false === Sensei_Utils::user_complete_course( $course_id, $user_id ) ) {
+					Course_Status_Updates::mark_failed();
+				}
 			}
 		}
 	}
@@ -1631,39 +1634,6 @@ class Sensei_Course {
 
 
 	/**
-	 * Get the IDs of the lessons of a course, without query filters.
-	 *
-	 * Unlike course_lessons(), the query runs without filters, so multilingual
-	 * plugins cannot limit it to the current language. Use it where the lessons
-	 * of that exact course are needed, like reading progress stored against them.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param int   $course_id  The course ID.
-	 * @param array $query_args Optional. Query arguments that override the defaults, like `post_status`. Default published lessons.
-	 * @return int[] Lesson IDs, in no particular order.
-	 */
-	public function get_course_lesson_ids( $course_id, $query_args = array() ) {
-		$lesson_ids = get_posts(
-			array_merge(
-				array(
-					'post_type'        => 'lesson',
-					'post_status'      => 'publish',
-					'numberposts'      => -1,
-					'fields'           => 'ids',
-					'orderby'          => 'none',
-					'suppress_filters' => true,
-					'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Lessons are attached to their course by meta.
-					'meta_value'       => (int) $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
-				),
-				$query_args
-			)
-		);
-
-		return array_map( 'intval', $lesson_ids );
-	}
-
-	/**
 	 * Get course lessons.
 	 *
 	 * @access public
@@ -1693,14 +1663,7 @@ class Sensei_Course {
 			]
 		);
 
-		if ( ! isset( $query_args['meta_query'] ) ) {
-			$query_args['meta_query'] = [];
-		}
-
-		$query_args['meta_query'][] = [
-			'key'   => '_lesson_course',
-			'value' => intval( $course_id ),
-		];
+		$query_args['sensei_course'] = (int) $course_id;
 
 		$query_results = new WP_Query( $query_args );
 		$lessons       = $query_results->posts;
@@ -1714,7 +1677,7 @@ class Sensei_Course {
 			$lesson_order = array();
 			foreach ( $lessons as $lesson ) {
 
-				$order = intval( get_post_meta( $lesson->ID, '_order_' . $course_id, true ) );
+				$order = Sensei()->course_lessons_repository->get_lesson_order( $lesson->ID, (int) $course_id );
 				// for lessons with no order set it to be 10000 so that it show up at the end
 				$lesson_order[ $lesson->ID ] = $order ? $order : 100000;
 			}
@@ -3766,7 +3729,7 @@ class Sensei_Course {
 		}
 
 		// setting lesson order
-		$course_lesson_order = get_post_meta( $course_id, '_lesson_order', true );
+		$course_lesson_order = Sensei()->course_lessons_repository->get_root_lesson_order( $course_id );
 		$all_ids             = get_posts(
 			[
 				'post_type'      => 'lesson',
@@ -3778,7 +3741,7 @@ class Sensei_Course {
 		);
 		if ( ! empty( $course_lesson_order ) ) {
 
-			$course_lesson_query_args['post__in'] = array_merge( explode( ',', $course_lesson_order ), $all_ids );
+			$course_lesson_query_args['post__in'] = array_merge( $course_lesson_order, $all_ids );
 			$course_lesson_query_args['orderby']  = 'post__in';
 			unset( $course_lesson_query_args['order'] );
 

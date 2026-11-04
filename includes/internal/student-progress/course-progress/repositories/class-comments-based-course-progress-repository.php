@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use DateTime;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
@@ -34,7 +35,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Interface The course progress.
-	 * @throws \RuntimeException If the course progress could not be created.
+	 * @throws Persistence_Exception If required progress creation fails.
 	 */
 	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
 		/**
@@ -56,12 +57,14 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		];
 		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, Course_Progress_Interface::STATUS_IN_PROGRESS, $metadata );
 		if ( ! $comment_id ) {
-			throw new \RuntimeException( "Can't create a course progress" );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'course', 'comments', $course_id, $user_id, 'insert_failed' );
 		}
 
 		$comment = get_comment( $comment_id );
 		if ( ! $comment ) {
-			throw new \RuntimeException( 'Created course progress not found' );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'course', 'comments', $course_id, $user_id, 'created_progress_not_found' );
 		}
 
 		return $this->create_progress_from_comment( $comment );
@@ -206,16 +209,34 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @internal
 	 *
 	 * @param Course_Progress_Interface $course_progress The course progress.
+	 * @throws Persistence_Exception If a required progress comment cannot be inserted.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {
 		$this->assert_comments_based_course_progress( $course_progress );
+
+		$status = $course_progress->get_status();
+		if ( empty( $status ) ) {
+			return;
+		}
+
 		$metadata   = [];
 		$started_at = $course_progress->get_started_at();
 		if ( $started_at ) {
 			// Comment dates are stored in the site timezone.
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
-		Sensei_Utils::update_course_status( $course_progress->get_user_id(), $course_progress->get_course_id(), $course_progress->get_status(), $metadata );
+
+		$comment_id = Sensei_Utils::update_course_status(
+			$course_progress->get_user_id(),
+			$course_progress->get_course_id(),
+			$status,
+			$metadata
+		);
+
+		if ( ! $comment_id ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'course', 'comments', $course_progress->get_course_id(), $course_progress->get_user_id() );
+		}
 	}
 
 	/**

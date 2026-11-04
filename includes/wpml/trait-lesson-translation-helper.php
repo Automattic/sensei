@@ -97,7 +97,7 @@ trait Lesson_Translation_Helper {
 	 * @param array $details Language details.
 	 */
 	private function set_lesson_order( $master_lesson_id, $details ) {
-		$master_course_id = (int) get_post_meta( $master_lesson_id, '_lesson_course', true );
+		$master_course_id = Sensei()->course_lessons_repository->get_course_id( (int) $master_lesson_id );
 		if ( ! $master_course_id ) {
 			return;
 		}

@@ -1,5 +1,6 @@
 <?php
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
 
 /**
  * Tests for Sensei_Frontend.
@@ -7,7 +8,8 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  * @group frontend
  */
 class Sensei_Frontend_Test extends WP_UnitTestCase {
-
+	use Sensei_HPPS_Helpers;
+	use Sensei_Progress_Insert_Failure_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
@@ -27,6 +29,9 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		unset(
 			$_POST['course_complete'],
 			$_POST['course_complete_id'],
@@ -37,6 +42,8 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 
 		remove_filter( 'sensei_is_login_required', '__return_false' );
 		remove_filter( 'sensei_can_user_view_lesson', '__return_false' );
+		wp_dequeue_style( 'sensei-frontend' );
+		wp_dequeue_style( 'pages-frontend' );
 
 		parent::tearDown();
 	}
@@ -47,27 +54,109 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The frontend stylesheet is skipped on a lesson whose course has Learning Mode enabled.
+	 *
+	 * @covers Sensei_Frontend::enqueue_styles
+	 */
+	public function testEnqueueStyles_WhenLessonCourseHadLearningModeEnabled_SkipsFrontendStylesheet() {
+		/* Arrange */
+		$course = $this->createCourseWithLessons( 1 );
+		update_post_meta( $course['course_id'], Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
+		wp_dequeue_style( 'sensei-frontend' );
+
+		/* Act */
+		Sensei()->frontend->enqueue_styles();
+
+		/* Assert */
+		self::assertFalse( wp_style_is( 'sensei-frontend' ) );
+	}
+
+	/**
+	 * The lesson breadcrumb links back to the lesson's course.
+	 *
+	 * @covers Sensei_Frontend::sensei_breadcrumb
+	 */
+	public function testSenseiBreadcrumb_WhenLessonHadCourse_LinksBackToCourse() {
+		/* Arrange */
+		$course    = $this->createCourseWithLessons( 1 );
+		$lesson_id = $course['lesson_ids'][0];
+		$this->go_to( get_permalink( $lesson_id ) );
+
+		/* Act */
+		ob_start();
+		Sensei()->frontend->sensei_breadcrumb( $lesson_id );
+		$output = ob_get_clean();
+
+		/* Assert */
+		self::assertStringContainsString( '<a href="' . esc_url( get_permalink( $course['course_id'] ) ) . '"', $output );
+	}
+
+	/**
 	 * An enrolled student can mark the course as complete.
+	 *
+	 * @covers Sensei_Frontend::sensei_complete_course
 	 */
 	public function testSenseiCompleteCourse_StudentEnrolled_CompletesCourse() {
-		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
-		$course_id  = $this->factory->get_course_with_lessons(
-			array(
-				'lesson_count'   => 2,
-				'question_count' => 0,
-			)
-		)['course_id'];
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+			$course_id  = $this->factory->get_course_with_lessons(
+				array(
+					'lesson_count'   => 2,
+					'question_count' => 0,
+				)
+			)['course_id'];
 
+			wp_set_current_user( $student_id );
+			$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
+			$this->submitCompletion( $course_id );
+
+			Sensei()->frontend->sensei_complete_course();
+
+			$comment = Sensei_Utils::user_course_status( $course_id, $student_id );
+
+			self::assertTrue(
+				Sensei_Utils::user_completed_course( $course_id, $student_id ),
+				'An enrolled student should be able to complete the course.'
+			);
+			self::assertSame( '100', get_comment_meta( $comment->comment_ID, 'percent', true ), 'The course comment should reflect full completion.' );
+			self::assertSame( '2', get_comment_meta( $comment->comment_ID, 'complete', true ), 'The course comment should contain both completed lessons.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
+	}
+
+	/**
+	 * A failed course save must show an error without announcing completion.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Frontend::sensei_complete_course
+	 */
+	public function testSenseiCompleteCourse_CommentInsertFailedDuringSave_ShowsErrorWithoutCompletion( string $mode ): void {
+		$this->set_progress_storage_mode( $mode );
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course_id  = $this->factory->course->create();
 		wp_set_current_user( $student_id );
 		$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
+		Sensei_Utils::user_start_course( $student_id, $course_id );
 		$this->submitCompletion( $course_id );
+		$completed = did_action( 'sensei_user_course_end' );
+		$messages  = Sensei()->frontend->messages;
+		Sensei()->notices->clear_notices();
+		$this->fail_progress_comment_insert( 'course', $course_id, $student_id, 'complete' );
 
-		Sensei()->frontend->sensei_complete_course();
+		ob_start();
+		try {
+			Sensei()->frontend->sensei_complete_course();
+			Sensei()->notices->maybe_print_notices();
+		} finally {
+			$notice = ob_get_clean();
+		}
 
-		self::assertTrue(
-			Sensei_Utils::user_completed_course( $course_id, $student_id ),
-			'An enrolled student should be able to complete the course.'
-		);
+		self::assertStringContainsString( "We couldn't finish marking this course as complete.", $notice, 'The student must see the save failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'A failed save must not announce course completion.' );
+		self::assertSame( $messages, Sensei()->frontend->messages, 'A failed save must not add a completion message.' );
 	}
 
 	/**
@@ -199,6 +288,50 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 			Sensei_Utils::user_completed_lesson( $locked_lesson, $student_id ),
 			'A locked lesson should not be completable even when login is not required.'
 		);
+	}
+
+	/**
+	 * The lesson meta links to the lesson's course.
+	 *
+	 * @covers Sensei_Frontend::sensei_lesson_meta
+	 */
+	public function testSenseiLessonMeta_WhenLessonHadCourse_OutputsCourseLink() {
+		/* Arrange */
+		$course    = $this->createCourseWithLessons( 1 );
+		$lesson_id = $course['lesson_ids'][0];
+		$this->go_to( get_permalink( $lesson_id ) );
+		setup_postdata( $GLOBALS['post'] );
+
+		/* Act */
+		ob_start();
+		Sensei()->frontend->sensei_lesson_meta( $lesson_id );
+		$output = ob_get_clean();
+
+		/* Assert */
+		self::assertStringContainsString( '<a href="' . esc_url( get_permalink( $course['course_id'] ) ) . '"', $output );
+	}
+
+	/**
+	 * A student enrolled in the course sees the preview lesson title without the preview label.
+	 *
+	 * @covers Sensei_Frontend::sensei_lesson_preview_title
+	 */
+	public function testSenseiLessonPreviewTitle_WhenStudentWasEnrolledInLessonCourse_ReturnsTitleUnchanged() {
+		/* Arrange */
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course     = $this->createCourseWithLessons( 1 );
+		$lesson_id  = $course['lesson_ids'][0];
+		update_post_meta( $lesson_id, '_lesson_preview', 'preview' );
+
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course['course_id'] );
+		$this->go_to( get_permalink( $lesson_id ) );
+
+		/* Act */
+		$title = Sensei()->frontend->sensei_lesson_preview_title( 'Lesson', $lesson_id );
+
+		/* Assert */
+		self::assertSame( 'Lesson', $title );
 	}
 
 	/**

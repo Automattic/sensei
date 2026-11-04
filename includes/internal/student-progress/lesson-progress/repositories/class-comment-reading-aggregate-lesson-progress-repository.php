@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
+
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
 
@@ -59,6 +61,7 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 * @return Lesson_Progress_Interface The lesson progress.
+	 * @throws Persistence_Exception If required progress creation fails.
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		$progress = $this->comments_based_repository->create( $lesson_id, $user_id );
@@ -98,6 +101,7 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If required progress creation fails.
 	 */
 	public function save( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->comments_based_repository->save( $lesson_progress );

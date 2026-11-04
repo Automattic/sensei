@@ -41,8 +41,8 @@ const getAction = ( action, studentCount, studentDisplayName ) => {
 			buttonLabel: __( 'Add to Course', 'sensei-lms' ),
 			errorMessage: ( students ) =>
 				_n(
-					'Unable to add student. Please try again.',
-					'Unable to add students. Please try again.',
+					"We couldn't finish enrolling the selected student. You can repeat the enrollment action. If the problem continues, contact your site administrator for help.",
+					"We couldn't finish enrolling the selected students. You can repeat the enrollment action. If the problem continues, contact your site administrator for help.",
 					students.length,
 					'sensei-lms'
 				),
@@ -159,25 +159,77 @@ export const StudentModal = ( {
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ isSending, setIsSending ] = useState( false );
 	const [ error, setError ] = useState( false );
+	const [ needsReload, setNeedsReload ] = useState( false );
 	const { getSignal } = useAbortController();
 
 	const send = useCallback( async () => {
 		setIsSending( true );
+		setError( false );
 
 		try {
-			await sendAction(
+			const result = await sendAction(
 				students,
 				selectedCourses.map( ( course ) => course.id ),
 				{ signal: getSignal() }
 			);
+
+			if ( action === 'add' ) {
+				// A completed request can contain failed or missing student/course results.
+				const outcomes = students.flatMap( ( studentId ) =>
+					selectedCourses.map(
+						( course ) =>
+							result?.[ studentId ]?.[ course.id ] === true
+					)
+				);
+
+				if ( outcomes.includes( false ) ) {
+					const successful = outcomes.filter( Boolean ).length;
+					const failed = outcomes.length - successful;
+					const hasSuccess = successful > 0;
+
+					if ( hasSuccess ) {
+						// Show saved enrollments when the modal is dismissed.
+						setNeedsReload( true );
+					}
+
+					setError(
+						hasSuccess
+							? sprintf(
+									// Translators: %1$d is completed enrollments; %2$d is failed enrollments.
+									_n(
+										"%1$d enrollment completed; %2$d couldn't be completed. Successful enrollments were kept. You can repeat the action to retry the failed enrollments.",
+										"%1$d enrollments completed; %2$d couldn't be completed. Successful enrollments were kept. You can repeat the action to retry the failed enrollments.",
+										successful,
+										'sensei-lms'
+									),
+									successful,
+									failed
+							  )
+							: errorMessage( students )
+					);
+					setIsSending( false );
+
+					// Keep the modal and selection available for retry.
+					return;
+				}
+			}
+
 			onClose( true );
 		} catch {
 			if ( ! getSignal().aborted ) {
-				setError( true );
+				setError( errorMessage( students ) );
 				setIsSending( false );
 			}
 		}
-	}, [ sendAction, students, selectedCourses, onClose, getSignal ] );
+	}, [
+		action,
+		sendAction,
+		students,
+		selectedCourses,
+		onClose,
+		getSignal,
+		errorMessage,
+	] );
 
 	const searchCourses = ( value ) => setSearchQuery( value );
 
@@ -185,7 +237,7 @@ export const StudentModal = ( {
 		<Modal
 			className="sensei-student-modal"
 			title={ __( 'Choose Course', 'sensei-lms' ) }
-			onRequestClose={ () => onClose() }
+			onRequestClose={ () => onClose( needsReload ) }
 		>
 			<RawHTML>{ description }</RawHTML>
 
@@ -209,7 +261,7 @@ export const StudentModal = ( {
 					isDismissible={ false }
 					className="sensei-student-modal__notice"
 				>
-					{ errorMessage( students ) }
+					{ error }
 				</Notice>
 			) }
 

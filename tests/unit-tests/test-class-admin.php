@@ -165,6 +165,34 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 			get_post_meta( $duplicated_lesson2->ID, "_order_$duplicated_course->ID", true ),
 			'Duplicated lesson order on second lesson differs from the original order'
 		);
+		$this->assertNull(
+			Sensei()->course_lessons_repository->get_lesson_order( $duplicated_lesson1->ID, $course_id ),
+			'Duplicated lesson kept its order in the original course'
+		);
+	}
+
+	/**
+	 * A trashed lesson is cleared as the prerequisite of the lessons that required it.
+	 *
+	 * @covers Sensei_Admin::delete_content
+	 */
+	public function testDeleteContent_PrerequisiteLessonGiven_ClearsDependentLessonPrerequisite() {
+		/* Arrange */
+		$course_lessons  = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$prerequisite_id = $course_lessons['lesson_ids'][0];
+		$lesson_id       = $course_lessons['lesson_ids'][1];
+		Sensei()->course_lessons_repository->set_lesson_prerequisite( $lesson_id, $prerequisite_id );
+
+		/* Act */
+		( new Sensei_Admin() )->delete_content( $prerequisite_id, get_post( $prerequisite_id ) );
+
+		/* Assert */
+		self::assertNull( Sensei()->course_lessons_repository->get_lesson_prerequisite_id( $lesson_id ) );
 	}
 
 	/**

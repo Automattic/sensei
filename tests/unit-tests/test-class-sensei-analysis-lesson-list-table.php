@@ -22,6 +22,38 @@ class Sensei_Analysis_Lesson_List_Table_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 	}
 
+	/**
+	 * The table keeps the course of its lesson for the student links.
+	 *
+	 * @covers Sensei_Analysis_Lesson_List_Table::__construct
+	 */
+	public function testConstruct_WhenLessonHadCourse_SetsCourseId() {
+		/* Arrange. */
+		$course = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+
+		/* Act. */
+		$table = new Sensei_Analysis_Lesson_List_Table( $course['lesson_ids'][0] );
+
+		/* Assert. */
+		self::assertSame( $course['course_id'], $table->course_id );
+	}
+
+	/**
+	 * The table keeps a zero course ID for a lesson without a course, so the student links still carry it.
+	 *
+	 * @covers Sensei_Analysis_Lesson_List_Table::__construct
+	 */
+	public function testConstruct_WhenLessonHadNoCourse_SetsZeroCourseId() {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$table = new Sensei_Analysis_Lesson_List_Table( $lesson_id );
+
+		/* Assert. */
+		self::assertSame( 0, $table->course_id );
+	}
+
 	public function testGenerateReport_StudentsByLesson_ReturnsCorrectNumberOfRows() {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();

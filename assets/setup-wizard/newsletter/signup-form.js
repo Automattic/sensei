@@ -3,7 +3,6 @@
  */
 import { useState } from '@wordpress/element';
 import { TextControl, Notice } from '@wordpress/components';
-import { addQueryArgs } from '@wordpress/url';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -12,12 +11,10 @@ import { __ } from '@wordpress/i18n';
 import { logLink } from '../../shared/helpers/log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
-const SIGNUP_CALLBACK = 'senseiSignupCallback';
-
 /**
  * Sign up to Sensei Mailing list.
  *
- * Submits form to mailing list provider signup page in new tab.
+ * Requests a subscription to Sensei's newsletter.
  * Fills in site administrator e-mail address.
  *
  * @param {Object}   props          Component props.
@@ -30,44 +27,40 @@ const SignupForm = ( { onSubmit } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ error, setError ] = useState( false );
 
-	const submitHandler = ( e ) => {
+	const submitHandler = async ( e ) => {
 		e.preventDefault();
+		setIsSubmitting( true );
+		setError( false );
 
-		const formData = new window.FormData( e.target );
+		try {
+			const response = await window.fetch( stepData.newsletter_url, {
+				method: 'POST',
+				credentials: 'omit',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: new URLSearchParams( { email, consent: '1' } ).toString(),
+			} );
 
-		const url = addQueryArgs(
-			e.target.action,
-			Object.fromEntries( formData )
-		);
-
-		// JSONP callback.
-		window[ SIGNUP_CALLBACK ] = ( json ) => {
-			setIsSubmitting( false );
-
-			if ( 'error' === json.result ) {
-				setError( json.msg );
-			} else {
-				onSubmit();
+			if ( ! response.ok ) {
+				throw new Error( 'Newsletter signup failed' );
 			}
-		};
+			const result = await response.json();
+			if ( true !== result.success ) {
+				throw new Error( 'Newsletter signup failed' );
+			}
 
-		// Create and append JSONP script.
-		const script = document.createElement( 'script' );
-		script.src = `${ url }&c=${ SIGNUP_CALLBACK }`;
-
-		script.onerror = () => {
-			setIsSubmitting( false );
+			onSubmit();
+		} catch {
 			setError(
 				__(
 					'Failed to connect to the server. Please try again later.',
 					'sensei-lms'
 				)
 			);
-		};
-
-		setIsSubmitting( true );
-		setError( false );
-		document.body.append( script );
+		} finally {
+			setIsSubmitting( false );
+		}
 	};
 
 	return (
@@ -82,22 +75,18 @@ const SignupForm = ( { onSubmit } ) => {
 				</Notice>
 			) }
 			<form
-				action={ stepData.mc_url }
-				method="GET"
+				action={ stepData.newsletter_url }
+				method="POST"
 				className="sensei-signup-form"
 				onSubmit={ submitHandler }
 			>
-				<input
-					type="hidden"
-					name={ `gdpr[${ stepData.gdpr_field }]` }
-					value="Y"
-				/>
+				<input type="hidden" name="consent" value="1" />
 
 				<TextControl
 					className="sensei-setup-wizard__text-control sensei-signup-form__text-control"
 					placeholder={ __( 'Your email address', 'sensei-lms' ) }
 					type="email"
-					name="EMAIL"
+					name="email"
 					value={ email }
 					onChange={ setEmail }
 				/>

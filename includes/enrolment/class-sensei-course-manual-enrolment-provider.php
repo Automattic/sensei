@@ -97,15 +97,23 @@ class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_St
 	 */
 	public function enrol_learner( $user_id, $course_id ) {
 
-		// Check if they are already manually enrolled.
-		if ( $this->is_enrolled( $user_id, $course_id ) ) {
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		// Skip enrollment only when provider status, progress, and course access are already saved.
+		if ( $this->is_enrolled( $user_id, $course_id )
+			&& Sensei_Utils::has_started_course( $course_id, $user_id )
+			&& $course_enrolment->is_enrolled( $user_id ) ) {
 			return true;
 		}
 
 		$this->set_enrolment_status( $user_id, $course_id, true );
+
+		if ( false === Sensei_Utils::user_start_course( $user_id, $course_id ) ) {
+			$course_enrolment->invalidate_learner_result( $user_id );
+			return false;
+		}
 		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $course_id );
 
-		if ( ! $this->is_enrolled( $user_id, $course_id ) ) {
+		if ( ! $this->is_enrolled( $user_id, $course_id ) || ! $course_enrolment->is_enrolled( $user_id, false ) ) {
 			return false;
 		}
 

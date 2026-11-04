@@ -6,7 +6,7 @@ import { camelCase, snakeCase, omit, keyBy } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { dispatch, select, useDispatch } from '@wordpress/data';
+import { dispatch, select, useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -32,14 +32,25 @@ export const QUIZ_STORE = 'sensei/quiz-structure';
  */
 export function useQuizStructure( { clientId } ) {
 	const { setBlock, loadStructure } = useDispatch( QUIZ_STORE );
+	const isPreviewMode = useSelect(
+		( selectStore ) =>
+			selectStore( 'core/block-editor' ).getSettings().isPreviewMode,
+		[]
+	);
+
 	useEffect( () => {
+		// Previews must not replace or clear the real block in the shared store.
+		if ( isPreviewMode ) {
+			return;
+		}
+
 		setBlock( clientId );
 		loadStructure();
 
 		return () => {
 			setBlock( null );
 		};
-	}, [ setBlock, loadStructure, clientId ] );
+	}, [ setBlock, loadStructure, clientId, isPreviewMode ] );
 }
 
 registerStructureStore( {

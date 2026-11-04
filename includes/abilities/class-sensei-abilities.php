@@ -1611,7 +1611,9 @@ class Sensei_Abilities {
 	 * Permission check: user can save a course's structure.
 	 *
 	 * Shares the check with the structure REST endpoint: the user can edit the
-	 * course, every lesson id in the structure and every module id in it.
+	 * course, every lesson id in the structure and every module the save would
+	 * update or delete. The structure is checked as execute_course_structure_set()
+	 * saves it, without the read-only bookkeeping keys.
 	 *
 	 * @access private
 	 * @since $$next-version$$
@@ -1619,7 +1621,7 @@ class Sensei_Abilities {
 	 * @param array $input Ability input.
 	 */
 	public static function can_set_course_structure( $input = array() ): bool {
-		$structure = is_array( $input['structure'] ?? null ) ? $input['structure'] : array();
+		$structure = self::strip_structure_bookkeeping( is_array( $input['structure'] ?? null ) ? $input['structure'] : array() );
 
 		return Sensei_Course_Structure::can_current_user_save( (int) ( $input['course'] ?? 0 ), $structure );
 	}

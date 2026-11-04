@@ -2325,7 +2325,6 @@
       <code><![CDATA[$lesson_id]]></code>
       <code><![CDATA[$post_type->cap->edit_post]]></code>
       <code><![CDATA[$quiz_id]]></code>
-      <code><![CDATA[get_edit_post_link( absint( $lesson_course_id ) )]]></code>
       <code><![CDATA[get_edit_post_link( absint( $lesson_prerequisite_id ) )]]></code>
       <code><![CDATA[get_post_type_object( 'course' )->cap->edit_post]]></code>
       <code><![CDATA[get_post_type_object( 'lesson' )->cap->edit_post]]></code>
@@ -4450,13 +4449,6 @@
       <code><![CDATA[! self::$instance]]></code>
       <code><![CDATA[self::$instance]]></code>
     </DocblockTypeContradiction>
-  </file>
-  <file src="includes/email-signup/template.php">
-    <DeprecatedClass>
-      <code><![CDATA[Sensei_Email_Signup_Form::GDPR_EMAIL_FIELD_ID]]></code>
-      <code><![CDATA[Sensei_Email_Signup_Form::MC_LIST_ID]]></code>
-      <code><![CDATA[Sensei_Email_Signup_Form::MC_USER_ID]]></code>
-    </DeprecatedClass>
   </file>
   <file src="includes/emails/class-sensei-email-learner-completed-course.php">
     <InvalidGlobal>
