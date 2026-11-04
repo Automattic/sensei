@@ -357,17 +357,17 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 	 */
 	public function testPost_ModuleIdOwnedByAnotherTeacherGiven_Returns403() {
 		$teacher_a_id = $this->get_user_by_role( 'teacher' );
-		$module_id    = $this->factory->term->create(
+		$this->login_as_teacher_b();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		// The slug is teacher B's, as after a teacher change, while the term meta still names teacher A.
+		$module_id = $this->factory->term->create(
 			array(
 				'taxonomy' => 'module',
 				'name'     => 'Teacher A module',
-				'slug'     => $teacher_a_id . '-teacher-a-module',
+				'slug'     => get_current_user_id() . '-teacher-a-module',
 			)
 		);
 		add_term_meta( $module_id, 'module_author', $teacher_a_id, true );
-
-		$this->login_as_teacher_b();
-		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
 		$structure = array(
 			array(
 				'type'    => 'module',

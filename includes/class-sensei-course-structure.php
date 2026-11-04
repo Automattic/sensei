@@ -57,13 +57,11 @@ class Sensei_Course_Structure {
 	 * Check whether the current user may save a structure for a course.
 	 *
 	 * Shared by the course structure REST controller and the `sensei/course-structure-set`
-	 * ability. Lessons without an id do not exist yet, so they are always allowed; lessons
-	 * with an id need `edit_post`. Modules need `edit_term` on every existing module save()
-	 * may write to: the one the id names (or, when that term was deleted by a teacher
-	 * change, the one the editor's `lastTitle` resolves to) and the one the title names,
-	 * which save() reuses for an id-less module and merges a retitled module into. This
-	 * limits teachers to their own content. A module that resolves to nothing has nothing
-	 * to protect and is left for save() to create or report.
+	 * ability. The structure is resolved the same way save() resolves it: every lesson id
+	 * needs `edit_post`, every module term save() would update needs `edit_term` and every
+	 * module term save() would delete needs `delete_term`. This limits teachers to their own
+	 * content. A structure that does not resolve has nothing to protect: save() rejects it
+	 * with the same error before writing anything.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -88,30 +86,36 @@ class Sensei_Course_Structure {
 			return false;
 		}
 
-		$structure = self::instance( $course->ID );
+		$course_structure = self::instance( $course->ID );
+		$structure        = $course_structure->sanitize_structure( $raw_structure );
+		if ( is_wp_error( $structure ) ) {
+			return true;
+		}
 
-		foreach ( $raw_structure as $item ) {
-			if ( ! is_array( $item ) ) {
+		foreach ( $structure as $item ) {
+			if ( 'lesson' === $item['type'] ) {
+				if ( ! self::can_current_user_edit_lesson( $item ) ) {
+					return false;
+				}
+
 				continue;
 			}
 
-			$type = $item['type'] ?? null;
+			$module_writes = $course_structure->resolve_module_writes( $item );
 
-			if ( 'lesson' === $type && ! self::can_current_user_edit_item( 'edit_post', $item ) ) {
+			if ( $module_writes['update'] && ! current_user_can( 'edit_term', $module_writes['update'] ) ) {
 				return false;
 			}
 
-			if ( 'module' === $type ) {
-				foreach ( $structure->get_module_ids_to_authorize( $item ) as $module_id ) {
-					if ( ! current_user_can( 'edit_term', $module_id ) ) {
-						return false;
-					}
+			foreach ( $module_writes['delete'] as $module_id ) {
+				if ( ! current_user_can( 'delete_term', $module_id ) ) {
+					return false;
 				}
+			}
 
-				foreach ( (array) ( $item['lessons'] ?? array() ) as $lesson_item ) {
-					if ( ! self::can_current_user_edit_item( 'edit_post', $lesson_item ) ) {
-						return false;
-					}
+			foreach ( $item['lessons'] as $lesson_item ) {
+				if ( ! self::can_current_user_edit_lesson( $lesson_item ) ) {
+					return false;
 				}
 			}
 		}
@@ -120,52 +124,14 @@ class Sensei_Course_Structure {
 	}
 
 	/**
-	 * Find the existing module terms a structure item may write to, for the permission check.
+	 * Check whether the current user may edit the lesson a sanitized structure item refers to.
 	 *
-	 * The id names one: changing a course's teacher can delete that term before the editor
-	 * saves its outline, and sanitize_item() then falls back to the module created for the
-	 * previous title. The title names another: sanitize_item() reuses it for an id-less
-	 * module, and save_module() merges a module into it when the given module's slug no
-	 * longer matches the title, so its description can be overwritten either way.
+	 * @param array $item Sanitized lesson item.
 	 *
-	 * @param array $item Raw module item.
-	 *
-	 * @return int[] Term IDs to check `edit_term` on; empty when the item refers to no existing module.
+	 * @return bool True when the lesson does not exist yet, or the user can edit it.
 	 */
-	private function get_module_ids_to_authorize( array $item ): array {
-		$module_ids = array();
-		$module_id  = (int) ( $item['id'] ?? 0 );
-
-		if ( $module_id && get_term( $module_id, 'module' ) instanceof WP_Term ) {
-			$module_ids[] = $module_id;
-		} elseif ( $module_id && ! empty( $item['lastTitle'] ) && is_string( $item['lastTitle'] ) ) {
-			$module_ids[] = $this->get_existing_module( $item['lastTitle'] );
-		}
-
-		if ( ! empty( $item['title'] ) && is_string( $item['title'] ) ) {
-			// Same sanitization as sanitize_item(), so the lookup lands on the same term.
-			$module_ids[] = $this->get_existing_module( trim( sanitize_text_field( $item['title'] ) ) );
-		}
-
-		return array_values( array_unique( array_filter( $module_ids ) ) );
-	}
-
-	/**
-	 * Check whether the current user may edit the lesson a structure item refers to.
-	 *
-	 * @param string $capability Meta capability to check against the item id, such as `edit_post`.
-	 * @param mixed  $item       Structure item.
-	 *
-	 * @return bool True when the item has no id, or the user has the capability for it.
-	 */
-	private static function can_current_user_edit_item( string $capability, $item ): bool {
-		$id = is_array( $item ) ? ( $item['id'] ?? null ) : null;
-
-		if ( ! $id ) {
-			return true;
-		}
-
-		return current_user_can( $capability, $id );
+	private static function can_current_user_edit_lesson( array $item ): bool {
+		return ! $item['id'] || current_user_can( 'edit_post', $item['id'] );
 	}
 
 	/**
@@ -418,24 +384,12 @@ class Sensei_Course_Structure {
 	 * }
 	 */
 	private function save_module( array $item ) {
-		if ( $item['id'] || $item['slug'] ) {
-			$term         = $item['id'] ? get_term( $item['id'], 'module' ) : null;
-			$default_slug = $this->get_module_slug( $item['title'] );
-			// Custom slug gets priority over conventional slug.
-			$slug = $item['slug'] ?? $default_slug;
+		$module_writes = $this->resolve_module_writes( $item );
 
-			if ( ! $term instanceof WP_Term || $term->slug !== $slug ) {
-				$existing_module = $this->try_get_existing_module_by_slug_or_title_for_author( $slug, $item['title'] );
-				if ( $existing_module ) {
-					$temp_item       = $item;
-					$temp_item['id'] = $existing_module->term_id;
-					$module_id       = $this->update_module( $temp_item );
-				} else {
-					$module_id = $this->create_module( $item );
-				}
-			} else {
-				$module_id = $this->update_module( $item );
-			}
+		if ( $module_writes['update'] ) {
+			$update_item       = $item;
+			$update_item['id'] = $module_writes['update'];
+			$module_id         = $this->update_module( $update_item );
 		} else {
 			$module_id = $this->create_module( $item );
 		}
@@ -460,20 +414,14 @@ class Sensei_Course_Structure {
 			$lesson_ids[] = $lesson_id;
 		}
 
-		if ( ! empty( $item['slug'] ) && ! empty( $item['lastTitle'] ) ) {
-			// If a custom slug is defined, remove any unused module generated when changing teacher.
-			$previous_term = get_term_by( 'slug', $this->get_module_slug( $item['lastTitle'] ), 'module' );
-			$previous_term && Sensei()->modules->remove_if_unused( $previous_term->term_id );
-		}
-
-		// If the previous id does not match the current id, remove the previous module.
 		if ( $item['id'] && $item['id'] !== $module_id ) {
 			wp_remove_object_terms( $this->course_id, $item['id'], 'module' );
+		}
 
-			// Only delete the previous module when the current user may delete it.
-			// The id is client-supplied, so this prevents deleting another teacher's module.
-			if ( current_user_can( 'delete_term', $item['id'] ) ) {
-				Sensei()->modules->remove_if_unused( $item['id'] );
+		// can_current_user_save() refuses these up front; the check here covers callers that skipped it.
+		foreach ( $module_writes['delete'] as $delete_module_id ) {
+			if ( current_user_can( 'delete_term', $delete_module_id ) ) {
+				Sensei()->modules->remove_if_unused( $delete_module_id );
 			}
 		}
 
@@ -483,6 +431,71 @@ class Sensei_Course_Structure {
 			$module_id,
 			$lesson_ids,
 		];
+	}
+
+	/**
+	 * Resolve which module terms saving a module item writes to.
+	 *
+	 * Both save_module() and can_current_user_save() read the answer from here, so the
+	 * permission check covers exactly the terms the save touches. A module is updated when
+	 * its id names a term whose slug matches the requested one, or when another term already
+	 * exists for the requested slug or title and the course teacher; otherwise one is created.
+	 * The term the id named is deleted when the save moves to a different term, and so is the
+	 * module the editor's `lastTitle` names when the module carries a custom slug. The term
+	 * being updated is never a deletion candidate.
+	 *
+	 * @param array $item Sanitized module item.
+	 *
+	 * @return array {
+	 *     @type int|null $update Term ID to update, or null to create a module.
+	 *     @type int[]    $delete Term IDs save_module() removes when they end up unused.
+	 * }
+	 */
+	private function resolve_module_writes( array $item ): array {
+		$update = null;
+
+		if ( $item['id'] || $item['slug'] ) {
+			$term = $item['id'] ? get_term( $item['id'], 'module' ) : null;
+			// Custom slug gets priority over conventional slug.
+			$slug = $item['slug'] ?? $this->get_module_slug( $item['title'] );
+
+			if ( $term instanceof WP_Term && $term->slug === $slug ) {
+				$update = (int) $term->term_id;
+			} else {
+				$existing_module = $this->try_get_existing_module_by_slug_or_title_for_author( $slug, $item['title'] );
+				$update          = $existing_module ? (int) $existing_module->term_id : null;
+			}
+		}
+
+		$delete = array();
+
+		if ( ! empty( $item['slug'] ) && ! empty( $item['lastTitle'] ) ) {
+			// A custom slug leaves behind the module generated from the title when the teacher changed.
+			$previous_term = get_term_by( 'slug', $this->get_module_slug( $item['lastTitle'] ), 'module' );
+			if ( $previous_term instanceof WP_Term ) {
+				$delete[] = (int) $previous_term->term_id;
+			}
+		}
+
+		if ( $item['id'] && get_term( $item['id'], 'module' ) instanceof WP_Term ) {
+			$delete[] = (int) $item['id'];
+		}
+
+		$delete = array_values(
+			array_unique(
+				array_filter(
+					$delete,
+					function ( $module_id ) use ( $update ) {
+						return $module_id !== $update;
+					}
+				)
+			)
+		);
+
+		return array(
+			'update' => $update,
+			'delete' => $delete,
+		);
 	}
 
 	/**
