@@ -126,7 +126,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			$current_datetime
 		);
 
-		if ( $id && Progress_Storage_Settings::is_cache_enabled() ) {
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_set( self::get_prefixed_key( $this->get_cache_key( $quiz_id, $user_id ), self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
 		}
 
