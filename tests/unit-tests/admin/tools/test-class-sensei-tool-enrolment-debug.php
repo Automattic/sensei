@@ -28,7 +28,7 @@ class Sensei_Tool_Enrolment_Debug_Test extends WP_UnitTestCase {
 		update_option( 'date_format', 'F j, Y' );
 		update_option( 'time_format', 'g:i a' );
 		$this->maybe_enable_hpps_tables_repository();
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
 	}
 
 	public function tearDown(): void {
@@ -73,12 +73,13 @@ class Sensei_Tool_Enrolment_Debug_Test extends WP_UnitTestCase {
 	 * @return string
 	 */
 	private function get_tool_output( int $student_id, int $course_id ): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Preserve the test request state.
 		$original_get = $_GET;
-		$_GET         = [
+		$_GET         = array(
 			'user_id'   => $student_id,
 			'course_id' => $course_id,
 			'_wpnonce'  => wp_create_nonce( Sensei_Tool_Enrolment_Debug::NONCE_ACTION ),
-		];
+		);
 		$tool         = new Sensei_Tool_Enrolment_Debug();
 
 		try {
