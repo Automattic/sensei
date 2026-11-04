@@ -19,8 +19,7 @@ This skill verifies that a change actually behaves correctly from a user's persp
 For browser checks and targeted Playwright specs that use a course, check
 `Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id )` for the
 test course. If it returns false, enable Learning Mode for that course and
-confirm it returns true before testing. Restore the original course setting
-afterward if you changed an existing course.
+confirm it returns true before testing.
 
 ## Sensei surface map
 
