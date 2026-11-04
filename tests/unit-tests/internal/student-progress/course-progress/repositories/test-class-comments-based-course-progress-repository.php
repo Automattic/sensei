@@ -2,16 +2,20 @@
 
 namespace SenseiTest\Internal\Student_Progress\Course_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+
+require_once __DIR__ . '/test-class-course-progress-repository.php';
 
 /**
  * Tests for the Comments_Based_Course_Progress_Repository_Test class.
  *
  * @covers \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository
  */
-class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
+class Comments_Based_Course_Progress_Repository_Test extends Course_Progress_Repository_Test {
 	protected $factory;
 
 	public function setUp(): void {
@@ -20,6 +24,9 @@ class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -198,6 +205,76 @@ class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertTrue( $repository->has( $course_id, $user_id ) );
 	}
 
+	/**
+	 * A missing status comment must be persisted before save can succeed.
+	 *
+	 * @dataProvider missing_comment_save_modes
+	 * @covers \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository::save
+	 */
+	public function testSave_MissingCommentInsertFailed_ThrowsAndRetries( string $mode, ?string $table_status ): void {
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+
+		$this->set_progress_storage_mode( $mode );
+
+		$repository = \Sensei()->course_progress_repository;
+		$progress   = $repository->create( $course_id, $user_id );
+		$progress->complete();
+		$events_before = did_action( 'sensei_course_status_updated' );
+		$failure       = null;
+
+		$this->fail_progress_comment_insert( 'course', $course_id, $user_id );
+
+		try {
+			$repository->save( $progress );
+		} catch ( Persistence_Exception $exception ) {
+			$failure = $exception;
+		}
+
+		self::assertInstanceOf( Persistence_Exception::class, $failure, 'A missing comment insert must report failure.' );
+		self::assertSame(
+			$events_before,
+			did_action( 'sensei_course_status_updated' ),
+			'Failed status inserts must not notify observers.'
+		);
+
+		$wpdb = $GLOBALS['wpdb'];
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Inspect persisted rows after an injected insert failure.
+		$saved_status = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT status FROM {$wpdb->prefix}sensei_lms_progress WHERE post_id = %d AND user_id = %d AND type = %s",
+				$course_id,
+				$user_id,
+				'course'
+			)
+		);
+		self::assertSame( $table_status, $saved_status, 'Writes before the failure must be retained; dependent writes must stop.' );
+
+		$this->restore_progress_insert_failure();
+		$repository->save( $progress );
+		self::assertSame(
+			'complete',
+			$repository->get( $course_id, $user_id )->get_status(),
+			'Retry should persist the requested status.'
+		);
+	}
+
+	/**
+	 * Storage modes and the table state retained after a failed comment insert.
+	 *
+	 * @return array
+	 */
+	public static function missing_comment_save_modes(): array {
+		if ( self::is_hpps_tables_mode() ) {
+			return array( 'tables primary' => array( 'tables', 'complete' ) );
+		}
+
+		return array(
+			'comments only'    => array( 'comments-only', null ),
+			'comments primary' => array( 'comments', 'complete' ),
+		);
+	}
+
 	public function testSave_CommentsBasedProgressGiven_ThrowsException(): void {
 		/* Arrange. */
 		$progress   = $this->createMock( Course_Progress_Interface::class );
@@ -279,5 +356,23 @@ class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 			'course_id' => $progress->get_course_id(),
 			'status'    => $progress->get_status(),
 		];
+	}
+
+	/**
+	 * Construct the comments-backed repository.
+	 *
+	 * @return Course_Progress_Repository_Interface The repository.
+	 */
+	protected function get_repository(): Course_Progress_Repository_Interface {
+		return new Comments_Based_Course_Progress_Repository();
+	}
+
+	/**
+	 * Identify the progress insertion table.
+	 *
+	 * @return string Table name.
+	 */
+	protected function get_insert_table(): string {
+		return $GLOBALS['wpdb']->comments;
 	}
 }

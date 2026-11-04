@@ -1,5 +1,7 @@
 <?php
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
@@ -15,8 +17,11 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
  * phpcs:disable Generic.Commenting.DocComment.MissingShort
  */
 class Sensei_Utils_Test extends WP_UnitTestCase {
+	use Sensei_HPPS_Helpers;
+	use Sensei_Progress_Insert_Failure_Helpers;
 	use \Sensei_File_System_Helper;
 	use \Sensei_Clock_Helpers;
+	use \Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
 	 * Setup function.
@@ -35,6 +40,9 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -332,6 +340,258 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$this->assertSame( 12.34, $quiz_submission->get_final_grade() );
 	}
 
+	/**
+	 * A missing course record must be created before changing an existing grade.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::sensei_grade_quiz
+	 */
+	public function testSenseiGradeQuiz_CourseInsertFailed_PreservesExistingGrade( string $mode ): void {
+		$data      = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $data['lesson_ids'][0];
+		$quiz_id   = $data['quiz_ids'][0];
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'course',
+			function () use ( $lesson_id, $quiz_id, $user_id ) {
+				Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+				$comments = Sensei()->lesson_progress_repository_factory->create_comments_based_repository()->get( $lesson_id, $user_id );
+				update_comment_meta( $comments->get_id(), 'questions_asked', '1' );
+				$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+				$submission->set_final_grade( 75 );
+				Sensei()->quiz_submission_repository->save( $submission );
+
+				$result = Sensei_Utils::sensei_grade_quiz( $quiz_id, 25, $user_id );
+
+				self::assertFalse( $result, 'Missing required course progress must reject grading.' );
+				self::assertEquals( 75, Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'An existing grade must remain unchanged.' );
+			}
+		);
+	}
+
+	/**
+	 * A comment lost after progress was read must not produce completion success.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_CommentInsertFailedDuringSave_ReturnsFalseWithoutCompletion( string $mode ): void {
+		$lesson_id = $this->factory->lesson->create();
+		$user_id   = $this->factory->user->create();
+		$completed = did_action( 'sensei_user_lesson_end' );
+
+		$this->set_progress_storage_mode( $mode );
+
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+
+		$this->fail_progress_comment_insert( 'lesson', $lesson_id, $user_id, 'complete' );
+
+		$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+
+		self::assertFalse( $result, 'The caller must report the required insert failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'Completion must not be announced after failure.' );
+	}
+
+	/**
+	 * Starting a lesson also starts its course for the student.
+	 *
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_WhenLessonHadCourse_StartsCourse() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$user_id        = $this->factory->user->create();
+
+		/* Act */
+		Sensei_Utils::sensei_start_lesson( $course_lessons['lesson_ids'][0], $user_id );
+
+		/* Assert */
+		self::assertNotFalse( Sensei_Utils::has_started_course( $course_lessons['course_id'], $user_id ) );
+	}
+
+	/**
+	 * A failed lesson insert must stop its start and completion events.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_PrimaryInsertFailed_ReturnsFalseWithoutCompletion( string $mode ): void {
+		$course_lessons = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$lesson_id      = $course_lessons['lesson_ids'][0];
+		$user_id        = $this->factory->user->create();
+		$completed      = did_action( 'sensei_user_lesson_end' );
+		$started        = did_action( 'sensei_user_lesson_start' );
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'lesson',
+			function () use ( $lesson_id, $user_id, $completed, $started ) {
+				$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+
+				self::assertFalse( $result, 'Lesson creation must report failure.' );
+				self::assertNull( Sensei()->lesson_progress_repository->get( $lesson_id, $user_id ), 'No lesson progress may be returned.' );
+				self::assertSame( $started + 1, did_action( 'sensei_user_lesson_start' ), 'The start hook must retain its position before progress creation.' );
+				self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'The failed lesson must not announce completion.' );
+			}
+		);
+	}
+
+	/**
+	 * Extension completion calls retain failure returns inside Sensei's hook dispatch.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 * @covers Sensei_Utils::user_complete_course
+	 */
+	public function testUserCompleteCourse_ExtensionCalledDuringLessonHook_ReturnsFalseWithoutInterruptingCallback( string $mode ): void {
+		$lesson_id        = $this->factory->lesson->create();
+		$course_id        = $this->factory->course->create();
+		$user_id          = $this->factory->user->create();
+		$extension_result = null;
+		$continued        = false;
+		$observer         = static function () use ( $course_id, $user_id, &$extension_result, &$continued ) {
+			$extension_result = Sensei_Utils::user_complete_course( $course_id, $user_id );
+			$continued        = true;
+		};
+		add_action( 'sensei_user_lesson_end', $observer, 20 );
+
+		try {
+			$result = $this->with_failed_progress_insert(
+				$mode,
+				'course',
+				static function () use ( $lesson_id, $user_id ) {
+					return Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+				}
+			);
+
+			self::assertNotFalse( $result, 'An unrelated extension operation must not fail the lesson action.' );
+			self::assertFalse( $extension_result, 'The extension must receive the ordinary failure return.' );
+			self::assertTrue( $continued, 'The extension must be able to finish its callback.' );
+		} finally {
+			remove_action( 'sensei_user_lesson_end', $observer, 20 );
+		}
+	}
+
+	/**
+	 * Start listeners can initialize progress before the lesson is created.
+	 *
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_NewLessonStarted_FiresStartBeforeProgressCreation(): void {
+		$this->maybe_enable_hpps_tables_repository();
+		$lesson_id = $this->factory->lesson->create();
+		$user_id   = $this->factory->user->create();
+		$started   = null;
+		$observer  = static function ( $student_id, $started_lesson_id ) use ( &$started ) {
+			$started = Sensei_Utils::user_started_lesson( $started_lesson_id, $student_id );
+		};
+		add_action( 'sensei_user_lesson_start', $observer, 10, 2 );
+
+		try {
+			$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+			self::assertNotFalse( $result, 'The lesson should start successfully.' );
+			self::assertFalse( $started, 'Start listeners must still observe that lesson progress does not exist yet.' );
+		} finally {
+			remove_action( 'sensei_user_lesson_start', $observer, 10 );
+			$this->maybe_reset_hpps_repository();
+		}
+	}
+
+	/**
+	 * Course failures stop lesson creation and preserve the failure return.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 * @covers Sensei_Utils::user_start_course
+	 * @covers Sensei_Utils::start_user_on_course
+	 */
+	public function testSenseiStartLesson_CourseInsertFailed_DoesNotCreateLesson( string $mode ): void {
+		$course_lessons = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$lesson_id      = $course_lessons['lesson_ids'][0];
+		$user_id        = $this->factory->user->create();
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'course',
+			function () use ( $lesson_id, $user_id ) {
+				$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+				self::assertFalse( $result, 'The enclosing start must report failure.' );
+				self::assertNull( Sensei()->lesson_progress_repository->get( $lesson_id, $user_id ), 'Dependent lesson progress must not be created.' );
+			}
+		);
+	}
+
+	/**
+	 * Aggregate save failures stop completion at the public helper boundary.
+	 *
+	 * @dataProvider dual_write_storage_modes
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_RequiredSynchronizationInsertFailed_StopsCompletion( string $mode, string $failed_store ): void {
+		$lesson_id = $this->factory->lesson->create();
+		$user_id   = $this->factory->user->create();
+		$completed = did_action( 'sensei_user_lesson_end' );
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'lesson',
+			function () use ( $mode, $lesson_id, $user_id, $completed ) {
+				$factory = Sensei()->lesson_progress_repository_factory;
+				$primary = 'tables' === $mode ? new \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository( $GLOBALS['wpdb'] ) : $factory->create_comments_based_repository();
+				$primary->create( $lesson_id, $user_id );
+
+				$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+
+				self::assertFalse( $result, 'The enclosing operation must report the required save failure.' );
+				self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'Failed synchronization must not announce completed progress.' );
+			},
+			$failed_store
+		);
+	}
+
+	/**
+	 * Course failures reach the lesson operation without interrupting extension callbacks.
+	 *
+	 * @dataProvider dual_write_storage_modes
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 * @covers Sensei_Course::update_status_after_lesson_change
+	 */
+	public function testSenseiStartLesson_CourseSynchronizationInsertFailed_PreservesFollowingObservers( string $mode, string $failed_store ): void {
+		$data      = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$course_id = $data['course_id'];
+		$lesson_id = $data['lesson_ids'][0];
+		$user_id   = $this->factory->user->create();
+		$observed  = false;
+		$observer  = static function () use ( &$observed ) {
+			$observed = true;
+		};
+		add_action( 'sensei_user_lesson_end', $observer, 20 );
+
+		try {
+			$this->with_failed_progress_insert(
+				$mode,
+				'course',
+				function () use ( $mode, $course_id, $lesson_id, $user_id, &$observed ) {
+					$factory = Sensei()->course_progress_repository_factory;
+					$primary = 'tables' === $mode ? new \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository( $GLOBALS['wpdb'] ) : $factory->create_comments_based_repository();
+					$primary->create( $course_id, $user_id );
+
+					$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+
+					self::assertFalse( $result, 'Nested course persistence failure must reach the lesson boundary.' );
+					self::assertTrue( $observed, 'Existing completion callbacks must still be allowed to finish.' );
+				},
+				$failed_store
+			);
+		} finally {
+			remove_action( 'sensei_user_lesson_end', $observer, 20 );
+		}
+	}
+
 	public function testIsRestRequest_WhenNotRestRequest_ReturnsFalse() {
 		/* Act. */
 		$is_rest_request = Sensei_Utils::is_rest_request();
@@ -391,6 +651,33 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertFalse( $is_frontend_request );
+	}
+
+	/**
+	 * Completing a new lesson with questions initializes its comment grade.
+	 *
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_NewLessonWithQuestionsCompleted_InitializesLessonCommentGrade() {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$user_id = $this->factory->user->create();
+			$course  = $this->factory->get_course_with_lessons(
+				array(
+					'lesson_count'   => 1,
+					'question_count' => 1,
+				)
+			);
+			Sensei_Utils::start_user_on_course( $user_id, $course['course_id'] );
+
+			Sensei_Utils::sensei_start_lesson( $course['lesson_ids'][0], $user_id, true );
+
+			$comment = Sensei_Utils::user_lesson_status( $course['lesson_ids'][0], $user_id );
+
+			self::assertSame( '0', get_comment_meta( $comment->comment_ID, 'grade', true ), 'The completed lesson comment should have its initial grade.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
 	}
 
 	public function testSenseiDeleteQuizAnswers_WhenNoQuizProvided_ReturnsFalse() {
@@ -486,6 +773,99 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A comment lost after progress was read must not produce completion success.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::user_complete_course
+	 */
+	public function testUserCompleteCourse_CommentInsertFailedDuringSave_ReturnsFalseWithoutCompletion( string $mode ): void {
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+		$completed = did_action( 'sensei_user_course_end' );
+
+		$this->set_progress_storage_mode( $mode );
+
+		Sensei()->course_progress_repository->create( $course_id, $user_id );
+
+		$this->fail_progress_comment_insert( 'course', $course_id, $user_id, 'complete' );
+
+		$result = Sensei_Utils::user_complete_course( $course_id, $user_id );
+
+		self::assertFalse( $result, 'The caller must report the required insert failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'Completion must not be announced after failure.' );
+	}
+
+	/**
+	 * Missing course progress must not become a completed invalid model.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::user_complete_course
+	 */
+	public function testUserCompleteCourse_PrimaryInsertFailed_DoesNotCompleteCourse( string $mode ): void {
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+		$completed = did_action( 'sensei_user_course_end' );
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'course',
+			function () use ( $course_id, $user_id, $completed ) {
+				$result = Sensei_Utils::user_complete_course( $course_id, $user_id );
+
+				self::assertFalse( $result, 'Failed course completion must report failure.' );
+				self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'The failed course must not announce completion.' );
+			}
+		);
+	}
+
+	/**
+	 * Course completion stores the lesson counts on its mirrored comment.
+	 *
+	 * @covers Sensei_Utils::user_complete_course
+	 * @dataProvider course_metadata_completion_provider
+	 */
+	public function testUserCompleteCourse_LessonsCompleted_UpdatesCourseCommentMetadata( $completed_lessons, $percent, $status ) {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$user_id = $this->factory->user->create();
+			$course  = $this->factory->get_course_with_lessons(
+				array(
+					'lesson_count'   => 2,
+					'question_count' => 0,
+				)
+			);
+			Sensei()->course_progress_repository->create( $course['course_id'], $user_id );
+			foreach ( array_slice( $course['lesson_ids'], 0, $completed_lessons ) as $lesson_id ) {
+				$progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+				$progress->complete();
+				Sensei()->lesson_progress_repository->save( $progress );
+			}
+
+			Sensei_Utils::user_complete_course( $course['course_id'], $user_id );
+
+			$comment = Sensei_Utils::user_course_status( $course['course_id'], $user_id );
+
+			self::assertSame( (string) $percent, get_comment_meta( $comment->comment_ID, 'percent', true ), 'The course comment should reflect the completion percentage.' );
+			self::assertSame( (string) $completed_lessons, get_comment_meta( $comment->comment_ID, 'complete', true ), 'The course comment should reflect the completed lesson count.' );
+			self::assertSame( $status, Sensei()->course_progress_repository->get( $course['course_id'], $user_id )->get_status(), 'Course status should reflect lesson completion.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
+	}
+
+	/**
+	 * Completion counts for a two-lesson course.
+	 *
+	 * @return array
+	 */
+	public static function course_metadata_completion_provider(): array {
+		return array(
+			'partially completed' => array( 1, 50, 'in-progress' ),
+			'fully completed'     => array( 2, 100, 'complete' ),
+		);
+	}
+
+	/**
 	 * Returns an associative array with parameters needed to run lesson completion test.
 	 *
 	 * @return array
@@ -503,6 +883,25 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 			'seconds' => [ 20, '20 seconds ago' ],
 			'date'    => [ 8 * 24 * 60 * 60, null ],
 		];
+	}
+
+	/**
+	 * An enrolled student who has not taken the lesson quiz gets the "not started" status.
+	 *
+	 * @covers Sensei_Utils::sensei_user_quiz_status_message
+	 */
+	public function testSenseiUserQuizStatusMessage_WhenStudentWasEnrolledInLessonCourse_ReturnsNotStartedStatus() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$user_id        = $this->factory->user->create();
+		wp_set_current_user( $user_id );
+		$this->manuallyEnrolStudentInCourse( $user_id, $course_lessons['course_id'] );
+
+		/* Act */
+		$status = Sensei_Utils::sensei_user_quiz_status_message( $course_lessons['lesson_ids'][0], $user_id, true );
+
+		/* Assert */
+		self::assertSame( 'not_started', $status['status'] );
 	}
 
 	public function testUserCountByRole_WhenCalled_ReturnsCorrectNumberOfStudents() {

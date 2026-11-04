@@ -16,6 +16,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - Shared skills live in `.agents/skills/`; `.claude/skills/` contains symlinks to the same directories for Claude Code.
 - When creating, opening, drafting, or updating a PR, follow `.agents/skills/pull-request/SKILL.md` for the PR workflow, including CI monitoring and fixes.
 - For agent-driven UI verification, read `.agents/skills/e2e-testing/SKILL.md`.
+- To smoke test Sensei's core flows, independent of any diff, read `.agents/skills/smoke-testing/SKILL.md`.
 
 ## Repository layout
 - `includes/` — main plugin PHP source.
@@ -26,7 +27,7 @@ Apply them to code you add. Do not rewrite surrounding code to match.
 - `changelog/` — per-PR changelog entries (created via `make changelog`; see Conventions).
 - `config/scoper.inc.php` — php-scoper config used during the build.
 - `scripts/linter-ci` — the diff-based PHPCS runner used by `make lint` and CI.
-- `.github/workflows/` — CI definitions; PR previews are built by `playground-preview.yml`.
+- `.github/workflows/` — CI definitions.
 
 ## Development environment
 - Run WordPress development commands inside the `make up` (wp-env) sandbox rather than against any host WordPress install — this keeps mistakes off shared/local state.

@@ -56,7 +56,7 @@ class Course_Lessons_Duplicator {
 				continue;
 			}
 
-			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
+			Sensei()->course_lessons_repository->attach_lesson( $new_lesson->ID, $new_course_id );
 
 			$update_prerequisite_object = $this->get_prerequisite_update_object( $lesson->ID, $new_lesson->ID );
 
@@ -88,8 +88,10 @@ class Course_Lessons_Duplicator {
 	private function update_lesson_prerequisite_ids( array $lessons_to_update, array $new_lesson_id_lookup ): void {
 		foreach ( $lessons_to_update as $lesson_to_update ) {
 			$old_prerequisite_id = $lesson_to_update['old_prerequisite_id'];
-			$new_prerequisite_id = $new_lesson_id_lookup[ $old_prerequisite_id ];
-			add_post_meta( $lesson_to_update['lesson_id'], '_lesson_prerequisite', $new_prerequisite_id );
+			$new_prerequisite_id = $new_lesson_id_lookup[ $old_prerequisite_id ] ?? null;
+			if ( null !== $new_prerequisite_id ) {
+				Sensei()->course_lessons_repository->set_lesson_prerequisite( $lesson_to_update['lesson_id'], $new_prerequisite_id );
+			}
 		}
 	}
 
@@ -101,7 +103,7 @@ class Course_Lessons_Duplicator {
 	 * @return array|null Object with the id of the lesson to update and its old prerequisite id.
 	 */
 	private function get_prerequisite_update_object( int $old_lesson_id, int $new_lesson_id ): ?array {
-		$lesson_prerequisite = get_post_meta( $old_lesson_id, '_lesson_prerequisite', true );
+		$lesson_prerequisite = Sensei()->course_lessons_repository->get_lesson_prerequisite_id( $old_lesson_id );
 
 		if ( empty( $lesson_prerequisite ) ) {
 			return null;
@@ -120,13 +122,12 @@ class Course_Lessons_Duplicator {
 	 * @param array $new_lesson_id_lookup An array mapping old lesson IDs to the IDs of their duplicates.
 	 */
 	private function update_lesson_order_on_course( int $course_id, array $new_lesson_id_lookup ): void {
-		$old_lesson_order_string = get_post_meta( $course_id, '_lesson_order', true );
+		$old_lesson_order = Sensei()->course_lessons_repository->get_root_lesson_order( $course_id );
 
-		if ( empty( $old_lesson_order_string ) ) {
+		if ( empty( $old_lesson_order ) ) {
 			return;
 		}
 
-		$old_lesson_order = explode( ',', $old_lesson_order_string );
 		$new_lesson_order = [];
 
 		// Map old lesson IDs to new IDs.
@@ -141,8 +142,7 @@ class Course_Lessons_Duplicator {
 		}
 
 		// Persist new lesson order to course meta.
-		$new_lesson_order_string = implode( ',', $new_lesson_order );
-		update_post_meta( $course_id, '_lesson_order', $new_lesson_order_string );
+		Sensei()->course_lessons_repository->set_root_lesson_order( $course_id, $new_lesson_order );
 	}
 
 	/**
@@ -153,8 +153,8 @@ class Course_Lessons_Duplicator {
 	 * @param int $new_course_id The ID of the new Course.
 	 */
 	private function update_lesson_order_on_lesson( int $new_lesson_id, int $old_course_id, int $new_course_id ): void {
-		$lesson_order_value = get_post_meta( $new_lesson_id, "_order_$old_course_id", true );
-		update_post_meta( $new_lesson_id, "_order_$new_course_id", $lesson_order_value );
-		delete_post_meta( $new_lesson_id, "_order_$old_course_id" );
+		$lesson_order = Sensei()->course_lessons_repository->get_lesson_order( $new_lesson_id, $old_course_id );
+		Sensei()->course_lessons_repository->set_lesson_order( $new_lesson_id, $new_course_id, $lesson_order ?? 0 );
+		Sensei()->course_lessons_repository->delete_lesson_order( $new_lesson_id, $old_course_id );
 	}
 }

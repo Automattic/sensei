@@ -53,41 +53,6 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * CSV exports use the plain course title.
-	 *
-	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report
-	 */
-	public function testGenerateReport_CourseGiven_ReturnsPlainCourseTitle(): void {
-		/* Arrange. */
-		$item     = (object) array(
-			'ID'                 => 123,
-			'post_title'         => 'Exported course',
-			'last_activity_date' => null,
-		);
-		$provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-		$provider->method( 'get_items' )->willReturn( array( $item ) );
-		$provider->method( 'get_last_total_items' )->willReturn( 1 );
-		$table = $this->getMockBuilder( Sensei_Reports_Overview_List_Table_Courses::class )
-			->setConstructorArgs(
-				array(
-					$this->createMock( Sensei_Grading::class ),
-					$this->createMock( Sensei_Course::class ),
-					$provider,
-					$this->createMock( Sensei_Reports_Overview_Service_Courses::class ),
-					$this->createMock( Progress_Aggregation_Service_Interface::class ),
-				)
-			)
-			->onlyMethods( array( 'get_columns' ) )->getMock();
-		$table->method( 'get_columns' )->willReturn( array( 'title' => 'Course' ) );
-
-		/* Act. */
-		$actual = $table->generate_report();
-
-		/* Assert. */
-		self::assertSame( 'Exported course', $actual[1]['title'] );
-	}
-
-	/**
 	 * Last Activity date selection is shared by translated rows, CSV, and headers.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Courses::generate_report

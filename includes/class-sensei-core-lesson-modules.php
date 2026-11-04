@@ -50,7 +50,7 @@ class Sensei_Core_Lesson_Modules {
 		if ( $course_id ) {
 			$course_id = intval( $course_id );
 		} else {
-			$course_id = get_post_meta( $this->lesson_id, '_lesson_course', true );
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $this->lesson_id );
 		}
 
 		// Does the incoming module belong to the course?
@@ -62,17 +62,16 @@ class Sensei_Core_Lesson_Modules {
 		// module is selected, or if the selected module does not exist in the
 		// given course.
 		if ( ! $module_id || empty( $module_id ) || ! $module_exists_in_course ) {
-			wp_delete_object_term_relationships( $this->lesson_id, $this->modules_taxonomy() );
+			Sensei()->course_lessons_repository->delete_lesson_module( (int) $this->lesson_id );
 			return;
 		}
 
 		// Assign lesson to selected module
-		wp_set_object_terms( $this->lesson_id, $module_id, $this->modules_taxonomy(), false );
+		Sensei()->course_lessons_repository->set_lesson_module( (int) $this->lesson_id, $module_id );
 
 		// Set default order for lesson inside module
-		$order_module_key = '_order_module_' . $module_id;
-		if ( ! get_post_meta( $this->lesson_id, $order_module_key, true ) ) {
-			update_post_meta( $this->lesson_id, $order_module_key, 0 );
+		if ( ! Sensei()->course_lessons_repository->get_lesson_module_order( (int) $this->lesson_id, $module_id ) ) {
+			Sensei()->course_lessons_repository->set_lesson_module_order( (int) $this->lesson_id, $module_id, 0 );
 		}
 	}
 

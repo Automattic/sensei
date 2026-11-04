@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Handle failed course and lesson progress creation and retain submitted quiz text for retry.

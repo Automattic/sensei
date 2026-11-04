@@ -851,7 +851,7 @@ class Sensei_Analysis {
 		$title         = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( $analysis_args, admin_url( 'admin.php' ) ) ), esc_html( $this->get_name() ) );
 		if ( isset( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
-			$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );
+			$course_id = Sensei()->course_lessons_repository->get_course_id( $lesson_id ) ?? 0;
 			$url       = add_query_arg(
 				array(
 					'page'      => self::PAGE_SLUG,
@@ -1071,7 +1071,7 @@ class Sensei_Analysis {
 	}
 
 	/**
-	 * Write array data to CSV
+	 * Write report data to CSV, decoding HTML entities in every cell.
 	 *
 	 * @since  1.2.0
 	 * @param  array $report_data data array
@@ -1080,6 +1080,18 @@ class Sensei_Analysis {
 	public function report_write_download( $report_data = array() ) {
 		$fp = fopen( 'php://output', 'w' );
 		foreach ( $report_data as $row ) {
+			$row = array_map(
+				/**
+				 * Decode a CSV cell.
+				 *
+				 * @param mixed $cell Cell value.
+				 * @return string Decoded cell value.
+				 */
+				static function ( $cell ) {
+					return html_entity_decode( (string) $cell, ENT_QUOTES, 'UTF-8' );
+				},
+				$row
+			);
 			fputcsv( $fp, $row, ',', '"', '' );
 		}
 		fclose( $fp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose

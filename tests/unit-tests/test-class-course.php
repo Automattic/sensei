@@ -1,6 +1,9 @@
 <?php
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
 class Sensei_Class_Course_Test extends WP_UnitTestCase {
+	use Sensei_Progress_Insert_Failure_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
@@ -427,6 +430,106 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
 
 		$this->assertTrue( $course_instance->can_access_course_content( $course_id, $user_id ), 'Standard users who are enrolled should have access to course content' );
+	}
+
+	/**
+	 * Completing the last lesson of a course completes the course for the student.
+	 *
+	 * @covers Sensei_Course::update_status_after_lesson_change
+	 */
+	public function testUpdateStatusAfterLessonChange_WhenLessonHadCourse_CompletesCourse() {
+		/* Arrange */
+		$course_lessons = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$user_id        = $this->factory->user->create();
+		$progress       = Sensei()->lesson_progress_repository->create( $course_lessons['lesson_ids'][0], $user_id );
+		$progress->complete();
+		Sensei()->lesson_progress_repository->save( $progress );
+
+		/* Act */
+		Sensei()->course->update_status_after_lesson_change( $user_id, $course_lessons['lesson_ids'][0] );
+
+		/* Assert */
+		self::assertTrue( Sensei_Utils::user_completed_course( $course_lessons['course_id'], $user_id ) );
+	}
+
+	/**
+	 * Existing callers can continue after course progress creation fails.
+	 *
+	 * @dataProvider course_status_hooks
+	 * @covers Sensei_Course::update_status_after_lesson_change
+	 * @covers Sensei_Course::update_status_after_quiz_submission
+	 */
+	public function testUpdateStatusAfterLessonChange_InsertFailedWithoutGuard_DoesNotInterruptCaller( string $mode, string $hook ): void {
+		$data     = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$user_id  = $this->factory->user->create();
+		$quiz_id  = $data['quiz_ids'][0];
+		$observed = false;
+		$observer = static function () use ( &$observed ) {
+			$observed = true;
+		};
+		update_post_meta( $quiz_id, '_quiz_lesson', $data['lesson_ids'][0] );
+		add_action( $hook, $observer, 20 );
+
+		try {
+			$this->with_failed_progress_insert(
+				$mode,
+				'course',
+				function () use ( $hook, $data, $user_id, $quiz_id ) {
+					$id = false !== strpos( $hook, 'quiz' ) ? $quiz_id : $data['lesson_ids'][0];
+					if ( 'sensei_user_quiz_grade' === $hook ) {
+						do_action( $hook, $user_id, $id, 100, 50, 'auto' );
+					} else {
+						do_action( $hook, $user_id, $id );
+					}
+
+					self::assertNull( Sensei()->course_progress_repository->get( $data['course_id'], $user_id ), 'Failed creation must not leave course progress.' );
+				}
+			);
+			self::assertTrue( $observed, 'Existing hook emitters must still reach later callbacks.' );
+		} finally {
+			remove_action( $hook, $observer, 20 );
+		}
+	}
+
+	/**
+	 * Guarded quiz actions receive failure results without changing hook arguments.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Course::update_status_after_quiz_submission
+	 */
+	public function testUpdateStatusAfterQuizSubmission_InsertFailedWithinGuard_ReportsFailure( string $mode ): void {
+		$data    = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$user_id = $this->factory->user->create();
+		update_post_meta( $data['quiz_ids'][0], '_quiz_lesson', $data['lesson_ids'][0] );
+
+		$result = $this->with_failed_progress_insert(
+			$mode,
+			'course',
+			static function () use ( $data, $user_id ) {
+				return \Sensei\Internal\Course_Status_Updates::run(
+					static function () use ( $data, $user_id ) {
+						do_action( 'sensei_user_quiz_grade', $user_id, $data['quiz_ids'][0], 100, 50, 'auto' );
+					}
+				);
+			}
+		);
+
+		self::assertFalse( $result );
+	}
+
+	/**
+	 * Existing hook emitters across progress storage modes.
+	 *
+	 * @return array
+	 */
+	public static function course_status_hooks(): array {
+		$cases = array();
+		foreach ( self::progress_storage_modes() as $name => $arguments ) {
+			foreach ( array( 'sensei_user_lesson_end', 'sensei_user_lesson_reset', 'sensei_user_quiz_grade' ) as $hook ) {
+				$cases[ $name . ' ' . $hook ] = array( $arguments[0], $hook );
+			}
+		}
+		return $cases;
 	}
 
 	/**
@@ -992,51 +1095,108 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		self::assertNotFalse( wp_cache_get( $post_id, 'category_relationships' ), 'Non-course queries should still prime the term cache.' );
 	}
 
-	public function testGetCourseLessonIds_LessonsHiddenByQueryFilters_ReturnsThePublishedLessonIds() {
+	/**
+	 * The lessons of a course come back in the order of their course positions, whatever their dates.
+	 *
+	 * @covers Sensei_Course::course_lessons
+	 */
+	public function testCourseLessons_PositionsStored_ReturnsTheLessonsInPositionOrder() {
 		/* Arrange. */
-		$course_id = $this->factory->course->create();
-		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
-		$this->factory->lesson->create(
-			array(
-				'post_status' => 'draft',
-				'meta_input'  => array( '_lesson_course' => $course_id ),
-			)
-		);
-		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $this->factory->course->create() ) ) );
-
-		add_filter(
-			'posts_where',
-			function ( $where, $query ) {
-				if ( 'lesson' === $query->get( 'post_type' ) ) {
-					$where .= ' AND 1=0';
-				}
-				return $where;
-			},
-			10,
-			2
-		);
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = array();
+		foreach ( array( 3, 1, 2 ) as $index => $position ) {
+			$lesson_ids[ $position ] = $this->factory->lesson->create(
+				array(
+					'post_date'  => '2020-01-0' . ( $index + 1 ) . ' 00:00:00',
+					'meta_input' => array(
+						'_lesson_course'       => $course_id,
+						'_order_' . $course_id => $position,
+					),
+				)
+			);
+		}
 
 		/* Act. */
-		$actual = Sensei()->course->get_course_lesson_ids( $course_id );
+		$actual = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
 
 		/* Assert. */
-		self::assertSame( array( $lesson_id ), $actual );
+		self::assertSame( array( $lesson_ids[1], $lesson_ids[2], $lesson_ids[3] ), $actual );
 	}
 
-	public function testGetCourseLessonIds_AnyPostStatusGiven_ReturnsTheDraftLessonIds() {
+	/**
+	 * A lesson whose course position is zero or empty sorts after the lessons with a position.
+	 *
+	 * @covers Sensei_Course::course_lessons
+	 * @dataProvider data_unpositionedCoursePositions
+	 *
+	 * @param string|null $position Value stored as the course position, or null for no meta.
+	 */
+	public function testCourseLessons_UnpositionedValueStored_SortsTheLessonLast( $position ) {
 		/* Arrange. */
-		$course_id = $this->factory->course->create();
-		$lesson_id = $this->factory->lesson->create(
+		$course_id  = $this->factory->course->create();
+		$meta_input = array( '_lesson_course' => $course_id );
+		if ( null !== $position ) {
+			$meta_input[ '_order_' . $course_id ] = $position;
+		}
+		$unpositioned_lesson = $this->factory->lesson->create(
 			array(
-				'post_status' => 'draft',
-				'meta_input'  => array( '_lesson_course' => $course_id ),
+				'post_date'  => '2020-01-01 00:00:00',
+				'meta_input' => $meta_input,
+			)
+		);
+		$positioned_lesson   = $this->factory->lesson->create(
+			array(
+				'post_date'  => '2020-01-02 00:00:00',
+				'meta_input' => array(
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 1,
+				),
 			)
 		);
 
 		/* Act. */
-		$actual = Sensei()->course->get_course_lesson_ids( $course_id, array( 'post_status' => 'any' ) );
+		$actual = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
 
 		/* Assert. */
-		self::assertSame( array( $lesson_id ), $actual );
+		self::assertSame( array( $positioned_lesson, $unpositioned_lesson ), $actual );
+	}
+
+	/**
+	 * Course position values that count as no position.
+	 *
+	 * @return array
+	 */
+	public function data_unpositionedCoursePositions() {
+		return array(
+			'no meta'      => array( null ),
+			'zero'         => array( '0' ),
+			'empty string' => array( '' ),
+		);
+	}
+
+	/**
+	 * The legacy single course page lists the lessons in the stored root lesson order.
+	 *
+	 * @covers Sensei_Course::load_single_course_lessons_query
+	 */
+	public function testLoadSingleCourseLessonsQuery_RootLessonOrderStored_QueriesTheLessonsInThatOrder() {
+		/* Arrange. */
+		global $post, $wp_query;
+		$course       = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 3,
+				'question_count' => 0,
+			)
+		);
+		$lesson_order = array_reverse( $course['lesson_ids'] );
+		Sensei()->course_lessons_repository->set_root_lesson_order( $course['course_id'], $lesson_order );
+		$post = get_post( $course['course_id'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		/* Act. */
+		Sensei_Course::load_single_course_lessons_query();
+		$actual = wp_list_pluck( $wp_query->posts, 'ID' );
+
+		/* Assert. */
+		self::assertSame( $lesson_order, $actual );
 	}
 }

@@ -87,7 +87,8 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		);
 
 		if ( isset( $filters['search'] ) ) {
-			$lessons_args['s'] = $filters['search'];
+			// WP_Query strips slashes from search text before parsing it.
+			$lessons_args['s'] = wp_slash( $filters['search'] );
 		}
 
 		// Using WP_Query as get_posts() doesn't support 'found_posts'.

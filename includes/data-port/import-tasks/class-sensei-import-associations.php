@@ -144,10 +144,10 @@ class Sensei_Import_Associations
 			}
 
 			// Check to see if this lesson was set to multiple courses in the import.
-			$current_lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			$current_lesson_course_id = Sensei()->course_lessons_repository->get_course_id( $lesson_id );
 			if (
 				$current_lesson_course_id
-				&& intval( $current_lesson_course_id ) !== intval( $course_id )
+				&& intval( $course_id ) !== $current_lesson_course_id
 				&& $this->get_job()->was_imported( Sensei_Data_Port_Course_Schema::POST_TYPE, $current_lesson_course_id )
 			) {
 				$add_warning_helper(
@@ -160,7 +160,7 @@ class Sensei_Import_Associations
 			}
 
 			// Add the lesson to the course.
-			update_post_meta( $lesson_id, '_lesson_course', $course_id );
+			Sensei()->course_lessons_repository->attach_lesson( $lesson_id, $course_id );
 
 			$module_term_id = $this->get_lesson_module( $lesson_id );
 			if ( $module_term_id ) {
@@ -170,10 +170,10 @@ class Sensei_Import_Associations
 					$module_indices[ $module_term_id ]++;
 				}
 
-				update_post_meta( $lesson_id, '_order_module_' . $module_term_id, $module_indices[ $module_term_id ] );
+				Sensei()->course_lessons_repository->set_lesson_module_order( $lesson_id, $module_term_id, $module_indices[ $module_term_id ] );
 			} else {
 				$lesson_order[] = $lesson_id;
-				update_post_meta( $lesson_id, '_order_' . $course_id, $order_index );
+				Sensei()->course_lessons_repository->set_lesson_order( $lesson_id, $course_id, $order_index );
 
 				$order_index++;
 			}
@@ -181,12 +181,12 @@ class Sensei_Import_Associations
 			$all_lessons[] = $lesson_id;
 		}
 
-		update_post_meta( $course_id, '_lesson_order', implode( ',', $lesson_order ) );
+		Sensei()->course_lessons_repository->set_root_lesson_order( $course_id, $lesson_order );
 
 		// Remove lessons on the course that weren't included in the course import.
 		$old_lessons = array_diff( $current_lessons, $all_lessons );
 		foreach ( $old_lessons as $lesson_id ) {
-			delete_post_meta( $lesson_id, '_lesson_course' );
+			Sensei()->course_lessons_repository->detach_lesson( $lesson_id );
 		}
 	}
 
@@ -291,7 +291,7 @@ class Sensei_Import_Associations
 			return false;
 		}
 
-		$result = wp_set_object_terms( $lesson_id, [ $term->term_id ], 'module' );
+		$result = Sensei()->course_lessons_repository->set_lesson_module( $lesson_id, $term->term_id );
 		if ( is_wp_error( $result ) ) {
 			$add_warning_helper( $result->get_error_message(), $result->get_error_code() );
 

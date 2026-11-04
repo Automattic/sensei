@@ -231,4 +231,59 @@ class Sensei_Template_Functions_Test extends WP_UnitTestCase {
 		// Next
 		$this->assertArrayNotHasKey( 'next', $nav_links, 'Next - No key' );
 	}
+
+	/**
+	 * The lesson meta passes the lesson's course to the back link action.
+	 *
+	 * @covers sensei_the_single_lesson_meta
+	 */
+	public function testSenseiTheSingleLessonMeta_WhenLessonHadCourse_PassesCourseIdToBackLinkAction() {
+		/* Arrange */
+		$course = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'subscriber' ) ) );
+		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
+
+		$back_link_course_id = null;
+		add_action(
+			'sensei_lesson_back_link',
+			function ( $course_id ) use ( &$back_link_course_id ) {
+				$back_link_course_id = $course_id;
+			}
+		);
+
+		/* Act */
+		ob_start();
+		sensei_the_single_lesson_meta();
+		ob_end_clean();
+
+		/* Assert */
+		self::assertSame( $course['course_id'], $back_link_course_id );
+	}
+
+	/**
+	 * The lesson meta passes 0 to the back link action for a lesson that belongs to no course.
+	 *
+	 * @covers sensei_the_single_lesson_meta
+	 */
+	public function testSenseiTheSingleLessonMeta_WhenLessonHadNoCourse_PassesZeroToBackLinkAction() {
+		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'subscriber' ) ) );
+		$GLOBALS['post'] = $this->factory->lesson->create_and_get();
+
+		$back_link_course_id = null;
+		add_action(
+			'sensei_lesson_back_link',
+			function ( $course_id ) use ( &$back_link_course_id ) {
+				$back_link_course_id = $course_id;
+			}
+		);
+
+		/* Act */
+		ob_start();
+		sensei_the_single_lesson_meta();
+		ob_end_clean();
+
+		/* Assert */
+		self::assertSame( 0, $back_link_course_id );
+	}
 }

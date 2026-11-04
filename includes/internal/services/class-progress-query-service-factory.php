@@ -113,6 +113,23 @@ class Progress_Query_Service_Factory {
 	}
 
 	/**
+	 * Create a student management listing service.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return Student_Management_Listing_Service_Interface The student listing service.
+	 */
+	public function create_student_management_listing_service(): Student_Management_Listing_Service_Interface {
+		global $wpdb;
+
+		if ( $this->storage_configuration->is_table_reading_enabled() ) {
+			return new Tables_Based_Student_Management_Listing_Service( $wpdb );
+		}
+
+		return new Comments_Based_Student_Management_Listing_Service();
+	}
+
+	/**
 	 * Create a Progress_Aggregation_Service_Interface instance.
 	 *
 	 * Returns a tables-based implementation when HPPS is enabled and the tables
