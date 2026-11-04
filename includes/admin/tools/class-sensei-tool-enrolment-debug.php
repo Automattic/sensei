@@ -213,16 +213,22 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 		$course_progress = Sensei()->course_progress_repository->get( $course->ID, $user->ID );
 		if ( $course_progress ) {
 			$started_at           = $course_progress->get_started_at();
-			$start_time           = $started_at ? $started_at->getTimestamp() : false;
+			$start_date           = false;
 			$course_activity_time = $course_progress->get_updated_at()->getTimestamp();
 			$status               = esc_html__( 'In Progress', 'sensei-lms' );
+
+			// Migrated zero dates normalize to a year before 1.
+			if ( $started_at && 0 < (int) $started_at->format( 'Y' ) ) {
+				$start_date = self::format_date( $started_at->getTimestamp() );
+			}
 
 			if ( $course_progress instanceof Comments_Based_Course_Progress ) {
 				$course_comment = get_comment( $course_progress->get_id() );
 
 				if ( $course_comment ) {
 					// Preserve the debug tool's existing interpretation of legacy comment dates.
-					$start_time           = strtotime( get_comment_meta( $course_comment->comment_ID, 'start', true ) );
+					$comment_start_date   = get_comment_meta( $course_comment->comment_ID, 'start', true );
+					$start_date           = self::format_date( strtotime( $comment_start_date ) );
 					$course_activity_time = strtotime( $course_comment->comment_date_gmt );
 				}
 			}
@@ -237,7 +243,7 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 			$last_activity_time = $this->get_last_progress_activity_date( $user->ID, $course->ID, $course_activity_time );
 
 			$debug_results['progress'] = [
-				'start_date'       => self::format_date( $start_time ),
+				'start_date'       => $start_date,
 				'last_activity'    => $last_activity_time ? self::format_date( $last_activity_time ) : false,
 				'status'           => $status,
 				'percent_complete' => $percent_complete,

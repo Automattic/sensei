@@ -87,18 +87,37 @@ class Sensei_Tool_Enrolment_Debug_Test extends WP_UnitTestCase {
 		$lesson_progress->complete();
 		Sensei()->lesson_progress_repository->save( $lesson_progress );
 
-		$comments_repository = Sensei()->lesson_progress_repository_factory->create_comments_based_repository();
-		$comment_progress    = $comments_repository->get( $lesson_ids[0], $student_id );
+		$course_comments_repository = Sensei()->course_progress_repository_factory->create_comments_based_repository();
+		$course_comment_progress    = $course_comments_repository->get( $course_id, $student_id );
 		wp_update_comment(
 			[
-				'comment_ID'       => $comment_progress->get_id(),
-				'comment_date'     => '2030-02-03 14:00:00',
-				'comment_date_gmt' => '2030-02-03 14:00:00',
+				'comment_ID'       => $course_comment_progress->get_id(),
+				'comment_date'     => '2024-01-01 12:00:00',
+				'comment_date_gmt' => '2024-01-01 12:00:00',
 			]
 		);
 		$wpdb->update(
 			$wpdb->prefix . 'sensei_lms_progress',
-			[ 'updated_at' => '2030-02-03 14:00:00' ],
+			[ 'updated_at' => '2024-01-01 12:00:00' ],
+			[
+				'post_id' => $course_id,
+				'user_id' => $student_id,
+				'type'    => 'course',
+			]
+		);
+
+		$lesson_comments_repository = Sensei()->lesson_progress_repository_factory->create_comments_based_repository();
+		$lesson_comment_progress    = $lesson_comments_repository->get( $lesson_ids[0], $student_id );
+		wp_update_comment(
+			[
+				'comment_ID'       => $lesson_comment_progress->get_id(),
+				'comment_date'     => '2024-02-03 14:00:00',
+				'comment_date_gmt' => '2024-02-03 14:00:00',
+			]
+		);
+		$wpdb->update(
+			$wpdb->prefix . 'sensei_lms_progress',
+			[ 'updated_at' => '2024-02-03 14:00:00' ],
 			[
 				'post_id' => $lesson_ids[0],
 				'user_id' => $student_id,
@@ -115,7 +134,7 @@ class Sensei_Tool_Enrolment_Debug_Test extends WP_UnitTestCase {
 			'Completed lessons should determine the in-progress percentage.'
 		);
 		self::assertStringContainsString(
-			'Last activity on February 3, 2030 2:00 pm',
+			'Last activity on February 3, 2024 2:00 pm',
 			$output,
 			'A newer lesson update should determine last activity.'
 		);
@@ -226,6 +245,54 @@ class Sensei_Tool_Enrolment_Debug_Test extends WP_UnitTestCase {
 			$output,
 			'The table update date should be the course activity baseline.'
 		);
+	}
+
+	/**
+	 * Unavailable table start dates must not be shown as actual start dates.
+	 *
+	 * @dataProvider unavailable_table_start_dates
+	 * @covers Sensei_Tool_Enrolment_Debug::process
+	 * @param string|null $started_at Stored table start date.
+	 */
+	public function testProcess_TableStartDateUnavailableGiven_OmitsStartDate( ?string $started_at ) {
+		global $wpdb;
+
+		$this->set_progress_storage_mode( 'tables' );
+		$course_id        = $this->factory->course->create();
+		$student_id       = $this->factory->user->create();
+		$table_repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+		$progress         = $table_repository->create( $course_id, $student_id );
+		$wpdb->update(
+			$wpdb->prefix . 'sensei_lms_progress',
+			[ 'started_at' => $started_at ],
+			[ 'id' => $progress->get_id() ]
+		);
+		wp_cache_flush();
+
+		$output = $this->get_tool_output( $student_id, $course_id );
+
+		self::assertStringContainsString(
+			'In Progress (0%)',
+			$output,
+			'Progress should remain visible when its start date is unavailable.'
+		);
+		self::assertStringNotContainsString(
+			'Started on ',
+			$output,
+			'An unavailable table start date must not be presented as an actual date.'
+		);
+	}
+
+	/**
+	 * Tables can contain missing start dates and zero dates from migrated data.
+	 *
+	 * @return array
+	 */
+	public static function unavailable_table_start_dates(): array {
+		return [
+			'missing date'       => [ null ],
+			'migrated zero date' => [ '0000-00-00 00:00:00' ],
+		];
 	}
 
 	/**

@@ -101,10 +101,12 @@ $allowed_debug_html = [
 				echo ' (' . intval( $results['progress']['percent_complete'] ) . '%)';
 				echo '</div>';
 
-				echo '<div class="info info-neutral">';
-				// translators: %s placeholder is datetime progress was started.
-				echo esc_html( sprintf( __( 'Started on %s', 'sensei-lms' ), $results['progress']['start_date'] ) );
-				echo '</div>';
+				if ( $results['progress']['start_date'] ) {
+					echo '<div class="info info-neutral">';
+					// translators: %s placeholder is datetime progress was started.
+					echo esc_html( sprintf( __( 'Started on %s', 'sensei-lms' ), $results['progress']['start_date'] ) );
+					echo '</div>';
+				}
 
 				if ( ! empty( $results['progress']['last_activity'] ) ) {
 					echo '<div class="info info-neutral">';
