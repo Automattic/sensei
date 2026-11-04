@@ -111,8 +111,12 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 				'module_count'   => 1,
 			)
 		);
-		$user_id        = $this->factory->user->create();
-		$progress       = Sensei()->lesson_progress_repository->create( $course_lessons['lesson_ids'][0], $user_id );
+		// The same module in another course, with a lesson the student has not completed.
+		$other_course = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		Sensei()->course_lessons_repository->set_lesson_module( $other_course['lesson_ids'][0], $course_lessons['modules'][0] );
+
+		$user_id  = $this->factory->user->create();
+		$progress = Sensei()->lesson_progress_repository->create( $course_lessons['lesson_ids'][0], $user_id );
 		$progress->complete();
 		Sensei()->lesson_progress_repository->save( $progress );
 
@@ -312,6 +316,32 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( array( $recent_lesson, $older_lesson ), wp_list_pluck( $actual->posts, 'ID' ) );
+	}
+
+	/**
+	 * The module archive filtered by course lists the lessons of that course only, although the module is shared.
+	 *
+	 * @covers Sensei_Core_Modules::module_archive_filter
+	 */
+	public function testModuleArchiveFilter_CourseIdRequested_ListsTheCourseLessonsOnly() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$other_course   = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$module_id      = $course_lessons['modules'][0];
+		Sensei()->course_lessons_repository->set_lesson_module( $other_course['lesson_ids'][0], $module_id );
+		Sensei()->course_lessons_repository->set_lesson_module_order( $other_course['lesson_ids'][0], $module_id, 0 );
+
+		/* Act. */
+		$this->go_to( add_query_arg( 'course_id', $course_lessons['course_id'], get_term_link( $module_id, 'module' ) ) );
+
+		/* Assert. */
+		self::assertEqualsCanonicalizing( $course_lessons['lesson_ids'], wp_list_pluck( $GLOBALS['wp_query']->posts, 'ID' ) );
 	}
 
 	/**
