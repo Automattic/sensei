@@ -43,7 +43,7 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 		$service->init();
 
 		/* Assert. */
-		self::assertSame( 10, has_action( 'pre_get_posts', array( $service, 'filter_lessons_by_course' ) ) );
+		self::assertSame( 999, has_action( 'pre_get_posts', array( $service, 'filter_lessons_by_course' ) ) );
 	}
 
 	/**
@@ -151,6 +151,50 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 					array(
 						'key'   => '_lesson_preview',
 						'value' => 'preview',
+					),
+				),
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $preview_lesson ), $actual );
+	}
+
+	/**
+	 * A query whose own meta clauses are joined with OR still requires the course.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_by_course
+	 */
+	public function testFilterLessonsByCourse_QueryWithOrMetaClausesGiven_StillRequiresTheCourse(): void {
+		/* Arrange. */
+		$course_id      = $this->factory->course->create();
+		$preview_lesson = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'  => $course_id,
+					'_lesson_preview' => 'preview',
+				),
+			)
+		);
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_preview' => 'preview' ) ) );
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_complexity' => 'hard' ) ) );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'sensei_course'  => $course_id,
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Test fixture.
+					'relation' => 'OR',
+					array(
+						'key'   => '_lesson_preview',
+						'value' => 'preview',
+					),
+					array(
+						'key'   => '_lesson_complexity',
+						'value' => 'hard',
 					),
 				),
 			)
