@@ -445,10 +445,8 @@ class Sensei_Course_Structure {
 	 *
 	 * @param array $item Sanitized module item.
 	 *
-	 * @return array {
-	 *     @type int|null $update Term ID to update, or null to create a module.
-	 *     @type int[]    $delete Term IDs save_module() removes when they end up unused.
-	 * }
+	 * @return array{update: int|null, delete: int[]} `update` is the term ID to update, or null to create a module;
+	 *                                                `delete` lists the term IDs save_module() removes when they end up unused.
 	 */
 	private function resolve_module_writes( array $item ): array {
 		$update = null;
