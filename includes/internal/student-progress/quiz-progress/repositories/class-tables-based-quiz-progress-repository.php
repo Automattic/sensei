@@ -10,6 +10,7 @@ namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 use DateTimeImmutable;
 use DateTimeZone;
 use Sensei\Internal\Cache_Prefix;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
@@ -63,6 +64,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
+	 * @throws Persistence_Exception If the required insert fails.
 	 * @return Quiz_Progress_Interface
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
@@ -80,7 +82,8 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
-		$this->wpdb->insert(
+
+		$result = $this->wpdb->insert(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'post_id'        => $quiz_id,
@@ -105,7 +108,12 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'%s',
 			]
 		);
+
 		$id = (int) $this->wpdb->insert_id;
+		if ( false === $result || $id <= 0 ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz', 'tables', $quiz_id, $user_id, false === $result ? 'insert_failed' : 'invalid_insert_id' );
+		}
 
 		$progress = new Tables_Based_Quiz_Progress(
 			$id,

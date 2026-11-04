@@ -70,7 +70,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 * @return Quiz_Progress_Interface The quiz progress.
-	 * @throws Persistence_Exception If required lesson progress creation fails.
+	 * @throws Persistence_Exception If required quiz or lesson progress cannot be created.
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		// We don't try to create comments-based quiz progress: it is part of lesson progress.

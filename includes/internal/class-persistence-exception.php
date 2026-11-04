@@ -52,7 +52,7 @@ class Persistence_Exception extends \RuntimeException {
 	 *
 	 * @param string $entity Progress entity.
 	 * @param string $store Storage implementation.
-	 * @param int    $post_id Course or lesson ID.
+	 * @param int    $post_id Course, lesson or quiz ID.
 	 * @param int    $user_id Student ID.
 	 * @param string $diagnostic Safe diagnostic code.
 	 */
@@ -60,6 +60,10 @@ class Persistence_Exception extends \RuntimeException {
 		// Comment helpers run other queries before throwing; only table inserts retain a reliable error.
 		$error   = 'tables' === $store ? $GLOBALS['wpdb']->last_error : '';
 		$failure = 'insert_failed' === $diagnostic ? 'Could not create a' : 'Could not verify a newly created';
+		if ( 'lesson_progress_missing' === $diagnostic ) {
+			$failure = 'Missing lesson progress required to create a';
+		}
+
 		parent::__construct( sprintf( '%s %s progress record in %s', $failure, sanitize_key( $entity ), sanitize_key( $store ) ) );
 		$configuration         = Sensei()->progress_storage_configuration;
 		$this->primary         = $configuration->get_read_backend();

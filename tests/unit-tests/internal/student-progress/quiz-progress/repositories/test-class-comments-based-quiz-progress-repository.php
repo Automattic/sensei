@@ -167,8 +167,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository = new \Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository();
 
 		/* Expect & Act. */
-		$this->expectException( \RuntimeException::class );
-		$this->expectExceptionMessage( 'Cannot create quiz progress' );
+		$this->expectException( Persistence_Exception::class );
 		$repository->create( $quiz_id, $user_id );
 	}
 
