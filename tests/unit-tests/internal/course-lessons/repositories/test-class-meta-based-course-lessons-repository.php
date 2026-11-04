@@ -429,4 +429,181 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( array(), $actual );
 	}
+
+	/**
+	 * A lesson is in the module it was assigned to.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::has_lesson_module
+	 */
+	public function testHasLessonModule_LessonHadTheModule_ReturnsTrue(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->set_lesson_module( $lesson_id, $module_id );
+
+		/* Act. */
+		$actual = $this->repository->has_lesson_module( $lesson_id, $module_id );
+
+		/* Assert. */
+		self::assertTrue( $actual );
+	}
+
+	/**
+	 * A lesson is not in a module it was not assigned to.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::has_lesson_module
+	 */
+	public function testHasLessonModule_LessonHadAnotherModule_ReturnsFalse(): void {
+		/* Arrange. */
+		$module_id       = $this->factory->module->create();
+		$other_module_id = $this->factory->module->create();
+		$lesson_id       = $this->factory->lesson->create();
+		$this->repository->set_lesson_module( $lesson_id, $other_module_id );
+
+		/* Act. */
+		$actual = $this->repository->has_lesson_module( $lesson_id, $module_id );
+
+		/* Assert. */
+		self::assertFalse( $actual );
+	}
+
+	/**
+	 * Setting the module of a lesson replaces the module it had instead of adding a second one.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::set_lesson_module
+	 */
+	public function testSetLessonModule_LessonHadModule_ReplacesIt(): void {
+		/* Arrange. */
+		$old_module_id = $this->factory->module->create();
+		$new_module_id = $this->factory->module->create();
+		$lesson_id     = $this->factory->lesson->create();
+		$this->repository->set_lesson_module( $lesson_id, $old_module_id );
+
+		/* Act. */
+		$this->repository->set_lesson_module( $lesson_id, $new_module_id );
+
+		/* Assert. */
+		self::assertSame( array( $new_module_id ), wp_get_object_terms( $lesson_id, 'module', array( 'fields' => 'ids' ) ) );
+	}
+
+	/**
+	 * Deleting the lesson module leaves the lesson with no module.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::delete_lesson_module
+	 */
+	public function testDeleteLessonModule_LessonHadModule_RemovesIt(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->set_lesson_module( $lesson_id, $module_id );
+
+		/* Act. */
+		$this->repository->delete_lesson_module( $lesson_id );
+
+		/* Assert. */
+		self::assertSame( array(), wp_get_object_terms( $lesson_id, 'module', array( 'fields' => 'ids' ) ) );
+	}
+
+	/**
+	 * Unsetting the lesson module leaves the lesson with no module and fires `set_object_terms`.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::unset_lesson_module
+	 */
+	public function testUnsetLessonModule_LessonHadModule_RemovesItThroughSetObjectTerms(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->set_lesson_module( $lesson_id, $module_id );
+		$set_object_terms_calls = array();
+		add_action(
+			'set_object_terms',
+			function ( $object_id ) use ( &$set_object_terms_calls ) {
+				$set_object_terms_calls[] = $object_id;
+			}
+		);
+
+		/* Act. */
+		$this->repository->unset_lesson_module( $lesson_id );
+
+		/* Assert. */
+		self::assertSame( array(), wp_get_object_terms( $lesson_id, 'module', array( 'fields' => 'ids' ) ), 'The lesson should have no module.' );
+		self::assertSame( array( $lesson_id ), $set_object_terms_calls, 'set_object_terms should fire once, for the lesson.' );
+	}
+
+	/**
+	 * A stored module order is cast to an integer like `intval()`, including zero and non-canonical numbers.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_module_order
+	 * @dataProvider storedOrdersProvider
+	 *
+	 * @param string $meta_value Value stored in the meta.
+	 * @param int    $expected   Expected order.
+	 */
+	public function testGetLessonModuleOrder_OrderStored_ReturnsItAsInteger( string $meta_value, int $expected ): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_order_module_' . $module_id => $meta_value ) ) );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_module_order( $lesson_id, $module_id );
+
+		/* Assert. */
+		self::assertSame( $expected, $actual );
+	}
+
+	/**
+	 * A lesson without a stored order in a module has no order, not an order of zero.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_module_order
+	 */
+	public function testGetLessonModuleOrder_NoOrderStored_ReturnsNull(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_module_order( $lesson_id, $module_id );
+
+		/* Assert. */
+		self::assertNull( $actual );
+	}
+
+	/**
+	 * Deleting a lesson module order removes the stored value instead of storing an empty one.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::delete_lesson_module_order
+	 */
+	public function testDeleteLessonModuleOrder_LessonHadOrder_DeletesIt(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->set_lesson_module_order( $lesson_id, $module_id, 2 );
+
+		/* Act. */
+		$this->repository->delete_lesson_module_order( $lesson_id, $module_id );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_order_module_' . $module_id ) );
+	}
+
+	/**
+	 * Deleting all the module orders of a lesson deletes the order stored for each of its modules.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::delete_all_lesson_module_orders
+	 */
+	public function testDeleteAllLessonModuleOrders_LessonHadTwoModules_DeletesBoth(): void {
+		/* Arrange. */
+		$module_ids = array( $this->factory->module->create(), $this->factory->module->create() );
+		$lesson_id  = $this->factory->lesson->create();
+		wp_set_object_terms( $lesson_id, $module_ids, 'module' );
+		$this->repository->set_lesson_module_order( $lesson_id, $module_ids[0], 1 );
+		$this->repository->set_lesson_module_order( $lesson_id, $module_ids[1], 2 );
+
+		/* Act. */
+		$this->repository->delete_all_lesson_module_orders( $lesson_id );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_order_module_' . $module_ids[0] ), 'The order in the first module should be deleted.' );
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_order_module_' . $module_ids[1] ), 'The order in the second module should be deleted.' );
+	}
 }

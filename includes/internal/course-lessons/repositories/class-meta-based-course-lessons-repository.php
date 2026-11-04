@@ -316,4 +316,135 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 
 		return array_map( 'intval', explode( ',', $lesson_order ) );
 	}
+
+	/**
+	 * Whether a lesson is in the given module.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return bool
+	 */
+	public function has_lesson_module( int $lesson_id, int $term_id ): bool {
+		return has_term( $term_id, 'module', $lesson_id );
+	}
+
+	/**
+	 * Set the module of a lesson, replacing any module it had.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 */
+	public function set_lesson_module( int $lesson_id, int $term_id ): void {
+		wp_set_object_terms( $lesson_id, array( $term_id ), 'module' );
+	}
+
+	/**
+	 * Remove a lesson from its module through `wp_delete_object_term_relationships()`.
+	 *
+	 * Unlike `unset_lesson_module()`, the `set_object_terms` action does not fire.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_lesson_module( int $lesson_id ): void {
+		wp_delete_object_term_relationships( $lesson_id, 'module' );
+	}
+
+	/**
+	 * Remove a lesson from its module through `wp_set_object_terms()` with no terms.
+	 *
+	 * Same result as `delete_lesson_module()`, but the `set_object_terms` action fires as well, with
+	 * the old terms as term taxonomy IDs. Both fire the term relationship deletion hooks.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function unset_lesson_module( int $lesson_id ): void {
+		wp_set_object_terms( $lesson_id, array(), 'module' );
+	}
+
+	/**
+	 * Get the order of a lesson in a module.
+	 *
+	 * Non-canonical values such as `'3abc'` are read as 3, like `intval()`.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return int|null Order, or null when the meta is missing or empty.
+	 */
+	public function get_lesson_module_order( int $lesson_id, int $term_id ): ?int {
+		$order = get_post_meta( $lesson_id, '_order_module_' . $term_id, true );
+
+		return '' === $order ? null : (int) $order;
+	}
+
+	/**
+	 * Set the order of a lesson in a module.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @param int $order     Order.
+	 */
+	public function set_lesson_module_order( int $lesson_id, int $term_id, int $order ): void {
+		update_post_meta( $lesson_id, '_order_module_' . $term_id, $order );
+	}
+
+	/**
+	 * Delete the order of a lesson in a module.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 */
+	public function delete_lesson_module_order( int $lesson_id, int $term_id ): void {
+		delete_post_meta( $lesson_id, '_order_module_' . $term_id );
+	}
+
+	/**
+	 * Delete the order of a lesson in each module it is in.
+	 *
+	 * Reads the modules with `get_the_terms()`, so the term cache and its filters apply.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_all_lesson_module_orders( int $lesson_id ): void {
+		$modules = get_the_terms( $lesson_id, 'module' );
+
+		if ( ! is_array( $modules ) ) {
+			return;
+		}
+
+		foreach ( $modules as $module ) {
+			delete_post_meta( $lesson_id, '_order_module_' . $module->term_id );
+		}
+	}
 }
