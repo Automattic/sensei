@@ -41,6 +41,90 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The module meta box of a lesson lists its course modules with the lesson module selected.
+	 *
+	 * @covers Sensei_Core_Modules::lesson_module_metabox
+	 */
+	public function testLessonModuleMetabox_WhenLessonCourseHadModules_OutputsLessonModuleSelected() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module         = get_term( $course_lessons['modules'][0], 'module' );
+
+		/* Act. */
+		ob_start();
+		Sensei()->modules->lesson_module_metabox( get_post( $course_lessons['lesson_ids'][0] ) );
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		self::assertMatchesRegularExpression( '/<option\b(?=[^>]*\bvalue=["\']' . $module->term_id . '["\'])(?=[^>]*\bselected\b)[^>]*>' . preg_quote( $module->name, '/' ) . '<\/option>/', $actual );
+	}
+
+	/**
+	 * The module assigned to a lesson is returned by its term ID.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module_if_exists
+	 */
+	public function testGetLessonModuleIfExists_LessonHasModule_ReturnsItsTermId() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson    = $this->factory->lesson->create_and_get();
+		wp_set_object_terms( $lesson->ID, array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module_if_exists( $lesson );
+
+		/* Assert. */
+		$this->assertSame( $module_id, $actual );
+	}
+
+	/**
+	 * A lesson without a module has no module term ID.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module_if_exists
+	 */
+	public function testGetLessonModuleIfExists_LessonHasNoModule_ReturnsZero() {
+		/* Arrange. */
+		$lesson = $this->factory->lesson->create_and_get();
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module_if_exists( $lesson );
+
+		/* Assert. */
+		$this->assertSame( 0, $actual );
+	}
+
+	/**
+	 * Completing the only lesson of a module saves the full module progress of the student in the lesson course.
+	 *
+	 * @covers Sensei_Core_Modules::save_lesson_module_progress
+	 */
+	public function testSaveLessonModuleProgress_WhenLessonCourseHadModule_SavesModuleProgress() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$user_id        = $this->factory->user->create();
+		$progress       = Sensei()->lesson_progress_repository->create( $course_lessons['lesson_ids'][0], $user_id );
+		$progress->complete();
+		Sensei()->lesson_progress_repository->save( $progress );
+
+		/* Act. */
+		Sensei()->modules->save_lesson_module_progress( $user_id, $course_lessons['lesson_ids'][0] );
+
+		/* Assert. */
+		$module_progress_key = '_module_progress_' . $course_lessons['course_id'] . '_' . $course_lessons['modules'][0];
+		self::assertSame( '100', get_user_meta( $user_id, $module_progress_key, true ) );
+	}
+
+	/**
 	 * Ensure an Administrator-owned course with an Administrator-owned module is available to an Editor.
 	 *
 	 * @covers Sensei_Core_Modules::module_order_screen
@@ -127,6 +211,131 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( array_map( 'strval', $expected ), get_post_meta( $course_id, '_module_order', true ) );
+	}
+
+	/**
+	 * The module assigned to a lesson is returned as its term.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module
+	 */
+	public function testGetLessonModule_LessonHasModule_ReturnsTheModule() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module( $lesson_id );
+
+		/* Assert. */
+		$this->assertSame( $module_id, $actual->term_id );
+	}
+
+	/**
+	 * A lesson without a module has no module.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module
+	 */
+	public function testGetLessonModule_LessonHasNoModule_ReturnsFalse() {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module( $lesson_id );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
+	/**
+	 * The module of a lesson in a course with that module links to the module page for that course.
+	 *
+	 * @covers Sensei_Core_Modules::get_lesson_module
+	 */
+	public function testGetLessonModule_WhenLessonCourseHadModule_ReturnsModuleUrlWithCourse() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lesson_module( $course_lessons['lesson_ids'][0] );
+
+		/* Assert. */
+		self::assertStringEndsWith( 'course_id=' . $course_lessons['course_id'], $actual->url );
+	}
+
+	/**
+	 * The lessons of a module are only those of the given course, ordered by their module position.
+	 *
+	 * @covers Sensei_Core_Modules::get_lessons_query
+	 */
+	public function testGetLessonsQuery_ModulePositionsStored_ReturnsTheCourseLessonsInModuleOrder() {
+		/* Arrange. */
+		$module_id           = $this->factory->module->create();
+		$course_id           = $this->factory->course->create();
+		$older_lesson        = $this->factory->lesson->create(
+			array(
+				'post_date'  => '2020-01-01 00:00:00',
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_module_' . $module_id => 2,
+				),
+			)
+		);
+		$recent_lesson       = $this->factory->lesson->create(
+			array(
+				'post_date'  => '2020-01-02 00:00:00',
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_module_' . $module_id => 1,
+				),
+			)
+		);
+		$other_course_lesson = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'              => $this->factory->course->create(),
+					'_order_module_' . $module_id => 0,
+				),
+			)
+		);
+		wp_set_object_terms( $older_lesson, array( $module_id ), 'module' );
+		wp_set_object_terms( $recent_lesson, array( $module_id ), 'module' );
+		wp_set_object_terms( $other_course_lesson, array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lessons_query( $course_id, $module_id );
+
+		/* Assert. */
+		$this->assertSame( array( $recent_lesson, $older_lesson ), wp_list_pluck( $actual->posts, 'ID' ) );
+	}
+
+	/**
+	 * The breadcrumb of a lesson in a module ends with the module.
+	 *
+	 * @covers Sensei_Core_Modules::module_breadcrumb_link
+	 */
+	public function testModuleBreadcrumbLink_LessonHadModule_AppendsTheModule() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module         = get_term( $course_lessons['modules'][0], 'module' );
+		$this->go_to( get_permalink( $course_lessons['lesson_ids'][0] ) );
+		$GLOBALS['post'] = get_post( $course_lessons['lesson_ids'][0] );
+
+		/* Act. */
+		$actual = Sensei()->modules->module_breadcrumb_link( 'Course', '&gt;' );
+
+		/* Assert. */
+		self::assertSame( 'Course &gt; ' . $module->name, wp_strip_all_tags( $actual ) );
 	}
 
 	/**
@@ -291,6 +500,54 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		}
 
 		$this->assertStringNotContainsString( 'more', $column_output, 'The "more" link shouldn\'t be present.' );
+	}
+
+	/**
+	 * The Module column of the lessons list links to the lesson's module.
+	 *
+	 * @covers Sensei_Core_Modules::add_lesson_column_content
+	 */
+	public function testAddLessonColumnContent_LessonHadModule_PrintsTheModuleLink() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module         = get_term( $course_lessons['modules'][0], 'module' );
+
+		/* Act. */
+		ob_start();
+		Sensei()->modules->add_lesson_column_content( 'modules', $course_lessons['lesson_ids'][0] );
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		self::assertMatchesRegularExpression( '/^<a\b[^>]*>' . preg_quote( $module->name, '/' ) . '<\/a>$/', $actual );
+	}
+
+	/**
+	 * The Module column of the course report links to the lesson's module.
+	 *
+	 * @covers Sensei_Core_Modules::analysis_course_column_data
+	 */
+	public function testAnalysisCourseColumnData_LessonHadModule_ReturnsTheModuleLink() {
+		/* Arrange. */
+		$course_lessons    = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module            = get_term( $course_lessons['modules'][0], 'module' );
+		$_GET['course_id'] = $course_lessons['course_id'];
+
+		/* Act. */
+		$actual = Sensei()->modules->analysis_course_column_data( array(), get_post( $course_lessons['lesson_ids'][0] ) );
+		unset( $_GET['course_id'] );
+
+		/* Assert. */
+		self::assertMatchesRegularExpression( '/^<a\b[^>]*tag_ID=' . $module->term_id . '\b[^>]*>' . preg_quote( $module->name, '/' ) . '<\/a>$/', $actual['lesson_module'] );
 	}
 
 	public function testModuleTeacherMeta_WhenAddedToACourse_TeacherIdGetsAddedToMeta() {

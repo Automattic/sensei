@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Improve progress-write error logs with readable messages and diagnostic context.

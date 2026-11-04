@@ -1,6 +1,17 @@
 <?php
 
 class Test_Sensei_Course_Video_Settings extends WP_UnitTestCase {
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->factory = new Sensei_Factory();
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
+
 	public function testMetaFieldsExist() {
 		$settings = Sensei_Course_Video_Settings::instance();
 		$settings->register_post_meta();
@@ -42,5 +53,34 @@ class Test_Sensei_Course_Video_Settings extends WP_UnitTestCase {
 				'<iframe src="https://player.vimeo.com/video/video-id"></iframe>',
 			),
 		);
+	}
+
+	/**
+	 * The course video settings printed for a lesson are read from the lesson's course.
+	 *
+	 * @covers Sensei_Course_Video_Settings::enqueue_frontend_scripts
+	 */
+	public function testEnqueueFrontendScripts_WhenLessonCourseHadVideoSettingsEnabled_AddsCourseSettings() {
+		/* Arrange */
+		$course          = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'course_args'    => array(
+					'meta_input' => array(
+						Sensei_Course_Video_Settings::COURSE_VIDEO_AUTOCOMPLETE => true,
+						Sensei_Course_Video_Settings::COURSE_VIDEO_AUTOPAUSE    => true,
+						Sensei_Course_Video_Settings::COURSE_VIDEO_REQUIRED     => true,
+					),
+				),
+			)
+		);
+		$GLOBALS['post'] = get_post( $course['lesson_ids'][0] );
+
+		/* Act */
+		Sensei_Course_Video_Settings::instance()->enqueue_frontend_scripts();
+
+		/* Assert */
+		$inline_script = wp_scripts()->get_inline_script_data( 'sensei-course-video-blocks-extension', 'before' );
+		self::assertStringContainsString( '{"courseVideoAutoComplete":true,"courseVideoAutoPause":true,"courseVideoRequired":true}', $inline_script );
 	}
 }

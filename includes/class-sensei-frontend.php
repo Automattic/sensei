@@ -8,6 +8,8 @@
  * @since 1.3.0
  */
 
+use Sensei\Internal\Persistence_Exception;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -178,7 +180,7 @@ class Sensei_Frontend {
 
 		// Don't load frontend.css in Learning Mode as it's not needed and negatively impacts button styles.
 		if ( 'lesson' === $post_type ) {
-			$course_id                = intval( get_post_meta( $post->ID, '_lesson_course', true ) );
+			$course_id                = Sensei()->course_lessons_repository->get_course_id( (int) $post->ID ) ?? 0;
 			$is_learning_mode_enabled = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
 		}
 
@@ -572,7 +574,7 @@ class Sensei_Frontend {
 		$html = '<section class="sensei-breadcrumb">' . esc_html( $sensei_breadcrumb_prefix );
 		// Lesson.
 		if ( is_singular( 'lesson' ) && 0 < intval( $id ) ) {
-			$course_id = intval( get_post_meta( $id, '_lesson_course', true ) );
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $id );
 			if ( ! $course_id ) {
 				return;
 			}
@@ -728,13 +730,19 @@ class Sensei_Frontend {
 
 		switch ( $sanitized_submit ) {
 			case 'lesson-complete':
-				Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true );
+				if ( false === Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true ) ) {
+					Sensei()->notices->add_notice( __( 'Unable to complete the lesson. Reload this page to check its status, or contact your instructor for help.', 'sensei-lms' ), 'alert' );
+					return;
+				}
 				$this->maybe_redirect_to_next_lesson( $lesson_id );
 
 				break;
 
 			case 'lesson-reset':
-				Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $current_user->ID );
+				if ( false === Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $current_user->ID ) ) {
+					Sensei()->notices->add_notice( __( 'Unable to reset the lesson. Reload this page to check its status, or contact your instructor for help.', 'sensei-lms' ), 'alert' );
+					return;
+				}
 
 				$this->messages = '<div class="sensei-message note">' . __( 'Lesson Reset Successfully.', 'sensei-lms' ) . '</div>';
 				break;
@@ -840,23 +848,40 @@ class Sensei_Frontend {
 
 					$course_progress = Sensei()->course_progress_repository->get( $sanitized_course_id, $current_user->ID );
 					if ( null === $course_progress ) {
-						$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
+						try {
+							$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
+						} catch ( Persistence_Exception $exception ) {
+							$exception->log( 'completing a course' );
+							Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this course as complete. Reload this page and check its status. Try Mark as Complete again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
+							return;
+						}
 					}
 
 					$course_lesson_ids = Sensei()->course->course_lessons( $sanitized_course_id, 'any', 'ids' );
 					foreach ( $course_lesson_ids as $lesson_id ) {
-						Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true );
+						if ( false === Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true ) ) {
+							Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this course as complete. Reload this page and check its status. Try Mark as Complete again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
+							return;
+						}
 					}
 
 					$course_progress->complete();
-					Sensei()->course_progress_repository->save( $course_progress );
 
 					$course_metadata = [
 						'percent'  => 100,
 						'complete' => count( $course_lesson_ids ),
 					];
 					foreach ( $course_metadata as $key => $value ) {
-						update_comment_meta( $course_progress->get_id(), $key, $value );
+						Sensei_Utils::update_user_data( $key, $sanitized_course_id, $value, $current_user->ID );
+					}
+
+					// Status observers may redirect and end the request during the save.
+					try {
+						Sensei()->course_progress_repository->save( $course_progress );
+					} catch ( Persistence_Exception $exception ) {
+						$exception->log( 'completing a course' );
+						Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this course as complete. Reload this page and check its status. Try Mark as Complete again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
+						return;
 					}
 
 					/**
@@ -1226,7 +1251,7 @@ class Sensei_Frontend {
 
 	public function sensei_lesson_meta( $post_id = 0 ) {
 		if ( 0 < intval( $post_id ) ) {
-			$lesson_course_id = absint( get_post_meta( $post_id, '_lesson_course', true ) );
+			$lesson_course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post_id ) ?? 0;
 			?>
 		<section class="entry">
 			<p class="sensei-course-meta">
@@ -1287,7 +1312,7 @@ class Sensei_Frontend {
 			if ( is_main_query() ) {
 
 				// Get the course ID.
-				$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+				$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post->ID ) ?? 0;
 
 				// Check if the user is taking the course.
 				if ( is_singular( 'lesson' ) && Sensei_Utils::is_preview_lesson( $post->ID ) && ! Sensei_Course::is_user_enrolled( $course_id ) && $post->ID == $id ) {
@@ -1357,6 +1382,7 @@ class Sensei_Frontend {
 		$this->data                        = new stdClass();
 		$this->data->is_user_taking_course = false;
 		if ( ! $student_enrolled ) {
+			Sensei()->notices->add_notice( __( 'We couldn\'t finish enrolling you in this course. Contact the course instructor if you still can\'t access it.', 'sensei-lms' ), 'alert' );
 			return;
 		}
 

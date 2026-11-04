@@ -1,6 +1,9 @@
 <?php
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
 class Sensei_Class_Grading_Test extends WP_UnitTestCase {
+	use Sensei_Progress_Insert_Failure_Helpers;
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Test_Redirect_Helpers;
 	use Sensei_HPPS_Helpers;
@@ -27,6 +30,9 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -74,6 +80,28 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		/* Clean up & Assert. */
 		remove_filter( 'posts_where', $language_filter );
 		$this->assertStringContainsString( 'quiz_id=' . $quiz_id, $row['action'], 'The Grade link should carry the quiz ID even when quiz queries are language filtered.' );
+	}
+
+	/**
+	 * The Course column links to the grading list of the lesson's course.
+	 *
+	 * @covers Sensei_Grading_Main::get_row_data
+	 */
+	public function testGetRowData_WhenLessonHadCourse_LinksCourseColumnToCourse(): void {
+		/* Arrange. */
+		$course       = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$user_id      = $this->factory->user->create();
+		$grading_main = new Sensei_Grading_Main( array( 'view' => 'ungraded' ) );
+		$item         = new \Sensei\Internal\Services\Grading_Item( 'ungraded', $user_id, $course['lesson_ids'][0], current_time( 'mysql' ), null );
+		$method       = new ReflectionMethod( Sensei_Grading_Main::class, 'get_row_data' );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
+
+		/* Act. */
+		$row = $method->invoke( $grading_main, $item );
+
+		/* Assert. */
+		$expected = '<a href="' . admin_url( 'admin.php' ) . '?page=sensei_grading&amp;course_id=' . $course['course_id'] . '">' . get_the_title( $course['course_id'] ) . '</a>';
+		$this->assertEqualHTML( $expected, $row['course'] );
 	}
 
 	/**
@@ -285,6 +313,52 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		if ( self::is_hpps_tables_mode() ) {
 			$this->reset_hpps_repository();
 		}
+	}
+
+	/**
+	 * The quiz grading title links back to the grading list of the lesson's course.
+	 *
+	 * @covers Sensei_Grading::grading_user_quiz_nav
+	 */
+	public function testGradingUserQuizNav_WhenLessonHadCourse_LinksToCourseGrading(): void {
+		/* Arrange. */
+		$course  = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$quiz_id = $course['quiz_ids'][0];
+		update_post_meta( $quiz_id, '_quiz_lesson', $course['lesson_ids'][0] );
+		$_GET['quiz_id'] = $quiz_id;
+
+		/* Act. */
+		ob_start();
+		Sensei()->grading->grading_user_quiz_nav();
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		$expected = '<h2>
+			Grading&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_grading&amp;course_id=' . $course['course_id'] . '">' . get_the_title( $course['course_id'] ) . '</a></span>&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_grading&amp;lesson_id=' . $course['lesson_ids'][0] . '">' . get_the_title( $course['lesson_ids'][0] ) . '</a></span>			</h2>';
+		$this->assertEqualHTML( $expected, trim( $actual ) );
+	}
+
+	/**
+	 * The quiz grading title of a lesson without a course links to the grading list with an empty course ID.
+	 *
+	 * @covers Sensei_Grading::grading_user_quiz_nav
+	 */
+	public function testGradingUserQuizNav_WhenLessonHadNoCourse_LinksWithEmptyCourseId(): void {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
+		$_GET['quiz_id'] = $quiz_id;
+
+		/* Act. */
+		ob_start();
+		Sensei()->grading->grading_user_quiz_nav();
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		$expected = '<h2>
+			Grading&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_grading&amp;course_id"></a></span>&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="' . admin_url( 'admin.php' ) . '?page=sensei_grading&amp;lesson_id=' . $lesson_id . '">' . get_the_title( $lesson_id ) . '</a></span>			</h2>';
+		$this->assertEqualHTML( $expected, trim( $actual ) );
 	}
 
 	/**
@@ -892,6 +966,172 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			'failed',
 			Sensei()->quiz_progress_repository->get( $quiz_id, $student )->get_status(),
 			'The owning teacher should be able to change the quiz status from passed to failed.'
+		);
+	}
+
+	/**
+	 * Failed lesson creation must stop grading before changing submission data.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 */
+	public function testAdminProcessGradingSubmission_PrimaryLessonInsertFailed_DoesNotGrade( string $mode ): void {
+		$owner                       = $this->get_user_by_role( 'teacher' );
+		$user_id                     = $this->factory->user->create();
+		list( $quiz_id, $lesson_id ) = $this->createOwnedPassRequiredQuiz( $owner );
+		$this->login_as( $owner );
+		$this->setGradingSubmissionGlobals( $quiz_id, $user_id );
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'lesson',
+			function () use ( $quiz_id, $user_id ) {
+				$result = Sensei()->grading->admin_process_grading_submission();
+
+				self::assertFalse( $result, 'Grading must report the failed progress creation.' );
+				ob_start();
+				Sensei()->grading->add_grading_notices();
+				$notice = ob_get_clean();
+				self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The grading page must explain the failure.' );
+				self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'No grade submission may be created after progress failure.' );
+			}
+		);
+	}
+
+	/**
+	 * Partial quiz data must not permit grading when required course progress cannot be created.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 */
+	public function testAdminProcessGradingSubmission_CourseInsertFailed_PreservesExistingSubmission( string $mode ): void {
+		$owner        = $this->get_user_by_role( 'teacher' );
+		$user_id      = $this->factory->user->create();
+		$data         = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 1,
+				'course_args'    => array( 'post_author' => $owner ),
+				'lesson_args'    => array( 'post_author' => $owner ),
+			)
+		);
+		$lesson_id    = $data['lesson_ids'][0];
+		$quiz_id      = $data['quiz_ids'][0];
+		$question_ids = wp_list_pluck( Sensei()->lesson->lesson_quiz_questions( $quiz_id ), 'ID' );
+		$this->login_as( $owner );
+		$this->setGradingSubmissionGlobals( $quiz_id, $user_id );
+		$this->prevent_wp_redirect();
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'course',
+			function () use ( $lesson_id, $quiz_id, $user_id, $question_ids ) {
+				Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+				$comments = Sensei()->lesson_progress_repository_factory->create_comments_based_repository()->get( $lesson_id, $user_id );
+				update_comment_meta( $comments->get_id(), 'questions_asked', implode( ',', $question_ids ) );
+				if ( ! Sensei()->quiz_progress_repository->get( $quiz_id, $user_id ) ) {
+					Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+				}
+				$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+				$submission->set_final_grade( 75 );
+				Sensei()->quiz_submission_repository->save( $submission );
+				$redirected = false;
+				$result     = null;
+
+				try {
+					$result = Sensei()->grading->admin_process_grading_submission();
+				} catch ( Sensei_WP_Redirect_Exception $exception ) {
+					$redirected = true;
+				}
+
+				self::assertFalse( $redirected, 'Failed required course progress must prevent grading success redirect.' );
+				self::assertFalse( $result, 'Grading must report required course creation failure.' );
+				self::assertEquals( 75, Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'Existing submission grade must not change.' );
+			}
+		);
+	}
+
+	/**
+	 * A failed quiz save must stop grading before completion or a success redirect.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 * @covers Sensei_Grading::add_grading_notices
+	 */
+	public function testAdminProcessGradingSubmission_CommentInsertFailedDuringSave_ShowsErrorWithoutCompletion( string $mode ): void {
+		$owner                       = $this->get_user_by_role( 'teacher' );
+		$user_id                     = $this->factory->user->create();
+		list( $quiz_id, $lesson_id ) = $this->createOwnedPassRequiredQuiz( $owner );
+		update_post_meta( $quiz_id, '_pass_required', '' );
+		$this->login_as( $owner );
+		$this->setGradingSubmissionGlobals( $quiz_id, $user_id );
+		$this->prevent_wp_redirect();
+		$this->set_progress_storage_mode( $mode );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+		$completed = did_action( 'sensei_user_lesson_end' );
+		$this->fail_progress_comment_insert( 'lesson', $lesson_id, $user_id, 'graded' );
+
+		$result = Sensei()->grading->admin_process_grading_submission();
+		ob_start();
+		Sensei()->grading->add_grading_notices();
+		$notice = ob_get_clean();
+
+		self::assertFalse( $result, 'A failed quiz save must report grading failure.' );
+		self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The grader must see the save failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'A failed quiz save must not announce lesson completion.' );
+	}
+
+	/**
+	 * Course-status failures during completion must still produce the grading error notice.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 * @covers Sensei_Grading::add_grading_notices
+	 */
+	public function testAdminProcessGradingSubmission_CourseInsertFailedDuringCompletion_ShowsError( string $mode ): void {
+		$owner   = $this->get_user_by_role( 'teacher' );
+		$user_id = $this->factory->user->create();
+		$data    = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 1,
+				'course_args'    => array( 'post_author' => $owner ),
+				'lesson_args'    => array( 'post_author' => $owner ),
+			)
+		);
+		update_post_meta( $data['quiz_ids'][0], '_pass_required', '' );
+		$this->login_as( $owner );
+		$this->setGradingSubmissionGlobals( $data['quiz_ids'][0], $user_id );
+		$this->prevent_wp_redirect();
+
+		$this->with_failed_progress_insert(
+			$mode,
+			'course',
+			function ( $fault ) use ( $data, $user_id ) {
+				remove_filter( 'query', $fault );
+				Sensei_Utils::user_start_course( $user_id, $data['course_id'] );
+				Sensei_Utils::sensei_start_lesson( $data['lesson_ids'][0], $user_id );
+				if ( ! Sensei()->quiz_progress_repository->get( $data['quiz_ids'][0], $user_id ) ) {
+					Sensei()->quiz_progress_repository->create( $data['quiz_ids'][0], $user_id );
+				}
+				add_filter( 'query', $fault );
+				$remove_progress = static function () use ( $data, $user_id ) {
+					$repository = Sensei()->course_progress_repository;
+					$repository->delete( $repository->get( $data['course_id'], $user_id ) );
+				};
+				add_action( 'sensei_user_lesson_end', $remove_progress, 9 );
+
+				try {
+					$result = Sensei()->grading->admin_process_grading_submission();
+					ob_start();
+					Sensei()->grading->add_grading_notices();
+					$notice = ob_get_clean();
+
+					self::assertFalse( $result, 'The failed course-status update must prevent grading success.' );
+					self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The failure must be visible to the grader.' );
+				} finally {
+					remove_action( 'sensei_user_lesson_end', $remove_progress, 9 );
+				}
+			}
 		);
 	}
 

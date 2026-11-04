@@ -91,6 +91,27 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Search requests select the displayed lessons and their header totals.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::prepare_items
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::get_columns
+	 * @dataProvider lesson_search_requests
+	 */
+	public function testPrepareItems_SearchRequestGiven_ReturnsMatchingRowsAndTotals( string $search, string $matching_title, string $other_title ): void {
+		list( $table, $lesson ) = $this->create_search_report( $search, $matching_title, $other_title );
+
+		$table->prepare_items();
+		$items   = $table->items;
+		$columns = $table->get_columns();
+
+		self::assertSame( array( $lesson ), wp_list_pluck( $items, 'ID' ), 'The displayed rows must include only the matching lesson.' );
+		self::assertSame( 'Lesson (1)', $columns['title'], 'The lesson total must reflect the search.' );
+		self::assertSame( 'Students (1)', $columns['students'], 'The student total must exclude the unmatched lesson.' );
+		self::assertSame( 'Completed (1)', $columns['completions'], 'The completed total must reflect the matching lesson.' );
+		self::assertSame( 'Completion Rate (100%)', $columns['completion_rate'], 'The completion rate must exclude unmatched activity.' );
+	}
+
+	/**
 	 * Exported lesson rows and headers reflect the selected activity.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
@@ -270,6 +291,30 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The lessons report export names the module of each lesson.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
+	 */
+	public function testGenerateReport_LessonHadModule_ExportsTheModuleName(): void {
+		/* Arrange. */
+		$created               = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$module                = get_term( $created['modules'][0], 'module' );
+		$_GET['course_filter'] = $created['course_id'];
+		$table                 = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course ) );
+
+		/* Act. */
+		$csv = $table->generate_report();
+
+		/* Assert. */
+		self::assertSame( $module->name, $csv[1]['lesson_module'] );
+	}
+
+	/**
 	 * Tests that we are getting right data for Completion Rate column.
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
@@ -350,6 +395,22 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 			'days_to_completion' => 'Days to Completion (9)',
 		);
 		self::assertSame( $expected, $actual, 'The expected column headers for lessons table in overview report does not match the actual output' );
+	}
+
+	/**
+	 * Search requests used for displayed rows and header totals.
+	 *
+	 * @return array
+	 */
+	public function lesson_search_requests(): array {
+		return array(
+			'ordinary text'     => array( 'needle', 'Selected needle lesson', 'Another lesson' ),
+			'apostrophe'        => array( "King's", "Selected King's guide", 'Kings guide' ),
+			'ampersand'         => array( 'Rock & Roll', 'Selected Rock & Roll workshop', 'Rock and Roll workshop' ),
+			'quoted phrase'     => array( '"red fox"', 'Selected red fox workshop', 'A red swift fox workshop' ),
+			'zero'              => array( '0', 'Selected Lesson 0', 'Lesson 1' ),
+			'literal backslash' => array( 'path\\chapter', 'Selected path\\chapter guide', 'A pathchapter guide' ),
+		);
 	}
 
 	/**
@@ -466,6 +527,43 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 			'N/A'  => array( 0, 0, 'N/A' ),
 			'0%'   => array( 1, 0, '0%' ),
 		);
+	}
+
+	/**
+	 * Create a searchable report with matching and unmatched lesson activity.
+	 *
+	 * @param string $search         Submitted search text.
+	 * @param string $matching_title Matching lesson title.
+	 * @param string $other_title    Unmatched lesson title.
+	 * @return array{Sensei_Reports_Overview_List_Table_Lessons, int} Table and matching lesson ID.
+	 */
+	private function create_search_report( string $search, string $matching_title, string $other_title ): array {
+		$course = $this->factory->course->create();
+		$lesson = $this->factory->lesson->create(
+			array(
+				'post_title'   => wp_slash( $matching_title ),
+				'post_content' => '',
+				'post_excerpt' => '',
+				'meta_input'   => array( '_lesson_course' => $course ),
+			)
+		);
+		$other  = $this->factory->lesson->create(
+			array(
+				'post_title'   => wp_slash( $other_title ),
+				'post_content' => '',
+				'post_excerpt' => '',
+				'meta_input'   => array( '_lesson_course' => $course ),
+			)
+		);
+		$this->create_lesson_progress( $lesson, '2022-01-01 12:00:00', '2022-01-02 12:00:00' );
+		$this->create_lesson_progress( $other, '2022-01-01 12:00:00', null );
+		$_GET  = array(
+			'course_filter' => $course,
+			's'             => wp_slash( $search ),
+		);
+		$table = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course ) );
+
+		return array( $table, $lesson );
 	}
 
 	/**

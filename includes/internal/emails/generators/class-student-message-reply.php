@@ -65,7 +65,7 @@ class Student_Message_Reply extends Email_Generators_Abstract {
 		}
 
 		if ( 'lesson' === $post->post_type ) {
-			$course_id = intval( get_post_meta( $post_id, '_lesson_course', true ) );
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post_id ) ?? 0;
 		} elseif ( 'quiz' === $post->post_type ) {
 			$lesson_id = Sensei()->quiz->get_lesson_id( $post_id );
 
@@ -73,7 +73,7 @@ class Student_Message_Reply extends Email_Generators_Abstract {
 				return;
 			}
 
-			$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id ) ?? 0;
 		} else { // Message sent from course page.
 			$course_id = $post_id;
 		}

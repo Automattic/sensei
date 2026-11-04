@@ -823,7 +823,11 @@ class Sensei_Admin {
 
 		$type = $post->post_type;
 
-		if ( in_array( $type, array( 'lesson', 'course' ) ) ) {
+		if ( 'lesson' === $type ) {
+			foreach ( Sensei()->course_lessons_repository->get_lesson_ids_with_prerequisite( (int) $post_id ) as $lesson_id ) {
+				Sensei()->course_lessons_repository->delete_lesson_prerequisite( $lesson_id );
+			}
+		} elseif ( 'course' === $type ) {
 
 			$meta_key = '_' . $type . '_prerequisite';
 

@@ -300,7 +300,7 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function lesson_module_metabox( $post ) {
-		$course_id = (int) get_post_meta( $post->ID, '_lesson_course', true );
+		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $post->ID ) ?? 0;
 
 		$this->output_lesson_module_metabox( $post, $course_id );
 	}
@@ -354,16 +354,9 @@ class Sensei_Core_Modules {
 	 * @return int
 	 */
 	public function get_lesson_module_if_exists( $post ) {
-		// Get existing lesson module.
-		$lesson_module      = 0;
-		$lesson_module_list = wp_get_post_terms( $post->ID, $this->taxonomy );
-		if ( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
-			foreach ( $lesson_module_list as $single_module ) {
-				$lesson_module = $single_module->term_id;
-				break;
-			}
-		}
-		return $lesson_module;
+		$module = Sensei()->course_lessons_repository->get_lesson_module( (int) $post->ID );
+
+		return $module ? $module->term_id : 0;
 	}
 
 	/**
@@ -785,14 +778,12 @@ class Sensei_Core_Modules {
 		global $post;
 		// Lesson
 		if ( is_singular( 'lesson' ) ) {
-			if ( has_term( '', $this->taxonomy, $post->ID ) ) {
-				$module = $this->get_lesson_module( $post->ID );
-				if ( $module ) {
-					if ( $this->do_link_to_module( $module ) ) {
-						$html .= ' ' . $separator . ' <a href="' . esc_url( $module->url ) . '" title="' . __( 'Back to the module', 'sensei-lms' ) . '">' . $module->name . '</a>';
-					} else {
-						$html .= ' ' . $separator . ' ' . $module->name;
-					}
+			$module = $this->get_lesson_module( $post->ID );
+			if ( $module ) {
+				if ( $this->do_link_to_module( $module ) ) {
+					$html .= ' ' . $separator . ' <a href="' . esc_url( $module->url ) . '" title="' . __( 'Back to the module', 'sensei-lms' ) . '">' . $module->name . '</a>';
+				} else {
+					$html .= ' ' . $separator . ' ' . $module->name;
 				}
 			}
 		}
@@ -1142,7 +1133,7 @@ class Sensei_Core_Modules {
 	 */
 	public function save_lesson_module_progress( $user_id = 0, $lesson_id = 0 ) {
 		$module    = $this->get_lesson_module( $lesson_id );
-		$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+		$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
 		if ( $module && $course_id ) {
 			$this->save_user_module_progress( intval( $module->term_id ), intval( $course_id ), intval( $user_id ) );
 		}
@@ -1602,8 +1593,7 @@ class Sensei_Core_Modules {
 	 */
 	public function add_lesson_column_content( $column = '', $lesson_id = 0 ) {
 		if ( 'modules' === $column ) {
-			$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
-			$module  = $modules && is_array( $modules ) ? $modules[0] : null;
+			$module = Sensei()->course_lessons_repository->get_lesson_module( (int) $lesson_id );
 
 			if ( $module ) {
 				printf(
@@ -1774,13 +1764,10 @@ class Sensei_Core_Modules {
 		_deprecated_function( __METHOD__, '4.3.0' );
 
 		if ( isset( $_GET['view'] ) && 'lessons' == $_GET['view'] ) {
-			$lesson_module      = '';
-			$lesson_module_list = wp_get_post_terms( $lesson->ID, $this->taxonomy );
-			if ( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
-				foreach ( $lesson_module_list as $single_module ) {
-					$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
-					break;
-				}
+			$lesson_module = '';
+			$single_module = Sensei()->course_lessons_repository->get_lesson_module( (int) $lesson->ID );
+			if ( $single_module ) {
+				$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
 			}
 
 			$columns['lesson_module'] = $lesson_module;
@@ -1819,13 +1806,10 @@ class Sensei_Core_Modules {
 		}
 
 		if ( isset( $_GET['course_id'] ) ) {
-			$lesson_module      = '';
-			$lesson_module_list = wp_get_post_terms( $lesson->ID, $this->taxonomy );
-			if ( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
-				foreach ( $lesson_module_list as $single_module ) {
-					$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
-					break;
-				}
+			$lesson_module = '';
+			$single_module = Sensei()->course_lessons_repository->get_lesson_module( (int) $lesson->ID );
+			if ( $single_module ) {
+				$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
 			}
 
 			$columns['lesson_module'] = $lesson_module;
@@ -1853,30 +1837,13 @@ class Sensei_Core_Modules {
 			return false;
 		}
 
-		// get taxonomy terms on this lesson
-		$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
-
-		// check if error returned
-		if ( empty( $modules )
-			|| is_wp_error( $modules )
-			|| isset( $modules['errors'] ) ) {
-
-			return false;
-
-		}
-
-		// get the last item in the array there should be only be 1 really.
-		// this method works for all php versions.
-		foreach ( $modules as $module ) {
-			break;
-		}
-
-		if ( ! isset( $module ) || ! is_object( $module ) || is_wp_error( $module ) ) {
+		$module = Sensei()->course_lessons_repository->get_lesson_module( $lesson_id );
+		if ( ! $module ) {
 			return false;
 		}
 
 		$module->url = get_term_link( $module, $this->taxonomy );
-		$course_id   = intval( get_post_meta( intval( $lesson_id ), '_lesson_course', true ) );
+		$course_id   = Sensei()->course_lessons_repository->get_course_id( $lesson_id );
 		if ( isset( $course_id ) && 0 < $course_id ) {
 
 			// the course should contain the same module taxonomy term for this to be valid
@@ -2146,13 +2113,7 @@ class Sensei_Core_Modules {
 			'post_type'        => 'lesson',
 			'post_status'      => $course_lessons_post_status,
 			'posts_per_page'   => -1,
-			'meta_query'       => array(
-				array(
-					'key'     => '_lesson_course',
-					'value'   => intval( $course_id ),
-					'compare' => '=',
-				),
-			),
+			'sensei_course'    => intval( $course_id ),
 			'tax_query'        => array(
 				array(
 					'taxonomy' => 'module',

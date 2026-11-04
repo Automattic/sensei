@@ -1471,6 +1471,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->assertEquals( null, get_post_meta( $lesson_ids[1], '_lesson_course', true ), 'Course lesson meta should have been cleared' );
 		$this->assertEquals( null, get_post_meta( $lesson_ids[0], '_order_' . $course_id, true ), 'Course lesson order meta should have been cleared' );
 		$this->assertEquals( null, get_post_meta( $lesson_ids[0], '_order_module_' . $modified_structure[0]['id'], true ), 'Course lesson order meta should have been cleared' );
+		$this->assertNull( Sensei()->course_lessons_repository->get_lesson_module( $lesson_ids[0] ), 'The lesson should have been removed from its module' );
 	}
 
 	/**
@@ -1599,6 +1600,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $modified_structure ) );
 		$this->assertExpectedStructure( $modified_structure, $course_structure->get( 'edit' ) );
+		$this->assertNull( Sensei()->course_lessons_repository->get_lesson_order( $modified_structure[0]['lessons'][0]['id'], $course_id ), 'A lesson moved into a module should lose its course lesson order' );
 	}
 
 	/**
