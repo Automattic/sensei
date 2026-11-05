@@ -28,7 +28,7 @@ trait Lesson_Translation_Helper {
 	 * @param int $new_course_id New course ID.
 	 */
 	private function update_lesson_course( $new_lesson_id, $new_course_id ) {
-		update_post_meta( $new_lesson_id, '_lesson_course', $new_course_id );
+		Sensei()->course_lessons_repository->attach_lesson( (int) $new_lesson_id, (int) $new_course_id );
 	}
 
 	/**
@@ -140,7 +140,7 @@ trait Lesson_Translation_Helper {
 		$lesson_ids = array_merge( $lesson_ids, array_map( 'intval', Sensei()->course->course_lessons( $new_course_id, 'any', 'ids' ) ) );
 
 		foreach ( array_values( array_unique( $lesson_ids ) ) as $index => $lesson_id ) {
-			update_post_meta( $lesson_id, '_order_' . $new_course_id, $index + 1 );
+			Sensei()->course_lessons_repository->set_lesson_order( $lesson_id, (int) $new_course_id, $index + 1 );
 		}
 	}
 }

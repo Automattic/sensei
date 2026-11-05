@@ -349,6 +349,7 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		/* Clean up & Assert. */
 		$this->remove_wpml_language_pair_filters();
 		$this->assertSame( $translated_course_id, (int) get_post_meta( $duplicated_lesson_id, '_lesson_course', true ) );
+		$this->assertFalse( metadata_exists( 'post', $duplicated_lesson_id, '_order_' . $master_course_id ), 'The order copied from the master lesson belongs to the master course and should be removed.' );
 	}
 
 	public function testUpdateQuizOnLessonDuplicated_DuplicatedLessonGiven_GivesItItsOwnQuiz() {
