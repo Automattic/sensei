@@ -2594,7 +2594,12 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$quiz_progress_repository->create( $quiz_id, $user_id );
+		try {
+			$quiz_progress_repository->create( $quiz_id, $user_id );
+		} catch ( Persistence_Exception $exception ) {
+			$exception->log( 'starting a quiz' );
+			Sensei()->notices->add_notice( __( 'Your quiz could not be started. Please try again.', 'sensei-lms' ), 'error' );
+		}
 	}
 
 	/**
