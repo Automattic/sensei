@@ -433,6 +433,60 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A lesson duplicated by WPML lands in the translated module with the original lesson's module order.
+	 *
+	 * @covers \Sensei\WPML\Lesson_Translation::update_lesson_properties_on_lesson_duplicated
+	 * @dataProvider module_orders
+	 */
+	public function testUpdateLessonPropertiesOnLessonDuplicated_OriginalLessonInAModuleGiven_PlacesTheDuplicateInTheTranslatedModuleWithTheOriginalOrder( $original_order, $expected_order ) {
+		/* Arrange. */
+		$master_course_id     = $this->factory->course->create();
+		$translated_course_id = $this->factory->course->create();
+		$master_lesson_ids    = $this->create_course_lessons( $master_course_id, array( '2024-01-11 10:00:00' ), true );
+		$duplicated_lesson_id = $this->create_lesson_duplicate( $master_lesson_ids[0], $master_course_id );
+		$master_module_id     = $this->factory->term->create( array( 'taxonomy' => 'module' ) );
+		$translated_module_id = $this->factory->term->create( array( 'taxonomy' => 'module' ) );
+
+		$repository = Sensei()->course_lessons_repository;
+		$repository->set_lesson_module( $master_lesson_ids[0], $master_module_id );
+		if ( null !== $original_order ) {
+			$repository->set_lesson_module_order( $master_lesson_ids[0], $master_module_id, $original_order );
+			// WPML copies the original's module order onto the duplicate.
+			$repository->set_lesson_module_order( $duplicated_lesson_id, $master_module_id, $original_order );
+		}
+
+		$this->simulate_wpml_language_pair(
+			array(
+				$master_lesson_ids[0] => $duplicated_lesson_id,
+				$master_course_id     => $translated_course_id,
+			),
+			array( $master_module_id => $translated_module_id )
+		);
+
+		$lesson_translation = new Lesson_Translation();
+
+		/* Act. */
+		$lesson_translation->update_lesson_properties_on_lesson_duplicated( $master_lesson_ids[0], 'es', array(), $duplicated_lesson_id );
+
+		/* Clean up & Assert. */
+		$this->remove_wpml_language_pair_filters();
+		$this->assertSame( array( $translated_module_id ), wp_get_object_terms( $duplicated_lesson_id, 'module', array( 'fields' => 'ids' ) ), 'The duplicate should be in the translated module only.' );
+		$this->assertSame( $expected_order, get_post_meta( $duplicated_lesson_id, '_order_module_' . $translated_module_id, true ), 'The duplicate should get the original order in the translated module.' );
+		$this->assertFalse( metadata_exists( 'post', $duplicated_lesson_id, '_order_module_' . $master_module_id ), 'The order copied for the original module should be removed.' );
+	}
+
+	/**
+	 * Module order of the original lesson and the one its duplicate should get. The module archive and
+	 * the course outline list only lessons with a module order row, so a missing one gives 0.
+	 */
+	public function module_orders(): array {
+		return array(
+			'original with order'    => array( 2, '2' ),
+			'original without order' => array( null, '0' ),
+		);
+	}
+
+	/**
 	 * Create lessons attached to a course, one per post date, in the given order.
 	 *
 	 * @param int      $course_id  Course the lessons belong to.
@@ -492,8 +546,10 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 	 * map resolving each post to its counterpart in the other language.
 	 *
 	 * @param array $counterparts Map of post ID to counterpart post ID (registered in both directions).
+	 * @param array $term_counterparts Original term id => translated term id, one way only (so the stub
+	 *                                 never swaps a translated term), resolved for taxonomy element types.
 	 */
-	private function simulate_wpml_language_pair( $counterparts ) {
+	private function simulate_wpml_language_pair( $counterparts, $term_counterparts = array() ) {
 		add_filter(
 			'wpml_element_language_details',
 			function () {
@@ -514,12 +570,29 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 
 		add_filter(
 			'wpml_object_id',
-			function ( $object_id, $element_type ) use ( $map ) {
+			function ( $object_id, $element_type ) use ( $map, $term_counterparts ) {
+				if ( taxonomy_exists( $element_type ) ) {
+					return $term_counterparts[ $object_id ] ?? 0;
+				}
+
 				$counterpart_id = $map[ $object_id ] ?? 0;
 				return $counterpart_id && get_post_type( $counterpart_id ) === $element_type ? $counterpart_id : 0;
 			},
 			10,
 			2
+		);
+
+		// WPML hands back the translation of a term in the current language, which is the
+		// translation's language here, unless the adjustment is disabled through `wpml_disable_term_adjust_id`.
+		add_filter(
+			'get_term',
+			function ( $term ) use ( $term_counterparts ) {
+				if ( isset( $term_counterparts[ $term->term_id ] ) && ! apply_filters( 'wpml_disable_term_adjust_id', false, $term ) ) {
+					return get_term( $term_counterparts[ $term->term_id ], $term->taxonomy );
+				}
+
+				return $term;
+			}
 		);
 	}
 
@@ -529,6 +602,7 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 	private function remove_wpml_language_pair_filters() {
 		remove_all_filters( 'wpml_element_language_details' );
 		remove_all_filters( 'wpml_object_id' );
+		remove_all_filters( 'get_term' );
 	}
 
 	/**
