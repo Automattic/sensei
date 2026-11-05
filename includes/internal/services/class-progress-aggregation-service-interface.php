@@ -26,6 +26,10 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count progress records grouped by status.
 	 *
+	 * The deprecated raw SQL `query` argument is supported only by comments-based storage.
+	 * Tables-based storage reports unsupported usage and ignores the SQL. Use the
+	 * documented filtering arguments where applicable before switching storage backends.
+	 *
 	 * @since 4.26.0
 	 *
 	 * @param array $args {

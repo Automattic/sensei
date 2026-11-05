@@ -1,0 +1,4 @@
+Significance: minor
+Type: deprecated
+
+Deprecate the raw SQL query argument for comments-based progress status counts in favor of structured filtering arguments.

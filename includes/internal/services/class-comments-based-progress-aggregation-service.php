@@ -44,7 +44,10 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count progress records grouped by status.
 	 *
+	 * Deprecated `query` conditions are applied to the comments table before grouping.
+	 *
 	 * @since 4.26.0
+	 * @since $$next-version$$ The `query` argument is deprecated. Use structured filtering arguments instead.
 	 *
 	 * @param array $args {
 	 *     Arguments for the query.
@@ -55,7 +58,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 *     @type int|array $user_id                      Restrict to specific user IDs.
 	 *     @type string[]  $exclude_user_login_prefixes  User login prefixes to exclude.
 	 *     @type string[]  $include_statuses_override    Statuses that bypass user exclusion.
-	 *     @type string    $query                        Raw SQL to append (backward compat).
+	 *     @type string    $query                        Deprecated raw SQL conditions on the comments table.
 	 * }
 	 * @return array Associative array of status => count.
 	 */
@@ -74,18 +77,37 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 
 		$reports_statuses = Utils::get_reports_post_status_sql();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
-		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( {$reports_statuses} ) WHERE comment_type = %s", $comment_type );
+		$filters  = $this->build_post_filter_clause( $args );
+		$filters .= $this->build_user_filter_clause( $args );
+		$filters .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
 
-		$query .= $this->build_post_filter_clause( $args );
-		$query .= $this->build_user_filter_clause( $args );
-		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name and filters contain trusted, prepared clauses.
+		$progress_query = $wpdb->prepare(
+			"SELECT comment_post_ID, comment_approved, COUNT(*) AS total
+			FROM {$wpdb->comments}
+			WHERE comment_type = %s {$filters}",
+			$comment_type
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-		if ( isset( $args['query'] ) ) {
-			$query .= $args['query'];
+		if ( ! empty( $args['query'] ) ) {
+			_deprecated_argument(
+				__METHOD__,
+				'$$next-version$$',
+				'The "query" argument is deprecated. Use "post_id", "post__in", "user_id", "exclude_user_login_prefixes", or "include_statuses_override" where applicable.'
+			);
+
+			$progress_query .= $args['query'];
 		}
 
-		$query .= ' GROUP BY comment_approved';
+		$progress_query .= ' GROUP BY comment_post_ID, comment_approved';
+
+		// Check post visibility once per post/status group instead of once per progress comment.
+		$query = "SELECT progress.comment_approved, SUM(progress.total) AS total
+			FROM ( {$progress_query} ) progress
+			INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = progress.comment_post_ID
+				AND {$wpdb->posts}.post_status IN ( {$reports_statuses} )
+			GROUP BY progress.comment_approved";
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
