@@ -1064,4 +1064,28 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		return [ $lesson_id, $quiz_id ];
 	}
+
+	/**
+	 * The deprecated single question schema method still returns the saver's schema.
+	 *
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::get_single_question_schema
+	 */
+	public function testGetSingleQuestionSchema_WhenCalled_ReturnsSaverSchemaAndDeprecates() {
+		$this->setExpectedDeprecated( 'Sensei_REST_API_Lesson_Quiz_Controller::get_single_question_schema' );
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
+
+		$this->assertSame( ( new Sensei_Lesson_Quiz_Saver() )->get_single_question_schema(), $controller->get_single_question_schema() );
+	}
+
+	/**
+	 * The deprecated common question properties schema method still returns the saver's schema.
+	 *
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::get_common_question_properties_schema
+	 */
+	public function testGetCommonQuestionPropertiesSchema_WhenCalled_ReturnsSaverSchemaAndDeprecates() {
+		$this->setExpectedDeprecated( 'Sensei_REST_API_Lesson_Quiz_Controller::get_common_question_properties_schema' );
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
+
+		$this->assertSame( ( new Sensei_Lesson_Quiz_Saver() )->get_common_question_properties_schema(), $controller->get_common_question_properties_schema() );
+	}
 }
