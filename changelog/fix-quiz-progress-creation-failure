@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Show an error when quiz progress cannot be created.
