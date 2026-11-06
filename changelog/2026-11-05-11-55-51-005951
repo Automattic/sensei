@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix the module order of a lesson translated or duplicated with WPML when the current language differs from the original lesson's.

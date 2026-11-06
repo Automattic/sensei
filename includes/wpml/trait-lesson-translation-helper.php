@@ -28,7 +28,7 @@ trait Lesson_Translation_Helper {
 	 * @param int $new_course_id New course ID.
 	 */
 	private function update_lesson_course( $new_lesson_id, $new_course_id ) {
-		update_post_meta( $new_lesson_id, '_lesson_course', $new_course_id );
+		Sensei()->course_lessons_repository->attach_lesson( (int) $new_lesson_id, (int) $new_course_id );
 	}
 
 	/**
@@ -70,24 +70,30 @@ trait Lesson_Translation_Helper {
 	 * @param array $details Language details.
 	 */
 	private function set_module_taxonomies( $new_lesson_id, $master_lesson_id, $details ) {
-		$terms = wp_get_object_terms( $master_lesson_id, 'module', array( 'fields' => 'ids' ) );
-		if ( empty( $terms ) || is_wp_error( $terms ) || ! is_array( $terms ) ) {
+		$repository = Sensei()->course_lessons_repository;
+
+		// Read the original lesson's own module, not WPML's swap to the admin
+		// language, since its order is stored under the original's term. The
+		// callback is our own so that removing it leaves any other in place.
+		$disable_term_adjustment = static function (): bool {
+			return true;
+		};
+
+		add_filter( 'wpml_disable_term_adjust_id', $disable_term_adjustment );
+		$module = $repository->get_lesson_module( (int) $master_lesson_id );
+		remove_filter( 'wpml_disable_term_adjust_id', $disable_term_adjustment );
+
+		if ( ! $module ) {
 			return;
 		}
 
-		$new_terms = array();
-		foreach ( $terms as $term_id ) {
-			$term_id = (int) $term_id;
+		$term_id  = (int) $module->term_id;
+		$new_term = $this->get_object_id( $term_id, 'module', false, $details['language_code'] );
+		$repository->delete_lesson_module_order( (int) $new_lesson_id, $term_id );
 
-			$new_term = $this->get_object_id( $term_id, 'module', false, $details['language_code'] );
-			delete_post_meta( $new_lesson_id, '_order_module_' . intval( $term_id ) );
-
-			$order = get_post_meta( $master_lesson_id, '_order_module_' . intval( $term_id ), true );
-			update_post_meta( $new_lesson_id, '_order_module_' . intval( $new_term ), $order );
-			$new_terms[] = $new_term;
-		}
-
-		wp_set_object_terms( $new_lesson_id, $new_terms, 'module' );
+		$order = $repository->get_lesson_module_order( (int) $master_lesson_id, $term_id );
+		$repository->set_lesson_module_order( (int) $new_lesson_id, $new_term, $order ?? 0 );
+		$repository->set_lesson_module( (int) $new_lesson_id, $new_term );
 	}
 
 	/**
@@ -140,7 +146,7 @@ trait Lesson_Translation_Helper {
 		$lesson_ids = array_merge( $lesson_ids, array_map( 'intval', Sensei()->course->course_lessons( $new_course_id, 'any', 'ids' ) ) );
 
 		foreach ( array_values( array_unique( $lesson_ids ) ) as $index => $lesson_id ) {
-			update_post_meta( $lesson_id, '_order_' . $new_course_id, $index + 1 );
+			Sensei()->course_lessons_repository->set_lesson_order( $lesson_id, (int) $new_course_id, $index + 1 );
 		}
 	}
 }
