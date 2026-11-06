@@ -972,6 +972,29 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * A question without a title fails the request before the quiz is created.
+	 */
+	public function testSaveQuiz_QuestionWithoutTitleGiven_CreatesNoQuiz() {
+		$this->login_as_teacher();
+		$lesson_id = $this->factory->lesson->create();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			array(
+				'options'   => array(),
+				'questions' => array(
+					array(
+						'title' => '',
+						'type'  => 'multi-line',
+					),
+				),
+			)
+		);
+
+		$this->assertSame( 'sensei_lesson_quiz_question_missing_title', $response->get_data()['code'] );
+		$this->assertNull( Sensei()->lesson->lesson_quizzes( $lesson_id ), 'No quiz should be created.' );
+	}
+	/**
 	 * Tests that invalid question data are validated.
 	 */
 	public function testQuestionValidationFails() {
@@ -1040,5 +1063,29 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$quiz_id   = $this->factory->quiz->create( array_merge( [ 'post_parent' => $lesson_id ], $quiz_args ) );
 
 		return [ $lesson_id, $quiz_id ];
+	}
+
+	/**
+	 * The deprecated single question schema method still returns the saver's schema.
+	 *
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::get_single_question_schema
+	 */
+	public function testGetSingleQuestionSchema_WhenCalled_ReturnsSaverSchemaAndDeprecates() {
+		$this->setExpectedDeprecated( 'Sensei_REST_API_Lesson_Quiz_Controller::get_single_question_schema' );
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
+
+		$this->assertSame( ( new Sensei_Lesson_Quiz_Saver() )->get_single_question_schema(), $controller->get_single_question_schema() );
+	}
+
+	/**
+	 * The deprecated common question properties schema method still returns the saver's schema.
+	 *
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::get_common_question_properties_schema
+	 */
+	public function testGetCommonQuestionPropertiesSchema_WhenCalled_ReturnsSaverSchemaAndDeprecates() {
+		$this->setExpectedDeprecated( 'Sensei_REST_API_Lesson_Quiz_Controller::get_common_question_properties_schema' );
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
+
+		$this->assertSame( ( new Sensei_Lesson_Quiz_Saver() )->get_common_question_properties_schema(), $controller->get_common_question_properties_schema() );
 	}
 }
