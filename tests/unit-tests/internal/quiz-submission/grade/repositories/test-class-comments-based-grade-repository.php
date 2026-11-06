@@ -2,6 +2,7 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Grade\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Comments_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
@@ -161,6 +162,44 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 				$grade_repository->get_all( $submission->get_id() )
 			)
 		);
+	}
+
+	/**
+	 * A failed feedback write must not announce a completely saved batch.
+	 *
+	 * @covers \Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository::save_many
+	 */
+	public function testSaveMany_FeedbackUpdateFailed_PreservesSavedPointsAndAllowsLaterSave(): void {
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$submission = $this->create_submission( $lesson_id, $user_id );
+		$repository = new Comments_Based_Grade_Repository();
+		$answer     = $this->createMock( Answer_Interface::class );
+		$repository->create( $submission, $answer, 1, 1, 'Old feedback' );
+		$grade = new Comments_Based_Grade( 1, 2, 'New feedback', current_datetime(), current_datetime() );
+		$wpdb  = $GLOBALS['wpdb'];
+		$fault = static function ( $query ) use ( $wpdb ) {
+			if ( 0 === strpos( $query, "UPDATE `{$wpdb->commentmeta}`" ) && false !== strpos( $query, 'quiz_answers_feedback' ) ) {
+				return 'UPDATE sensei_missing_quiz_metadata SET meta_value = 1';
+			}
+			return $query;
+		};
+		$previous_errors = $wpdb->suppress_errors( true );
+		add_filter( 'query', $fault );
+
+		try {
+			$repository->save_many( $submission, array( $grade ) );
+			self::fail( 'A failed feedback write must report a failed batch.' );
+		} catch ( Persistence_Exception $exception ) {
+			self::assertSame( array( 1 => 2 ), get_comment_meta( $submission->get_id(), 'quiz_grades', true ), 'Already saved points must remain saved.' );
+			self::assertSame( array( 1 => 'Old feedback' ), get_comment_meta( $submission->get_id(), 'quiz_answers_feedback', true ), 'The failed write must leave the previous feedback intact.' );
+		} finally {
+			remove_filter( 'query', $fault );
+			$wpdb->suppress_errors( $previous_errors );
+		}
+		$repository->save_many( $submission, array( $grade ) );
+
+		self::assertSame( array( 1 => 'New feedback' ), get_comment_meta( $submission->get_id(), 'quiz_answers_feedback', true ) );
 	}
 
 	public function testDeleteAll_WhenCalled_DeletesAllGrades(): void {

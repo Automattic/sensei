@@ -7,9 +7,10 @@
 
 namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 
+use Sensei\Internal\Quiz_Submission\Comment_Metadata;
 use DateTimeImmutable;
 use DateTimeInterface;
-use RuntimeException;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei_Utils;
@@ -37,7 +38,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
-	 * @throws RuntimeException     In case the lesson status is missing.
+	 * @throws Persistence_Exception If lesson progress is missing or the grade cannot be saved.
 	 */
 	public function create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
@@ -55,16 +56,13 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
 
 		if ( ! $status_comment ) {
-			throw new RuntimeException( 'Missing lesson status.' );
-		}
-
-		if ( null !== $final_grade ) {
-			update_comment_meta( $status_comment->comment_ID, 'grade', $final_grade );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz_submission', 'comments', $quiz_id, $user_id, 'lesson_progress_missing' );
 		}
 
 		$created_at = $this->get_created_date( $status_comment );
 
-		return new Comments_Based_Submission(
+		$submission = new Comments_Based_Submission(
 			$status_comment->comment_ID,
 			$quiz_id,
 			$user_id,
@@ -72,6 +70,12 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 			$created_at,
 			$created_at
 		);
+
+		if ( null !== $final_grade ) {
+			Comment_Metadata::update( $status_comment->comment_ID, 'grade', $final_grade, $submission );
+		}
+
+		return $submission;
 	}
 
 	/**
@@ -84,6 +88,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
@@ -193,19 +198,20 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 *
 	 * @param Submission_Interface $submission The quiz submission.
 	 *
-	 * @throws RuntimeException In case the lesson status is missing.
+	 * @throws Persistence_Exception If lesson progress is missing or the grade cannot be saved.
 	 */
 	public function save( Submission_Interface $submission ): void {
 		$status_comment = $this->get_status_comment( $submission->get_quiz_id(), $submission->get_user_id() );
 
 		if ( ! $status_comment ) {
-			throw new RuntimeException( 'Missing lesson status.' );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz_submission', 'comments', $submission->get_quiz_id(), $submission->get_user_id(), 'lesson_progress_missing', 'save' );
 		}
 
 		if ( null !== $submission->get_final_grade() ) {
-			update_comment_meta( $status_comment->comment_ID, 'grade', $submission->get_final_grade() );
+			Comment_Metadata::update( $status_comment->comment_ID, 'grade', $submission->get_final_grade(), $submission );
 		} else {
-			delete_comment_meta( $status_comment->comment_ID, 'grade' );
+			Comment_Metadata::clear_grade( $status_comment->comment_ID, $submission );
 		}
 	}
 

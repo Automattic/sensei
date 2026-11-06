@@ -2,6 +2,9 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Grade\Repositories;
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Tables_Based_Grade;
@@ -14,6 +17,8 @@ use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submiss
  * @covers \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository
  */
 class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
+	use \Sensei_Progress_Insert_Failure_Helpers;
+
 	protected $factory;
 
 	public function setUp(): void {
@@ -34,7 +39,8 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange */
 		$submission = $this->createMock( Tables_Based_Submission::class );
 		$answer     = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
-		$wpdb       = $this->createMock( \wpdb::class );
+		$wpdb            = $this->createMock( \wpdb::class );
+		$wpdb->insert_id = 1;
 		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Act */
@@ -55,7 +61,8 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange */
 		$submission = $this->createMock( Tables_Based_Submission::class );
 		$answer     = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
-		$wpdb       = $this->createMock( \wpdb::class );
+		$wpdb            = $this->createMock( \wpdb::class );
+		$wpdb->insert_id = 1;
 		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Expect & Act */
@@ -100,6 +107,46 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		/* Cleanup */
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->delete( "{$wpdb->prefix}sensei_lms_quiz_grades", [ 'id' => $grade->get_id() ] );
+	}
+
+	/**
+	 * Failed inserts must not return or cache an invalid record, and a later insert must succeed.
+	 *
+	 * @dataProvider failed_insert_responses
+	 * @covers \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository::create
+	 */
+	public function testCreate_InsertFailedOrReturnedWithoutId_ThrowsAndAllowsLaterCreation( ?string $replacement ): void {
+		$submission = ( new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository( $GLOBALS['wpdb'] ) )->create( 123, 456 );
+		$answer     = ( new \Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository( $GLOBALS['wpdb'] ) )->create( $submission, 789, 'Saved answer' );
+		$repository = new Tables_Based_Grade_Repository( $GLOBALS['wpdb'] );
+
+		$this->with_failed_cached_insert(
+			$GLOBALS['wpdb']->prefix . 'sensei_lms_quiz_grades',
+			function () use ( $repository, $submission, $answer ) {
+				try {
+					$repository->create( $submission, $answer, 789, 1 );
+					self::fail( 'The required insert must report failure.' );
+				} catch ( Persistence_Exception $exception ) {
+					self::assertEmpty( $repository->get_all( $submission->get_id() ), 'A failed insert must not expose an invalid cached record.' );
+				}
+			},
+			$replacement
+		);
+		$record = $repository->create( $submission, $answer, 789, 1 );
+
+		self::assertGreaterThan( 0, $record->get_id() );
+	}
+
+	/**
+	 * Database failures and successful queries that did not insert a row.
+	 *
+	 * @return array
+	 */
+	public static function failed_insert_responses(): array {
+		return array(
+			'failed insert' => array( null ),
+			'no insert ID'  => array( 'SELECT 1' ),
+		);
 	}
 
 	public function testSaveMany_GradesGiven_UpdatesData(): void {
@@ -173,6 +220,66 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 		/* Cleanup */
 		$this->cleanup( $created );
+	}
+
+	/**
+	 * A failed grade update must stop the batch and expose completed writes through the cache.
+	 *
+	 * @covers \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository::save_many
+	 */
+	public function testSaveMany_LaterUpdateFailed_PreservesCompletedWriteAndStopsBatch(): void {
+		$wpdb       = $GLOBALS['wpdb'];
+		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( 123, 456 );
+		$answers    = new \Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository( $wpdb );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
+		$grades     = array();
+		foreach ( array( 1, 2, 3 ) as $question_id ) {
+			$answer   = $answers->create( $submission, $question_id, 'Saved answer' );
+			$grades[] = $repository->create( $submission, $answer, $question_id, 1 );
+		}
+		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
+		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
+		$repository->get_all( $submission->get_id() );
+		$grades = array_map(
+			static function ( $grade ) {
+				return new Tables_Based_Grade(
+					$grade->get_id(),
+					$grade->get_answer_id(),
+					$grade->get_question_id(),
+					2,
+					null,
+					$grade->get_created_at(),
+					$grade->get_updated_at()
+				);
+			},
+			$grades
+		);
+		$failed_id = $grades[1]->get_id();
+		$fault     = static function ( $query ) use ( $wpdb, $failed_id ) {
+			return 0 === strpos( $query, "UPDATE `{$wpdb->prefix}sensei_lms_quiz_grades`" )
+				&& false !== strpos( $query, "WHERE `id` = {$failed_id}" )
+				? 'UPDATE sensei_missing_quiz_table SET id = 1'
+				: $query;
+		};
+		$previous_errors = $wpdb->suppress_errors( true );
+		add_filter( 'query', $fault );
+
+		try {
+			$repository->save_many( $submission, $grades );
+			self::fail( 'A failed update must stop the grade batch.' );
+		} catch ( Persistence_Exception $exception ) {
+			$saved_points = array_map(
+				static function ( $grade ) {
+					return $grade->get_points();
+				},
+				$repository->get_all( $submission->get_id() )
+			);
+
+			self::assertSame( array( 2, 1, 1 ), $saved_points, 'Only the completed first update must be visible.' );
+		} finally {
+			remove_filter( 'query', $fault );
+			$wpdb->suppress_errors( $previous_errors );
+		}
 	}
 
 	public function testDeleteAll_SubmissionIdGiven_ExecutesDeleteQuery(): void {
