@@ -381,6 +381,44 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Clearing a grade must report failure and allow an already cleared grade.
+	 *
+	 * @dataProvider final_grade_write_failures
+	 * @covers Sensei_Utils::sensei_delete_quiz_grade
+	 */
+	public function testSenseiDeleteQuizGrade_RequiredWriteFailed_ReturnsFalseAndAllowsLaterClear( string $mode, string $store ): void {
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		Sensei_Utils::sensei_grade_quiz( $quiz_id, 75, $user_id );
+		$wpdb      = $GLOBALS['wpdb'];
+		$statement = 'tables' === $store ? "UPDATE `{$wpdb->prefix}sensei_lms_quiz_submissions`" : "DELETE FROM {$wpdb->commentmeta}";
+		$fault     = static function ( $query ) use ( $statement ) {
+			return 0 === strpos( $query, $statement )
+				? 'UPDATE sensei_missing_quiz_table SET id = 1'
+				: $query;
+		};
+		$previous_errors = $wpdb->suppress_errors( true );
+		add_filter( 'query', $fault );
+
+		try {
+			$result = Sensei_Utils::sensei_delete_quiz_grade( $quiz_id, $user_id );
+
+			self::assertFalse( $result, 'A failed required write must reject clearing the grade.' );
+		} finally {
+			remove_filter( 'query', $fault );
+			$wpdb->suppress_errors( $previous_errors );
+		}
+
+		self::assertTrue( Sensei_Utils::sensei_delete_quiz_grade( $quiz_id, $user_id ), 'A later clear must succeed.' );
+		self::assertTrue( Sensei_Utils::sensei_delete_quiz_grade( $quiz_id, $user_id ), 'An already cleared grade must also succeed.' );
+		self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'The final grade must be cleared.' );
+	}
+
+	/**
 	 * Required final-grade writes in each active storage configuration.
 	 *
 	 * @return array

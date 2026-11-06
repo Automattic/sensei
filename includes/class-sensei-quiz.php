@@ -983,7 +983,11 @@ class Sensei_Quiz {
 				}
 
 				// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade.
-				Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
+				$submission      = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+				$answers_deleted = Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
+				if ( $submission && ! $answers_deleted ) {
+					return false;
+				}
 			}
 
 			// Update course completion.

@@ -857,6 +857,64 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Reset must stop when clearing answers cannot create a required mirrored submission.
+	 *
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 */
+	public function testResetUserLessonData_RequiredMirroredSubmissionInsertFailed_ReturnsFalseWithoutSuccess(): void {
+		$this->set_progress_storage_mode( 'comments' );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		$tables = new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository( $GLOBALS['wpdb'] );
+		$tables->delete( $tables->get( $quiz_id, $user_id ) );
+		$reset_events = did_action( 'sensei_user_lesson_reset' );
+
+		$this->with_failed_insert(
+			$GLOBALS['wpdb']->prefix . 'sensei_lms_quiz_submissions',
+			function () use ( $lesson_id, $user_id, $reset_events ) {
+				$result = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+
+				self::assertFalse( $result, 'A required synchronization insert must stop reset.' );
+				self::assertSame( $reset_events, did_action( 'sensei_user_lesson_reset' ), 'A failed reset must not publish success.' );
+			}
+		);
+	}
+
+	/**
+	 * Reset removes legacy answers even when no modern submission exists.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 */
+	public function testResetUserLessonData_OnlyLegacyAnswersExisted_RemovesLegacyAnswersAndGrades( string $mode ): void {
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		$source_id   = $this->factory->comment->create(
+			array(
+				'comment_post_ID'  => $question_id,
+				'comment_content'  => 'Legacy answer',
+				'comment_type'     => 'sensei_user_answer',
+				'comment_approved' => 'log',
+				'user_id'          => $user_id,
+			)
+		);
+		update_comment_meta( $source_id, 'user_grade', 1 );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		$result = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+
+		self::assertTrue( $result, 'A started lesson with legacy data must reset successfully.' );
+		self::assertNull( get_comment( $source_id ), 'Reset must remove the old answer rather than leave it available to conversion.' );
+		self::assertSame( '', get_comment_meta( $source_id, 'user_grade', true ), 'Reset must remove the old grade metadata.' );
+	}
+
+	/**
 	 * Resetting a completed lesson updates its course comment metadata.
 	 *
 	 * @covers Sensei_Quiz::reset_user_lesson_data
