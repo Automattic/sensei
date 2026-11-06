@@ -962,10 +962,8 @@ class Sensei_Grading {
 					} else {
 						$quiz_progress->fail();
 					}
-				}
-
-				// Student only has to partake the quiz.
-				else {
+				} else {
+					// Student only has to partake the quiz.
 					$lesson_progress->complete();
 					$quiz_progress->grade();
 				}
