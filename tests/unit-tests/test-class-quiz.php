@@ -1254,7 +1254,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		$this->with_failed_insert(
 			$GLOBALS['wpdb']->prefix . 'sensei_lms_quiz_answers',
-			function () use ( $ids, $question, $second_category_question ) {
+			function () use ( $ids, $question, $second_category_question, $save_request ) {
 				Sensei()->quiz->user_save_quiz_answers_listener();
 				$questions = Sensei()->lesson->lesson_quiz_questions( $ids['quiz_id'] );
 
