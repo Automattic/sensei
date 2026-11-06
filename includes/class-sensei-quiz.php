@@ -1265,28 +1265,36 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-		if ( ! $submission ) {
+		try {
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			if ( ! $submission ) {
+				return false;
+			}
+
+			Sensei()->quiz_grade_repository->delete_all( $submission );
+
+			$answers     = Sensei()->quiz_answer_repository->get_all( $submission->get_id() );
+			$answers_map = [];
+			foreach ( $answers as $answer ) {
+				$answers_map[ $answer->get_question_id() ] = $answer;
+			}
+
+			foreach ( $quiz_grades as $question_id => $points ) {
+				$answer = $answers_map[ $question_id ];
+				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
+			}
+
+			$transient_key = self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id );
+			set_transient( $transient_key, $quiz_grades, 10 * DAY_IN_SECONDS );
+
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			delete_transient( self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id ) );
+			delete_transient( self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id ) );
+
+			$exception->log( 'saving question grades' );
 			return false;
 		}
-
-		Sensei()->quiz_grade_repository->delete_all( $submission );
-
-		$answers     = Sensei()->quiz_answer_repository->get_all( $submission->get_id() );
-		$answers_map = [];
-		foreach ( $answers as $answer ) {
-			$answers_map[ $answer->get_question_id() ] = $answer;
-		}
-
-		foreach ( $quiz_grades as $question_id => $points ) {
-			$answer = $answers_map[ $question_id ];
-			Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
-		}
-
-		$transient_key = self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id );
-		set_transient( $transient_key, $quiz_grades, 10 * DAY_IN_SECONDS );
-
-		return true;
 
 	}
 
@@ -1430,24 +1438,31 @@ class Sensei_Quiz {
 			$encoded_answers_feedback[ $question_id ] = base64_encode( $feedback );
 		}
 
-		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-		if ( ! $submission ) {
+		try {
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			if ( ! $submission ) {
+				return false;
+			}
+
+			$grades = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
+			foreach ( $grades as $grade ) {
+				$feedback = $encoded_answers_feedback[ $grade->get_question_id() ];
+				$grade->set_feedback( $feedback );
+			}
+
+			Sensei()->quiz_grade_repository->save_many( $submission, $grades );
+
+			// Save transient to make retrieval faster in the future.
+			$transient_key = self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
+			set_transient( $transient_key, $encoded_answers_feedback, 10 * DAY_IN_SECONDS );
+
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			delete_transient( self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id ) );
+
+			$exception->log( 'saving quiz feedback' );
 			return false;
 		}
-
-		$grades = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
-		foreach ( $grades as $grade ) {
-			$feedback = $encoded_answers_feedback[ $grade->get_question_id() ];
-			$grade->set_feedback( $feedback );
-		}
-
-		Sensei()->quiz_grade_repository->save_many( $submission, $grades );
-
-		// Save transient to make retrieval faster in the future.
-		$transient_key = self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
-		set_transient( $transient_key, $encoded_answers_feedback, 10 * DAY_IN_SECONDS );
-
-		return true;
 
 	}
 

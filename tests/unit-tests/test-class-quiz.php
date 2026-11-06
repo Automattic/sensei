@@ -2256,6 +2256,52 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Grade synchronization reached through save_many must stop on a failed required insert.
+	 *
+	 * @dataProvider dual_write_storage_modes
+	 * @covers Sensei_Quiz::save_user_answers_feedback
+	 */
+	public function testSaveUserAnswersFeedback_RequiredSecondaryGradeInsertFailed_PreservesPrimaryGradesAndAllowsLaterSave( string $mode, string $secondary ): void {
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
+		$wpdb = $GLOBALS['wpdb'];
+
+		if ( 'tables' === $secondary ) {
+			$secondary_submission = ( new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository( $wpdb ) )->get( $quiz_id, $user_id );
+			( new \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository( $wpdb ) )->delete_all( $secondary_submission );
+			$table        = $wpdb->prefix . 'sensei_lms_quiz_grades';
+			$metadata_key = null;
+		} else {
+			$secondary_submission = ( new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository() )->get( $quiz_id, $user_id );
+			delete_comment_meta( $secondary_submission->get_id(), 'quiz_grades' );
+			$table        = $wpdb->commentmeta;
+			$metadata_key = 'quiz_grades';
+		}
+		$feedback = array( $question_id => 'Saved feedback' );
+
+		$this->with_failed_insert(
+			$table,
+			function () use ( $feedback, $lesson_id, $user_id, $quiz_id ) {
+				self::assertFalse( Sensei()->quiz->save_user_answers_feedback( $feedback, $lesson_id, $user_id ), 'A failed insert reached through save_many must report failure.' );
+				$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+				$grades     = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
+				self::assertCount( 1, $grades, 'Primary grades must survive a failed secondary insert.' );
+				self::assertSame( 1, $grades[0]->get_points(), 'Already saved points must remain available.' );
+			},
+			null,
+			$metadata_key
+		);
+		$result = Sensei()->quiz->save_user_answers_feedback( $feedback, $lesson_id, $user_id );
+
+		self::assertTrue( $result, 'A later save must complete without duplicating saved grades.' );
+	}
+
+	/**
 	 * This tests Sensei()->quiz->save_user_answers_feedback.
 	 */
 	public function testSaveUserAnswersFeedback() {

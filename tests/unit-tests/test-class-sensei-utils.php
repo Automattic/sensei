@@ -341,6 +341,63 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A failed final-grade write must stop grading before publishing success.
+	 *
+	 * @dataProvider final_grade_write_failures
+	 * @covers Sensei_Utils::sensei_grade_quiz
+	 */
+	public function testSenseiGradeQuiz_RequiredGradeWriteFailed_ReturnsFalseWithoutSuccessEvent( string $mode, string $store ): void {
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		Sensei_Utils::sensei_grade_quiz( $quiz_id, 25, $user_id );
+		$graded_events = did_action( 'sensei_user_quiz_grade' );
+		$wpdb          = $GLOBALS['wpdb'];
+		$table         = 'tables' === $store ? $wpdb->prefix . 'sensei_lms_quiz_submissions' : $wpdb->commentmeta;
+		$fault         = static function ( $query ) use ( $table ) {
+			return 0 === strpos( $query, "UPDATE `{$table}`" )
+				? 'UPDATE sensei_missing_quiz_table SET id = 1'
+				: $query;
+		};
+		$previous_errors = $wpdb->suppress_errors( true );
+		add_filter( 'query', $fault );
+
+		try {
+			$result = Sensei_Utils::sensei_grade_quiz( $quiz_id, 75, $user_id );
+
+			self::assertFalse( $result, 'A failed final-grade write must report failure.' );
+			self::assertSame( $graded_events, did_action( 'sensei_user_quiz_grade' ), 'A failed write must not fire a grading success event.' );
+		} finally {
+			remove_filter( 'query', $fault );
+			$wpdb->suppress_errors( $previous_errors );
+		}
+
+		self::assertTrue( Sensei_Utils::sensei_grade_quiz( $quiz_id, 75, $user_id ), 'A later ordinary grade must succeed.' );
+		self::assertTrue( Sensei_Utils::sensei_grade_quiz( $quiz_id, 75, $user_id ), 'An unchanged grade must also succeed.' );
+		self::assertEquals( 75, Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'The final grade must be persisted.' );
+	}
+
+	/**
+	 * Required final-grade writes in each active storage configuration.
+	 *
+	 * @return array
+	 */
+	public static function final_grade_write_failures(): array {
+		$cases = array();
+		foreach ( self::progress_storage_modes() as $name => $arguments ) {
+			$cases[ $name . ' comment grade' ] = array( $arguments[0], 'comments' );
+			if ( 'comments-only' !== $arguments[0] ) {
+				$cases[ $name . ' table grade' ] = array( $arguments[0], 'tables' );
+			}
+		}
+
+		return $cases;
+	}
+
+	/**
 	 * A missing course record must be created before changing an existing grade.
 	 *
 	 * @dataProvider progress_storage_modes
