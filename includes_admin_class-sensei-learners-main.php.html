@@ -753,7 +753,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 *
 	 * @psalm-suppress InternalProperty This global table consumes the internal student row model.
 	 */
-	private function get_edit_start_date_form( Students_Item $student, $post_id, $post_type ) : string {
+	private function get_edit_start_date_form( Students_Item $student, $post_id, $post_type ): string {
 		$submit_button_text = __( 'Update Student', 'sensei-lms' );
 
 		return '&lt;form class="edit-start-date">
