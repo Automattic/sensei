@@ -14,6 +14,13 @@ This skill verifies that a change actually behaves correctly from a user's persp
 - Browser tools are available, such as Chrome DevTools MCP or the harness's browser automation tools. Read their usage instructions before driving the browser. If none are available, report that agent-driven browser verification is unavailable and provide manual steps.
 - For PHP changes that touch built assets, run `npm run build:assets` first. For changes that affect the scoped vendor tree, run `make build`.
 
+## Learning Mode coverage
+
+For browser checks and targeted Playwright specs that use a course, check
+`Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id )` for the
+test course. If it returns false, enable Learning Mode for that course and
+confirm it returns true before testing.
+
 ## Sensei surface map
 
 The most common surfaces ranked by what a Sensei change typically touches:
