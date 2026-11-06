@@ -78,7 +78,6 @@ class Sensei_Course_Theme_Templates {
 		add_filter( 'theme_quiz_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
 		add_action( 'init', [ $this, 'load_course_theme_patterns' ] );
 		add_action( 'init', array( $this, 'register_block_templates' ) );
-
 	}
 
 	/**
