@@ -3642,10 +3642,7 @@ class Sensei_Lesson {
 			'fields'           => 'ids',
 		);
 		if ( $course_id ) {
-			$post_args['meta_query'][] = array(
-				'key'   => '_lesson_course',
-				'value' => $course_id,
-			);
+			$post_args['sensei_course'] = $course_id;
 		} else {
 			// Simple check for connection to a Course
 			$post_args['meta_query'][] = array(
