@@ -186,6 +186,38 @@ class Comments_Based_Progress_Aggregation_Service_Test extends \Progress_Aggrega
 		$this->assertArrayNotHasKey( 'in-progress', $result, 'Excluded user status should not appear.' );
 	}
 
+	/**
+	 * Status totals count every matching comment across lessons.
+	 *
+	 * @covers \Sensei\Internal\Services\Comments_Based_Progress_Aggregation_Service::count_statuses
+	 */
+	public function testCountStatuses_RepeatedStatusesAcrossLessonsGiven_CountsEveryMatchingComment(): void {
+		global $wpdb;
+
+		$lesson_ids = $this->sensei_factory->lesson->create_many( 2 );
+		$post_ids   = array(
+			$lesson_ids[0],
+			$lesson_ids[0],
+			$lesson_ids[1],
+		);
+
+		foreach ( $post_ids as $post_id ) {
+			$this->factory->comment->create(
+				array(
+					'comment_post_ID'  => $post_id,
+					'comment_type'     => 'sensei_lesson_status',
+					'comment_approved' => 'complete',
+				)
+			);
+		}
+
+		$service = new Comments_Based_Progress_Aggregation_Service( $wpdb );
+
+		$result = $service->count_statuses( array( 'type' => 'lesson' ) );
+
+		$this->assertSame( array( 'complete' => 3 ), $result );
+	}
+
 	public function testGetLessonStudentCount_WithStudentProgress_ReturnsCount(): void {
 		/* Arrange. */
 		global $wpdb;

@@ -52,6 +52,8 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 	/**
 	 * Count progress records grouped by status.
 	 *
+	 * A nonempty `query` argument triggers `_doing_it_wrong()` and is ignored.
+	 *
 	 * @since 4.26.0
 	 *
 	 * @param array $args {
