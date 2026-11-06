@@ -449,21 +449,31 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		// save the user data
-		$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+		try {
+			// save the user data
+			$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
 
-		Sensei()->quiz_grade_repository->delete_all( $submission );
-		Sensei()->quiz_answer_repository->delete_all( $submission );
+			Sensei()->quiz_grade_repository->delete_all( $submission );
+			Sensei()->quiz_answer_repository->delete_all( $submission );
 
-		foreach ( $prepared_answers as $question_id => $answer ) {
-			Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
+			foreach ( $prepared_answers as $question_id => $answer ) {
+				Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
+			}
+
+			// Save transient to make retrieval faster.
+			$transient_key = self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id );
+			set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
+
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			delete_transient( self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id ) );
+			delete_transient( self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id ) );
+			delete_transient( self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id ) );
+
+			$exception->log( 'saving quiz answers' );
+			return false;
 		}
 
-		// Save transient to make retrieval faster.
-		$transient_key = self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id );
-		set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
-
-		return true;
 	}
 
 	/**
@@ -534,6 +544,23 @@ class Sensei_Quiz {
 
 	}
 
+	/**
+	 * Get the submitted question order retained after a failed form write.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $user_id Student ID.
+	 * @return int[]|null Question IDs, or null when no failed form is retained.
+	 */
+	public function get_unsaved_question_ids( int $lesson_id, int $user_id ): ?array {
+		if ( ! isset( $this->unsaved_answers[ $lesson_id ][ $user_id ] ) ) {
+			return null;
+		}
+
+		return array_keys( $this->unsaved_answers[ $lesson_id ][ $user_id ] );
+	}
 
 	/**
 	 *
