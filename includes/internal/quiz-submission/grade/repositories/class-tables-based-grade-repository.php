@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Sensei\Internal\Cache_Prefix;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Tables_Based_Grade;
@@ -68,6 +69,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * @param string|null          $feedback    The feedback.
 	 *
 	 * @return Grade_Interface The grade.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface {
 		/**
@@ -98,7 +100,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		$current_date = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
 		$date_format  = 'Y-m-d H:i:s';
 
-		$this->wpdb->insert(
+		$result = $this->wpdb->insert(
 			$this->get_table_name(),
 			[
 				'answer_id'   => $answer_id,
@@ -118,8 +120,22 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 			]
 		);
 
+		$id = (int) $this->wpdb->insert_id;
+		if ( false === $result || $id <= 0 ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception(
+				'quiz_grade',
+				'tables',
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
+				$submission->get_quiz_id(),
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
+				$submission->get_user_id(),
+				false === $result ? 'insert_failed' : 'invalid_insert_id'
+			);
+		}
+
 		$grade = new Tables_Based_Grade(
-			$this->wpdb->insert_id,
+			$id,
 			$answer_id,
 			$question_id,
 			$points,
@@ -209,15 +225,18 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param Submission_Interface $submission The submission.
 	 * @param Grade_Interface[]    $grades     An array of grades.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function save_many( Submission_Interface $submission, array $grades ): void {
-		foreach ( $grades as $grade ) {
-			$this->save( $grade );
-		}
-
-		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			$cache_submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission->get_id(), 'tables' );
-			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $cache_submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
+		try {
+			foreach ( $grades as $grade ) {
+				$this->save( $grade, $submission );
+			}
+		} finally {
+			if ( Progress_Storage_Settings::is_cache_enabled() ) {
+				$cache_submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission->get_id(), 'tables' );
+				wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $cache_submission_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
+			}
 		}
 	}
 
@@ -261,12 +280,14 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**
 	 * Save single grade.
 	 *
-	 * @param Grade_Interface $grade The grade.
+	 * @param Grade_Interface      $grade The grade.
+	 * @param Submission_Interface $submission Submission identity.
+	 * @throws Persistence_Exception If the required update fails.
 	 */
-	private function save( Grade_Interface $grade ): void {
+	private function save( Grade_Interface $grade, Submission_Interface $submission ): void {
 		$updated_at = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
 
-		$this->wpdb->update(
+		$result = $this->wpdb->update(
 			$this->get_table_name(),
 			[
 				'points'     => $grade->get_points(),
@@ -285,6 +306,11 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 				'%d',
 			]
 		);
+
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz_grade', 'tables', $submission->get_quiz_id(), $submission->get_user_id(), 'update_failed', 'save' );
+		}
 	}
 
 	/**

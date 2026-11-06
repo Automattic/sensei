@@ -35,6 +35,7 @@ interface Grade_Repository_Interface {
 	 * @param string|null          $feedback    The feedback.
 	 *
 	 * @return Grade_Interface The grade.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface;
 
@@ -56,6 +57,7 @@ interface Grade_Repository_Interface {
 	 *
 	 * @param Submission_Interface $submission The submission.
 	 * @param Grade_Interface[]    $grades     An array of grades.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function save_many( Submission_Interface $submission, array $grades ): void;
 
@@ -65,6 +67,7 @@ interface Grade_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function delete_all( Submission_Interface $submission ): void;
 }
