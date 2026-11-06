@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Source: includes/rest-api/class-sensei-rest-api-lesson-quiz-controller.php - Sensei LMS Hook Docs</title>
+	<title>Source: includes/class-sensei-lesson-quiz-saver.php - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Source: includes/rest-api/class-sensei-rest-api-lesson-quiz-controller.php</h1>
+	<h1 class="page-title">Source: includes/class-sensei-lesson-quiz-saver.php</h1>
 	
 
 	
@@ -33,7 +33,7 @@
         <article>
             <pre class="prettyprint source linenums"><code>&lt;?php
 /**
- * File containing the class Sensei_REST_API_Lesson_Quiz_Controller.
+ * File containing the class Sensei_Lesson_Quiz_Saver.
  *
  * @package sensei
  */
@@ -43,87 +43,49 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Lesson Quiz REST API endpoints.
+ * Saves a lesson's quiz settings and questions.
  *
- * @package Sensei
- * @author  Automattic
- * @since   3.9.0
+ * This is the save path of the lesson quiz block in the editor, shared by the
+ * lesson-quiz REST controller and the `sensei/quiz-questions-set` ability.
+ *
+ * @since $$next-version$$
  */
-class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
+class Sensei_Lesson_Quiz_Saver {
 	use Sensei_REST_API_Question_Helpers_Trait;
 
 	/**
-	 * Routes namespace.
+	 * Quiz options stored as a yes/no/unset tri-state.
 	 *
-	 * @var string
+	 * @var string[]
 	 */
-	protected $namespace;
+	const TRISTATE_OPTIONS = array( 'failed_indicate_incorrect', 'failed_show_correct_answers', 'failed_show_answer_feedback' );
 
 	/**
-	 * Routes prefix.
+	 * Check whether the current user may save the quiz of a lesson.
 	 *
-	 * @var string
+	 * @param int $lesson_id Lesson post ID.
+	 *
+	 * @return bool
 	 */
-	protected $rest_base = 'lesson-quiz';
+	public static function can_current_user_save( int $lesson_id ): bool {
+		// get_post( 0 ) falls back to the global post, which must never stand in for a lesson id.
+		if ( $lesson_id &lt;= 0 ) {
+			return false;
+		}
 
-	/**
-	 * Sensei_REST_API_Quiz_Controller constructor.
-	 *
-	 * @param string $routes_namespace Routes namespace.
-	 */
-	public function __construct( $routes_namespace ) {
-		$this->namespace = $routes_namespace;
+		$lesson = get_post( $lesson_id );
+
+		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
+			return false;
+		}
+
+		$post_type_object = get_post_type_object( 'lesson' );
+
+		return $post_type_object &amp;&amp; is_user_logged_in() &amp;&amp; current_user_can( $post_type_object->cap->edit_post, $lesson->ID );
 	}
 
 	/**
-	 * Register the REST API endpoints for quiz.
-	 */
-	public function register_routes() {
-		register_rest_route(
-			$this->namespace,
-			$this->rest_base . '/(?P&lt;lesson_id>[0-9]+)',
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_quiz' ),
-					'permission_callback' => array( $this, 'can_user_get_quiz' ),
-					'args'                => array(
-						'lesson_id' => array(
-							'type'              => 'integer',
-							'sanitize_callback' => 'sanitize_key',
-							'validate_callback' => 'rest_validate_request_arg',
-						),
-					),
-				),
-				array(
-					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'save_quiz' ),
-					'permission_callback' => array( $this, 'can_user_save_quiz' ),
-					'args'                => array(
-						'options'   => array(
-							'type'              => 'object',
-							'required'          => true,
-							'sanitize_callback' => 'rest_sanitize_request_arg',
-							'validate_callback' => 'rest_validate_request_arg',
-						),
-						'questions' => array(
-							'type'              => 'array',
-							'required'          => true,
-							'sanitize_callback' => array( $this, 'sanitize_questions' ),
-							'validate_callback' => array( $this, 'validate_questions' ),
-						),
-					),
-				),
-				'schema' => array( $this, 'get_item_schema' ),
-			)
-		);
-	}
-
-	/**
-	 * Sanitization method for questions.
-	 *
-	 * This can be replaced by `rest_sanitize_request_arg` in the callback once we no longer support WordPress
-	 * versions before 5.6 (when `oneOf` support was added).
+	 * Sanitize questions against the schema of their type.
 	 *
 	 * @param array $questions The questions.
 	 *
@@ -134,7 +96,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		foreach ( $questions as $question ) {
 			$result = rest_sanitize_value_from_schema( $question, $this->get_question_schema( $question['type'] ) );
 
-			if ( is_wp_error( $result ) ) {
+			if ( $result instanceof WP_Error ) {
 				return $result;
 			}
 
@@ -145,10 +107,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Validation method for questions.
-	 *
-	 * This can be replaced by `rest_validate_request_arg` in the callback once we no longer support WordPress
-	 * versions before 5.6 (when `oneOf` support was added).
+	 * Validate questions against the schema of their type.
 	 *
 	 * @param array $questions The questions.
 	 *
@@ -167,66 +126,107 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Check user permission for saving course structure.
+	 * Save the quiz options and questions of a lesson, creating the quiz when the lesson has none.
 	 *
-	 * @param WP_REST_Request $request WordPress request object.
+	 * Questions without an id are created; questions left out are removed from the quiz.
+	 * Options not present in `$params['options']` are reset, as the editor always sends all of them;
+	 * see get_options_for_update() to merge over the stored options instead.
 	 *
-	 * @return bool|WP_Error Whether the user can save course structure data. Error if not found.
+	 * Questions are written before the quiz, and the questions this save created are deleted again
+	 * when a later write fails, so a failed save leaves no quiz behind and no question outside one.
+	 *
+	 * @param WP_Post $lesson                       The lesson.
+	 * @param array   $params                       Quiz data: `options` and `questions`, as validated and sanitized against the schemas.
+	 * @param bool    $reject_unavailable_questions Whether a question id that names no question the user may edit, and is
+	 *                                              not already in the quiz, fails the save. The editor relies on such
+	 *                                              questions being dropped; the ability reports them.
+	 *
+	 * @return int|WP_Error The quiz ID, or an error. Errors carry no HTTP status.
 	 */
-	public function can_user_save_quiz( WP_REST_Request $request ) {
-		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
-
-		if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
-			return new WP_Error(
-				'sensei_lesson_quiz_missing_lesson',
-				__( 'Lesson not found.', 'sensei-lms' ),
-				array( 'status' => 404 )
-			);
-		}
-
-		if ( ! is_user_logged_in() ) {
-			return false;
-		}
-
-		return current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson->ID );
-	}
-
-	/**
-	 * Save the quiz.
-	 *
-	 * @param WP_REST_Request $request WordPress request object.
-	 *
-	 * @return WP_REST_Response|WP_Error
-	 */
-	public function save_quiz( WP_REST_Request $request ) {
-		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
-
+	public function save( WP_Post $lesson, array $params, bool $reject_unavailable_questions = false ) {
 		if ( 'auto-draft' === $lesson->post_status ) {
 			return new WP_Error(
 				'sensei_lesson_quiz_lesson_auto_draft',
-				__( 'Cannot update the quiz of an Auto Draft lesson.', 'sensei-lms' ),
-				array( 'status' => 400 )
+				__( 'Cannot update the quiz of an Auto Draft lesson.', 'sensei-lms' )
 			);
 		}
+
+		$options   = is_array( $params['options'] ?? null ) ? $params['options'] : array();
+		$questions = is_array( $params['questions'] ?? null ) ? $params['questions'] : array();
 
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 		$is_new  = null === $quiz_id;
 
-		$json_params = $request->get_json_params();
+		$existing_question_ids = $is_new ? array() : array_map( 'intval', wp_list_pluck( Sensei()->quiz->get_questions( (int) $quiz_id ), 'ID' ) );
+
+		$resolved_questions = $this->resolve_questions( $questions, $existing_question_ids );
+		if ( is_wp_error( $resolved_questions ) ) {
+			return $resolved_questions;
+		}
+
+		if ( $reject_unavailable_questions ) {
+			foreach ( $resolved_questions as $resolved ) {
+				if ( 'drop' === $resolved['action'] ) {
+					return new WP_Error(
+						'sensei_lesson_quiz_question_not_available',
+						// translators: Placeholder is the question ID.
+						sprintf( __( 'Question with id "%d" was not found or cannot be edited.', 'sensei-lms' ), (int) $resolved['id'] ),
+						$resolved['id']
+					);
+				}
+			}
+		}
+
+		$question_ids         = array();
+		$created_question_ids = array();
+		foreach ( $resolved_questions as $resolved ) {
+			if ( 'drop' === $resolved['action'] ) {
+				continue;
+			}
+
+			if ( 'keep' === $resolved['action'] ) {
+				$question_ids[] = $resolved['id'];
+				continue;
+			}
+
+			$question_id = $resolved['is_category']
+				? $this->save_category_question( $resolved['question'] )
+				: $this->save_question( $resolved['question'] );
+
+			// The helpers return 0, not a WP_Error, when WordPress refuses the post.
+			if ( is_wp_error( $question_id ) || ! $question_id ) {
+				$this->delete_questions( $created_question_ids );
+
+				return is_wp_error( $question_id )
+					? $question_id
+					: new WP_Error( 'sensei_lesson_quiz_question_save_failed', __( 'The question could not be saved.', 'sensei-lms' ) );
+			}
+
+			if ( 'create' === $resolved['action'] ) {
+				$created_question_ids[] = (int) $question_id;
+			}
+
+			$question_ids[] = (int) $question_id;
+		}
 
 		$quiz_id = wp_insert_post(
-			array(
-				'ID'           => $quiz_id,
-				'post_content' => '',
-				'post_status'  => $lesson->post_status,
-				'post_title'   => $lesson->post_title,
-				'post_type'    => 'quiz',
-				'post_parent'  => $lesson->ID,
-				'meta_input'   => $this->get_quiz_meta( $json_params, $lesson ),
-			)
+			wp_slash(
+				array(
+					'ID'           => $quiz_id,
+					'post_content' => '',
+					'post_status'  => $lesson->post_status,
+					'post_title'   => $lesson->post_title,
+					'post_type'    => 'quiz',
+					'post_parent'  => $lesson->ID,
+					'meta_input'   => $this->get_quiz_meta( $options, $lesson ),
+				)
+			),
+			true
 		);
 
 		if ( is_wp_error( $quiz_id ) ) {
+			$this->delete_questions( $created_question_ids );
+
 			return $quiz_id;
 		}
 
@@ -247,62 +247,119 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			do_action( 'sensei_quiz_create', (int) $quiz_id, (int) $lesson->ID );
 		}
 
-		$existing_question_ids = array_map( 'intval', wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' ) );
-
-		$question_ids = array();
-		foreach ( $json_params['questions'] as $question ) {
-			if ( isset( $question['type'] ) &amp;&amp; 'category-question' === $question['type'] ) {
-				$question_id = $this->save_category_question( $question );
-			} else {
-				$question_id = $this->save_question( $question );
-			}
-
-			if ( is_wp_error( $question_id ) ) {
-				if ( 'sensei_lesson_quiz_question_not_available' === $question_id->get_error_code() ) {
-					// Gracefully ignore this error and include it (unchanged) in the quiz if it already exists.
-					$question_id = (int) $question_id->get_error_data();
-
-					if ( ! in_array( $question_id, $existing_question_ids, true ) ) {
-						$question_id = null;
-					}
-				} else {
-					return $question_id;
-				}
-			}
-
-			$question_ids[] = $question_id;
-		}
-
-		Sensei()->quiz->set_questions( $quiz_id, array_filter( $question_ids ) );
+		Sensei()->quiz->set_questions( $quiz_id, $question_ids );
 
 		/**
-		 * Fire action when a the lesson-quiz controller updates the data of the quiz.
+		 * Fires when the questions and options of a lesson quiz have been saved, by the
+		 * lesson-quiz REST controller or the `sensei/quiz-questions-set` ability.
 		 *
 		 * @hook sensei_rest_api_lesson_quiz_update
 		 *
 		 * @param {WP_Post} $lesson         The lesson.
-		 * @param {array}   $request_params The request parameters.
+		 * @param {array}   $request_params The quiz data that was saved: `options` and `questions`.
 		 */
-		do_action( 'sensei_rest_api_lesson_quiz_update', $lesson, $json_params );
+		do_action( 'sensei_rest_api_lesson_quiz_update', $lesson, $params );
 
-		$response = new WP_REST_Response();
-		$response->set_data( $this->get_quiz_data( get_post( $quiz_id ), $lesson ) );
+		return (int) $quiz_id;
+	}
 
-		return $response;
+	/**
+	 * Resolve what saving each question does, before anything is written.
+	 *
+	 * A question without an id is created. A question whose id names a question of the right
+	 * type that the user may edit is updated. Any other id is kept unchanged when the question is
+	 * already in the quiz and dropped otherwise, as the editor sends back shared questions the
+	 * user may not edit. Questions to create or update are validated here, so an invalid one
+	 * fails the save before the quiz or any earlier question is written.
+	 *
+	 * @param array $questions             The questions.
+	 * @param int[] $existing_question_ids IDs of the questions currently in the quiz.
+	 *
+	 * @return array&lt;int, array{action: string, id: int|null, is_category: bool, question: array}>|WP_Error One entry per
+	 *                   question: `action` is `create`, `update`, `keep` or `drop`; `id` the question post ID, when given;
+	 *                   `is_category` whether it is a category-question placeholder; `question` the question as given.
+	 */
+	private function resolve_questions( array $questions, array $existing_question_ids ) {
+		$resolved = array();
+		$seen_ids = array();
+
+		foreach ( $questions as $question ) {
+			if ( ! is_array( $question ) ) {
+				continue;
+			}
+
+			$question_id = (int) ( $question['id'] ?? 0 );
+			$question_id = $question_id > 0 ? $question_id : null;
+			$is_category = isset( $question['type'] ) &amp;&amp; 'category-question' === $question['type'];
+			$post_type   = $is_category ? 'multiple_question' : 'question';
+			$entry       = array(
+				'action'      => $question_id ? 'update' : 'create',
+				'id'          => $question_id,
+				'is_category' => $is_category,
+				'question'    => $question,
+			);
+
+			if ( $question_id ) {
+				if ( in_array( $question_id, $seen_ids, true ) ) {
+					return new WP_Error(
+						'sensei_lesson_quiz_duplicate_question',
+						__( 'A question cannot appear more than once in the same quiz.', 'sensei-lms' ),
+						$question_id
+					);
+				}
+				$seen_ids[] = $question_id;
+
+				$post_type_object = get_post_type_object( $post_type );
+				if (
+					get_post_type( $question_id ) !== $post_type
+					|| ! $post_type_object
+					|| ! current_user_can( $post_type_object->cap->edit_post, $question_id )
+				) {
+					$entry['action'] = in_array( $question_id, $existing_question_ids, true ) ? 'keep' : 'drop';
+					$resolved[]      = $entry;
+					continue;
+				}
+			}
+
+			if ( $is_category ) {
+				$category_id = (int) ( $question['options']['category'] ?? 0 );
+				if ( ! $category_id || ! get_term( $category_id, 'question-category' ) instanceof WP_Term ) {
+					return new WP_Error( 'sensei_lesson_quiz_question_invalid_category', esc_html__( 'Invalid question category selected.', 'sensei-lms' ), $question_id );
+				}
+			} elseif ( empty( $question['title'] ) ) {
+				return new WP_Error(
+					'sensei_lesson_quiz_question_missing_title',
+					__( 'Please ensure all questions have a title before saving.', 'sensei-lms' )
+				);
+			}
+
+			$resolved[] = $entry;
+		}
+
+		return $resolved;
+	}
+
+	/**
+	 * Delete the questions a failed save created, so a retry does not leave them behind.
+	 *
+	 * @param int[] $question_ids Question post IDs.
+	 */
+	private function delete_questions( array $question_ids ): void {
+		foreach ( $question_ids as $question_id ) {
+			wp_delete_post( $question_id, true );
+		}
 	}
 
 	/**
 	 * Helper method to translate input to quiz meta.
 	 *
-	 * @param array   $json_params The input coming from JSON data.
+	 * @param array   $quiz_options The quiz options.
 	 * @param WP_Post $lesson       The parent lesson.
 	 *
 	 * @return array The meta.
 	 */
-	private function get_quiz_meta( array $json_params, WP_Post $lesson ): array {
+	private function get_quiz_meta( array $quiz_options, WP_Post $lesson ): array {
 		$meta_input = array( '_quiz_lesson' => $lesson->ID );
-
-		$quiz_options = $json_params['options'];
 
 		if ( isset( $quiz_options['pass_required'] ) ) {
 			$meta_input['_pass_required'] = true === $quiz_options['pass_required'] ? 'on' : '';
@@ -328,7 +385,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$meta_input['_random_question_order'] = true === $quiz_options['random_question_order'] ? 'yes' : 'no';
 		}
 
-		foreach ( array( 'failed_indicate_incorrect', 'failed_show_correct_answers', 'failed_show_answer_feedback' ) as $option ) {
+		foreach ( self::TRISTATE_OPTIONS as $option ) {
 			if ( isset( $quiz_options[ $option ] ) ) {
 				$meta_input[ '_' . $option ] = $quiz_options[ $option ] ? 'yes' : 'no';
 			} else {
@@ -347,59 +404,106 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Check user permission for reading a quiz.
+	 * Build the options for a partial update: the given options over the stored ones, or over the
+	 * schema defaults when the lesson has no quiz yet.
 	 *
-	 * @param WP_REST_Request $request WordPress request object.
+	 * @param WP_Post|null $quiz    The quiz, or null when the lesson has none.
+	 * @param array        $options Options to change.
 	 *
-	 * @return bool|WP_Error Whether the user can read a quiz. Error if not found.
+	 * @return array Complete options to pass to save().
 	 */
-	public function can_user_get_quiz( WP_REST_Request $request ) {
-		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
-		if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
-			return new WP_Error(
-				'sensei_lesson_quiz_missing_lesson',
-				__( 'Lesson not found.', 'sensei-lms' ),
-				array( 'status' => 404 )
-			);
-		}
+	public function get_options_for_update( ?WP_Post $quiz, array $options ): array {
+		$current = $quiz ? $this->get_stored_options( $quiz ) : $this->get_default_options();
 
-		if ( ! is_user_logged_in() ) {
-			return false;
-		}
+		$pagination = array_merge(
+			is_array( $current['pagination'] ?? null ) ? $current['pagination'] : array(),
+			is_array( $options['pagination'] ?? null ) ? $options['pagination'] : array()
+		);
 
-		return current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson->ID ) || current_user_can( 'manage_options' );
+		$merged               = array_merge( $current, $options );
+		$merged['pagination'] = $pagination;
+
+		return $merged;
 	}
 
 	/**
-	 * Get the quiz.
+	 * Get the options schema defaults.
 	 *
-	 * @param WP_REST_Request $request WordPress request object.
-	 *
-	 * @return WP_REST_Response
+	 * @return array
 	 */
-	public function get_quiz( WP_REST_Request $request ): WP_REST_Response {
-		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
-		$quiz   = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+	public function get_default_options(): array {
+		$defaults = array();
 
-		if ( ! $quiz ) {
-			return new WP_REST_Response( null, 204 );
+		foreach ( $this->get_options_schema()['properties'] as $key => $property ) {
+			if ( 'pagination' === $key ) {
+				$defaults[ $key ] = array();
+				foreach ( $property['properties'] as $pagination_key => $pagination_property ) {
+					$defaults[ $key ][ $pagination_key ] = $pagination_property['default'] ?? null;
+				}
+				continue;
+			}
+
+			$defaults[ $key ] = $property['default'] ?? null;
 		}
 
-		$response = new WP_REST_Response();
-		$response->set_data( $this->get_quiz_data( get_post( $quiz ), $lesson ) );
-
-		return $response;
+		return $defaults;
 	}
 
 	/**
-	 * Helper method which retrieves quiz options.
+	 * Get the options stored on a quiz, with unset tri-state options as null rather than their
+	 * displayed default, so that saving them back leaves them unset.
+	 *
+	 * @param WP_Post $quiz The quiz.
+	 *
+	 * @return array
+	 */
+	public function get_stored_options( WP_Post $quiz ): array {
+		$options = $this->get_quiz_options( $quiz );
+
+		foreach ( self::TRISTATE_OPTIONS as $option ) {
+			$meta               = get_post_meta( $quiz->ID, '_' . $option, true );
+			$options[ $option ] = '' === $meta || null === $meta ? null : 'yes' === $meta;
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Helper method which retrieves quiz options and questions.
 	 *
 	 * @param WP_Post $quiz   The quiz post.
 	 * @param WP_Post $lesson The lesson post.
 	 *
 	 * @return array
 	 */
-	private function get_quiz_data( WP_Post $quiz, WP_Post $lesson ): array {
+	public function get_quiz_data( WP_Post $quiz, WP_Post $lesson ): array {
+		$quiz_data = array(
+			'options'       => $this->get_quiz_options( $quiz ),
+			'questions'     => $this->get_quiz_questions( $quiz ),
+			'lesson_title'  => $lesson->post_title,
+			'lesson_status' => $lesson->post_status,
+		);
+
+		/**
+		 * Filters the response of lesson-quiz requests.
+		 *
+		 * @hook sensei_rest_api_lesson_quiz_response
+		 *
+		 * @param {array}   $quiz_data The response data.
+		 * @param {WP_Post} $quiz      The quiz post.default interval.
+		 * @return {array} $quiz_data The modified response data.
+		 */
+		return apply_filters( 'sensei_rest_api_lesson_quiz_response', $quiz_data, $quiz );
+	}
+
+	/**
+	 * Read the quiz options from the quiz meta.
+	 *
+	 * @param WP_Post $quiz The quiz post.
+	 *
+	 * @return array
+	 */
+	private function get_quiz_options( WP_Post $quiz ): array {
 		$post_meta = get_post_meta( $quiz->ID );
 
 		$allow_retakes           = ! empty( $post_meta['_enable_quiz_reset'][0] ) &amp;&amp; 'on' === $post_meta['_enable_quiz_reset'][0];
@@ -421,36 +525,20 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$pagination = $pagination ? $pagination : $pagination_defaults;
 		}
 
-		$quiz_data = array(
-			'options'       => array(
-				'pass_required'               => ! empty( $post_meta['_pass_required'][0] ) &amp;&amp; 'on' === $post_meta['_pass_required'][0],
-				'quiz_passmark'               => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
-				'auto_grade'                  => ! empty( $post_meta['_quiz_grade_type'][0] ) &amp;&amp; 'auto' === $post_meta['_quiz_grade_type'][0],
-				'allow_retakes'               => $allow_retakes,
-				'show_questions'              => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
-				'random_question_order'       => ! empty( $post_meta['_random_question_order'][0] ) &amp;&amp; 'yes' === $post_meta['_random_question_order'][0],
-				'failed_indicate_incorrect'   => empty( $post_meta['_failed_indicate_incorrect'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_indicate_incorrect'][0],
-				'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_correct_answers'][0],
-				'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
-				'button_text_color'           => ! empty( $post_meta['_button_text_color'][0] ) ? $post_meta['_button_text_color'][0] : null,
-				'button_background_color'     => ! empty( $post_meta['_button_background_color'][0] ) ? $post_meta['_button_background_color'][0] : null,
-				'pagination'                  => $pagination,
-			),
-			'questions'     => $this->get_quiz_questions( $quiz ),
-			'lesson_title'  => $lesson->post_title,
-			'lesson_status' => $lesson->post_status,
+		return array(
+			'pass_required'               => ! empty( $post_meta['_pass_required'][0] ) &amp;&amp; 'on' === $post_meta['_pass_required'][0],
+			'quiz_passmark'               => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
+			'auto_grade'                  => ! empty( $post_meta['_quiz_grade_type'][0] ) &amp;&amp; 'auto' === $post_meta['_quiz_grade_type'][0],
+			'allow_retakes'               => $allow_retakes,
+			'show_questions'              => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
+			'random_question_order'       => ! empty( $post_meta['_random_question_order'][0] ) &amp;&amp; 'yes' === $post_meta['_random_question_order'][0],
+			'failed_indicate_incorrect'   => empty( $post_meta['_failed_indicate_incorrect'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_indicate_incorrect'][0],
+			'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_correct_answers'][0],
+			'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
+			'button_text_color'           => ! empty( $post_meta['_button_text_color'][0] ) ? $post_meta['_button_text_color'][0] : null,
+			'button_background_color'     => ! empty( $post_meta['_button_background_color'][0] ) ? $post_meta['_button_background_color'][0] : null,
+			'pagination'                  => $pagination,
 		);
-
-		/**
-		 * Filters the response of lesson-quiz requests.
-		 *
-		 * @hook sensei_rest_api_lesson_quiz_response
-		 *
-		 * @param {array}   $quiz_data The response data.
-		 * @param {WP_Post} $quiz      The quiz post.default interval.
-		 * @return {array} $quiz_data The modified response data.
-		 */
-		return apply_filters( 'sensei_rest_api_lesson_quiz_response', $quiz_data, $quiz );
 	}
 
 	/**
@@ -480,123 +568,102 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Schema for the endpoint.
+	 * Schema of the quiz options.
 	 *
-	 * @return array Schema object.
+	 * @return array Schema object for the `options` property.
 	 */
-	public function get_item_schema(): array {
-		$schema = array(
+	public function get_options_schema(): array {
+		return array(
 			'type'       => 'object',
 			'properties' => array(
-				'options'       => array(
+				'pass_required'               => array(
+					'type'        => 'boolean',
+					'description' => 'Pass required to complete lesson',
+					'default'     => false,
+				),
+				'quiz_passmark'               => array(
+					'type'        => 'integer',
+					'description' => 'Score grade between 0 and 100 required to pass the quiz',
+					'default'     => 100,
+				),
+				'auto_grade'                  => array(
+					'type'        => 'boolean',
+					'description' => 'Whether auto-grading should take place',
+					'default'     => true,
+				),
+				'allow_retakes'               => array(
+					'type'        => 'boolean',
+					'description' => 'Allow quizzes to be taken again',
+					'default'     => true,
+				),
+				'show_questions'              => array(
+					'type'        => array( 'integer', 'null' ),
+					'description' => 'Number of questions to show randomly',
+					'default'     => null,
+				),
+				'random_question_order'       => array(
+					'type'        => 'boolean',
+					'description' => 'Show questions in a random order',
+					'default'     => false,
+				),
+				'failed_indicate_incorrect'   => array(
+					'type'        => array( 'boolean', 'null' ),
+					'description' => 'Indicate which questions are incorrect',
+					'default'     => null,
+				),
+				'failed_show_correct_answers' => array(
+					'type'        => array( 'boolean', 'null' ),
+					'description' => 'Show correct answers',
+					'default'     => null,
+				),
+				'failed_show_answer_feedback' => array(
+					'type'        => array( 'boolean', 'null' ),
+					'description' => 'Show answer feedback text',
+					'default'     => null,
+				),
+				'button_text_color'           => array(
+					'type'        => array( 'string', 'null' ),
+					'description' => 'Button text color',
+					'default'     => null,
+				),
+				'button_background_color'     => array(
+					'type'        => array( 'string', 'null' ),
+					'description' => 'Button background color',
+					'default'     => null,
+				),
+				'pagination'                  => array(
 					'type'       => 'object',
 					'required'   => true,
 					'properties' => array(
-						'pass_required'               => array(
-							'type'        => 'boolean',
-							'description' => 'Pass required to complete lesson',
-							'default'     => false,
-						),
-						'quiz_passmark'               => array(
-							'type'        => 'integer',
-							'description' => 'Score grade between 0 and 100 required to pass the quiz',
-							'default'     => 100,
-						),
-						'auto_grade'                  => array(
-							'type'        => 'boolean',
-							'description' => 'Whether auto-grading should take place',
-							'default'     => true,
-						),
-						'allow_retakes'               => array(
-							'type'        => 'boolean',
-							'description' => 'Allow quizzes to be taken again',
-							'default'     => true,
-						),
-						'show_questions'              => array(
+						'pagination_number'       => array(
 							'type'        => array( 'integer', 'null' ),
-							'description' => 'Number of questions to show randomly',
+							'description' => 'Number of questions per page',
 							'default'     => null,
 						),
-						'random_question_order'       => array(
+						'show_progress_bar'       => array(
 							'type'        => 'boolean',
-							'description' => 'Show questions in a random order',
+							'description' => 'Deprecated. Retained for compatibility; no longer controls automatic quiz progress bar rendering.',
 							'default'     => false,
 						),
-						'failed_indicate_incorrect'   => array(
-							'type'        => array( 'boolean', 'null' ),
-							'description' => 'Indicate which questions are incorrect',
-							'default'     => null,
+						'progress_bar_radius'     => array(
+							'type'        => 'integer',
+							'description' => 'Deprecated. Retained for compatibility; no longer controls the quiz progress bar radius.',
+							'default'     => 6,
 						),
-						'failed_show_correct_answers' => array(
-							'type'        => array( 'boolean', 'null' ),
-							'description' => 'Show correct answers',
-							'default'     => null,
+						'progress_bar_height'     => array(
+							'type'        => 'integer',
+							'description' => 'Deprecated. Retained for compatibility; no longer controls the quiz progress bar height.',
+							'default'     => 12,
 						),
-						'failed_show_answer_feedback' => array(
-							'type'        => array( 'boolean', 'null' ),
-							'description' => 'Show answer feedback text',
-							'default'     => null,
-						),
-						'button_text_color'           => array(
+						'progress_bar_background' => array(
 							'type'        => array( 'string', 'null' ),
-							'description' => 'Button text color',
+							'description' => 'Deprecated. Retained for compatibility; no longer controls the quiz progress bar background color.',
 							'default'     => null,
-						),
-						'button_background_color'     => array(
-							'type'        => array( 'string', 'null' ),
-							'description' => 'Button background color',
-							'default'     => null,
-						),
-						'pagination'                  => array(
-							'type'       => 'object',
-							'required'   => true,
-							'properties' => array(
-								'pagination_number'       => array(
-									'type'        => array( 'integer', 'null' ),
-									'description' => 'Number of questions per page',
-									'default'     => null,
-								),
-								'show_progress_bar'       => array(
-									'type'        => 'boolean',
-									'description' => 'Deprecated. Retained for compatibility; no longer controls automatic quiz progress bar rendering.',
-									'default'     => false,
-								),
-								'progress_bar_radius'     => array(
-									'type'        => 'integer',
-									'description' => 'Deprecated. Retained for compatibility; no longer controls the quiz progress bar radius.',
-									'default'     => 6,
-								),
-								'progress_bar_height'     => array(
-									'type'        => 'integer',
-									'description' => 'Deprecated. Retained for compatibility; no longer controls the quiz progress bar height.',
-									'default'     => 12,
-								),
-								'progress_bar_background' => array(
-									'type'        => array( 'string', 'null' ),
-									'description' => 'Deprecated. Retained for compatibility; no longer controls the quiz progress bar background color.',
-									'default'     => null,
-								),
-							),
 						),
 					),
 				),
-				'questions'     => array(
-					'type'     => 'array',
-					'required' => true,
-					'items'    => $this->get_single_question_schema(),
-				),
-				'lesson_title'  => array(
-					'type'        => 'string',
-					'description' => 'The lesson title',
-				),
-				'lesson_status' => array(
-					'type'        => 'string',
-					'description' => 'The lesson status',
-				),
 			),
 		);
-
-		return $schema;
 	}
 }
 </code></pre>
