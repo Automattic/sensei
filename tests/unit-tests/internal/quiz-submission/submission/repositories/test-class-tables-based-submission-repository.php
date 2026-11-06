@@ -40,7 +40,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$wpdb            = $this->createMock( wpdb::class );
 		$wpdb->insert_id = 1;
-		$repository = new Tables_Based_Submission_Repository( $wpdb );
+		$repository      = new Tables_Based_Submission_Repository( $wpdb );
 
 		/* Expect & Act. */
 		$wpdb

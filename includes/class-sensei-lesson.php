@@ -3843,6 +3843,7 @@ class Sensei_Lesson {
 
 		// If viewing quiz on frontend or in grading then only single questions must be shown.
 		$selected_questions = array();
+		$question_capacity  = 0;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Input used for comparisons.
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
@@ -3944,7 +3945,7 @@ class Sensei_Lesson {
 							unset( $qargs['post__not_in'] );
 							$qargs['post__in']       = $unsaved_question_ids;
 							$qargs['posts_per_page'] = -1;
-							$qargs['orderby']       = 'post__in';
+							$qargs['orderby']        = 'post__in';
 						}
 
 						$cat_questions = get_posts( $qargs );
@@ -3975,7 +3976,7 @@ class Sensei_Lesson {
 			}
 			$selected_questions = array_values( array_intersect( $unsaved_question_ids, array_keys( $eligible_questions ) ) );
 			$selected_questions = array_slice( $selected_questions, 0, $question_capacity );
-			$show_questions     = (int) get_post_meta( $quiz_id, '_show_questions', true );
+			$show_questions     = (int) get_post_meta( (int) $quiz_id, '_show_questions', true );
 			if ( $show_questions > 0 ) {
 				$selected_questions = array_slice( $selected_questions, 0, $show_questions );
 			}

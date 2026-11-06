@@ -126,7 +126,9 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 			throw new Persistence_Exception(
 				'quiz_grade',
 				'tables',
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$submission->get_quiz_id(),
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$submission->get_user_id(),
 				false === $result ? 'insert_failed' : 'invalid_insert_id'
 			);

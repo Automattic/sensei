@@ -41,7 +41,7 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		$submission->method( 'get_id' )->willReturn( 1 );
 		$wpdb            = $this->createMock( wpdb::class );
 		$wpdb->insert_id = 1;
-		$repository = new Tables_Based_Answer_Repository( $wpdb );
+		$repository      = new Tables_Based_Answer_Repository( $wpdb );
 
 		/* Expect & Act. */
 		$wpdb

@@ -977,10 +977,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 */
 	public function testAdminProcessGradingSubmission_QuestionGradeWriteFailed_ShowsFailureWithoutRedirect( string $mode, string $table, ?string $metadata_key ): void {
 		$this->set_progress_storage_mode( $mode );
-		$owner   = $this->get_user_by_role( 'teacher' );
-		$user_id = $this->factory->user->create();
+		$owner                       = $this->get_user_by_role( 'teacher' );
+		$user_id                     = $this->factory->user->create();
 		list( $quiz_id, $lesson_id ) = $this->createOwnedPassRequiredQuiz( $owner );
-		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$question_id                 = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
 		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
 		$this->login_as( $owner );
 		$this->setGradingSubmissionGlobals( $quiz_id, $user_id );
@@ -1012,7 +1012,12 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$this->set_progress_storage_mode( $mode );
 		$lesson_id   = $this->factory->lesson->create();
 		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
-		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id, 'question_type' => 'boolean' ) );
+		$question_id = $this->factory->question->create(
+			array(
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'boolean',
+			)
+		);
 		$user_id     = $this->factory->user->create();
 		$this->login_as( $user_id );
 		$answers = array( $question_id => 'true' );
@@ -1081,7 +1086,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	public static function autograde_write_failures(): array {
 		$cases = array();
 		foreach ( self::progress_storage_modes() as $name => $arguments ) {
-			$mode = $arguments[0];
+			$mode                       = $arguments[0];
 			$cases[ $name . ' points' ] = array( $mode, 'commentmeta', 'quiz_grades' );
 			if ( 'comments-only' !== $mode ) {
 				$cases[ $name . ' table grade' ] = array( $mode, 'sensei_lms_quiz_grades', null );
@@ -1098,7 +1103,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	public static function quiz_grade_write_failures(): array {
 		$cases = array();
 		foreach ( self::progress_storage_modes() as $name => $arguments ) {
-			$mode = $arguments[0];
+			$mode                         = $arguments[0];
 			$cases[ $name . ' points' ]   = array( $mode, 'commentmeta', 'quiz_grades' );
 			$cases[ $name . ' feedback' ] = array( $mode, 'commentmeta', 'quiz_answers_feedback' );
 			if ( 'comments-only' !== $mode ) {

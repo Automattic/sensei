@@ -97,8 +97,8 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		$submission = $this->create_submission( $lesson_id, $user_id );
 		$repository = new Comments_Based_Answer_Repository();
 		$repository->create( $submission, 1, 'First answer' );
-		$wpdb  = $GLOBALS['wpdb'];
-		$fault = static function ( $query ) use ( $wpdb, $key ) {
+		$wpdb            = $GLOBALS['wpdb'];
+		$fault           = static function ( $query ) use ( $wpdb, $key ) {
 			if ( 0 === strpos( $query, "UPDATE `{$wpdb->commentmeta}`" ) && false !== strpos( $query, $key ) ) {
 				return 'UPDATE sensei_missing_quiz_metadata SET meta_value = 1';
 			}
@@ -118,7 +118,14 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		}
 		$repository->create( $submission, 2, 'Second answer' );
 
-		self::assertSame( array( 1 => 'First answer', 2 => 'Second answer' ), get_comment_meta( $submission->get_id(), 'quiz_answers', true ), 'A later save must retain both answers.' );
+		self::assertSame(
+			array(
+				1 => 'First answer',
+				2 => 'Second answer',
+			),
+			get_comment_meta( $submission->get_id(), 'quiz_answers', true ),
+			'A later save must retain both answers.'
+		);
 		self::assertSame( '1,2', get_comment_meta( $submission->get_id(), 'questions_asked', true ), 'A later save must finish the question list.' );
 	}
 
@@ -146,8 +153,8 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		$repository = new Comments_Based_Answer_Repository();
 		$repository->create( $submission, 1, 'First answer' );
 		wp_cache_delete( $submission->get_id(), 'comment_meta' );
-		$wpdb  = $GLOBALS['wpdb'];
-		$fault = static function ( $query ) use ( $wpdb ) {
+		$wpdb            = $GLOBALS['wpdb'];
+		$fault           = static function ( $query ) use ( $wpdb ) {
 			return false !== strpos( $query, "FROM {$wpdb->commentmeta}" )
 				? 'SELECT * FROM sensei_missing_quiz_metadata'
 				: $query;

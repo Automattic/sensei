@@ -354,10 +354,10 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$user_id     = $this->factory->user->create();
 		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
 		Sensei_Utils::sensei_grade_quiz( $quiz_id, 25, $user_id );
-		$graded_events = did_action( 'sensei_user_quiz_grade' );
-		$wpdb          = $GLOBALS['wpdb'];
-		$table         = 'tables' === $store ? $wpdb->prefix . 'sensei_lms_quiz_submissions' : $wpdb->commentmeta;
-		$fault         = static function ( $query ) use ( $table ) {
+		$graded_events   = did_action( 'sensei_user_quiz_grade' );
+		$wpdb            = $GLOBALS['wpdb'];
+		$table           = 'tables' === $store ? $wpdb->prefix . 'sensei_lms_quiz_submissions' : $wpdb->commentmeta;
+		$fault           = static function ( $query ) use ( $table ) {
 			return 0 === strpos( $query, "UPDATE `{$table}`" )
 				? 'UPDATE sensei_missing_quiz_table SET id = 1'
 				: $query;
@@ -394,9 +394,9 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$user_id     = $this->factory->user->create();
 		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
 		Sensei_Utils::sensei_grade_quiz( $quiz_id, 75, $user_id );
-		$wpdb      = $GLOBALS['wpdb'];
-		$statement = 'tables' === $store ? "UPDATE `{$wpdb->prefix}sensei_lms_quiz_submissions`" : "DELETE FROM {$wpdb->commentmeta}";
-		$fault     = static function ( $query ) use ( $statement ) {
+		$wpdb            = $GLOBALS['wpdb'];
+		$statement       = 'tables' === $store ? "UPDATE `{$wpdb->prefix}sensei_lms_quiz_submissions`" : "DELETE FROM {$wpdb->commentmeta}";
+		$fault           = static function ( $query ) use ( $statement ) {
 			return 0 === strpos( $query, $statement )
 				? 'UPDATE sensei_missing_quiz_table SET id = 1'
 				: $query;

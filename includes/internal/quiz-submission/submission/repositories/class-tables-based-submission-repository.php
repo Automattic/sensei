@@ -109,7 +109,9 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 			throw new Persistence_Exception(
 				'quiz_submission',
 				'tables',
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$quiz_id,
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$user_id,
 				false === $result ? 'insert_failed' : 'invalid_insert_id'
 			);

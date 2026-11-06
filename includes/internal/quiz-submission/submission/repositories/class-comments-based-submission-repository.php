@@ -63,7 +63,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		$created_at = $this->get_created_date( $status_comment );
 
 		$submission = new Comments_Based_Submission(
-			$status_comment->comment_ID,
+			(int) $status_comment->comment_ID,
 			$quiz_id,
 			$user_id,
 			$final_grade,
@@ -148,7 +148,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		$created_at  = $this->get_created_date( $status_comment );
 
 		return new Comments_Based_Submission(
-			$status_comment->comment_ID,
+			(int) $status_comment->comment_ID,
 			$quiz_id,
 			$user_id,
 			is_numeric( $final_grade ) ? $final_grade : null,
@@ -209,9 +209,9 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		}
 
 		if ( null !== $submission->get_final_grade() ) {
-			Comment_Metadata::update( $status_comment->comment_ID, 'grade', $submission->get_final_grade(), $submission );
+			Comment_Metadata::update( (int) $status_comment->comment_ID, 'grade', $submission->get_final_grade(), $submission );
 		} else {
-			Comment_Metadata::clear_grade( $status_comment->comment_ID, $submission );
+			Comment_Metadata::clear_grade( (int) $status_comment->comment_ID, $submission );
 		}
 	}
 

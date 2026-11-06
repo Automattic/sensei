@@ -300,11 +300,17 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$quiz_id      = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
 		$question_ids = $this->factory->question->create_many( 2, array( 'quiz_id' => $quiz_id ) );
 		$user_id      = $this->factory->user->create();
-		$old_answers  = array( $question_ids[0] => 'Old first answer', $question_ids[1] => 'Old second answer' );
-		$new_answers  = array( $question_ids[0] => 'New first answer', $question_ids[1] => 'New second answer' );
+		$old_answers  = array(
+			$question_ids[0] => 'Old first answer',
+			$question_ids[1] => 'Old second answer',
+		);
+		$new_answers  = array(
+			$question_ids[0] => 'New first answer',
+			$question_ids[1] => 'New second answer',
+		);
 		Sensei_Quiz::save_user_answers( $old_answers, array(), $lesson_id, $user_id );
-		$wpdb  = $GLOBALS['wpdb'];
-		$fault = static function ( $query ) use ( $wpdb ) {
+		$wpdb            = $GLOBALS['wpdb'];
+		$fault           = static function ( $query ) use ( $wpdb ) {
 			return 0 === strpos( $query, "UPDATE `{$wpdb->commentmeta}`" ) && false !== strpos( $query, 'questions_asked' )
 				? 'UPDATE sensei_missing_quiz_table SET id = 1'
 				: $query;
@@ -331,7 +337,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	public static function quiz_answer_write_failures(): array {
 		$cases = array();
 		foreach ( self::progress_storage_modes() as $name => $arguments ) {
-			$mode = $arguments[0];
+			$mode                           = $arguments[0];
 			$cases[ $name . ' answer map' ] = array( $mode, 'commentmeta', 'quiz_answers' );
 			$cases[ $name . ' questions' ]  = array( $mode, 'commentmeta', 'questions_asked' );
 			if ( 'comments-only' !== $mode ) {
@@ -1122,7 +1128,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		$this->set_progress_storage_mode( $mode );
 		Sensei_Course_Enrolment_Manager::instance()->collect_enrolment_providers();
-		$course_data = $this->factory->get_course_with_lessons(
+		$course_data  = $this->factory->get_course_with_lessons(
 			array(
 				'question_count' => 2,
 				'question_args'  => array( 'question_type' => 'multi-line' ),
@@ -1132,21 +1138,24 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$quiz_id      = $course_data['quiz_ids'][0];
 		$question_ids = wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' );
 		$user_id      = $this->factory->user->create();
-		$answers      = array( $question_ids[0] => 'First submitted answer', $question_ids[1] => 'Second submitted answer' );
+		$answers      = array(
+			$question_ids[0] => 'First submitted answer',
+			$question_ids[1] => 'Second submitted answer',
+		);
 		Sensei_Course_Enrolment::get_course_instance( $course_data['course_id'] )->enrol( $user_id );
 		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 		update_post_meta( $quiz_id, '_pagination', wp_json_encode( array( 'pagination_number' => $per_page ) ) );
 		wp_set_current_user( $user_id );
 		$this->go_to( add_query_arg( 'quiz-page', $page, get_permalink( $quiz_id ) ) );
-		$_POST = array(
+		$_POST           = array(
 			$button           => add_query_arg( 'quiz-page', $page + 1, get_permalink( $quiz_id ) ),
 			'questions_asked' => $question_ids,
 			'sensei_question' => $answers,
 			$nonce            => wp_create_nonce( $nonce ),
 		);
-		$wpdb  = $GLOBALS['wpdb'];
-		$table = $wpdb->prefix . $table;
-		$fault = static function ( $query ) use ( $statement, $table, $metadata_key ) {
+		$wpdb            = $GLOBALS['wpdb'];
+		$table           = $wpdb->prefix . $table;
+		$fault           = static function ( $query ) use ( $statement, $table, $metadata_key ) {
 			return preg_match( '/^' . $statement . ' `?' . preg_quote( $table, '/' ) . '`?\s/i', $query )
 				&& ( null === $metadata_key || false !== strpos( $query, $metadata_key ) )
 				? 'INSERT INTO sensei_missing_quiz_table (id) VALUES (1)'
@@ -1210,8 +1219,14 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 				)
 			);
 		}
-		$unrelated = wp_insert_post( array( 'post_type' => 'question', 'post_status' => 'publish', 'post_title' => 'Unrelated question' ) );
-		$draft     = wp_insert_post(
+		$unrelated                = wp_insert_post(
+			array(
+				'post_type'   => 'question',
+				'post_status' => 'publish',
+				'post_title'  => 'Unrelated question',
+			)
+		);
+		$draft                    = wp_insert_post(
 			array(
 				'post_type'   => 'question',
 				'post_status' => 'draft',
@@ -1224,13 +1239,14 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		);
 		$_POST['questions_asked'] = array( $ids['question_id'], $question, $second_category_question, $unrelated, $draft );
 		$_POST['sensei_question'] = array(
-			$ids['question_id']         => 'Direct question answer',
-			$question                   => 'First category answer',
-			$second_category_question  => 'Second category answer',
-			$unrelated                  => 'Unrelated answer',
-			$draft                      => 'Draft answer',
+			$ids['question_id']       => 'Direct question answer',
+			$question                 => 'First category answer',
+			$second_category_question => 'Second category answer',
+			$unrelated                => 'Unrelated answer',
+			$draft                    => 'Draft answer',
 		);
 		update_post_meta( $ids['quiz_id'], '_pagination', wp_json_encode( array( 'pagination_number' => 1 ) ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Preserve the test request across go_to().
 		$save_request = $_POST;
 		$this->go_to( add_query_arg( 'quiz-page', 2, get_permalink( $ids['quiz_id'] ) ) );
 		$_POST = $save_request;
@@ -1254,7 +1270,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 					'Page two must still render the first category question.'
 				);
 				self::assertSame(
-					$_POST['sensei_question'],
+					$save_request['sensei_question'],
 					Sensei()->quiz->get_user_answers( $ids['lesson_id'], $ids['user_id'] ),
 					'The submitted values must remain available for the failure response.'
 				);
@@ -1338,10 +1354,10 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 				'The original A-then-B selection must contain both eligible questions.'
 			);
 
-			$_POST = array(
-				'quiz_save'                       => '',
-				'questions_asked'                 => $questions,
-				'sensei_question'                 => array(
+			$_POST             = array(
+				'quiz_save'                        => '',
+				'questions_asked'                  => $questions,
+				'sensei_question'                  => array(
 					$questions[0] => 'Shared question answer',
 					$questions[1] => 'Second question answer',
 					$questions[2] => 'Extra unasked answer',
@@ -1394,7 +1410,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	public static function asymmetric_category_write_failures(): array {
 		$cases = array();
 		foreach ( self::progress_storage_modes() as $name => $arguments ) {
-			$mode = $arguments[0];
+			$mode           = $arguments[0];
 			$cases[ $name ] = 'comments' === $mode
 				? array( $mode, 'sensei_lms_quiz_answers', null )
 				: array( $mode, 'commentmeta', 'quiz_answers' );
@@ -1419,7 +1435,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			'comments'      => array( 'INSERT INTO', 'sensei_lms_quiz_answers', null ),
 			'tables'        => array( 'INSERT INTO', 'commentmeta', 'quiz_answers' ),
 		);
-		$cases = array();
+		$cases    = array();
 		foreach ( self::progress_storage_modes() as $name => $arguments ) {
 			$mode = $arguments[0];
 			foreach ( $requests as $request => $values ) {

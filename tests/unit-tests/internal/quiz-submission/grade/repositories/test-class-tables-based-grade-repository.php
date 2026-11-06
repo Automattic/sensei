@@ -37,11 +37,11 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_ParamsGiven_ReturnsGrade(): void {
 		/* Arrange */
-		$submission = $this->createMock( Tables_Based_Submission::class );
-		$answer     = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
+		$submission      = $this->createMock( Tables_Based_Submission::class );
+		$answer          = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
 		$wpdb            = $this->createMock( \wpdb::class );
 		$wpdb->insert_id = 1;
-		$repository = new Tables_Based_Grade_Repository( $wpdb );
+		$repository      = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Act */
 		$grade = $repository->create( $submission, $answer, 3, 4, 'feedback' );
@@ -59,11 +59,11 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_ParamsGiven_InsertsData(): void {
 		/* Arrange */
-		$submission = $this->createMock( Tables_Based_Submission::class );
-		$answer     = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
+		$submission      = $this->createMock( Tables_Based_Submission::class );
+		$answer          = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
 		$wpdb            = $this->createMock( \wpdb::class );
 		$wpdb->insert_id = 1;
-		$repository = new Tables_Based_Grade_Repository( $wpdb );
+		$repository      = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Expect & Act */
 		$wpdb->expects( $this->once() )
@@ -240,7 +240,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		add_filter( 'sensei_hpps_cache_enabled', '__return_true' );
 		\Sensei\Internal\Services\Progress_Storage_Settings::reset_cache_enabled();
 		$repository->get_all( $submission->get_id() );
-		$grades = array_map(
+		$grades          = array_map(
 			static function ( $grade ) {
 				return new Tables_Based_Grade(
 					$grade->get_id(),
@@ -254,8 +254,8 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 			},
 			$grades
 		);
-		$failed_id = $grades[1]->get_id();
-		$fault     = static function ( $query ) use ( $wpdb, $failed_id ) {
+		$failed_id       = $grades[1]->get_id();
+		$fault           = static function ( $query ) use ( $wpdb, $failed_id ) {
 			return 0 === strpos( $query, "UPDATE `{$wpdb->prefix}sensei_lms_quiz_grades`" )
 				&& false !== strpos( $query, "WHERE `id` = {$failed_id}" )
 				? 'UPDATE sensei_missing_quiz_table SET id = 1'

@@ -33,7 +33,7 @@ class Comment_Metadata {
 	 * @throws Persistence_Exception If the metadata cannot be read.
 	 */
 	public static function get( int $comment_id, string $key, Submission_Interface $submission ) {
-		$wpdb = $GLOBALS['wpdb'];
+		$wpdb             = $GLOBALS['wpdb'];
 		$wpdb->last_error = '';
 
 		$value = get_comment_meta( $comment_id, $key, true );
@@ -44,7 +44,9 @@ class Comment_Metadata {
 			throw new Persistence_Exception(
 				'quiz_submission',
 				'comments',
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$submission->get_quiz_id(),
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$submission->get_user_id(),
 				'metadata_read_failed',
 				'read'
@@ -78,7 +80,9 @@ class Comment_Metadata {
 			throw new Persistence_Exception(
 				'quiz_submission',
 				'comments',
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$submission->get_quiz_id(),
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$submission->get_user_id(),
 				'metadata_write_failed',
 				'save'
@@ -107,7 +111,9 @@ class Comment_Metadata {
 			throw new Persistence_Exception(
 				'quiz_submission',
 				'comments',
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$submission->get_quiz_id(),
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$submission->get_user_id(),
 				'metadata_delete_failed',
 				'save'

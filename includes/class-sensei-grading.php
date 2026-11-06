@@ -1167,7 +1167,7 @@ class Sensei_Grading {
 		}
 
 		$user_id           = get_current_user_id();
-		$lesson_id         = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$lesson_id         = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
 		$quiz_autogradable = true;
 
 		/**

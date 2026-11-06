@@ -176,9 +176,9 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$repository = new Comments_Based_Grade_Repository();
 		$answer     = $this->createMock( Answer_Interface::class );
 		$repository->create( $submission, $answer, 1, 1, 'Old feedback' );
-		$grade = new Comments_Based_Grade( 1, 2, 'New feedback', current_datetime(), current_datetime() );
-		$wpdb  = $GLOBALS['wpdb'];
-		$fault = static function ( $query ) use ( $wpdb ) {
+		$grade           = new Comments_Based_Grade( 1, 2, 'New feedback', current_datetime(), current_datetime() );
+		$wpdb            = $GLOBALS['wpdb'];
+		$fault           = static function ( $query ) use ( $wpdb ) {
 			if ( 0 === strpos( $query, "UPDATE `{$wpdb->commentmeta}`" ) && false !== strpos( $query, 'quiz_answers_feedback' ) ) {
 				return 'UPDATE sensei_missing_quiz_metadata SET meta_value = 1';
 			}
