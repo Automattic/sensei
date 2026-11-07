@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix a lesson incorrectly showing as incomplete when its quiz has a stale in-progress attempt but no actual questions.
