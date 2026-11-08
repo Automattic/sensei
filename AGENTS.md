@@ -1,7 +1,7 @@
 See `make help` for the full list of available dev commands.
 
 ## Read before writing code
-- Writing or changing a **test**? Read `docs/conventions/unit-tests.md` first.
+- Before deciding whether a change needs a new or updated **test**, read `docs/conventions/unit-tests.md` and inspect the existing coverage for the affected behavior.
 - Writing a **class, hook, meta key, block, or stylesheet**? Read `docs/conventions/naming.md` first.
 
 Apply them to code you add. Do not rewrite surrounding code to match.

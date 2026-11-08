@@ -6,7 +6,9 @@ Tests that load WordPress and exercise its APIs or database are integration test
 
 ## 1. Select meaningful scenarios
 
-Before adding or extending a test, read the existing tests for the method or behavior being changed. Identify the requirement or regression the proposed case protects and why existing coverage does not already protect it. If it adds no distinct coverage, omit it.
+Before writing a test, identify a specific way the behavior could break. What input would expose the problem? What observable result would be wrong? Which assertion would fail? Check whether an existing test already catches that failure. If it does, rerun it. If you can’t identify a distinct failure the proposed test would catch, skip it.
+
+For example, if a bug causes a quiz grade to disappear after reload, a test that only checks whether the save method was called would pass with the bug still present. Exercise the save and read the grade back. If an existing test already does that for the affected case, rerun it.
 
 Apply this check throughout implementation, refinement, and review. For small refinements to already-tested behavior, reuse and rerun existing tests. Added production code, branches, or dependency calls do not by themselves justify more tests. For example, adding cache priming that preserves existing results calls for rerunning relevant tests and focused performance measurements where appropriate, rather than a new test asserting that the priming method was called. If the change fixes an uncovered failure, test the observable result of that failure instead.
 
