@@ -196,4 +196,42 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( array( $course['lesson_ids'][0] ), $actual );
 	}
+
+	/**
+	 * A query that orders by its own meta clause keeps that order.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_by_course
+	 */
+	public function testFilterLessonsByCourse_QueryOrderedByOwnMetaClauseGiven_KeepsThatOrder(): void {
+		/* Arrange. */
+		$course = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		update_post_meta( $course['lesson_ids'][0], '_lesson_length', 20 );
+		update_post_meta( $course['lesson_ids'][1], '_lesson_length', 10 );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'sensei_course'  => $course['course_id'],
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Test fixture.
+					array(
+						'key'     => '_lesson_length',
+						'compare' => 'EXISTS',
+					),
+				),
+				'orderby'        => 'meta_value_num',
+				'order'          => 'ASC',
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $course['lesson_ids'][1], $course['lesson_ids'][0] ), $actual );
+	}
 }

@@ -60,7 +60,8 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 			'value' => (int) $course_id,
 		);
 
-		// The course is required even when the query's own clauses are joined with OR.
-		$query->set( 'meta_query', array( $course_clause, $meta_query ) );
+		// The course is required even when the query's own clauses are joined with OR. It goes
+		// last, so the query's own first clause stays the one `orderby => meta_value` uses.
+		$query->set( 'meta_query', array( $meta_query, $course_clause ) );
 	}
 }
