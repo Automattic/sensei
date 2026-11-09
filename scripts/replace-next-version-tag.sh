@@ -22,7 +22,7 @@ function usage {
 		   Other WordPress deprecation functions also work. The call must be on one
 		   line, indented with tabs, and the '$$next-version$$' token must be in a
 		   single-quoted string.
-		 - `'$$next-version$$'` alone on a line, as in a call split over several lines.
+		 - `'$$next-version$$'` alone on a line.
 	EOH
 	exit 1
 }
