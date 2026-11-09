@@ -1,6 +1,26 @@
 *** Changelog ***
 
-## 4.27.0 - 2026-11-09
+## 4.27.0 - 2026-11-10
+### Security
+- Added capability checks to the course notification, settings section, exit survey and extension install requests.
+- Close comments on lessons the current user cannot view, so they cannot post comments to them.
+- Drop block inline style values that add extra CSS declarations and escape the progress bar label.
+- Escape the email title in the checkbox column of the Emails settings screen.
+- Escape the module name in the Learning Mode lesson module block and in the lesson breadcrumb.
+- Improved the permission checks when assigning a lesson to a course.
+- Improved the validation of file upload answers in quizzes.
+- Improved the validation of quiz submissions.
+- Match lessons on title and excerpt only in site search for users who cannot edit lessons while Access Permissions is enabled.
+- Only render question posts when loading the questions a student was asked in a quiz.
+- Remove the comments of lessons the visitor cannot view from the comment feeds.
+- Respect the course completion mode and the quiz pass requirement when completing a course or lesson from the front end.
+- Restricted the Order Lessons and Order Modules screens to courses the current user can edit.
+- Return a 404 on the course results page when the course is not published and the user cannot read it.
+- Tighten the permission checks of the quiz editor, lesson prerequisite and grading admin requests.
+- Tighten validation in the REST API, private messages and the students list, and escape more frontend output.
+- Validate the quiz colors and the setup wizard data saved through the REST API.
+- Validate the values written by the legacy quiz editor.
+
 ### Added
 - Add the sensei/course-create ability so AI agents can create draft courses with the default course layout. [#8370](https://github.com/Automattic/sensei/pull/8370)
 - Add the sensei/course-structure-set and sensei/course-structure-get abilities so AI agents can build and read a course outline, and refuse structure saves that reference another teacher's module. [#8375](https://github.com/Automattic/sensei/pull/8375)

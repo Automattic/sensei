@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Added capability checks to the course notification, settings section, exit survey and extension install requests.

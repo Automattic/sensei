@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Escape the module name in the Learning Mode lesson module block and in the lesson breadcrumb.

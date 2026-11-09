@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Match lessons on title and excerpt only in site search for users who cannot edit lessons while Access Permissions is enabled.

@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Validate the values written by the legacy quiz editor.

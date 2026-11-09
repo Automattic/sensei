@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Improved the permission checks when assigning a lesson to a course.

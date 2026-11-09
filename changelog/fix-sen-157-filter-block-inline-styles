@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Drop block inline style values that add extra CSS declarations and escape the progress bar label.

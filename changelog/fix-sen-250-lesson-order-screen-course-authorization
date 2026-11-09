@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Restricted the Order Lessons and Order Modules screens to courses the current user can edit.
