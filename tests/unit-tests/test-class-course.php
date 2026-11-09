@@ -1217,6 +1217,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			)
 		);
 		$this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		Sensei()->course_lessons_repository->set_root_lesson_order( $course['course_id'], array() );
 		$post = get_post( $course['course_id'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		/* Act. */

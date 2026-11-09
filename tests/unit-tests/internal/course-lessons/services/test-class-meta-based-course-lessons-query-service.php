@@ -167,15 +167,8 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 	 */
 	public function testFilterLessonsByCourse_QueryWithOrMetaClausesGiven_StillRequiresTheCourse(): void {
 		/* Arrange. */
-		$course_id      = $this->factory->course->create();
-		$preview_lesson = $this->factory->lesson->create(
-			array(
-				'meta_input' => array(
-					'_lesson_course'  => $course_id,
-					'_lesson_preview' => 'preview',
-				),
-			)
-		);
+		$course = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		update_post_meta( $course['lesson_ids'][0], '_lesson_preview', 'preview' );
 		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_preview' => 'preview' ) ) );
 		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_complexity' => 'hard' ) ) );
 
@@ -185,7 +178,7 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 				'post_type'      => 'lesson',
 				'posts_per_page' => -1,
 				'fields'         => 'ids',
-				'sensei_course'  => $course_id,
+				'sensei_course'  => $course['course_id'],
 				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Test fixture.
 					'relation' => 'OR',
 					array(
@@ -201,6 +194,6 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 		) )->posts;
 
 		/* Assert. */
-		self::assertSame( array( $preview_lesson ), $actual );
+		self::assertSame( array( $course['lesson_ids'][0] ), $actual );
 	}
 }
