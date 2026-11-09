@@ -247,12 +247,12 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	/**
 	 * Get the schema for a single question.
 	 *
-	 * @deprecated $$next-version$$ Use Sensei_Lesson_Quiz_Saver::get_single_question_schema() instead.
+	 * @deprecated 4.27.0 Use Sensei_Lesson_Quiz_Saver::get_single_question_schema() instead.
 	 *
 	 * @return array
 	 */
 	public function get_single_question_schema() {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Lesson_Quiz_Saver::get_single_question_schema' );
+		_deprecated_function( __METHOD__, '4.27.0', 'Sensei_Lesson_Quiz_Saver::get_single_question_schema' );
 
 		return $this->saver->get_single_question_schema();
 	}
@@ -260,12 +260,12 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	/**
 	 * Get the schema for common question properties.
 	 *
-	 * @deprecated $$next-version$$ Use Sensei_Lesson_Quiz_Saver::get_common_question_properties_schema() instead.
+	 * @deprecated 4.27.0 Use Sensei_Lesson_Quiz_Saver::get_common_question_properties_schema() instead.
 	 *
 	 * @return array The properties.
 	 */
 	public function get_common_question_properties_schema(): array {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Lesson_Quiz_Saver::get_common_question_properties_schema' );
+		_deprecated_function( __METHOD__, '4.27.0', 'Sensei_Lesson_Quiz_Saver::get_common_question_properties_schema' );
 
 		return $this->saver->get_common_question_properties_schema();
 	}

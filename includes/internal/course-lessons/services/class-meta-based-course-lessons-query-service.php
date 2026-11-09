@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.27.0
  */
 class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Service_Interface {
 	/**
@@ -26,7 +26,7 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 */
 	public function init(): void {
 		add_action( 'pre_get_posts', array( $this, 'filter_lessons_by_course' ) );
@@ -39,7 +39,7 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param WP_Query $query The query being prepared.
 	 */

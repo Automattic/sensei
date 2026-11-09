@@ -90,7 +90,7 @@ class Sensei_Grading {
 	 * Create a grading controller with its query-service dependencies.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string                                 $file                    The main plugin file path.
 	 * @param Grading_Listing_Service_Interface      $grading_listing_service The grading listing service.

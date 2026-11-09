@@ -1583,7 +1583,7 @@ class Sensei_Utils {
 	 *
 	 * The ID may belong to a comment or a progress table row, depending on the active repository.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int      $course_id Course ID.
 	 * @param int|null $user_id   User ID. Defaults to the current user when empty.
@@ -1614,14 +1614,14 @@ class Sensei_Utils {
 	 * Get the course progress ID from the selected storage backend, if it exists.
 	 *
 	 * @since 3.0.0
-	 * @deprecated $$next-version$$ Use Sensei_Utils::get_course_progress_id() instead.
+	 * @deprecated 4.27.0 Use Sensei_Utils::get_course_progress_id() instead.
 	 *
 	 * @param int      $course_id Course ID.
 	 * @param int|null $user_id   User ID. Defaults to the current user when empty.
 	 * @return int|false Course progress ID, which is not necessarily a comment ID, or false if no progress exists.
 	 */
 	public static function get_course_progress_comment_id( $course_id, $user_id = null ) {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Utils::get_course_progress_id' );
+		_deprecated_function( __METHOD__, '4.27.0', 'Sensei_Utils::get_course_progress_id' );
 
 		return self::get_course_progress_id( $course_id, $user_id );
 	}

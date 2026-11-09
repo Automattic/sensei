@@ -309,7 +309,7 @@ class Sensei_Quiz {
 	/**
 	 * Shows progress errors using the current quiz layout's notice template.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string $title   Error heading.
 	 * @param string $message Supporting text.
@@ -1968,12 +1968,12 @@ class Sensei_Quiz {
 	 * Render the quiz progress bar for existing callers.
 	 *
 	 * @since 3.15.0
-	 * @deprecated $$next-version$$ Automatic quiz progress bars have been retired. No replacement.
+	 * @deprecated 4.27.0 Automatic quiz progress bars have been retired. No replacement.
 	 *
 	 * @return void
 	 */
 	public static function the_quiz_progress_bar() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.27.0' );
 
 		$quiz_id             = get_the_ID();
 		$pagination_settings = json_decode(

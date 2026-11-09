@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This is the save path of the lesson quiz block in the editor, shared by the
  * lesson-quiz REST controller and the `sensei/quiz-questions-set` ability.
  *
- * @since $$next-version$$
+ * @since 4.27.0
  */
 class Sensei_Lesson_Quiz_Saver {
 	use Sensei_REST_API_Question_Helpers_Trait;

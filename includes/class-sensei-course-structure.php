@@ -63,7 +63,7 @@ class Sensei_Course_Structure {
 	 * content. A structure that does not resolve has nothing to protect: save() rejects it
 	 * with the same error before writing anything.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int   $course_id     Course post ID.
 	 * @param array $raw_structure Structure as passed to save().

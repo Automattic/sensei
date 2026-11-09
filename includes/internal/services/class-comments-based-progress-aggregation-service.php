@@ -47,7 +47,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 * Deprecated `query` conditions are applied to the comments table before grouping.
 	 *
 	 * @since 4.26.0
-	 * @since $$next-version$$ The `query` argument is deprecated. Use structured filtering arguments instead.
+	 * @since 4.27.0 The `query` argument is deprecated. Use structured filtering arguments instead.
 	 *
 	 * @param array $args {
 	 *     Arguments for the query.
@@ -93,7 +93,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		if ( ! empty( $args['query'] ) ) {
 			_deprecated_argument(
 				__METHOD__,
-				'$$next-version$$',
+				'4.27.0',
 				'The "query" argument is deprecated. Use "post_id", "post__in", "user_id", "exclude_user_login_prefixes", or "include_statuses_override" where applicable.'
 			);
 
@@ -165,7 +165,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count course progress records grouped by post and status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Course IDs to count; an empty list counts all courses.
 	 * @param array $args {
@@ -208,7 +208,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Get report status counts for a lesson, excluding temporary users.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Requested lesson post ID.
 	 * @return array<string, int> Counts keyed by progress status.
@@ -396,7 +396,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count completed lesson progress per lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $lesson_ids Lesson post IDs.
 	 * @param array $args       Optional query filters (see interface).
@@ -450,7 +450,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Get rounded completion-day averages keyed by requested course ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Course post IDs.
 	 * @param array $args       Optional query filters (see interface).

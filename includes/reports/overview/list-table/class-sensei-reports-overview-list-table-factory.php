@@ -52,7 +52,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	 * Create a factory with its dependencies.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param Sensei_Course                          $course                   Course-related functionality.
 	 * @param Progress_Clauses_Service_Interface     $progress_clauses_service Progress clauses service.
