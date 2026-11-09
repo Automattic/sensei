@@ -52,19 +52,20 @@ jobs:
                       exit 1
                   fi
                   # The issues endpoint returns pull requests too; only those carry a pull_request key.
-                  OPEN_ITEMS=$( gh api "repos/$GITHUB_REPOSITORY/issues?milestone=$MILESTONE_NUMBER&state=open&per_page=100" )
-                  OPEN_PRS=$( jq -r '[.[] | select(.pull_request) | "#\(.number)"] | join(", ")' <<< "$OPEN_ITEMS" )
-                  OPEN_ISSUES=$( jq -r '[.[] | select(.pull_request | not) | "#\(.number)"] | join(", ")' <<< "$OPEN_ITEMS" )
+                  # --slurp wraps the pages in an outer array, hence the .[][] below.
+                  OPEN_ITEMS=$( gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/issues?milestone=$MILESTONE_NUMBER&state=open&per_page=100" )
+                  OPEN_PRS=$( jq -r '[.[][] | select(.pull_request) | "#\(.number)"] | join(", ")' <<< "$OPEN_ITEMS" )
+                  OPEN_ISSUES=$( jq -r '[.[][] | select(.pull_request | not) | "#\(.number)"] | join(", ")' <<< "$OPEN_ITEMS" )
                   MILESTONE_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/milestone/$MILESTONE_NUMBER"
-                  if [[ -n "$OPEN_PRS" ]]; then
-                      echo "::error::Milestone $VERSION has open pull requests: $OPEN_PRS. Merge them or move them to another milestone: $MILESTONE_URL"
-                      echo "Milestone $VERSION has open pull requests. [See them in the milestone]($MILESTONE_URL)." >> "$GITHUB_STEP_SUMMARY"
-                      exit 1
-                  fi
                   # Open issues don't change what ships, so they don't block the release.
                   if [[ -n "$OPEN_ISSUES" ]]; then
                       echo "::warning::Milestone $VERSION has open issues: $OPEN_ISSUES. Move them to another milestone: $MILESTONE_URL"
                       echo "Milestone $VERSION has open issues: $OPEN_ISSUES. [See them in the milestone]($MILESTONE_URL)." >> "$GITHUB_STEP_SUMMARY"
+                  fi
+                  if [[ -n "$OPEN_PRS" ]]; then
+                      echo "::error::Milestone $VERSION has open pull requests: $OPEN_PRS. Merge them or move them to another milestone: $MILESTONE_URL"
+                      echo "Milestone $VERSION has open pull requests: $OPEN_PRS. [See them in the milestone]($MILESTONE_URL)." >> "$GITHUB_STEP_SUMMARY"
+                      exit 1
                   fi
 
                   echo "::notice::Preparing release $VERSION."
