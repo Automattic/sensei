@@ -115,6 +115,8 @@ class Sensei_PostTypes {
 		// REST API functionality.
 		add_action( 'rest_api_init', [ $this, 'setup_rest_api' ] );
 		add_filter( 'rest_post_search_query', [ $this, 'exclude_post_types_from_rest_search' ] );
+		add_filter( 'posts_search', array( $this, 'exclude_lesson_content_from_search' ) );
+		add_filter( 'posts_search_orderby', array( $this, 'exclude_lesson_content_from_search' ) );
 
 		// Add protections on feeds for certain CPTs.
 		add_action( 'wp', [ $this, 'protect_feeds' ] );
@@ -203,6 +205,40 @@ class Sensei_PostTypes {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Keep lesson content out of searches by users who cannot edit lessons, while Access Permissions is enabled.
+	 *
+	 * Whether a locked lesson shows up for a search term, and where it ranks, would otherwise reveal which words its body contains.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param string $sql Search SQL for the WHERE or ORDER BY clause.
+	 *
+	 * @return string
+	 */
+	public function exclude_lesson_content_from_search( $sql ) {
+		global $wpdb;
+
+		// Queries that are not searches pass an empty clause.
+		if ( '' === $sql || ! sensei_is_login_required() || current_user_can( 'edit_lessons' ) ) {
+			return $sql;
+		}
+
+		// Core compares each term with post_content; make those comparisons ignore lessons.
+		return str_replace(
+			array(
+				"{$wpdb->posts}.post_content LIKE",
+				"{$wpdb->posts}.post_content NOT LIKE",
+			),
+			array(
+				"{$wpdb->posts}.post_type <> 'lesson' AND {$wpdb->posts}.post_content LIKE",
+				"{$wpdb->posts}.post_type = 'lesson' OR {$wpdb->posts}.post_content NOT LIKE",
+			),
+			$sql
+		);
 	}
 
 	/**

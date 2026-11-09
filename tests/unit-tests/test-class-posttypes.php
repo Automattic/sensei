@@ -23,6 +23,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	 * Tear down function.
 	 */
 	public function tearDown(): void {
+		Sensei()->settings->set( 'access_permission', true );
 		$this->factory->tearDown();
 		parent::tearDown();
 	}
@@ -396,5 +397,164 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertFalse( $actual );
+	}
+
+	/**
+	 * Lesson bodies are not searchable, in site search, in lesson-only queries such as the REST lessons endpoint, or when only the content is searched.
+	 *
+	 * @dataProvider providerExcludeLessonContentFromSearchQueryArgs
+	 */
+	public function testExcludeLessonContentFromSearch_VisitorSearchedLessonBodyTerm_OmitsLesson( array $query_args ): void {
+		/* Arrange. */
+		wp_set_current_user( 0 );
+		$this->create_lesson_with_body( 'xylokrantz' );
+
+		/* Act. */
+		$found = $this->search( 'xylokrantz', $query_args );
+
+		/* Assert. */
+		$this->assertEmpty( $found );
+	}
+
+	public function providerExcludeLessonContentFromSearchQueryArgs(): array {
+		return array(
+			'any post type'       => array( array() ),
+			'lessons only'        => array( array( 'post_type' => 'lesson' ) ),
+			'content column only' => array( array( 'search_columns' => array( 'post_content' ) ) ),
+		);
+	}
+
+	/**
+	 * Lessons still match on the public columns, including when a body word is excluded.
+	 *
+	 * @dataProvider providerExcludeLessonContentFromSearchPublicLessonTerms
+	 */
+	public function testExcludeLessonContentFromSearch_VisitorSearchedPublicLessonTerm_ReturnsLesson( string $term ): void {
+		/* Arrange. */
+		wp_set_current_user( 0 );
+		$lesson_id = $this->create_lesson_with_body( 'xylokrantz' );
+
+		/* Act. */
+		$found = $this->search( $term );
+
+		/* Assert. */
+		$this->assertSame( array( $lesson_id ), $found );
+	}
+
+	public function providerExcludeLessonContentFromSearchPublicLessonTerms(): array {
+		return array(
+			'title term'         => array( 'quendalor' ),
+			'excerpt term'       => array( 'public excerpt' ),
+			'excluded body term' => array( 'quendalor -xylokrantz' ),
+		);
+	}
+
+	public function testExcludeLessonContentFromSearch_VisitorSearchedPostBodyTerm_ReturnsPost(): void {
+		/* Arrange. */
+		wp_set_current_user( 0 );
+		$this->create_lesson_with_body( 'xylokrantz' );
+		$post_id = $this->factory->post->create( array( 'post_content' => 'A post about xylokrantz.' ) );
+
+		/* Act. */
+		$found = $this->search( 'xylokrantz' );
+
+		/* Assert. */
+		$this->assertSame( array( $post_id ), $found );
+	}
+
+	public function testExcludeLessonContentFromSearch_TeacherSearchedLessonBodyTerm_ReturnsLesson(): void {
+		/* Arrange. */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'teacher' ) ) );
+		$lesson_id = $this->create_lesson_with_body( 'xylokrantz' );
+
+		/* Act. */
+		$found = $this->search( 'xylokrantz' );
+
+		/* Assert. */
+		$this->assertSame( array( $lesson_id ), $found );
+	}
+
+	public function testExcludeLessonContentFromSearch_AccessPermissionDisabled_ReturnsLesson(): void {
+		/* Arrange. */
+		Sensei()->settings->set( 'access_permission', false );
+		wp_set_current_user( 0 );
+		$lesson_id = $this->create_lesson_with_body( 'xylokrantz' );
+
+		/* Act. */
+		$found = $this->search( 'xylokrantz' );
+
+		/* Assert. */
+		$this->assertSame( array( $lesson_id ), $found );
+	}
+
+	public function testExcludeLessonContentFromSearch_LessonBodyContainedSearchedPhrase_KeepsLessonPosition(): void {
+		/* Arrange. */
+		wp_set_current_user( 0 );
+		$lesson_args     = array(
+			'post_title'   => 'Lesson',
+			'post_excerpt' => 'Alpha comes before beta.',
+		);
+		$older_lesson_id = $this->factory->lesson->create(
+			array_merge(
+				$lesson_args,
+				array(
+					'post_content' => 'The body says alpha beta.',
+					'post_date'    => '2020-01-01 00:00:00',
+				)
+			)
+		);
+		$newer_lesson_id = $this->factory->lesson->create(
+			array_merge(
+				$lesson_args,
+				array(
+					'post_content' => 'The body says nothing.',
+					'post_date'    => '2020-01-02 00:00:00',
+				)
+			)
+		);
+
+		/* Act. */
+		$found = $this->search( 'alpha beta' );
+
+		/* Assert. */
+		$this->assertSame( array( $newer_lesson_id, $older_lesson_id ), $found );
+	}
+
+	/**
+	 * Create a published lesson with the given word in its body only.
+	 *
+	 * @param string $word Word only present in the body.
+	 * @return int Lesson ID.
+	 */
+	private function create_lesson_with_body( $word ) {
+		return $this->factory->lesson->create(
+			array(
+				'post_title'   => 'Quendalor lesson',
+				'post_content' => "The secret word is {$word}.",
+				'post_excerpt' => 'Public excerpt.',
+			)
+		);
+	}
+
+	/**
+	 * Run a search and return the matching post IDs.
+	 *
+	 * @param string $term       Search term.
+	 * @param array  $query_args Query args overriding the defaults.
+	 * @return int[]
+	 */
+	private function search( $term, $query_args = array() ) {
+		$query = new WP_Query(
+			array_merge(
+				array(
+					's'         => $term,
+					'post_type' => 'any',
+					'fields'    => 'ids',
+				),
+				$query_args
+			)
+		);
+
+		return array_map( 'intval', $query->posts );
 	}
 }
