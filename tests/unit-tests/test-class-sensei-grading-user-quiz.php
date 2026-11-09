@@ -26,7 +26,10 @@ class Sensei_Grading_User_Quiz_Test extends WP_UnitTestCase {
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
 		$attachment_id = $factory->attachment->create(
-			array( 'file' => 'submitted.docx' )
+			array(
+				'file'        => 'submitted.docx',
+				'post_author' => $user_id,
+			)
 		);
 		Sensei()->quiz->save_user_answers( array( $question_id => (string) $attachment_id ), array(), $lesson_id, $user_id );
 		$grading = new Sensei_Grading_User_Quiz( $user_id, $quiz_id );
