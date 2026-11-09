@@ -212,7 +212,7 @@ class Sensei_PostTypes {
 	 *
 	 * Whether a locked lesson shows up for a search term, and where it ranks, would otherwise reveal which words its body contains.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 * @access private
 	 *
 	 * @param string $sql Search SQL for the WHERE or ORDER BY clause.
@@ -271,7 +271,7 @@ class Sensei_PostTypes {
 	/**
 	 * Close comments on lessons the current user cannot view.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 * @access private
 	 *
 	 * @param bool $open    Whether the post is open for comments.

@@ -176,7 +176,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Check user permission for installing plugins.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param WP_REST_Request $request WordPress request object.
 	 *

@@ -69,7 +69,7 @@ class Sensei_Course_Results {
 	 *
 	 * The query var is removed too, so the title filter and the templates do not load the course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 * @access private
 	 *
 	 * @param array $query_vars The query variables of the request.

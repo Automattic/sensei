@@ -855,7 +855,7 @@ class Sensei_Quiz {
 	/**
 	 * Check if the answer to a file upload question is a file the user uploaded.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param mixed $attachment_id The answer to the file upload question.
 	 * @param int   $user_id       The user who gave the answer.
@@ -1989,7 +1989,7 @@ class Sensei_Quiz {
 	/**
 	 * Sign the set of questions a quiz asks, so the form cannot come back with another set.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int   $quiz_id      Quiz ID.
 	 * @param int[] $question_ids IDs of the questions asked.

@@ -203,7 +203,7 @@ class Sensei_Home_Tasks_Provider {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 */
 	public function handle_settings_section_visited() {
 		if (

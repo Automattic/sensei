@@ -210,7 +210,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Checks if a given request has access to create a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return true|WP_Error True if the request has access to create the lesson, WP_Error object otherwise.
@@ -224,7 +224,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Checks if a given request has access to update a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return true|WP_Error True if the request has access to update the lesson, WP_Error object otherwise.
