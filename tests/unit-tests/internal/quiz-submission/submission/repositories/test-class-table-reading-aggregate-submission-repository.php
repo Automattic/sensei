@@ -172,8 +172,8 @@ class Table_Reading_Aggregate_Submission_Repository_Test extends \WP_UnitTestCas
 			2,
 			3,
 			12.34,
-			new DateTimeImmutable( 'now', new DateTimeZone( 'US/Central' ) ),
-			new DateTimeImmutable( 'now', new DateTimeZone( 'US/Central' ) )
+			new DateTimeImmutable( 'now', new DateTimeZone( 'America/Chicago' ) ),
+			new DateTimeImmutable( 'now', new DateTimeZone( 'America/Chicago' ) )
 		);
 
 		$comments_based_submission = $this->create_comments_based_submission();
