@@ -35,7 +35,7 @@ the PR without discarding local work.
 
 If on `trunk`, run `git switch -c <branch>` before committing. This preserves
 current edits and local commits. Choose a descriptive name such as
-`fix/course-navigation`; never use `codex/`. Do not reset local `trunk`. Otherwise,
+`fix/course-navigation`. Do not reset local `trunk`. Otherwise,
 reuse an appropriate feature branch.
 
 ## 2. Prepare the changelog
@@ -74,28 +74,23 @@ for the PR description. If it is empty, report that there is nothing to PR.
 Use a concise, imperative title without a conventional-commit prefix, for example
 `Add course link to quiz page breadcrumb`.
 
-Read `.github/PULL_REQUEST_TEMPLATE.md` and fill its sections in order. Keep its
-headings for applicable sections; remove inapplicable sections and their comments
-and placeholders.
+Read `.github/PULL_REQUEST_TEMPLATE.md` when preparing the body. It is the
+source of truth for sections, order, formatting, and section-specific guidance.
+Fill it for the final change, removing unused placeholders and inapplicable
+sections as directed by the template. Do not maintain a separate body format in
+this skill.
 
-- **`Resolves #`**: include a known GitHub issue resolved by this change. Use
-  references from the user, branch, or commits; never guess. Remove if absent.
-- **Proposed Changes**: lead with the problem or need and its user impact, then
-  explain the approach briefly. Describe the final change, not commit history
-  or a list of modified files.
-- **Screenshots**: keep only for visible changes, judging the resulting behavior
-  rather than file types. Capture and attach relevant images using available
-  browser and upload tools. Use Before/After for changed UI, or one image/video
-  for new UI. If capture or upload is unavailable, leave the applicable
-  placeholders and report missing images. GitHub cannot display local file paths.
-- **Testing Instructions**: manual WordPress behavior checks with click paths and
-  expected results, using `- [ ]` checkboxes. Omit for CI-only, documentation,
-  test-only, or other changes without meaningful manual checks. Do not substitute
-  automated suite commands, file/diff review, or "no manual testing needed" text.
-- **New/Updated Hooks**: describe added or changed actions/filters and arguments;
-  apply `Hooks`. Remove if none.
-- **Deprecated Code**: name deprecated code and its replacement, if applicable;
-  apply `Deprecation`. Remove if none.
+Before presenting a draft with Testing Instructions, confirm that an agent has
+followed every manual step as written and observed each expected result. Reuse
+earlier checks when the setup and steps match and the relevant behavior is
+unchanged. Run any new, changed, or unverified steps first. If a required check
+fails or cannot be run, report it before requesting PR approval.
+
+Lead with the problem and resulting behavior. Cite only known
+issue references; do not imply that a partial fix resolves the whole issue.
+When including screenshots, upload them to a location GitHub can display;
+local file paths will not render. Report unavailable evidence accurately.
+Determine required labels from `AGENTS.md`.
 
 Show the title and filled body before publishing, noting the changelog choice,
 labels, and missing screenshots. This is a preview, not another approval gate.
