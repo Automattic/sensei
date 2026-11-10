@@ -19,8 +19,10 @@ not been specified.
 
 Always use the repository PR template, include a changelog entry or the
 appropriate label, assign a milestone, and accurately report testing.
-Follow applicable approval requirements and the scope of the user's request
-before committing, pushing, or publishing.
+A request to open or create a PR authorizes the necessary branch, commit, push,
+and PR creation steps within the requested scope. Proceed to publication unless
+the developer has explicitly required approval first. A request to prepare a
+description or preview authorizes preparing that draft; publish when requested.
 
 ## 1. Inspect the work and prepare the branch
 
@@ -99,8 +101,10 @@ When including screenshots, upload them to a location GitHub can display;
 local file paths will not render. Report unavailable evidence accurately.
 Determine required labels from `AGENTS.md`.
 
-Show the title and filled body before publishing, noting the changelog choice,
-labels, and missing screenshots. Follow applicable approval requirements.
+When the developer explicitly requires approval before publication, present the
+title, filled body, branch and commit, validation results and limitations, and
+applicable metadata, then wait for approval. Otherwise, publish in response to
+the request to open or create the PR.
 
 ## 5. Publish and assign metadata
 
