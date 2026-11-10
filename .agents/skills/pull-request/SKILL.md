@@ -4,7 +4,7 @@ description: >-
   Open a Sensei pull request when the user asks to create, open, or draft a PR.
   Creates a branch if needed, commits and pushes relevant changes, fills the PR
   template, ensures a changelog entry or the appropriate `No Changelog` label,
-  assigns the required milestone, and follows the developer's workflow for CI follow-up.
+  assigns the required milestone, and monitors CI through fixes unless directed otherwise.
 ---
 
 # Open a Sensei Pull Request
@@ -13,7 +13,7 @@ Assume maintainer access to `Automattic/sensei`, with `origin` pointing there.
 
 Use this skill automatically for PR tasks. Follow the developer's instructions
 and established local workflow for branches, commits, testing order, draft status,
-publishing, and CI follow-up. Reuse completed work and checks when they still
+and publishing. Reuse completed work and checks when they still
 apply. The sections below provide a default workflow when those choices have
 not been specified.
 
@@ -131,8 +131,11 @@ changelog checks:
 gh pr view <PR_NUMBER> --json headRefOid,statusCheckRollup
 ```
 
-Follow the developer's workflow for who monitors CI and handles failures. When
-the agent is responsible for monitoring, watch checks through completion:
+By default, monitor CI through completion and fix failures caused by the PR
+within the authorized scope. If the developer explicitly assigns CI follow-up
+to another person or process, or asks to stop after publishing, report the
+current status and leave follow-up with the designated owner. Otherwise,
+watch checks through completion:
 
 ```bash
 gh pr checks <PR_NUMBER> --watch --interval 30
