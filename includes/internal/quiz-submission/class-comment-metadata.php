@@ -33,7 +33,8 @@ class Comment_Metadata {
 	 * @throws Persistence_Exception If the metadata cannot be read.
 	 */
 	public static function get( int $comment_id, string $key, Submission_Interface $submission ) {
-		$wpdb             = $GLOBALS['wpdb'];
+		global $wpdb;
+
 		$wpdb->last_error = '';
 
 		$value = get_comment_meta( $comment_id, $key, true );
