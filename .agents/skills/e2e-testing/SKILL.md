@@ -5,7 +5,7 @@ description: Use when verifying a Sensei UI or behavior change end-to-end agains
 
 # Sensei E2E Verification
 
-This skill verifies that a change actually behaves correctly from a user's perspective. Use it after the unit-test loop passes and before relying on Playwright for full regression.
+This skill verifies that a change actually behaves correctly from a user's perspective. Choose the order of browser verification, unit tests, and Playwright runs according to the change and investigation.
 
 ## Prerequisites
 
