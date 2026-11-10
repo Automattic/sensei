@@ -151,6 +151,22 @@ class Sensei_Course_Structure {
 	}
 
 	/**
+	 * Check whether a module is already in this course and belongs to the course teacher.
+	 *
+	 * Such a module is covered by the course edit permission, so a user who can edit the course
+	 * without owning its modules (a co-teacher, for example) can save it with its custom slug.
+	 *
+	 * @param WP_Term $module_term   Module term.
+	 * @param WP_User $module_author Module author.
+	 *
+	 * @return bool
+	 */
+	private function is_course_teacher_module( WP_Term $module_term, WP_User $module_author ): bool {
+		return has_term( (int) $module_term->term_id, 'module', $this->course_id )
+			&& (int) get_post_field( 'post_author', $this->course_id ) === (int) $module_author->ID;
+	}
+
+	/**
 	 * Get the course structure.
 	 *
 	 * @see Sensei_Course_Structure::prepare_lesson()
@@ -1013,10 +1029,12 @@ class Sensei_Course_Structure {
 				}
 
 				$term_author = Sensei_Core_Modules::get_term_author( $item['slug'] );
+				$slug_term   = get_term_by( 'slug', $item['slug'], 'module' );
 				if ( $term_author instanceof WP_User &&
 					wp_get_current_user()->ID !== $term_author->ID &&
 					! current_user_can( 'manage_options' ) &&
-					get_term_by( 'slug', $item['slug'], 'module' )
+					$slug_term instanceof WP_Term &&
+					! $this->is_course_teacher_module( $slug_term, $term_author )
 				) {
 					return new WP_Error(
 						'module_belongs_to_another_user',
