@@ -103,12 +103,12 @@ class Sensei_Course_Structure {
 
 			$module_writes = $course_structure->resolve_module_writes( $item );
 
-			if ( $module_writes['update'] && ! current_user_can( 'edit_term', $module_writes['update'] ) ) {
+			if ( $module_writes['update'] && ! self::can_current_user_write_module( $course->ID, $module_writes['update'], 'edit_term' ) ) {
 				return false;
 			}
 
 			foreach ( $module_writes['delete'] as $module_id ) {
-				if ( ! current_user_can( 'delete_term', $module_id ) ) {
+				if ( ! self::can_current_user_write_module( $course->ID, $module_id, 'delete_term' ) ) {
 					return false;
 				}
 			}
@@ -132,6 +132,22 @@ class Sensei_Course_Structure {
 	 */
 	private static function can_current_user_edit_lesson( array $item ): bool {
 		return ! $item['id'] || current_user_can( 'edit_post', $item['id'] );
+	}
+
+	/**
+	 * Check whether the current user may update or delete a module from a structure save.
+	 *
+	 * Modules already in the course are covered by the course edit permission, so a user who
+	 * can edit the course without owning them (a co-teacher, for example) can keep saving it.
+	 *
+	 * @param int    $course_id Course post ID.
+	 * @param int    $module_id Module term ID.
+	 * @param string $cap       `edit_term` or `delete_term`.
+	 *
+	 * @return bool
+	 */
+	private static function can_current_user_write_module( int $course_id, int $module_id, string $cap ): bool {
+		return has_term( $module_id, 'module', $course_id ) || current_user_can( $cap, $module_id );
 	}
 
 	/**

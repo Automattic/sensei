@@ -1204,6 +1204,52 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A module already in the course is covered by the course edit permission, so a user who can edit
+	 * the course without owning its modules, like a Sensei Pro co-teacher, can still save the structure.
+	 *
+	 * @covers Sensei_Course_Structure::can_current_user_save
+	 */
+	public function testCanCurrentUserSave_CourseModuleOwnedByAnotherTeacherGiven_ReturnsTrue() {
+		$teacher_a_id = $this->get_user_by_role( 'teacher' );
+		$course_id    = $this->factory->course->create( array( 'post_author' => $teacher_a_id ) );
+		$module_id    = $this->factory->term->create(
+			array(
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Basics',
+				'slug'     => $teacher_a_id . '-basics',
+			)
+		);
+		wp_set_object_terms( $course_id, array( $module_id ), Sensei()->modules->taxonomy );
+
+		// Teacher B can edit this course without owning its module, as a co-teacher can.
+		$this->login_as_teacher_b();
+		add_filter(
+			'user_has_cap',
+			function ( $allcaps, $caps, $args ) use ( $course_id ) {
+				if ( isset( $args[2] ) && (int) $args[2] === $course_id ) {
+					$allcaps['edit_others_courses']    = true;
+					$allcaps['edit_published_courses'] = true;
+				}
+				return $allcaps;
+			},
+			10,
+			3
+		);
+
+		$structure = array(
+			array(
+				'type'        => 'module',
+				'id'          => $module_id,
+				'title'       => 'Basics',
+				'description' => '',
+				'lessons'     => array(),
+			),
+		);
+
+		$this->assertTrue( Sensei_Course_Structure::can_current_user_save( $course_id, $structure ) );
+	}
+
+	/**
 	 * A module the save would delete needs `delete_term`, even when the save only updates a module the user owns.
 	 *
 	 * @covers Sensei_Course_Structure::can_current_user_save
