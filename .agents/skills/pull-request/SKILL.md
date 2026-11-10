@@ -4,16 +4,23 @@ description: >-
   Open a Sensei pull request when the user asks to create, open, or draft a PR.
   Creates a branch if needed, commits and pushes relevant changes, fills the PR
   template, ensures a changelog entry or the appropriate `No Changelog` label,
-  assigns the required milestone, and monitors CI through fixes.
+  assigns the required milestone, and follows the developer's workflow for CI follow-up.
 ---
 
 # Open a Sensei Pull Request
 
 Assume maintainer access to `Automattic/sensei`, with `origin` pointing there.
-A request to open a PR authorizes branching, committing, pushing, creating the PR,
-and fixing and pushing CI failures within its scope. Proceed without additional
-confirmation. Explicit limits such as "no commit", "no push", or "prepare only"
-take precedence; complete the allowed work and explain what remains.
+
+Use this skill automatically for PR tasks. Follow the developer's instructions
+and established local workflow for branches, commits, testing order, draft status,
+publishing, and CI follow-up. Reuse completed work and checks when they still
+apply. The sections below provide a default workflow when those choices have
+not been specified.
+
+Always use the repository PR template, include a changelog entry or the
+appropriate label, assign a milestone, and accurately report testing.
+Follow applicable approval requirements and the scope of the user's request
+before committing, pushing, publishing, or fixing CI failures.
 
 ## 1. Inspect the work and prepare the branch
 
@@ -80,11 +87,11 @@ Fill it for the final change, removing unused placeholders and inapplicable
 sections as directed by the template. Do not maintain a separate body format in
 this skill.
 
-Before presenting a draft with Testing Instructions, confirm that an agent has
-followed every manual step as written and observed each expected result. Reuse
-earlier checks when the setup and steps match and the relevant behavior is
-unchanged. Run any new, changed, or unverified steps first. If a required check
-fails or cannot be run, report it before requesting PR approval.
+Write Testing Instructions with concrete steps and expected results. Report
+which checks were actually performed and what they showed, including failures,
+pending checks, and checks that could not run. Reuse earlier checks when their
+setup and scope still apply. A draft may be shared while testing is pending;
+expected results in reviewer instructions do not establish that checks passed.
 
 Lead with the problem and resulting behavior. Cite only known
 issue references; do not imply that a partial fix resolves the whole issue.
@@ -93,7 +100,7 @@ local file paths will not render. Report unavailable evidence accurately.
 Determine required labels from `AGENTS.md`.
 
 Show the title and filled body before publishing, noting the changelog choice,
-labels, and missing screenshots. This is a preview, not another approval gate.
+labels, and missing screenshots. Follow applicable approval requirements.
 
 ## 5. Publish and assign metadata
 
@@ -111,44 +118,37 @@ git push -u origin <branch>
 gh pr create --base trunk --head <branch> --title "<title>" --body-file <body-file> --assignee "@me"
 ```
 
-Add `--draft` only when requested. Capture the PR URL and number. Assign the
-selected milestone and any labels identified above with `gh pr edit`.
+Choose draft status according to the developer's workflow and the PR's readiness.
+Capture the PR URL and number. Assign the selected milestone and any labels
+identified above with `gh pr edit`.
 
-## 6. Monitor CI through completion
+## 6. Follow up on CI
 
-Watch checks for the latest PR head, including milestone and changelog checks:
+Check the latest PR head and report its current status, including milestone and
+changelog checks:
 
 ```bash
 gh pr view <PR_NUMBER> --json headRefOid,statusCheckRollup
+```
+
+Follow the developer's workflow for who monitors CI and handles failures. When
+the agent is responsible for monitoring, watch checks through completion:
+
+```bash
 gh pr checks <PR_NUMBER> --watch --interval 30
 ```
 
-Keep repeated polling output out of the model context: redirect watch output to
-a temporary file or filter it before returning tool results. Read compact
-summaries at bounded intervals, report meaningful changes, and retrieve failed
-job logs only when needed for diagnosis.
+- Keep polling output compact and report meaningful changes.
+- An empty check list means checks have not appeared; it does not establish a pass.
+- Inspect failed job logs before diagnosing a failure. Fix and push changes
+  within the authorized scope, following the testing policy in `AGENTS.md`.
+- Associate results with the current head SHA and latest run attempt. Recheck
+  affected results after a push; earlier commits' results do not validate new code.
+- Retry a clearly transient failure once when appropriate. Report repeated
+  infrastructure failures, missing permissions, and fixes outside the task's scope.
+- Report pending, failed, cancelled, or unavailable checks accurately. Claim
+  CI passed only when applicable checks for the current head have passed,
+  accounting for expected skips.
 
-- Wait for checks to appear; an empty list is not a pass. Use bounded waits and
-  share meaningful progress.
-- Inspect failed jobs and logs (`gh run view <RUN_ID> --log-failed`) before acting.
-  Autonomously fix failures caused by the PR and validate changes according to
-  the testing policy in `AGENTS.md`. Commit relevant fixes and push to the same
-  branch. Update the body or changelog if needed.
-- After **every push**, obtain the new head SHA and watch its checks. Earlier
-  commits' passing runs do not count. For reruns, use the latest attempt of each
-  applicable check rather than treating superseded failures as current failures.
-- For a clearly transient infrastructure failure, rerun failed jobs once when
-  safe and watch that attempt. Report a repeated infrastructure failure instead
-  of retrying indefinitely. Do not weaken tests/checks or change unrelated code
-  just to make CI green.
-- Report blockers such as outages, missing permissions/secrets, required user
-  action, fixes outside the PR's scope, or repeated failures with no new diagnosis
-  or safe fix. Also report checks stuck without progress. Include the affected
-  check, run link, evidence, and any required user action.
-
-Before declaring success, confirm the PR head still matches the checked commit
-and no applicable checks remain failed, pending, or cancelled. Accept skips only
-when expected by workflow conditions; disclose checks that could not run.
-
-Return the PR URL and final CI status, summarizing fixes or remaining blockers.
-Do not merge unless separately requested.
+Return the PR URL and observed CI status, including any pending follow-up and
+who is handling it when known. Merge only when separately requested.
