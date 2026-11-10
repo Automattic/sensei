@@ -33,7 +33,7 @@ class Utils {
 	/**
 	 * Temporary user accounts excluded from Reports lists and calculations.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @var string[]
 	 */
@@ -69,7 +69,7 @@ class Utils {
 	 * For example, WPML uses these filters to share progress with the original-language post.
 	 * Callers query the mapped IDs and key their results by the requested IDs.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[]  $post_ids Requested post IDs.
 	 * @param string $type     Course or lesson progress type.
@@ -94,7 +94,7 @@ class Utils {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 * @return string Mapping query with requested_id and stored_id columns, or an empty string.
@@ -127,7 +127,7 @@ class Utils {
 	/**
 	 * Build the join and stored lesson ID expression for a report query.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param \wpdb $wpdb       WordPress database object.
 	 * @param int[] $lesson_ids Requested lesson post IDs.
@@ -161,7 +161,7 @@ class Utils {
 	 *
 	 * Requested IDs without a stored result are omitted. Result values are preserved.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @template T
 	 * @param array<int, T>   $results     Results keyed by stored progress ID.
@@ -275,7 +275,7 @@ class Utils {
 	 * When include_statuses_override is set, excluded users are kept if their
 	 * effective status matches one of the override statuses.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 * @param array $args Query arguments with 'exclude_user_login_prefixes' and optional 'include_statuses_override'.

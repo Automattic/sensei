@@ -23,6 +23,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	 * Tear down function.
 	 */
 	public function tearDown(): void {
+		Sensei()->settings->set( 'access_permission', true );
 		$this->factory->tearDown();
 		parent::tearDown();
 	}
@@ -254,6 +255,120 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 	}
 
+	/**
+	 * The comment feeds list a lesson's comments only for viewers who can view the lesson.
+	 *
+	 * @dataProvider providerProtectFeedsCommentFeed
+	 */
+	public function testProtectFeeds_CommentFeedRequested_ListsLessonCommentOnlyForViewersWithAccess( string $feed_url, bool $enrolled, bool $expected_listed, bool $expected_post_comment_listed ): void {
+		/* Arrange. */
+		$course_id       = $this->factory->course->create();
+		$lesson_id       = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course' => $course_id,
+				),
+			)
+		);
+		$comment_id      = $this->factory->comment->create(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'comment_approved' => 1,
+			)
+		);
+		$post_comment_id = $this->factory->comment->create(
+			array(
+				'comment_post_ID'  => $this->factory->post->create(),
+				'comment_approved' => 1,
+			)
+		);
+
+		$user_id = 0;
+		if ( $enrolled ) {
+			$user_id = $this->factory->user->create();
+			Sensei_Course_Enrolment::get_course_instance( $course_id )->enrol( $user_id );
+		}
+		wp_set_current_user( $user_id );
+
+		/* Act. */
+		$this->go_to( str_replace( '{lesson}', get_post_field( 'post_name', $lesson_id ), $feed_url ) );
+		$listed_comment_ids = array_map( 'intval', wp_list_pluck( $GLOBALS['wp_query']->comments, 'comment_ID' ) );
+
+		/* Assert. */
+		$this->assertSame( $expected_listed, in_array( $comment_id, $listed_comment_ids, true ), 'The lesson comment should be listed only for viewers with access.' );
+		$this->assertSame( $expected_post_comment_listed, in_array( $post_comment_id, $listed_comment_ids, true ), 'The site feed should keep listing comments on other posts.' );
+		$this->assertCount( $GLOBALS['wp_query']->comment_count, $listed_comment_ids, 'The comment count should match the listed comments.' );
+	}
+
+	public function providerProtectFeedsCommentFeed(): array {
+		return array(
+			'site feed, visitor without access'   => array( '/?feed=rss2&withcomments=1', false, false, true ),
+			'site feed, enrolled student'         => array( '/?feed=rss2&withcomments=1', true, true, true ),
+			'lesson feed, visitor without access' => array( '/?lesson={lesson}&feed=rss2', false, false, false ),
+			'lesson feed, enrolled student'       => array( '/?lesson={lesson}&feed=rss2', true, true, false ),
+		);
+	}
+
+	public function testCloseCommentsOnLockedLessons_StudentWithoutPrerequisite_RejectsComment(): void {
+		/* Arrange. */
+		list( $course_id, $lesson_id ) = $this->create_course_with_locked_lesson();
+		$student_id                    = $this->factory->user->create();
+		Sensei_Course_Enrolment::get_course_instance( $course_id )->enrol( $student_id );
+		wp_set_current_user( $student_id );
+
+		/* Act. */
+		$result = wp_handle_comment_submission(
+			array(
+				'comment_post_ID' => $lesson_id,
+				'comment'         => 'Comment on the lesson.',
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( 'comment_closed', $result->get_error_code() );
+	}
+
+	public function testCloseCommentsOnLockedLessons_CourseTeacher_AcceptsComment(): void {
+		/* Arrange. */
+		list( , $lesson_id, $teacher_id ) = $this->create_course_with_locked_lesson();
+		wp_set_current_user( $teacher_id );
+		// Earlier tests leave comments from the same IP, which would trip the flood check.
+		remove_action( 'check_comment_flood', 'check_comment_flood_db' );
+
+		/* Act. */
+		$result = wp_handle_comment_submission(
+			array(
+				'comment_post_ID' => $lesson_id,
+				'comment'         => 'Comment on the lesson.',
+			)
+		);
+
+		/* Assert. */
+		$this->assertInstanceOf( WP_Comment::class, $result );
+	}
+
+	/**
+	 * Create a teacher's course with a lesson locked behind a prerequisite.
+	 *
+	 * @return int[] The course ID, the locked lesson ID and the teacher ID.
+	 */
+	private function create_course_with_locked_lesson(): array {
+		$teacher_id   = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$course_id    = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$lesson_args  = array(
+			'post_author'    => $teacher_id,
+			'comment_status' => 'open',
+			'meta_input'     => array(
+				'_lesson_course' => $course_id,
+			),
+		);
+		$prerequisite = $this->factory->lesson->create( $lesson_args );
+		$lesson_id    = $this->factory->lesson->create( $lesson_args );
+		update_post_meta( $lesson_id, '_lesson_prerequisite', $prerequisite );
+
+		return array( $course_id, $lesson_id, $teacher_id );
+	}
+
 	public function testExcludePostTypesFromRestSearch_WhenHasPostTypes_RemovesExcludedPostTypes() {
 		/* Arrange. */
 		$post_types = [
@@ -282,5 +397,164 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertFalse( $actual );
+	}
+
+	/**
+	 * Lesson bodies are not searchable, in site search, in lesson-only queries such as the REST lessons endpoint, or when only the content is searched.
+	 *
+	 * @dataProvider providerExcludeLessonContentFromSearchQueryArgs
+	 */
+	public function testExcludeLessonContentFromSearch_VisitorSearchedLessonBodyTerm_OmitsLesson( array $query_args ): void {
+		/* Arrange. */
+		wp_set_current_user( 0 );
+		$this->create_lesson_with_body( 'xylokrantz' );
+
+		/* Act. */
+		$found = $this->search( 'xylokrantz', $query_args );
+
+		/* Assert. */
+		$this->assertEmpty( $found );
+	}
+
+	public function providerExcludeLessonContentFromSearchQueryArgs(): array {
+		return array(
+			'any post type'       => array( array() ),
+			'lessons only'        => array( array( 'post_type' => 'lesson' ) ),
+			'content column only' => array( array( 'search_columns' => array( 'post_content' ) ) ),
+		);
+	}
+
+	/**
+	 * Lessons still match on the public columns, including when a body word is excluded.
+	 *
+	 * @dataProvider providerExcludeLessonContentFromSearchPublicLessonTerms
+	 */
+	public function testExcludeLessonContentFromSearch_VisitorSearchedPublicLessonTerm_ReturnsLesson( string $term ): void {
+		/* Arrange. */
+		wp_set_current_user( 0 );
+		$lesson_id = $this->create_lesson_with_body( 'xylokrantz' );
+
+		/* Act. */
+		$found = $this->search( $term );
+
+		/* Assert. */
+		$this->assertSame( array( $lesson_id ), $found );
+	}
+
+	public function providerExcludeLessonContentFromSearchPublicLessonTerms(): array {
+		return array(
+			'title term'         => array( 'quendalor' ),
+			'excerpt term'       => array( 'public excerpt' ),
+			'excluded body term' => array( 'quendalor -xylokrantz' ),
+		);
+	}
+
+	public function testExcludeLessonContentFromSearch_VisitorSearchedPostBodyTerm_ReturnsPost(): void {
+		/* Arrange. */
+		wp_set_current_user( 0 );
+		$this->create_lesson_with_body( 'xylokrantz' );
+		$post_id = $this->factory->post->create( array( 'post_content' => 'A post about xylokrantz.' ) );
+
+		/* Act. */
+		$found = $this->search( 'xylokrantz' );
+
+		/* Assert. */
+		$this->assertSame( array( $post_id ), $found );
+	}
+
+	public function testExcludeLessonContentFromSearch_TeacherSearchedLessonBodyTerm_ReturnsLesson(): void {
+		/* Arrange. */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'teacher' ) ) );
+		$lesson_id = $this->create_lesson_with_body( 'xylokrantz' );
+
+		/* Act. */
+		$found = $this->search( 'xylokrantz' );
+
+		/* Assert. */
+		$this->assertSame( array( $lesson_id ), $found );
+	}
+
+	public function testExcludeLessonContentFromSearch_AccessPermissionDisabled_ReturnsLesson(): void {
+		/* Arrange. */
+		Sensei()->settings->set( 'access_permission', false );
+		wp_set_current_user( 0 );
+		$lesson_id = $this->create_lesson_with_body( 'xylokrantz' );
+
+		/* Act. */
+		$found = $this->search( 'xylokrantz' );
+
+		/* Assert. */
+		$this->assertSame( array( $lesson_id ), $found );
+	}
+
+	public function testExcludeLessonContentFromSearch_LessonBodyContainedSearchedPhrase_KeepsLessonPosition(): void {
+		/* Arrange. */
+		wp_set_current_user( 0 );
+		$lesson_args     = array(
+			'post_title'   => 'Lesson',
+			'post_excerpt' => 'Alpha comes before beta.',
+		);
+		$older_lesson_id = $this->factory->lesson->create(
+			array_merge(
+				$lesson_args,
+				array(
+					'post_content' => 'The body says alpha beta.',
+					'post_date'    => '2020-01-01 00:00:00',
+				)
+			)
+		);
+		$newer_lesson_id = $this->factory->lesson->create(
+			array_merge(
+				$lesson_args,
+				array(
+					'post_content' => 'The body says nothing.',
+					'post_date'    => '2020-01-02 00:00:00',
+				)
+			)
+		);
+
+		/* Act. */
+		$found = $this->search( 'alpha beta' );
+
+		/* Assert. */
+		$this->assertSame( array( $newer_lesson_id, $older_lesson_id ), $found );
+	}
+
+	/**
+	 * Create a published lesson with the given word in its body only.
+	 *
+	 * @param string $word Word only present in the body.
+	 * @return int Lesson ID.
+	 */
+	private function create_lesson_with_body( $word ) {
+		return $this->factory->lesson->create(
+			array(
+				'post_title'   => 'Quendalor lesson',
+				'post_content' => "The secret word is {$word}.",
+				'post_excerpt' => 'Public excerpt.',
+			)
+		);
+	}
+
+	/**
+	 * Run a search and return the matching post IDs.
+	 *
+	 * @param string $term       Search term.
+	 * @param array  $query_args Query args overriding the defaults.
+	 * @return int[]
+	 */
+	private function search( $term, $query_args = array() ) {
+		$query = new WP_Query(
+			array_merge(
+				array(
+					's'         => $term,
+					'post_type' => 'any',
+					'fields'    => 'ids',
+				),
+				$query_args
+			)
+		);
+
+		return array_map( 'intval', $query->posts );
 	}
 }

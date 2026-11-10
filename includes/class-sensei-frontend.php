@@ -730,6 +730,11 @@ class Sensei_Frontend {
 
 		switch ( $sanitized_submit ) {
 			case 'lesson-complete':
+				// Lessons whose quiz requires a passing grade cannot be self-completed.
+				if ( Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) ) {
+					break;
+				}
+
 				if ( false === Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true ) ) {
 					Sensei()->notices->add_notice( __( 'Unable to complete the lesson. Reload this page to check its status, or contact your instructor for help.', 'sensei-lms' ), 'alert' );
 					return;
@@ -841,6 +846,11 @@ class Sensei_Frontend {
 			// Handle submit data.
 			switch ( $sanitized_submit ) {
 				case __( 'Mark as Complete', 'sensei-lms' ):
+					// Self-completion is only available when courses are set to complete on demand.
+					if ( 'complete' !== Sensei()->settings->get( 'course_completion' ) ) {
+						break;
+					}
+
 					// Only students enrolled in the course may mark it as complete.
 					if ( ! Sensei_Course::is_user_enrolled( $sanitized_course_id, $current_user->ID ) ) {
 						break;

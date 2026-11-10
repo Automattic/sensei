@@ -134,7 +134,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 	/**
 	 * Get grade counts and sums grouped by lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $lesson_ids Requested lesson IDs; an empty selection matches no grades.
 	 * @param array $args       Optional user-login exclusions (see interface).

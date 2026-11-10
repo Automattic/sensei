@@ -1583,6 +1583,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Marks the given section as visited.
 	 */
 	public function mark_section_as_visited() {
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			return;
+		}
+
 		if ( isset( $_POST['nonce'] ) && wp_verify_nonce( sensei_request_text( $_POST['nonce'] ), 'sensei-mark-settings-section-visited' ) ) {
 			if ( isset( $_POST['section_id'] ) ) {
 				$section_id = sanitize_key( $_POST['section_id'] );

@@ -448,6 +448,13 @@ class Sensei_Setup_Wizard {
 	 * @return bool Whether value was updated.
 	 */
 	public function update_wizard_user_data( $changes ) {
+		$changes = array_intersect_key( (array) $changes, $this->user_data_defaults );
+		unset( $changes['__version'] );
+
+		if ( isset( $changes['purpose']['other'] ) ) {
+			$changes['purpose']['other'] = sanitize_text_field( $changes['purpose']['other'] );
+		}
+
 		$option = array_merge( $this->get_wizard_user_data(), $changes );
 		return update_option( self::USER_DATA_OPTION, $option );
 	}

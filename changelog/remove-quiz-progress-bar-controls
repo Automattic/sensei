@@ -1,4 +1,0 @@
-Significance: minor
-Type: removed
-
-Remove the progress bar option from the Quiz block and its automatic frontend rendering.

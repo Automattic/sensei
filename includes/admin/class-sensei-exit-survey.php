@@ -55,6 +55,11 @@ class Sensei_Exit_Survey {
 	public function save_exit_survey() {
 		check_ajax_referer( 'sensei_exit_survey' );
 
+		// The survey is shown on the Plugins screen, so only users who can deactivate the plugin can answer it.
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			wp_die( '', '', 403 );
+		}
+
 		$feedback = [
 			'reason'  => isset( $_POST['reason'] ) ? sensei_request_text( $_POST['reason'] ) : null,
 			'details' => isset( $_POST['details'] ) ? sensei_request_text( $_POST['details'] ) : null,

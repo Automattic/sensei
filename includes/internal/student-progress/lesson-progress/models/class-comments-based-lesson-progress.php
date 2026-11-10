@@ -74,7 +74,7 @@ class Comments_Based_Lesson_Progress extends Lesson_Progress_Abstract {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @return string|null
 	 */

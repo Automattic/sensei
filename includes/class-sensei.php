@@ -362,7 +362,7 @@ class Sensei_Main {
 	/**
 	 * Course lessons repository.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 * @psalm-suppress PropertyNotSetInConstructor
 	 * @var Course_Lessons_Repository_Interface
 	 */

@@ -197,7 +197,7 @@ class Sensei_Grading_User_Quiz {
 						// Get uploaded file.
 						if ( $user_answer_content ) {
 							$attachment_id = $user_answer_content;
-							if ( 0 < intval( $attachment_id ) ) {
+							if ( Sensei_Quiz::is_file_uploaded_by_user( $attachment_id, $user_id ) ) {
 								$answer_media_url      = wp_get_attachment_url( $attachment_id );
 								$filename_raw          = basename( $answer_media_url );
 								$answer_media_filename = self::remove_hash_prefix( $filename_raw );

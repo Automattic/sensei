@@ -103,7 +103,7 @@ class Sensei_Feature_Flags {
 	/**
 	 * Get the current WordPress environment type.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @return string The current environment type.
 	 */

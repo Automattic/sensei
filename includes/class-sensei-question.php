@@ -1334,7 +1334,7 @@ class Sensei_Question {
 
 			}
 
-			if ( 0 < intval( $attachment_id ) ) {
+			if ( Sensei_Quiz::is_file_uploaded_by_user( $attachment_id, get_current_user_id() ) ) {
 
 				$answer_media_url      = wp_get_attachment_url( $attachment_id );
 				$filename_raw          = basename( $answer_media_url );

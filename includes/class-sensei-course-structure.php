@@ -63,7 +63,7 @@ class Sensei_Course_Structure {
 	 * content. A structure that does not resolve has nothing to protect: save() rejects it
 	 * with the same error before writing anything.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int   $course_id     Course post ID.
 	 * @param array $raw_structure Structure as passed to save().
@@ -103,12 +103,12 @@ class Sensei_Course_Structure {
 
 			$module_writes = $course_structure->resolve_module_writes( $item );
 
-			if ( $module_writes['update'] && ! current_user_can( 'edit_term', $module_writes['update'] ) ) {
+			if ( $module_writes['update'] && ! self::can_current_user_write_module( $course->ID, $module_writes['update'], 'edit_term' ) ) {
 				return false;
 			}
 
 			foreach ( $module_writes['delete'] as $module_id ) {
-				if ( ! current_user_can( 'delete_term', $module_id ) ) {
+				if ( ! self::can_current_user_write_module( $course->ID, $module_id, 'delete_term' ) ) {
 					return false;
 				}
 			}
@@ -132,6 +132,38 @@ class Sensei_Course_Structure {
 	 */
 	private static function can_current_user_edit_lesson( array $item ): bool {
 		return ! $item['id'] || current_user_can( 'edit_post', $item['id'] );
+	}
+
+	/**
+	 * Check whether the current user may update or delete a module from a structure save.
+	 *
+	 * Modules already in the course are covered by the course edit permission, so a user who
+	 * can edit the course without owning them (a co-teacher, for example) can keep saving it.
+	 *
+	 * @param int    $course_id Course post ID.
+	 * @param int    $module_id Module term ID.
+	 * @param string $cap       `edit_term` or `delete_term`.
+	 *
+	 * @return bool
+	 */
+	private static function can_current_user_write_module( int $course_id, int $module_id, string $cap ): bool {
+		return has_term( $module_id, 'module', $course_id ) || current_user_can( $cap, $module_id );
+	}
+
+	/**
+	 * Check whether a module is already in this course and belongs to the course teacher.
+	 *
+	 * Such a module is covered by the course edit permission, so a user who can edit the course
+	 * without owning its modules (a co-teacher, for example) can save it with its custom slug.
+	 *
+	 * @param WP_Term $module_term   Module term.
+	 * @param WP_User $module_author Module author.
+	 *
+	 * @return bool
+	 */
+	private function is_course_teacher_module( WP_Term $module_term, WP_User $module_author ): bool {
+		return has_term( (int) $module_term->term_id, 'module', $this->course_id )
+			&& (int) get_post_field( 'post_author', $this->course_id ) === (int) $module_author->ID;
 	}
 
 	/**
@@ -997,10 +1029,12 @@ class Sensei_Course_Structure {
 				}
 
 				$term_author = Sensei_Core_Modules::get_term_author( $item['slug'] );
+				$slug_term   = get_term_by( 'slug', $item['slug'], 'module' );
 				if ( $term_author instanceof WP_User &&
 					wp_get_current_user()->ID !== $term_author->ID &&
 					! current_user_can( 'manage_options' ) &&
-					get_term_by( 'slug', $item['slug'], 'module' )
+					$slug_term instanceof WP_Term &&
+					! $this->is_course_teacher_module( $slug_term, $term_author )
 				) {
 					return new WP_Error(
 						'module_belongs_to_another_user',
