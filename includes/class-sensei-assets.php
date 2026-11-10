@@ -301,7 +301,7 @@ class Sensei_Assets {
 	 * Gets SVG HTML from a generated sprite.
 	 *
 	 * @since 3.15.0
-	 * @since $$next-version$$ Added the decorative parameter.
+	 * @since 4.27.0 Added the decorative parameter.
 	 *
 	 * @param string $name        The name of the icon file at "assets/images/<name>.svg".
 	 * @param string $class_names Classnames to add to the SVG element.

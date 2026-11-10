@@ -1330,7 +1330,12 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	public function lesson_order_screen() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nothing is modified.
+		$requested_course_id = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : 0;
 
+		if ( $requested_course_id > 0 && ( 'course' !== get_post_type( $requested_course_id ) || ! Sensei_Course::can_current_user_edit_course( $requested_course_id ) ) ) {
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
+		}
 		?>
 		<div id="<?php echo esc_attr( $this->lesson_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->lesson_order_page_slug ); ?>">
 			<h1><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></h1>

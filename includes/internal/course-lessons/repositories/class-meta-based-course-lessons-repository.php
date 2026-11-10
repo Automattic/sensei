@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.27.0
  */
 class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_Interface {
 	/**
@@ -46,7 +46,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @return int|null Course ID, or null when the lesson has no course.
@@ -62,7 +62,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @return int|null Prerequisite lesson ID, or null when none is stored.
@@ -78,7 +78,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $lesson_ids Lesson IDs.
 	 * @return array<int, int|false> Course ID keyed by lesson ID, or false when the lesson has no existing course.
@@ -131,7 +131,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int             $course_id   Course ID.
 	 * @param string|string[] $post_status Lesson post status or statuses. Default 'publish'.
@@ -161,7 +161,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
@@ -180,7 +180,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @return WP_Term|null The lesson's module term, or null when it has none or a filter returns no term.
@@ -207,7 +207,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id              Lesson ID.
 	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
@@ -221,7 +221,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 */
@@ -234,7 +234,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
 	 * @return int[] Lesson IDs, in no particular order. Trashed lessons are left out.
@@ -261,7 +261,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
@@ -276,7 +276,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
@@ -290,7 +290,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int   $course_id  Course ID.
 	 * @param int[] $lesson_ids Lesson IDs, in order.
@@ -304,7 +304,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $course_id Course ID.
 	 * @return int[] Lesson IDs, in order. Empty when none is stored.
@@ -323,7 +323,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $term_id   Module term ID.
@@ -338,7 +338,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $term_id   Module term ID.
@@ -357,7 +357,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 */
@@ -373,7 +373,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 */
@@ -388,7 +388,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $term_id   Module term ID.
@@ -405,7 +405,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $term_id   Module term ID.
@@ -420,7 +420,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $term_id   Module term ID.
@@ -436,7 +436,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 */
@@ -459,7 +459,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
@@ -475,7 +475,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 */

@@ -952,6 +952,26 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertSame( $body['options']['pagination'], $response_data['options']['pagination'], 'Deprecated progress bar settings should round-trip through the API.' );
 	}
 
+	public function testSaveQuiz_WhenColorWithExtraDeclarationGiven_DoesNotStoreIt() {
+		$this->login_as_teacher();
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = array(
+			'options'   => array(
+				'button_text_color'       => 'red; background: url(https://example.com/x.gif)',
+				'button_background_color' => 'rgb(1, 2, 3)',
+			),
+			'questions' => array(),
+		);
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		$this->assertSame( '', get_post_meta( $quiz_id, '_button_text_color', true ), 'A color with another declaration should not be stored.' );
+		$this->assertSame( 'rgb(1, 2, 3)', get_post_meta( $quiz_id, '_button_background_color', true ), 'A color without extra declarations should be kept.' );
+	}
+
 	/**
 	 * Tests default values for quiz pagination settings.
 	 */

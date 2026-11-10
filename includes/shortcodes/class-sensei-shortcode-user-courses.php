@@ -261,7 +261,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 				<?php esc_html_e( 'You have no active or completed courses.', 'sensei-lms' ); ?>
 
-				<a href="<?php echo esc_attr( Sensei_Course::get_courses_page_url() ); ?>">
+				<a href="<?php echo esc_url( Sensei_Course::get_courses_page_url() ); ?>">
 
 					<?php esc_html_e( 'Start a Course!', 'sensei-lms' ); ?>
 
@@ -304,7 +304,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 				<?php esc_html_e( 'You have no active courses.', 'sensei-lms' ); ?>
 
-				<a href="<?php echo esc_attr( Sensei_Course::get_courses_page_url() ); ?>">
+				<a href="<?php echo esc_url( Sensei_Course::get_courses_page_url() ); ?>">
 
 					<?php esc_html_e( 'Start a Course!', 'sensei-lms' ); ?>
 

@@ -62,7 +62,7 @@ class Progress_Bar {
 			$class_names[] = $attributes['className'];
 		}
 
-		$label_html = ! empty( $attributes['label'] ) ? '<div class="sensei-progress-bar__label">' . $attributes['label'] . '</div>' : '';
+		$label_html = ! empty( $attributes['label'] ) ? '<div class="sensei-progress-bar__label">' . esc_html( $attributes['label'] ) . '</div>' : '';
 
 		return '
 			<div ' . \Sensei_Block_Helpers::render_style_attributes( $class_names, $base_css ) . '>

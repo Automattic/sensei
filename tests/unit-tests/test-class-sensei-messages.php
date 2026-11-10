@@ -340,6 +340,28 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		$this->assertFalse( $actual );
 	}
 
+	public function testPreventMessageCanonicalRedirect_NonParticipantWithNumericallyEqualLoginGiven_ReturnsFalse() {
+		/* Arrange. */
+		$this->factory->user->create( array( 'user_login' => '100' ) );
+		$message_id = $this->factory->message->create(
+			array(
+				'meta_input' => array(
+					'_receiver' => '100',
+					'_sender'   => '100',
+				),
+			)
+		);
+		wp_set_current_user( $this->factory->user->create( array( 'user_login' => '1e2' ) ) );
+		$this->go_to( '/?p=' . $message_id );
+		$instance = new Sensei_Messages();
+
+		/* Act. */
+		$actual = $instance->prevent_message_canonical_redirect( 'https://example.org/messages/secret/' );
+
+		/* Assert. */
+		$this->assertFalse( $actual );
+	}
+
 	public function testPreventMessageCanonicalRedirect_AnonymousRequestedRegularPostGiven_ReturnsRedirectUrl() {
 		/* Arrange. */
 		$post_id = $this->factory->post->create();

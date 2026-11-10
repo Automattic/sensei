@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix Grading status counters including other courses when a teacher filters by course.

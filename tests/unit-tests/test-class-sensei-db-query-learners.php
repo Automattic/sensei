@@ -49,6 +49,24 @@ class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $this->exportLearners( $learners ) );
 	}
 
+	public function testGetAll_UnsafeOrderByGiven_ReturnsLearners() {
+		$this->factory->user->create( array( 'user_email' => 'user1@example.com' ) );
+		$query = new Sensei_Db_Query_Learners( array( 'orderby' => 'user_login; SELECT 1' ) );
+
+		$learners = $query->get_all();
+
+		$expected = array(
+			array(
+				'user_email' => 'admin@example.org', // admin
+			),
+			array(
+				'user_email' => 'user1@example.com',
+			),
+		);
+
+		self::assertEqualsCanonicalizing( $expected, $this->exportLearners( $learners ) );
+	}
+
 	public function testGetAll_CourseIdGiven_ReturnsMatchingResult() {
 		$user1_id = $this->factory->user->create( [ 'user_email' => 'user1@example.com' ] );
 		$user2_id = $this->factory->user->create( [ 'user_email' => 'user2@example.com' ] );

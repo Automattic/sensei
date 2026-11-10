@@ -676,10 +676,14 @@ class Sensei_Messages {
 		}
 
 		$user_login = null;
-		if ( $user_id == 0 ) {
+		if ( 0 === (int) $user_id ) {
 			global $current_user;
 			wp_get_current_user();
 			$user_login = $current_user->user_login;
+		}
+
+		if ( empty( $user_login ) ) {
+			return false;
 		}
 
 		// Get allowed users
@@ -687,7 +691,7 @@ class Sensei_Messages {
 		$sender   = get_post_meta( $message_id, '_sender', true );
 
 		// Check if user is allowed to view the message
-		if ( in_array( $user_login, array( $receiver, $sender ) ) ) {
+		if ( in_array( $user_login, array( $receiver, $sender ), true ) ) {
 			return true;
 		}
 

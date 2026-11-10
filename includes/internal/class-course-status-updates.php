@@ -11,7 +11,7 @@ namespace Sensei\Internal;
  * Collects failures that WordPress action callback return values cannot convey.
  *
  * @internal
- * @since $$next-version$$
+ * @since 4.27.0
  */
 final class Course_Status_Updates {
 	/**
@@ -27,7 +27,7 @@ final class Course_Status_Updates {
 	/**
 	 * Run an action and check whether its course-status update succeeded.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param callable $operation Action to run.
 	 * @return bool Whether the course-status callbacks completed successfully.
@@ -47,7 +47,7 @@ final class Course_Status_Updates {
 	/**
 	 * Record a failed course-status update without interrupting hook callbacks.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @return void
 	 */

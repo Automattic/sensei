@@ -458,7 +458,7 @@ class Sensei_Abilities {
 	/**
 	 * Register the sensei/course-create ability.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 */
 	private static function register_course_create_ability(): void {
 		wp_register_ability(
@@ -513,7 +513,7 @@ class Sensei_Abilities {
 	/**
 	 * Register the `sensei/course-structure-get` ability.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 */
 	private static function register_course_structure_get_ability(): void {
 		wp_register_ability(
@@ -554,7 +554,7 @@ class Sensei_Abilities {
 	/**
 	 * Register the `sensei/course-structure-set` ability.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 */
 	private static function register_course_structure_set_ability(): void {
 		$lesson_item_schema = array(
@@ -679,7 +679,7 @@ class Sensei_Abilities {
 	/**
 	 * Register the `sensei/quiz-questions-set` ability.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 */
 	private static function register_quiz_questions_set_ability(): void {
 		$saver = new Sensei_Lesson_Quiz_Saver();
@@ -751,7 +751,7 @@ class Sensei_Abilities {
 	 *
 	 * Extra keys are allowed: the structure carries editor bookkeeping too.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @return array
 	 */
@@ -1164,7 +1164,7 @@ class Sensei_Abilities {
 	 * cannot reach through it what the editor would not let them publish.
 	 *
 	 * @access private
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $input Ability input.
 	 *
@@ -1244,7 +1244,7 @@ class Sensei_Abilities {
 	/**
 	 * Execute the course structure get ability.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 * @access private
 	 *
 	 * @param array $input Ability input.
@@ -1262,7 +1262,7 @@ class Sensei_Abilities {
 	/**
 	 * Execute the course structure set ability.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 * @access private
 	 *
 	 * @param array $input Ability input.
@@ -1411,7 +1411,7 @@ class Sensei_Abilities {
 	/**
 	 * Execute the quiz questions set ability.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 * @access private
 	 *
 	 * @param array $input Ability input.
@@ -1585,7 +1585,7 @@ class Sensei_Abilities {
 	 * ability only creates drafts.
 	 *
 	 * @access private
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 */
 	public static function can_create_courses(): bool {
 		$post_type_object = get_post_type_object( 'course' );
@@ -1603,7 +1603,7 @@ class Sensei_Abilities {
 	 * and the user must be able to edit it.
 	 *
 	 * @access private
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $input Ability input.
 	 */
@@ -1620,7 +1620,7 @@ class Sensei_Abilities {
 	 * saves it, without the read-only bookkeeping keys.
 	 *
 	 * @access private
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $input Ability input.
 	 */
@@ -1637,7 +1637,7 @@ class Sensei_Abilities {
 	 * the user must be able to edit it, which limits teachers to their own lessons.
 	 *
 	 * @access private
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $input Ability input.
 	 */
