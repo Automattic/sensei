@@ -208,6 +208,24 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
+	 * Perform permissions check when editing the lesson course meta.
+	 *
+	 * @since 4.25.1
+	 * @deprecated 4.27.0 The course is now checked in create_item_permissions_check() and update_item_permissions_check().
+	 * @access private
+	 *
+	 * @param bool   $allowed  True if allowed to view the meta field by default, false otherwise.
+	 * @param string $meta_key Meta key.
+	 * @param int    $post_id  Lesson ID.
+	 * @return bool Whether the user can edit the post meta.
+	 */
+	public function lesson_course_meta_auth_callback( $allowed, $meta_key, $post_id ) {
+		_deprecated_function( __METHOD__, '4.27.0' );
+
+		return $this->auth_callback( $allowed, $meta_key, $post_id );
+	}
+
+	/**
 	 * Checks if a given request has access to create a lesson.
 	 *
 	 * @since 4.27.0

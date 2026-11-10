@@ -43,6 +43,7 @@
 - Deprecate Sensei_Course_Theme::get_learning_mode_customizer_url(), unused since the Customize Colors link was removed. [#8364](https://github.com/Automattic/sensei/pull/8364)
 - Deprecate Sensei_Quiz::the_quiz_progress_bar(). [#8332](https://github.com/Automattic/sensei/pull/8332)
 - Deprecate Sensei_REST_API_Lesson_Quiz_Controller::get_single_question_schema() and get_common_question_properties_schema() in favour of Sensei_Lesson_Quiz_Saver. [#8376](https://github.com/Automattic/sensei/pull/8376)
+- Deprecate Sensei_REST_API_Lessons_Controller::lesson_course_meta_auth_callback(). The lesson course is now checked on the REST request.
 - Deprecate Sensei_Utils::get_course_progress_comment_id() in favor of get_course_progress_id(), which returns the ID from the selected progress storage backend. [#8429](https://github.com/Automattic/sensei/pull/8429)
 - Deprecate the legacy Courses report completion callback. [#8348](https://github.com/Automattic/sensei/pull/8348)
 - Deprecate the raw SQL query argument for comments-based progress status counts in favor of structured filtering arguments. [#8434](https://github.com/Automattic/sensei/pull/8434)
