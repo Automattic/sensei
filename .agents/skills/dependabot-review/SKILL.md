@@ -79,8 +79,8 @@ and confirm that no unrelated dependency or metadata churn entered the diff.
 
 Validate the removal proportionately: perform a clean install, run the smallest
 consumer/build check that could expose a missing dependency, inspect the final
-dependency graph, and run `git diff --check`. Follow `AGENTS.md`; leave broad
-linting, full suites, and compatibility matrices to CI.
+dependency graph, and run `git diff --check`. Follow `AGENTS.md` when choosing
+additional local checks, including broader linting, full suites, or compatibility checks.
 
 Read and follow the repository's `pull-request` skill to commit, push, and open
 the separate cleanup PR. This is internal maintenance, so use `No Changelog`

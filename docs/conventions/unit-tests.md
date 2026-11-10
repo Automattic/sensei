@@ -37,8 +37,7 @@ Test Sensei's expected behavior, rather than its internal implementation. A test
 - Assert dependency calls or call counts only when the interaction is itself a requirement. Otherwise, stub dependencies and assert the resulting behavior.
 - Do not retest WordPress or third-party APIs themselves. Test Sensei's use of them: for example, the capability assigned to a Sensei menu or the conditions under which Sensei enqueues an asset.
 - Do not invent behavior for unsupported inputs. Only expect a fallback, exception, or rejection when Sensei's contract requires it.
-- For bug fixes that require tests under `AGENTS.md`'s testing rules, first write a regression test that reproduces the bug and fails, then verify that it passes after the fix.
-- For regression tests, confirm the failure comes from the incorrect behavior, rather than broken setup, and that the fix makes the same test pass.
+- Regression tests should detect the incorrect behavior and pass with the fix applied. A failure caused by broken test setup does not demonstrate regression coverage.
 
 For example, test a formatter's expected output for supported amounts, rather than asserting that it calls a regex or string replacement function.
 
