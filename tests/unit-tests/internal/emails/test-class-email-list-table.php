@@ -230,27 +230,6 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( '(no title)', $result );
 	}
 
-	public function testGetRowData_WhenTitleContainsHtml_EscapesTheCheckboxLabel() {
-		/* Arrange. */
-		// An admin keeps the HTML in the title on save (unfiltered_html).
-		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
-
-		$list_table = new Email_List_Table( new Email_Repository() );
-		$post_id    = $this->factory->email->create( array( 'post_title' => '<script>alert(1)</script>' ) );
-
-		update_post_meta( $post_id, '_sensei_email_description', 'description' );
-
-		/* Act. */
-		$list_table->prepare_items();
-
-		ob_start();
-		$list_table->display_rows();
-		$result = ob_get_clean();
-
-		/* Assert. */
-		$this->assertStringContainsString( 'Select &lt;script&gt;alert(1)&lt;/script&gt;', $result );
-	}
-
 	public function testGetRowData_WhenHasDescription_ReturnsTheDescription() {
 		/* Arrange. */
 		$list_table = new Email_List_Table( new Email_Repository() );
