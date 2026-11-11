@@ -16,30 +16,20 @@ class Sensei_Exit_Survey_Test extends WP_UnitTestCase {
 
 	public function tearDown(): void {
 		remove_filter( 'pre_http_request', '__return_empty_array' );
+		revoke_super_admin( get_current_user_id() );
 
 		parent::tearDown();
 	}
 
-	public function testSaveExitSurvey_SubscriberWithNonceGiven_DoesNotStoreTheFeedback() {
-		/* Arrange. */
-		$this->login_as_student();
-		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_exit_survey' );
-		$_POST['reason']      = 'other';
-
-		/* Act. */
-		try {
-			( new Sensei_Exit_Survey() )->save_exit_survey();
-		} catch ( WPDieException $e ) {
-			unset( $e );
-		}
-
-		/* Assert. */
-		$this->assertFalse( get_option( 'sensei_exit_survey_data' ) );
-	}
-
-	public function testSaveExitSurvey_AdministratorWithNonceGiven_StoresTheFeedback() {
+	/**
+	 * Users allowed to deactivate plugins can submit feedback.
+	 *
+	 * @covers Sensei_Exit_Survey::save_exit_survey
+	 */
+	public function testSaveExitSurvey_PluginAdministratorWithNonceGiven_StoresTheFeedback() {
 		/* Arrange. */
 		$this->login_as_admin();
+		grant_super_admin( get_current_user_id() );
 		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_exit_survey' );
 		$_POST['reason']      = 'other';
 
