@@ -2290,6 +2290,7 @@ class Sensei_Quiz {
 		}
 
 		wp_delete_post( $quiz_id );
+
 	}
 
 	/**

@@ -92,6 +92,7 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 	 * @covers \Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository::create
 	 */
 	public function testCreate_MetadataUpdateFailed_PreservesExistingAnswerAndAllowsLaterSave( string $key ): void {
+		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$submission = $this->create_submission( $lesson_id, $user_id );
@@ -107,8 +108,11 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		$previous_errors = $wpdb->suppress_errors( true );
 		add_filter( 'query', $fault );
 
+		/* Act. */
 		try {
 			$repository->create( $submission, 2, 'Second answer' );
+
+			/* Assert. */
 			self::fail( 'A failed metadata update must not return a saved answer.' );
 		} catch ( Persistence_Exception $exception ) {
 			self::assertSame( 'First answer', $repository->get_all( $submission->get_id() )[0]->get_value() );
@@ -147,6 +151,7 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 	 * @covers \Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository::create
 	 */
 	public function testCreate_AnswerMapReadFailed_PreservesSavedAnswers(): void {
+		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$submission = $this->create_submission( $lesson_id, $user_id );
@@ -162,8 +167,11 @@ class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 		$previous_errors = $wpdb->suppress_errors( true );
 		add_filter( 'query', $fault );
 
+		/* Act. */
 		try {
 			$repository->create( $submission, 2, 'Second answer' );
+
+			/* Assert. */
 			self::fail( 'A failed map read must stop the write.' );
 		} catch ( Persistence_Exception $exception ) {
 			self::assertInstanceOf( Persistence_Exception::class, $exception );

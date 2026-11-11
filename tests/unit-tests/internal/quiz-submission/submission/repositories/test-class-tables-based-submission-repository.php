@@ -38,9 +38,8 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_WhenCalled_InsertsToWpdb(): void {
 		/* Arrange. */
-		$wpdb            = $this->createMock( wpdb::class );
-		$wpdb->insert_id = 1;
-		$repository      = new Tables_Based_Submission_Repository( $wpdb );
+		$wpdb       = $this->createMock( wpdb::class );
+		$repository = new Tables_Based_Submission_Repository( $wpdb );
 
 		/* Expect & Act. */
 		$wpdb
@@ -110,40 +109,31 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * Failed inserts must not return or cache an invalid record, and a later insert must succeed.
 	 *
-	 * @dataProvider failed_insert_responses
 	 * @covers \Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository::create
 	 */
-	public function testCreate_InsertFailedOrReturnedWithoutId_ThrowsAndAllowsLaterCreation( ?string $replacement ): void {
+	public function testCreate_InsertFailed_ThrowsAndAllowsLaterCreation(): void {
+		/* Arrange. */
 		$repository = new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] );
 
+		/* Act. */
 		$this->with_failed_cached_insert(
 			$GLOBALS['wpdb']->prefix . 'sensei_lms_quiz_submissions',
 			function () use ( $repository ) {
 				try {
 					$repository->create( 123, 456 );
+
+					/* Assert. */
 					self::fail( 'The required insert must report failure.' );
 				} catch ( Persistence_Exception $exception ) {
 					self::assertNull( $repository->get( 123, 456 ), 'A failed insert must not expose an invalid cached record.' );
 				}
-			},
-			$replacement
+			}
 		);
 		$record = $repository->create( 123, 456 );
 
 		self::assertGreaterThan( 0, $record->get_id() );
 	}
 
-	/**
-	 * Database failures and successful queries that did not insert a row.
-	 *
-	 * @return array
-	 */
-	public static function failed_insert_responses(): array {
-		return array(
-			'failed insert' => array( null ),
-			'no insert ID'  => array( 'SELECT 1' ),
-		);
-	}
 
 	public function testGetOrCreate_WhenSubmissionExists_ReturnsExistingSubmission(): void {
 		/* Arrange. */

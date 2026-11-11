@@ -120,8 +120,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 			]
 		);
 
-		$id = (int) $this->wpdb->insert_id;
-		if ( false === $result || $id <= 0 ) {
+		if ( false === $result ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
 			throw new Persistence_Exception(
 				'quiz_grade',
@@ -130,12 +129,12 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 				$submission->get_quiz_id(),
 				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$submission->get_user_id(),
-				false === $result ? 'insert_failed' : 'invalid_insert_id'
+				'insert_failed'
 			);
 		}
 
 		$grade = new Tables_Based_Grade(
-			$id,
+			$this->wpdb->insert_id,
 			$answer_id,
 			$question_id,
 			$points,

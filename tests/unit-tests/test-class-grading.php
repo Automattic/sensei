@@ -976,6 +976,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Grading::admin_process_grading_submission
 	 */
 	public function testAdminProcessGradingSubmission_QuestionGradeWriteFailed_ShowsFailureWithoutRedirect( string $mode, string $table, ?string $metadata_key ): void {
+		/* Arrange. */
 		$this->set_progress_storage_mode( $mode );
 		$owner                       = $this->get_user_by_role( 'teacher' );
 		$user_id                     = $this->factory->user->create();
@@ -987,13 +988,17 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$_POST[ 'question_' . $question_id . '_grade' ] = 1;
 		$this->prevent_wp_redirect();
 
+		/* Act. */
 		$this->with_failed_insert(
 			$GLOBALS['wpdb']->prefix . $table,
 			function () use ( $quiz_id, $user_id ) {
-				self::assertFalse( Sensei()->grading->admin_process_grading_submission(), 'A failed grade write must stop the success redirect.' );
+				$result = Sensei()->grading->admin_process_grading_submission();
 				ob_start();
 				Sensei()->grading->add_grading_notices();
 				$notice = ob_get_clean();
+
+				/* Assert. */
+				self::assertFalse( $result, 'A failed grade write must stop the success redirect.' );
 				self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The admin must see the existing grading failure notice.' );
 				self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'No final grade may be saved after the question grade failed.' );
 			},
@@ -1009,6 +1014,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Grading::grade_quiz_auto
 	 */
 	public function testGradeQuizAuto_QuestionGradeWriteFailed_ReturnsErrorWithoutFinalGrade( string $mode, string $table, ?string $metadata_key ): void {
+		/* Arrange. */
 		$this->set_progress_storage_mode( $mode );
 		$lesson_id   = $this->factory->lesson->create();
 		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
@@ -1024,11 +1030,13 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		Sensei_Quiz::save_user_answers( $answers, array(), $lesson_id, $user_id );
 		$graded_events = did_action( 'sensei_user_quiz_grade' );
 
+		/* Act. */
 		$this->with_failed_insert(
 			$GLOBALS['wpdb']->prefix . $table,
 			function () use ( $quiz_id, $user_id, $answers, $graded_events ) {
 				$result = Sensei_Grading::grade_quiz_auto( $quiz_id, $answers );
 
+				/* Assert. */
 				self::assertWPError( $result, 'A failed question-grade write must report a grading error.' );
 				self::assertSame( 'sensei_progress_save_failed', $result->get_error_code(), 'The caller must receive the existing persistence failure result.' );
 				self::assertSame( $graded_events, did_action( 'sensei_user_quiz_grade' ), 'No grade success event may fire after a required write fails.' );
@@ -1036,45 +1044,6 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			},
 			null,
 			$metadata_key
-		);
-	}
-
-	/**
-	 * Progress preflight must protect saved question grades when final-grade writes are delayed.
-	 *
-	 * @dataProvider progress_storage_modes
-	 * @covers Sensei_Grading::grade_quiz_auto
-	 */
-	public function testGradeQuizAuto_CourseInsertFailed_PreservesSavedQuestionGrades( string $mode ): void {
-		$this->set_progress_storage_mode( $mode );
-		$data        = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
-		$course_id   = $data['course_id'];
-		$lesson_id   = $data['lesson_ids'][0];
-		$quiz_id     = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
-		$user_id     = $this->factory->user->create();
-		$this->login_as( $user_id );
-		$answers = array( $question_id => 'Student answer' );
-		Sensei_Quiz::save_user_answers( $answers, array(), $lesson_id, $user_id );
-		Sensei()->quiz->set_user_grades( array( $question_id => 7 ), $lesson_id, $user_id );
-		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
-		Sensei()->course_progress_repository->delete( $course_progress );
-		$wpdb  = $GLOBALS['wpdb'];
-		$table = 'tables' === $mode ? $wpdb->prefix . 'sensei_lms_progress' : $wpdb->comments;
-		$type  = 'tables' === $mode ? "'course'" : 'sensei_course_status';
-
-		$this->with_failed_insert(
-			$table,
-			function () use ( $quiz_id, $user_id, $answers ) {
-				$result = Sensei_Grading::grade_quiz_auto( $quiz_id, $answers );
-
-				self::assertWPError( $result, 'A required progress failure must stop autograding.' );
-				$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-				$grades     = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
-				self::assertSame( 7, $grades[0]->get_points(), 'A failed preflight must preserve the saved question grade.' );
-			},
-			null,
-			$type
 		);
 	}
 

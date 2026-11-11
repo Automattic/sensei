@@ -17,6 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Distinguishes unchanged quiz metadata from failed writes.
  *
+ * WordPress returns false for both an unchanged metadata value and a failed
+ * update. Answer, grade, and submission repositories use this check so a
+ * repeat save succeeds while a failed required write stops the operation.
+ *
  * @internal
  * @since $$next-version$$
  */
@@ -58,7 +62,7 @@ class Comment_Metadata {
 	}
 
 	/**
-	 * Save metadata, accepting a value that is already stored.
+	 * Save metadata only when the requested value differs from the stored value.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -71,8 +75,11 @@ class Comment_Metadata {
 	 */
 	public static function update( int $comment_id, string $key, $value, Submission_Interface $submission ): void {
 		$stored = self::get( $comment_id, $key, $submission );
+		$normalized_value = sanitize_meta( $key, wp_unslash( $value ), 'comment', get_object_subtype( 'comment', $comment_id ) );
+		// Compare the value WordPress would store, but do not treat a missing key as unchanged.
+		// update_comment_meta() returns false for both unchanged values and failed writes.
 		if ( metadata_exists( 'comment', $comment_id, $key )
-			&& (string) maybe_serialize( $stored ) === (string) maybe_serialize( wp_unslash( $value ) ) ) {
+			&& (string) maybe_serialize( $stored ) === (string) maybe_serialize( $normalized_value ) ) {
 			return;
 		}
 

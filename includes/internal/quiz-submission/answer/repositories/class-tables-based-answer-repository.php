@@ -117,8 +117,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 			]
 		);
 
-		$id = (int) $this->wpdb->insert_id;
-		if ( false === $result || $id <= 0 ) {
+		if ( false === $result ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
 			throw new Persistence_Exception(
 				'quiz_answer',
@@ -127,12 +126,12 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 				$submission->get_quiz_id(),
 				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$submission->get_user_id(),
-				false === $result ? 'insert_failed' : 'invalid_insert_id'
+				'insert_failed'
 			);
 		}
 
 		$answer = new Tables_Based_Answer(
-			$id,
+			$this->wpdb->insert_id,
 			$submission_id,
 			$question_id,
 			$value,

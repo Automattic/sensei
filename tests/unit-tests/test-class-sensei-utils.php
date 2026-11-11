@@ -347,6 +347,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Utils::sensei_grade_quiz
 	 */
 	public function testSenseiGradeQuiz_RequiredGradeWriteFailed_ReturnsFalseWithoutSuccessEvent( string $mode, string $store ): void {
+		/* Arrange. */
 		$this->set_progress_storage_mode( $mode );
 		$lesson_id   = $this->factory->lesson->create();
 		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
@@ -365,9 +366,11 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$previous_errors = $wpdb->suppress_errors( true );
 		add_filter( 'query', $fault );
 
+		/* Act. */
 		try {
 			$result = Sensei_Utils::sensei_grade_quiz( $quiz_id, 75, $user_id );
 
+			/* Assert. */
 			self::assertFalse( $result, 'A failed final-grade write must report failure.' );
 			self::assertSame( $graded_events, did_action( 'sensei_user_quiz_grade' ), 'A failed write must not fire a grading success event.' );
 		} finally {
@@ -387,6 +390,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Utils::sensei_delete_quiz_grade
 	 */
 	public function testSenseiDeleteQuizGrade_RequiredWriteFailed_ReturnsFalseAndAllowsLaterClear( string $mode, string $store ): void {
+		/* Arrange. */
 		$this->set_progress_storage_mode( $mode );
 		$lesson_id   = $this->factory->lesson->create();
 		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
@@ -404,9 +408,11 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		$previous_errors = $wpdb->suppress_errors( true );
 		add_filter( 'query', $fault );
 
+		/* Act. */
 		try {
 			$result = Sensei_Utils::sensei_delete_quiz_grade( $quiz_id, $user_id );
 
+			/* Assert. */
 			self::assertFalse( $result, 'A failed required write must reject clearing the grade.' );
 		} finally {
 			remove_filter( 'query', $fault );

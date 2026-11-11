@@ -170,6 +170,7 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 	 * @covers \Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository::save_many
 	 */
 	public function testSaveMany_FeedbackUpdateFailed_PreservesSavedPointsAndAllowsLaterSave(): void {
+		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$submission = $this->create_submission( $lesson_id, $user_id );
@@ -187,8 +188,11 @@ class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$previous_errors = $wpdb->suppress_errors( true );
 		add_filter( 'query', $fault );
 
+		/* Act. */
 		try {
 			$repository->save_many( $submission, array( $grade ) );
+
+			/* Assert. */
 			self::fail( 'A failed feedback write must report a failed batch.' );
 		} catch ( Persistence_Exception $exception ) {
 			self::assertSame( array( 1 => 2 ), get_comment_meta( $submission->get_id(), 'quiz_grades', true ), 'Already saved points must remain saved.' );

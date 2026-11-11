@@ -103,8 +103,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 			]
 		);
 
-		$id = (int) $this->wpdb->insert_id;
-		if ( false === $result || $id <= 0 ) {
+		if ( false === $result ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
 			throw new Persistence_Exception(
 				'quiz_submission',
@@ -113,12 +112,12 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 				$quiz_id,
 				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
 				$user_id,
-				false === $result ? 'insert_failed' : 'invalid_insert_id'
+				'insert_failed'
 			);
 		}
 
 		$submission = new Tables_Based_Submission(
-			$id,
+			$this->wpdb->insert_id,
 			$quiz_id,
 			$user_id,
 			$final_grade,

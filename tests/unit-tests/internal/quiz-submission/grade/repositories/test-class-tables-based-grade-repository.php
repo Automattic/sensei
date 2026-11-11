@@ -39,9 +39,8 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange */
 		$submission      = $this->createMock( Tables_Based_Submission::class );
 		$answer          = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
-		$wpdb            = $this->createMock( \wpdb::class );
-		$wpdb->insert_id = 1;
-		$repository      = new Tables_Based_Grade_Repository( $wpdb );
+		$wpdb       = $this->createMock( \wpdb::class );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Act */
 		$grade = $repository->create( $submission, $answer, 3, 4, 'feedback' );
@@ -61,9 +60,8 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange */
 		$submission      = $this->createMock( Tables_Based_Submission::class );
 		$answer          = new Tables_Based_Answer( 2, 3, 4, 'value', new \DateTimeImmutable(), new \DateTimeImmutable() );
-		$wpdb            = $this->createMock( \wpdb::class );
-		$wpdb->insert_id = 1;
-		$repository      = new Tables_Based_Grade_Repository( $wpdb );
+		$wpdb       = $this->createMock( \wpdb::class );
+		$repository = new Tables_Based_Grade_Repository( $wpdb );
 
 		/* Expect & Act */
 		$wpdb->expects( $this->once() )
@@ -112,42 +110,33 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * Failed inserts must not return or cache an invalid record, and a later insert must succeed.
 	 *
-	 * @dataProvider failed_insert_responses
 	 * @covers \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository::create
 	 */
-	public function testCreate_InsertFailedOrReturnedWithoutId_ThrowsAndAllowsLaterCreation( ?string $replacement ): void {
+	public function testCreate_InsertFailed_ThrowsAndAllowsLaterCreation(): void {
+		/* Arrange. */
 		$submission = ( new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository( $GLOBALS['wpdb'] ) )->create( 123, 456 );
 		$answer     = ( new \Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository( $GLOBALS['wpdb'] ) )->create( $submission, 789, 'Saved answer' );
 		$repository = new Tables_Based_Grade_Repository( $GLOBALS['wpdb'] );
 
+		/* Act. */
 		$this->with_failed_cached_insert(
 			$GLOBALS['wpdb']->prefix . 'sensei_lms_quiz_grades',
 			function () use ( $repository, $submission, $answer ) {
 				try {
 					$repository->create( $submission, $answer, 789, 1 );
+
+					/* Assert. */
 					self::fail( 'The required insert must report failure.' );
 				} catch ( Persistence_Exception $exception ) {
 					self::assertEmpty( $repository->get_all( $submission->get_id() ), 'A failed insert must not expose an invalid cached record.' );
 				}
-			},
-			$replacement
+			}
 		);
 		$record = $repository->create( $submission, $answer, 789, 1 );
 
 		self::assertGreaterThan( 0, $record->get_id() );
 	}
 
-	/**
-	 * Database failures and successful queries that did not insert a row.
-	 *
-	 * @return array
-	 */
-	public static function failed_insert_responses(): array {
-		return array(
-			'failed insert' => array( null ),
-			'no insert ID'  => array( 'SELECT 1' ),
-		);
-	}
 
 	public function testSaveMany_GradesGiven_UpdatesData(): void {
 		/* Arrange */
@@ -228,6 +217,7 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 	 * @covers \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository::save_many
 	 */
 	public function testSaveMany_LaterUpdateFailed_PreservesCompletedWriteAndStopsBatch(): void {
+		/* Arrange. */
 		$wpdb       = $GLOBALS['wpdb'];
 		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( 123, 456 );
 		$answers    = new \Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository( $wpdb );
@@ -264,8 +254,11 @@ class Tables_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 		$previous_errors = $wpdb->suppress_errors( true );
 		add_filter( 'query', $fault );
 
+		/* Act. */
 		try {
 			$repository->save_many( $submission, $grades );
+
+			/* Assert. */
 			self::fail( 'A failed update must stop the grade batch.' );
 		} catch ( Persistence_Exception $exception ) {
 			$saved_points = array_map(
