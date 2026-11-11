@@ -144,7 +144,7 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 		$comment_answers = get_comment_meta( $submission_id, 'quiz_answers', true );
 
 		if ( ! $comment_answers || ! is_array( $comment_answers ) ) {
-			return [];
+			return array();
 		}
 
 		return $comment_answers;

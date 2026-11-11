@@ -1122,13 +1122,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 		wp_set_current_user( $user_id );
 		$this->go_to( get_permalink( $quiz_id ) );
-		$_POST = array(
+		$_POST           = array(
 			$button           => get_permalink( $quiz_id ),
 			'questions_asked' => $question_ids,
 			'sensei_question' => $answers,
 			$nonce            => wp_create_nonce( $nonce ),
 		);
-		$fault = static function ( $query ) use ( $wpdb ) {
+		$fault           = static function ( $query ) use ( $wpdb ) {
 			return 0 === strpos( $query, "UPDATE `{$wpdb->commentmeta}`" ) && false !== strpos( $query, 'quiz_answers' )
 				? 'UPDATE sensei_missing_quiz_table SET meta_value = 1'
 				: $query;
@@ -2090,6 +2090,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			null,
 			$metadata_key
 		);
+
 		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 		$grades     = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
 

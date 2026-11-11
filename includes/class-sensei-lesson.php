@@ -3938,8 +3938,8 @@ class Sensei_Lesson {
 								continue;
 							}
 
-						// Count the category's allowed slots before fetching submitted questions.
-						$category_limit = abs( $question_number );
+							// Count the category's allowed slots before fetching submitted questions.
+							$category_limit = abs( $question_number );
 
 							if ( -1 === $question_number ) {
 								$category_limit = count( $unsaved_question_ids );
@@ -3986,7 +3986,7 @@ class Sensei_Lesson {
 			$selected_questions = array_values( array_intersect( $unsaved_question_ids, array_keys( $eligible_questions ) ) );
 			$selected_questions = array_slice( $selected_questions, 0, $maximum_restored_questions );
 
-			$show_questions     = (int) get_post_meta( (int) $quiz_id, '_show_questions', true );
+			$show_questions = (int) get_post_meta( (int) $quiz_id, '_show_questions', true );
 			if ( $show_questions > 0 ) {
 				$selected_questions = array_slice( $selected_questions, 0, $show_questions );
 			}

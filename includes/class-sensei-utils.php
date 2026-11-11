@@ -2721,7 +2721,6 @@ class Sensei_Utils {
 	public static function restore_wp_query() {
 
 		wp_reset_query();
-
 	}
 
 	/**
@@ -3209,7 +3208,6 @@ class Sensei_Utils {
 		}
 		$video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
 		return $video_embed ? self::render_video_embed( $video_embed ) : null;
-
 	}
 
 	/**
