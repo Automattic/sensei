@@ -921,16 +921,18 @@ class Sensei_Grading {
 
 			}
 
-			// store all question grades on the lesson status
+			$has_submission = (bool) Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+
+			// No submission and no grades means there is nothing to save.
 			if ( ! Sensei()->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id, $user_id )
-				&& ( $all_question_grades || Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ) ) ) {
+				&& ( $all_question_grades || $has_submission ) ) {
 				$this->progress_save_failed = true;
 				return false;
 			}
 
-			// store the feedback from grading
+			// No submission and no feedback means there is nothing to save.
 			if ( ! Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id )
-				&& ( $all_answers_feedback || Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ) ) ) {
+				&& ( $all_answers_feedback || $has_submission ) ) {
 				$this->progress_save_failed = true;
 				return false;
 			}
@@ -950,7 +952,7 @@ class Sensei_Grading {
 
 				// Set the users total quiz grade.
 				$grade = Sensei_Utils::quotient_as_absolute_rounded_percentage( $quiz_grade, $quiz_grade_total, 2 );
-				if ( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )
+				if ( $has_submission
 					&& ! Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id ) ) {
 					$this->progress_save_failed = true;
 					return false;

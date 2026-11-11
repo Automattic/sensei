@@ -720,10 +720,12 @@ class Sensei_Utils {
 		}
 
 		// Delete quiz answers and their grading metadata after progress can be reset.
-		$quiz_submission = $lesson_quiz_id ? Sensei()->quiz_submission_repository->get( $lesson_quiz_id, $user_id ) : null;
-		$answers_deleted = $lesson_quiz_id ? self::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id ) : false;
-		if ( $quiz_submission && ! $answers_deleted ) {
-			return false;
+		if ( $lesson_quiz_id ) {
+			$quiz_submission = Sensei()->quiz_submission_repository->get( $lesson_quiz_id, $user_id );
+			$answers_deleted = self::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id );
+			if ( $quiz_submission && ! $answers_deleted ) {
+				return false;
+			}
 		}
 
 		// Delete lesson progress.
@@ -2719,6 +2721,7 @@ class Sensei_Utils {
 	public static function restore_wp_query() {
 
 		wp_reset_query();
+
 	}
 
 	/**
@@ -3206,6 +3209,7 @@ class Sensei_Utils {
 		}
 		$video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
 		return $video_embed ? self::render_video_embed( $video_embed ) : null;
+
 	}
 
 	/**

@@ -3819,10 +3819,14 @@ class Sensei_Lesson {
 			$user_id = get_current_user_id();
 		}
 
+		// A failed quiz write keeps the student's answers for this response. The saved question list may be incomplete.
+		// Null means there is no failed form to restore; an empty array still represents a failed form.
 		$unsaved_question_ids = ! is_admin()
 			? Sensei()->quiz->get_unsaved_question_ids( (int) $quiz_lesson_id, (int) $user_id )
 			: null;
+
 		if ( null !== $unsaved_question_ids ) {
+			// The normal 'any' query could show draft questions when restoring the form.
 			$post_status = 'publish';
 		}
 
@@ -3842,12 +3846,13 @@ class Sensei_Lesson {
 		$questions_array = $questions;
 
 		// If viewing quiz on frontend or in grading then only single questions must be shown.
-		$selected_questions = array();
-		$question_capacity  = 0;
+		$selected_questions         = array();
+		$maximum_restored_questions = 0;
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Input used for comparisons.
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
-			// Fetch the questions that the user was asked in their quiz if they have already completed it.
+			// Skip the saved question list while restoring a failed form; it may be incomplete.
 			$submission         = null === $unsaved_question_ids && $quiz_id && $user_id
 				? Sensei()->quiz_submission_repository->get( (int) $quiz_id, (int) $user_id )
 				: null;
@@ -3877,7 +3882,7 @@ class Sensei_Lesson {
 					$existing_questions[] = $question->ID;
 				}
 
-				$question_capacity = count( $existing_questions );
+				$maximum_restored_questions = count( $existing_questions );
 
 				// Include only single questions in the return array.
 				$questions_loop  = $questions_array;
@@ -3933,15 +3938,18 @@ class Sensei_Lesson {
 								continue;
 							}
 
-							$category_capacity = abs( $question_number );
-							if ( -1 === $question_number ) {
-								$category_capacity = count( $unsaved_question_ids );
-							} elseif ( 0 === $question_number ) {
-								$category_capacity = max( 1, (int) get_option( 'posts_per_page' ) );
-							}
-							$question_capacity += $category_capacity;
+						// Count the category's allowed slots before fetching submitted questions.
+						$category_limit = abs( $question_number );
 
-							// Check membership without reassigning slots through a new random category order.
+							if ( -1 === $question_number ) {
+								$category_limit = count( $unsaved_question_ids );
+							} elseif ( 0 === $question_number ) {
+								$category_limit = max( 1, (int) get_option( 'posts_per_page' ) );
+							}
+
+							$maximum_restored_questions += $category_limit;
+
+							// Fetch submitted IDs in this category, then cap the restored list by its total slots.
 							unset( $qargs['post__not_in'] );
 							$qargs['post__in']       = $unsaved_question_ids;
 							$qargs['posts_per_page'] = -1;
@@ -3969,13 +3977,15 @@ class Sensei_Lesson {
 		}
 
 		if ( null !== $unsaved_question_ids ) {
-			// Reuse eligible questions in the submitted order instead of the partially saved list.
+			// Restore submitted order using only eligible questions, within the quiz's question limits.
 			$eligible_questions = array();
 			foreach ( $questions as $question ) {
 				$eligible_questions[ $question->ID ] = $question;
 			}
+
 			$selected_questions = array_values( array_intersect( $unsaved_question_ids, array_keys( $eligible_questions ) ) );
-			$selected_questions = array_slice( $selected_questions, 0, $question_capacity );
+			$selected_questions = array_slice( $selected_questions, 0, $maximum_restored_questions );
+
 			$show_questions     = (int) get_post_meta( (int) $quiz_id, '_show_questions', true );
 			if ( $show_questions > 0 ) {
 				$selected_questions = array_slice( $selected_questions, 0, $show_questions );

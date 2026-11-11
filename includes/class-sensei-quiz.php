@@ -466,6 +466,7 @@ class Sensei_Quiz {
 
 			return true;
 		} catch ( Persistence_Exception $exception ) {
+			// Earlier deletes or writes may have succeeded, leaving cached quiz data stale.
 			delete_transient( self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id ) );
 			delete_transient( self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id ) );
 			delete_transient( self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id ) );

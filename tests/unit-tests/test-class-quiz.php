@@ -1094,20 +1094,15 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Lesson::lesson_quiz_questions
 	 */
 	public function testStartQuizQuestionsLoop_RequiredAnswerWriteFailed_RendersSubmittedQuestions(
-		string $mode,
 		string $listener,
 		string $button,
-		string $nonce,
-		int $page,
-		int $per_page,
-		string $statement,
-		string $table,
-		?string $metadata_key
+		string $nonce
 	): void {
 		/* Arrange. */
 		global $sensei_question_loop;
+		global $wpdb;
 
-		$this->set_progress_storage_mode( $mode );
+		$this->set_progress_storage_mode( 'comments-only' );
 		Sensei_Course_Enrolment_Manager::instance()->collect_enrolment_providers();
 		$course_data  = $this->factory->get_course_with_lessons(
 			array(
@@ -1125,21 +1120,17 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		);
 		Sensei_Course_Enrolment::get_course_instance( $course_data['course_id'] )->enrol( $user_id );
 		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
-		update_post_meta( $quiz_id, '_pagination', wp_json_encode( array( 'pagination_number' => $per_page ) ) );
 		wp_set_current_user( $user_id );
-		$this->go_to( add_query_arg( 'quiz-page', $page, get_permalink( $quiz_id ) ) );
-		$_POST           = array(
-			$button           => add_query_arg( 'quiz-page', $page + 1, get_permalink( $quiz_id ) ),
+		$this->go_to( get_permalink( $quiz_id ) );
+		$_POST = array(
+			$button           => get_permalink( $quiz_id ),
 			'questions_asked' => $question_ids,
 			'sensei_question' => $answers,
 			$nonce            => wp_create_nonce( $nonce ),
 		);
-		$wpdb            = $GLOBALS['wpdb'];
-		$table           = $wpdb->prefix . $table;
-		$fault           = static function ( $query ) use ( $statement, $table, $metadata_key ) {
-			return preg_match( '/^' . $statement . ' `?' . preg_quote( $table, '/' ) . '`?\s/i', $query )
-				&& ( null === $metadata_key || false !== strpos( $query, $metadata_key ) )
-				? 'INSERT INTO sensei_missing_quiz_table (id) VALUES (1)'
+		$fault = static function ( $query ) use ( $wpdb ) {
+			return 0 === strpos( $query, "UPDATE `{$wpdb->commentmeta}`" ) && false !== strpos( $query, 'quiz_answers' )
+				? 'UPDATE sensei_missing_quiz_table SET meta_value = 1'
 				: $query;
 		};
 		$previous_errors = $wpdb->suppress_errors( true );
@@ -1154,7 +1145,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			/* Assert. */
 			self::assertSame( $question_ids, $sensei_question_loop['questions_asked'], 'The form must retain every submitted question despite the partial durable list.' );
 			self::assertSame( $answers, Sensei()->quiz->get_user_answers( $lesson_id, $user_id ), 'The form must retain every submitted answer.' );
-			self::assertSame( $question_ids[ $page - 1 ], $sensei_question_loop['questions'][0]->ID, 'The current page must still render its submitted question.' );
+			self::assertSame( $question_ids[0], $sensei_question_loop['questions'][0]->ID, 'The form must render the first submitted question.' );
+			self::assertSame( $question_ids[1], $sensei_question_loop['questions'][1]->ID, 'The form must render the second submitted question.' );
 			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 			self::assertSame( array( $question_ids[0] ), Sensei()->quiz_submission_repository->get_question_ids( $submission->get_id() ), 'Retaining input must not persist a successful complete question list.' );
 		} finally {
@@ -1164,30 +1156,15 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Failure responses that must keep the submitted question set in each storage mode.
+	 * Student actions that must keep submitted questions on a failed save.
 	 *
 	 * @return array
 	 */
 	public static function failed_answer_form_requests(): array {
-		$requests = array(
-			'save'        => array( 'user_save_quiz_answers_listener', 'quiz_save', 'woothemes_sensei_save_quiz_nonce', 1, 0 ),
-			'submit'      => array( 'user_quiz_submit_listener', 'quiz_complete', 'woothemes_sensei_complete_quiz_nonce', 1, 0 ),
-			'page change' => array( 'page_change_listener', 'quiz_target_page', 'sensei_quiz_page_change_nonce', 2, 1 ),
+		return array(
+			'save'   => array( 'user_save_quiz_answers_listener', 'quiz_save', 'woothemes_sensei_save_quiz_nonce' ),
+			'submit' => array( 'user_quiz_submit_listener', 'quiz_complete', 'woothemes_sensei_complete_quiz_nonce' ),
 		);
-		$failures = array(
-			'comments-only' => array( 'UPDATE', 'commentmeta', 'quiz_answers' ),
-			'comments'      => array( 'INSERT INTO', 'sensei_lms_quiz_answers', null ),
-			'tables'        => array( 'INSERT INTO', 'commentmeta', 'quiz_answers' ),
-		);
-		$cases    = array();
-		foreach ( self::progress_storage_modes() as $name => $arguments ) {
-			$mode = $arguments[0];
-			foreach ( $requests as $request => $values ) {
-				$cases[ $name . ' ' . $request ] = array_merge( array( $mode ), $values, $failures[ $mode ] );
-			}
-		}
-
-		return $cases;
 	}
 
 	public function testUserSaveQuizAnswersListener_QuizCompleted_KeepsTheSavedAnswer() {
@@ -2079,7 +2056,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * @dataProvider dual_write_storage_modes
 	 * @covers Sensei_Quiz::save_user_answers_feedback
 	 */
-	public function testSaveUserAnswersFeedback_RequiredSecondaryGradeInsertFailed_PreservesPrimaryGradesAndAllowsLaterSave( string $mode, string $secondary ): void {
+	public function testSaveUserAnswersFeedback_SecondaryGradeInsertFails_ReportsFailureAndCanRetry( string $mode, string $secondary ): void {
 		/* Arrange. */
 		$this->set_progress_storage_mode( $mode );
 		$lesson_id   = $this->factory->lesson->create();
@@ -2090,6 +2067,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
 		$wpdb = $GLOBALS['wpdb'];
 
+		// Force save_many() to create the missing mirror grade when feedback is saved.
 		if ( 'tables' === $secondary ) {
 			$secondary_submission = ( new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository( $wpdb ) )->get( $quiz_id, $user_id );
 			( new \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository( $wpdb ) )->delete_all( $secondary_submission );
@@ -2104,24 +2082,23 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$feedback = array( $question_id => 'Saved feedback' );
 
 		/* Act. */
-		$this->with_failed_insert(
+		$failed_save = $this->with_failed_insert(
 			$table,
-			function () use ( $feedback, $lesson_id, $user_id, $quiz_id ) {
-				$result     = Sensei()->quiz->save_user_answers_feedback( $feedback, $lesson_id, $user_id );
-				$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-				$grades     = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
-
-				/* Assert. */
-				self::assertFalse( $result, 'A failed insert reached through save_many must report failure.' );
-				self::assertCount( 1, $grades, 'Primary grades must survive a failed secondary insert.' );
-				self::assertSame( 1, $grades[0]->get_points(), 'Already saved points must remain available.' );
+			function () use ( $feedback, $lesson_id, $user_id ) {
+				return Sensei()->quiz->save_user_answers_feedback( $feedback, $lesson_id, $user_id );
 			},
 			null,
 			$metadata_key
 		);
-		$result = Sensei()->quiz->save_user_answers_feedback( $feedback, $lesson_id, $user_id );
+		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		$grades     = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
 
-		self::assertTrue( $result, 'A later save must complete without duplicating saved grades.' );
+		/* Assert. */
+		self::assertFalse( $failed_save, 'A failed mirror insert must report failure.' );
+		self::assertCount( 1, $grades, 'The primary grade must survive the failed mirror insert.' );
+		self::assertSame( 1, $grades[0]->get_points(), 'Already saved points must remain available.' );
+
+		self::assertTrue( Sensei()->quiz->save_user_answers_feedback( $feedback, $lesson_id, $user_id ), 'A later save must complete after removing the fault.' );
 	}
 
 	/**

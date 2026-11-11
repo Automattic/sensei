@@ -74,12 +74,13 @@ class Comment_Metadata {
 	 * @throws Persistence_Exception If the metadata cannot be saved.
 	 */
 	public static function update( int $comment_id, string $key, $value, Submission_Interface $submission ): void {
-		$stored = self::get( $comment_id, $key, $submission );
+		$stored_value     = self::get( $comment_id, $key, $submission );
 		$normalized_value = sanitize_meta( $key, wp_unslash( $value ), 'comment', get_object_subtype( 'comment', $comment_id ) );
+
 		// Compare the value WordPress would store, but do not treat a missing key as unchanged.
 		// update_comment_meta() returns false for both unchanged values and failed writes.
 		if ( metadata_exists( 'comment', $comment_id, $key )
-			&& (string) maybe_serialize( $stored ) === (string) maybe_serialize( $normalized_value ) ) {
+			&& (string) maybe_serialize( $stored_value ) === (string) maybe_serialize( $normalized_value ) ) {
 			return;
 		}
 
@@ -109,6 +110,7 @@ class Comment_Metadata {
 	 * @throws Persistence_Exception If the final grade cannot be cleared.
 	 */
 	public static function clear_grade( int $comment_id, Submission_Interface $submission ): void {
+		// Check the read before treating an absent key as an already cleared grade.
 		self::get( $comment_id, 'grade', $submission );
 		if ( ! metadata_exists( 'comment', $comment_id, 'grade' ) ) {
 			return;
