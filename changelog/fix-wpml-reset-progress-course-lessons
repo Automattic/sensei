@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fixed the lesson progress being kept when resetting a student's course progress in a secondary language with WPML.

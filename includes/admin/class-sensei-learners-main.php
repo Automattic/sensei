@@ -71,7 +71,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * Constructor
 	 *
 	 * @since  1.6.0
-	 * @since $$next-version$$ Accepts an optional student listing service.
+	 * @since 4.27.0 Accepts an optional student listing service.
 	 *
 	 * @param Student_Management_Listing_Service_Interface|null $student_listing_service Student listing service.
 	 */
@@ -575,7 +575,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				 * This filter runs on the learner management screen for a specific course.
 				 * It provides the student row column details.
 				 *
-				 * @since $$next-version$$ The $item argument is a Students_Item.
+				 * @since 4.27.0 The $item argument is a Students_Item.
 				 *
 				 * @param {array}   $columns {
 				 *   @type {string}   $title             Learner name.

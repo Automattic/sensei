@@ -97,43 +97,33 @@ class Sensei_Lesson {
 
 			// Add/Update question.
 			add_action( 'wp_ajax_lesson_update_question', array( $this, 'lesson_update_question' ) );
-			add_action( 'wp_ajax_nopriv_lesson_update_question', array( $this, 'lesson_update_question' ) );
 
 			// Update grade type.
 			add_action( 'wp_ajax_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
-			add_action( 'wp_ajax_nopriv_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
 
 			// Update question order.
 			add_action( 'wp_ajax_lesson_update_question_order', array( $this, 'lesson_update_question_order' ) );
-			add_action( 'wp_ajax_nopriv_lesson_update_question_order', array( $this, 'lesson_update_question_order' ) );
 
 			// Update question order.
 			add_action( 'wp_ajax_lesson_update_question_order_random', array( $this, 'lesson_update_question_order_random' ) );
-			add_action( 'wp_ajax_nopriv_lesson_update_question_order_random', array( $this, 'lesson_update_question_order_random' ) );
 
 			// Get answer ID.
 			add_action( 'wp_ajax_question_get_answer_id', array( $this, 'question_get_answer_id' ) );
-			add_action( 'wp_ajax_nopriv_question_get_answer_id', array( $this, 'question_get_answer_id' ) );
 
 			// Add multiple questions.
 			add_action( 'wp_ajax_lesson_add_multiple_questions', array( $this, 'lesson_add_multiple_questions' ) );
-			add_action( 'wp_ajax_nopriv_lesson_add_multiple_questions', array( $this, 'lesson_add_multiple_questions' ) );
 
 			// Remove multiple questions.
 			add_action( 'wp_ajax_lesson_remove_multiple_questions', array( $this, 'lesson_remove_multiple_questions' ) );
-			add_action( 'wp_ajax_nopriv_lesson_remove_multiple_questions', array( $this, 'lesson_remove_multiple_questions' ) );
 
 			// Get question category limit.
 			add_action( 'wp_ajax_get_question_category_limit', array( $this, 'get_question_category_limit' ) );
-			add_action( 'wp_ajax_nopriv_get_question_category_limit', array( $this, 'get_question_category_limit' ) );
 
 			// Add existing questions.
 			add_action( 'wp_ajax_lesson_add_existing_questions', array( $this, 'lesson_add_existing_questions' ) );
-			add_action( 'wp_ajax_nopriv_lesson_add_existing_questions', array( $this, 'lesson_add_existing_questions' ) );
 
 			// Filter existing questions.
 			add_action( 'wp_ajax_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
-			add_action( 'wp_ajax_nopriv_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 
 			// Get the prerequisite meta box content.
 			add_action( 'wp_ajax_get_prerequisite_meta_box_content', array( $this, 'handle_get_prerequisite_meta_box_content' ) );
@@ -587,10 +577,18 @@ class Sensei_Lesson {
 		check_ajax_referer( 'get_prerequisite_meta_box_content_nonce', 'security' );
 
 		if ( isset( $_GET['lesson_id'] ) && isset( $_GET['course_id'] ) ) {
-			$this->output_prerequisite_meta_box_content(
-				(int) $_GET['lesson_id'],
-				(int) $_GET['course_id']
-			);
+			$lesson_id = (int) $_GET['lesson_id'];
+			$course_id = (int) $_GET['course_id'];
+
+			if (
+				'lesson' !== get_post_type( $lesson_id )
+				|| ! current_user_can( 'edit_lesson', $lesson_id )
+				|| ( $course_id > 0 && ( 'course' !== get_post_type( $course_id ) || ! Sensei_Course::can_current_user_edit_course( $course_id ) ) )
+			) {
+				wp_die( '', '', 403 );
+			}
+
+			$this->output_prerequisite_meta_box_content( $lesson_id, $course_id );
 		}
 
 		wp_die(); // This is required to terminate immediately and return a proper response.
@@ -2103,8 +2101,8 @@ class Sensei_Lesson {
 			$nonce = sensei_request_text( $_POST['filter_existing_questions_nonce'] );
 		}
 
-		if ( ! wp_verify_nonce( $nonce, 'filter_existing_questions_nonce' ) ) {
-			die( '' );
+		if ( ! wp_verify_nonce( $nonce, 'filter_existing_questions_nonce' ) || ! current_user_can( 'edit_lessons' ) ) {
+			wp_die( '', '', 403 );
 		}
 
 		// Parse POST data
@@ -3128,6 +3126,10 @@ class Sensei_Lesson {
 	}
 
 	public function get_question_category_limit() {
+		if ( ! current_user_can( 'edit_lessons' ) ) {
+			wp_die( '', '', 403 );
+		}
+
 		// Set default
 		$return = 1;
 
@@ -3153,7 +3155,7 @@ class Sensei_Lesson {
 
 		echo esc_html( $return );
 
-		die( '' );
+		wp_die();
 	}
 
 	/**
@@ -3202,7 +3204,8 @@ class Sensei_Lesson {
 		$question_data = array();
 		parse_str( $data, $question_data );
 
-		if ( ! $this->user_can_edit_quiz( $question_data['quiz_id'] ) ) {
+		$quiz_id = isset( $question_data['quiz_id'] ) ? absint( $question_data['quiz_id'] ) : 0;
+		if ( ! $this->user_can_edit_quiz( $quiz_id ) ) {
 			die( '' );
 		}
 
@@ -3220,7 +3223,6 @@ class Sensei_Lesson {
 					}
 				);
 
-				$quiz_id        = $question_data['quiz_id'];
 				$question_count = intval( $question_data['question_count'] );
 
 				foreach ( $questions as $question_id ) {
@@ -3271,11 +3273,17 @@ class Sensei_Lesson {
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
 
-		if ( ! $this->user_can_edit_quiz( $quiz_data['quiz_id'] ) ) {
+		$quiz_id = isset( $quiz_data['quiz_id'] ) ? absint( $quiz_data['quiz_id'] ) : 0;
+		if ( ! $this->user_can_edit_quiz( $quiz_id ) ) {
 			wp_die( '' );
 		}
 
-		update_post_meta( $quiz_data['quiz_id'], '_quiz_grade_type', $quiz_data['quiz_grade_type'] );
+		$grade_type = isset( $quiz_data['quiz_grade_type'] ) ? $quiz_data['quiz_grade_type'] : '';
+		if ( ! in_array( $grade_type, array( 'auto', 'manual' ), true ) ) {
+			wp_die( '' );
+		}
+
+		update_post_meta( $quiz_id, '_quiz_grade_type', $grade_type );
 		wp_die();
 	}
 
@@ -3333,11 +3341,17 @@ class Sensei_Lesson {
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
 
-		if ( ! $this->user_can_edit_quiz( $quiz_data['quiz_id'] ) ) {
+		$quiz_id = isset( $quiz_data['quiz_id'] ) ? absint( $quiz_data['quiz_id'] ) : 0;
+		if ( ! $this->user_can_edit_quiz( $quiz_id ) ) {
 			wp_die( '' );
 		}
 
-		update_post_meta( $quiz_data['quiz_id'], '_random_question_order', $quiz_data['random_question_order'] );
+		$random_order = isset( $quiz_data['random_question_order'] ) ? $quiz_data['random_question_order'] : '';
+		if ( ! in_array( $random_order, array( 'yes', 'no' ), true ) ) {
+			wp_die( '' );
+		}
+
+		update_post_meta( $quiz_id, '_random_question_order', $random_order );
 		wp_die();
 	}
 
@@ -3372,6 +3386,16 @@ class Sensei_Lesson {
 		if ( isset( $data['question_id'] ) && ( 0 < absint( $data['question_id'] ) ) ) {
 			$question_id = absint( $data['question_id'] );
 		}
+
+		// Only accept a registered question type, or the type the question already has.
+		$allowed_types = array_keys( Sensei()->question->question_types() );
+		if ( $question_id ) {
+			$allowed_types[] = Sensei()->question->get_question_type( $question_id );
+		}
+		if ( ! in_array( $question_type, $allowed_types, true ) ) {
+			return false;
+		}
+
 		if ( isset( $data['question'] ) && ( '' != $data['question'] ) ) {
 			$question_text = $data['question'];
 		}
@@ -3865,7 +3889,7 @@ class Sensei_Lesson {
 				$questions = array();
 				foreach ( $selected_questions as $question_id ) {
 					$question = get_post( $question_id );
-					if ( ! isset( $question ) || ! isset( $question->ID ) ) {
+					if ( ! isset( $question ) || ! isset( $question->ID ) || 'question' !== $question->post_type ) {
 						continue;
 					}
 					$questions[] = $question;
@@ -5048,7 +5072,7 @@ class Sensei_Lesson {
 				. esc_url( get_permalink( $lesson_prerequisite ) )
 				. '" title="'
 				// translators: Placeholder is the item title.
-				. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
+				. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), esc_attr( get_the_title( $lesson_prerequisite ) ) )
 				. '">'
 				. get_the_title( $lesson_prerequisite )
 				. '</a>';

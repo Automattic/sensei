@@ -11,7 +11,7 @@ namespace Sensei\Internal;
  * A required persistence operation failed.
  *
  * @internal
- * @since $$next-version$$
+ * @since 4.27.0
  */
 class Persistence_Exception extends \RuntimeException {
 	/**
@@ -48,7 +48,7 @@ class Persistence_Exception extends \RuntimeException {
 	/**
 	 * Create a failure with record identity and available database error text.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string $entity Progress or quiz submission entity.
 	 * @param string $store Storage implementation.
@@ -84,7 +84,7 @@ class Persistence_Exception extends \RuntimeException {
 	/**
 	 * Log the failure at the handling boundary.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string $operation Application action handling the failure.
 	 * @return void

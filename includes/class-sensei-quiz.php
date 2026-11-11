@@ -309,7 +309,7 @@ class Sensei_Quiz {
 	/**
 	 * Shows progress errors using the current quiz layout's notice template.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string $title   Error heading.
 	 * @param string $message Supporting text.
@@ -354,12 +354,16 @@ class Sensei_Quiz {
 			$user_id
 		);
 
-		$success = self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id );
+		$success = null !== $answers && self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id );
 
 		if ( $success ) {
 			// Update the message shown to the user.
 			$message                     = __( 'Quiz Saved Successfully.', 'sensei-lms' );
 			Sensei()->frontend->messages = '<div class="sensei-message note">' . $message . '</div>';
+			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-save', $message );
+		} elseif ( null === $answers ) {
+			$message                     = __( 'The quiz could not be saved. Please reload the page and try again.', 'sensei-lms' );
+			Sensei()->frontend->messages = '<div class="sensei-message alert">' . $message . '</div>';
 			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-save', $message );
 		} else {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
@@ -384,9 +388,16 @@ class Sensei_Quiz {
 	 * @param int   $lesson_id       The lesson ID.
 	 * @param int   $user_id         The user ID.
 	 *
-	 * @return array
+	 * @return array|null The answers keyed by question, or null when the question set is not the one the quiz asked.
 	 */
-	private function parse_form_answers( array $answers, array $questions_asked, int $lesson_id, int $user_id ): array {
+	private function parse_form_answers( array $answers, array $questions_asked, int $lesson_id, int $user_id ): ?array {
+		// The question set is client input: it must carry the signature the quiz gave it.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Nonce verified by the form listeners, and the value is only compared.
+		$signature = $_POST['questions_asked_signature'] ?? '';
+
+		if ( ! is_string( $signature ) || ! hash_equals( self::get_questions_asked_signature( (int) get_the_ID(), $questions_asked ), $signature ) ) {
+			return null;
+		}
 
 		// If we have a fraction of the answers (e.g. pagination), include the previously saved answers.
 		if ( count( $answers ) !== count( $questions_asked ) ) {
@@ -444,7 +455,7 @@ class Sensei_Quiz {
 		}
 
 		// prepare the answers
-		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers, $files );
+		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers, $files, $user_id );
 		if ( ! $prepared_answers ) {
 			return false;
 		}
@@ -647,6 +658,14 @@ class Sensei_Quiz {
 			$user_id
 		);
 
+		if ( null === $answers ) {
+			$message                     = __( 'The quiz could not be submitted. Please reload the page and try again.', 'sensei-lms' );
+			Sensei()->frontend->messages = '<div class="sensei-message alert">' . $message . '</div>';
+			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-submit', $message );
+
+			return;
+		}
+
 		if ( false === self::submit_answers_for_grading( $answers, $_FILES, $lesson_id, $user_id ) ) {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 			$this->add_progress_failure_notice(
@@ -718,7 +737,7 @@ class Sensei_Quiz {
 				$user_id
 			);
 
-			if ( false === self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id ) ) {
+			if ( null !== $answers && false === self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id ) ) {
 				$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 				$this->add_progress_failure_notice(
 					__( 'Unable to change quiz pages', 'sensei-lms' ),
@@ -813,9 +832,10 @@ class Sensei_Quiz {
 	 *
 	 * @param array $unprepared_answers Submitted answers.
 	 * @param array $files Uploaded files.
+	 * @param int   $user_id The user who submitted the answers. Defaults to the current user.
 	 * @return array|false
 	 */
-	public static function prepare_form_submitted_answers( $unprepared_answers, $files ) {
+	public static function prepare_form_submitted_answers( $unprepared_answers, $files, $user_id = 0 ) {
 
 		$prepared_answers = array();
 
@@ -836,15 +856,20 @@ class Sensei_Quiz {
 			if ( 'multi-line' === $question_type ) {
 				$answer = wp_kses( $answer, wp_kses_allowed_html( 'post' ) );
 			} elseif ( 'file-upload' === $question_type ) {
-				$file_key = 'file_upload_' . $question_id;
+				$file_key      = 'file_upload_' . $question_id;
+				$attachment_id = false;
 				if (
 					isset( $files[ $file_key ] )
 					&& self::is_uploaded_file_valid( $files[ $file_key ]['tmp_name'], $files[ $file_key ]['name'], $question_id )
 				) {
 					$attachment_id = Sensei_Utils::upload_file( $files[ $file_key ] );
-					if ( $attachment_id ) {
-						$answer = $attachment_id;
-					}
+				}
+
+				if ( $attachment_id ) {
+					$answer = $attachment_id;
+				} elseif ( ! self::is_file_uploaded_by_user( $answer, $user_id ? $user_id : get_current_user_id() ) ) {
+					// Without a new upload, the answer can only be a file the user uploaded before.
+					$answer = '';
 				}
 			}
 
@@ -853,6 +878,24 @@ class Sensei_Quiz {
 		}
 
 		return $prepared_answers;
+	}
+
+	/**
+	 * Check if the answer to a file upload question is a file the user uploaded.
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param mixed $attachment_id The answer to the file upload question.
+	 * @param int   $user_id       The user who gave the answer.
+	 *
+	 * @return bool
+	 */
+	public static function is_file_uploaded_by_user( $attachment_id, $user_id ) {
+		$attachment = is_numeric( $attachment_id ) && 0 < (int) $attachment_id ? get_post( (int) $attachment_id ) : null;
+
+		return $attachment instanceof WP_Post
+			&& 'attachment' === $attachment->post_type
+			&& (int) $attachment->post_author === (int) $user_id;
 	}
 
 	/**
@@ -1985,6 +2028,25 @@ class Sensei_Quiz {
 			<?php
 		}
 
+		?>
+		<input type="hidden" name="questions_asked_signature" form="sensei-quiz-form" value="<?php echo esc_attr( self::get_questions_asked_signature( (int) get_the_ID(), $sensei_question_loop['questions_asked'] ?? array() ) ); ?>">
+		<?php
+	}
+
+	/**
+	 * Sign the set of questions a quiz asks, so the form cannot come back with another set.
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int   $quiz_id      Quiz ID.
+	 * @param int[] $question_ids IDs of the questions asked.
+	 * @return string
+	 */
+	private static function get_questions_asked_signature( int $quiz_id, array $question_ids ): string {
+		$question_ids = array_unique( array_map( 'intval', $question_ids ) );
+		sort( $question_ids );
+
+		return wp_hash( $quiz_id . '-' . implode( ',', $question_ids ), 'nonce' );
 	}
 
 	/**
@@ -2015,12 +2077,12 @@ class Sensei_Quiz {
 	 * Render the quiz progress bar for existing callers.
 	 *
 	 * @since 3.15.0
-	 * @deprecated $$next-version$$ Automatic quiz progress bars have been retired. No replacement.
+	 * @deprecated 4.27.0 Automatic quiz progress bars have been retired. No replacement.
 	 *
 	 * @return void
 	 */
 	public static function the_quiz_progress_bar() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.27.0' );
 
 		$quiz_id             = get_the_ID();
 		$pagination_settings = json_decode(

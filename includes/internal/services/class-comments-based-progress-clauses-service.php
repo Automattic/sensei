@@ -156,7 +156,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	/**
 	 * Add Last Activity and Days to Completion fields to lesson queries.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $clauses    Associative array of the clauses for the query.
 	 * @param int[] $lesson_ids Requested lesson post IDs.
@@ -234,7 +234,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	/**
 	 * Add Last Activity grouped by user ID to a WP_User_Query.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param \WP_User_Query $query The user query.
 	 */
@@ -259,7 +259,7 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	/**
 	 * Filter users by Last Activity after adding the activity field.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param \WP_User_Query $query The user query.
 	 * @param string         $from  Start date, or empty for no lower bound.

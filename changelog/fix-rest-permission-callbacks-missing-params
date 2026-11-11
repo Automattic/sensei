@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix PHP warnings in the course students batch and update teacher REST permission checks when required parameters are missing.

@@ -64,7 +64,7 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count course progress records grouped by post and status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Course IDs to count; an empty list counts all courses.
 	 * @param array $args {
@@ -79,7 +79,7 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Get report status counts for a lesson, excluding temporary users.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Requested lesson post ID.
 	 * @return array<string, int> Counts keyed by progress status.
@@ -147,7 +147,7 @@ interface Progress_Aggregation_Service_Interface {
 	/**
 	 * Count completed lesson progress per lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $lesson_ids Lesson post IDs.
 	 * @param array $args {
@@ -166,7 +166,7 @@ interface Progress_Aggregation_Service_Interface {
 	 * start and completion date. Completed records with a valid start but no
 	 * completion date add zero days while still counting in that course's average.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Course post IDs.
 	 * @param array $args {

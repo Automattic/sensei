@@ -361,4 +361,30 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		$this->original_request_method = null;
 		$this->original_screen         = null;
 	}
+
+	public function testMarkSectionAsVisited_SubscriberWithNonceGiven_DoesNotStoreTheSection() {
+		/* Arrange. */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'subscriber' ) ) );
+		$_POST['nonce']      = wp_create_nonce( 'sensei-mark-settings-section-visited' );
+		$_POST['section_id'] = 'email-notification-settings';
+
+		/* Act. */
+		Sensei()->settings->mark_section_as_visited();
+
+		/* Assert. */
+		$this->assertSame( array(), get_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY, array() ) );
+	}
+
+	public function testMarkSectionAsVisited_AdministratorWithNonceGiven_StoresTheSection() {
+		/* Arrange. */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$_POST['nonce']      = wp_create_nonce( 'sensei-mark-settings-section-visited' );
+		$_POST['section_id'] = 'email-notification-settings';
+
+		/* Act. */
+		Sensei()->settings->mark_section_as_visited();
+
+		/* Assert. */
+		$this->assertSame( array( 'email-notification-settings' ), get_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY, array() ) );
+	}
 }

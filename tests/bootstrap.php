@@ -112,7 +112,7 @@ class Sensei_Unit_Tests_Bootstrap {
 	/**
 	 * Makes a reflected method or property accessible on PHP versions where this is required.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param ReflectionMethod|ReflectionProperty $reflection The reflected method or property.
 	 */

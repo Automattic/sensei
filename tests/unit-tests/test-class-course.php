@@ -1199,4 +1199,32 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( $lesson_order, $actual );
 	}
+
+	public function testSaveCourseNotificationMetaBox_UserWhoCannotEditTheCourseGiven_DoesNotSaveTheSetting() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_author' => $this->get_user_by_role( 'teacher' ) ) );
+		$this->login_as_teacher_b();
+		$_POST['_sensei_course_notification']        = wp_create_nonce( 'update-course-notification-setting' );
+		$_POST['disable_sensei_course_notification'] = 'on';
+
+		/* Act. */
+		Sensei()->course->save_course_notification_meta_box( $course_id );
+
+		/* Assert. */
+		$this->assertSame( '', get_post_meta( $course_id, 'disable_notification', true ) );
+	}
+
+	public function testSaveCourseNotificationMetaBox_CourseAuthorGiven_SavesTheSetting() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_author' => $this->get_user_by_role( 'teacher' ) ) );
+		$this->login_as_teacher();
+		$_POST['_sensei_course_notification']        = wp_create_nonce( 'update-course-notification-setting' );
+		$_POST['disable_sensei_course_notification'] = 'on';
+
+		/* Act. */
+		Sensei()->course->save_course_notification_meta_box( $course_id );
+
+		/* Assert. */
+		$this->assertSame( '1', get_post_meta( $course_id, 'disable_notification', true ) );
+	}
 }
