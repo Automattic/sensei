@@ -1123,7 +1123,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 		wp_set_current_user( $user_id );
 		$this->go_to( get_permalink( $quiz_id ) );
-		$_POST           = array(
+		$_POST = array(
 			$button           => get_permalink( $quiz_id ),
 			'questions_asked' => $question_ids,
 			'sensei_question' => $answers,
