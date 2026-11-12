@@ -227,6 +227,8 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		$status_comment = $this->get_status_comment( $submission->get_quiz_id(), $submission->get_user_id() );
 		if ( $status_comment ) {
 			Comment_Metadata::delete( (int) $status_comment->comment_ID, 'grade', $submission, 'quiz_submission' );
+			// This key makes the comments-based submission discoverable, so clear it last.
+			Comment_Metadata::delete( (int) $status_comment->comment_ID, 'questions_asked', $submission, 'quiz_submission' );
 		}
 	}
 

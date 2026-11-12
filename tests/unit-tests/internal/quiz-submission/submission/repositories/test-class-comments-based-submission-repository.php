@@ -242,7 +242,12 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	public function testDelete_WhenCalled_DeletesTheGrade(): void {
+	/**
+	 * Deleting a submission removes the metadata used to find it.
+	 *
+	 * @covers \Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository::delete
+	 */
+	public function testDelete_WhenCalled_DeletesTheSubmission(): void {
 		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
@@ -259,7 +264,8 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete( $submission );
 
 		/* Assert. */
-		$this->assertNull( $repository->get( $quiz_id, $user_id )->get_final_grade() );
+		$this->assertNull( $repository->get( $quiz_id, $user_id ) );
+		$this->assertFalse( metadata_exists( 'comment', $submission_id, 'grade' ) );
 	}
 
 	private function export_submission( Comments_Based_Submission $submission ): array {
