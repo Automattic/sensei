@@ -40,6 +40,7 @@
 
 namespace Sensei\Internal\Quiz_Submission\Grade\Repositories;
 
+use Sensei\Internal\Quiz_Submission\Comment_Metadata;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Comments_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
@@ -69,6 +70,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * @param string|null          $feedback    The feedback.
 	 *
 	 * @return Grade_Interface The grade.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface {
 		/**
@@ -96,18 +98,18 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 		 */
 		$question_id = apply_filters( 'sensei_quiz_grade_create_question_id', $question_id );
 
-		$grades_map                 = get_comment_meta( $submission_id, 'quiz_grades', true );
+		$grades_map                 = Comment_Metadata::get( $submission_id, 'quiz_grades', $submission );
 		$grades_map                 = is_array( $grades_map ) ? $grades_map : [];
 		$grades_map[ $question_id ] = $points;
 
-		update_comment_meta( $submission_id, 'quiz_grades', $grades_map );
+		Comment_Metadata::update( $submission_id, 'quiz_grades', $grades_map, $submission );
 
 		if ( $feedback ) {
-			$feedback_map                 = get_comment_meta( $submission_id, 'quiz_answers_feedback', true );
+			$feedback_map                 = Comment_Metadata::get( $submission_id, 'quiz_answers_feedback', $submission );
 			$feedback_map                 = is_array( $feedback_map ) ? $feedback_map : [];
 			$feedback_map[ $question_id ] = $feedback;
 
-			update_comment_meta( $submission_id, 'quiz_answers_feedback', $feedback_map );
+			Comment_Metadata::update( $submission_id, 'quiz_answers_feedback', $feedback_map, $submission );
 		}
 
 		$created_at = current_datetime();
@@ -162,6 +164,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param Submission_Interface $submission The submission.
 	 * @param Grade_Interface[]    $grades     An array of grades.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function save_many( Submission_Interface $submission, array $grades ): void {
 		/**
@@ -196,8 +199,8 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 			$feedback_map[ $question_id ] = $grade->get_feedback();
 		}
 
-		update_comment_meta( $submission_id, 'quiz_grades', $grades_map );
-		update_comment_meta( $submission_id, 'quiz_answers_feedback', $feedback_map );
+		Comment_Metadata::update( $submission_id, 'quiz_grades', $grades_map, $submission );
+		Comment_Metadata::update( $submission_id, 'quiz_answers_feedback', $feedback_map, $submission );
 	}
 
 	/**

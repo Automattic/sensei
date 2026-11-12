@@ -40,6 +40,7 @@
 
 namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 
+use Sensei\Internal\Quiz_Submission\Comment_Metadata;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Comments_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
@@ -66,6 +67,7 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @param string               $value       The answer value.
 	 *
 	 * @return Answer_Interface The answer model.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface {
 		/**
@@ -93,12 +95,13 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 		 */
 		$question_id = (int) apply_filters( 'sensei_quiz_answer_create_question_id', $question_id );
 
-		$answers_map                 = $this->get_answers_map( $submission_id );
+		$answers_map                 = Comment_Metadata::get( $submission_id, 'quiz_answers', $submission );
+		$answers_map                 = is_array( $answers_map ) ? $answers_map : [];
 		$answers_map[ $question_id ] = $value;
 		$questions_asked_csv         = implode( ',', array_keys( $answers_map ) );
 
-		update_comment_meta( $submission_id, 'quiz_answers', $answers_map );
-		update_comment_meta( $submission_id, 'questions_asked', $questions_asked_csv );
+		Comment_Metadata::update( $submission_id, 'quiz_answers', $answers_map, $submission );
+		Comment_Metadata::update( $submission_id, 'questions_asked', $questions_asked_csv, $submission );
 
 		$created_at = current_datetime();
 
@@ -174,7 +177,7 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 		$comment_answers = get_comment_meta( $submission_id, 'quiz_answers', true );
 
 		if ( ! $comment_answers || ! is_array( $comment_answers ) ) {
-			return [];
+			return array();
 		}
 
 		return $comment_answers;

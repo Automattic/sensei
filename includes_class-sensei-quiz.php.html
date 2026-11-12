@@ -342,7 +342,7 @@ class Sensei_Quiz {
 	/**
 	 * Shows progress errors using the current quiz layout's notice template.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string $title   Error heading.
 	 * @param string $message Supporting text.
@@ -387,18 +387,22 @@ class Sensei_Quiz {
 			$user_id
 		);
 
-		$success = self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id );
+		$success = null !== $answers &amp;&amp; self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id );
 
 		if ( $success ) {
 			// Update the message shown to the user.
 			$message                     = __( 'Quiz Saved Successfully.', 'sensei-lms' );
 			Sensei()->frontend->messages = '&lt;div class="sensei-message note">' . $message . '&lt;/div>';
 			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-save', $message );
+		} elseif ( null === $answers ) {
+			$message                     = __( 'The quiz could not be saved. Please reload the page and try again.', 'sensei-lms' );
+			Sensei()->frontend->messages = '&lt;div class="sensei-message alert">' . $message . '&lt;/div>';
+			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-save', $message );
 		} else {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 			$this->add_progress_failure_notice(
 				__( 'Unable to save your answers', 'sensei-lms' ),
-				__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+				__( 'Review the answers shown below and reselect any files before trying again. Keep this page open.', 'sensei-lms' )
 			);
 		}
 
@@ -417,9 +421,16 @@ class Sensei_Quiz {
 	 * @param int   $lesson_id       The lesson ID.
 	 * @param int   $user_id         The user ID.
 	 *
-	 * @return array
+	 * @return array|null The answers keyed by question, or null when the question set is not the one the quiz asked.
 	 */
-	private function parse_form_answers( array $answers, array $questions_asked, int $lesson_id, int $user_id ): array {
+	private function parse_form_answers( array $answers, array $questions_asked, int $lesson_id, int $user_id ): ?array {
+		// The question set is client input: it must carry the signature the quiz gave it.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Nonce verified by the form listeners, and the value is only compared.
+		$signature = $_POST['questions_asked_signature'] ?? '';
+
+		if ( ! is_string( $signature ) || ! hash_equals( self::get_questions_asked_signature( (int) get_the_ID(), $questions_asked ), $signature ) ) {
+			return null;
+		}
 
 		// If we have a fraction of the answers (e.g. pagination), include the previously saved answers.
 		if ( count( $answers ) !== count( $questions_asked ) ) {
@@ -477,26 +488,37 @@ class Sensei_Quiz {
 		}
 
 		// prepare the answers
-		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers, $files );
+		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers, $files, $user_id );
 		if ( ! $prepared_answers ) {
 			return false;
 		}
 
-		// save the user data
-		$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+		try {
+			// save the user data
+			$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
 
-		Sensei()->quiz_grade_repository->delete_all( $submission );
-		Sensei()->quiz_answer_repository->delete_all( $submission );
+			Sensei()->quiz_grade_repository->delete_all( $submission );
+			Sensei()->quiz_answer_repository->delete_all( $submission );
 
-		foreach ( $prepared_answers as $question_id => $answer ) {
-			Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
+			foreach ( $prepared_answers as $question_id => $answer ) {
+				Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
+			}
+
+			// Save transient to make retrieval faster.
+			$transient_key = self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id );
+			set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
+
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			// Earlier deletes or writes may have succeeded, leaving cached quiz data stale.
+			delete_transient( self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id ) );
+			delete_transient( self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id ) );
+			delete_transient( self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id ) );
+
+			$exception->log( 'saving quiz answers' );
+			return false;
 		}
 
-		// Save transient to make retrieval faster.
-		$transient_key = self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id );
-		set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
-
-		return true;
 	}
 
 	/**
@@ -567,6 +589,23 @@ class Sensei_Quiz {
 
 	}
 
+	/**
+	 * Get the submitted question order retained after a failed form write.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $user_id Student ID.
+	 * @return int[]|null Question IDs, or null when no failed form is retained.
+	 */
+	public function get_unsaved_question_ids( int $lesson_id, int $user_id ): ?array {
+		if ( ! isset( $this->unsaved_answers[ $lesson_id ][ $user_id ] ) ) {
+			return null;
+		}
+
+		return array_keys( $this->unsaved_answers[ $lesson_id ][ $user_id ] );
+	}
 
 	/**
 	 *
@@ -652,11 +691,19 @@ class Sensei_Quiz {
 			$user_id
 		);
 
+		if ( null === $answers ) {
+			$message                     = __( 'The quiz could not be submitted. Please reload the page and try again.', 'sensei-lms' );
+			Sensei()->frontend->messages = '&lt;div class="sensei-message alert">' . $message . '&lt;/div>';
+			Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->add_notice( 'quiz-submit', $message );
+
+			return;
+		}
+
 		if ( false === self::submit_answers_for_grading( $answers, $_FILES, $lesson_id, $user_id ) ) {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 			$this->add_progress_failure_notice(
 				__( 'Unable to submit your answers', 'sensei-lms' ),
-				__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+				__( 'Review the answers shown below and reselect any files before trying again. Keep this page open.', 'sensei-lms' )
 			);
 			return;
 		}
@@ -723,11 +770,11 @@ class Sensei_Quiz {
 				$user_id
 			);
 
-			if ( false === self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id ) ) {
+			if ( null !== $answers &amp;&amp; false === self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id ) ) {
 				$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 				$this->add_progress_failure_notice(
 					__( 'Unable to change quiz pages', 'sensei-lms' ),
-					__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+					__( 'Review the answers shown below and reselect any files before trying again. Keep this page open.', 'sensei-lms' )
 				);
 				return;
 			}
@@ -818,9 +865,10 @@ class Sensei_Quiz {
 	 *
 	 * @param array $unprepared_answers Submitted answers.
 	 * @param array $files Uploaded files.
+	 * @param int   $user_id The user who submitted the answers. Defaults to the current user.
 	 * @return array|false
 	 */
-	public static function prepare_form_submitted_answers( $unprepared_answers, $files ) {
+	public static function prepare_form_submitted_answers( $unprepared_answers, $files, $user_id = 0 ) {
 
 		$prepared_answers = array();
 
@@ -841,15 +889,20 @@ class Sensei_Quiz {
 			if ( 'multi-line' === $question_type ) {
 				$answer = wp_kses( $answer, wp_kses_allowed_html( 'post' ) );
 			} elseif ( 'file-upload' === $question_type ) {
-				$file_key = 'file_upload_' . $question_id;
+				$file_key      = 'file_upload_' . $question_id;
+				$attachment_id = false;
 				if (
 					isset( $files[ $file_key ] )
 					&amp;&amp; self::is_uploaded_file_valid( $files[ $file_key ]['tmp_name'], $files[ $file_key ]['name'], $question_id )
 				) {
 					$attachment_id = Sensei_Utils::upload_file( $files[ $file_key ] );
-					if ( $attachment_id ) {
-						$answer = $attachment_id;
-					}
+				}
+
+				if ( $attachment_id ) {
+					$answer = $attachment_id;
+				} elseif ( ! self::is_file_uploaded_by_user( $answer, $user_id ? $user_id : get_current_user_id() ) ) {
+					// Without a new upload, the answer can only be a file the user uploaded before.
+					$answer = '';
 				}
 			}
 
@@ -858,6 +911,24 @@ class Sensei_Quiz {
 		}
 
 		return $prepared_answers;
+	}
+
+	/**
+	 * Check if the answer to a file upload question is a file the user uploaded.
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param mixed $attachment_id The answer to the file upload question.
+	 * @param int   $user_id       The user who gave the answer.
+	 *
+	 * @return bool
+	 */
+	public static function is_file_uploaded_by_user( $attachment_id, $user_id ) {
+		$attachment = is_numeric( $attachment_id ) &amp;&amp; 0 &lt; (int) $attachment_id ? get_post( (int) $attachment_id ) : null;
+
+		return $attachment instanceof WP_Post
+			&amp;&amp; 'attachment' === $attachment->post_type
+			&amp;&amp; (int) $attachment->post_author === (int) $user_id;
 	}
 
 	/**
@@ -989,7 +1060,11 @@ class Sensei_Quiz {
 				}
 
 				// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade.
-				Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
+				$submission      = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+				$answers_deleted = Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
+				if ( $submission &amp;&amp; ! $answers_deleted ) {
+					return false;
+				}
 			}
 
 			// Update course completion.
@@ -1271,28 +1346,36 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-		if ( ! $submission ) {
+		try {
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			if ( ! $submission ) {
+				return false;
+			}
+
+			Sensei()->quiz_grade_repository->delete_all( $submission );
+
+			$answers     = Sensei()->quiz_answer_repository->get_all( $submission->get_id() );
+			$answers_map = [];
+			foreach ( $answers as $answer ) {
+				$answers_map[ $answer->get_question_id() ] = $answer;
+			}
+
+			foreach ( $quiz_grades as $question_id => $points ) {
+				$answer = $answers_map[ $question_id ];
+				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
+			}
+
+			$transient_key = self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id );
+			set_transient( $transient_key, $quiz_grades, 10 * DAY_IN_SECONDS );
+
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			delete_transient( self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id ) );
+			delete_transient( self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id ) );
+
+			$exception->log( 'saving question grades' );
 			return false;
 		}
-
-		Sensei()->quiz_grade_repository->delete_all( $submission );
-
-		$answers     = Sensei()->quiz_answer_repository->get_all( $submission->get_id() );
-		$answers_map = [];
-		foreach ( $answers as $answer ) {
-			$answers_map[ $answer->get_question_id() ] = $answer;
-		}
-
-		foreach ( $quiz_grades as $question_id => $points ) {
-			$answer = $answers_map[ $question_id ];
-			Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
-		}
-
-		$transient_key = self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id );
-		set_transient( $transient_key, $quiz_grades, 10 * DAY_IN_SECONDS );
-
-		return true;
 
 	}
 
@@ -1436,24 +1519,31 @@ class Sensei_Quiz {
 			$encoded_answers_feedback[ $question_id ] = base64_encode( $feedback );
 		}
 
-		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-		if ( ! $submission ) {
+		try {
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			if ( ! $submission ) {
+				return false;
+			}
+
+			$grades = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
+			foreach ( $grades as $grade ) {
+				$feedback = $encoded_answers_feedback[ $grade->get_question_id() ];
+				$grade->set_feedback( $feedback );
+			}
+
+			Sensei()->quiz_grade_repository->save_many( $submission, $grades );
+
+			// Save transient to make retrieval faster in the future.
+			$transient_key = self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
+			set_transient( $transient_key, $encoded_answers_feedback, 10 * DAY_IN_SECONDS );
+
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			delete_transient( self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id ) );
+
+			$exception->log( 'saving quiz feedback' );
 			return false;
 		}
-
-		$grades = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
-		foreach ( $grades as $grade ) {
-			$feedback = $encoded_answers_feedback[ $grade->get_question_id() ];
-			$grade->set_feedback( $feedback );
-		}
-
-		Sensei()->quiz_grade_repository->save_many( $submission, $grades );
-
-		// Save transient to make retrieval faster in the future.
-		$transient_key = self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
-		set_transient( $transient_key, $encoded_answers_feedback, 10 * DAY_IN_SECONDS );
-
-		return true;
 
 	}
 
@@ -1971,6 +2061,25 @@ class Sensei_Quiz {
 			&lt;?php
 		}
 
+		?>
+		&lt;input type="hidden" name="questions_asked_signature" form="sensei-quiz-form" value="&lt;?php echo esc_attr( self::get_questions_asked_signature( (int) get_the_ID(), $sensei_question_loop['questions_asked'] ?? array() ) ); ?>">
+		&lt;?php
+	}
+
+	/**
+	 * Sign the set of questions a quiz asks, so the form cannot come back with another set.
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int   $quiz_id      Quiz ID.
+	 * @param int[] $question_ids IDs of the questions asked.
+	 * @return string
+	 */
+	private static function get_questions_asked_signature( int $quiz_id, array $question_ids ): string {
+		$question_ids = array_unique( array_map( 'intval', $question_ids ) );
+		sort( $question_ids );
+
+		return wp_hash( $quiz_id . '-' . implode( ',', $question_ids ), 'nonce' );
 	}
 
 	/**
@@ -2001,12 +2110,12 @@ class Sensei_Quiz {
 	 * Render the quiz progress bar for existing callers.
 	 *
 	 * @since 3.15.0
-	 * @deprecated $$next-version$$ Automatic quiz progress bars have been retired. No replacement.
+	 * @deprecated 4.27.0 Automatic quiz progress bars have been retired. No replacement.
 	 *
 	 * @return void
 	 */
 	public static function the_quiz_progress_bar() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.27.0' );
 
 		$quiz_id             = get_the_ID();
 		$pagination_settings = json_decode(
@@ -2277,7 +2386,6 @@ class Sensei_Quiz {
 		}
 
 		wp_delete_post( $quiz_id );
-
 	}
 
 	/**
