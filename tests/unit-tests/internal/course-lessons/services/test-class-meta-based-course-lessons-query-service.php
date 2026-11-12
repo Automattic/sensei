@@ -234,4 +234,62 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( array( $course['lesson_ids'][1], $course['lesson_ids'][0] ), $actual );
 	}
+
+	/**
+	 * A lesson query with the lesson order course query var returns the lessons that have an order in that course, in that order.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::order_lessons_in_course
+	 */
+	public function testOrderLessonsInCourse_LessonOrderStored_ReturnsOnlyTheOrderedLessonsInOrder(): void {
+		/* Arrange. */
+		$second_lesson = $this->factory->lesson->create();
+		$first_lesson  = $this->factory->lesson->create();
+		$this->factory->lesson->create();
+		Sensei()->course_lessons_repository->set_lesson_order( $second_lesson, 5, 10 );
+		Sensei()->course_lessons_repository->set_lesson_order( $first_lesson, 5, 2 );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'                  => 'lesson',
+				'posts_per_page'             => -1,
+				'fields'                     => 'ids',
+				'sensei_lesson_order_course' => 5,
+				'orderby'                    => 'date',
+				'order'                      => 'ASC',
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $first_lesson, $second_lesson ), $actual );
+	}
+
+	/**
+	 * A lesson query with the lesson order module query var returns the lessons that have an order in that module, in that order.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::order_lessons_in_module
+	 */
+	public function testOrderLessonsInModule_LessonOrderStored_ReturnsOnlyTheOrderedLessonsInOrder(): void {
+		/* Arrange. */
+		$second_lesson = $this->factory->lesson->create();
+		$first_lesson  = $this->factory->lesson->create();
+		$this->factory->lesson->create();
+		Sensei()->course_lessons_repository->set_lesson_module_order( $second_lesson, 5, 10 );
+		Sensei()->course_lessons_repository->set_lesson_module_order( $first_lesson, 5, 2 );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'                  => 'lesson',
+				'posts_per_page'             => -1,
+				'fields'                     => 'ids',
+				'sensei_lesson_order_module' => 5,
+				'orderby'                    => 'date',
+				'order'                      => 'ASC',
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $first_lesson, $second_lesson ), $actual );
+	}
 }

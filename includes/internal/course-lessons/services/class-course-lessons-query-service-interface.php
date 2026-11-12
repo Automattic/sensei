@@ -30,4 +30,26 @@ interface Course_Lessons_Query_Service_Interface {
 	 * @param \WP_Query $query The query being prepared.
 	 */
 	public function filter_lessons_by_course( \WP_Query $query ): void;
+
+	/**
+	 * Sort the lessons of a query by their order in the course set in the `sensei_lesson_order_course` query var.
+	 *
+	 * Lessons without an order in the course are not returned.
+	 *
+	 * @internal
+	 *
+	 * @param \WP_Query $query The query being prepared.
+	 */
+	public function order_lessons_in_course( \WP_Query $query ): void;
+
+	/**
+	 * Sort the lessons of a query by their order in the module set in the `sensei_lesson_order_module` query var.
+	 *
+	 * Lessons without an order in the module are not returned.
+	 *
+	 * @internal
+	 *
+	 * @param \WP_Query $query The query being prepared.
+	 */
+	public function order_lessons_in_module( \WP_Query $query ): void;
 }
