@@ -1129,6 +1129,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			'sensei_question' => $answers,
 			$nonce            => wp_create_nonce( $nonce ),
 		);
+
+		$_POST['questions_asked_signature'] = $this->get_quiz_form_signature();
+
 		$fault           = static function ( $query ) use ( $wpdb ) {
 			return 0 === strpos( $query, "UPDATE `{$wpdb->commentmeta}`" ) && false !== strpos( $query, 'quiz_answers' )
 				? 'UPDATE sensei_missing_quiz_table SET meta_value = 1'

@@ -987,7 +987,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$this->login_as( $owner );
 		$this->setGradingSubmissionGlobals( $quiz_id, $user_id );
 		$_POST[ 'question_' . $question_id . '_grade' ] = 1;
-		$_POST['questions_feedback'][ $question_id ] = 'Unsaved feedback';
+		$_POST['questions_feedback'][ $question_id ]    = 'Unsaved feedback';
 		$this->prevent_wp_redirect();
 
 		/* Act. */
@@ -1112,7 +1112,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 				ob_start();
 				Sensei()->grading->add_grading_notices();
 				$notice = ob_get_clean();
-				self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The grading page must explain the failure.' );
+				self::assertStringContainsString( 'We couldn\'t save all grading changes.', $notice, 'The grading page must explain the failure.' );
 				self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'No grade submission may be created after progress failure.' );
 			}
 		);
@@ -1197,7 +1197,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$notice = ob_get_clean();
 
 		self::assertFalse( $result, 'A failed quiz save must report grading failure.' );
-		self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The grader must see the save failure.' );
+		self::assertStringContainsString( 'We couldn\'t save all grading changes.', $notice, 'The grader must see the save failure.' );
 		self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'A failed quiz save must not announce lesson completion.' );
 	}
 
@@ -1247,7 +1247,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 					$notice = ob_get_clean();
 
 					self::assertFalse( $result, 'The failed course-status update must prevent grading success.' );
-					self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The failure must be visible to the grader.' );
+					self::assertStringContainsString( 'We couldn\'t save all grading changes.', $notice, 'The failure must be visible to the grader.' );
 				} finally {
 					remove_action( 'sensei_user_lesson_end', $remove_progress, 9 );
 				}

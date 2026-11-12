@@ -273,7 +273,7 @@ class Sensei_Grading_User_Quiz {
 					$submitted_grade     = (string) $submitted_input[ $grade_field ];
 					$user_question_grade = '' === $submitted_grade ? false : absint( $submitted_grade );
 				}
-				$graded_class        = 'ungraded';
+				$graded_class = 'ungraded';
 
 				// Question with no grade value associated with it.
 				if ( 0 === $question_grade_total ) {
@@ -304,7 +304,7 @@ class Sensei_Grading_User_Quiz {
 							<input type="hidden" class="question_total_grade" name="question_total_grade" value="<?php echo esc_attr( $question_grade_total ); ?>" />
 							<span class="grading-mark icon_right"><input type="radio" class="<?php echo esc_attr( 'question_' . $question_id . '_right_option' ); ?>" name="<?php echo esc_attr( 'question_' . $question_id ); ?>" value="right" <?php checked( $graded_class, 'user_right', true ); ?> /></span>
 							<span class="grading-mark icon_wrong"><input type="radio" class="<?php echo esc_attr( 'question_' . $question_id . '_wrong_option' ); ?>" name="<?php echo esc_attr( 'question_' . $question_id ); ?>" value="wrong" <?php checked( $graded_class, 'user_wrong', true ); ?> /></span>
-							<input type="number" class="question-grade" name="<?php echo esc_attr( 'question_' . $question_id . '_grade' ); ?>" id="<?php echo esc_attr( 'question_' . $question_id . '_grade' ); ?>" value="<?php echo esc_attr( $user_question_grade ); ?>" min="0" max="<?php echo esc_attr( $question_grade_total ); ?>" />
+							<input type="number" class="question-grade" name="<?php echo esc_attr( 'question_' . $question_id . '_grade' ); ?>" id="<?php echo esc_attr( 'question_' . $question_id . '_grade' ); ?>" value="<?php echo esc_attr( (string) $user_question_grade ); ?>" min="0" max="<?php echo esc_attr( $question_grade_total ); ?>" />
 							<span class="question-grade-total"><?php echo esc_html( $question_grade_total ); ?></span>
 						</div>
 					</div>
@@ -403,14 +403,14 @@ class Sensei_Grading_User_Quiz {
 			}
 
 			?>
-			<input type="hidden" name="total_grade" id="total_grade" value="<?php echo esc_attr( $user_quiz_grade_total ); ?>" />
+			<input type="hidden" name="total_grade" id="total_grade" value="<?php echo esc_attr( (string) $user_quiz_grade_total ); ?>" />
 			<input type="hidden" name="total_questions" id="total_questions" value="<?php echo esc_attr( $count ); ?>" />
 			<input type="hidden" name="quiz_grade_total" id="quiz_grade_total" value="<?php echo esc_attr( $quiz_grade_total ); ?>" />
 			<input type="hidden" name="total_graded_questions" id="total_graded_questions" value="<?php echo esc_attr( $graded_count ); ?>" />
 			<input type="hidden" name="all_questions_graded" id="all_questions_graded" value="<?php echo esc_attr( $all_graded ); ?>" />
 			<div class="total_grade_display">
 				<span><?php esc_attr_e( 'Grade:', 'sensei-lms' ); ?></span>
-				<span class="total_grade_total"><?php echo esc_html( $user_quiz_grade_total ); ?></span> / <span class="quiz_grade_total"><?php echo esc_html( $quiz_grade_total ); ?></span> (<span class="total_grade_percent"><?php echo esc_html( $quiz_grade ); ?></span>%)
+				<span class="total_grade_total"><?php echo esc_html( (string) $user_quiz_grade_total ); ?></span> / <span class="quiz_grade_total"><?php echo esc_html( $quiz_grade_total ); ?></span> (<span class="total_grade_percent"><?php echo esc_html( $quiz_grade ); ?></span>%)
 			</div>
 			<div class="buttons">
 				<input type="submit" value="<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
