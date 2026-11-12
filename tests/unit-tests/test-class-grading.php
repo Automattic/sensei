@@ -982,24 +982,31 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$user_id                     = $this->factory->user->create();
 		list( $quiz_id, $lesson_id ) = $this->createOwnedPassRequiredQuiz( $owner );
 		$question_id                 = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
 		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
 		$this->login_as( $owner );
 		$this->setGradingSubmissionGlobals( $quiz_id, $user_id );
 		$_POST[ 'question_' . $question_id . '_grade' ] = 1;
+		$_POST['questions_feedback'][ $question_id ] = 'Unsaved feedback';
 		$this->prevent_wp_redirect();
 
 		/* Act. */
 		$this->with_failed_insert(
 			$GLOBALS['wpdb']->prefix . $table,
-			function () use ( $quiz_id, $user_id ) {
+			function () use ( $quiz_id, $user_id, $question_id ) {
 				$result = Sensei()->grading->admin_process_grading_submission();
 				ob_start();
 				Sensei()->grading->add_grading_notices();
 				$notice = ob_get_clean();
+				ob_start();
+				Sensei()->grading->grading_user_quiz_view();
+				$form = ob_get_clean();
 
 				/* Assert. */
 				self::assertFalse( $result, 'A failed grade write must stop the success redirect.' );
-				self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The admin must see the existing grading failure notice.' );
+				self::assertStringContainsString( 'name="question_' . $question_id . '_grade" id="question_' . $question_id . '_grade" value="1"', $form, 'The entered grade must remain in the form.' );
+				self::assertStringContainsString( '>Unsaved feedback</textarea>', $form, 'The entered feedback must remain in the form.' );
+				self::assertStringContainsString( 'We couldn\'t save all grading changes.', $notice, 'The admin must see the grading failure notice.' );
 				self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'No final grade may be saved after the question grade failed.' );
 			},
 			null,

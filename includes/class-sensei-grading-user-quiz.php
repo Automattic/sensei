@@ -86,8 +86,10 @@ class Sensei_Grading_User_Quiz {
 	 * This view is shown when grading a quiz for a single user in admin under grading
 	 *
 	 * @since  1.3.0
+	 *
+	 * @param array $submitted_input Values from a failed grading request, if any.
 	 */
-	public function display() {
+	public function display( $submitted_input = array() ) {
 		// Get data for the user.
 		$questions = $this->build_data_array();
 
@@ -135,6 +137,12 @@ class Sensei_Grading_User_Quiz {
 
 				if ( ! $correct_feedback && ! $incorrect_feedback ) {
 					$custom_feedback = $question_answer_notes;
+				}
+				if ( isset( $submitted_input['questions_feedback'] )
+					&& is_array( $submitted_input['questions_feedback'] )
+					&& array_key_exists( $question_id, $submitted_input['questions_feedback'] ) ) {
+					$submitted_feedback = $submitted_input['questions_feedback'][ $question_id ];
+					$custom_feedback    = is_string( $submitted_feedback ) ? wp_kses_post( $submitted_feedback ) : '';
 				}
 
 				$question_grade_total = Sensei()->question->get_question_grade( $question_id );
@@ -260,6 +268,11 @@ class Sensei_Grading_User_Quiz {
 
 				$graded_class        = '';
 				$user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
+				$grade_field         = 'question_' . $question_id . '_grade';
+				if ( array_key_exists( $grade_field, $submitted_input ) && is_scalar( $submitted_input[ $grade_field ] ) ) {
+					$submitted_grade     = (string) $submitted_input[ $grade_field ];
+					$user_question_grade = '' === $submitted_grade ? false : absint( $submitted_grade );
+				}
 				$graded_class        = 'ungraded';
 
 				// Question with no grade value associated with it.

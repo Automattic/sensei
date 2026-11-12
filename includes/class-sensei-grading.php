@@ -401,6 +401,8 @@ class Sensei_Grading {
 		}
 
 		$sensei_grading_user_profile = new Sensei_Grading_User_Quiz( $user_id, $quiz_id );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The grading handler validates this request before setting the failure flag; the form sanitizes each submitted value.
+		$submitted_input = $this->progress_save_failed ? wp_unslash( $_POST ) : array();
 
 		// Wrappers
 		/**
@@ -432,7 +434,7 @@ class Sensei_Grading {
 		?>
 		<div id="poststuff" class="sensei-grading-wrap user-profile">
 			<div class="sensei-grading-main">
-				<?php $sensei_grading_user_profile->display(); ?>
+				<?php $sensei_grading_user_profile->display( $submitted_input ); ?>
 			</div>
 		</div>
 		<?php
@@ -1118,7 +1120,7 @@ class Sensei_Grading {
 
 	public function add_grading_notices() {
 		if ( $this->progress_save_failed ) {
-			wp_admin_notice( __( 'We couldn\'t save these grading changes. Some changes may have been saved. Review the values shown and re-enter any missing grades or feedback before trying again. Contact your site administrator if the problem continues.', 'sensei-lms' ), array( 'type' => 'error' ) );
+			wp_admin_notice( __( 'We couldn\'t save all grading changes. Your entered grades and feedback are shown below, but they may not all be saved. Keep this page open, review them, and try again. Contact your site administrator if the problem continues.', 'sensei-lms' ), array( 'type' => 'error' ) );
 			return;
 		}
 

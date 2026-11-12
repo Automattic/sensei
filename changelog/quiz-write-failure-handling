@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Report failed quiz answer and grading writes without showing success.
+Report failed quiz writes while retaining typed answers and manual grading input.
