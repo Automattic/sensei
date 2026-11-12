@@ -900,8 +900,8 @@ class Sensei_Core_Modules {
 			// Set order of lessons
 			if ( version_compare( Sensei()->version, '1.6.0', '>=' ) ) {
 				$module_id = $query->queried_object_id;
-				$query->set( 'meta_key', '_order_module_' . $module_id );
-				$query->set( 'orderby', 'meta_value_num date' );
+				$query->set( 'sensei_lesson_order_module', $module_id );
+				$query->set( 'orderby', 'date' );
 			} else {
 				$query->set( 'orderby', 'menu_order' );
 			}
@@ -2124,8 +2124,8 @@ class Sensei_Core_Modules {
 		);
 
 		if ( version_compare( Sensei()->version, '1.6.0', '>=' ) ) {
-			$args['meta_key'] = '_order_module_' . intval( $term_id );
-			$args['orderby']  = 'meta_value_num date ID';
+			$args['sensei_lesson_order_module'] = intval( $term_id );
+			$args['orderby']                    = 'date ID';
 		}
 
 		$lessons_query = new WP_Query( $args );
