@@ -39,7 +39,10 @@ class Sensei_Exit_Survey_Test extends WP_UnitTestCase {
 
 	public function testSaveExitSurvey_AdministratorWithNonceGiven_StoresTheFeedback() {
 		/* Arrange. */
+		// Let site administrators activate and deactivate plugins on multisite.
+		update_site_option( 'menu_items', array( 'plugins' => 1 ) );
 		$this->login_as_admin();
+
 		$_REQUEST['_wpnonce'] = wp_create_nonce( 'sensei_exit_survey' );
 		$_POST['reason']      = 'other';
 

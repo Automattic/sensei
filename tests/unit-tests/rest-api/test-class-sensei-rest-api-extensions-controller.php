@@ -26,6 +26,9 @@ class Sensei_REST_API_Extensions_Controller_Test extends WP_Test_REST_TestCase {
 
 	public function testInstallExtension_UserWithoutInstallCapabilityGiven_ReturnsForbidden() {
 		/* Arrange. */
+		// On multisite, users who can update plugins can always install them.
+		$this->skipWithMultisite();
+
 		$this->login_as_admin();
 		wp_get_current_user()->add_cap( 'install_plugins', false );
 
@@ -42,7 +45,9 @@ class Sensei_REST_API_Extensions_Controller_Test extends WP_Test_REST_TestCase {
 
 	public function testCanUserInstallPlugins_AdministratorGiven_ReturnsTrue() {
 		/* Arrange. */
+		// On multisite only super admins can manage plugins.
 		$this->login_as_admin();
+		grant_super_admin( get_current_user_id() );
 
 		/* Act. */
 		$actual = ( new Sensei_REST_API_Extensions_Controller( 'sensei-internal/v1' ) )->can_user_install_plugins( new WP_REST_Request() );

@@ -232,8 +232,10 @@ class Email_List_Table_Test extends \WP_UnitTestCase {
 
 	public function testGetRowData_WhenTitleContainsHtml_EscapesTheCheckboxLabel() {
 		/* Arrange. */
-		// An admin keeps the HTML in the title on save (unfiltered_html).
-		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		// An admin keeps the HTML in the title on save (unfiltered_html). On multisite that takes a super admin.
+		$user_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		grant_super_admin( $user_id );
+		wp_set_current_user( $user_id );
 
 		$list_table = new Email_List_Table( new Email_Repository() );
 		$post_id    = $this->factory->email->create( array( 'post_title' => '<script>alert(1)</script>' ) );
