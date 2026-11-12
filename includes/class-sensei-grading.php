@@ -818,6 +818,8 @@ class Sensei_Grading {
 			 *
 			 * @hook sensei_grading_filter_lessons
 			 *
+			 * @since $$next-version$$ The course is given in the `sensei_course` argument instead of a `_lesson_course` meta clause.
+			 *
 			 * @param {array} $lesson_args Array of arguments for the query.
 			 * @return {array} Filtered arguments.
 			 */

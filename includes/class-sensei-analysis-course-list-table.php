@@ -786,6 +786,8 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		 *
 		 * @hook sensei_analysis_course_filter_lessons
 		 *
+		 * @since $$next-version$$ The course is given in the `sensei_course` argument instead of a `_lesson_course` meta clause.
+		 *
 		 * @param {array} $lessons_args The lessons arguments.
 		 * @return {array} The lessons arguments.
 		 */

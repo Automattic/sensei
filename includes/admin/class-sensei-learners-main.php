@@ -805,6 +805,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		 *
 		 * @hook sensei_learners_filter_lessons
 		 *
+		 * @since $$next-version$$ The course is given in the `sensei_course` argument instead of a `_lesson_course` meta clause.
+		 *
 		 * @param {array} $lesson_args Lesson query arguments.
 		 * @return {array} The modified arguments.
 		 */
