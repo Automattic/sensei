@@ -432,7 +432,7 @@ describe( '<StudentModal />', () => {
 
 			expect(
 				await findAllByText(
-					'Unable to reset progress. Some changes may have been saved. Review student progress before trying again.'
+					"We couldn't finish resetting progress. Some progress or quiz answers may already have been cleared. Refresh the page and review student progress before taking further action. If it looks inconsistent, contact your site administrator."
 				)
 			).toBeTruthy();
 			expect( onClose ).not.toHaveBeenCalled();
@@ -540,7 +540,7 @@ describe( '<StudentModal />', () => {
 				expect(
 					// In addition to the notice, there is an ARIA element that has this text.
 					await findAllByText(
-						'Unable to reset progress. Some changes may have been saved. Review student progress before trying again.'
+						"We couldn't finish resetting progress. Some progress or quiz answers may already have been cleared. Refresh the page and review student progress before taking further action. If it looks inconsistent, contact your site administrator."
 					)
 				).toBeTruthy();
 			} );
@@ -641,7 +641,7 @@ describe( '<StudentModal />', () => {
 
 				expect(
 					await findAllByText(
-						'Unable to reset progress. Some changes may have been saved. Review student progress before trying again.'
+						"We couldn't finish resetting progress. Some progress or quiz answers may already have been cleared. Refresh the page and review student progress before taking further action. If it looks inconsistent, contact your site administrator."
 					)
 				).toBeTruthy();
 			} );

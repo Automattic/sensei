@@ -216,7 +216,7 @@ export const StudentModal = ( {
 
 			if ( action === 'reset-progress' ) {
 				// A 200 response can contain failed or missing student/course results.
-				// Keep the selection open for retry; refresh if any reset persisted.
+				// Keep the selection visible; refresh if any reset persisted.
 				const outcomes = getBatchOutcomes(
 					result,
 					students,

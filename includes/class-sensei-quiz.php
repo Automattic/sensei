@@ -369,7 +369,7 @@ class Sensei_Quiz {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 			$this->add_progress_failure_notice(
 				__( 'Unable to save your answers', 'sensei-lms' ),
-				__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+				__( 'Review the answers shown below and reselect any files before trying again. Keep this page open.', 'sensei-lms' )
 			);
 		}
 
@@ -670,7 +670,7 @@ class Sensei_Quiz {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 			$this->add_progress_failure_notice(
 				__( 'Unable to submit your answers', 'sensei-lms' ),
-				__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+				__( 'Review the answers shown below and reselect any files before trying again. Keep this page open.', 'sensei-lms' )
 			);
 			return;
 		}
@@ -741,7 +741,7 @@ class Sensei_Quiz {
 				$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 				$this->add_progress_failure_notice(
 					__( 'Unable to change quiz pages', 'sensei-lms' ),
-					__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+					__( 'Review the answers shown below and reselect any files before trying again. Keep this page open.', 'sensei-lms' )
 				);
 				return;
 			}
