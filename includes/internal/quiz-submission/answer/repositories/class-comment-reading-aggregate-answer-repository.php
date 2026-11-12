@@ -107,10 +107,9 @@ class Comment_Reading_Aggregate_Answer_Repository implements Answer_Repository_I
 	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function delete_all( Submission_Interface $submission ): void {
-		$this->comments_based_repository->delete_all( $submission );
-
 		$tables_based_submission = $this->get_or_create_tables_based_submission( $submission );
 		$this->tables_based_repository->delete_all( $tables_based_submission );
+		$this->comments_based_repository->delete_all( $submission );
 	}
 
 	/**

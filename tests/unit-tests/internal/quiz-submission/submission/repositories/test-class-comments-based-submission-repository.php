@@ -4,6 +4,7 @@ namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
 use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei_Utils;
 
@@ -242,7 +243,12 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	public function testDelete_WhenCalled_DeletesTheGrade(): void {
+	/**
+	 * Deleting a submission removes the metadata used to find it.
+	 *
+	 * @covers \Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository::delete
+	 */
+	public function testDelete_WhenCalled_DeletesTheSubmission(): void {
 		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
@@ -259,7 +265,33 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete( $submission );
 
 		/* Assert. */
-		$this->assertNull( $repository->get( $quiz_id, $user_id )->get_final_grade() );
+		$this->assertNull( $repository->get( $quiz_id, $user_id ) );
+		$this->assertFalse( metadata_exists( 'comment', $submission_id, 'grade' ) );
+	}
+
+	/**
+	 * A table submission ID must not be used as a comment ID.
+	 *
+	 * @covers \Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository::delete
+	 */
+	public function testDelete_TablesSubmissionGiven_DeletesTheMatchingCommentMetadata(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
+		$repository = new Comments_Based_Submission_Repository();
+		$comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		update_comment_meta( $comment_id, 'questions_asked', '1,2' );
+		$repository->create( $quiz_id, $user_id, 12.34 );
+		$now        = new \DateTimeImmutable();
+		$submission = new Tables_Based_Submission( $comment_id + 1000, $quiz_id, $user_id, null, $now, $now );
+
+		/* Act. */
+		$repository->delete( $submission );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'comment', $comment_id, 'questions_asked' ) );
+		self::assertFalse( metadata_exists( 'comment', $comment_id, 'grade' ) );
 	}
 
 	private function export_submission( Comments_Based_Submission $submission ): array {
