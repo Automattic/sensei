@@ -1097,7 +1097,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	public function testStartQuizQuestionsLoop_RequiredAnswerWriteFailed_RendersSubmittedQuestions(
 		string $listener,
 		string $button,
-		string $nonce
+		string $nonce,
+		array $quiz_options
 	): void {
 		/* Arrange. */
 		global $sensei_question_loop;
@@ -1105,32 +1106,28 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		$this->set_progress_storage_mode( 'comments-only' );
 		Sensei_Course_Enrolment_Manager::instance()->collect_enrolment_providers();
-		$course_data  = $this->factory->get_course_with_lessons(
-			array(
-				'question_count' => 2,
-				'question_args'  => array( 'question_type' => 'multi-line' ),
-			)
-		);
-		$lesson_id    = $course_data['lesson_ids'][0];
-		$quiz_id      = $course_data['quiz_ids'][0];
-		$question_ids = wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' );
-		$user_id      = $this->factory->user->create();
-		$answers      = array(
-			$question_ids[0] => 'First submitted answer',
-			$question_ids[1] => 'Second submitted answer',
-		);
+		$course_data = $this->factory->get_course_with_lessons( $quiz_options );
+		$lesson_id   = $course_data['lesson_ids'][0];
+		$quiz_id     = $course_data['quiz_ids'][0];
+		$user_id     = $this->factory->user->create();
 		Sensei_Course_Enrolment::get_course_instance( $course_data['course_id'] )->enrol( $user_id );
 		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 		wp_set_current_user( $user_id );
 		$this->go_to( get_permalink( $quiz_id ) );
-		$_POST = array(
-			$button           => get_permalink( $quiz_id ),
-			'questions_asked' => $question_ids,
-			'sensei_question' => $answers,
-			$nonce            => wp_create_nonce( $nonce ),
+		// Capture the questions chosen for this form before the failed save.
+		$signature    = $this->get_quiz_form_signature();
+		$question_ids = $sensei_question_loop['questions_asked'];
+		$answers      = array(
+			$question_ids[0] => 'First submitted answer',
+			$question_ids[1] => 'Second submitted answer',
 		);
-
-		$_POST['questions_asked_signature'] = $this->get_quiz_form_signature();
+		$_POST = array(
+			$button                     => get_permalink( $quiz_id ),
+			'questions_asked'           => $question_ids,
+			'questions_asked_signature' => $signature,
+			'sensei_question'           => $answers,
+			$nonce                      => wp_create_nonce( $nonce ),
+		);
 
 		$fault           = static function ( $query ) use ( $wpdb ) {
 			return 0 === strpos( $query, "UPDATE `{$wpdb->commentmeta}`" ) && false !== strpos( $query, 'quiz_answers' )
@@ -1160,14 +1157,26 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Student actions that must keep submitted questions on a failed save.
+	 * Student actions and quiz layouts that must keep submitted questions on a failed save.
 	 *
 	 * @return array
 	 */
 	public static function failed_answer_form_requests(): array {
+		$plain_quiz = array(
+			'question_count' => 2,
+			'question_args'  => array( 'question_type' => 'multi-line' ),
+		);
+		$category_quiz = array(
+			'question_count'          => 0,
+			'multiple_question_count' => 1,
+			'multiple_question_args'  => array( 'question_number' => 2 ),
+			'quiz_args'               => array( 'meta_input' => array( '_random_question_order' => 'yes' ) ),
+		);
+
 		return array(
-			'save'   => array( 'user_save_quiz_answers_listener', 'quiz_save', 'woothemes_sensei_save_quiz_nonce' ),
-			'submit' => array( 'user_quiz_submit_listener', 'quiz_complete', 'woothemes_sensei_complete_quiz_nonce' ),
+			'save'          => array( 'user_save_quiz_answers_listener', 'quiz_save', 'woothemes_sensei_save_quiz_nonce', $plain_quiz ),
+			'submit'        => array( 'user_quiz_submit_listener', 'quiz_complete', 'woothemes_sensei_complete_quiz_nonce', $plain_quiz ),
+			'category save' => array( 'user_save_quiz_answers_listener', 'quiz_save', 'woothemes_sensei_save_quiz_nonce', $category_quiz ),
 		);
 	}
 
