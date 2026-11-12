@@ -1169,7 +1169,9 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 	public function testUpdateCourseStatus_WhenPreviousStatusFound_PassesSameStatusAsPreviousStatusToTheAction(): void {
 		/* Arrange. */
-		Sensei()->course_progress_repository->create( 2, 1 );
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+		Sensei()->course_progress_repository->create( $course_id, $user_id );
 
 		$previous_status = 'not-set';
 		$action          = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
@@ -1178,7 +1180,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		add_action( 'sensei_course_status_updated', $action, 10, 5 );
 
 		/* Act. */
-		Sensei_Utils::update_course_status( 1, 2, 'complete' );
+		Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
 
 		/* Assert. */
 		$this->assertSame( 'in-progress', $previous_status );
