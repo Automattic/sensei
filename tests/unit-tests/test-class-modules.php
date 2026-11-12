@@ -891,4 +891,82 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		/* Assert: the whole hierarchy, not only the teacher's terms — core caches this map site-wide. */
 		self::assertSame( array( $parent['term_id'] => array( $child['term_id'] ) ), $hierarchy );
 	}
+
+	public function testModuleOrderScreen_CourseOfAnotherTeacherGiven_DiesWithInsufficientPermissions() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_author' => $this->get_user_by_role( 'teacher', '_b' ) ) );
+		$this->login_as_teacher();
+		set_current_screen( 'admin_page_module-order' );
+		$_GET['course_id'] = $course_id;
+
+		/* Act. */
+		$exception = null;
+		ob_start();
+		try {
+			Sensei()->modules->module_order_screen();
+		} catch ( WPDieException $e ) {
+			$exception = $e;
+		} finally {
+			ob_end_clean();
+		}
+
+		/* Assert. */
+		$this->assertSame( 'Insufficient permissions', $exception ? $exception->getMessage() : null );
+	}
+
+	public function testModuleOrderScreen_OwnCourseGiven_RendersItsModules() {
+		/* Arrange. */
+		$teacher_id = $this->get_user_by_role( 'teacher' );
+		$course_id  = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$term       = wp_insert_term( 'Own module', 'module' );
+		update_term_meta( $term['term_id'], 'module_author', $teacher_id );
+		wp_set_object_terms( $course_id, array( $term['term_id'] ), 'module' );
+		$this->login_as_teacher();
+		set_current_screen( 'admin_page_module-order' );
+		$_GET['course_id'] = $course_id;
+
+		/* Act. */
+		ob_start();
+		Sensei()->modules->module_order_screen();
+		$output = ob_get_clean();
+
+		/* Assert. */
+		$this->assertStringContainsString( 'Own module', $output );
+	}
+
+	public function testModuleBreadcrumbLink_WhenModuleIsLinked_EscapesTheModuleName() {
+		/* Arrange. */
+		global $wpdb;
+
+		$lesson_id = $this->factory->lesson->create();
+		$module    = wp_insert_term( 'Module', 'module', array( 'description' => 'Description' ) );
+		wp_set_object_terms( $lesson_id, $module['term_id'], 'module' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Bypasses the sanitization of term names on save.
+		$wpdb->update( $wpdb->terms, array( 'name' => '<b>Module</b>' ), array( 'term_id' => $module['term_id'] ) );
+		$this->go_to( get_permalink( $lesson_id ) );
+
+		/* Act. */
+		$html = Sensei()->modules->module_breadcrumb_link( '', '>' );
+
+		/* Assert. */
+		$this->assertStringContainsString( '&lt;b&gt;Module&lt;/b&gt;</a>', $html );
+	}
+
+	public function testModuleBreadcrumbLink_WhenModuleIsNotLinked_EscapesTheModuleName() {
+		/* Arrange. */
+		global $wpdb;
+
+		$lesson_id = $this->factory->lesson->create();
+		$module    = wp_insert_term( 'Module', 'module', array( 'description' => '' ) );
+		wp_set_object_terms( $lesson_id, $module['term_id'], 'module' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Bypasses the sanitization of term names on save.
+		$wpdb->update( $wpdb->terms, array( 'name' => '<b>Module</b>' ), array( 'term_id' => $module['term_id'] ) );
+		$this->go_to( get_permalink( $lesson_id ) );
+
+		/* Act. */
+		$html = Sensei()->modules->module_breadcrumb_link( '', '>' );
+
+		/* Assert. */
+		$this->assertSame( ' > &lt;b&gt;Module&lt;/b&gt;', $html );
+	}
 }

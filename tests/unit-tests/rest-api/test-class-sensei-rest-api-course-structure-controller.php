@@ -385,6 +385,44 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertSame( 'Teacher A module', get_term( $module_id, 'module' )->name, 'The module should be untouched.' );
 	}
+
+	/**
+	 * A user who can edit the course without owning its modules, like an editor or a Sensei Pro
+	 * co-teacher, can save a lesson edit when a module of the course has a custom slug.
+	 *
+	 * @covers Sensei_REST_API_Course_Structure_Controller::save_course_structure
+	 */
+	public function testSaveCourseStructure_CustomSlugModuleOfCourseTeacherGivenByAnotherUser_SavesLessonEdit() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		Sensei_Course_Structure::instance( $course_id )->save(
+			array(
+				array(
+					'type'    => 'module',
+					'title'   => 'Basics',
+					'slug'    => 'custom-basics',
+					'lessons' => array(
+						array(
+							'type'  => 'lesson',
+							'title' => 'Lesson',
+						),
+					),
+				),
+			)
+		);
+		$structure                           = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+		$structure[0]['lessons'][0]['title'] = 'Lesson edited';
+		$this->login_as_editor();
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'structure' => $structure ) ) );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status(), 'The save should be accepted.' );
+		$this->assertSame( 'Lesson edited', get_post( $structure[0]['lessons'][0]['id'] )->post_title, 'The lesson edit should be saved.' );
+	}
+
 	/**
 	 * Tests to make sure an guest cannot edit course structure with `POST /sensei-internal/v1/course-structure/{course_id}`.
 	 */

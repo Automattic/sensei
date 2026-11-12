@@ -195,7 +195,26 @@ class Sensei_Home_Tasks_Provider {
 		// Attach the update_tasks_statuses method to filters and actions
 		// that can affect the status of the Sensei Home tasks.
 		add_action( 'save_post_course', [ $this, 'update_tasks_statuses' ] );
-		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'update_tasks_statuses' ] );
+		add_action( 'wp_ajax_sensei_settings_section_visited', array( $this, 'handle_settings_section_visited' ) );
+	}
+
+	/**
+	 * Updates the tasks statuses when a settings section is visited, after checking the request.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 */
+	public function handle_settings_section_visited() {
+		if (
+			! isset( $_POST['nonce'] )
+			|| ! wp_verify_nonce( sensei_request_text( $_POST['nonce'] ), 'sensei-mark-settings-section-visited' )
+			|| ! current_user_can( 'manage_sensei' )
+		) {
+			return;
+		}
+
+		$this->update_tasks_statuses();
 	}
 
 	/**

@@ -74,14 +74,13 @@ remove a transitive package directly when its parent is still used.
 ## 3. If the dependency is obsolete
 
 Do not turn the Dependabot update branch into a removal. Create a separate
-cleanup branch from a freshly fetched `origin/trunk`, never with a `codex/`
-prefix. Remove the direct declaration, regenerate only the applicable lockfile,
+cleanup branch from a freshly fetched `origin/trunk`. Remove the direct declaration, regenerate only the applicable lockfile,
 and confirm that no unrelated dependency or metadata churn entered the diff.
 
 Validate the removal proportionately: perform a clean install, run the smallest
 consumer/build check that could expose a missing dependency, inspect the final
-dependency graph, and run `git diff --check`. Follow `AGENTS.md`; leave broad
-linting, full suites, and compatibility matrices to CI.
+dependency graph, and run `git diff --check`. Follow `AGENTS.md` when choosing
+additional local checks, including broader linting, full suites, or compatibility checks.
 
 Read and follow the repository's `pull-request` skill to commit, push, and open
 the separate cleanup PR. This is internal maintenance, so use `No Changelog`

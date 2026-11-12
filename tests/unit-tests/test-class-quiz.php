@@ -907,6 +907,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		$_POST['quiz_save']                        = '';
 		$_POST['questions_asked']                  = array( $question_id );
+		$_POST['questions_asked_signature']        = $this->get_quiz_form_signature();
 		$_POST['sensei_question']                  = array( $question_id => 'Rewritten answer' );
 		$_POST['woothemes_sensei_save_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' );
 
@@ -1153,6 +1154,139 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			'The function should return true for valid parameters'
 		);
 
+	}
+
+	/**
+	 * Get the signature the form of the current quiz page carries for its asked questions.
+	 *
+	 * @return string
+	 */
+	private function get_quiz_form_signature(): string {
+		Sensei_Quiz::start_quiz_questions_loop();
+		ob_start();
+		Sensei_Quiz::output_quiz_hidden_fields();
+		preg_match( '/name="questions_asked_signature"[^>]*value="(\w+)"/', ob_get_clean(), $matches );
+
+		return $matches[1];
+	}
+
+	/**
+	 * Arrange a learner on a quiz page posting a tampered form: only the first question is declared as asked.
+	 *
+	 * @return array The quiz_id and user_id.
+	 */
+	private function arrange_tampered_quiz_form(): array {
+		$quiz_id      = Sensei()->lesson->lesson_quizzes( $this->factory->get_random_lesson_id() );
+		$question_ids = wp_list_pluck( Sensei()->lesson->lesson_quiz_questions( $quiz_id ), 'ID' );
+
+		$user_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		wp_set_current_user( $user_id );
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		$_POST['questions_asked']           = array( $question_ids[0] );
+		$_POST['questions_asked_signature'] = $this->get_quiz_form_signature();
+		$_POST['sensei_question']           = array( $question_ids[0] => 'true' );
+
+		return array(
+			'quiz_id' => $quiz_id,
+			'user_id' => $user_id,
+		);
+	}
+
+	public function testUserQuizSubmitListener_QuestionsAskedChanged_SavesNothing() {
+		/* Arrange. */
+		$ids = $this->arrange_tampered_quiz_form();
+		add_filter( 'sensei_is_enrolled', '__return_true' );
+
+		$_POST['quiz_complete']                        = '1';
+		$_POST['woothemes_sensei_complete_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' );
+
+		/* Act. */
+		Sensei()->quiz->user_quiz_submit_listener();
+
+		/* Assert. */
+		$this->assertNull( Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] ) );
+
+		remove_filter( 'sensei_is_enrolled', '__return_true' );
+	}
+
+	public function testUserQuizSubmitListener_QuestionsAskedUnchanged_SavesTheAnswers() {
+		/* Arrange. */
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $this->factory->get_random_lesson_id() );
+		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
+
+		$user_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		wp_set_current_user( $user_id );
+		add_filter( 'sensei_is_enrolled', '__return_true' );
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		$_POST['quiz_complete']                        = '1';
+		$_POST['questions_asked']                      = array_keys( $answers );
+		$_POST['questions_asked_signature']            = $this->get_quiz_form_signature();
+		$_POST['sensei_question']                      = $answers;
+		$_POST['woothemes_sensei_complete_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' );
+
+		$this->prevent_wp_redirect();
+
+		/* Act. */
+		try {
+			Sensei()->quiz->user_quiz_submit_listener();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			// The listener redirects after submitting the answers.
+			$redirected = true;
+		}
+
+		/* Assert. */
+		$this->assertTrue( $redirected ?? false, 'The listener should redirect after submitting the answers.' );
+		$this->assertNotNull(
+			Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ),
+			'The answers should be saved when the question set is the one the quiz asked.'
+		);
+
+		remove_filter( 'sensei_is_enrolled', '__return_true' );
+	}
+
+	public function testPageChangeListener_QuestionsAskedChanged_SavesNothing() {
+		/* Arrange. */
+		$ids = $this->arrange_tampered_quiz_form();
+		add_filter( 'sensei_is_enrolled', '__return_true' );
+
+		$_POST['quiz_target_page']              = get_permalink( $ids['quiz_id'] );
+		$_POST['sensei_quiz_page_change_nonce'] = wp_create_nonce( 'sensei_quiz_page_change_nonce' );
+
+		$this->prevent_wp_redirect();
+
+		/* Act. */
+		try {
+			Sensei()->quiz->page_change_listener();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			// The listener always redirects to the target page and exits.
+			$redirected = true;
+		}
+
+		/* Assert. */
+		$this->assertTrue( $redirected ?? false, 'The listener should still redirect to the target page.' );
+		$this->assertNull(
+			Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] ),
+			'No answers should be saved when the question set was changed.'
+		);
+
+		remove_filter( 'sensei_is_enrolled', '__return_true' );
+	}
+
+	public function testUserSaveQuizAnswersListener_QuestionsAskedChanged_SavesNothing() {
+		/* Arrange. */
+		$ids = $this->arrange_tampered_quiz_form();
+		add_filter( 'sensei_is_enrolled', '__return_true' );
+
+		$_POST['quiz_save']                        = '1';
+		$_POST['woothemes_sensei_save_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' );
+
+		/* Act. */
+		Sensei()->quiz->user_save_quiz_answers_listener();
+
+		/* Assert. */
+		$this->assertNull( Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] ) );
 	}
 
 	public function testSubmitAnswersForGrading_WhenNoQuizProgressExist_CreatesQuizProgress(): void {
@@ -1703,7 +1837,12 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$user_id     = $this->factory->user->create();
 		$lesson_id   = $this->factory->get_random_lesson_id();
 		$quiz_id     = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
+		$question_id = $this->factory->question->create(
+			array(
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'single-line',
+			)
+		);
 
 		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
@@ -3344,5 +3483,32 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$this->assertTrue( wp_style_is( 'sensei-single-quiz-style' ) );
+	}
+
+	public function testPrepareFormSubmittedAnswers_OtherUsersAttachmentGiven_DiscardsTheAnswer() {
+		/* Arrange. */
+		$user_id       = $this->factory->user->create();
+		$question_id   = $this->factory->question->create( array( 'question_type' => 'file-upload' ) );
+		$attachment_id = $this->factory->attachment->create( array( 'post_author' => $this->factory->user->create() ) );
+
+		/* Act. */
+		$prepared_answers = Sensei_Quiz::prepare_form_submitted_answers( array( $question_id => (string) $attachment_id ), array(), $user_id );
+
+		/* Assert. */
+		$this->assertSame( '', $prepared_answers[ $question_id ] );
+	}
+
+	public function testPrepareFormSubmittedAnswers_OwnAttachmentGiven_KeepsTheAnswer() {
+		/* Arrange. */
+		$user_id       = $this->factory->user->create();
+		$question_id   = $this->factory->question->create( array( 'question_type' => 'file-upload' ) );
+		$attachment_id = $this->factory->attachment->create( array( 'post_author' => $user_id ) );
+
+		/* Act. */
+		$prepared_answers = Sensei_Quiz::prepare_form_submitted_answers( array( $question_id => (string) $attachment_id ), array(), $user_id );
+
+		/* Assert. */
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding the prepared answer.
+		$this->assertSame( (string) $attachment_id, base64_decode( $prepared_answers[ $question_id ] ) );
 	}
 }

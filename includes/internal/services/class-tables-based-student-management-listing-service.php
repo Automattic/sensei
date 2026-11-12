@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Reads progress for course and lesson student management.
  *
  * @internal
- * @since $$next-version$$
+ * @since 4.27.0
  */
 class Tables_Based_Student_Management_Listing_Service implements Student_Management_Listing_Service_Interface {
 
@@ -36,7 +36,7 @@ class Tables_Based_Student_Management_Listing_Service implements Student_Managem
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param \wpdb $wpdb Database connection.
 	 */
@@ -48,7 +48,7 @@ class Tables_Based_Student_Management_Listing_Service implements Student_Managem
 	/**
 	 * Get student activity and its pagination total.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{items: Students_Item[], total_count: int} Activity rows and total.
@@ -99,7 +99,7 @@ class Tables_Based_Student_Management_Listing_Service implements Student_Managem
 	/**
 	 * Count student activity.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return int Activity count.

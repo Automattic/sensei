@@ -2714,7 +2714,8 @@ class Sensei_Course {
 	public function save_course_notification_meta_box( $course_id ) {
 
 		if ( ! isset( $_POST['_sensei_course_notification'] )
-			|| ! wp_verify_nonce( sensei_request_text( $_POST['_sensei_course_notification'] ), 'update-course-notification-setting' ) ) {
+			|| ! wp_verify_nonce( sensei_request_text( $_POST['_sensei_course_notification'] ), 'update-course-notification-setting' )
+			|| ! current_user_can( 'edit_post', $course_id ) ) {
 			return;
 		}
 
@@ -4290,7 +4291,7 @@ class Sensei_Course {
 			. sprintf(
 				// translators: Placeholder is the item title.
 				esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ),
-				$course_title
+				esc_attr( $course_title )
 			)
 			. '">' . $course_title . '</a>';
 

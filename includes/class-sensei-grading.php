@@ -90,7 +90,7 @@ class Sensei_Grading {
 	 * Create a grading controller with its query-service dependencies.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string                                 $file                    The main plugin file path.
 	 * @param Grading_Listing_Service_Interface      $grading_listing_service The grading listing service.
@@ -1025,6 +1025,10 @@ class Sensei_Grading {
 	}
 
 	public function get_redirect_url() {
+		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
+			wp_die( '', '', 403 );
+		}
+
 		if ( ! isset( $_GET['course_id'] ) || ! isset( $_GET['lesson_id'] ) ) {
 			// Try deprecated functionality as a fallback.
 			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.

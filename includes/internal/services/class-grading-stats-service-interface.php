@@ -46,7 +46,7 @@ interface Grading_Stats_Service_Interface {
 	 * Empty selections match no grades. Translated lessons read original progress;
 	 * results retain requested IDs, including zero totals for missing grades.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $lesson_ids Requested lesson IDs.
 	 * @param array $args {

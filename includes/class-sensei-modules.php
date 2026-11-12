@@ -781,9 +781,9 @@ class Sensei_Core_Modules {
 			$module = $this->get_lesson_module( $post->ID );
 			if ( $module ) {
 				if ( $this->do_link_to_module( $module ) ) {
-					$html .= ' ' . $separator . ' <a href="' . esc_url( $module->url ) . '" title="' . __( 'Back to the module', 'sensei-lms' ) . '">' . $module->name . '</a>';
+					$html .= ' ' . $separator . ' <a href="' . esc_url( $module->url ) . '" title="' . esc_attr__( 'Back to the module', 'sensei-lms' ) . '">' . esc_html( $module->name ) . '</a>';
 				} else {
-					$html .= ' ' . $separator . ' ' . $module->name;
+					$html .= ' ' . $separator . ' ' . esc_html( $module->name );
 				}
 			}
 		}
@@ -791,7 +791,7 @@ class Sensei_Core_Modules {
 		if ( is_tax( $this->taxonomy ) ) {
 			if ( isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
 				$course_id = intval( $_GET['course_id'] );
-				$html     .= '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Back to the course', 'sensei-lms' ) . '">' . get_the_title( $course_id ) . '</a>';
+				$html     .= '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Back to the course', 'sensei-lms' ) . '">' . get_the_title( $course_id ) . '</a>';
 			}
 		}
 		return $html;
@@ -1325,6 +1325,12 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function module_order_screen() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nothing is modified.
+		$requested_course_id = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : 0;
+
+		if ( $requested_course_id > 0 && ( 'course' !== get_post_type( $requested_course_id ) || ! Sensei_Course::can_current_user_edit_course( $requested_course_id ) ) ) {
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
+		}
 		?>
 		<div id="<?php echo esc_attr( $this->order_page_slug ); ?>"
 			 class="wrap <?php echo esc_attr( $this->order_page_slug ); ?>">

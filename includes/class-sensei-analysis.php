@@ -87,7 +87,7 @@ class Sensei_Analysis {
 	 * Create an analysis controller with its query-service dependencies.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string                                     $file                                Main plugin file path.
 	 * @param Sensei_Reports_Overview_List_Table_Factory $reports_overview_list_table_factory Reports overview list table factory.
