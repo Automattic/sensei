@@ -2,6 +2,7 @@
 
 use Sensei\Internal\Course_Status_Updates;
 use Sensei\Internal\Persistence_Exception;
+use Sensei\Internal\Quiz_Submission\Comment_Metadata;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -105,7 +106,9 @@ class Sensei_Utils {
 			if ( empty( $args['keep_time'] ) ) {
 				$data['comment_date'] = current_time( 'mysql' );
 			}
-			wp_update_comment( $data );
+			if ( false === wp_update_comment( $data ) ) {
+				return false;
+			}
 		}
 
 		/**
@@ -902,9 +905,21 @@ class Sensei_Utils {
 		try {
 			$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 			if ( $quiz_submission ) {
-				Sensei()->quiz_submission_repository->delete( $quiz_submission );
-				Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
 				Sensei()->quiz_grade_repository->delete_all( $quiz_submission );
+				Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
+
+				$status_comment     = self::user_lesson_status( (int) Sensei()->quiz->get_lesson_id( $quiz_id ), $user_id );
+				$is_tables_primary  = 'tables' === Sensei()->progress_storage_configuration->get_read_backend();
+				$clear_question_ids = $status_comment && ( ! $is_tables_primary || Sensei()->progress_storage_configuration->is_dual_write_enabled() );
+
+				// Keep the primary submission discoverable until the other store is cleared.
+				if ( $clear_question_ids && $is_tables_primary ) {
+					Comment_Metadata::delete( (int) $status_comment->comment_ID, 'questions_asked', $quiz_submission, 'quiz_submission' );
+				}
+				Sensei()->quiz_submission_repository->delete( $quiz_submission );
+				if ( $clear_question_ids && ! $is_tables_primary ) {
+					Comment_Metadata::delete( (int) $status_comment->comment_ID, 'questions_asked', $quiz_submission, 'quiz_submission' );
+				}
 
 				$deleted = true;
 			}

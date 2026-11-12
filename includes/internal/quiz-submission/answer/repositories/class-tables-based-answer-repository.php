@@ -211,6 +211,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The submission.
+	 * @throws Persistence_Exception If answer rows cannot be deleted.
 	 */
 	public function delete_all( Submission_Interface $submission ): void {
 		/**
@@ -226,7 +227,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		 */
 		$submission_id = (int) apply_filters( 'sensei_quiz_answer_delete_all_submission_id', $submission->get_id(), 'tables' );
 
-		$this->wpdb->delete(
+		$result = $this->wpdb->delete(
 			$this->get_table_name(),
 			[
 				'submission_id' => $submission_id,
@@ -235,6 +236,10 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 				'%d',
 			]
 		);
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'quiz_answer', 'tables', $submission->get_quiz_id(), $submission->get_user_id(), 'delete_failed', 'delete' );
+		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cache_submission_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission->get_id(), 'tables' );

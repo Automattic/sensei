@@ -221,9 +221,13 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The quiz submission.
+	 * @throws Persistence_Exception If required submission metadata cannot be deleted.
 	 */
 	public function delete( Submission_Interface $submission ): void {
-		delete_comment_meta( $submission->get_id(), 'grade' );
+		$status_comment = $this->get_status_comment( $submission->get_quiz_id(), $submission->get_user_id() );
+		if ( $status_comment ) {
+			Comment_Metadata::delete( (int) $status_comment->comment_ID, 'grade', $submission, 'quiz_submission' );
+		}
 	}
 
 	/**

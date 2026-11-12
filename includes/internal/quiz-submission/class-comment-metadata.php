@@ -130,4 +130,28 @@ class Comment_Metadata {
 			);
 		}
 	}
+
+	/**
+	 * Delete required quiz metadata, accepting a key that is already absent.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int                  $comment_id Comment ID.
+	 * @param string               $key Metadata key.
+	 * @param Submission_Interface $submission Submission identity.
+	 * @param string               $entity Quiz data type for diagnostics.
+	 * @return void
+	 * @throws Persistence_Exception If the metadata cannot be deleted.
+	 */
+	public static function delete( int $comment_id, string $key, Submission_Interface $submission, string $entity ): void {
+		self::get( $comment_id, $key, $submission );
+		if ( ! metadata_exists( 'comment', $comment_id, $key ) ) {
+			return;
+		}
+
+		if ( false === delete_comment_meta( $comment_id, $key ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( $entity, 'comments', $submission->get_quiz_id(), $submission->get_user_id(), 'metadata_delete_failed', 'delete' );
+		}
+	}
 }

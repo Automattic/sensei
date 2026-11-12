@@ -245,6 +245,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If the progress update fails.
 	 */
 	public function save( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->assert_tables_based_lesson_progress( $lesson_progress );
@@ -253,7 +254,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		$lesson_progress->set_updated_at( $updated_at );
 
 		$date_format = 'Y-m-d H:i:s';
-		$this->wpdb->update(
+		$result      = $this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'status'       => $lesson_progress->get_status(),
@@ -275,6 +276,10 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				'%d',
 			]
 		);
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'lesson', 'tables', $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id(), 'update_failed', 'update' );
+		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );

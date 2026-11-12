@@ -153,7 +153,7 @@ class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repo
 	 * @param Submission_Interface $submission The quiz submission.
 	 */
 	public function delete( Submission_Interface $submission ): void {
-		$this->comments_based_repository->delete( $submission );
 		$this->tables_based_repository->delete( $submission );
+		$this->comments_based_repository->delete( $submission );
 	}
 }
