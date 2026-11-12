@@ -1784,7 +1784,7 @@ class Sensei_Course {
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'author'           => $author_id,
-			'sensei_course'    => $course_id,
+			'sensei_course'    => (int) $course_id,
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
 			'fields'           => 'ids', // less data to retrieve
@@ -1806,7 +1806,7 @@ class Sensei_Course {
 		$lesson_args   = [
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
-			'sensei_course'    => $course_id,
+			'sensei_course'    => (int) $course_id,
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
 			'fields'           => 'ids', // less data to retrieve
@@ -1832,7 +1832,7 @@ class Sensei_Course {
 			'posts_per_page'   => -1,
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
-			'sensei_course'    => $course_id,
+			'sensei_course'    => (int) $course_id,
 			'meta_query'       => [
 				[
 					'key'   => '_lesson_preview',

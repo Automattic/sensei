@@ -1222,7 +1222,7 @@ class Sensei_Core_Modules {
 					'terms'    => $module_id,
 				),
 			),
-			'sensei_course'  => $course_id,
+			'sensei_course'  => (int) $course_id,
 			'fields'         => 'ids',
 		);
 		$lessons = get_posts( $args );
