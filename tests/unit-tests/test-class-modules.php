@@ -319,11 +319,11 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The module archive filtered by course lists the lessons of that course only, although the module is shared.
+	 * The module archive filtered by course lists the lessons of that course only, in module order, although the module is shared.
 	 *
 	 * @covers Sensei_Core_Modules::module_archive_filter
 	 */
-	public function testModuleArchiveFilter_CourseIdRequested_ListsTheCourseLessonsOnly() {
+	public function testModuleArchiveFilter_CourseIdRequested_ListsTheCourseLessonsInModuleOrder() {
 		/* Arrange. */
 		$course_lessons = $this->factory->get_course_with_lessons(
 			array(
@@ -336,12 +336,14 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$module_id      = $course_lessons['modules'][0];
 		Sensei()->course_lessons_repository->set_lesson_module( $other_course['lesson_ids'][0], $module_id );
 		Sensei()->course_lessons_repository->set_lesson_module_order( $other_course['lesson_ids'][0], $module_id, 0 );
+		Sensei()->course_lessons_repository->set_lesson_module_order( $course_lessons['lesson_ids'][0], $module_id, 2 );
+		Sensei()->course_lessons_repository->set_lesson_module_order( $course_lessons['lesson_ids'][1], $module_id, 1 );
 
 		/* Act. */
 		$this->go_to( add_query_arg( 'course_id', $course_lessons['course_id'], get_term_link( $module_id, 'module' ) ) );
 
 		/* Assert. */
-		self::assertEqualsCanonicalizing( $course_lessons['lesson_ids'], wp_list_pluck( $GLOBALS['wp_query']->posts, 'ID' ) );
+		self::assertSame( array( $course_lessons['lesson_ids'][1], $course_lessons['lesson_ids'][0] ), wp_list_pluck( $GLOBALS['wp_query']->posts, 'ID' ) );
 	}
 
 	/**

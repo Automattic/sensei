@@ -203,20 +203,15 @@ function sensei_get_other_lessons( $course_id, $lesson_ids ) {
 	$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
 
 	$args = array(
-		'post_type'        => 'lesson',
-		'post_status'      => $course_lessons_post_status,
-		'posts_per_page'   => -1,
-		'suppress_filters' => 0,
-		'meta_key'         => '_order_' . $course_id,
-		'orderby'          => 'meta_value_num date',
-		'order'            => 'ASC',
-		'meta_query'       => array(
-			array(
-				'key'   => '_lesson_course',
-				'value' => intval( $course_id ),
-			),
-		),
-		'post__not_in'     => $lesson_ids,
+		'post_type'                  => 'lesson',
+		'post_status'                => $course_lessons_post_status,
+		'posts_per_page'             => -1,
+		'suppress_filters'           => 0,
+		'sensei_course'              => intval( $course_id ),
+		'sensei_lesson_order_course' => intval( $course_id ),
+		'orderby'                    => 'date',
+		'order'                      => 'ASC',
+		'post__not_in'               => $lesson_ids,
 	);
 
 	return get_posts( $args );
