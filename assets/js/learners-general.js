@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
 import { resetProgressErrorMessage } from '../shared/reset-progress-error';
@@ -190,11 +195,16 @@ jQuery( document ).ready( function ( $ ) {
 				course: window.woo_learners_general_data
 					.remove_progress_confirm,
 				action: 'remove_user_from_post',
+				errorMessage: __(
+					"We couldn't finish removing progress. Some progress or quiz answers may already have been cleared. Refresh the page and review student progress before taking further action. If it looks inconsistent, contact your site administrator.",
+					'sensei-lms'
+				),
 			},
 			reset_progress: {
 				lesson: window.woo_learners_general_data.reset_lesson_confirm,
 				course: window.woo_learners_general_data.reset_course_confirm,
 				action: 'reset_user_post',
+				errorMessage: resetProgressErrorMessage(),
 			},
 		};
 
@@ -214,14 +224,16 @@ jQuery( document ).ready( function ( $ ) {
 		const userId = jQuery( this ).attr( 'data-user-id' );
 		const postId = jQuery( this ).attr( 'data-post-id' );
 		const tableRow = jQuery( this ).closest( 'tr' );
-		const showResetError = () => {
+		const showProgressError = () => {
 			const $table = tableRow.closest( 'table' );
-			$table.prev( '.sensei-reset-progress-error' ).remove();
+			$table.prev( '.sensei-progress-action-error' ).remove();
 			$( '<div>', {
-				class: 'sensei-reset-progress-error notice notice-error',
+				class: 'sensei-progress-action-error notice notice-error',
 				role: 'alert',
 			} )
-				.append( $( '<p>' ).text( resetProgressErrorMessage() ) )
+				.append(
+					$( '<p>' ).text( actions[ currentAction ].errorMessage )
+				)
 				.insertBefore( $table );
 		};
 
@@ -238,11 +250,9 @@ jQuery( document ).ready( function ( $ ) {
 			} );
 
 			request.done( function ( response ) {
-				if ( ! response ) {
-					if ( 'reset_progress' === currentAction ) {
-						// The legacy handler returns an empty body when the reset fails.
-						showResetError();
-					}
+				if ( 'removed' !== response && 'altered' !== response ) {
+					// The legacy handlers return an empty body when the action fails.
+					showProgressError();
 					return;
 				}
 
@@ -265,11 +275,7 @@ jQuery( document ).ready( function ( $ ) {
 				}
 			} );
 
-			request.fail( function () {
-				if ( 'reset_progress' === currentAction ) {
-					showResetError();
-				}
-			} );
+			request.fail( showProgressError );
 
 			window.sensei_log_event( 'learner_management_' + currentAction );
 		}
