@@ -3681,6 +3681,8 @@ class Sensei_Lesson {
 		 *
 		 * @hook sensei_lesson_count
 		 *
+		 * @since $$next-version$$ The course is given in the `sensei_course` argument instead of a `_lesson_course` meta clause.
+		 *
 		 * @param {array} $post_args Post arguments.
 		 * @return {array} Post arguments.
 		 */
