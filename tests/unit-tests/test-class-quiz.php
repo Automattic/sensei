@@ -1121,7 +1121,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			$question_ids[0] => 'First submitted answer',
 			$question_ids[1] => 'Second submitted answer',
 		);
-		$_POST = array(
+		$_POST        = array(
 			$button                     => get_permalink( $quiz_id ),
 			'questions_asked'           => $question_ids,
 			'questions_asked_signature' => $signature,
@@ -1162,7 +1162,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * @return array
 	 */
 	public static function failed_answer_form_requests(): array {
-		$plain_quiz = array(
+		$plain_quiz    = array(
 			'question_count' => 2,
 			'question_args'  => array( 'question_type' => 'multi-line' ),
 		);
