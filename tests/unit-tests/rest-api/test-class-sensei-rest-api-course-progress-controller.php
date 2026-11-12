@@ -147,7 +147,12 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		self::assertSame( $expected, $response->get_data() );
 	}
 
-	public function testDeleteCourseProgress_StudentHasntEnrolledToCourse_ReturnsMatchingResponseData() {
+	/**
+	 * An unstarted course has no progress to reset, so the request succeeds.
+	 *
+	 * @covers Sensei_REST_API_Course_Progress_Controller::batch_delete_items
+	 */
+	public function testDeleteCourseProgress_StudentHasNotStartedCourse_ReturnsSuccessForNoOp() {
 		/* Arrange. */
 		$course_id  = $this->factory->course->create();
 		$student_id = $this->factory->user->create();
@@ -172,7 +177,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		/* Assert. */
 		$expected = [
 			$student_id => [
-				$course_id => false,
+				$course_id => true,
 			],
 		];
 		self::assertSame( $expected, $response->get_data() );

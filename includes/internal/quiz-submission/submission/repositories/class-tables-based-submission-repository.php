@@ -10,6 +10,7 @@ namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 use DateTimeImmutable;
 use DateTimeZone;
 use Sensei\Internal\Cache_Prefix;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
@@ -66,6 +67,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
@@ -83,7 +85,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
-		$this->wpdb->insert(
+		$result = $this->wpdb->insert(
 			$this->get_table_name(),
 			[
 				'quiz_id'     => $quiz_id,
@@ -100,6 +102,19 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 				'%s',
 			]
 		);
+
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception(
+				'quiz_submission',
+				'tables',
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
+				$quiz_id,
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
+				$user_id,
+				'insert_failed'
+			);
+		}
 
 		$submission = new Tables_Based_Submission(
 			$this->wpdb->insert_id,
@@ -127,6 +142,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
@@ -259,12 +275,13 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function save( Submission_Interface $submission ): void {
 		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$submission->set_updated_at( $updated_at );
 
-		$this->wpdb->update(
+		$result = $this->wpdb->update(
 			$this->get_table_name(),
 			[
 				'final_grade' => $submission->get_final_grade(),
@@ -284,6 +301,11 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission->get_quiz_id(), $submission->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
+		}
+
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz_submission', 'tables', $submission->get_quiz_id(), $submission->get_user_id(), 'update_failed', 'save' );
 		}
 	}
 

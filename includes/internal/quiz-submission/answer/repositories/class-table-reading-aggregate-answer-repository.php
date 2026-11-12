@@ -74,6 +74,7 @@ class Table_Reading_Aggregate_Answer_Repository implements Answer_Repository_Int
 	 * @param string               $value       The answer value.
 	 *
 	 * @return Answer_Interface The answer model.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface {
 		$answer = $this->tables_based_repository->create( $submission, $question_id, $value );
@@ -103,6 +104,7 @@ class Table_Reading_Aggregate_Answer_Repository implements Answer_Repository_Int
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function delete_all( Submission_Interface $submission ): void {
 		$this->tables_based_repository->delete_all( $submission );

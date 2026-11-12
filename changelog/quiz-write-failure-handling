@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Report failed quiz writes while retaining typed answers and manual grading input.

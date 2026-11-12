@@ -3843,6 +3843,17 @@ class Sensei_Lesson {
 			$user_id = get_current_user_id();
 		}
 
+		// A failed quiz write keeps the student's answers for this response. The saved question list may be incomplete.
+		// Null means there is no failed form to restore; an empty array still represents a failed form.
+		$unsaved_question_ids = ! is_admin()
+			? Sensei()->quiz->get_unsaved_question_ids( (int) $quiz_lesson_id, (int) $user_id )
+			: null;
+
+		if ( null !== $unsaved_question_ids ) {
+			// The normal 'any' query could show draft questions when restoring the form.
+			$post_status = 'publish';
+		}
+
 		// If viewing quiz on the frontend then show questions in random order if set.
 		if ( ! is_admin() ) {
 			$random_order = get_post_meta( $quiz_id, '_random_question_order', true );
@@ -3859,12 +3870,14 @@ class Sensei_Lesson {
 		$questions_array = $questions;
 
 		// If viewing quiz on frontend or in grading then only single questions must be shown.
-		$selected_questions = array();
+		$selected_questions         = array();
+		$maximum_restored_questions = 0;
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Input used for comparisons.
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
-			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$submission         = $quiz_id && $user_id
+			// Skip the saved question list while restoring a failed form; it may be incomplete.
+			$submission         = null === $unsaved_question_ids && $quiz_id && $user_id
 				? Sensei()->quiz_submission_repository->get( (int) $quiz_id, (int) $user_id )
 				: null;
 			$selected_questions = $submission
@@ -3892,6 +3905,8 @@ class Sensei_Lesson {
 					}
 					$existing_questions[] = $question->ID;
 				}
+
+				$maximum_restored_questions = count( $existing_questions );
 
 				// Include only single questions in the return array.
 				$questions_loop  = $questions_array;
@@ -3942,6 +3957,29 @@ class Sensei_Lesson {
 							$qargs['author'] = $quiz_author;
 						}
 
+						if ( null !== $unsaved_question_ids ) {
+							if ( ! $unsaved_question_ids ) {
+								continue;
+							}
+
+							// Count the category's allowed slots before fetching submitted questions.
+							$category_limit = abs( $question_number );
+
+							if ( -1 === $question_number ) {
+								$category_limit = count( $unsaved_question_ids );
+							} elseif ( 0 === $question_number ) {
+								$category_limit = max( 1, (int) get_option( 'posts_per_page' ) );
+							}
+
+							$maximum_restored_questions += $category_limit;
+
+							// Fetch submitted IDs in this category, then cap the restored list by its total slots.
+							unset( $qargs['post__not_in'] );
+							$qargs['post__in']       = $unsaved_question_ids;
+							$qargs['posts_per_page'] = -1;
+							$qargs['orderby']        = 'post__in';
+						}
+
 						$cat_questions = get_posts( $qargs );
 
 						// Merge results into return array.
@@ -3962,8 +4000,29 @@ class Sensei_Lesson {
 			}
 		}
 
+		if ( null !== $unsaved_question_ids ) {
+			// Restore submitted order using only eligible questions, within the quiz's question limits.
+			$eligible_questions = array();
+			foreach ( $questions as $question ) {
+				$eligible_questions[ $question->ID ] = $question;
+			}
+
+			$selected_questions = array_values( array_intersect( $unsaved_question_ids, array_keys( $eligible_questions ) ) );
+			$selected_questions = array_slice( $selected_questions, 0, $maximum_restored_questions );
+
+			$show_questions = (int) get_post_meta( (int) $quiz_id, '_show_questions', true );
+			if ( $show_questions > 0 ) {
+				$selected_questions = array_slice( $selected_questions, 0, $show_questions );
+			}
+
+			$questions = array();
+			foreach ( $selected_questions as $question_id ) {
+				$questions[] = $eligible_questions[ $question_id ];
+			}
+		}
+
 		// If user has not already taken the quiz and a limited number of questions are to be shown, then show a random selection of the specified amount of questions.
-		if ( ! $selected_questions ) {
+		if ( ! $selected_questions && null === $unsaved_question_ids ) {
 
 			// Only limit questions like this on the frontend.
 			if ( ! is_admin() ) {

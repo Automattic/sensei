@@ -369,7 +369,7 @@ class Sensei_Quiz {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 			$this->add_progress_failure_notice(
 				__( 'Unable to save your answers', 'sensei-lms' ),
-				__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+				__( 'Review the answers shown below and reselect any files before trying again. Keep this page open.', 'sensei-lms' )
 			);
 		}
 
@@ -460,21 +460,32 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		// save the user data
-		$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
+		try {
+			// save the user data
+			$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
 
-		Sensei()->quiz_grade_repository->delete_all( $submission );
-		Sensei()->quiz_answer_repository->delete_all( $submission );
+			Sensei()->quiz_grade_repository->delete_all( $submission );
+			Sensei()->quiz_answer_repository->delete_all( $submission );
 
-		foreach ( $prepared_answers as $question_id => $answer ) {
-			Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
+			foreach ( $prepared_answers as $question_id => $answer ) {
+				Sensei()->quiz_answer_repository->create( $submission, $question_id, $answer );
+			}
+
+			// Save transient to make retrieval faster.
+			$transient_key = self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id );
+			set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
+
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			// Earlier deletes or writes may have succeeded, leaving cached quiz data stale.
+			delete_transient( self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id ) );
+			delete_transient( self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id ) );
+			delete_transient( self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id ) );
+
+			$exception->log( 'saving quiz answers' );
+			return false;
 		}
 
-		// Save transient to make retrieval faster.
-		$transient_key = self::get_cache_key( 'sensei_answers_', $user_id, $lesson_id );
-		set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
-
-		return true;
 	}
 
 	/**
@@ -545,6 +556,23 @@ class Sensei_Quiz {
 
 	}
 
+	/**
+	 * Get the submitted question order retained after a failed form write.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $user_id Student ID.
+	 * @return int[]|null Question IDs, or null when no failed form is retained.
+	 */
+	public function get_unsaved_question_ids( int $lesson_id, int $user_id ): ?array {
+		if ( ! isset( $this->unsaved_answers[ $lesson_id ][ $user_id ] ) ) {
+			return null;
+		}
+
+		return array_keys( $this->unsaved_answers[ $lesson_id ][ $user_id ] );
+	}
 
 	/**
 	 *
@@ -642,7 +670,7 @@ class Sensei_Quiz {
 			$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 			$this->add_progress_failure_notice(
 				__( 'Unable to submit your answers', 'sensei-lms' ),
-				__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+				__( 'Review the answers shown below and reselect any files before trying again. Keep this page open.', 'sensei-lms' )
 			);
 			return;
 		}
@@ -713,7 +741,7 @@ class Sensei_Quiz {
 				$this->unsaved_answers[ $lesson_id ][ $user_id ] = $answers;
 				$this->add_progress_failure_notice(
 					__( 'Unable to change quiz pages', 'sensei-lms' ),
-					__( 'Your answers are still shown below. Keep this page open and try again.', 'sensei-lms' )
+					__( 'Review the answers shown below and reselect any files before trying again. Keep this page open.', 'sensei-lms' )
 				);
 				return;
 			}
@@ -999,7 +1027,11 @@ class Sensei_Quiz {
 				}
 
 				// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade.
-				Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
+				$submission      = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+				$answers_deleted = Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
+				if ( $submission && ! $answers_deleted ) {
+					return false;
+				}
 			}
 
 			// Update course completion.
@@ -1281,28 +1313,36 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-		if ( ! $submission ) {
+		try {
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			if ( ! $submission ) {
+				return false;
+			}
+
+			Sensei()->quiz_grade_repository->delete_all( $submission );
+
+			$answers     = Sensei()->quiz_answer_repository->get_all( $submission->get_id() );
+			$answers_map = [];
+			foreach ( $answers as $answer ) {
+				$answers_map[ $answer->get_question_id() ] = $answer;
+			}
+
+			foreach ( $quiz_grades as $question_id => $points ) {
+				$answer = $answers_map[ $question_id ];
+				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
+			}
+
+			$transient_key = self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id );
+			set_transient( $transient_key, $quiz_grades, 10 * DAY_IN_SECONDS );
+
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			delete_transient( self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id ) );
+			delete_transient( self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id ) );
+
+			$exception->log( 'saving question grades' );
 			return false;
 		}
-
-		Sensei()->quiz_grade_repository->delete_all( $submission );
-
-		$answers     = Sensei()->quiz_answer_repository->get_all( $submission->get_id() );
-		$answers_map = [];
-		foreach ( $answers as $answer ) {
-			$answers_map[ $answer->get_question_id() ] = $answer;
-		}
-
-		foreach ( $quiz_grades as $question_id => $points ) {
-			$answer = $answers_map[ $question_id ];
-			Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, $points );
-		}
-
-		$transient_key = self::get_cache_key( 'quiz_grades_', $user_id, $lesson_id );
-		set_transient( $transient_key, $quiz_grades, 10 * DAY_IN_SECONDS );
-
-		return true;
 
 	}
 
@@ -1446,24 +1486,31 @@ class Sensei_Quiz {
 			$encoded_answers_feedback[ $question_id ] = base64_encode( $feedback );
 		}
 
-		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-		if ( ! $submission ) {
+		try {
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			if ( ! $submission ) {
+				return false;
+			}
+
+			$grades = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
+			foreach ( $grades as $grade ) {
+				$feedback = $encoded_answers_feedback[ $grade->get_question_id() ];
+				$grade->set_feedback( $feedback );
+			}
+
+			Sensei()->quiz_grade_repository->save_many( $submission, $grades );
+
+			// Save transient to make retrieval faster in the future.
+			$transient_key = self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
+			set_transient( $transient_key, $encoded_answers_feedback, 10 * DAY_IN_SECONDS );
+
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			delete_transient( self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id ) );
+
+			$exception->log( 'saving quiz feedback' );
 			return false;
 		}
-
-		$grades = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
-		foreach ( $grades as $grade ) {
-			$feedback = $encoded_answers_feedback[ $grade->get_question_id() ];
-			$grade->set_feedback( $feedback );
-		}
-
-		Sensei()->quiz_grade_repository->save_many( $submission, $grades );
-
-		// Save transient to make retrieval faster in the future.
-		$transient_key = self::get_cache_key( 'sensei_answers_feedback_', $user_id, $lesson_id );
-		set_transient( $transient_key, $encoded_answers_feedback, 10 * DAY_IN_SECONDS );
-
-		return true;
 
 	}
 
@@ -2306,7 +2353,6 @@ class Sensei_Quiz {
 		}
 
 		wp_delete_post( $quiz_id );
-
 	}
 
 	/**

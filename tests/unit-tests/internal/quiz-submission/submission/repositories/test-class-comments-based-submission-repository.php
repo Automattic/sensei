@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
-use RuntimeException;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei_Utils;
@@ -31,8 +31,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository = new Comments_Based_Submission_Repository();
 
 		/* Assert. */
-		$this->expectException( RuntimeException::class );
-		$this->expectExceptionMessage( 'Missing lesson status.' );
+		$this->expectException( Persistence_Exception::class );
 
 		/* Act. */
 		$repository->create( 1, 2 );
@@ -190,8 +189,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$repository = new Comments_Based_Submission_Repository();
 
 		/* Assert. */
-		$this->expectException( RuntimeException::class );
-		$this->expectExceptionMessage( 'Missing lesson status.' );
+		$this->expectException( Persistence_Exception::class );
 
 		/* Act. */
 		$repository->save( $submission );

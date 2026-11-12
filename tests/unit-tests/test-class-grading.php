@@ -970,6 +970,126 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Required question-grade failures must stop admin grading before a success redirect.
+	 *
+	 * @dataProvider quiz_grade_write_failures
+	 * @covers Sensei_Grading::admin_process_grading_submission
+	 */
+	public function testAdminProcessGradingSubmission_QuestionGradeWriteFailed_ShowsFailureWithoutRedirect( string $mode, string $table, ?string $metadata_key ): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( $mode );
+		$owner                       = $this->get_user_by_role( 'teacher' );
+		$user_id                     = $this->factory->user->create();
+		list( $quiz_id, $lesson_id ) = $this->createOwnedPassRequiredQuiz( $owner );
+		$question_id                 = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		$this->login_as( $owner );
+		$this->setGradingSubmissionGlobals( $quiz_id, $user_id );
+		$_POST[ 'question_' . $question_id . '_grade' ] = 1;
+		$_POST['questions_feedback'][ $question_id ]    = 'Unsaved feedback';
+		$this->prevent_wp_redirect();
+
+		/* Act. */
+		$this->with_failed_insert(
+			$GLOBALS['wpdb']->prefix . $table,
+			function () use ( $quiz_id, $user_id, $question_id ) {
+				$result = Sensei()->grading->admin_process_grading_submission();
+				ob_start();
+				Sensei()->grading->add_grading_notices();
+				$notice = ob_get_clean();
+				ob_start();
+				Sensei()->grading->grading_user_quiz_view();
+				$form = ob_get_clean();
+
+				/* Assert. */
+				self::assertFalse( $result, 'A failed grade write must stop the success redirect.' );
+				self::assertStringContainsString( 'name="question_' . $question_id . '_grade" id="question_' . $question_id . '_grade" value="1"', $form, 'The entered grade must remain in the form.' );
+				self::assertStringContainsString( '>Unsaved feedback</textarea>', $form, 'The entered feedback must remain in the form.' );
+				self::assertStringContainsString( 'We couldn\'t save all grading changes.', $notice, 'The admin must see the grading failure notice.' );
+				self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'No final grade may be saved after the question grade failed.' );
+			},
+			null,
+			$metadata_key
+		);
+	}
+
+	/**
+	 * An autograding write failure must not publish a final grade or its success event.
+	 *
+	 * @dataProvider autograde_write_failures
+	 * @covers Sensei_Grading::grade_quiz_auto
+	 */
+	public function testGradeQuizAuto_QuestionGradeWriteFailed_ReturnsErrorWithoutFinalGrade( string $mode, string $table, ?string $metadata_key ): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create(
+			array(
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'boolean',
+			)
+		);
+		$user_id     = $this->factory->user->create();
+		$this->login_as( $user_id );
+		$answers = array( $question_id => 'true' );
+		Sensei_Quiz::save_user_answers( $answers, array(), $lesson_id, $user_id );
+		$graded_events = did_action( 'sensei_user_quiz_grade' );
+
+		/* Act. */
+		$this->with_failed_insert(
+			$GLOBALS['wpdb']->prefix . $table,
+			function () use ( $quiz_id, $user_id, $answers, $graded_events ) {
+				$result = Sensei_Grading::grade_quiz_auto( $quiz_id, $answers );
+
+				/* Assert. */
+				self::assertWPError( $result, 'A failed question-grade write must report a grading error.' );
+				self::assertSame( 'sensei_progress_save_failed', $result->get_error_code(), 'The caller must receive the existing persistence failure result.' );
+				self::assertSame( $graded_events, did_action( 'sensei_user_quiz_grade' ), 'No grade success event may fire after a required write fails.' );
+				self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'A final grade must not be saved before question grades succeed.' );
+			},
+			null,
+			$metadata_key
+		);
+	}
+
+	/**
+	 * Autograding creates points without feedback.
+	 *
+	 * @return array
+	 */
+	public static function autograde_write_failures(): array {
+		$cases = array();
+		foreach ( self::progress_storage_modes() as $name => $arguments ) {
+			$mode                       = $arguments[0];
+			$cases[ $name . ' points' ] = array( $mode, 'commentmeta', 'quiz_grades' );
+			if ( 'comments-only' !== $mode ) {
+				$cases[ $name . ' table grade' ] = array( $mode, 'sensei_lms_quiz_grades', null );
+			}
+		}
+		return $cases;
+	}
+
+	/**
+	 * Required question-grade writes across supported storage modes.
+	 *
+	 * @return array
+	 */
+	public static function quiz_grade_write_failures(): array {
+		$cases = array();
+		foreach ( self::progress_storage_modes() as $name => $arguments ) {
+			$mode                         = $arguments[0];
+			$cases[ $name . ' points' ]   = array( $mode, 'commentmeta', 'quiz_grades' );
+			$cases[ $name . ' feedback' ] = array( $mode, 'commentmeta', 'quiz_answers_feedback' );
+			if ( 'comments-only' !== $mode ) {
+				$cases[ $name . ' table grade' ] = array( $mode, 'sensei_lms_quiz_grades', null );
+			}
+		}
+		return $cases;
+	}
+
+	/**
 	 * Failed lesson creation must stop grading before changing submission data.
 	 *
 	 * @dataProvider progress_storage_modes
@@ -992,7 +1112,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 				ob_start();
 				Sensei()->grading->add_grading_notices();
 				$notice = ob_get_clean();
-				self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The grading page must explain the failure.' );
+				self::assertStringContainsString( 'We couldn\'t save all grading changes.', $notice, 'The grading page must explain the failure.' );
 				self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'No grade submission may be created after progress failure.' );
 			}
 		);
@@ -1077,7 +1197,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$notice = ob_get_clean();
 
 		self::assertFalse( $result, 'A failed quiz save must report grading failure.' );
-		self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The grader must see the save failure.' );
+		self::assertStringContainsString( 'We couldn\'t save all grading changes.', $notice, 'The grader must see the save failure.' );
 		self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'A failed quiz save must not announce lesson completion.' );
 	}
 
@@ -1127,7 +1247,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 					$notice = ob_get_clean();
 
 					self::assertFalse( $result, 'The failed course-status update must prevent grading success.' );
-					self::assertStringContainsString( 'We couldn\'t save these grading changes.', $notice, 'The failure must be visible to the grader.' );
+					self::assertStringContainsString( 'We couldn\'t save all grading changes.', $notice, 'The failure must be visible to the grader.' );
 				} finally {
 					remove_action( 'sensei_user_lesson_end', $remove_progress, 9 );
 				}

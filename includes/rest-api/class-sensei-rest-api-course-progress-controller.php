@@ -76,7 +76,8 @@ class Sensei_REST_API_Course_Progress_Controller extends \WP_REST_Controller {
 			if ( $student->exists() ) {
 				$result[ $student_id ] = array();
 				foreach ( $course_ids as $course_id ) {
-					$result[ $student_id ][ $course_id ] = false;
+					// A course with no progress needs no reset and is not a failure.
+					$result[ $student_id ][ $course_id ] = true;
 					if ( Sensei_Utils::has_started_course( $course_id, $student_id ) ) {
 						$result[ $student_id ][ $course_id ] = Sensei_Utils::reset_course_for_user( $course_id, $student_id );
 					}
