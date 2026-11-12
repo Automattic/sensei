@@ -348,9 +348,10 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The quiz submission.
+	 * @throws Persistence_Exception If the submission row cannot be deleted.
 	 */
 	public function delete( Submission_Interface $submission ): void {
-		$this->wpdb->delete(
+		$result = $this->wpdb->delete(
 			$this->get_table_name(),
 			[
 				'quiz_id' => $submission->get_quiz_id(),
@@ -361,6 +362,10 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 				'%d',
 			]
 		);
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'quiz_submission', 'tables', $submission->get_quiz_id(), $submission->get_user_id(), 'delete_failed', 'delete' );
+		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission->get_quiz_id(), $submission->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );

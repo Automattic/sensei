@@ -268,7 +268,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 
 		if ( ! $comment_id ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
-			throw new Persistence_Exception( 'course', 'comments', $course_progress->get_course_id(), $course_progress->get_user_id() );
+			throw new Persistence_Exception( 'course', 'comments', $course_progress->get_course_id(), $course_progress->get_user_id(), 'write_failed', 'save' );
 		}
 	}
 

@@ -278,6 +278,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The submission.
+	 * @throws Persistence_Exception If grade rows cannot be deleted.
 	 */
 	public function delete_all( Submission_Interface $submission ): void {
 		/**
@@ -301,7 +302,11 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		$placeholders = implode( ', ', array_fill( 0, count( $answer_ids ), '%d' ) );
 		$delete_query = 'DELETE FROM ' . $this->get_table_name() . ' WHERE answer_id IN (' . $placeholders . ')';
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$this->wpdb->query( $this->wpdb->prepare( $delete_query, ...$answer_ids ) );
+		$result = $this->wpdb->query( $this->wpdb->prepare( $delete_query, ...$answer_ids ) );
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'quiz_grade', 'tables', $submission->get_quiz_id(), $submission->get_user_id(), 'delete_failed', 'delete' );
+		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cache_submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission->get_id(), 'tables' );

@@ -147,6 +147,7 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If answer metadata cannot be deleted.
 	 */
 	public function delete_all( Submission_Interface $submission ): void {
 		/**
@@ -162,8 +163,8 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 		 */
 		$submission_id = (int) apply_filters( 'sensei_quiz_answer_delete_all_submission_id', $submission->get_id(), 'comments' );
 
-		delete_comment_meta( $submission_id, 'quiz_answers' );
-		delete_comment_meta( $submission_id, 'questions_asked' );
+		// The submission still needs questions_asked so a failed replacement or reset can find it again.
+		Comment_Metadata::delete( $submission_id, 'quiz_answers', $submission, 'quiz_answer' );
 	}
 
 	/**

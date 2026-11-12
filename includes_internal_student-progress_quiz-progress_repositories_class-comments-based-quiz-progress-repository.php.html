@@ -213,7 +213,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 
 		if ( ! $comment_id ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
-			throw new Persistence_Exception( 'lesson', 'comments', $lesson_id, $quiz_progress->get_user_id() );
+			throw new Persistence_Exception( 'lesson', 'comments', $lesson_id, $quiz_progress->get_user_id(), 'write_failed', 'save' );
 		}
 	}
 

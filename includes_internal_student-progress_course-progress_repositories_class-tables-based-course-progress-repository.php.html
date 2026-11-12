@@ -275,6 +275,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 * @internal
 	 *
 	 * @param Course_Progress_Interface $course_progress The course progress.
+	 * @throws Persistence_Exception If the progress update fails.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {
 		$this->assert_tables_based_course_progress( $course_progress );
@@ -284,7 +285,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$course_progress->set_updated_at( $updated_at );
 
-		$this->wpdb->update(
+		$result = $this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'status'       => $course_progress->get_status(),
@@ -306,6 +307,10 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				'%d',
 			]
 		);
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'course', 'tables', $course_progress->get_course_id(), $course_progress->get_user_id(), 'update_failed', 'update' );
+		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $course_progress->get_course_id(), $course_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
