@@ -288,6 +288,37 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A lesson query with the excluded modules query var returns the lessons outside those modules only.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_outside_modules
+	 */
+	public function testFilterLessonsOutsideModules_ModulesQueryVarGiven_ReturnsTheLessonsOutsideThoseModules(): void {
+		/* Arrange. */
+		$module_id           = $this->factory->module->create();
+		$other_module_id     = $this->factory->module->create();
+		$module_lesson       = $this->factory->lesson->create();
+		$other_module_lesson = $this->factory->lesson->create();
+		$lesson_without      = $this->factory->lesson->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $module_lesson, $module_id );
+		Sensei()->course_lessons_repository->set_lesson_module( $other_module_lesson, $other_module_id );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'             => 'lesson',
+				'posts_per_page'        => -1,
+				'fields'                => 'ids',
+				'orderby'               => 'ID',
+				'order'                 => 'ASC',
+				'sensei_module__not_in' => array( $module_id ),
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $other_module_lesson, $lesson_without ), $actual );
+	}
+
+	/**
 	 * A lesson query with the lesson order course query var returns the lessons that have an order in that course, in that order.
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::order_lessons_in_course

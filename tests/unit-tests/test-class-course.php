@@ -1228,6 +1228,31 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The legacy single course page lists the course lessons outside its modules only.
+	 *
+	 * @covers Sensei_Course::load_single_course_lessons_query
+	 */
+	public function testLoadSingleCourseLessonsQuery_CourseWithModuleGiven_QueriesTheLessonsOutsideModulesOnly() {
+		/* Arrange. */
+		global $post, $wp_query;
+		$course                = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$lesson_outside_module = $this->factory->lesson->create();
+		Sensei()->course_lessons_repository->attach_lesson( $lesson_outside_module, $course['course_id'] );
+		$post = get_post( $course['course_id'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		/* Act. */
+		Sensei_Course::load_single_course_lessons_query();
+
+		/* Assert. */
+		self::assertSame( array( $lesson_outside_module ), wp_list_pluck( $wp_query->posts, 'ID' ) );
+	}
+
+	/**
 	 * The preview lesson count of a course ignores the preview lessons of other courses.
 	 *
 	 * @covers Sensei_Course::course_lesson_preview_count
