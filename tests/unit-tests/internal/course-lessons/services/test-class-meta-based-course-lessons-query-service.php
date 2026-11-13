@@ -288,6 +288,48 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A query whose own tax clauses are joined with OR still requires the module.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_by_module
+	 */
+	public function testFilterLessonsByModule_QueryWithOrTaxClausesGiven_StillRequiresTheModule(): void {
+		/* Arrange. */
+		$module_id            = $this->factory->module->create();
+		$tag_ids              = $this->factory->term->create_many( 2, array( 'taxonomy' => 'lesson-tag' ) );
+		$tagged_lesson        = $this->factory->lesson->create();
+		$module_lesson        = $this->factory->lesson->create();
+		$tagged_module_lesson = $this->factory->lesson->create();
+		wp_set_object_terms( $tagged_lesson, array( $tag_ids[0] ), 'lesson-tag' );
+		wp_set_object_terms( $tagged_module_lesson, array( $tag_ids[0] ), 'lesson-tag' );
+		Sensei()->course_lessons_repository->set_lesson_module( $module_lesson, $module_id );
+		Sensei()->course_lessons_repository->set_lesson_module( $tagged_module_lesson, $module_id );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'sensei_module'  => $module_id,
+				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Test fixture.
+					'relation' => 'OR',
+					array(
+						'taxonomy' => 'lesson-tag',
+						'terms'    => $tag_ids[0],
+					),
+					array(
+						'taxonomy' => 'lesson-tag',
+						'terms'    => $tag_ids[1],
+					),
+				),
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $tagged_module_lesson ), $actual );
+	}
+
+	/**
 	 * A lesson query with the excluded modules query var returns the lessons outside those modules only.
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_outside_modules
