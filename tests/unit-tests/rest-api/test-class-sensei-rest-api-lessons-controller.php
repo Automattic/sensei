@@ -90,33 +90,20 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 		$this->assertTrue( $has_course_id );
 	}
 
-	public function testGet_MetaQueryWithEmptyCourseProvided_AppliesMetaQuery() {
+	/**
+	 * Filtering the lessons route by an empty course returns only the lessons without a course: with no course meta, with an empty one or with course 0.
+	 *
+	 * @covers Sensei_REST_API_Lessons_Controller::add_meta_query_args
+	 */
+	public function testAddMetaQueryArgs_EmptyLessonCourseMetaProvided_ReturnsTheLessonsWithoutCourse() {
 		/* Arrange. */
 		$this->login_as_teacher();
-
-		$has_compare_not_exists   = false;
-		$rest_lesson_query_filter = function ( $args ) use ( &$has_compare_not_exists ) {
-			$meta_query = $args['meta_query'] ?? array();
-			if ( ! empty( $meta_query ) ) {
-				foreach ( $meta_query as $meta_query_item ) {
-					foreach ( $meta_query_item as $sub_item ) {
-						if ( ! is_array( $sub_item ) ) {
-							continue;
-						}
-
-						if ( isset( $sub_item['key'] )
-							&& '_lesson_course' === $sub_item['key']
-							&& isset( $sub_item['compare'] )
-							&& 'NOT EXISTS' === $sub_item['compare']
-						) {
-							$has_compare_not_exists = true;
-						}
-					}
-				}
-			}
-			return $args;
-		};
-		add_filter( 'rest_lesson_query', $rest_lesson_query_filter, 11, 1 );
+		$this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$lesson_without_course_meta = $this->factory->lesson->create();
+		$lesson_of_course_zero      = $this->factory->lesson->create();
+		Sensei()->course_lessons_repository->attach_lesson( $lesson_of_course_zero, 0 );
+		// An empty course meta is legacy data: the repository does not write it.
+		$lesson_with_empty_course = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => '' ) ) );
 
 		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
 
@@ -128,11 +115,13 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 				'metaValue' => 0,
 			)
 		);
-		$this->server->dispatch( $request );
-		remove_filter( 'rest_lesson_query', $rest_lesson_query_filter, 11 );
+		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$this->assertTrue( $has_compare_not_exists );
+		$this->assertEqualsCanonicalizing(
+			array( $lesson_without_course_meta, $lesson_of_course_zero, $lesson_with_empty_course ),
+			wp_list_pluck( $response->get_data(), 'id' )
+		);
 	}
 
 	public function testUpdateItemPermissionsCheck_UneditableCourseGiven_ReturnsForbidden() {
