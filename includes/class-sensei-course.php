@@ -3709,14 +3709,7 @@ class Sensei_Course {
 
 			}
 
-			$course_lesson_query_args['tax_query'] = [
-				[
-					'taxonomy' => 'module',
-					'field'    => 'id',
-					'terms'    => $terms_ids,
-					'operator' => 'NOT IN',
-				],
-			];
+			$course_lesson_query_args['sensei_module__not_in'] = $terms_ids;
 		}
 
 		// setting lesson order

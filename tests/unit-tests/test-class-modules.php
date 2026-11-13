@@ -99,6 +99,59 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A module with a lesson is in use.
+	 *
+	 * @covers Sensei_Core_Modules::is_term_used
+	 */
+	public function testIsTermUsed_LessonInModule_ReturnsTrue() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $this->factory->lesson->create(), $module_id );
+
+		/* Act. */
+		$actual = Sensei()->modules->is_term_used( $module_id );
+
+		/* Assert. */
+		self::assertTrue( $actual );
+	}
+
+	/**
+	 * A module of a course is in use, although it has no lessons.
+	 *
+	 * @covers Sensei_Core_Modules::is_term_used
+	 */
+	public function testIsTermUsed_CourseHasModule_ReturnsTrue() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		wp_set_object_terms( $this->factory->course->create(), array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->is_term_used( $module_id );
+
+		/* Assert. */
+		self::assertTrue( $actual );
+	}
+
+	/**
+	 * A module without lessons or courses is not in use, although other modules have them.
+	 *
+	 * @covers Sensei_Core_Modules::is_term_used
+	 */
+	public function testIsTermUsed_ModuleWithoutLessonsOrCourses_ReturnsFalse() {
+		/* Arrange. */
+		$module_id       = $this->factory->module->create();
+		$other_module_id = $this->factory->module->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $this->factory->lesson->create(), $other_module_id );
+		wp_set_object_terms( $this->factory->course->create(), array( $other_module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->is_term_used( $module_id );
+
+		/* Assert. */
+		self::assertFalse( $actual );
+	}
+
+	/**
 	 * Completing the only lesson of a module saves the full module progress of the student in the lesson course.
 	 *
 	 * @covers Sensei_Core_Modules::save_lesson_module_progress
@@ -114,6 +167,8 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		// The same module in another course, with a lesson the student has not completed.
 		$other_course = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
 		Sensei()->course_lessons_repository->set_lesson_module( $other_course['lesson_ids'][0], $course_lessons['modules'][0] );
+		// A lesson of the course outside the module, which the student has not completed either.
+		Sensei()->course_lessons_repository->attach_lesson( $this->factory->lesson->create(), $course_lessons['course_id'] );
 
 		$user_id  = $this->factory->user->create();
 		$progress = Sensei()->lesson_progress_repository->create( $course_lessons['lesson_ids'][0], $user_id );
@@ -270,6 +325,23 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertStringEndsWith( 'course_id=' . $course_lessons['course_id'], $actual->url );
+	}
+
+	/**
+	 * The lessons query of a module is flagged as a query of that module, as with a `tax_query` argument.
+	 *
+	 * @covers Sensei_Core_Modules::get_lessons_query
+	 */
+	public function testGetLessonsQuery_ModuleGiven_FlagsTheQueryAsAModuleTaxonomyQuery() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$course_id = $this->factory->course->create();
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lessons_query( $course_id, $module_id );
+
+		/* Assert. */
+		self::assertTrue( $actual->is_tax( 'module', $module_id ) );
 	}
 
 	/**

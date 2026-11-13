@@ -91,12 +91,7 @@ class Sensei_Export_Courses
 				'posts_per_page'             => -1,
 				'post__in'                   => $all_lessons,
 				'fields'                     => 'ids',
-				'tax_query'                  => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- We only return the lessons which belong to a course and module.
-					[
-						'taxonomy' => 'module',
-						'terms'    => $term,
-					],
-				],
+				'sensei_module'              => $term,
 				'sensei_lesson_order_module' => $term,
 				'orderby'                    => 'date',
 				'order'                      => 'ASC',
