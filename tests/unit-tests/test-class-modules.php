@@ -99,6 +99,59 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A module with a lesson is in use.
+	 *
+	 * @covers Sensei_Core_Modules::is_term_used
+	 */
+	public function testIsTermUsed_LessonInModule_ReturnsTrue() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $this->factory->lesson->create(), $module_id );
+
+		/* Act. */
+		$actual = Sensei()->modules->is_term_used( $module_id );
+
+		/* Assert. */
+		self::assertTrue( $actual );
+	}
+
+	/**
+	 * A module of a course is in use, although it has no lessons.
+	 *
+	 * @covers Sensei_Core_Modules::is_term_used
+	 */
+	public function testIsTermUsed_CourseHasModule_ReturnsTrue() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		wp_set_object_terms( $this->factory->course->create(), array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->is_term_used( $module_id );
+
+		/* Assert. */
+		self::assertTrue( $actual );
+	}
+
+	/**
+	 * A module without lessons or courses is not in use, although other modules have them.
+	 *
+	 * @covers Sensei_Core_Modules::is_term_used
+	 */
+	public function testIsTermUsed_ModuleWithoutLessonsOrCourses_ReturnsFalse() {
+		/* Arrange. */
+		$module_id       = $this->factory->module->create();
+		$other_module_id = $this->factory->module->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $this->factory->lesson->create(), $other_module_id );
+		wp_set_object_terms( $this->factory->course->create(), array( $other_module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->is_term_used( $module_id );
+
+		/* Assert. */
+		self::assertFalse( $actual );
+	}
+
+	/**
 	 * Completing the only lesson of a module saves the full module progress of the student in the lesson course.
 	 *
 	 * @covers Sensei_Core_Modules::save_lesson_module_progress

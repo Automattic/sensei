@@ -439,9 +439,23 @@ class Sensei_Core_Modules {
 			return true;
 		}
 
-		$post_query = new WP_Query(
+		$lessons_query = new WP_Query(
 			array(
-				'post_type'      => array( 'lesson', 'course' ),
+				'post_type'      => 'lesson',
+				'sensei_module'  => intval( $module_term_id ),
+				'fields'         => 'ids',
+				'posts_per_page' => 1,
+				'no_found_rows'  => true,
+			)
+		);
+
+		if ( $lessons_query->post_count > 0 ) {
+			return true;
+		}
+
+		$courses_query = new WP_Query(
+			array(
+				'post_type'      => 'course',
 				'tax_query'      => array(
 					array(
 						'taxonomy' => 'module',
@@ -451,14 +465,11 @@ class Sensei_Core_Modules {
 				),
 				'fields'         => 'ids',
 				'posts_per_page' => 1,
+				'no_found_rows'  => true,
 			)
 		);
 
-		if ( $post_query->found_posts > 0 ) {
-			return true;
-		}
-
-		return false;
+		return $courses_query->post_count > 0;
 	}
 
 	/**
