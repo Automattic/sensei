@@ -1215,13 +1215,7 @@ class Sensei_Core_Modules {
 			'post_type'      => 'lesson',
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
-			'tax_query'      => array(
-				array(
-					'taxonomy' => $this->taxonomy,
-					'field'    => 'id',
-					'terms'    => $module_id,
-				),
-			),
+			'sensei_module'  => (int) $module_id,
 			'sensei_course'  => (int) $course_id,
 			'fields'         => 'ids',
 		);
@@ -1693,13 +1687,7 @@ class Sensei_Core_Modules {
 		$args = array(
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
-			'tax_query'      => array(
-				array(
-					'taxonomy' => $this->taxonomy,
-					'field'    => 'id',
-					'terms'    => intval( $term_id ),
-				),
-			),
+			'sensei_module'  => intval( $term_id ),
 		);
 
 		$module = get_term( $term_id, $this->taxonomy );
@@ -2111,13 +2099,7 @@ class Sensei_Core_Modules {
 			'post_status'      => $course_lessons_post_status,
 			'posts_per_page'   => -1,
 			'sensei_course'    => intval( $course_id ),
-			'tax_query'        => array(
-				array(
-					'taxonomy' => 'module',
-					'field'    => 'id',
-					'terms'    => intval( $term_id ),
-				),
-			),
+			'sensei_module'    => intval( $term_id ),
 			'orderby'          => 'menu_order',
 			'order'            => 'ASC',
 			'suppress_filters' => 0,

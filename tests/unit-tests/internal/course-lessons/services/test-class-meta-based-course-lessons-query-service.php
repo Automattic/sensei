@@ -236,6 +236,58 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A lesson query with the module query var returns the lessons of that module only.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_by_module
+	 */
+	public function testFilterLessonsByModule_ModuleQueryVarGiven_ReturnsTheLessonsOfThatModule(): void {
+		/* Arrange. */
+		$module_id           = $this->factory->module->create();
+		$other_module_id     = $this->factory->module->create();
+		$module_lesson       = $this->factory->lesson->create();
+		$other_module_lesson = $this->factory->lesson->create();
+		$this->factory->lesson->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $module_lesson, $module_id );
+		Sensei()->course_lessons_repository->set_lesson_module( $other_module_lesson, $other_module_id );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'sensei_module'  => $module_id,
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $module_lesson ), $actual );
+	}
+
+	/**
+	 * A query for module 0 returns no lessons instead of every lesson.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_by_module
+	 */
+	public function testFilterLessonsByModule_ZeroModuleGiven_ReturnsNoLessons(): void {
+		/* Arrange. */
+		Sensei()->course_lessons_repository->set_lesson_module( $this->factory->lesson->create(), $this->factory->module->create() );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'sensei_module'  => 0,
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array(), $actual );
+	}
+
+	/**
 	 * A lesson query with the lesson order course query var returns the lessons that have an order in that course, in that order.
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::order_lessons_in_course
