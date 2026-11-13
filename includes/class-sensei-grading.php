@@ -1346,7 +1346,7 @@ class Sensei_Grading {
 
 		}
 
-		return $question_grade;
+		return (int) $question_grade;
 	}
 
 	/**
