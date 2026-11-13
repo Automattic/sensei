@@ -711,14 +711,9 @@ class Sensei_Usage_Tracking_Data {
 	private static function get_lesson_module_count() {
 		$query = new WP_Query(
 			array(
-				'post_type' => 'lesson',
-				'fields'    => 'ids',
-				'tax_query' => array(
-					array(
-						'taxonomy' => 'module',
-						'operator' => 'EXISTS',
-					),
-				),
+				'post_type'         => 'lesson',
+				'fields'            => 'ids',
+				'sensei_has_module' => true,
 			)
 		);
 
