@@ -661,15 +661,9 @@ class Sensei_Usage_Tracking_Data {
 	private static function get_lesson_prerequisite_count() {
 		$query = new WP_Query(
 			array(
-				'post_type'  => 'lesson',
-				'fields'     => 'ids',
-				'meta_query' => array(
-					array(
-						'key'     => '_lesson_prerequisite',
-						'value'   => 0,
-						'compare' => '>',
-					),
-				),
+				'post_type'               => 'lesson',
+				'fields'                  => 'ids',
+				'sensei_has_prerequisite' => true,
 			)
 		);
 
