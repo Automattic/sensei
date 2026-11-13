@@ -40,6 +40,7 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 		// flags (e.g. `is_tax()`) as it does with a `tax_query` argument.
 		add_action( 'parse_tax_query', array( $this, 'filter_lessons_by_module' ) );
 		add_action( 'parse_tax_query', array( $this, 'filter_lessons_outside_modules' ) );
+		add_action( 'parse_tax_query', array( $this, 'filter_lessons_with_module' ) );
 	}
 
 	/**
@@ -124,6 +125,23 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 				'operator' => 'NOT IN',
 			)
 		);
+	}
+
+	/**
+	 * Limit a lesson query to the lessons in a module when its `sensei_has_module` query var is set.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_Query $query The query being prepared.
+	 */
+	public function filter_lessons_with_module( WP_Query $query ): void {
+		if ( ! $query->get( 'sensei_has_module' ) ) {
+			return;
+		}
+
+		$this->add_module_clause( $query, 'sensei_has_module', array( 'operator' => 'EXISTS' ) );
 	}
 
 	/**
