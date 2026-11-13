@@ -32,6 +32,24 @@ interface Course_Lessons_Query_Service_Interface {
 	public function filter_lessons_by_course( \WP_Query $query ): void;
 
 	/**
+	 * Limit a lesson query to the lessons without a course when its `sensei_without_course` query var is set.
+	 *
+	 * @internal
+	 *
+	 * @param \WP_Query $query The query being prepared.
+	 */
+	public function filter_lessons_without_course( \WP_Query $query ): void;
+
+	/**
+	 * Limit a lesson query to the lessons with a prerequisite when its `sensei_has_prerequisite` query var is set.
+	 *
+	 * @internal
+	 *
+	 * @param \WP_Query $query The query being prepared.
+	 */
+	public function filter_lessons_with_prerequisite( \WP_Query $query ): void;
+
+	/**
 	 * Limit a lesson query to the lessons of the module set in the `sensei_module` query var.
 	 *
 	 * @internal
