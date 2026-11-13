@@ -166,6 +166,12 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 				return $args;
 			}
 
+			if ( '_lesson_course' === $meta_key && empty( $meta_value ) ) {
+				$args['sensei_without_course'] = true;
+
+				return $args;
+			}
+
 			if ( empty( $meta_value ) ) {
 				$meta_query[] = array(
 					'relation' => 'OR',
