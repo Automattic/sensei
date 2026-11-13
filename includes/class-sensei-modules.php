@@ -2147,15 +2147,7 @@ class Sensei_Core_Modules {
 		$base_args      = [];
 
 		if ( ! empty( $course_modules ) && is_array( $course_modules ) ) {
-			$term_ids               = wp_list_pluck( $course_modules, 'term_id' );
-			$base_args['tax_query'] = [
-				[
-					'taxonomy' => 'module',
-					'field'    => 'id',
-					'terms'    => $term_ids,
-					'operator' => 'NOT IN',
-				],
-			];
+			$base_args['sensei_module__not_in'] = wp_list_pluck( $course_modules, 'term_id' );
 		}
 
 		return Sensei()->course->course_lessons( $course_id, $post_status, 'all', $base_args );

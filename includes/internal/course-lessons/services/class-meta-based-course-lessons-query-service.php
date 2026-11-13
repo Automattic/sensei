@@ -39,6 +39,7 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 		// The module clauses are added while WordPress parses the query, so it sets the query
 		// flags (e.g. `is_tax()`) as it does with a `tax_query` argument.
 		add_action( 'parse_tax_query', array( $this, 'filter_lessons_by_module' ) );
+		add_action( 'parse_tax_query', array( $this, 'filter_lessons_outside_modules' ) );
 	}
 
 	/**
@@ -94,6 +95,33 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 			array(
 				'field' => 'id',
 				'terms' => (int) $module_id,
+			)
+		);
+	}
+
+	/**
+	 * Limit a lesson query to the lessons outside the modules set in the `sensei_module__not_in` query var.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_Query $query The query being prepared.
+	 */
+	public function filter_lessons_outside_modules( WP_Query $query ): void {
+		$module_ids = $query->get( 'sensei_module__not_in', null );
+
+		if ( null === $module_ids ) {
+			return;
+		}
+
+		$this->add_module_clause(
+			$query,
+			'sensei_module__not_in',
+			array(
+				'field'    => 'id',
+				'terms'    => array_map( 'intval', (array) $module_ids ),
+				'operator' => 'NOT IN',
 			)
 		);
 	}
