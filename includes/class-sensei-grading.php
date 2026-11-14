@@ -803,8 +803,7 @@ class Sensei_Grading {
 				'posts_per_page'   => -1,
 				'orderby'          => 'title',
 				'order'            => 'ASC',
-				'meta_key'         => '_lesson_course',
-				'meta_value'       => $course_id,
+				'sensei_course'    => $course_id,
 				'post_status'      => array( 'publish', 'private' ),
 				'suppress_filters' => 0,
 				'fields'           => 'ids',
@@ -820,6 +819,8 @@ class Sensei_Grading {
 			 * Filter the arguments used to query for lessons in the grading dropdown.
 			 *
 			 * @hook sensei_grading_filter_lessons
+			 *
+			 * @since $$next-version$$ The course is given in the `sensei_course` argument instead of a `_lesson_course` meta clause.
 			 *
 			 * @param {array} $lesson_args Array of arguments for the query.
 			 * @return {array} Filtered arguments.

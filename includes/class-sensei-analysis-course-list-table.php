@@ -771,12 +771,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'offset'           => $args['offset'],
 			'order'            => $args['order'],
 			'orderby'          => $args['orderby'],
-			'meta_query'       => array(
-				array(
-					'key'   => '_lesson_course',
-					'value' => intval( $this->course_id ),
-				),
-			),
+			'sensei_course'    => intval( $this->course_id ),
 			'post_status'      => array( 'publish', 'private' ),
 			'suppress_filters' => 0,
 		);
@@ -790,6 +785,8 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		 * Filter the lessons arguments for the Course Analysis list table.
 		 *
 		 * @hook sensei_analysis_course_filter_lessons
+		 *
+		 * @since $$next-version$$ The course is given in the `sensei_course` argument instead of a `_lesson_course` meta clause.
 		 *
 		 * @param {array} $lessons_args The lessons arguments.
 		 * @return {array} The lessons arguments.

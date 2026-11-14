@@ -55,17 +55,17 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$this->login_as_teacher();
 
-		$has_course_id            = false;
-		$rest_lesson_query_filter = function ( $args ) use ( &$has_course_id ) {
+		$has_meta_clause          = false;
+		$rest_lesson_query_filter = function ( $args ) use ( &$has_meta_clause ) {
 			$meta_query = $args['meta_query'] ?? array();
 			if ( ! empty( $meta_query ) ) {
 				foreach ( $meta_query as $meta_query_item ) {
 					if ( isset( $meta_query_item['key'] )
-						&& '_lesson_course' === $meta_query_item['key']
+						&& '_lesson_complexity' === $meta_query_item['key']
 						&& isset( $meta_query_item['value'] )
-						&& 1 === (int) $meta_query_item['value']
+						&& 'easy' === $meta_query_item['value']
 					) {
-						$has_course_id = true;
+						$has_meta_clause = true;
 					}
 				}
 			}
@@ -79,15 +79,56 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 		$request = new WP_REST_Request( 'GET', '/wp/v2/lessons' );
 		$request->set_query_params(
 			array(
-				'metaKey'   => '_lesson_course',
-				'metaValue' => 1,
+				'metaKey'   => '_lesson_complexity',
+				'metaValue' => 'easy',
 			)
 		);
 		$this->server->dispatch( $request );
 		remove_filter( 'rest_lesson_query', $rest_lesson_query_filter, 11 );
 
 		/* Assert. */
-		$this->assertTrue( $has_course_id );
+		$this->assertTrue( $has_meta_clause );
+	}
+
+	/**
+	 * Filtering the lessons route by course returns the lessons of that course only.
+	 *
+	 * @covers Sensei_REST_API_Lessons_Controller::add_meta_query_args
+	 */
+	public function testAddMetaQueryArgs_LessonCourseMetaProvided_ReturnsTheLessonsOfThatCourse() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+
+		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
+
+		/* Act. */
+		$request = new WP_REST_Request( 'GET', '/wp/v2/lessons' );
+		$request->set_query_params(
+			array(
+				'metaKey'   => '_lesson_course',
+				'metaValue' => $course_lessons['course_id'],
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$actual   = wp_list_pluck( $response->get_data(), 'id' );
+		sort( $actual );
+
+		/* Assert. */
+		$expected = $course_lessons['lesson_ids'];
+		sort( $expected );
+		$this->assertSame( $expected, $actual );
 	}
 
 	public function testGet_MetaQueryWithEmptyCourseProvided_AppliesMetaQuery() {

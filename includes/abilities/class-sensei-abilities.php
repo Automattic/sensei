@@ -900,12 +900,7 @@ class Sensei_Abilities {
 		}
 
 		if ( ! empty( $input['course'] ) ) {
-			$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-				array(
-					'key'   => '_lesson_course',
-					'value' => (int) $input['course'],
-				),
-			);
+			$args['sensei_course'] = (int) $input['course'];
 		}
 
 		if ( ! empty( $input['search'] ) ) {

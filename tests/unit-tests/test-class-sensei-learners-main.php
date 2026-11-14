@@ -95,6 +95,12 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	public function testGetRowData_LessonWithStudentProgressGiven_RendersStudentCount() {
 		$lesson_id = $this->createListingPost( 'lesson' );
 		$this->createListingProgress( 'lesson', $lesson_id, $this->factory->user->create() );
+		$this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
 		$_GET['course_id'] = $this->course_id;
 		$_GET['view']      = 'lessons';
 		$table             = new Sensei_Learners_Main();

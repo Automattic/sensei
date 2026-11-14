@@ -793,10 +793,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		);
 
 		if ( $this->course_id ) {
-			$lesson_args['meta_query'][] = array(
-				'key'   => '_lesson_course',
-				'value' => $this->course_id,
-			);
+			$lesson_args['sensei_course'] = $this->course_id;
 		}
 
 		if ( $args['search'] ) {
@@ -807,6 +804,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		 * Filter arguments for the lesson query on the student management screen.
 		 *
 		 * @hook sensei_learners_filter_lessons
+		 *
+		 * @since $$next-version$$ The course is given in the `sensei_course` argument instead of a `_lesson_course` meta clause.
 		 *
 		 * @param {array} $lesson_args Lesson query arguments.
 		 * @return {array} The modified arguments.
