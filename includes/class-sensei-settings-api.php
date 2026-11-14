@@ -218,7 +218,7 @@ class Sensei_Settings_API {
 		$image_path_desktop = Sensei()->assets->get_image( 'content-drip-promo-desktop.png' );
 		$image_path_mobile  = Sensei()->assets->get_image( 'content-drip-promo-mobile.png' );
 		$header             = __( 'Get Sensei Pro', 'sensei-lms' );
-		$text               = __( 'Keep students engaged and improve knowledge retention by setting a delivery schedule for course content.', 'sensei-lms' );
+		$text               = __( 'Release lessons on a schedule. For example, unlock a lesson one week after enrollment.', 'sensei-lms' );
 		$url                = Sensei_Pro_Upsell::get_sensei_pro_upsell_url( 'settings_content_drip' );
 		$button_text        = __( 'Upgrade to Sensei Pro', 'sensei-lms' );
 		$this->render_promo_banner( $image_path_desktop, $image_path_mobile, $header, $text, $url, $button_text );
@@ -237,7 +237,7 @@ class Sensei_Settings_API {
 		$header             = __( 'Get Sensei Pro', 'sensei-lms' );
 		$text               = __( 'Sell your courses using the most popular eCommerce platform on the web, WooCommerce.', 'sensei-lms' );
 		$url                = Sensei_Pro_Upsell::get_sensei_pro_upsell_url( 'settings_woocommerce' );
-		$button_text        = __( 'Upgrade to Sensei Pro', 'sensei-lms' );
+		$button_text        = __( 'Sell with Sensei Pro', 'sensei-lms' );
 		$this->render_promo_banner( $image_path_desktop, $image_path_mobile, $header, $text, $url, $button_text );
 	}
 

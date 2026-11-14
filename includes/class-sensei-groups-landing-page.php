@@ -103,28 +103,15 @@ class Sensei_Groups_Landing_Page {
 			</h3>
 			<div class="sensei-promo-groups__actions">
 				<?php
-				$upsell_args = array_merge(
-					Sensei_Pro_Upsell::get_default_utm_params(),
-					[ 'utm_campaign' => 'groups' ]
-				);
-
-				$primary_url  = add_query_arg( $upsell_args, Sensei_Pro_Upsell::get_base_url() );
-				$features_url = add_query_arg( $upsell_args, Sensei_Pro_Upsell::get_base_url() . '#features' );
+				$plans_url = Sensei_Pro_Upsell::get_sensei_pro_upsell_url( 'groups' );
 				?>
 				<a
 					class="button button-primary sensei-promo-groups__primary-action"
-					href="<?php echo esc_url( $primary_url ); ?>"
+					href="<?php echo esc_url( $plans_url ); ?>"
 					target="_blank"
 				>
 					<?php echo esc_html( __( 'Get Sensei Pro', 'sensei-lms' ) ); ?>
 				</a>
-				<a
-					class="sensei-promo-groups__secondary_action"
-					href="<?php echo esc_url( $features_url ); ?>"
-					target="_blank"
-				>
-				<?php echo esc_html( __( 'See all Sensei Pro Features', 'sensei-lms' ) ); ?>
-			</a>
 			</div>
 		</div>
 			<picture>
