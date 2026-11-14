@@ -1,0 +1,4 @@
+Significance: minor
+Type: changed
+
+Pass the course to the `sensei_lesson_count` filter in the `sensei_course` argument instead of a `_lesson_course` meta clause.

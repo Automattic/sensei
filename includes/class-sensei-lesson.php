@@ -3666,10 +3666,7 @@ class Sensei_Lesson {
 			'fields'           => 'ids',
 		);
 		if ( $course_id ) {
-			$post_args['meta_query'][] = array(
-				'key'   => '_lesson_course',
-				'value' => $course_id,
-			);
+			$post_args['sensei_course'] = $course_id;
 		} else {
 			// Simple check for connection to a Course
 			$post_args['meta_query'][] = array(
@@ -3683,6 +3680,8 @@ class Sensei_Lesson {
 		 * Filter the query arguments for getting the lesson count.
 		 *
 		 * @hook sensei_lesson_count
+		 *
+		 * @since $$next-version$$ The course is given in the `sensei_course` argument instead of a `_lesson_course` meta clause.
 		 *
 		 * @param {array} $post_args Post arguments.
 		 * @return {array} Post arguments.

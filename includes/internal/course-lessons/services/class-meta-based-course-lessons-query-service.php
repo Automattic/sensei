@@ -29,13 +29,13 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 	 * @since 4.27.0
 	 */
 	public function init(): void {
-		add_action( 'pre_get_posts', array( $this, 'filter_lessons_by_course' ) );
+		// Runs at a late priority so it sees the final `sensei_course` after other
+		// `pre_get_posts` callbacks (e.g. the module archive) have set it.
+		add_action( 'pre_get_posts', array( $this, 'filter_lessons_by_course' ), 999 );
 	}
 
 	/**
 	 * Limit a lesson query to the lessons of the course given in its `sensei_course` query var.
-	 *
-	 * Added to the query arguments on `pre_get_posts`, so the SQL is the same as with an inline `_lesson_course` meta clause.
 	 *
 	 * @internal
 	 *
@@ -46,20 +46,22 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 	public function filter_lessons_by_course( WP_Query $query ): void {
 		$course_id = $query->get( 'sensei_course', null );
 
+		// Only null skips the course limit; any other value, even 0, is cast and limits the query.
 		if ( null === $course_id ) {
 			return;
 		}
 
-		// An empty or invalid course ID still limits the query, to lessons of course 0, as it always has.
 		$meta_query = $query->get( 'meta_query' );
 		if ( ! is_array( $meta_query ) ) {
 			$meta_query = array();
 		}
-		$meta_query[] = array(
+		$course_clause = array(
 			'key'   => '_lesson_course',
 			'value' => (int) $course_id,
 		);
 
-		$query->set( 'meta_query', $meta_query );
+		// The course is required even when the query's own clauses are joined with OR. It goes
+		// last, so the query's own first clause stays the one `orderby => meta_value` uses.
+		$query->set( 'meta_query', array( $meta_query, $course_clause ) );
 	}
 }

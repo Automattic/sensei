@@ -908,14 +908,10 @@ class Sensei_Core_Modules {
 			$query->set( 'order', 'ASC' );
 
 			// Limit to specific course if specified
-			if ( isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
-				$course_id    = intval( $_GET['course_id'] );
-				$meta_query   = [];
-				$meta_query[] = array(
-					'key'   => '_lesson_course',
-					'value' => intval( $course_id ),
-				);
-				$query->set( 'meta_query', $meta_query );
+			// phpcs:ignore WordPress.Security.NonceVerification -- Read-only filter argument of the archive URL.
+			$course_id = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : 0;
+			if ( 0 < $course_id ) {
+				$query->set( 'sensei_course', $course_id );
 			}
 		}
 	}
@@ -1226,12 +1222,7 @@ class Sensei_Core_Modules {
 					'terms'    => $module_id,
 				),
 			),
-			'meta_query'     => array(
-				array(
-					'key'   => '_lesson_course',
-					'value' => $course_id,
-				),
-			),
+			'sensei_course'  => (int) $course_id,
 			'fields'         => 'ids',
 		);
 		$lessons = get_posts( $args );
