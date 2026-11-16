@@ -399,4 +399,20 @@ class Comments_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Rep
 	protected function get_insert_table(): string {
 		return $GLOBALS['wpdb']->comments;
 	}
+
+	/**
+	 * Set the comment date used to sort progress.
+	 *
+	 * @param int    $progress_id Progress record ID.
+	 * @param string $timestamp Update time.
+	 */
+	protected function set_progress_update_time( int $progress_id, string $timestamp ): void {
+		wp_update_comment(
+			array(
+				'comment_ID'       => $progress_id,
+				'comment_date'     => $timestamp,
+				'comment_date_gmt' => get_gmt_from_date( $timestamp ),
+			)
+		);
+	}
 }

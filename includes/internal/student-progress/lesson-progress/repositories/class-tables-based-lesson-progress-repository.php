@@ -442,7 +442,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param array $args The arguments.
+	 * @param array $args The filters, including 'orderby' (id, lesson_id, status, created_at, updated_at, or completed_at)
+	 *                    and 'order' (ASC or DESC).
 	 * @return Lesson_Progress_Interface[]
 	 */
 	public function find( array $args ): array {
@@ -495,8 +496,25 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			$query_string .= 'WHERE ' . implode( ' AND ', $where_clause ) . ' ';
 		}
 
-		$query_string  .= 'ORDER BY id ASC ';
-		$query_string  .= 'LIMIT %d OFFSET %d';
+		$sort_columns = array(
+			'id'           => 'id',
+			'lesson_id'    => 'post_id',
+			'status'       => 'status',
+			'created_at'   => 'created_at',
+			'updated_at'   => 'updated_at',
+			'completed_at' => 'completed_at',
+		);
+		$orderby      = $args['orderby'] ?? 'id';
+		$column       = is_string( $orderby ) ? ( $sort_columns[ $orderby ] ?? 'id' ) : 'id';
+		$order        = $args['order'] ?? 'ASC';
+		$direction    = is_string( $order ) && 'DESC' === strtoupper( $order ) ? 'DESC' : 'ASC';
+		$ordering     = "{$column} {$direction}";
+
+		if ( 'id' !== $column ) {
+			$ordering .= ', id ASC';
+		}
+
+		$query_string  .= "ORDER BY {$ordering} LIMIT %d OFFSET %d";
 		$query_params[] = $limit;
 		$query_params[] = $offset;
 
