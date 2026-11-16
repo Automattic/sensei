@@ -7,13 +7,14 @@
  */
 export const getSenseiProUpsellUrl = ( campaign = '' ) => {
 	const { upsellUrl } = window.sensei_admin;
-	const url = new URL( upsellUrl );
 
-	url.searchParams.set( 'utm_source', 'plugin_sensei' );
-	url.searchParams.set( 'utm_medium', 'upsell' );
-	url.searchParams.set( 'utm_campaign', campaign );
+	const senseiParams = new URLSearchParams( {
+		utm_source: 'plugin_sensei',
+		utm_medium: 'upsell',
+		utm_campaign: campaign,
+	} );
 
-	return url.toString();
+	return `${ upsellUrl }?${ senseiParams.toString() }`;
 };
 
 /**

@@ -6,8 +6,6 @@
  * @since   4.8.0
  */
 
-use Sensei\Internal\Services\Sensei_Pro_Upsell;
-
 /**
  * Class responsible for generating the Help structure for Sensei Home screen.
  */
@@ -101,7 +99,7 @@ class Sensei_Home_Help_Provider {
 		 * @return {bool} Filtered value.
 		 */
 		if ( apply_filters( 'sensei_home_support_ticket_creation_upsell_show', true ) ) {
-			$extra_link = $this->create_extra_link( __( 'Upgrade to Sensei Pro', 'sensei-lms' ), Sensei_Pro_Upsell::get_base_url() );
+			$extra_link = $this->create_extra_link( __( 'Upgrade to Sensei Pro', 'sensei-lms' ), 'https://senseilms.com/pricing/' );
 			$icon       = 'lock';
 		} elseif ( Sensei_Utils::has_wpcom_subscription() ) {
 			$url = 'https://wordpress.com/help/contact';

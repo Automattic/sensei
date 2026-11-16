@@ -19,7 +19,7 @@ const QuizTimerPromo = () => {
 				disabled
 				label={ __( 'Quiz Timer', 'sensei-lms' ) }
 				help={ __(
-					'Set a time limit for the quiz. The countdown starts when students click Start Quiz.',
+					'The quiz timer enables you to control how much time a student has to complete the quiz.',
 					'sensei-lms'
 				) }
 			/>
