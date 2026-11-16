@@ -235,7 +235,8 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			$course_progress->get_user_id(),
 			$course_progress->get_course_id(),
 			$status,
-			$metadata
+			$metadata,
+			$course_progress->get_completed_at()
 		);
 
 		if ( ! $comment_id ) {

@@ -931,9 +931,10 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		global $wpdb;
 
 		$this->set_progress_storage_mode( $mode );
-		$user_id   = $this->factory->user->create();
-		$course    = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
-		$course_id = $course['course_id'];
+		$user_id      = $this->factory->user->create();
+		$course       = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$course_id    = $course['course_id'];
+		$completed_at = '2024-05-01 15:45:00';
 
 		$lesson_progress = Sensei()->lesson_progress_repository->create( $course['lesson_ids'][0], $user_id );
 		$lesson_progress->complete();
@@ -942,12 +943,22 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 		$comment = Sensei_Utils::user_course_status( $course_id, $user_id );
 		delete_comment_meta( $comment->comment_ID, 'start' );
+		wp_update_comment(
+			array(
+				'comment_ID'       => $comment->comment_ID,
+				'comment_date'     => $completed_at,
+				'comment_date_gmt' => $completed_at,
+			)
+		);
 
 		if ( 'comments-only' !== $mode ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->update(
 				$wpdb->prefix . 'sensei_lms_progress',
-				array( 'started_at' => null ),
+				array(
+					'started_at'   => null,
+					'completed_at' => $completed_at,
+				),
 				array(
 					'post_id' => $course_id,
 					'user_id' => $user_id,
@@ -969,6 +980,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 		self::assertSame( 'complete', $progress->get_status(), 'The new lesson should leave the course complete.' );
 		self::assertNull( $progress->get_started_at(), 'Recalculating the course should leave its start unknown.' );
+		self::assertSame( $completed_at, $progress->get_completed_at()->format( 'Y-m-d H:i:s' ), 'The original completion time should remain recorded.' );
 	}
 
 	/**

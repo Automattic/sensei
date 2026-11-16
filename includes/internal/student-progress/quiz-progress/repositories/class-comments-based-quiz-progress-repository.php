@@ -176,7 +176,8 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			$quiz_progress->get_user_id(),
 			$lesson_id,
 			$status,
-			$metadata
+			$metadata,
+			$quiz_progress->get_completed_at()
 		);
 
 		if ( ! $comment_id ) {

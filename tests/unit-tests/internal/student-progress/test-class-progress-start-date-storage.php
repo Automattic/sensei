@@ -77,7 +77,7 @@ class Progress_Start_Date_Storage_Test extends WP_UnitTestCase {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$table_progress = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT started_at FROM {$wpdb->prefix}sensei_lms_progress WHERE post_id = %d AND user_id = %d AND type = %s",
+				"SELECT started_at, completed_at FROM {$wpdb->prefix}sensei_lms_progress WHERE post_id = %d AND user_id = %d AND type = %s",
 				$post_id,
 				$user_id,
 				$type
@@ -88,6 +88,8 @@ class Progress_Start_Date_Storage_Test extends WP_UnitTestCase {
 		self::assertNull( $comment_progress->get_started_at(), 'The saved comment should have no recorded start date.' );
 		self::assertFalse( metadata_exists( 'comment', $comment_progress->get_id(), 'start' ), 'The comment save should leave start metadata absent.' );
 		self::assertNull( $table_progress->started_at, 'The table save should store SQL NULL for the unknown start.' );
+		self::assertSame( $completed_at, $comment_progress->get_completed_at()->format( 'Y-m-d H:i:s' ), 'The save should retain the comment completion date.' );
+		self::assertSame( $completed_at, $table_progress->completed_at, 'The save should retain the table completion date.' );
 	}
 
 	/**

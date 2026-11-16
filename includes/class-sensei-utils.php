@@ -46,10 +46,12 @@ class Sensei_Utils {
 	 *
 	 * @access public
 	 * @since  1.0.0
-	 * @param  array $args (default: array())
+	 * @since $$next-version$$ $activity_date parameter added.
+	 * @param array                  $args Activity data.
+	 * @param DateTimeInterface|null $activity_date Recorded date for the activity, when available.
 	 * @return bool | int
 	 */
-	public static function sensei_log_activity( $args = array() ) {
+	public static function sensei_log_activity( $args = array(), ?DateTimeInterface $activity_date = null ) {
 		global $wpdb;
 
 		// Args, minimum data required for WP
@@ -63,6 +65,12 @@ class Sensei_Utils {
 			'user_id'              => intval( $args['user_id'] ),
 			'comment_approved'     => ! empty( $args['status'] ) ? esc_html( $args['status'] ) : 'log',
 		);
+		if ( $activity_date ) {
+			$timestamp                = $activity_date->getTimestamp();
+			$data['comment_date']     = wp_date( 'Y-m-d H:i:s', $timestamp );
+			$data['comment_date_gmt'] = gmdate( 'Y-m-d H:i:s', $timestamp );
+		}
+
 		// Allow extra data
 		if ( ! empty( $args['username'] ) ) {
 			$data['comment_author'] = sanitize_user( $args['username'] );
@@ -102,7 +110,7 @@ class Sensei_Utils {
 			// Update the comment if an update was requested
 			$data['comment_ID'] = $comment_id;
 			// By default update the timestamp of the comment
-			if ( empty( $args['keep_time'] ) ) {
+			if ( ! $activity_date && empty( $args['keep_time'] ) ) {
 				$data['comment_date'] = current_time( 'mysql' );
 			}
 			if ( false === wp_update_comment( $data ) ) {
@@ -1727,7 +1735,10 @@ class Sensei_Utils {
 				}
 			}
 
-			if ( $lessons_completed === $total_lessons ) {
+			if (
+				$lessons_completed === $total_lessons
+				&& Course_Progress_Interface::STATUS_COMPLETE !== $course_progress->get_status()
+			) {
 				$course_progress->complete();
 			}
 
@@ -2120,15 +2131,16 @@ class Sensei_Utils {
 	 * Sets the status for the lesson
 	 *
 	 * @since  1.7.0
+	 * @since $$next-version$$ $completed_at parameter added.
 	 *
-	 * @param int|string $user_id
-	 * @param int|string $lesson_id
-	 * @param string     $status
-	 * @param array      $metadata
-	 *
+	 * @param int|string             $user_id Student ID.
+	 * @param int|string             $lesson_id Lesson ID.
+	 * @param string                 $status Progress status.
+	 * @param array                  $metadata Comment metadata.
+	 * @param DateTimeInterface|null $completed_at Recorded completion date, when available.
 	 * @return mixed false or comment_ID
 	 */
-	public static function update_lesson_status( $user_id, $lesson_id, $status = 'in-progress', $metadata = array() ) {
+	public static function update_lesson_status( $user_id, $lesson_id, $status = 'in-progress', $metadata = array(), ?DateTimeInterface $completed_at = null ) {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$user = get_userdata( (int) $user_id );
@@ -2145,7 +2157,7 @@ class Sensei_Utils {
 				unset( $args['keep_time'] ); // Keep updating what's happened
 			}
 
-			$comment_id = self::sensei_log_activity( $args );
+			$comment_id = self::sensei_log_activity( $args, $completed_at );
 			if ( ! $comment_id ) {
 				return false;
 			}
@@ -2176,13 +2188,15 @@ class Sensei_Utils {
 	 *
 	 * @access public
 	 * @since  1.7.0
-	 * @param int    $user_id
-	 * @param int    $course_id
-	 * @param string $status
-	 * @param array  $metadata
+	 * @since $$next-version$$ $completed_at parameter added.
+	 * @param int|string             $user_id Student ID.
+	 * @param int|string             $course_id Course ID.
+	 * @param string                 $status Progress status.
+	 * @param array                  $metadata Comment metadata.
+	 * @param DateTimeInterface|null $completed_at Recorded completion date, when available.
 	 * @return mixed false or comment_ID
 	 */
-	public static function update_course_status( $user_id, $course_id, $status = 'in-progress', $metadata = array() ) {
+	public static function update_course_status( $user_id, $course_id, $status = 'in-progress', $metadata = array(), ?DateTimeInterface $completed_at = null ) {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
@@ -2197,7 +2211,7 @@ class Sensei_Utils {
 				'action'   => 'update', // Update the existing status...
 			);
 
-			$comment_id = self::sensei_log_activity( $args );
+			$comment_id = self::sensei_log_activity( $args, $completed_at );
 			if ( ! $comment_id ) {
 				return false;
 			}
