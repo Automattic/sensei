@@ -26,12 +26,11 @@ export const getSenseiProUpsellUrl = ( campaign = '' ) => {
  */
 export const getSenseiProCheckoutUrl = ( campaign = '' ) => {
 	const { checkoutUrl } = window.sensei_admin;
+	const url = new URL( checkoutUrl );
 
-	const senseiParams = new URLSearchParams( {
-		utm_source: 'plugin_sensei',
-		utm_medium: 'checkout',
-		utm_campaign: campaign,
-	} );
+	url.searchParams.set( 'utm_source', 'plugin_sensei' );
+	url.searchParams.set( 'utm_medium', 'checkout' );
+	url.searchParams.set( 'utm_campaign', campaign );
 
-	return `${ checkoutUrl }?${ senseiParams.toString() }`;
+	return url.toString();
 };
