@@ -824,4 +824,21 @@ class Tables_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Repos
 	protected function get_insert_table(): string {
 		return $GLOBALS['wpdb']->prefix . 'sensei_lms_progress';
 	}
+
+	/**
+	 * Set the timestamp used to sort table-backed progress.
+	 *
+	 * @param int    $progress_id Progress record ID.
+	 * @param string $timestamp Update time.
+	 */
+	protected function set_progress_update_time( int $progress_id, string $timestamp ): void {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Set a fixed timestamp because save() uses the current time.
+		$wpdb->update(
+			$this->get_insert_table(),
+			array( 'updated_at' => $timestamp ),
+			array( 'id' => $progress_id )
+		);
+	}
 }
