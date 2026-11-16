@@ -920,6 +920,58 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Adding an unfinished lesson does not undo historical course completion.
+	 *
+	 * @covers Sensei_Utils::user_complete_course
+	 * @dataProvider progress_storage_modes
+	 *
+	 * @param string $mode The primary storage mode.
+	 */
+	public function testUserCompleteCourse_CompletedCourseWithUnknownStartAndNewLesson_PreservesCompletion( string $mode ): void {
+		global $wpdb;
+
+		$this->set_progress_storage_mode( $mode );
+		$user_id      = $this->factory->user->create();
+		$course       = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$course_id    = $course['course_id'];
+
+		$lesson_progress = Sensei()->lesson_progress_repository->create( $course['lesson_ids'][0], $user_id );
+		$lesson_progress->complete();
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
+		Sensei_Utils::user_complete_course( $course_id, $user_id, false );
+
+		$comment = Sensei_Utils::user_course_status( $course_id, $user_id );
+		delete_comment_meta( $comment->comment_ID, 'start' );
+
+		if ( 'comments-only' !== $mode ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->update(
+				$wpdb->prefix . 'sensei_lms_progress',
+				array( 'started_at' => null ),
+				array(
+					'post_id' => $course_id,
+					'user_id' => $user_id,
+					'type'    => 'course',
+				)
+			);
+		}
+
+		$this->factory->lesson->create(
+			array(
+				'meta_input' => array( '_lesson_course' => $course_id ),
+			)
+		);
+		wp_cache_flush();
+
+		Sensei_Utils::user_complete_course( $course_id, $user_id, false );
+
+		$progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+
+		self::assertSame( 'complete', $progress->get_status(), 'The new lesson should leave the course complete.' );
+		self::assertNull( $progress->get_started_at(), 'Recalculating the course should leave its start unknown.' );
+	}
+
+	/**
 	 * Course completion stores the lesson counts on its mirrored comment.
 	 *
 	 * @covers Sensei_Utils::user_complete_course

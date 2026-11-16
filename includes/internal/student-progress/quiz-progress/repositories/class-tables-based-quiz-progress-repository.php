@@ -14,6 +14,7 @@ use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -62,12 +63,13 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @internal
 	 *
-	 * @param int $quiz_id Quiz identifier.
-	 * @param int $user_id User identifier.
+	 * @param int  $quiz_id Quiz identifier.
+	 * @param int  $user_id User identifier.
+	 * @param bool $record_start Whether creation also records a start event.
 	 * @throws Persistence_Exception If the required insert fails.
 	 * @return Quiz_Progress_Interface
 	 */
-	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
+	public function create( int $quiz_id, int $user_id, bool $record_start = true ): Quiz_Progress_Interface {
 		/**
 		 * Filter quiz id for quiz progress creation.
 		 *
@@ -91,7 +93,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'parent_post_id' => null,
 				'type'           => 'quiz',
 				'status'         => Quiz_Progress_Interface::STATUS_IN_PROGRESS,
-				'started_at'     => $current_datetime->format( $date_format ),
+				'started_at'     => $record_start ? $current_datetime->format( $date_format ) : null,
 				'completed_at'   => null,
 				'created_at'     => $current_datetime->format( $date_format ),
 				'updated_at'     => $current_datetime->format( $date_format ),
@@ -120,7 +122,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			$quiz_id,
 			$user_id,
 			Quiz_Progress_Interface::STATUS_IN_PROGRESS,
-			$current_datetime,
+			$record_start ? $current_datetime : null,
 			null,
 			$current_datetime,
 			$current_datetime
@@ -194,7 +196,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			(int) $row->post_id,
 			(int) $row->user_id,
 			$row->status,
-			new DateTimeImmutable( $row->started_at, $timezone ),
+			Progress_Start_Date::is_recorded( $row->started_at ) ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
 			$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
 			new DateTimeImmutable( $row->created_at, $timezone ),
 			new DateTimeImmutable( $row->updated_at, $timezone )
@@ -481,7 +483,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				(int) $row->post_id,
 				(int) $row->user_id,
 				$row->status,
-				$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
 				$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
 				new DateTimeImmutable( $row->created_at, $timezone ),
 				new DateTimeImmutable( $row->updated_at, $timezone )
