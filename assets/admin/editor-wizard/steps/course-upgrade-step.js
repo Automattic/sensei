@@ -11,7 +11,7 @@ import { useSelect } from '@wordpress/data';
 import { EXTENSIONS_STORE } from '../../../extensions/store';
 import senseiProUpsellImage from '../../../images/sensei-pro-upsell.png';
 import CheckIcon from '../../../icons/checked.svg';
-import { getSenseiProUpsellUrl } from '../../helpers';
+import { getSenseiProCheckoutUrl } from '../../helpers';
 
 /**
  * Upgrade step during course creation wizard.
@@ -101,8 +101,8 @@ const FeatureItem = ( { children } ) => (
 CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 	const upgrade = () => {
 		window.open(
-			getSenseiProUpsellUrl( 'course_editor_wizard' ),
-			'sensei-pricing',
+			getSenseiProCheckoutUrl( 'course_editor_wizard' ),
+			'sensei-checkout',
 			'noreferrer'
 		);
 		goToNextStep();
@@ -123,7 +123,7 @@ CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 				target="_blank"
 				className="sensei-editor-wizard-modal-upsell__button"
 			>
-				{ __( 'Get Sensei Pro', 'sensei-lms' ) }
+				{ __( 'Buy Sensei Pro', 'sensei-lms' ) }
 			</Button>
 		</>
 	);

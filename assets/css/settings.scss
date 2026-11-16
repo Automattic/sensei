@@ -1038,7 +1038,6 @@ $promo_highlight: #43af99;
 
 	&__actions {
 		display: flex;
-		gap: 14px;
 	}
 
 	&__primary-action {
@@ -1052,19 +1051,6 @@ $promo_highlight: #43af99;
 		font-family: 'Inter';
 		border-radius: 0;
 		color: #26212E;
-	}
-
-	&__secondary_action {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 200px;
-		height: 48px;
-		font-family: 'Inter';
-		font-size: 13px;
-		line-height: 150%;
-		color: white;
-		text-decoration: none;
 	}
 }
 

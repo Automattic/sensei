@@ -34,7 +34,7 @@ class Sensei_Pro_Upsell {
 			return "https://wordpress.com/plugins/sensei-pro/{$site_slug}";
 		}
 
-		return 'https://senseilms.com/sensei-pro/';
+		return 'https://senseilms.com/sensei-pro/#features';
 	}
 
 	/**
