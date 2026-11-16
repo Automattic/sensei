@@ -931,9 +931,9 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		global $wpdb;
 
 		$this->set_progress_storage_mode( $mode );
-		$user_id      = $this->factory->user->create();
-		$course       = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
-		$course_id    = $course['course_id'];
+		$user_id   = $this->factory->user->create();
+		$course    = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$course_id = $course['course_id'];
 
 		$lesson_progress = Sensei()->lesson_progress_repository->create( $course['lesson_ids'][0], $user_id );
 		$lesson_progress->complete();
