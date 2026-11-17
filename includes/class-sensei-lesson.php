@@ -3666,10 +3666,7 @@ class Sensei_Lesson {
 			'fields'           => 'ids',
 		);
 		if ( $course_id ) {
-			$post_args['meta_query'][] = array(
-				'key'   => '_lesson_course',
-				'value' => $course_id,
-			);
+			$post_args['sensei_course'] = $course_id;
 		} else {
 			// Simple check for connection to a Course
 			$post_args['meta_query'][] = array(
@@ -3682,12 +3679,44 @@ class Sensei_Lesson {
 		/**
 		 * Filter the query arguments for getting the lesson count.
 		 *
-		 * @hook sensei_lesson_count
+		 * @since $$next-version$$
 		 *
-		 * @param {array} $post_args Post arguments.
+		 * @hook sensei_lesson_count_query_args
+		 *
+		 * @param {array} $post_args Post arguments. The course, if any, is in the `sensei_course` argument.
 		 * @return {array} Post arguments.
 		 */
-		$lessons_query = new WP_Query( apply_filters( 'sensei_lesson_count', $post_args ) );
+		$post_args = apply_filters( 'sensei_lesson_count_query_args', $post_args );
+
+		if ( has_filter( 'sensei_lesson_count' ) ) {
+			// The deprecated filter gets the course in a `_lesson_course` meta clause, as it always did.
+			if ( isset( $post_args['sensei_course'] ) ) {
+				$post_args['meta_query'][] = array(
+					'key'   => '_lesson_course',
+					'value' => $post_args['sensei_course'],
+				);
+				unset( $post_args['sensei_course'] );
+			}
+
+			/**
+			 * Filter the query arguments for getting the lesson count.
+			 *
+			 * @deprecated $$next-version$$ Use sensei_lesson_count_query_args instead.
+			 *
+			 * @hook sensei_lesson_count
+			 *
+			 * @param {array} $post_args Post arguments.
+			 * @return {array} Post arguments.
+			 */
+			$post_args = apply_filters_deprecated(
+				'sensei_lesson_count',
+				array( $post_args ),
+				'$$next-version$$',
+				'sensei_lesson_count_query_args'
+			);
+		}
+
+		$lessons_query = new WP_Query( $post_args );
 
 		return count( $lessons_query->posts );
 	}
