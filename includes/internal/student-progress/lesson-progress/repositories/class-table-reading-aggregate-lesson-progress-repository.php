@@ -138,6 +138,7 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 	 * Deletes a lesson progress.
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
 	 */
 	public function delete( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->tables_based_repository->delete( $lesson_progress );
@@ -148,6 +149,21 @@ class Table_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Progr
 		if ( $comments_based_progress ) {
 			$this->comments_based_repository->delete( $comments_based_progress );
 		}
+	}
+
+	/**
+	 * Delete progress for a student, including when the selected read store has no record.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id   The student ID.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
+	 */
+	public function delete_for_student( int $lesson_id, int $user_id ): void {
+		$this->tables_based_repository->delete_for_student( $lesson_id, $user_id );
+		$this->comments_based_repository->delete_for_student( $lesson_id, $user_id );
 	}
 
 	/**

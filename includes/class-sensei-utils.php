@@ -2,6 +2,12 @@
 
 use Sensei\Internal\Course_Status_Updates;
 use Sensei\Internal\Persistence_Exception;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -713,28 +719,33 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		// Process quiz
-		$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$lesson_quiz_id = Sensei()->lesson->get_quiz_id_for_lesson_progress( $lesson_id );
 
+		// The regular reset only handles an available quiz. Trashed quiz data is deleted below.
 		$has_progress = Sensei()->lesson_progress_repository->has( $lesson_id, $user_id )
-			|| ( $lesson_quiz_id && Sensei()->quiz_progress_repository->has( $lesson_quiz_id, $user_id ) );
+			|| (
+				$lesson_quiz_id
+				&& 'trash' !== get_post_status( $lesson_quiz_id )
+				&& Sensei()->quiz_progress_repository->has( $lesson_quiz_id, $user_id )
+			);
 		if ( $has_progress && false === Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id ) ) {
 			return false;
 		}
 
-		// Delete quiz answers and their grading metadata after progress can be reset.
-		if ( $lesson_quiz_id ) {
-			$quiz_submission = Sensei()->quiz_submission_repository->get( $lesson_quiz_id, $user_id );
-			$answers_deleted = self::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id );
-			if ( $quiz_submission && ! $answers_deleted ) {
+		try {
+			if ( $user_id && $lesson_quiz_id && ! self::delete_quiz_data_for_lesson_removal( $lesson_quiz_id, $user_id ) ) {
 				return false;
 			}
-		}
 
-		// Delete lesson progress.
-		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
-		if ( $lesson_progress ) {
-			Sensei()->lesson_progress_repository->delete( $lesson_progress );
+			if ( $user_id ) {
+				$lesson_repository  = Sensei()->lesson_progress_repository;
+				$lesson_progress    = $lesson_repository->get( $lesson_id, $user_id );
+				$progress_lesson_id = $lesson_progress ? $lesson_progress->get_lesson_id() : $lesson_id;
+				$lesson_repository->delete_for_student( $progress_lesson_id, $user_id );
+			}
+		} catch ( Persistence_Exception $exception ) {
+			$exception->log( 'removing lesson progress' );
+			return false;
 		}
 
 		if ( ! $from_course ) {
@@ -889,18 +900,7 @@ class Sensei_Utils {
 			return false;
 		}
 
-		$deleted   = false;
-		$questions = self::sensei_get_quiz_questions( $quiz_id );
-		foreach ( $questions as $question ) {
-			// Fallback for pre 1.7.4 data.
-			$deleted = self::sensei_delete_activities(
-				array(
-					'post_id' => $question->ID,
-					'user_id' => $user_id,
-					'type'    => 'sensei_user_answer',
-				)
-			);
-		}
+		$deleted = self::delete_legacy_quiz_answer_comments( $quiz_id, $user_id );
 
 		try {
 			$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
@@ -919,6 +919,72 @@ class Sensei_Utils {
 			return false;
 		}
 
+	}
+
+	/**
+	 * Delete answers stored as individual comments before Sensei 1.7.4.
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @return bool Whether the last matching question activity was deleted.
+	 */
+	private static function delete_legacy_quiz_answer_comments( int $quiz_id, int $user_id ): bool {
+		$deleted = false;
+		foreach ( self::sensei_get_quiz_questions( $quiz_id ) as $question ) {
+			$deleted = self::sensei_delete_activities(
+				array(
+					'post_id' => $question->ID,
+					'user_id' => $user_id,
+					'type'    => 'sensei_user_answer',
+				)
+			);
+		}
+
+		return $deleted;
+	}
+
+	/**
+	 * Clear a student's quiz data during lesson removal.
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @return bool Whether quiz data was removed or already absent.
+	 * @throws Persistence_Exception If any required deletion fails.
+	 */
+	private static function delete_quiz_data_for_lesson_removal( int $quiz_id, int $user_id ): bool {
+		if ( ! Sensei()->progress_storage_configuration->is_dual_write_enabled() ) {
+			$submission      = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			$answers_deleted = self::sensei_delete_quiz_answers( $quiz_id, $user_id );
+
+			return ! $submission || $answers_deleted;
+		}
+
+		global $wpdb;
+
+		self::delete_legacy_quiz_answer_comments( $quiz_id, $user_id );
+
+		// Each store may have its own submission ID, or be missing the submission altogether.
+		$tables_submissions = new Tables_Based_Submission_Repository( $wpdb );
+		$tables_submission  = $tables_submissions->get( $quiz_id, $user_id );
+		if ( $tables_submission ) {
+			( new Tables_Based_Grade_Repository( $wpdb ) )->delete_all( $tables_submission );
+			( new Tables_Based_Answer_Repository( $wpdb ) )->delete_all( $tables_submission );
+			$tables_submissions->delete( $tables_submission );
+		}
+
+		$comments_submissions = new Comments_Based_Submission_Repository();
+		$comments_submission  = $comments_submissions->get( $quiz_id, $user_id );
+		if ( $comments_submission ) {
+			( new Comments_Based_Grade_Repository() )->delete_all( $comments_submission );
+			( new Comments_Based_Answer_Repository() )->delete_all( $comments_submission );
+			$comments_submissions->delete( $comments_submission );
+		}
+
+		// Quiz progress in comments is removed with the lesson comment.
+		$quiz_repository = Sensei()->quiz_progress_repository_factory->create_tables_based_repository();
+		$quiz_repository->delete_for_student( $quiz_id, $user_id );
+
+		return true;
 	}
 
 	/**

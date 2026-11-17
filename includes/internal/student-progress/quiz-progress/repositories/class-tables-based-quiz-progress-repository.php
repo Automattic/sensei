@@ -301,24 +301,40 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @internal
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
 	 */
 	public function delete( Quiz_Progress_Interface $quiz_progress ): void {
-		$this->wpdb->delete(
+		$this->delete_for_student( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
+	}
+
+	/**
+	 * Delete a student's quiz progress by identity.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void {
+		$result = $this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
-			[
-				'post_id' => $quiz_progress->get_quiz_id(),
-				'user_id' => $quiz_progress->get_user_id(),
+			array(
+				'post_id' => $quiz_id,
+				'user_id' => $user_id,
 				'type'    => 'quiz',
-			],
-			[
-				'%d',
-				'%d',
-				'%s',
-			]
+			),
+			array( '%d', '%d', '%s' )
 		);
 
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz', 'tables', $quiz_id, $user_id, 'delete_failed', 'delete' );
+		}
+
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $quiz_id, $user_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
