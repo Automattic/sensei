@@ -18,6 +18,7 @@ use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Inte
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
@@ -65,9 +66,11 @@ class Progress_Validation {
 				new Comments_Based_Lesson_Progress_Repository(),
 				new Tables_Based_Lesson_Progress_Repository( $wpdb )
 			);
-			foreach ( $this->get_quiz_ids() as $quiz_id ) {
-				$this->validate_quiz_progress( $quiz_id );
-			}
+			$this->validate_progress(
+				'quiz',
+				new Comments_Based_Quiz_Progress_Repository(),
+				new Tables_Based_Quiz_Progress_Repository( $wpdb )
+			);
 		} catch ( RuntimeException $exception ) {
 			$this->add_error( $exception->getMessage() );
 		}
@@ -110,24 +113,6 @@ class Progress_Validation {
 	}
 
 	/**
-	 * Get the quiz IDs.
-	 *
-	 * @psalm-suppress InvalidReturnType, InvalidReturnStatement -- Psalm doesn't understand the 'fields' argument.
-	 *
-	 * @return int[]
-	 */
-	private function get_quiz_ids(): array {
-		return get_posts(
-			[
-				'post_type'      => 'quiz',
-				'post_status'    => 'any',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-			]
-		);
-	}
-
-	/**
 	 * Check if the progress migration is complete.
 	 *
 	 * @return bool
@@ -150,6 +135,12 @@ class Progress_Validation {
 		foreach ( Validation_Records::get_comments( $comment_type ) as $record ) {
 			$post_id = (int) $record->post_id;
 			$user_id = (int) $record->user_id;
+			if ( 'quiz' === $type ) {
+				$post_id = Sensei()->lesson->get_quiz_id_for_lesson_progress( $post_id );
+				if ( ! $post_id ) {
+					continue;
+				}
+			}
 
 			$comments_progress = $comments_repository->get( $post_id, $user_id );
 			if ( ! $comments_progress || $comments_progress->get_id() !== (int) $record->id ) {
@@ -160,7 +151,9 @@ class Progress_Validation {
 				continue;
 			}
 
-			$this->add_missing_progress_error( $type, 'tables', $post_id, $user_id );
+			if ( ! $comments_progress instanceof Comments_Based_Quiz_Progress || $this->has_recorded_quiz_activity( $comments_progress ) ) {
+				$this->add_missing_progress_error( $type, 'tables', $post_id, $user_id );
+			}
 		}
 
 		foreach ( Validation_Records::get_progress_rows( $type ) as $record ) {
@@ -180,6 +173,27 @@ class Progress_Validation {
 	}
 
 	/**
+	 * Whether the shared lesson comment contains evidence that the quiz was attempted.
+	 *
+	 * A lesson start or completion alone can appear as quiz progress in the comments repository.
+	 *
+	 * @param Comments_Based_Quiz_Progress $progress Comments-based quiz progress.
+	 * @return bool
+	 */
+	private function has_recorded_quiz_activity( Comments_Based_Quiz_Progress $progress ): bool {
+		return in_array(
+			$progress->get_raw_status(),
+			array(
+				Quiz_Progress_Interface::STATUS_PASSED,
+				Quiz_Progress_Interface::STATUS_FAILED,
+				Quiz_Progress_Interface::STATUS_GRADED,
+				Quiz_Progress_Interface::STATUS_UNGRADED,
+			),
+			true
+		) || (bool) get_comment_meta( $progress->get_id(), 'questions_asked', true );
+	}
+
+	/**
 	 * Record an identity with no progress in one store.
 	 *
 	 * @param string $type    The progress type.
@@ -196,61 +210,6 @@ class Progress_Validation {
 				'source'      => $store,
 			)
 		);
-	}
-
-	/**
-	 * Validate the quiz progress.
-	 *
-	 * @param int $quiz_id Quiz post ID.
-	 */
-	private function validate_quiz_progress( int $quiz_id ): void {
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
-
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$user_ids = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT user_id FROM {$wpdb->comments}
-				WHERE comment_type = 'sensei_lesson_status'
-				AND comment_post_ID = %d",
-				$lesson_id
-			)
-		);
-		if ( ! $user_ids ) {
-			return;
-		}
-
-		$comments_based_repository = new Comments_Based_Quiz_Progress_Repository();
-		$tables_based_repository   = new Tables_Based_Quiz_Progress_Repository( $wpdb );
-
-		foreach ( $user_ids as $user_id ) {
-			$comments_based_progress = $comments_based_repository->get( $quiz_id, $user_id );
-			$tables_based_progress   = $tables_based_repository->get( $quiz_id, $user_id );
-
-			if ( ! $comments_based_progress ) {
-				$this->add_error(
-					'Quiz comments based progress not found.',
-					[
-						'quiz_id' => $quiz_id,
-						'user_id' => $user_id,
-					]
-				);
-				continue;
-			}
-
-			if ( ! $tables_based_progress ) {
-				$this->add_error(
-					'Quiz tables based progress not found.',
-					[
-						'quiz_id' => $quiz_id,
-						'user_id' => $user_id,
-					]
-				);
-				continue;
-			}
-
-			$this->compare_progress( $comments_based_progress, $tables_based_progress );
-		}
 	}
 
 	/**
