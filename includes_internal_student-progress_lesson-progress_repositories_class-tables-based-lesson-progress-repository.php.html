@@ -48,6 +48,7 @@ use Sensei\Internal\Cache_Prefix;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -96,13 +97,14 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param int $lesson_id The lesson ID.
-	 * @param int $user_id The user ID.
+	 * @param int  $lesson_id The lesson ID.
+	 * @param int  $user_id The user ID.
+	 * @param bool $record_start Whether creation also records a start event.
 	 *
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 * @throws Persistence_Exception If required progress creation fails.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
+	public function create( int $lesson_id, int $user_id, bool $record_start = true ): Lesson_Progress_Interface {
 		/**
 		 * Filter lesson id for lesson progress creation.
 		 *
@@ -125,7 +127,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				'parent_post_id' => null,
 				'type'           => 'lesson',
 				'status'         => Lesson_Progress_Interface::STATUS_IN_PROGRESS,
-				'started_at'     => $current_datetime->format( $date_format ),
+				'started_at'     => $record_start ? $current_datetime->format( $date_format ) : null,
 				'completed_at'   => null,
 				'created_at'     => $current_datetime->format( $date_format ),
 				'updated_at'     => $current_datetime->format( $date_format ),
@@ -153,7 +155,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			$lesson_id,
 			$user_id,
 			Lesson_Progress_Interface::STATUS_IN_PROGRESS,
-			$current_datetime,
+			$record_start ? $current_datetime : null,
 			null,
 			$current_datetime,
 			$current_datetime
@@ -224,7 +226,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			(int) $row->post_id,
 			(int) $row->user_id,
 			$row->status,
-			$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+			Progress_Start_Date::is_recorded( $row->started_at ) ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
 			$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
 			new DateTimeImmutable( $row->created_at, $timezone ),
 			new DateTimeImmutable( $row->updated_at, $timezone )
@@ -573,7 +575,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				(int) $row->post_id,
 				(int) $row->user_id,
 				$row->status,
-				$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
 				$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
 				new DateTimeImmutable( $row->created_at, $timezone ),
 				new DateTimeImmutable( $row->updated_at, $timezone )
