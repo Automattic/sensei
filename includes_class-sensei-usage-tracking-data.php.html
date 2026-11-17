@@ -81,7 +81,7 @@ class Sensei_Usage_Tracking_Data {
 				'lesson_length'                  => self::get_lesson_has_length_count(),
 				'lesson_complexity'              => self::get_lesson_with_complexity_count(),
 				'lesson_videos'                  => self::get_lesson_with_video_count(),
-				'messages'                       => wp_count_posts( 'sensei_message' )->publish,
+				'messages'                       => post_type_exists( 'sensei_message' ) ? wp_count_posts( 'sensei_message' )->publish : 0,
 				'modules'                        => wp_count_terms( 'module' ),
 				'modules_max'                    => self::get_max_module_count(),
 				'modules_min'                    => self::get_min_module_count(),
