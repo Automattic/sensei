@@ -137,6 +137,10 @@ class Quiz_Submission_Validation {
 
 		$comments_based_repository = new Comments_Based_Submission_Repository();
 		$tables_based_repository   = new Tables_Based_Submission_Repository( $wpdb );
+		$comments_answers         = new Comments_Based_Answer_Repository();
+		$tables_answers           = new Tables_Based_Answer_Repository( $wpdb );
+		$comments_grades          = new Comments_Based_Grade_Repository();
+		$tables_grades            = new Tables_Based_Grade_Repository( $wpdb );
 
 		foreach ( $user_ids as $user_id ) {
 			$comments_based_submission = $comments_based_repository->get( $quiz_id, $user_id );
@@ -170,200 +174,97 @@ class Quiz_Submission_Validation {
 
 			$this->compare_submission( $comments_based_submission, $tables_based_submission );
 
-			$this->compare_answers( $comments_based_submission, $tables_based_submission );
-			$this->compare_gradings( $comments_based_submission, $tables_based_submission );
+			$identity = array(
+				'quiz_id'                => $quiz_id,
+				'user_id'                => $user_id,
+				'comments_submission_id' => $comments_based_submission->get_id(),
+				'tables_submission_id'   => $tables_based_submission->get_id(),
+			);
+
+			$this->compare_question_data(
+				array_map( array( $this, 'get_answer_data' ), $comments_answers->get_all( $comments_based_submission->get_id() ) ),
+				array_map( array( $this, 'get_answer_data' ), $tables_answers->get_all( $tables_based_submission->get_id() ) ),
+				$identity,
+				'answers'
+			);
+			$this->compare_question_data(
+				array_map( array( $this, 'get_grade_data' ), $comments_grades->get_all( $comments_based_submission->get_id() ) ),
+				array_map( array( $this, 'get_grade_data' ), $tables_grades->get_all( $tables_based_submission->get_id() ) ),
+				$identity,
+				'grades'
+			);
 		}
 	}
 
 	/**
 	 * Compare the comments and tables based submissions.
 	 *
-	 * @param Submission_Interface $comments_based_submission Comments based progress.
-	 * @param Submission_Interface $tables_based_submission   Tables based progress.
+	 * @param Submission_Interface $comments_based_submission Comments based submission.
+	 * @param Submission_Interface $tables_based_submission   Tables based submission.
 	 */
 	private function compare_submission( Submission_Interface $comments_based_submission, Submission_Interface $tables_based_submission ): void {
-		// phpcs:ignore Universal.Operators.StrictComparisons.LooseComparison -- Intended.
-		if ( $this->get_submission_data( $comments_based_submission ) != $this->get_submission_data( $tables_based_submission ) ) {
-			$this->add_mismatch_submission_error( $comments_based_submission, $tables_based_submission );
+		$comments = $this->get_submission_data( $comments_based_submission );
+		$tables   = $this->get_submission_data( $tables_based_submission );
+
+		if ( $comments !== $tables ) {
+			$this->add_error(
+				'Data mismatch between comments and tables based submissions.',
+				array(
+					array_merge( array( 'source' => 'comments' ), $comments ),
+					array_merge( array( 'source' => 'tables' ), $tables ),
+				)
+			);
 		}
 	}
 
 	/**
-	 * Compare the comments and tables based answers.
+	 * Compare answers or grades for each question in the two submissions.
 	 *
-	 * @param Submission_Interface $comments_based_submission Comments based submission.
-	 * @param Submission_Interface $tables_based_submission   Tables based submission.
+	 * @param array  $comments The values from the comments store.
+	 * @param array  $tables   The values from the tables store.
+	 * @param array  $identity The quiz, student, and submission IDs.
+	 * @param string $kind     The kind of question data, answers or grades.
 	 */
-	private function compare_answers( Submission_Interface $comments_based_submission, Submission_Interface $tables_based_submission ): void {
-		global $wpdb;
-
-		$comments_based_answer_repository = new Comments_Based_Answer_Repository();
-		$tables_based_answer_repository   = new Tables_Based_Answer_Repository( $wpdb );
-
-		$comments_based_answers = $comments_based_answer_repository->get_all( $comments_based_submission->get_id() );
-		$tables_based_answers   = $tables_based_answer_repository->get_all( $tables_based_submission->get_id() );
-
-		if ( count( $comments_based_answers ) !== count( $tables_based_answers ) ) {
+	private function compare_question_data( array $comments, array $tables, array $identity, string $kind ): void {
+		$comments_count = count( $comments );
+		$tables_count   = count( $tables );
+		if ( $comments_count !== $tables_count ) {
 			$this->add_error(
-				'Number of answers does not match.',
-				array(
-					'comments-based submission_id' => $comments_based_submission->get_id(),
-					'tables-based submission_id'   => $tables_based_submission->get_id(),
+				sprintf( 'Number of %s does not match.', 'grades' === $kind ? 'gradings' : $kind ),
+				array_merge(
+					$identity,
+					array(
+						'comments_count' => $comments_count,
+						'tables_count'   => $tables_count,
+					)
 				)
 			);
 		}
 
-		$comments_based_answers = array_reduce(
-			$comments_based_answers,
-			function( array $answers, Answer_Interface $answer ) {
-				$answers[ $answer->get_question_id() ] = $this->get_answer_data( $answer );
-				return $answers;
-			},
-			array()
-		);
-
-		$tables_based_answers = array_reduce(
-			$tables_based_answers,
-			function( array $answers, Answer_Interface $answer ) {
-				$answers[ $answer->get_question_id() ] = $this->get_answer_data( $answer );
-				return $answers;
-			},
-			array()
-		);
-
-		$comments_based_keys    = array_keys( $comments_based_answers );
-		$tables_based_keys      = array_keys( $tables_based_answers );
-		$missed_in_tables_based = array_diff( $comments_based_keys, $tables_based_keys );
-		if ( count( $missed_in_tables_based ) ) {
-			foreach ( $missed_in_tables_based as $question_id ) {
+		$comments = array_column( $comments, null, 'question_id' );
+		$tables   = array_column( $tables, null, 'question_id' );
+		foreach ( array_keys( $comments + $tables ) as $question_id ) {
+			if ( ! isset( $comments[ $question_id ], $tables[ $question_id ] ) ) {
+				$store = isset( $comments[ $question_id ] ) ? 'tables' : 'comments';
 				$this->add_error(
-					'Answers missing in tables based answers.',
-					array(
-						'tables_based_submission_id' => $tables_based_submission->get_id(),
-						'comments_based_answer'      => $comments_based_answers[ $question_id ],
+					sprintf( '%s missing in %s based %s.', ucfirst( $kind ), $store, $kind ),
+					array_merge(
+						$identity,
+						array(
+							'question_id' => $question_id,
+							'source'      => $store,
+						)
 					)
 				);
+				continue;
 			}
-		}
 
-		$missed_in_comments_based = array_diff( $tables_based_keys, $comments_based_keys );
-		if ( count( $missed_in_comments_based ) ) {
-			foreach ( $missed_in_comments_based as $question_id ) {
+			if ( $comments[ $question_id ] !== $tables[ $question_id ] ) {
 				$this->add_error(
-					'Answers missing in comments based answers.',
+					sprintf( '%s mismatch.', ucfirst( $kind ) ),
 					array(
-						'comments_based_submission_id' => $comments_based_submission->get_id(),
-						'tables_based_answer'          => $tables_based_answers[ $question_id ],
-					)
-				);
-			}
-		}
-
-		$common_keys = array_intersect( $comments_based_keys, $tables_based_keys );
-		foreach ( $common_keys as $question_id ) {
-			// phpcs:ignore Universal.Operators.StrictComparisons.LooseComparison -- Intended.
-			if ( $comments_based_answers[ $question_id ]['value'] != $tables_based_answers[ $question_id ]['value'] ) {
-				$this->add_error(
-					'Answers mismatch.',
-					array(
-						'question_id' => $question_id,
-						'comments'    => $comments_based_answers[ $question_id ],
-						'tables'      => $tables_based_answers[ $question_id ],
-					)
-				);
-			}
-		}
-	}
-
-	/**
-	 * Compare the comments and tables based gradings.
-	 *
-	 * @param Submission_Interface $comments_based_submission Comments based submission.
-	 * @param Submission_Interface $tables_based_submission   Tables based submission.
-	 */
-	private function compare_gradings( Submission_Interface $comments_based_submission, Submission_Interface $tables_based_submission ): void {
-		global $wpdb;
-
-		$comments_based_grade_repository = new Comments_Based_Grade_Repository();
-		$tables_based_grade_repository   = new Tables_Based_Grade_Repository( $wpdb );
-
-		$comments_based_grades = $comments_based_grade_repository->get_all( $comments_based_submission->get_id() );
-		$tables_based_grades   = $tables_based_grade_repository->get_all( $tables_based_submission->get_id() );
-
-		if ( count( $comments_based_grades ) !== count( $tables_based_grades ) ) {
-			$this->add_error(
-				'Number of gradings does not match.',
-				array(
-					'comments-based submission_id' => $comments_based_submission->get_id(),
-					'tables-based submission_id'   => $tables_based_submission->get_id(),
-				)
-			);
-		}
-
-		$comments_based_grades = array_reduce(
-			$comments_based_grades,
-			function( array $grades, Grade_Interface $grade ) {
-				$grades[ $grade->get_question_id() ] = $this->get_grade_data( $grade );
-				return $grades;
-			},
-			array()
-		);
-
-		$tables_based_grades = array_reduce(
-			$tables_based_grades,
-			function( array $grades, Grade_Interface $grade ) {
-				$grades[ $grade->get_question_id() ] = $this->get_grade_data( $grade );
-				return $grades;
-			},
-			array()
-		);
-
-		$comments_based_keys    = array_keys( $comments_based_grades );
-		$tables_based_keys      = array_keys( $tables_based_grades );
-		$missed_in_tables_based = array_diff( $comments_based_keys, $tables_based_keys );
-		if ( count( $missed_in_tables_based ) ) {
-			foreach ( $missed_in_tables_based as $question_id ) {
-				$this->add_error(
-					'Grades missing in tables based grades.',
-					array(
-						'tables_based_submission_id' => $tables_based_submission->get_id(),
-						'comments_based_grade'       => $comments_based_grades[ $question_id ],
-					)
-				);
-			}
-		}
-
-		$missed_in_comments_based = array_diff( $tables_based_keys, $comments_based_keys );
-		if ( count( $missed_in_comments_based ) ) {
-			foreach ( $missed_in_comments_based as $question_id ) {
-				$this->add_error(
-					'Grades missing in comments based grades.',
-					array(
-						'comments_based_submission_id' => $comments_based_submission->get_id(),
-						'tables_based_grade'           => $tables_based_grades[ $question_id ],
-					)
-				);
-			}
-		}
-
-		$common_keys = array_intersect( $comments_based_keys, $tables_based_keys );
-		foreach ( $common_keys as $question_id ) {
-			$comments_based_grade = array(
-				'points'   => $comments_based_grades[ $question_id ]['points'],
-				'feedback' => $comments_based_grades[ $question_id ]['feedback'],
-			);
-			$tables_based_grade   = array(
-				'points'   => $tables_based_grades[ $question_id ]['points'],
-				'feedback' => $tables_based_grades[ $question_id ]['feedback'],
-			);
-			// phpcs:ignore Universal.Operators.StrictComparisons.LooseComparison -- Intended.
-			if ( $comments_based_grade != $tables_based_grade ) {
-				$this->add_error(
-					'Grades mismatch.',
-					array(
-						'question_id' => $question_id,
-						'comments'    => $comments_based_grades[ $question_id ],
-						'tables'      => $tables_based_grades[ $question_id ],
+						array_merge( $identity, array( 'source' => 'comments' ), $comments[ $question_id ] ),
+						array_merge( $identity, array( 'source' => 'tables' ), $tables[ $question_id ] ),
 					)
 				);
 			}
@@ -378,10 +279,13 @@ class Quiz_Submission_Validation {
 	 * @return array
 	 */
 	private function get_submission_data( Submission_Interface $submission ): array {
+		// The HPPS column stores two decimal places. A missing grade remains distinct from zero.
+		$grade = $submission->get_final_grade();
+
 		return array(
 			'quiz_id'     => $submission->get_quiz_id(),
 			'user_id'     => $submission->get_user_id(),
-			'final_grade' => $submission->get_final_grade(),
+			'final_grade' => null === $grade ? null : round( $grade, 2 ),
 		);
 	}
 
@@ -394,9 +298,8 @@ class Quiz_Submission_Validation {
 	 */
 	private function get_answer_data( Answer_Interface $answer ): array {
 		return array(
-			'submission_id' => $answer->get_submission_id(),
-			'question_id'   => $answer->get_question_id(),
-			'value'         => $answer->get_value(),
+			'question_id' => $answer->get_question_id(),
+			'value'       => $answer->get_value(),
 		);
 	}
 
@@ -411,33 +314,7 @@ class Quiz_Submission_Validation {
 		return array(
 			'question_id' => $grade->get_question_id(),
 			'points'      => $grade->get_points(),
-			'feedback'    => $grade->get_feedback(),
-		);
-	}
-
-	/**
-	 * Log a progress mismatch.
-	 *
-	 * @param Submission_Interface $comments_based_submission Comments based progress.
-	 * @param Submission_Interface $tables_based_submission   Tables based progress.
-	 */
-	private function add_mismatch_submission_error( Submission_Interface $comments_based_submission, Submission_Interface $tables_based_submission ): void {
-		$this->add_error(
-			'Data mismatch between comments and tables based submissions.',
-			array(
-				array_merge(
-					array(
-						'source' => 'comments',
-					),
-					$this->get_submission_data( $comments_based_submission )
-				),
-				array_merge(
-					array(
-						'source' => 'tables',
-					),
-					$this->get_submission_data( $tables_based_submission )
-				),
-			)
+			'feedback'    => $grade->get_feedback() ?? '',
 		);
 	}
 }
