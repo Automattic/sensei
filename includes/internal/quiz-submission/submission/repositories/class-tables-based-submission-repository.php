@@ -11,6 +11,8 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Sensei\Internal\Cache_Prefix;
 use Sensei\Internal\Persistence_Exception;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
@@ -337,6 +339,27 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission->get_quiz_id(), $submission->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
+	}
+
+	/**
+	 * Delete a student's submission and its grades and answers for one quiz.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @throws Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void {
+		$submission = $this->get( $quiz_id, $user_id );
+		if ( ! $submission ) {
+			return;
+		}
+
+		( new Tables_Based_Grade_Repository( $this->wpdb ) )->delete_all( $submission );
+		( new Tables_Based_Answer_Repository( $this->wpdb ) )->delete_all( $submission );
+		$this->delete( $submission );
 	}
 
 	/**

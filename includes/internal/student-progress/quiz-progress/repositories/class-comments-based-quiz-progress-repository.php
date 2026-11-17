@@ -197,6 +197,19 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	}
 
 	/**
+	 * Delete a student's separately stored progress for one quiz.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void {
+		// The lesson status comment also stores quiz progress and is deleted with the lesson.
+	}
+
+	/**
 	 * Delete all quiz progress for a given quiz.
 	 *
 	 * @internal

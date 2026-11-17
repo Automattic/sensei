@@ -2,12 +2,6 @@
 
 use Sensei\Internal\Course_Status_Updates;
 use Sensei\Internal\Persistence_Exception;
-use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
-use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
-use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
-use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -733,8 +727,9 @@ class Sensei_Utils {
 		}
 
 		try {
-			if ( $user_id && $lesson_quiz_id && ! self::delete_quiz_data_for_lesson_removal( $lesson_quiz_id, $user_id ) ) {
-				return false;
+			if ( $user_id && $lesson_quiz_id ) {
+				Sensei()->quiz_submission_repository->delete_for_student( $lesson_quiz_id, $user_id );
+				Sensei()->quiz_progress_repository->delete_for_student( $lesson_quiz_id, $user_id );
 			}
 
 			if ( $user_id ) {
@@ -916,48 +911,6 @@ class Sensei_Utils {
 			return false;
 		}
 
-	}
-
-	/**
-	 * Clear a student's quiz data during lesson removal.
-	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The student ID.
-	 * @return bool Whether quiz data was removed or already absent.
-	 * @throws Persistence_Exception If any required deletion fails.
-	 */
-	private static function delete_quiz_data_for_lesson_removal( int $quiz_id, int $user_id ): bool {
-		if ( ! Sensei()->progress_storage_configuration->is_dual_write_enabled() ) {
-			$submission      = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-			$answers_deleted = self::sensei_delete_quiz_answers( $quiz_id, $user_id );
-
-			return ! $submission || $answers_deleted;
-		}
-
-		global $wpdb;
-
-		// Each store may have its own submission ID, or be missing the submission altogether.
-		$tables_submissions = new Tables_Based_Submission_Repository( $wpdb );
-		$tables_submission  = $tables_submissions->get( $quiz_id, $user_id );
-		if ( $tables_submission ) {
-			( new Tables_Based_Grade_Repository( $wpdb ) )->delete_all( $tables_submission );
-			( new Tables_Based_Answer_Repository( $wpdb ) )->delete_all( $tables_submission );
-			$tables_submissions->delete( $tables_submission );
-		}
-
-		$comments_submissions = new Comments_Based_Submission_Repository();
-		$comments_submission  = $comments_submissions->get( $quiz_id, $user_id );
-		if ( $comments_submission ) {
-			( new Comments_Based_Grade_Repository() )->delete_all( $comments_submission );
-			( new Comments_Based_Answer_Repository() )->delete_all( $comments_submission );
-			$comments_submissions->delete( $comments_submission );
-		}
-
-		// Quiz progress in comments is removed with the lesson comment.
-		$quiz_repository = Sensei()->quiz_progress_repository_factory->create_tables_based_repository();
-		$quiz_repository->delete_for_student( $quiz_id, $user_id );
-
-		return true;
 	}
 
 	/**
