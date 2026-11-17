@@ -12,6 +12,7 @@ use DateTime;
 use InvalidArgumentException;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use Sensei_Utils;
 use WP_Comment;
 
@@ -32,13 +33,14 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 *
 	 * @internal
 	 *
-	 * @param int $lesson_id The lesson ID.
-	 * @param int $user_id The user ID.
+	 * @param int  $lesson_id The lesson ID.
+	 * @param int  $user_id The user ID.
+	 * @param bool $record_start Whether creation also records a start event.
 	 *
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 * @throws Persistence_Exception If required progress creation fails.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
+	public function create( int $lesson_id, int $user_id, bool $record_start = true ): Lesson_Progress_Interface {
 		/**
 		 * Filter lesson id for lesson progress creation.
 		 *
@@ -51,9 +53,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		 */
 		$lesson_id = (int) apply_filters( 'sensei_lesson_progress_create_lesson_id', $lesson_id );
 
-		$metadata   = [
-			'start' => current_time( 'mysql' ),
-		];
+		$metadata   = $record_start ? array( 'start' => current_time( 'mysql' ) ) : array();
 		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, Lesson_Progress_Interface::STATUS_IN_PROGRESS, $metadata );
 		if ( ! $comment_id ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
@@ -449,7 +449,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	private function create_progress_from_comment( WP_Comment $comment ): Comments_Based_Lesson_Progress {
 		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
 		$meta_start   = get_comment_meta( (int) $comment->comment_ID, 'start', true );
-		$started_at   = ! empty( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
+		$started_at   = Progress_Start_Date::is_recorded( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : null;
 
 		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
 			$completed_at = $comment_date;

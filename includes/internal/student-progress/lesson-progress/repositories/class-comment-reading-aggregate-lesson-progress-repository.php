@@ -110,11 +110,12 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 		if ( ! $tables_based_progress ) {
 			$tables_based_progress = $this->tables_based_repository->create(
 				$lesson_progress->get_lesson_id(),
-				$lesson_progress->get_user_id()
+				$lesson_progress->get_user_id(),
+				false
 			);
 		}
 
-		$started_at = null;
+		$started_at = $tables_based_progress->get_started_at();
 		if ( $lesson_progress->get_started_at() ) {
 			$started_at = new \DateTimeImmutable( '@' . $lesson_progress->get_started_at()->getTimestamp() );
 		}

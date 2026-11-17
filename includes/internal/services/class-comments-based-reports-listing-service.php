@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Services;
 
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -181,7 +183,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 			$requested_post_id ?? (int) $comment->comment_post_ID,
 			(int) $comment->user_id,
 			$comment->comment_approved,
-			$start_date ? $start_date : null,
+			Progress_Start_Date::is_recorded( $start_date ) ? $start_date : null,
 			$comment->comment_date ? $comment->comment_date : null,
 			$grade,
 			$percent

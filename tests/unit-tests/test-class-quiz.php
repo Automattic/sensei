@@ -3,7 +3,6 @@
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
 
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
-use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
@@ -2974,82 +2973,49 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertEmpty( $quiz_grades );
 	}
 
-	public function testResetUserLessonData_WhenCourseAlreadyStarted_DoesNotResetTheCourseStartDate() {
-		/* Arrange. */
-		$user_id   = $this->factory->user->create();
-		$course_id = $this->factory->course->create();
-		$lesson_id = $this->factory->lesson->create(
-			[
-				'meta_input' => [
-					'_lesson_course' => $course_id,
-				],
-			]
-		);
+	/**
+	 * Resetting a lesson reopens the course and preserves its recorded or unknown start date.
+	 *
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 * @dataProvider course_start_dates_on_lesson_reset
+	 *
+	 * @param string|null $started_at The original course start, if recorded.
+	 */
+	public function testResetUserLessonData_CompletedCourseGiven_ReopensWithOriginalStartDate( ?string $started_at ): void {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$user_id    = $this->factory->user->create();
+			$course     = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+			$course_id  = $course['course_id'];
+			$lesson_id  = $course['lesson_ids'][0];
+			$start_date = $started_at ? new DateTimeImmutable( $started_at, wp_timezone() ) : null;
 
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+			$this->factory->create_completed_course_progress( $course_id, $user_id, $start_date );
+			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 
-		$course_start_date    = new DateTime( '-1 day' );
-		$course_progress_mock = $this->createMock( Course_Progress_Interface::class );
-		$course_progress_mock->method( 'get_started_at' )
-			->willReturn( $course_start_date );
+			Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
-		$_course_progress_repository     = Sensei()->course_progress_repository;
-		$course_progress_repository_mock = $this->createMock( Course_Progress_Repository_Interface::class );
-		$course_progress_repository_mock
-			->method( 'get' )
-			->with( $course_id, $user_id )
-			->willReturn( $course_progress_mock );
+			$progress       = Sensei()->course_progress_repository->get( $course_id, $user_id );
+			$reopened_start = $progress->get_started_at();
 
-		/* Assert. */
-		$course_progress_mock
-			->expects( $this->once() )
-			->method( 'start' )
-			->with( $course_start_date );
-
-		/* Act. */
-		Sensei()->course_progress_repository = $course_progress_repository_mock;
-		ob_start();
-		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
-		ob_end_clean();
-		Sensei()->course_progress_repository = $_course_progress_repository; // Reset.
+			self::assertSame( Course_Progress_Interface::STATUS_IN_PROGRESS, $progress->get_status(), 'The course should return to in-progress.' );
+			self::assertSame( $started_at, $reopened_start ? wp_date( 'Y-m-d H:i:s', $reopened_start->getTimestamp() ) : null, 'The original start should be preserved.' );
+			self::assertNull( $progress->get_completed_at(), 'The reopened course should no longer have a completion date.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
 	}
 
-	public function testResetUserLessonData_WhenCourseCompleted_ResetsTheCourseStatus() {
-		/* Arrange. */
-		$user_id   = $this->factory->user->create();
-		$course_id = $this->factory->course->create();
-		$lesson_id = $this->factory->lesson->create(
-			[
-				'meta_input' => [
-					'_lesson_course' => $course_id,
-				],
-			]
+	/**
+	 * Original course start dates.
+	 *
+	 * @return array
+	 */
+	public static function course_start_dates_on_lesson_reset(): array {
+		return array(
+			'known start'   => array( '2024-04-01 08:00:00' ),
+			'unknown start' => array( null ),
 		);
-
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id, true );
-
-		$course_progress_mock = $this->createMock( Course_Progress_Interface::class );
-		$course_progress_mock->method( 'get_started_at' )
-			->willReturn( new DateTime() );
-
-		$_course_progress_repository     = Sensei()->course_progress_repository;
-		$course_progress_repository_mock = $this->createMock( Course_Progress_Repository_Interface::class );
-		$course_progress_repository_mock
-			->method( 'get' )
-			->with( $course_id, $user_id )
-			->willReturn( $course_progress_mock );
-
-		/* Assert. */
-		$course_progress_mock
-			->expects( $this->once() )
-			->method( 'start' );
-
-		/* Act. */
-		Sensei()->course_progress_repository = $course_progress_repository_mock;
-		ob_start();
-		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
-		ob_end_clean();
-		Sensei()->course_progress_repository = $_course_progress_repository; // Reset.
 	}
 
 	public function testSetQuizAuthorOnCreate_WhenCreatingQuiz_SetsAuthorToLessonTeacher() {

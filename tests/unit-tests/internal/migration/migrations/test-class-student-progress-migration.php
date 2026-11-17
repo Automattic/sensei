@@ -156,6 +156,57 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->assertSame( $expected, $actual_rows );
 	}
 
+	/**
+	 * Migration preserves completion and leaves absent start metadata unknown.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration::run
+	 */
+	public function testRun_ProgressCommentsWithoutStartMetadata_PreservesUnknownStartsAndCompletionDates(): void {
+		global $wpdb;
+
+		update_option( 'timezone_string', 'America/Toronto' );
+		$user_id      = $this->factory->user->create();
+		$course       = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$completed_at = '2024-05-01 15:45:00';
+		$fixtures     = array(
+			'sensei_course_status' => $course['course_id'],
+			'sensei_lesson_status' => $course['lesson_ids'][0],
+		);
+
+		foreach ( $fixtures as $type => $post_id ) {
+			wp_insert_comment(
+				array(
+					'comment_post_ID'  => $post_id,
+					'user_id'          => $user_id,
+					'comment_type'     => $type,
+					'comment_approved' => 'complete',
+					'comment_date'     => '2024-05-01 11:45:00',
+					'comment_date_gmt' => $completed_at,
+				)
+			);
+		}
+
+		$this->migration->run( false );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT type, started_at, completed_at FROM {$wpdb->prefix}sensei_lms_progress WHERE user_id = %d ORDER BY type",
+				$user_id
+			),
+			ARRAY_N
+		);
+
+		self::assertSame(
+			array(
+				array( 'course', null, $completed_at ),
+				array( 'lesson', null, $completed_at ),
+				array( 'quiz', null, $completed_at ),
+			),
+			$rows
+		);
+	}
+
 	public function testRun_TimeExceeded_StopsEarlyAndAdvancesCursor(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();

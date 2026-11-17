@@ -97,7 +97,11 @@ class Table_Reading_Aggregate_Course_Progress_Repository implements Course_Progr
 		$this->tables_based_repository->save( $course_progress );
 		$comments_based_progress = $this->comments_based_repository->get( $course_progress->get_course_id(), $course_progress->get_user_id() );
 		if ( ! $comments_based_progress ) {
-			$comments_based_progress = $this->comments_based_repository->create( $course_progress->get_course_id(), $course_progress->get_user_id() );
+			$comments_based_progress = $this->comments_based_repository->create(
+				$course_progress->get_course_id(),
+				$course_progress->get_user_id(),
+				false
+			);
 		}
 		$updated_comments_based_progress = new Comments_Based_Course_Progress(
 			$comments_based_progress->get_id(),

@@ -920,6 +920,41 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Adding an unfinished lesson does not undo historical course completion.
+	 *
+	 * @covers Sensei_Utils::user_complete_course
+	 */
+	public function testUserCompleteCourse_CompletedCourseWithUnknownStartAndNewLesson_PreservesCompletion(): void {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$user_id   = $this->factory->user->create();
+			$course    = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+			$course_id = $course['course_id'];
+
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $course['lesson_ids'][0], $user_id );
+			$lesson_progress->complete();
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
+			$this->factory->create_completed_course_progress( $course_id, $user_id, null );
+
+			$this->factory->lesson->create(
+				array(
+					'meta_input' => array( '_lesson_course' => $course_id ),
+				)
+			);
+			wp_cache_flush();
+
+			Sensei_Utils::user_complete_course( $course_id, $user_id, false );
+
+			$progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+
+			self::assertSame( 'complete', $progress->get_status(), 'The new lesson should leave the course complete.' );
+			self::assertNull( $progress->get_started_at(), 'Recalculating the course should leave its start unknown.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
+	}
+
+	/**
 	 * Course completion stores the lesson counts on its mirrored comment.
 	 *
 	 * @covers Sensei_Utils::user_complete_course

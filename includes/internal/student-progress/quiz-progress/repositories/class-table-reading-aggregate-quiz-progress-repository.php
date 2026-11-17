@@ -127,7 +127,11 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 			if ( $lesson_id ) {
 				$lesson_progress_exists = $this->comments_based_lesson_progress_repository->has( $lesson_id, $quiz_progress->get_user_id() );
 				if ( ! $lesson_progress_exists ) {
-					$this->comments_based_lesson_progress_repository->create( $lesson_id, $quiz_progress->get_user_id() );
+					$this->comments_based_lesson_progress_repository->create(
+						$lesson_id,
+						$quiz_progress->get_user_id(),
+						false
+					);
 				}
 			}
 			$comments_based_quiz_progress = $this->comments_based_repository->get(
