@@ -1650,6 +1650,11 @@ class Sensei_Frontend {
 			return;
 		}
 
+		// The form is only shown when registration is open, but a nonce issued earlier stays valid after it closes.
+		if ( ! get_option( 'users_can_register' ) ) {
+			return;
+		}
+
 		// Validate the registration request nonce.
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sensei_request_text( $_POST['_wpnonce'] ), 'sensei-register' ) ) {
 			return;
@@ -1705,6 +1710,22 @@ class Sensei_Frontend {
 		// exit on email address error.
 		if ( empty( $new_user_password ) ) {
 			Sensei()->notices->add_notice( __( '<strong>ERROR</strong>: The password field is empty.', 'sensei-lms' ), 'alert' );
+			return;
+		}
+
+		// Run the same checks as core registration so CAPTCHA and allowlist plugins apply here too.
+		$registration_errors = new WP_Error();
+
+		/** This action is documented in wp-includes/user.php */
+		do_action( 'register_post', $new_user_name, $new_user_email, $registration_errors ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook.
+
+		/** This filter is documented in wp-includes/user.php */
+		$registration_errors = apply_filters( 'registration_errors', $registration_errors, $new_user_name, $new_user_email ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook.
+
+		if ( $registration_errors->has_errors() ) {
+			foreach ( $registration_errors->get_error_messages() as $registration_error_message ) {
+				Sensei()->notices->add_notice( $registration_error_message, 'alert' );
+			}
 			return;
 		}
 

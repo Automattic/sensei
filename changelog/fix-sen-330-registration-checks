@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Respect the site's registration setting and core registration checks in the Sensei registration form.
