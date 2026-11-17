@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Report missing and mismatched progress and quiz records in both storage backends in the Sensei validation commands.

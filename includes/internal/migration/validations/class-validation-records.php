@@ -85,6 +85,59 @@ class Validation_Records {
 	}
 
 	/**
+	 * Get the HPPS answer rows whose submission no longer exists.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return Generator<int, object>
+	 */
+	public static function get_answers_without_submissions(): Generator {
+		global $wpdb;
+
+		return self::read(
+			'SELECT answers.id, answers.submission_id, answers.question_id
+			FROM %i AS answers
+			LEFT JOIN %i AS submissions ON submissions.id = answers.submission_id
+			WHERE submissions.id IS NULL AND answers.id > %d
+			ORDER BY answers.id
+			LIMIT %d',
+			array(
+				$wpdb->prefix . 'sensei_lms_quiz_answers',
+				$wpdb->prefix . 'sensei_lms_quiz_submissions',
+			),
+			'quiz answers table'
+		);
+	}
+
+	/**
+	 * Get the HPPS grade rows with a missing answer or a different question than the answer.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return Generator<int, object>
+	 */
+	public static function get_grades_with_invalid_answers(): Generator {
+		global $wpdb;
+
+		return self::read(
+			'SELECT grades.id, grades.answer_id, grades.question_id,
+				answers.question_id AS answer_question_id, answers.submission_id, submissions.quiz_id, submissions.user_id
+			FROM %i AS grades
+			LEFT JOIN %i AS answers ON answers.id = grades.answer_id
+			LEFT JOIN %i AS submissions ON submissions.id = answers.submission_id
+			WHERE (answers.id IS NULL OR grades.question_id <> answers.question_id) AND grades.id > %d
+			ORDER BY grades.id
+			LIMIT %d',
+			array(
+				$wpdb->prefix . 'sensei_lms_quiz_grades',
+				$wpdb->prefix . 'sensei_lms_quiz_answers',
+				$wpdb->prefix . 'sensei_lms_quiz_submissions',
+			),
+			'quiz grades table'
+		);
+	}
+
+	/**
 	 * Read a query whose last two arguments are the primary key cursor and limit.
 	 *
 	 * @param string $query   The prepared statement template.
