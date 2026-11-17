@@ -805,12 +805,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		 *
 		 * @since $$next-version$$
 		 *
-		 * @hook sensei_learners_filter_lessons_query_args
+		 * @hook sensei_students_filter_lessons_query_args
 		 *
 		 * @param {array} $lesson_args Lesson query arguments. The course, if any, is in the `sensei_course` argument.
 		 * @return {array} The modified arguments.
 		 */
-		$lesson_args = apply_filters( 'sensei_learners_filter_lessons_query_args', $lesson_args );
+		$lesson_args = apply_filters( 'sensei_students_filter_lessons_query_args', $lesson_args );
 
 		if ( has_filter( 'sensei_learners_filter_lessons' ) ) {
 			// The deprecated filter gets the course in a `_lesson_course` meta clause, as it always did.
@@ -825,7 +825,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			/**
 			 * Filter arguments for the lesson query on the student management screen.
 			 *
-			 * @deprecated $$next-version$$ Use sensei_learners_filter_lessons_query_args instead.
+			 * @deprecated $$next-version$$ Use sensei_students_filter_lessons_query_args instead.
 			 *
 			 * @hook sensei_learners_filter_lessons
 			 *
@@ -836,7 +836,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				'sensei_learners_filter_lessons',
 				array( $lesson_args ),
 				'$$next-version$$',
-				'sensei_learners_filter_lessons_query_args'
+				'sensei_students_filter_lessons_query_args'
 			);
 		}
 
