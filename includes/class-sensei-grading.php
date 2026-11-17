@@ -816,14 +816,42 @@ class Sensei_Grading {
 			/**
 			 * Filter the arguments used to query for lessons in the grading dropdown.
 			 *
-			 * @hook sensei_grading_filter_lessons
+			 * @since $$next-version$$
 			 *
-			 * @since $$next-version$$ The course is given in the `sensei_course` argument instead of a `_lesson_course` meta clause.
+			 * @hook sensei_grading_filter_lessons_query_args
 			 *
-			 * @param {array} $lesson_args Array of arguments for the query.
+			 * @param {array} $lesson_args Array of arguments for the query. The course is in the `sensei_course` argument.
 			 * @return {array} Filtered arguments.
 			 */
-			$lessons = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
+			$lesson_args = apply_filters( 'sensei_grading_filter_lessons_query_args', $lesson_args );
+
+			if ( has_filter( 'sensei_grading_filter_lessons' ) ) {
+				// The deprecated filter gets the course in the `meta_key` and `meta_value` arguments, as it always did.
+				if ( isset( $lesson_args['sensei_course'] ) ) {
+					$lesson_args['meta_key']   = '_lesson_course'; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Argument shape of the deprecated filter.
+					$lesson_args['meta_value'] = $lesson_args['sensei_course']; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Argument shape of the deprecated filter.
+					unset( $lesson_args['sensei_course'] );
+				}
+
+				/**
+				 * Filter the arguments used to query for lessons in the grading dropdown.
+				 *
+				 * @deprecated $$next-version$$ Use sensei_grading_filter_lessons_query_args instead.
+				 *
+				 * @hook sensei_grading_filter_lessons
+				 *
+				 * @param {array} $lesson_args Array of arguments for the query.
+				 * @return {array} Filtered arguments.
+				 */
+				$lesson_args = apply_filters_deprecated(
+					'sensei_grading_filter_lessons',
+					array( $lesson_args ),
+					'$$next-version$$',
+					'sensei_grading_filter_lessons_query_args'
+				);
+			}
+
+			$lessons = get_posts( $lesson_args );
 
 			$html .= '<option value="">' . esc_html__( 'Select a lesson', 'sensei-lms' ) . '</option>';
 			if ( $lessons ) {

@@ -784,14 +784,44 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		/**
 		 * Filter the lessons arguments for the Course Analysis list table.
 		 *
-		 * @hook sensei_analysis_course_filter_lessons
+		 * @since $$next-version$$
 		 *
-		 * @since $$next-version$$ The course is given in the `sensei_course` argument instead of a `_lesson_course` meta clause.
+		 * @hook sensei_analysis_course_filter_lessons_query_args
 		 *
-		 * @param {array} $lessons_args The lessons arguments.
+		 * @param {array} $lessons_args The lessons arguments. The course is in the `sensei_course` argument.
 		 * @return {array} The lessons arguments.
 		 */
-		$lessons_query     = new WP_Query( apply_filters( 'sensei_analysis_course_filter_lessons', $lessons_args ) );
+		$lessons_args = apply_filters( 'sensei_analysis_course_filter_lessons_query_args', $lessons_args );
+
+		if ( has_filter( 'sensei_analysis_course_filter_lessons' ) ) {
+			// The deprecated filter gets the course in a `_lesson_course` meta clause, as it always did.
+			if ( isset( $lessons_args['sensei_course'] ) ) {
+				$lessons_args['meta_query'][] = array(
+					'key'   => '_lesson_course',
+					'value' => $lessons_args['sensei_course'],
+				);
+				unset( $lessons_args['sensei_course'] );
+			}
+
+			/**
+			 * Filter the lessons arguments for the Course Analysis list table.
+			 *
+			 * @deprecated $$next-version$$ Use sensei_analysis_course_filter_lessons_query_args instead.
+			 *
+			 * @hook sensei_analysis_course_filter_lessons
+			 *
+			 * @param {array} $lessons_args The lessons arguments.
+			 * @return {array} The lessons arguments.
+			 */
+			$lessons_args = apply_filters_deprecated(
+				'sensei_analysis_course_filter_lessons',
+				array( $lessons_args ),
+				'$$next-version$$',
+				'sensei_analysis_course_filter_lessons_query_args'
+			);
+		}
+
+		$lessons_query     = new WP_Query( $lessons_args );
 		$this->total_items = $lessons_query->found_posts;
 
 		return $lessons_query->posts;
