@@ -3708,7 +3708,12 @@ class Sensei_Lesson {
 			 * @param {array} $post_args Post arguments.
 			 * @return {array} Post arguments.
 			 */
-			$post_args = apply_filters_deprecated( 'sensei_lesson_count', array( $post_args ), '$$next-version$$', 'sensei_lesson_count_query_args' );
+			$post_args = apply_filters_deprecated(
+				'sensei_lesson_count',
+				array( $post_args ),
+				'$$next-version$$',
+				'sensei_lesson_count_query_args'
+			);
 		}
 
 		$lessons_query = new WP_Query( $post_args );
