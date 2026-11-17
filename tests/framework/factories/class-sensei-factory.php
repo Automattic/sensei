@@ -1,5 +1,8 @@
 <?php
 
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
+
 /**
  * Class Sensei Factory
  *
@@ -297,6 +300,32 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			'quiz_ids'   => $quiz_ids,
 			'modules'    => $module_ids,
 		);
+	}
+
+	/**
+	 * Create completed course progress for either backend to read.
+	 *
+	 * @param int                    $course_id Course ID.
+	 * @param int                    $user_id Student ID.
+	 * @param DateTimeInterface|null $started_at Recorded start date, if known.
+	 * @param DateTimeInterface|null $completed_at Recorded completion date, if supplied.
+	 */
+	public function create_completed_course_progress( int $course_id, int $user_id, ?DateTimeInterface $started_at, ?DateTimeInterface $completed_at = null ): void {
+		global $wpdb;
+
+		$repositories = array(
+			new Comments_Based_Course_Progress_Repository(),
+			new Tables_Based_Course_Progress_Repository( $wpdb ),
+		);
+
+		foreach ( $repositories as $repository ) {
+			$progress = $repository->create( $course_id, $user_id, false );
+			if ( $started_at ) {
+				$progress->set_started_at( $started_at );
+			}
+			$progress->complete( $completed_at );
+			$repository->save( $progress );
+		}
 	}
 
 	/**

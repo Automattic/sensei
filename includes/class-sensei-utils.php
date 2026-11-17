@@ -67,7 +67,7 @@ class Sensei_Utils {
 		);
 		if ( $activity_date ) {
 			$timestamp                = $activity_date->getTimestamp();
-			$data['comment_date']     = wp_date( 'Y-m-d H:i:s', $timestamp );
+			$data['comment_date']     = (string) wp_date( 'Y-m-d H:i:s', $timestamp );
 			$data['comment_date_gmt'] = gmdate( 'Y-m-d H:i:s', $timestamp );
 		}
 
@@ -2189,8 +2189,8 @@ class Sensei_Utils {
 	 * @access public
 	 * @since  1.7.0
 	 * @since $$next-version$$ $completed_at parameter added.
-	 * @param int|string             $user_id Student ID.
-	 * @param int|string             $course_id Course ID.
+	 * @param int                    $user_id Student ID.
+	 * @param int                    $course_id Course ID.
 	 * @param string                 $status Progress status.
 	 * @param array                  $metadata Comment metadata.
 	 * @param DateTimeInterface|null $completed_at Recorded completion date, when available.
