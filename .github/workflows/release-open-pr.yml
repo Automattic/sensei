@@ -179,6 +179,8 @@ jobs:
                   - [ ] Check whether `Requires PHP` needs a bump. If it does, bump it in its own commit on this branch.
                   - [ ] Confirm no new commits landed after testing.
 
+                  Merging this pull request builds the package and drafts the GitHub release. The link to the draft is posted in a comment here.
+
                   ## QA
 
                   EOF
