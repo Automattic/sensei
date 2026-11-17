@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Sensei\Internal\Migration\Migration_Abstract;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 
 /**
@@ -299,10 +300,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 			$completed_at = null;
 		}
 
-		$started_at = 0;
-		if ( isset( $meta['start'] ) ) {
+		$started_at = null;
+		$meta_start = $meta['start'] ?? null;
+		if ( Progress_Start_Date::is_recorded( $meta_start ) ) {
 			try {
-				$started_at = $this->convert_to_utc( $meta['start'] );
+				$started_at = $this->convert_to_utc( $meta_start );
 			} catch ( \Exception $e ) {
 				$this->add_error(
 					sprintf(
@@ -354,10 +356,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 			}
 		}
 
-		$started_at = 0;
-		if ( isset( $meta['start'] ) ) {
+		$started_at = null;
+		$meta_start = $meta['start'] ?? null;
+		if ( Progress_Start_Date::is_recorded( $meta_start ) ) {
 			try {
-				$started_at = $this->convert_to_utc( $meta['start'] );
+				$started_at = $this->convert_to_utc( $meta_start );
 			} catch ( \Exception $e ) {
 				$this->add_error(
 					sprintf(

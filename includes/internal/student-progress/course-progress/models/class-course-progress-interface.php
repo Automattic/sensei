@@ -45,6 +45,14 @@ interface Course_Progress_Interface {
 	public function start( ?DateTimeInterface $started_at = null ): void;
 
 	/**
+	 * Return the course to in-progress and retain its original start date.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 */
+	public function reopen(): void;
+
+	/**
 	 * Set complete status and completion date.
 	 *
 	 * @internal

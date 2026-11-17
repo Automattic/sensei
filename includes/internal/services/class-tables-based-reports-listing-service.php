@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Services;
 
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -112,7 +114,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$post_id,
 				(int) $row->user_id,
 				$row->effective_status ?? 'in-progress',
-				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 				null !== $row->grade ? (float) $row->grade : null,
 				null
@@ -182,7 +184,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$course_id,
 				(int) $row->user_id,
 				$row->status ?? 'in-progress',
-				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 				null,
 				null !== $row->percent ? round( (float) $row->percent, 0 ) : null
@@ -239,7 +241,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			$post_id,
 			$user_id,
 			$row->effective_status ?? 'in-progress',
-			$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
+			Progress_Start_Date::is_recorded( $row->started_at ) ? get_date_from_gmt( $row->started_at ) : null,
 			$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 			null !== $row->grade ? (float) $row->grade : null,
 			null
@@ -321,7 +323,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				(int) $row->post_id,
 				$user_id,
 				$row->status ?? 'in-progress',
-				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 				null,
 				null !== $row->percent ? round( (float) $row->percent, 0 ) : null

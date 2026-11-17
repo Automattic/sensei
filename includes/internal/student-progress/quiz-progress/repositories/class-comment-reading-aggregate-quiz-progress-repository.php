@@ -108,11 +108,12 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 		if ( ! $tables_based_progress ) {
 			$tables_based_progress = $this->tables_based_repository->create(
 				$quiz_progress->get_quiz_id(),
-				$quiz_progress->get_user_id()
+				$quiz_progress->get_user_id(),
+				false
 			);
 		}
 
-		$started_at = null;
+		$started_at = $tables_based_progress->get_started_at();
 		if ( $quiz_progress->get_started_at() ) {
 			$started_at = new \DateTimeImmutable( '@' . $quiz_progress->get_started_at()->getTimestamp() );
 		}

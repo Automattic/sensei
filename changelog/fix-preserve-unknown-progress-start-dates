@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Preserve unknown start dates when saving or migrating student progress.

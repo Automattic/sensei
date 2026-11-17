@@ -6,7 +6,6 @@
  * @since 3.7.0
  */
 
-use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -217,14 +216,7 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 			$course_activity_time = $course_progress->get_updated_at()->getTimestamp();
 			$status               = esc_html__( 'In Progress', 'sensei-lms' );
 
-			// The comments repository returns the current time when no start date was recorded.
-			if ( $course_progress instanceof Comments_Based_Course_Progress && ! get_comment_meta( $course_progress->get_id(), 'start', true ) ) {
-				$started_at = null;
-			}
-
-			// When a course has no recorded start date, migration can store 0000-00-00 00:00:00.
-			// PHP reads that as year -1, so omit it from the debug output.
-			if ( $started_at && 0 < (int) $started_at->format( 'Y' ) ) {
+			if ( $started_at ) {
 				$start_date = self::format_date( $started_at->getTimestamp() );
 			}
 
