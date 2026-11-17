@@ -3799,7 +3799,6 @@ class Sensei_Lesson {
 	/**
 	 * Resolve the quiz associated with persisted lesson activity.
 	 *
-	 * @internal
 	 * @since $$next-version$$
 	 *
 	 * @param int $lesson_id The lesson ID.
