@@ -2979,67 +2979,43 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Quiz::reset_user_lesson_data
 	 * @dataProvider course_start_dates_on_lesson_reset
 	 *
-	 * @param string      $mode The primary progress store.
 	 * @param string|null $started_at The original course start, if recorded.
 	 */
-	public function testResetUserLessonData_CompletedCourseGiven_ReopensWithOriginalStartDate( string $mode, ?string $started_at ): void {
-		global $wpdb;
+	public function testResetUserLessonData_CompletedCourseGiven_ReopensWithOriginalStartDate( ?string $started_at ): void {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$user_id    = $this->factory->user->create();
+			$course     = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+			$course_id  = $course['course_id'];
+			$lesson_id  = $course['lesson_ids'][0];
+			$start_date = $started_at ? new DateTimeImmutable( $started_at, wp_timezone() ) : null;
 
-		$this->set_progress_storage_mode( $mode );
-		$user_id   = $this->factory->user->create();
-		$course    = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
-		$course_id = $course['course_id'];
-		$lesson_id = $course['lesson_ids'][0];
+			$this->factory->create_completed_course_progress( $course_id, $user_id, $start_date );
+			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 
-		$progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
-		$progress->complete();
-		Sensei()->course_progress_repository->save( $progress );
-		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+			Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
-		$comment = Sensei_Utils::user_course_status( $course_id, $user_id );
-		if ( null === $started_at ) {
-			delete_comment_meta( $comment->comment_ID, 'start' );
-		} else {
-			update_comment_meta( $comment->comment_ID, 'start', $started_at );
+			$progress       = Sensei()->course_progress_repository->get( $course_id, $user_id );
+			$reopened_start = $progress->get_started_at();
+
+			self::assertSame( Course_Progress_Interface::STATUS_IN_PROGRESS, $progress->get_status(), 'The course should return to in-progress.' );
+			self::assertSame( $started_at, $reopened_start ? wp_date( 'Y-m-d H:i:s', $reopened_start->getTimestamp() ) : null, 'The original start should be preserved.' );
+			self::assertNull( $progress->get_completed_at(), 'The reopened course should no longer have a completion date.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
 		}
-
-		if ( 'comments-only' !== $mode ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$wpdb->update(
-				$wpdb->prefix . 'sensei_lms_progress',
-				array( 'started_at' => $started_at ),
-				array(
-					'post_id' => $course_id,
-					'user_id' => $user_id,
-					'type'    => 'course',
-				)
-			);
-		}
-		wp_cache_flush();
-
-		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
-
-		$progress       = Sensei()->course_progress_repository->get( $course_id, $user_id );
-		$reopened_start = $progress->get_started_at();
-
-		self::assertSame( Course_Progress_Interface::STATUS_IN_PROGRESS, $progress->get_status(), 'The course should return to in-progress.' );
-		self::assertSame( $started_at, $reopened_start ? $reopened_start->format( 'Y-m-d H:i:s' ) : null, 'The original start should be preserved.' );
-		self::assertNull( $progress->get_completed_at(), 'The reopened course should no longer have a completion date.' );
 	}
 
 	/**
-	 * Progress storage modes and original course start dates.
+	 * Original course start dates.
 	 *
 	 * @return array
 	 */
 	public static function course_start_dates_on_lesson_reset(): array {
-		$cases = array();
-		foreach ( self::progress_storage_modes() as $label => list( $mode ) ) {
-			$cases[ "$label, known start" ]   = array( $mode, '2024-04-01 08:00:00' );
-			$cases[ "$label, unknown start" ] = array( $mode, null );
-		}
-
-		return $cases;
+		return array(
+			'known start'   => array( '2024-04-01 08:00:00' ),
+			'unknown start' => array( null ),
+		);
 	}
 
 	public function testSetQuizAuthorOnCreate_WhenCreatingQuiz_SetsAuthorToLessonTeacher() {
