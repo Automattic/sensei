@@ -900,47 +900,22 @@ class Sensei_Utils {
 			return false;
 		}
 
-		$deleted = self::delete_legacy_quiz_answer_comments( $quiz_id, $user_id );
-
 		try {
 			$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-			if ( $quiz_submission ) {
-				Sensei()->quiz_grade_repository->delete_all( $quiz_submission );
-				Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
-
-				Sensei()->quiz_submission_repository->delete( $quiz_submission );
-
-				$deleted = true;
+			if ( ! $quiz_submission ) {
+				return false;
 			}
 
-			return $deleted;
+			Sensei()->quiz_grade_repository->delete_all( $quiz_submission );
+			Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
+			Sensei()->quiz_submission_repository->delete( $quiz_submission );
+
+			return true;
 		} catch ( Persistence_Exception $exception ) {
 			$exception->log( 'clearing quiz answers' );
 			return false;
 		}
 
-	}
-
-	/**
-	 * Delete answers stored as individual comments before Sensei 1.7.4.
-	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The student ID.
-	 * @return bool Whether the last matching question activity was deleted.
-	 */
-	private static function delete_legacy_quiz_answer_comments( int $quiz_id, int $user_id ): bool {
-		$deleted = false;
-		foreach ( self::sensei_get_quiz_questions( $quiz_id ) as $question ) {
-			$deleted = self::sensei_delete_activities(
-				array(
-					'post_id' => $question->ID,
-					'user_id' => $user_id,
-					'type'    => 'sensei_user_answer',
-				)
-			);
-		}
-
-		return $deleted;
 	}
 
 	/**
@@ -960,8 +935,6 @@ class Sensei_Utils {
 		}
 
 		global $wpdb;
-
-		self::delete_legacy_quiz_answer_comments( $quiz_id, $user_id );
 
 		// Each store may have its own submission ID, or be missing the submission altogether.
 		$tables_submissions = new Tables_Based_Submission_Repository( $wpdb );
