@@ -589,6 +589,21 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->assertEquals( $published, $usage_data['messages'], 'Count' );
 	}
 
+	public function testGetUsageDataMessagesWhenMessagesAreDisabled() {
+		/* Arrange */
+		// The message post type is only registered while messages are enabled.
+		unregister_post_type( 'sensei_message' );
+
+		/* Act */
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		// Restore the post type for the remaining tests.
+		Sensei()->post_types->setup_sensei_message_post_type();
+
+		/* Assert */
+		$this->assertSame( 0, $usage_data['messages'] );
+	}
+
 	public function testGetUsageDataModules() {
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
