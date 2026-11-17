@@ -64,6 +64,27 @@ class Validation_Records {
 	}
 
 	/**
+	 * Get the HPPS quiz submission records.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return Generator<int, object>
+	 */
+	public static function get_submission_rows(): Generator {
+		global $wpdb;
+
+		return self::read(
+			'SELECT id, quiz_id AS post_id, user_id
+			FROM %i
+			WHERE id > %d
+			ORDER BY id
+			LIMIT %d',
+			array( $wpdb->prefix . 'sensei_lms_quiz_submissions' ),
+			'quiz submission table'
+		);
+	}
+
+	/**
 	 * Read a query whose last two arguments are the primary key cursor and limit.
 	 *
 	 * @param string $query   The prepared statement template.

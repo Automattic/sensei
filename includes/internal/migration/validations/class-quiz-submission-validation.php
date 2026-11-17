@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Migration\Validations;
 
+use RuntimeException;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
@@ -45,8 +46,10 @@ class Quiz_Submission_Validation {
 			$this->add_error( 'The progress migration is not complete. Please run the progress migration first.' );
 		}
 
-		foreach ( $this->get_quiz_ids() as $quiz_id ) {
-			$this->validate_quiz_submissions( $quiz_id );
+		try {
+			$this->validate_quiz_submissions();
+		} catch ( RuntimeException $exception ) {
+			$this->add_error( $exception->getMessage() );
 		}
 	}
 
@@ -87,24 +90,6 @@ class Quiz_Submission_Validation {
 	}
 
 	/**
-	 * Get the quiz IDs.
-	 *
-	 * @psalm-suppress InvalidReturnType, InvalidReturnStatement -- Psalm doesn't understand the 'fields' argument.
-	 *
-	 * @return int[]
-	 */
-	private function get_quiz_ids(): array {
-		return get_posts(
-			array(
-				'post_type'      => 'quiz',
-				'post_status'    => 'any',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-			)
-		);
-	}
-
-	/**
 	 * Check if the progress migration is complete.
 	 *
 	 * @return bool
@@ -114,86 +99,89 @@ class Quiz_Submission_Validation {
 	}
 
 	/**
-	 * Validate the quiz progress.
-	 *
-	 * @param int $quiz_id Quiz post ID.
+	 * Find comment-only submissions and validate each table submission once.
 	 */
-	private function validate_quiz_submissions( int $quiz_id ): void {
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
-
+	private function validate_quiz_submissions(): void {
 		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$user_ids = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT user_id FROM {$wpdb->comments}
-				WHERE comment_type = 'sensei_lesson_status'
-				AND comment_post_ID = %d",
-				$lesson_id
-			)
-		);
-		if ( ! $user_ids ) {
-			return;
+
+		$comments_repository = new Comments_Based_Submission_Repository();
+		$tables_repository   = new Tables_Based_Submission_Repository( $wpdb );
+		$comments_answers    = new Comments_Based_Answer_Repository();
+		$tables_answers      = new Tables_Based_Answer_Repository( $wpdb );
+		$comments_grades     = new Comments_Based_Grade_Repository();
+		$tables_grades       = new Tables_Based_Grade_Repository( $wpdb );
+
+		foreach ( Validation_Records::get_comments( 'sensei_lesson_status' ) as $record ) {
+			$quiz_id = Sensei()->lesson->get_quiz_id_for_lesson_progress( (int) $record->post_id );
+			if ( ! $quiz_id ) {
+				continue;
+			}
+
+			$user_id             = (int) $record->user_id;
+			$comments_submission = $comments_repository->get( $quiz_id, $user_id );
+			if ( ! $comments_submission || $comments_submission->get_id() !== (int) $record->id ) {
+				continue;
+			}
+
+			if ( ! $tables_repository->get( $quiz_id, $user_id ) ) {
+				$this->add_missing_submission_error( 'tables', $quiz_id, $user_id );
+			}
 		}
 
-		$comments_based_repository = new Comments_Based_Submission_Repository();
-		$tables_based_repository   = new Tables_Based_Submission_Repository( $wpdb );
-		$comments_answers         = new Comments_Based_Answer_Repository();
-		$tables_answers           = new Tables_Based_Answer_Repository( $wpdb );
-		$comments_grades          = new Comments_Based_Grade_Repository();
-		$tables_grades            = new Tables_Based_Grade_Repository( $wpdb );
-
-		foreach ( $user_ids as $user_id ) {
-			$comments_based_submission = $comments_based_repository->get( $quiz_id, $user_id );
-			$tables_based_submission   = $tables_based_repository->get( $quiz_id, $user_id );
-
-			if ( ! $comments_based_submission && ! $tables_based_submission ) {
+		foreach ( Validation_Records::get_submission_rows() as $record ) {
+			$quiz_id             = (int) $record->post_id;
+			$user_id             = (int) $record->user_id;
+			$comments_submission = $comments_repository->get( $quiz_id, $user_id );
+			if ( ! $comments_submission ) {
+				$this->add_missing_submission_error( 'comments', $quiz_id, $user_id );
 				continue;
 			}
 
-			if ( ! $comments_based_submission ) {
-				$this->add_error(
-					'Comments-based quiz submission not found.',
-					array(
-						'quiz_id' => $quiz_id,
-						'user_id' => $user_id,
-					)
-				);
+			$tables_submission = $tables_repository->get( $quiz_id, $user_id );
+			if ( ! $tables_submission ) {
 				continue;
 			}
 
-			if ( ! $tables_based_submission ) {
-				$this->add_error(
-					'Tables-based quiz submission not found.',
-					array(
-						'quiz_id' => $quiz_id,
-						'user_id' => $user_id,
-					)
-				);
-				continue;
-			}
-
-			$this->compare_submission( $comments_based_submission, $tables_based_submission );
+			$this->compare_submission( $comments_submission, $tables_submission );
 
 			$identity = array(
 				'quiz_id'                => $quiz_id,
 				'user_id'                => $user_id,
-				'comments_submission_id' => $comments_based_submission->get_id(),
-				'tables_submission_id'   => $tables_based_submission->get_id(),
+				'comments_submission_id' => $comments_submission->get_id(),
+				'tables_submission_id'   => $tables_submission->get_id(),
 			);
 
 			$this->compare_question_data(
-				array_map( array( $this, 'get_answer_data' ), $comments_answers->get_all( $comments_based_submission->get_id() ) ),
-				array_map( array( $this, 'get_answer_data' ), $tables_answers->get_all( $tables_based_submission->get_id() ) ),
+				array_map( array( $this, 'get_answer_data' ), $comments_answers->get_all( $comments_submission->get_id() ) ),
+				array_map( array( $this, 'get_answer_data' ), $tables_answers->get_all( $tables_submission->get_id() ) ),
 				$identity,
 				'answers'
 			);
 			$this->compare_question_data(
-				array_map( array( $this, 'get_grade_data' ), $comments_grades->get_all( $comments_based_submission->get_id() ) ),
-				array_map( array( $this, 'get_grade_data' ), $tables_grades->get_all( $tables_based_submission->get_id() ) ),
+				array_map( array( $this, 'get_grade_data' ), $comments_grades->get_all( $comments_submission->get_id() ) ),
+				array_map( array( $this, 'get_grade_data' ), $tables_grades->get_all( $tables_submission->get_id() ) ),
 				$identity,
 				'grades'
 			);
 		}
+	}
+
+	/**
+	 * Record an identity with no submission in one store.
+	 *
+	 * @param string $store   The store missing the submission.
+	 * @param int    $quiz_id The quiz ID.
+	 * @param int    $user_id The student ID.
+	 */
+	private function add_missing_submission_error( string $store, int $quiz_id, int $user_id ): void {
+		$this->add_error(
+			sprintf( '%s-based quiz submission not found.', ucfirst( $store ) ),
+			array(
+				'quiz_id' => $quiz_id,
+				'user_id' => $user_id,
+				'source'  => $store,
+			)
+		);
 	}
 
 	/**
