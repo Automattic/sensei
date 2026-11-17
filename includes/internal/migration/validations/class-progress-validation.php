@@ -326,9 +326,17 @@ class Progress_Validation {
 	 * @param object $tables_based_progress   Tables based progress.
 	 */
 	private function compare_progress( object $comments_based_progress, object $tables_based_progress ): void {
-		// phpcs:ignore Universal.Operators.StrictComparisons.LooseComparison -- Intended.
-		if ( $this->get_progress_data( $comments_based_progress ) != $this->get_progress_data( $tables_based_progress ) ) {
-			$this->add_mismatch_error( $comments_based_progress, $tables_based_progress );
+		$comments = $this->get_progress_data( $comments_based_progress );
+		$tables   = $this->get_progress_data( $tables_based_progress );
+
+		if ( $comments !== $tables ) {
+			$this->add_error(
+				'Data mismatch between comments and tables based progress.',
+				array(
+					array_merge( array( 'source' => 'comments' ), $comments ),
+					array_merge( array( 'source' => 'tables' ), $tables ),
+				)
+			);
 		}
 	}
 
@@ -354,39 +362,17 @@ class Progress_Validation {
 			throw new \InvalidArgumentException( 'Invalid progress type.' );
 		}
 
-		return [
+		// Compare the same instant regardless of the timezone used by either store.
+		$started_at   = $progress->get_started_at();
+		$completed_at = $progress->get_completed_at();
+
+		return array(
 			'type'         => $type,
 			'post_id'      => $post_id,
 			'user_id'      => $progress->get_user_id(),
 			'status'       => $progress->get_status(),
-			'started_at'   => $progress->get_started_at(),
-			'completed_at' => $progress->get_completed_at(),
-		];
-	}
-
-	/**
-	 * Log a progress mismatch.
-	 *
-	 * @param object $comments_based_progress Comments based progress.
-	 * @param object $tables_based_progress   Tables based progress.
-	 */
-	private function add_mismatch_error( object $comments_based_progress, object $tables_based_progress ): void {
-		$this->add_error(
-			'Data mismatch between comments and tables based progress.',
-			[
-				array_merge(
-					[
-						'source' => 'comments',
-					],
-					$this->get_progress_data( $comments_based_progress )
-				),
-				array_merge(
-					[
-						'source' => 'tables',
-					],
-					$this->get_progress_data( $tables_based_progress )
-				),
-			]
+			'started_at'   => $started_at ? gmdate( 'Y-m-d H:i:s', $started_at->getTimestamp() ) : null,
+			'completed_at' => $completed_at ? gmdate( 'Y-m-d H:i:s', $completed_at->getTimestamp() ) : null,
 		);
 	}
 }
