@@ -1,4 +1,4 @@
-Significance: patch
-Type: fixed
+Significance: minor
+Type: changed
 
-Report missing and mismatched progress and quiz records in both storage backends in the Sensei validation commands.
+HPPS: Report missing and mismatched progress and quiz records in both storage backends in the Sensei WP-CLI validation commands.
