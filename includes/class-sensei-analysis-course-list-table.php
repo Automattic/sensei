@@ -782,16 +782,16 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 		// Using WP_Query as get_posts() doesn't support 'found_posts'
 		/**
-		 * Filter the lessons arguments for the Course Analysis list table.
+		 * Filter the lessons arguments for the lessons table of a course on the Reports screen.
 		 *
 		 * @since $$next-version$$
 		 *
-		 * @hook sensei_analysis_course_filter_lessons_query_args
+		 * @hook sensei_reports_course_filter_lessons_query_args
 		 *
 		 * @param {array} $lessons_args The lessons arguments. The course is in the `sensei_course` argument.
 		 * @return {array} The lessons arguments.
 		 */
-		$lessons_args = apply_filters( 'sensei_analysis_course_filter_lessons_query_args', $lessons_args );
+		$lessons_args = apply_filters( 'sensei_reports_course_filter_lessons_query_args', $lessons_args );
 
 		if ( has_filter( 'sensei_analysis_course_filter_lessons' ) ) {
 			// The deprecated filter gets the course in a `_lesson_course` meta clause, as it always did.
@@ -806,7 +806,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			/**
 			 * Filter the lessons arguments for the Course Analysis list table.
 			 *
-			 * @deprecated $$next-version$$ Use sensei_analysis_course_filter_lessons_query_args instead.
+			 * @deprecated $$next-version$$ Use sensei_reports_course_filter_lessons_query_args instead.
 			 *
 			 * @hook sensei_analysis_course_filter_lessons
 			 *
@@ -817,7 +817,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				'sensei_analysis_course_filter_lessons',
 				array( $lessons_args ),
 				'$$next-version$$',
-				'sensei_analysis_course_filter_lessons_query_args'
+				'sensei_reports_course_filter_lessons_query_args'
 			);
 		}
 
