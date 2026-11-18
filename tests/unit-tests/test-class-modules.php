@@ -103,7 +103,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	 *
 	 * @covers Sensei_Core_Modules::is_term_used
 	 */
-	public function testIsTermUsed_LessonInModule_ReturnsTrue() {
+	public function testIsTermUsed_ModuleWithLessonGiven_ReturnsTrue() {
 		/* Arrange. */
 		$module_id = $this->factory->module->create();
 		Sensei()->course_lessons_repository->set_lesson_module( $this->factory->lesson->create(), $module_id );
@@ -120,7 +120,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	 *
 	 * @covers Sensei_Core_Modules::is_term_used
 	 */
-	public function testIsTermUsed_CourseHasModule_ReturnsTrue() {
+	public function testIsTermUsed_ModuleOfCourseGiven_ReturnsTrue() {
 		/* Arrange. */
 		$module_id = $this->factory->module->create();
 		wp_set_object_terms( $this->factory->course->create(), array( $module_id ), 'module' );
@@ -137,7 +137,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	 *
 	 * @covers Sensei_Core_Modules::is_term_used
 	 */
-	public function testIsTermUsed_ModuleWithoutLessonsOrCourses_ReturnsFalse() {
+	public function testIsTermUsed_ModuleWithoutLessonsOrCoursesGiven_ReturnsFalse() {
 		/* Arrange. */
 		$module_id       = $this->factory->module->create();
 		$other_module_id = $this->factory->module->create();
