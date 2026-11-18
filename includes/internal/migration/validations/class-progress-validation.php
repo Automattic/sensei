@@ -154,12 +154,13 @@ class Progress_Validation {
 				continue;
 			}
 
+			// Always report missing course or lesson progress. Quiz progress needs evidence of activity because it shares the lesson comment.
 			if ( ! $comments_progress instanceof Comments_Based_Quiz_Progress || $this->has_recorded_quiz_activity( $comments_progress ) ) {
 				$this->add_missing_progress_error( $type, 'tables', $post_id, $user_id );
 			}
 		}
 
-		// Scan tables for missing comments and compare each matching pair once.
+		// For each HPPS row, report missing comments or compare progress for the same student and course, lesson, or quiz.
 		foreach ( Validation_Records::get_progress_rows( $type ) as $record ) {
 			$post_id           = (int) $record->post_id;
 			$user_id           = (int) $record->user_id;
@@ -202,8 +203,15 @@ class Progress_Validation {
 		}
 
 		$quiz_id = $tables_progress->get_quiz_id();
-		if ( $comments_progress && ( Quiz_Progress_Interface::STATUS_PASSED !== $comments_progress->get_status() || get_post_meta( $quiz_id, '_pass_required', true ) ) ) {
-			return false;
+		if ( $comments_progress ) {
+			$comment_says_passed = Quiz_Progress_Interface::STATUS_PASSED === $comments_progress->get_status();
+			$pass_required      = (bool) get_post_meta( $quiz_id, '_pass_required', true );
+
+			// Only a passed comment for an optional quiz could come from completing the lesson alone.
+			// Otherwise, return false so the caller continues normal validation.
+			if ( ! $comment_says_passed || $pass_required ) {
+				return false;
+			}
 		}
 
 		global $wpdb;
