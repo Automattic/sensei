@@ -80,7 +80,7 @@ class Lesson_Progress_Removal {
 			}
 		}
 
-		// The lesson comment also holds quiz data, so delete it after quiz cleanup succeeds.
+		// Delete lesson progress last so the lesson comment stays available if quiz cleanup fails.
 		$lesson_progress    = $this->lesson_progress_repository->get( $lesson_id, $user_id );
 		$progress_lesson_id = $lesson_progress ? $lesson_progress->get_lesson_id() : $lesson_id;
 		$this->lesson_progress_repository->delete_for_student( $progress_lesson_id, $user_id );

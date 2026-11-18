@@ -902,7 +902,6 @@ class Sensei_Main {
 	/**
 	 * Configure lesson progress removal for the resolved storage settings.
 	 *
-	 * @internal
 	 * @since $$next-version$$
 	 *
 	 * @return Lesson_Progress_Removal The configured removal service.
