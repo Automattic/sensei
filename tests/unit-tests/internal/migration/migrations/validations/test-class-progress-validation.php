@@ -449,6 +449,9 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$course     = $this->factory->get_course_with_lessons( $course_args );
 		$student_id = $this->factory->user->create();
 		Sensei_Course_Enrolment::get_course_instance( $course['course_id'] )->enrol( $student_id );
+		$course_progress = Sensei()->course_progress_repository->get( $course['course_id'], $student_id );
+		// Synchronize the fixture dates after the two inserts, which can cross a second boundary.
+		Sensei()->course_progress_repository->save( $course_progress );
 		$this->mask_migration_as_complete();
 
 		return array( $course['lesson_ids'][0], $course['quiz_ids'][0], $student_id );
