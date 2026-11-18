@@ -205,7 +205,7 @@ class Progress_Validation {
 		$quiz_id = $tables_progress->get_quiz_id();
 		if ( $comments_progress ) {
 			$comment_says_passed = Quiz_Progress_Interface::STATUS_PASSED === $comments_progress->get_status();
-			$pass_required      = (bool) get_post_meta( $quiz_id, '_pass_required', true );
+			$pass_required       = (bool) get_post_meta( $quiz_id, '_pass_required', true );
 
 			// Only a passed comment for an optional quiz could come from completing the lesson alone.
 			// Otherwise, return false so the caller continues normal validation.
