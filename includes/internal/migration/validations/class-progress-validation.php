@@ -10,6 +10,7 @@ namespace Sensei\Internal\Migration\Validations;
 
 use RuntimeException;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
@@ -163,16 +164,62 @@ class Progress_Validation {
 			$post_id           = (int) $record->post_id;
 			$user_id           = (int) $record->user_id;
 			$comments_progress = $comments_repository->get( $post_id, $user_id );
+			$tables_progress   = $tables_repository->get( $post_id, $user_id );
+			if ( ! $tables_progress ) {
+				continue;
+			}
+
+			if ( $tables_progress instanceof Quiz_Progress_Interface
+				&& ( ! $comments_progress || $comments_progress instanceof Comments_Based_Quiz_Progress )
+				&& $this->has_expected_quiz_visit_difference( $tables_progress, $comments_progress )
+			) {
+				continue;
+			}
+
 			if ( ! $comments_progress ) {
 				$this->add_missing_progress_error( $type, 'comments', $post_id, $user_id );
 				continue;
 			}
 
-			$tables_progress = $tables_repository->get( $post_id, $user_id );
-			if ( $tables_progress ) {
-				$this->compare_progress( $comments_progress, $tables_progress );
-			}
+			$this->compare_progress( $comments_progress, $tables_progress );
 		}
+	}
+
+	/**
+	 * Allow quiz progress that the shared lesson comment cannot represent independently.
+	 *
+	 * Opening a quiz only creates a table row. Completing an optional lesson can mark
+	 * its comment as passed while the quiz remains in progress. A grade in either
+	 * store provides evidence that the quiz progress should also have been updated.
+	 *
+	 * @param Quiz_Progress_Interface           $tables_progress   Quiz progress in the tables.
+	 * @param Comments_Based_Quiz_Progress|null $comments_progress Quiz progress from the lesson comment.
+	 * @return bool
+	 */
+	private function has_expected_quiz_visit_difference( Quiz_Progress_Interface $tables_progress, ?Comments_Based_Quiz_Progress $comments_progress ): bool {
+		if ( Quiz_Progress_Interface::STATUS_IN_PROGRESS !== $tables_progress->get_status() ) {
+			return false;
+		}
+
+		$quiz_id = $tables_progress->get_quiz_id();
+		if ( $comments_progress && ( Quiz_Progress_Interface::STATUS_PASSED !== $comments_progress->get_status() || get_post_meta( $quiz_id, '_pass_required', true ) ) ) {
+			return false;
+		}
+
+		global $wpdb;
+		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->get( $quiz_id, $tables_progress->get_user_id() );
+
+		// Saved answers should have a lesson comment even if quiz progress is still in progress.
+		if ( ! $comments_progress ) {
+			return null === $submission;
+		}
+
+		// The shared passed status alone cannot distinguish a completed lesson from a submitted quiz.
+		$comment_id        = $comments_progress->get_id();
+		$has_comment_grade = get_comment_meta( $comment_id, 'questions_asked', true )
+			&& is_numeric( get_comment_meta( $comment_id, 'grade', true ) );
+
+		return ( ! $submission || null === $submission->get_final_grade() ) && ! $has_comment_grade;
 	}
 
 	/**
@@ -184,6 +231,11 @@ class Progress_Validation {
 	 * @return bool
 	 */
 	private function has_recorded_quiz_activity( Comments_Based_Quiz_Progress $progress ): bool {
+		if ( Quiz_Progress_Interface::STATUS_PASSED === $progress->get_status() && ! get_post_meta( $progress->get_quiz_id(), '_pass_required', true ) ) {
+			// Completing a lesson can record a quiz pass without any answers.
+			return (bool) get_comment_meta( $progress->get_id(), 'questions_asked', true );
+		}
+
 		return in_array(
 			$progress->get_raw_status(),
 			array(
@@ -225,7 +277,16 @@ class Progress_Validation {
 		$comments = $this->get_progress_data( $comments_based_progress );
 		$tables   = $this->get_progress_data( $tables_based_progress );
 
-		if ( $comments !== $tables ) {
+		$comments_to_compare = $comments;
+		if ( 'quiz' === $comments['type']
+			&& Quiz_Progress_Interface::STATUS_IN_PROGRESS === $comments['status']
+			&& Quiz_Progress_Interface::STATUS_IN_PROGRESS === $tables['status']
+		) {
+			// Before submission, the lesson start in comments and the quiz start in HPPS are separate events.
+			$comments_to_compare['started_at'] = $tables['started_at'];
+		}
+
+		if ( $comments_to_compare !== $tables ) {
 			$this->add_error(
 				'Data mismatch between comments and tables based progress.',
 				array(
