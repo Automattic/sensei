@@ -767,9 +767,7 @@ class Sensei_Admin {
 			$lesson_course = isset( $_GET['lesson_course'] ) ? absint( $_GET['lesson_course'] ) : '';
 
 			if ( $lesson_course ) {
-				$request['meta_key']     = '_lesson_course';
-				$request['meta_value']   = $lesson_course;
-				$request['meta_compare'] = '=';
+				$request['sensei_course'] = $lesson_course;
 			}
 		}
 

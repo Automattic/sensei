@@ -84,6 +84,7 @@ class Sensei_Grading_Lessons_Dropdown_AJAX_Test extends WP_Ajax_UnitTestCase {
 		/* Arrange. */
 		$teacher   = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		$course_id = $this->create_course_with_private_lesson( $teacher, 'Secret Lesson Gamma' );
+		$this->create_course_with_private_lesson( $teacher, 'Secret Lesson Epsilon' );
 
 		wp_set_current_user( $teacher );
 
@@ -92,6 +93,7 @@ class Sensei_Grading_Lessons_Dropdown_AJAX_Test extends WP_Ajax_UnitTestCase {
 
 		/* Assert. */
 		$this->assertStringContainsString( 'Secret Lesson Gamma', $response, 'A teacher should still see their own lesson.' );
+		$this->assertStringNotContainsString( 'Secret Lesson Epsilon', $response, 'The dropdown lists the lessons of the selected course only.' );
 	}
 
 	public function testGetLessonsDropdown_CalledByAdminForAnotherAuthorsCourse_IncludesTheirLessons() {

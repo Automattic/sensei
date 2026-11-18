@@ -127,6 +127,12 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		$lesson1_id = $this->factory->lesson->create( $lesson_args );
 		$lesson2_id = $this->factory->lesson->create( $lesson_args );
 		$lesson3_id = $this->factory->lesson->create( $lesson_args );
+		$this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
 
 		$_GET['view'] = 'lesson';
 

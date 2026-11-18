@@ -793,10 +793,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		);
 
 		if ( $this->course_id ) {
-			$lesson_args['meta_query'][] = array(
-				'key'   => '_lesson_course',
-				'value' => $this->course_id,
-			);
+			$lesson_args['sensei_course'] = $this->course_id;
 		}
 
 		if ( $args['search'] ) {
@@ -806,12 +803,44 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		/**
 		 * Filter arguments for the lesson query on the student management screen.
 		 *
-		 * @hook sensei_learners_filter_lessons
+		 * @since $$next-version$$
 		 *
-		 * @param {array} $lesson_args Lesson query arguments.
+		 * @hook sensei_students_filter_lessons_query_args
+		 *
+		 * @param {array} $lesson_args Lesson query arguments. The course, if any, is in the `sensei_course` argument.
 		 * @return {array} The modified arguments.
 		 */
-		$lessons_query = new WP_Query( apply_filters( 'sensei_learners_filter_lessons', $lesson_args ) );
+		$lesson_args = apply_filters( 'sensei_students_filter_lessons_query_args', $lesson_args );
+
+		if ( has_filter( 'sensei_learners_filter_lessons' ) ) {
+			// The deprecated filter gets the course in a `_lesson_course` meta clause, as it always did.
+			if ( isset( $lesson_args['sensei_course'] ) ) {
+				$lesson_args['meta_query'][] = array(
+					'key'   => '_lesson_course',
+					'value' => $lesson_args['sensei_course'],
+				);
+				unset( $lesson_args['sensei_course'] );
+			}
+
+			/**
+			 * Filter arguments for the lesson query on the student management screen.
+			 *
+			 * @deprecated $$next-version$$ Use sensei_students_filter_lessons_query_args instead.
+			 *
+			 * @hook sensei_learners_filter_lessons
+			 *
+			 * @param {array} $lesson_args Lesson query arguments.
+			 * @return {array} The modified arguments.
+			 */
+			$lesson_args = apply_filters_deprecated(
+				'sensei_learners_filter_lessons',
+				array( $lesson_args ),
+				'$$next-version$$',
+				'sensei_students_filter_lessons_query_args'
+			);
+		}
+
+		$lessons_query = new WP_Query( $lesson_args );
 
 		$this->total_items = $lessons_query->found_posts;
 		return $lessons_query->posts;

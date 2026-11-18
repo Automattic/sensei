@@ -172,6 +172,39 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The admin lessons list filtered by course lists the lessons of that course only.
+	 *
+	 * @covers Sensei_Admin::lesson_filter_actions
+	 */
+	public function testLessonFilterActions_CourseRequested_ListsTheCourseLessonsOnly() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		set_current_screen( 'edit-lesson' );
+		$_GET['lesson_course'] = $course_lessons['course_id'];
+
+		/* Act. */
+		$request = ( new Sensei_Admin() )->lesson_filter_actions( array( 'post_type' => 'lesson' ) );
+		$actual  = wp_list_pluck( ( new WP_Query( $request ) )->posts, 'ID' );
+		sort( $actual );
+
+		/* Assert. */
+		$expected = $course_lessons['lesson_ids'];
+		sort( $expected );
+		self::assertSame( $expected, $actual );
+	}
+
+	/**
 	 * A trashed lesson is cleared as the prerequisite of the lessons that required it.
 	 *
 	 * @covers Sensei_Admin::delete_content
