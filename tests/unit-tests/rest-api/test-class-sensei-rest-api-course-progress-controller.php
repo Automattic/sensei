@@ -282,4 +282,21 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		];
 		self::assertSame( $expected, $this->getResponseAndStatusCode( $response ) );
 	}
+
+	public function testDeleteCourseProgress_CourseIdsMissing_AllowHeaderOmitsDelete() {
+		/* Arrange. */
+		$this->login_as_admin();
+
+		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'student_ids' => array( 1 ) ) ) );
+
+		/* Act. */
+		$response = $this->server->dispatch( $request );
+		$response = apply_filters( 'rest_post_dispatch', rest_ensure_response( $response ), $this->server, $request );
+
+		/* Assert. */
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertArrayNotHasKey( 'Allow', $response->get_headers() );
+	}
 }
