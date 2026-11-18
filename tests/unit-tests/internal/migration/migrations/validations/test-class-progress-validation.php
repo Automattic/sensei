@@ -389,11 +389,12 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 
 	private function cleanup_custom_tables() {
 		global $wpdb;
+		// Keep cleanup inside the test transaction.
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_progress" );
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades" );
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_answers" );
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_submissions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}sensei_lms_progress" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}sensei_lms_quiz_grades" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}sensei_lms_quiz_answers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}sensei_lms_quiz_submissions" );
 		// phpcs:enable
 	}
 
