@@ -1357,6 +1357,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		self::assertTrue( $result, 'Lesson and quiz removal should succeed.' );
 		self::assertNull( $quiz_repository->get( $quiz_id, $user_id ), 'The HPPS quiz row should be removed with the lesson.' );
 		self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'The quiz submission should be removed with the lesson.' );
+		self::assertNull( Sensei()->lesson_progress_repository->get( $lesson_id, $user_id ), 'The lesson progress should be removed after quiz cleanup.' );
 	}
 
 	public function testSenseiRemoveUserFromCourse_LessonsHiddenByQueryFilters_DeletesTheLessonProgress(): void {
