@@ -113,7 +113,7 @@ class Quiz_Submission_Validation {
 		$tables_grades       = new Tables_Based_Grade_Repository( $wpdb );
 
 		foreach ( Validation_Records::get_comments( 'sensei_lesson_status' ) as $record ) {
-			$quiz_id = Sensei()->lesson->get_quiz_id_for_lesson_progress( (int) $record->post_id );
+			$quiz_id = (int) Sensei()->lesson->lesson_quizzes( (int) $record->post_id );
 			if ( ! $quiz_id ) {
 				continue;
 			}

@@ -132,11 +132,13 @@ class Progress_Validation {
 	 */
 	private function validate_progress( string $type, object $comments_repository, object $tables_repository ): void {
 		$comment_type = 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status';
+
+		// Scan comments for progress that is missing from the tables.
 		foreach ( Validation_Records::get_comments( $comment_type ) as $record ) {
 			$post_id = (int) $record->post_id;
 			$user_id = (int) $record->user_id;
 			if ( 'quiz' === $type ) {
-				$post_id = Sensei()->lesson->get_quiz_id_for_lesson_progress( $post_id );
+				$post_id = (int) Sensei()->lesson->lesson_quizzes( $post_id );
 				if ( ! $post_id ) {
 					continue;
 				}
@@ -156,6 +158,7 @@ class Progress_Validation {
 			}
 		}
 
+		// Scan tables for missing comments and compare each matching pair once.
 		foreach ( Validation_Records::get_progress_rows( $type ) as $record ) {
 			$post_id           = (int) $record->post_id;
 			$user_id           = (int) $record->user_id;
