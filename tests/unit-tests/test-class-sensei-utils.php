@@ -6,6 +6,8 @@ use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interf
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
 
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
 
@@ -1263,6 +1265,99 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		/* Clean up & Assert. */
 		remove_filter( 'posts_where', $language_filter );
 		$this->assertSame( 80.0, (float) $course_grade, 'The course grade should count the quiz when it is hidden from post queries.' );
+	}
+
+	/**
+	 * Report an HPPS delete fault and complete the removal on retry, even with no comment.
+	 *
+	 * @dataProvider lesson_progress_delete_failures
+	 * @covers Sensei_Utils::sensei_remove_user_from_lesson
+	 */
+	public function testSenseiRemoveUserFromLesson_WhenTableDeleteFailed_ReturnsFailureAndAllowsRetry( string $mode, bool $has_comment ): void {
+		global $wpdb;
+
+		$this->set_progress_storage_mode( $mode );
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$user_id   = $this->factory->user->create();
+		$comments  = new Comments_Based_Lesson_Progress_Repository();
+		$tables    = new Tables_Based_Lesson_Progress_Repository( $wpdb );
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		if ( ! $has_comment ) {
+			// Recreate a partial removal where the lesson comment was deleted first.
+			$comments->delete_for_student( $lesson_id, $user_id );
+		}
+
+		$statement = "DELETE FROM `{$wpdb->prefix}sensei_lms_progress`";
+		$fault     = static function ( $query ) use ( $statement ) {
+			return 0 === strpos( $query, $statement ) && false !== strpos( $query, "`type` = 'lesson'" )
+				? 'DELETE FROM sensei_missing_lesson_progress_table WHERE id = 1'
+				: $query;
+		};
+
+		$previous_errors = $wpdb->suppress_errors( true );
+		add_filter( 'query', $fault );
+
+		try {
+			$result = Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id );
+		} finally {
+			remove_filter( 'query', $fault );
+			$wpdb->suppress_errors( $previous_errors );
+		}
+
+		self::assertFalse( $result, 'A failed required HPPS delete should reach the caller.' );
+		self::assertNotNull( $tables->get( $lesson_id, $user_id ), 'The failed delete should leave the table row.' );
+		if ( $has_comment ) {
+			self::assertNotNull( $comments->get( $lesson_id, $user_id ), 'A required table delete should finish before removing the comment.' );
+		}
+
+		self::assertTrue( Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id ), 'The removal should succeed after the failure clears.' );
+		self::assertNull( $tables->get( $lesson_id, $user_id ), 'The retry should remove the table row.' );
+		self::assertNull( $comments->get( $lesson_id, $user_id ), 'The retry should remove any remaining comment.' );
+	}
+
+	/**
+	 * Check the failure with both copies and when only table progress survives.
+	 *
+	 * @return array
+	 */
+	public static function lesson_progress_delete_failures(): array {
+		$cases = array();
+		foreach ( self::dual_write_storage_modes() as $name => $arguments ) {
+			$cases[ $name . ' with both copies' ]  = array( $arguments[0], true );
+			$cases[ $name . ' with only a table' ] = array( $arguments[0], false );
+		}
+
+		return $cases;
+	}
+
+	/**
+	 * Removing a lesson also removes the separate HPPS quiz progress.
+	 *
+	 * @dataProvider dual_write_storage_modes
+	 * @covers Sensei_Utils::sensei_remove_user_from_lesson
+	 */
+	public function testSenseiRemoveUserFromLesson_WhenQuizProgressExists_RemovesQuizProgressAndSubmission( string $mode ): void {
+		$this->set_progress_storage_mode( $mode );
+		$course    = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$lesson_id = $course['lesson_ids'][0];
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$user_id   = $this->factory->user->create();
+		$answers   = $this->factory->generate_user_quiz_answers( $quiz_id );
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course['course_id'] );
+
+		// Opening the quiz creates its HPPS progress record before the student submits.
+		$quiz_repository = Sensei()->quiz_progress_repository_factory->create_tables_based_repository();
+		$quiz_repository->create( $quiz_id, $user_id );
+		self::assertTrue( Sensei_Quiz::submit_answers_for_grading( $answers, array(), $lesson_id, $user_id ), 'The student should have a quiz submission before removal.' );
+
+		$result = Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id );
+
+		self::assertTrue( $result, 'Lesson and quiz removal should succeed.' );
+		self::assertNull( $quiz_repository->get( $quiz_id, $user_id ), 'The HPPS quiz row should be removed with the lesson.' );
+		self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'The quiz submission should be removed with the lesson.' );
+		self::assertNull( Sensei()->lesson_progress_repository->get( $lesson_id, $user_id ), 'The lesson progress should be removed after quiz cleanup.' );
 	}
 
 	public function testSenseiRemoveUserFromCourse_LessonsHiddenByQueryFilters_DeletesTheLessonProgress(): void {

@@ -90,4 +90,16 @@ interface Submission_Repository_Interface {
 	 * @param Submission_Interface $submission The quiz submission.
 	 */
 	public function delete( Submission_Interface $submission ): void;
+
+	/**
+	 * Delete a student's submission and its grades and answers for one quiz.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void;
 }

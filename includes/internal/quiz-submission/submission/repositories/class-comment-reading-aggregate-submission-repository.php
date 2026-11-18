@@ -156,4 +156,19 @@ class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repo
 		$this->tables_based_repository->delete( $submission );
 		$this->comments_based_repository->delete( $submission );
 	}
+
+	/**
+	 * Delete a student's submission and its grades and answers for one quiz.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void {
+		$this->tables_based_repository->delete_for_student( $quiz_id, $user_id );
+		$this->comments_based_repository->delete_for_student( $quiz_id, $user_id );
+	}
 }

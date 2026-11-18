@@ -11,6 +11,8 @@ use Sensei\Internal\Quiz_Submission\Comment_Metadata;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Sensei\Internal\Persistence_Exception;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei_Utils;
@@ -239,6 +241,27 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 
 		// This key makes the comments-based submission discoverable, so clear it last.
 		Comment_Metadata::delete( $comment_id, 'questions_asked', $submission, 'quiz_submission' );
+	}
+
+	/**
+	 * Delete a student's submission and its grades and answers for one quiz.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @throws Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void {
+		$submission = $this->get( $quiz_id, $user_id );
+		if ( ! $submission ) {
+			return;
+		}
+
+		( new Comments_Based_Grade_Repository() )->delete_all( $submission );
+		( new Comments_Based_Answer_Repository() )->delete_all( $submission );
+		$this->delete( $submission );
 	}
 
 	/**

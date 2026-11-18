@@ -713,8 +713,7 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		// Process quiz
-		$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$lesson_quiz_id = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$has_progress = Sensei()->lesson_progress_repository->has( $lesson_id, $user_id )
 			|| ( $lesson_quiz_id && Sensei()->quiz_progress_repository->has( $lesson_quiz_id, $user_id ) );
@@ -722,19 +721,13 @@ class Sensei_Utils {
 			return false;
 		}
 
-		// Delete quiz answers and their grading metadata after progress can be reset.
-		if ( $lesson_quiz_id ) {
-			$quiz_submission = Sensei()->quiz_submission_repository->get( $lesson_quiz_id, $user_id );
-			$answers_deleted = self::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id );
-			if ( $quiz_submission && ! $answers_deleted ) {
-				return false;
+		try {
+			if ( $user_id ) {
+				Sensei()->lesson_progress_removal->remove_for_student( $lesson_id, $user_id, $lesson_quiz_id );
 			}
-		}
-
-		// Delete lesson progress.
-		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
-		if ( $lesson_progress ) {
-			Sensei()->lesson_progress_repository->delete( $lesson_progress );
+		} catch ( Persistence_Exception $exception ) {
+			$exception->log( 'removing lesson progress' );
+			return false;
 		}
 
 		if ( ! $from_course ) {
@@ -889,31 +882,17 @@ class Sensei_Utils {
 			return false;
 		}
 
-		$deleted   = false;
-		$questions = self::sensei_get_quiz_questions( $quiz_id );
-		foreach ( $questions as $question ) {
-			// Fallback for pre 1.7.4 data.
-			$deleted = self::sensei_delete_activities(
-				array(
-					'post_id' => $question->ID,
-					'user_id' => $user_id,
-					'type'    => 'sensei_user_answer',
-				)
-			);
-		}
-
 		try {
 			$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-			if ( $quiz_submission ) {
-				Sensei()->quiz_grade_repository->delete_all( $quiz_submission );
-				Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
-
-				Sensei()->quiz_submission_repository->delete( $quiz_submission );
-
-				$deleted = true;
+			if ( ! $quiz_submission ) {
+				return false;
 			}
 
-			return $deleted;
+			Sensei()->quiz_grade_repository->delete_all( $quiz_submission );
+			Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
+			Sensei()->quiz_submission_repository->delete( $quiz_submission );
+
+			return true;
 		} catch ( Persistence_Exception $exception ) {
 			$exception->log( 'clearing quiz answers' );
 			return false;
