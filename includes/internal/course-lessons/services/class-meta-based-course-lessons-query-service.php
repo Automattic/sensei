@@ -33,6 +33,8 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 		// Runs at a late priority so it sees the final query vars after other
 		// `pre_get_posts` callbacks (e.g. the module archive) have set them.
 		add_action( 'pre_get_posts', array( $this, 'filter_lessons_by_course' ), 999 );
+		add_action( 'pre_get_posts', array( $this, 'filter_lessons_without_course' ), 999 );
+		add_action( 'pre_get_posts', array( $this, 'filter_lessons_with_prerequisite' ), 999 );
 		add_action( 'pre_get_posts', array( $this, 'order_lessons_in_course' ), 999 );
 		add_action( 'pre_get_posts', array( $this, 'order_lessons_in_module' ), 999 );
 
@@ -60,18 +62,73 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 			return;
 		}
 
-		$meta_query = $query->get( 'meta_query' );
-		if ( ! is_array( $meta_query ) ) {
-			$meta_query = array();
-		}
-		$course_clause = array(
-			'key'   => '_lesson_course',
-			'value' => (int) $course_id,
+		$this->add_meta_clause(
+			$query,
+			array(
+				'key'   => '_lesson_course',
+				'value' => (int) $course_id,
+			)
 		);
+	}
 
-		// The course is required even when the query's own clauses are joined with OR. It goes
-		// last, so the query's own first clause stays the one `orderby => meta_value` uses.
-		$query->set( 'meta_query', array( $meta_query, $course_clause ) );
+	/**
+	 * Limit a lesson query to the lessons without a course when its `sensei_without_course` query var is set.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_Query $query The query being prepared.
+	 */
+	public function filter_lessons_without_course( WP_Query $query ): void {
+		if ( ! $query->get( 'sensei_without_course' ) ) {
+			return;
+		}
+
+		$this->add_meta_clause(
+			$query,
+			array(
+				'relation' => 'OR',
+				array(
+					'key'     => '_lesson_course',
+					'compare' => 'NOT EXISTS',
+				),
+				array(
+					'key'     => '_lesson_course',
+					'value'   => '',
+					'compare' => '=',
+				),
+				array(
+					'key'     => '_lesson_course',
+					'value'   => '0',
+					'compare' => '=',
+				),
+			)
+		);
+	}
+
+	/**
+	 * Limit a lesson query to the lessons with a prerequisite when its `sensei_has_prerequisite` query var is set.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_Query $query The query being prepared.
+	 */
+	public function filter_lessons_with_prerequisite( WP_Query $query ): void {
+		if ( ! $query->get( 'sensei_has_prerequisite' ) ) {
+			return;
+		}
+
+		$this->add_meta_clause(
+			$query,
+			array(
+				'key'     => '_lesson_prerequisite',
+				'value'   => 0,
+				'compare' => '>',
+			)
+		);
 	}
 
 	/**
@@ -205,6 +262,23 @@ class Meta_Based_Course_Lessons_Query_Service implements Course_Lessons_Query_Se
 		if ( is_string( $orderby ) ) {
 			$query->set( 'orderby', 'meta_value_num ' . $orderby );
 		}
+	}
+
+	/**
+	 * Add a clause to the `meta_query` of a lesson query.
+	 *
+	 * @param WP_Query $query  The query being prepared.
+	 * @param array    $clause The clause to add.
+	 */
+	private function add_meta_clause( WP_Query $query, array $clause ): void {
+		$meta_query = $query->get( 'meta_query' );
+		if ( ! is_array( $meta_query ) ) {
+			$meta_query = array();
+		}
+
+		// The clause is required even when the query's own clauses are joined with OR. It goes
+		// last, so the query's own first clause stays the one `orderby => meta_value` uses.
+		$query->set( 'meta_query', array( $meta_query, $clause ) );
 	}
 
 	/**
