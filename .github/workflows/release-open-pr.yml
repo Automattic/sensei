@@ -7,6 +7,10 @@ on:
                 description: 'Version to release (X.Y.Z). Leave empty to use the open milestone with the lowest version.'
                 required: false
                 default: ''
+            from:
+                description: 'Tag to start the release from (version/X.Y.Z), to leave out what trunk got since that release. Leave empty to start from trunk.'
+                required: false
+                default: ''
 
 permissions: {}
 
@@ -23,6 +27,7 @@ jobs:
             pull-requests: write
         env:
             INPUT_VERSION: ${{ inputs.version }}
+            INPUT_FROM: ${{ inputs.from }}
             # Skip the lint-staged pre-commit hook; CI lints the release PR.
             HUSKY: 0
         steps:
@@ -68,12 +73,24 @@ jobs:
                       exit 1
                   fi
 
-                  echo "::notice::Preparing release $VERSION."
+                  # Validated before writing to GITHUB_ENV so the input can't inject other variables.
+                  FROM=${INPUT_FROM:-trunk}
+                  if ! [[ "$FROM" == 'trunk' || "$FROM" =~ ^version/[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                      echo "::error::'$FROM' is not a version/X.Y.Z tag."
+                      exit 1
+                  fi
+                  if [[ "$FROM" != 'trunk' ]] && ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$FROM" --silent 2>/dev/null; then
+                      echo "::error::Tag $FROM does not exist."
+                      exit 1
+                  fi
+
+                  echo "::notice::Preparing release $VERSION from $FROM."
                   echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+                  echo "FROM=$FROM" >> "$GITHUB_ENV"
 
             - uses: actions/checkout@v7.0.1
               with:
-                  ref: trunk
+                  ref: ${{ env.FROM }}
                   # Changelogger needs the history to add PR numbers to the entries.
                   fetch-depth: 0
                   # Keep the token out of .git/config so dependency install scripts can't read it.
@@ -160,6 +177,11 @@ jobs:
                   {
                       echo "Release $VERSION."
                       echo
+                      if [[ "$FROM" != 'trunk' ]]; then
+                          echo '> [!IMPORTANT]'
+                          echo "> This release starts from \`$FROM\`. It leaves out what trunk got since then, and the package is built from this branch, not from trunk."
+                          echo
+                      fi
                       if [[ -n "$WP_LATEST" ]]; then
                           echo '> [!WARNING]'
                           echo "> Tested up to is bumped to WordPress $WP_LATEST and Requires at least to $WP_MINIMUM in their own commit. Test on $WP_LATEST during QA and revert that commit if it fails."
