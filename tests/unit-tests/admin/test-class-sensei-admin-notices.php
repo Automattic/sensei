@@ -580,7 +580,10 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 	public function testGetNoticesToDisplay_GivenInstalledSinceString_ValidatesStrings() {
 		// Arrange.
 		$this->login_as_admin();
-		update_option( 'sensei_installed_at', time() - 10 );
+
+		$now            = new DateTimeImmutable( '2026-01-01T00:00:00Z' );
+		Sensei()->clock = $this->createConfiguredMock( \Sensei\Clock\Clock_Interface::class, array( 'now' => $now ) );
+		update_option( 'sensei_installed_at', $now->getTimestamp() - 10 );
 		$all_notices = [
 			'show-since-9'  => [
 				'message'    => 'Show since 9',

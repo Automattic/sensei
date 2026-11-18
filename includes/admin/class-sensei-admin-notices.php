@@ -526,7 +526,8 @@ class Sensei_Admin_Notices {
 	private function condition_installed_since( $installed_since ): bool {
 		$installed_at = get_option( 'sensei_installed_at' );
 		if ( $installed_since && is_string( $installed_since ) ) {
-			$installed_since = strtotime( '-' . $installed_since );
+			$now             = Sensei()->clock->now()->getTimestamp();
+			$installed_since = strtotime( '-' . $installed_since, $now );
 		}
 		if ( ! $installed_at || ! $installed_since ) {
 			return false;
