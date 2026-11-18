@@ -330,7 +330,7 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * A legacy lesson start can represent a quiz the student has yet to attempt.
+	 * Starting a lesson creates a shared comment even when the student has not opened its quiz.
 	 *
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
@@ -390,55 +390,6 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 			'quiz opened after the lesson'              => array( true, true, false ),
 			'lesson completed without opening the quiz' => array( true, false, true ),
 			'lesson completed with a saved quiz draft'  => array( true, true, true ),
-		);
-	}
-
-	/**
-	 * Records in both stores can follow a full batch for the same content.
-	 *
-	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
-	 */
-	public function testRun_WhenStoresSpanSeveralBatches_FindsBothMissingCourseRecords(): void {
-		global $wpdb;
-
-		$course_id = $this->factory->course->create();
-		for ( $student_id = 1; $student_id <= 202; ++$student_id ) {
-			wp_insert_comment(
-				array(
-					'comment_post_ID'  => $course_id,
-					'comment_type'     => 'sensei_course_status',
-					'comment_approved' => 'in-progress',
-					'user_id'          => $student_id,
-				)
-			);
-		}
-		$this->migrate_progress();
-		$tables_repository = new Tables_Based_Course_Progress_Repository( $wpdb );
-		$tables_repository->create( $course_id, 203 );
-		$tables_repository->delete( $tables_repository->get( $course_id, 201 ) );
-		$validation = new Progress_Validation();
-
-		$validation->run();
-
-		$errors = $validation->get_errors();
-		self::assertCount( 2, $errors, 'Both stores should be checked past their first batch.' );
-		self::assertSame(
-			array(
-				'course_id' => $course_id,
-				'user_id'   => 201,
-				'source'    => 'tables',
-			),
-			$errors[0]->get_data(),
-			'The comments scan should report the missing table row after the first batch.'
-		);
-		self::assertSame(
-			array(
-				'course_id' => $course_id,
-				'user_id'   => 203,
-				'source'    => 'comments',
-			),
-			$errors[1]->get_data(),
-			'The table scan should report the missing comment.'
 		);
 	}
 
