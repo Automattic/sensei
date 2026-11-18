@@ -713,15 +713,10 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		$lesson_quiz_id = Sensei()->lesson->get_quiz_id_for_lesson_progress( $lesson_id );
+		$lesson_quiz_id = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
 
-		// The regular reset only handles an available quiz. Trashed quiz data is deleted below.
 		$has_progress = Sensei()->lesson_progress_repository->has( $lesson_id, $user_id )
-			|| (
-				$lesson_quiz_id
-				&& 'trash' !== get_post_status( $lesson_quiz_id )
-				&& Sensei()->quiz_progress_repository->has( $lesson_quiz_id, $user_id )
-			);
+			|| ( $lesson_quiz_id && Sensei()->quiz_progress_repository->has( $lesson_quiz_id, $user_id ) );
 		if ( $has_progress && false === Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id ) ) {
 			return false;
 		}

@@ -3797,24 +3797,6 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Resolve the quiz associated with persisted lesson activity.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param int $lesson_id The lesson ID.
-	 * @return int The quiz ID, or zero when the lesson has no quiz.
-	 */
-	public function get_quiz_id_for_lesson_progress( int $lesson_id ): int {
-		$quiz_id = (int) $this->lesson_quizzes( $lesson_id );
-		if ( $quiz_id ) {
-			return $quiz_id;
-		}
-
-		// Trashing the quiz leaves its activity linked to the lesson.
-		return (int) $this->lesson_quizzes( $lesson_id, 'trash' );
-	}
-
-	/**
 	 * Get quiz permalink.
 	 *
 	 * @since 3.14.0
