@@ -7,10 +7,6 @@ on:
                 description: 'Version to release (X.Y.Z). Leave empty to use the open milestone with the lowest version.'
                 required: false
                 default: ''
-            from:
-                description: 'Tag to start the release from (version/X.Y.Z), to leave out what trunk got since that release. Leave empty to start from trunk.'
-                required: false
-                default: ''
 
 permissions: {}
 
@@ -27,7 +23,6 @@ jobs:
             pull-requests: write
         env:
             INPUT_VERSION: ${{ inputs.version }}
-            INPUT_FROM: ${{ inputs.from }}
             # Skip the lint-staged pre-commit hook; CI lints the release PR.
             HUSKY: 0
         steps:
@@ -47,9 +42,16 @@ jobs:
                       echo "::error::Tag version/$VERSION already exists."
                       exit 1
                   fi
-                  if gh api "repos/$GITHUB_REPOSITORY/branches/release/$VERSION" --silent 2>/dev/null; then
-                      echo "::error::Branch release/$VERSION already exists."
+                  if [[ -n "$( gh pr list --repo "$GITHUB_REPOSITORY" --head "release/$VERSION" --state open --json number --jq '.[].number' )" ]]; then
+                      echo "::error::The pull request for release/$VERSION is already open."
                       exit 1
+                  fi
+                  # A release/X.Y.Z branch that someone created is the starting point. Create it from the tag of
+                  # the last release to leave out what trunk got since then. This workflow cannot create it,
+                  # because its token is not allowed to push the workflow files of an older commit.
+                  START=trunk
+                  if gh api "repos/$GITHUB_REPOSITORY/branches/release/$VERSION" --silent 2>/dev/null; then
+                      START="release/$VERSION"
                   fi
                   MILESTONE_NUMBER=$( jq -r --arg v "$VERSION" '.[] | select(.title == $v) | .number' <<< "$MILESTONES" )
                   if [[ -z "$MILESTONE_NUMBER" ]]; then
@@ -73,24 +75,13 @@ jobs:
                       exit 1
                   fi
 
-                  # Validated before writing to GITHUB_ENV so the input can't inject other variables.
-                  FROM=${INPUT_FROM:-trunk}
-                  if ! [[ "$FROM" == 'trunk' || "$FROM" =~ ^version/[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                      echo "::error::'$FROM' is not a version/X.Y.Z tag."
-                      exit 1
-                  fi
-                  if [[ "$FROM" != 'trunk' ]] && ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$FROM" --silent 2>/dev/null; then
-                      echo "::error::Tag $FROM does not exist."
-                      exit 1
-                  fi
-
-                  echo "::notice::Preparing release $VERSION from $FROM."
+                  echo "::notice::Preparing release $VERSION from $START."
                   echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-                  echo "FROM=$FROM" >> "$GITHUB_ENV"
+                  echo "START=$START" >> "$GITHUB_ENV"
 
             - uses: actions/checkout@v7.0.1
               with:
-                  ref: ${{ env.FROM }}
+                  ref: ${{ env.START }}
                   # Changelogger needs the history to add PR numbers to the entries.
                   fetch-depth: 0
                   # Keep the token out of .git/config so dependency install scripts can't read it.
@@ -136,7 +127,7 @@ jobs:
 
                   git config user.name 'github-actions[bot]'
                   git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-                  git switch -c "release/$VERSION"
+                  git switch -C "release/$VERSION"
 
                   ./scripts/replace-next-version-tag.sh "$VERSION"
                   commit 'Replace next version tag'
@@ -183,9 +174,9 @@ jobs:
                   {
                       echo "Release $VERSION."
                       echo
-                      if [[ "$FROM" != 'trunk' ]]; then
+                      if [[ "$START" != 'trunk' ]]; then
                           echo '> [!IMPORTANT]'
-                          echo "> This release starts from \`$FROM\`. It leaves out what trunk got since then, and the package is built from this branch, not from trunk."
+                          echo "> This release starts from the \`$START\` branch as it was, not from trunk. It only has what that branch has, and the package is built from this branch."
                           echo
                       fi
                       if [[ -n "$CHANGELOG_PENDING" ]]; then
@@ -228,8 +219,11 @@ jobs:
                       --body-file pr-body.md \
                       --label 'No Changelog' \
                       --milestone "$VERSION"; then
-                      # Remove the pushed branch so the workflow can be re-run once the cause is fixed.
-                      echo "::error::Could not open the release pull request. Deleting release/$VERSION."
-                      git push origin --delete "release/$VERSION"
+                      echo "::error::Could not open the release pull request."
+                      # Remove the branch this workflow created so it can be re-run once the cause is fixed.
+                      if [[ "$START" == 'trunk' ]]; then
+                          echo "::error::Deleting release/$VERSION."
+                          git push origin --delete "release/$VERSION"
+                      fi
                       exit 1
                   fi
