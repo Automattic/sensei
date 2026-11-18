@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Sensei_HPPS_Helpers {
 	/**
-	 * Repositories to restore after enabling HPPS.
+	 * Repositories and services to restore after enabling HPPS.
 	 *
 	 * @var array
 	 */
@@ -115,7 +115,7 @@ trait Sensei_HPPS_Helpers {
 	}
 
 	/**
-	 * Restore the repositories and configuration saved before selecting a test mode.
+	 * Restore the storage objects and configuration saved before selecting a test mode.
 	 */
 	protected function restore_progress_storage_mode(): void {
 		if ( null === $this->_original_progress_storage_state ) {
@@ -130,10 +130,10 @@ trait Sensei_HPPS_Helpers {
 	}
 
 	/**
-	 * Replace progress repositories using one configuration, returning the originals.
+	 * Replace progress repositories and services for a test storage configuration.
 	 *
 	 * @param Progress_Storage_Configuration $configuration Storage configuration.
-	 * @return array Original repositories keyed by plugin property.
+	 * @return array Original objects keyed by plugin property.
 	 */
 	private function set_progress_repositories( Progress_Storage_Configuration $configuration ): array {
 		$factories = array(
@@ -150,6 +150,8 @@ trait Sensei_HPPS_Helpers {
 			Sensei()->$property    = ( new $factory_class( $configuration ) )->create();
 		}
 		Sensei()->progress_storage_configuration = $configuration;
+		$original['lesson_progress_removal']     = Sensei()->lesson_progress_removal;
+		Sensei()->lesson_progress_removal        = Sensei()->create_lesson_progress_removal();
 
 		return $original;
 	}
