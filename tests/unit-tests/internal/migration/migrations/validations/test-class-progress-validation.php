@@ -33,6 +33,7 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
+		self::resetCourseEnrolmentManager();
 		$this->factory = new Sensei_Factory();
 	}
 
