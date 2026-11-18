@@ -168,7 +168,7 @@ class Quiz_Submission_Validation {
 	}
 
 	/**
-	 * Validate table rows that the submission repositories cannot associate with the right parent.
+	 * Report table rows whose parent record is missing.
 	 */
 	private function validate_table_relationships(): void {
 		foreach ( Validation_Records::get_answers_without_submissions() as $record ) {
@@ -183,27 +183,16 @@ class Quiz_Submission_Validation {
 			);
 		}
 
-		foreach ( Validation_Records::get_grades_with_invalid_answers() as $record ) {
-			$data = array(
-				'grade_id'    => (int) $record->id,
-				'answer_id'   => (int) $record->answer_id,
-				'question_id' => (int) $record->question_id,
-				'source'      => 'tables',
+		foreach ( Validation_Records::get_grades_without_answers() as $record ) {
+			$this->add_error(
+				'Tables-based quiz grade has no answer.',
+				array(
+					'grade_id'    => (int) $record->id,
+					'answer_id'   => (int) $record->answer_id,
+					'question_id' => (int) $record->question_id,
+					'source'      => 'tables',
+				)
 			);
-
-			if ( null === $record->answer_question_id ) {
-				$this->add_error( 'Tables-based quiz grade has no answer.', $data );
-				continue;
-			}
-
-			$data['answer_question_id'] = (int) $record->answer_question_id;
-			$data['submission_id']      = (int) $record->submission_id;
-			if ( null !== $record->quiz_id ) {
-				$data['quiz_id'] = (int) $record->quiz_id;
-				$data['user_id'] = (int) $record->user_id;
-			}
-
-			$this->add_error( 'Tables-based quiz grade and answer have different questions.', $data );
 		}
 	}
 
