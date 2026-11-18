@@ -230,16 +230,35 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
 	 */
 	public function delete( Lesson_Progress_Interface $lesson_progress ): void {
+		$this->delete_for_student( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() );
+	}
+
+	/**
+	 * Delete progress for a student, including when the selected read store has no record.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id   The student ID.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
+	 */
+	public function delete_for_student( int $lesson_id, int $user_id ): void {
 		$args = array(
-			'post_id' => $lesson_progress->get_lesson_id(),
+			'post_id' => $lesson_id,
 			'type'    => 'sensei_lesson_status',
-			'user_id' => $lesson_progress->get_user_id(),
+			'user_id' => $user_id,
 		);
 
-		// This auto deletes the corresponding meta data, such as the quiz grade, and questions asked.
+		// Deleting the comment also removes its quiz metadata.
 		Sensei_Utils::sensei_delete_activities( $args );
+		if ( Sensei_Utils::sensei_check_for_activity( $args ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'lesson', 'comments', $lesson_id, $user_id, 'delete_failed', 'delete' );
+		}
 	}
 
 	/**

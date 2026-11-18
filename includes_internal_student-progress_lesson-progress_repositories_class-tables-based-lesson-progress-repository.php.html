@@ -327,24 +327,40 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
 	 */
 	public function delete( Lesson_Progress_Interface $lesson_progress ): void {
-		$this->wpdb->delete(
+		$this->delete_for_student( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() );
+	}
+
+	/**
+	 * Delete progress for a student, including when the selected read store has no record.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id   The student ID.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
+	 */
+	public function delete_for_student( int $lesson_id, int $user_id ): void {
+		$result = $this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
-			[
-				'post_id' => $lesson_progress->get_lesson_id(),
-				'user_id' => $lesson_progress->get_user_id(),
+			array(
+				'post_id' => $lesson_id,
+				'user_id' => $user_id,
 				'type'    => 'lesson',
-			],
-			[
-				'%d',
-				'%d',
-				'%s',
-			]
+			),
+			array( '%d', '%d', '%s' )
 		);
 
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'lesson', 'tables', $lesson_id, $user_id, 'delete_failed', 'delete' );
+		}
+
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $lesson_id, $user_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
