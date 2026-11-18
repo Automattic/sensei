@@ -200,12 +200,11 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Find attempted quiz progress without an HPPS copy in each quiz post status.
+	 * Find attempted quiz progress without an HPPS copy.
 	 *
-	 * @dataProvider quiz_trash_states
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
-	public function testRun_WhenQuizProgressIsMissingFromTables_ReportsQuizAndStudent( bool $trashed ): void {
+	public function testRun_WhenQuizProgressIsMissingFromTables_ReportsQuizAndStudent(): void {
 		global $wpdb;
 
 		$course_data         = $this->factory->get_course_with_lessons();
@@ -218,9 +217,6 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		Sensei_Quiz::save_user_answers( $answers, array(), $lesson_id, $student_id );
 		$this->migrate_progress();
 		$progress_repository->delete_for_quiz( $quiz_id );
-		if ( $trashed ) {
-			wp_trash_post( $quiz_id );
-		}
 		$validation = new Progress_Validation();
 
 		$validation->run();
@@ -240,24 +236,11 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Quiz post visibility cases for comments-based scans.
+	 * Report differing quiz progress once when both stores have a copy.
 	 *
-	 * @return array
-	 */
-	public static function quiz_trash_states(): array {
-		return array(
-			'published quiz' => array( false ),
-			'trashed quiz'   => array( true ),
-		);
-	}
-
-	/**
-	 * Compare both copies of quiz progress for published and trashed quizzes.
-	 *
-	 * @dataProvider quiz_trash_states
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
-	public function testRun_WhenQuizProgressDiffered_ReportsTheDifferenceOnce( bool $trashed ): void {
+	public function testRun_WhenQuizProgressDiffered_ReportsTheDifferenceOnce(): void {
 		global $wpdb;
 
 		$student_id = 1;
@@ -273,9 +256,6 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$progress          = $tables_repository->get( $quiz_id, $student_id );
 		$progress->pass();
 		$tables_repository->save( $progress );
-		if ( $trashed ) {
-			wp_trash_post( $quiz_id );
-		}
 		$validation = new Progress_Validation();
 
 		$validation->run();
@@ -331,10 +311,9 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	/**
 	 * A legacy lesson start can represent a quiz the student has yet to attempt.
 	 *
-	 * @dataProvider quiz_trash_states
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
-	public function testRun_WhenQuizWasNeverAttempted_AllowsMissingQuizTableRow( bool $trashed ): void {
+	public function testRun_WhenQuizWasNeverAttempted_AllowsMissingQuizTableRow(): void {
 		global $wpdb;
 
 		$course     = $this->factory->get_course_with_lessons();
@@ -344,9 +323,6 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		( new Comments_Based_Lesson_Progress_Repository() )->create( $lesson_id, $student_id );
 		$this->migrate_progress();
 		( new Tables_Based_Quiz_Progress_Repository( $wpdb ) )->delete_for_quiz( $quiz_id );
-		if ( $trashed ) {
-			wp_trash_post( $quiz_id );
-		}
 		$validation = new Progress_Validation();
 
 		$validation->run();

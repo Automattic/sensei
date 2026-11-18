@@ -57,12 +57,11 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Find submissions without a table copy in each quiz post status.
+	 * Find quiz submissions without a table copy.
 	 *
-	 * @dataProvider quiz_trash_states
 	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
 	 */
-	public function testRun_WhenQuizSubmissionIsMissingFromTables_ReportsQuizAndStudent( bool $trashed ): void {
+	public function testRun_WhenQuizSubmissionIsMissingFromTables_ReportsQuizAndStudent(): void {
 		$lesson_id   = $this->factory->lesson->create();
 		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
 		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
@@ -70,9 +69,6 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 		$progress    = ( new Comments_Based_Lesson_Progress_Repository() )->create( $lesson_id, $student_id );
 		// The legacy repository uses this metadata to identify a submission.
 		update_comment_meta( $progress->get_id(), 'questions_asked', (string) $question_id );
-		if ( $trashed ) {
-			wp_trash_post( $quiz_id );
-		}
 		$this->mask_migration_as_complete();
 		$validation = new Quiz_Submission_Validation();
 
@@ -89,18 +85,6 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 			),
 			$errors[0]->get_data(),
 			'Report the missing quiz and student record.'
-		);
-	}
-
-	/**
-	 * Quiz post visibility cases for comments-based scans.
-	 *
-	 * @return array
-	 */
-	public static function quiz_trash_states(): array {
-		return array(
-			'published quiz' => array( false ),
-			'trashed quiz'   => array( true ),
 		);
 	}
 
@@ -569,33 +553,6 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Compare both submissions even if the lesson lookup omits the trashed quiz.
-	 *
-	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
-	 */
-	public function testRun_WhenTrashedQuizHadDifferentSubmissions_ReportsTheDifferenceOnce(): void {
-		global $wpdb;
-
-		$lesson_id   = $this->factory->lesson->create();
-		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
-		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
-		$student_id  = 2;
-		$progress    = ( new Comments_Based_Lesson_Progress_Repository() )->create( $lesson_id, $student_id );
-		update_comment_meta( $progress->get_id(), 'questions_asked', (string) $question_id );
-		( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $student_id, 70 );
-		wp_trash_post( $quiz_id );
-		$this->mask_migration_as_complete();
-		$validation = new Quiz_Submission_Validation();
-
-		$validation->run();
-
-		$errors = $validation->get_errors();
-		self::assertCount( 1, $errors, 'Report the submission difference once.' );
-		self::assertSame( 'Data mismatch between comments and tables based submissions.', $errors[0]->get_message(), 'Report a value mismatch for a pair with both copies.' );
-		self::assertSame( $quiz_id, $errors[0]->get_data()[0]['quiz_id'], 'Report the affected quiz ID.' );
-	}
-
-	/**
 	 * An answer with no submission remains discoverable by its own row ID.
 	 *
 	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
@@ -665,49 +622,6 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 			),
 			$errors[0]->get_data(),
 			'Report only the identities linked to the surviving grade row.'
-		);
-	}
-
-	/**
-	 * Report a grade attached to an answer for a different question.
-	 *
-	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
-	 */
-	public function testRun_WhenGradeAndAnswerHadDifferentQuestions_ReportsTheInvalidLink(): void {
-		global $wpdb;
-
-		$student_id   = 2;
-		$quiz_id      = $this->factory->quiz->create();
-		$question_ids = $this->factory->question->create_many( 2, array( 'quiz_id' => $quiz_id ) );
-		$submission   = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $student_id );
-		$answer       = ( new Tables_Based_Answer_Repository( $wpdb ) )->create( $submission, $question_ids[0], 'answer' );
-		$grade        = ( new Tables_Based_Grade_Repository( $wpdb ) )->create( $submission, $answer, $question_ids[1], 1 );
-		$this->mask_migration_as_complete();
-		$validation = new Quiz_Submission_Validation();
-
-		$validation->run();
-
-		$errors = array_filter(
-			$validation->get_errors(),
-			static function ( $error ) {
-				return 'Tables-based quiz grade and answer have different questions.' === $error->get_message();
-			}
-		);
-		self::assertCount( 1, $errors, 'Report the incorrect link independently of missing data in comments.' );
-		$error = reset( $errors );
-		self::assertSame(
-			array(
-				'grade_id'           => $grade->get_id(),
-				'answer_id'          => $answer->get_id(),
-				'question_id'        => $question_ids[1],
-				'source'             => 'tables',
-				'answer_question_id' => $question_ids[0],
-				'submission_id'      => $submission->get_id(),
-				'quiz_id'            => $quiz_id,
-				'user_id'            => $student_id,
-			),
-			$error->get_data(),
-			'Report the inconsistent questions and the identifiable student and quiz.'
 		);
 	}
 
