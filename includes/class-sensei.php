@@ -34,6 +34,7 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Re
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\Lesson_Progress_Removal;
 use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
 use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
 use Sensei\Internal\Tools\Progress_Tables_Eraser;
@@ -395,6 +396,15 @@ class Sensei_Main {
 	 * @var Lesson_Progress_Repository_Interface
 	 */
 	public $lesson_progress_repository;
+
+	/**
+	 * Lesson progress removal service.
+	 *
+	 * @since $$next-version$$
+	 * @psalm-suppress PropertyNotSetInConstructor
+	 * @var Lesson_Progress_Removal
+	 */
+	public $lesson_progress_removal;
 
 	/**
 	 * Quiz progress repository factory.
@@ -834,6 +844,8 @@ class Sensei_Main {
 		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $this->progress_storage_configuration ) )->create();
 		$this->quiz_grade_repository      = ( new Grade_Repository_Factory( $this->progress_storage_configuration ) )->create();
 
+		$this->lesson_progress_removal = $this->create_lesson_progress_removal();
+
 		// Progress tables eraser.
 		if ( $this->progress_storage_configuration->is_hpps_enabled() ) {
 			( new Progress_Tables_Eraser() )->init();
@@ -885,6 +897,24 @@ class Sensei_Main {
 		if ( apply_filters( 'sensei_email_mailpoet_feature', true ) ) {
 			add_action( 'mailpoet_initialized', [ $this, 'initialize_mailpoet' ] );
 		}
+	}
+
+	/**
+	 * Configure lesson progress removal for the resolved storage settings.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @return Lesson_Progress_Removal The configured removal service.
+	 */
+	public function create_lesson_progress_removal(): Lesson_Progress_Removal {
+		return new Lesson_Progress_Removal(
+			$this->lesson_progress_repository,
+			$this->quiz_submission_repository,
+			$this->progress_storage_configuration->is_dual_write_enabled()
+				? $this->quiz_progress_repository_factory->create_tables_based_repository()
+				: null
+		);
 	}
 
 	/**

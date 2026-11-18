@@ -171,20 +171,6 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	}
 
 	/**
-	 * Delete a student's separately stored progress for one quiz.
-	 *
-	 * @internal
-	 * @since $$next-version$$
-	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The student ID.
-	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.
-	 */
-	public function delete_for_student( int $quiz_id, int $user_id ): void {
-		$this->tables_based_repository->delete_for_student( $quiz_id, $user_id );
-	}
-
-	/**
 	 * Deletes all quiz progress for a given quiz.
 	 *
 	 * @param int $quiz_id The quiz ID.

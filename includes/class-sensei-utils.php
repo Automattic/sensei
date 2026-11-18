@@ -727,16 +727,8 @@ class Sensei_Utils {
 		}
 
 		try {
-			if ( $user_id && $lesson_quiz_id ) {
-				Sensei()->quiz_submission_repository->delete_for_student( $lesson_quiz_id, $user_id );
-				Sensei()->quiz_progress_repository->delete_for_student( $lesson_quiz_id, $user_id );
-			}
-
 			if ( $user_id ) {
-				$lesson_repository  = Sensei()->lesson_progress_repository;
-				$lesson_progress    = $lesson_repository->get( $lesson_id, $user_id );
-				$progress_lesson_id = $lesson_progress ? $lesson_progress->get_lesson_id() : $lesson_id;
-				$lesson_repository->delete_for_student( $progress_lesson_id, $user_id );
+				Sensei()->lesson_progress_removal->remove_for_student( $lesson_id, $user_id, $lesson_quiz_id );
 			}
 		} catch ( Persistence_Exception $exception ) {
 			$exception->log( 'removing lesson progress' );
