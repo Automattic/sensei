@@ -158,10 +158,16 @@ jobs:
                       commit "Bump Tested up to $WP_LATEST and Requires at least $WP_MINIMUM"
                   fi
 
-                  ./vendor/bin/changelogger write --add-pr-num --use-version="$VERSION" --no-interaction
-                  ./scripts/changelog-unwrap-pr-links.sh
-                  ./scripts/copy-changelog-to-readme.php
-                  commit 'Update changelog'
+                  # A release started from a tag has no changelog entries until its fixes are added to the branch.
+                  if [[ -n "$( find changelog -type f ! -name '.gitkeep' )" ]]; then
+                      ./vendor/bin/changelogger write --add-pr-num --use-version="$VERSION" --no-interaction
+                      ./scripts/changelog-unwrap-pr-links.sh
+                      ./scripts/copy-changelog-to-readme.php
+                      commit 'Update changelog'
+                  else
+                      echo "::warning::No changelog entries found. Write the changelog after adding the fixes to release/$VERSION."
+                      echo "CHANGELOG_PENDING=1" >> "$GITHUB_ENV"
+                  fi
 
                   npm run i18n:build
                   commit 'Update translations'
@@ -180,6 +186,11 @@ jobs:
                       if [[ "$FROM" != 'trunk' ]]; then
                           echo '> [!IMPORTANT]'
                           echo "> This release starts from \`$FROM\`. It leaves out what trunk got since then, and the package is built from this branch, not from trunk."
+                          echo
+                      fi
+                      if [[ -n "$CHANGELOG_PENDING" ]]; then
+                          echo '> [!WARNING]'
+                          echo "> There were no changelog entries, so the changelog is not written yet. After adding the fixes to this branch, run \`./vendor/bin/changelogger write --add-pr-num --use-version=$VERSION\`, \`./scripts/changelog-unwrap-pr-links.sh\` and \`./scripts/copy-changelog-to-readme.php\`, and commit the result."
                           echo
                       fi
                       if [[ -n "$WP_LATEST" ]]; then
