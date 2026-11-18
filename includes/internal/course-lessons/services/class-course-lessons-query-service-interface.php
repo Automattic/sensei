@@ -32,6 +32,33 @@ interface Course_Lessons_Query_Service_Interface {
 	public function filter_lessons_by_course( \WP_Query $query ): void;
 
 	/**
+	 * Limit a lesson query to the lessons of the module set in the `sensei_module` query var.
+	 *
+	 * @internal
+	 *
+	 * @param \WP_Query $query The query being prepared.
+	 */
+	public function filter_lessons_by_module( \WP_Query $query ): void;
+
+	/**
+	 * Limit a lesson query to the lessons outside the modules set in the `sensei_module__not_in` query var.
+	 *
+	 * @internal
+	 *
+	 * @param \WP_Query $query The query being prepared.
+	 */
+	public function filter_lessons_outside_modules( \WP_Query $query ): void;
+
+	/**
+	 * Limit a lesson query to the lessons in a module when its `sensei_has_module` query var is set.
+	 *
+	 * @internal
+	 *
+	 * @param \WP_Query $query The query being prepared.
+	 */
+	public function filter_lessons_with_module( \WP_Query $query ): void;
+
+	/**
 	 * Sort the lessons of a query by their order in the course set in the `sensei_lesson_order_course` query var.
 	 *
 	 * Lessons without an order in the course are not returned.
