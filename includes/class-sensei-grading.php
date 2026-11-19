@@ -1346,6 +1346,10 @@ class Sensei_Grading {
 						$all_correct = false;
 					}
 				}
+				// Repeating one right answer must not stand in for the others.
+				if ( $all_correct && array_diff( $right_answer, $answer ) ) {
+					$all_correct = false;
+				}
 				// If all correct then grade
 				if ( $all_correct ) {
 					$question_grade = Sensei()->question->get_question_grade( $question_id );

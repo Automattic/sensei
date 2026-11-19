@@ -148,6 +148,16 @@ jQuery( document ).ready( function ( $ ) {
 							}
 						} );
 
+						// Repeating one right answer must not stand in for the others.
+						if (
+							correctAnswers.some(
+								( answer ) =>
+									answer && ! userAnswers.includes( answer )
+							)
+						) {
+							allCorrect = false;
+						}
+
 						if (
 							userAnswers.length !==
 							correctAnswers.length - 1

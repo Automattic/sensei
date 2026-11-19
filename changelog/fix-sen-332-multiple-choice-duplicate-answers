@@ -1,0 +1,4 @@
+Significance: patch
+Type: security
+
+Require every right answer when auto-grading multiple choice questions, so repeating one right answer no longer scores full marks.

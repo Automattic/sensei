@@ -362,6 +362,37 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Multiple choice answers checked against right answers `a` and `b`.
+	 *
+	 * @return array
+	 */
+	public function providerGradeQuestionAuto_MultipleChoiceAnswerGiven_ReturnsExpectedGrade(): array {
+		return array(
+			'all right answers'               => array( array( 'a', 'b' ), 1 ),
+			'all right answers in reverse'    => array( array( 'b', 'a' ), 1 ),
+			'one right answer repeated'       => array( array( 'a', 'a' ), false ),
+			'one right answer only'           => array( array( 'a' ), false ),
+			'one right and one wrong answer'  => array( array( 'a', 'c' ), false ),
+			'all right answers plus a repeat' => array( array( 'a', 'b', 'b' ), false ),
+		);
+	}
+
+	/**
+	 * Test that a multiple choice question scores only when every right answer is given.
+	 *
+	 * @dataProvider providerGradeQuestionAuto_MultipleChoiceAnswerGiven_ReturnsExpectedGrade
+	 * @covers Sensei_Grading::grade_question_auto
+	 */
+	public function testGradeQuestionAuto_MultipleChoiceAnswerGiven_ReturnsExpectedGrade( array $answer, $expected ): void {
+		$question_id = $this->getTestQuestion( 'multiple-choice' );
+		update_post_meta( $question_id, '_question_right_answer', array( 'a', 'b' ) );
+
+		$actual = Sensei_Grading::grade_question_auto( $question_id, 'multiple-choice', $answer );
+
+		$this->assertSame( $expected, $actual );
+	}
+
+	/**
 	 * Data source for ::testGradeGapFillQuestionRegEx
 	 *
 	 * @return array
