@@ -172,7 +172,8 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 
 		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
 		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
-			$completed_at = $comment_date;
+			$completed_at = new DateTime( $comment->comment_date_gmt, new \DateTimeZone( 'UTC' ) );
+			$completed_at->setTimezone( wp_timezone() );
 		} else {
 			$completed_at = null;
 		}
@@ -434,6 +435,8 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 				case 'started_at':
 					throw new \InvalidArgumentException( 'Ordering by started_at is not supported in comments-based version.' );
 				case 'completed_at':
+					$comments_args['orderby'] = 'comment_date_gmt';
+					break;
 				case 'created_at':
 				case 'updated_at':
 					$comments_args['orderby'] = 'comment_date';
