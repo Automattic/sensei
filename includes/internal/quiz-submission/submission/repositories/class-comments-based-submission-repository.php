@@ -265,6 +265,39 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	}
 
 	/**
+	 * Delete every student's submission, grades, and answers for one quiz.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @throws Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void {
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
+		if ( ! $lesson_id ) {
+			return;
+		}
+
+		/**
+		 * Lesson comments identify the students whose quiz data needs cleanup.
+		 *
+		 * @var \WP_Comment[] $comments
+		 */
+		$comments = get_comments(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+				'number'  => 0,
+			)
+		);
+		foreach ( $comments as $comment ) {
+			$this->delete_for_student( $quiz_id, (int) $comment->user_id );
+		}
+	}
+
+	/**
 	 * Get the lesson status comment.
 	 *
 	 * @param int $quiz_id The quiz ID.

@@ -167,7 +167,21 @@ class Table_Reading_Aggregate_Submission_Repository implements Submission_Reposi
 	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.
 	 */
 	public function delete_for_student( int $quiz_id, int $user_id ): void {
-		$this->tables_based_repository->delete_for_student( $quiz_id, $user_id );
 		$this->comments_based_repository->delete_for_student( $quiz_id, $user_id );
+		$this->tables_based_repository->delete_for_student( $quiz_id, $user_id );
+	}
+
+	/**
+	 * Delete every student's submission, grades, and answers for one quiz.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void {
+		$this->comments_based_repository->delete_for_quiz( $quiz_id );
+		$this->tables_based_repository->delete_for_quiz( $quiz_id );
 	}
 }
