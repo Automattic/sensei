@@ -396,6 +396,31 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	}
 
 	/**
+	 * Delete every student's submission, grades, and answers for one quiz.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @throws Persistence_Exception If submissions cannot be read or required data cannot be deleted.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void {
+		$query = $this->wpdb->prepare( 'SELECT user_id FROM %i WHERE quiz_id = %d', $this->get_table_name(), $quiz_id );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Prepared with placeholders above.
+		$result = $this->wpdb->query( $query );
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz_submission', 'tables', $quiz_id, 0, 'lookup_failed', 'delete' );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Read the successful SELECT above without running another query.
+		$user_ids = $this->wpdb->get_col( null );
+		foreach ( $user_ids as $user_id ) {
+			$this->delete_for_student( $quiz_id, (int) $user_id );
+		}
+	}
+
+	/**
 	 * Get the cache key for a quiz submission.
 	 *
 	 * @since 4.26.0
