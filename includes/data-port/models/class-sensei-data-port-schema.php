@@ -15,6 +15,18 @@ abstract class Sensei_Data_Port_Schema {
 	const COLUMN_SLUG = 'slug';
 
 	/**
+	 * Post meta key used to record the source import id on every imported post.
+	 *
+	 * Provides durable per-post identity so re-imports of the same source row
+	 * resolve to the existing post even when the slug is empty.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	const META_KEY_IMPORT_ID = '_sensei_import_id';
+
+	/**
 	 * Post statuses supported by the data port. Export coerces any other status to
 	 * `draft`, and import only accepts these; keeping both sides in sync avoids a
 	 * status being emitted that the importer would reject.
@@ -74,6 +86,17 @@ abstract class Sensei_Data_Port_Schema {
 	}
 
 	/**
+	 * Get the post meta key used to record the source import id.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string
+	 */
+	public function get_meta_key_import_id() {
+		return self::META_KEY_IMPORT_ID;
+	}
+
+	/**
 	 * Get the optional fields in the schema.
 	 *
 	 * @return array Field names.
@@ -84,7 +107,7 @@ abstract class Sensei_Data_Port_Schema {
 		return array_values(
 			array_filter(
 				array_map(
-					function( $field ) use ( $schema ) {
+					function ( $field ) use ( $schema ) {
 						if ( ! empty( $schema[ $field ]['required'] ) ) {
 							return $field;
 						}
@@ -108,7 +131,7 @@ abstract class Sensei_Data_Port_Schema {
 		return array_values(
 			array_filter(
 				array_map(
-					function( $field ) use ( $schema ) {
+					function ( $field ) use ( $schema ) {
 						if ( empty( $schema[ $field ]['required'] ) ) {
 							return $field;
 						}
@@ -135,7 +158,7 @@ abstract class Sensei_Data_Port_Schema {
 
 		return array_filter(
 			get_allowed_mime_types(),
-			function( $mime_type ) use ( $filter_type ) {
+			function ( $mime_type ) use ( $filter_type ) {
 				return 0 === strpos( $mime_type, $filter_type );
 			}
 		);
