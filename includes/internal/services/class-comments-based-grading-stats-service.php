@@ -271,12 +271,18 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 	public function get_courses_average_grade( array $course_ids = array(), array $args = array() ): float {
 		$wpdb = $this->wpdb;
 
+		$lesson_course       = Sensei()->course_lessons_sql_service->get_lesson_course_clauses( 'course' );
+		$lesson_course_table = $lesson_course['table'];
+		$lesson_course_where = $lesson_course['where'];
+		$lesson_id_sql       = $lesson_course['lesson_id'];
+		$course_id_sql       = $lesson_course['course_id'];
+
 		if ( empty( $course_ids ) ) {
 			$course_filter = '';
 		} else {
 			$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			$course_filter = $wpdb->prepare( " AND course.meta_value IN ( $placeholders )", $course_ids );
+			$course_filter = $wpdb->prepare( " AND {$course_id_sql} IN ( $placeholders )", $course_ids );
 		}
 
 		/**
@@ -295,13 +301,13 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 				SELECT AVG(cm.meta_value) AS course_average
 				FROM `{$wpdb->comments}` c
 				INNER JOIN `{$wpdb->commentmeta}` cm ON c.comment_ID = cm.comment_id
-				INNER JOIN `{$wpdb->postmeta}` course ON c.comment_post_ID = course.post_id
-				INNER JOIN `{$wpdb->posts}` p ON p.ID = course.meta_value
+				INNER JOIN `{$lesson_course_table}` course ON c.comment_post_ID = {$lesson_id_sql}
+				INNER JOIN `{$wpdb->posts}` p ON p.ID = {$course_id_sql}
 				WHERE c.comment_type = 'sensei_lesson_status'
 					AND c.comment_approved IN " . $this->get_graded_statuses_sql() . "
 					AND cm.meta_key = 'grade'
-					AND course.meta_key = '_lesson_course'
-					AND course.meta_value <> ''
+					AND {$lesson_course_where}
+					AND {$course_id_sql} <> ''
 					AND EXISTS (
 						SELECT 1 FROM `{$wpdb->commentmeta}` cm2
 						WHERE cm2.comment_id = c.comment_ID
@@ -309,7 +315,7 @@ class Comments_Based_Grading_Stats_Service implements Grading_Stats_Service_Inte
 					)";
 		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
 		$query .= $course_filter;
-		$query .= ' GROUP BY course.meta_value ) averages_by_course';
+		$query .= " GROUP BY {$course_id_sql} ) averages_by_course";
 
 		/** Query result. @var object|null $result */
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names trusted; value filters use $wpdb->prepare(). Caching handled by callers.

@@ -289,12 +289,18 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 		$table             = $this->get_progress_table_name();
 		$submissions_table = $this->get_submissions_table_name();
 
+		$lesson_course       = Sensei()->course_lessons_sql_service->get_lesson_course_clauses( 'lesson_course' );
+		$lesson_course_table = $lesson_course['table'];
+		$lesson_course_where = $lesson_course['where'];
+		$lesson_id_sql       = $lesson_course['lesson_id'];
+		$course_id_sql       = $lesson_course['course_id'];
+
 		if ( empty( $course_ids ) ) {
 			$course_filter = '';
 		} else {
 			$placeholders = implode( ', ', array_fill( 0, count( $course_ids ), '%d' ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dynamically.
-			$course_filter = $wpdb->prepare( " AND lesson_course.meta_value IN ( $placeholders )", $course_ids );
+			$course_filter = $wpdb->prepare( " AND {$course_id_sql} IN ( $placeholders )", $course_ids );
 		}
 
 		// Table names are trusted (built from $wpdb->prefix); statuses are from constants, not user input.
@@ -303,9 +309,9 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 			FROM (
 				SELECT AVG(qs.final_grade) AS course_average
 				FROM `$table` p
-				INNER JOIN `{$wpdb->postmeta}` lesson_course ON lesson_course.post_id = p.post_id
-					AND lesson_course.meta_key = '_lesson_course'
-					AND lesson_course.meta_value <> ''
+				INNER JOIN `{$lesson_course_table}` lesson_course ON {$lesson_id_sql} = p.post_id
+					AND {$lesson_course_where}
+					AND {$course_id_sql} <> ''
 				INNER JOIN `{$wpdb->postmeta}` lesson_quiz ON lesson_quiz.post_id = p.post_id
 					AND lesson_quiz.meta_key = '_lesson_quiz'
 					AND lesson_quiz.meta_value > 0
@@ -316,7 +322,7 @@ class Tables_Based_Grading_Stats_Service implements Grading_Stats_Service_Interf
 					AND qs.final_grade IS NOT NULL';
 		$query .= Utils::build_user_exclusion_clause( $wpdb, $args, 'q.status' );
 		$query .= $course_filter;
-		$query .= ' GROUP BY lesson_course.meta_value ) averages_by_course';
+		$query .= " GROUP BY {$course_id_sql} ) averages_by_course";
 
 		/** Query result. @var object|null $result */
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names trusted; value filters use $wpdb->prepare(). Caching handled by callers.
