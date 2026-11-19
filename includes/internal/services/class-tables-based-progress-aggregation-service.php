@@ -402,6 +402,12 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 		$submissions_table = $wpdb->prefix . 'sensei_lms_quiz_submissions';
 		$placeholders      = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
 
+		$lesson_course       = Sensei()->course_lessons_sql_service->get_lesson_course_clauses( 'course_meta' );
+		$lesson_course_table = $lesson_course['table'];
+		$lesson_course_where = $lesson_course['where'];
+		$lesson_id_sql       = $lesson_course['lesson_id'];
+		$course_id_sql       = $lesson_course['course_id'];
+
 		// Check parent-course eligibility once per grouped lesson, not once per student.
 		// A submitted quiz supplies the lesson status; quiz rows without a submission are ignored.
 		// Submitted quizzes count as completions even while awaiting grading, for published/private parent courses.
@@ -424,10 +430,10 @@ class Tables_Based_Progress_Aggregation_Service implements Progress_Aggregation_
 				GROUP BY p.post_id
 			) completions
 			WHERE EXISTS (
-				SELECT 1 FROM {$wpdb->postmeta} course_meta
-				JOIN {$wpdb->posts} course ON course.ID = course_meta.meta_value
-				WHERE course_meta.post_id = completions.lesson_id
-					AND course_meta.meta_key = '_lesson_course'
+				SELECT 1 FROM {$lesson_course_table} course_meta
+				JOIN {$wpdb->posts} course ON course.ID = {$course_id_sql}
+				WHERE {$lesson_id_sql} = completions.lesson_id
+					AND {$lesson_course_where}
 					AND course.post_status IN ( {$reports_statuses} )
 			)";
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare

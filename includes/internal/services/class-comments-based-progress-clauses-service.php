@@ -48,8 +48,8 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 	/**
 	 * Modify WP_Query clauses to add last activity date to course posts.
 	 *
-	 * Joins wp_comments via wp_postmeta to find the most recent lesson completion
-	 * date for each course.
+	 * Joins wp_comments to find the most recent lesson completion date for each
+	 * course.
 	 *
 	 * @since 4.26.0
 	 *
@@ -71,13 +71,19 @@ class Comments_Based_Progress_Clauses_Service implements Progress_Clauses_Servic
 			. Utils::build_comment_author_exclusion_clause( $wpdb, $args ) . '
 			GROUP BY c.comment_post_id';
 
-		// Map lessons to courses via postmeta, then take the most recent activity date across all lessons per course.
+		$lesson_course        = Sensei()->course_lessons_sql_service->get_lesson_course_clauses( 'pm' );
+		$lesson_course_table  = $lesson_course['table'];
+		$lesson_course_where  = $lesson_course['where'];
+		$lesson_id_sql        = $lesson_course['lesson_id'];
+		$lesson_course_id_sql = $lesson_course['course_id'];
+
+		// Map lessons to courses, then take the most recent activity date across all lessons per course.
 		// Numeric course IDs allow indexed lookups in the derived activity table.
-		$course_query = "SELECT CAST(pm.meta_value AS UNSIGNED) AS course_id, MAX(lq.comment_date_gmt) AS comment_date_gmt
-		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) lq
-		ON lq.lesson_id = pm.post_id
-		AND pm.meta_key = '_lesson_course'
-		GROUP BY pm.meta_value
+		$course_query = "SELECT CAST({$lesson_course_id_sql} AS UNSIGNED) AS course_id, MAX(lq.comment_date_gmt) AS comment_date_gmt
+		FROM {$lesson_course_table} pm JOIN ({$lessons_query}) lq
+		ON lq.lesson_id = {$lesson_id_sql}
+		AND {$lesson_course_where}
+		GROUP BY {$lesson_course_id_sql}
 		";
 
 		$course_id_map_sql = Utils::get_course_progress_id_map_sql( $wpdb );

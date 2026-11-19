@@ -415,6 +415,12 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$wpdb             = $this->wpdb;
 		$placeholders     = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
 
+		$lesson_course       = Sensei()->course_lessons_sql_service->get_lesson_course_clauses( 'wpm' );
+		$lesson_course_table = $lesson_course['table'];
+		$lesson_course_where = $lesson_course['where'];
+		$lesson_id_sql       = $lesson_course['lesson_id'];
+		$course_id_sql       = $lesson_course['course_id'];
+
 		// Submitted quizzes count as lesson completions even while awaiting grading.
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb. Placeholders created dynamically.
 		$query  = $wpdb->prepare(
@@ -424,9 +430,9 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			AND c.comment_type = 'sensei_lesson_status'
 			AND c.comment_post_ID IN ( $placeholders )
 			AND c.comment_post_ID IN (
-				SELECT wpm.post_id FROM {$wpdb->posts} wpc
-				JOIN {$wpdb->postmeta} wpm ON wpm.meta_value = wpc.id
-				WHERE wpm.meta_key = '_lesson_course'
+				SELECT {$lesson_id_sql} FROM {$wpdb->posts} wpc
+				JOIN {$lesson_course_table} wpm ON {$course_id_sql} = wpc.id
+				WHERE {$lesson_course_where}
 				AND wpc.post_status IN ( {$reports_statuses} )
 			)",
 			$lesson_ids
