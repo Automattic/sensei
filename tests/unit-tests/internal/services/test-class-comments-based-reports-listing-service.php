@@ -96,6 +96,30 @@ class Comments_Based_Reports_Listing_Service_Test extends \Reports_Listing_Servi
 	}
 
 	/**
+	 * Report completion dates use the current timezone after the site timezone changes.
+	 *
+	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_course_students
+	 */
+	public function testGetCourseStudents_CompletedBeforeTimezoneChanged_ReturnsCurrentLocalCompletionDate(): void {
+		update_option( 'timezone_string', 'Asia/Dhaka' );
+		$post = self::factory()->post->create( array( 'post_type' => 'course' ) );
+		$user = self::factory()->user->create();
+		$this->seed_report_progress( $post, $user, 'course', 'complete', '2022-05-17 01:36:12' );
+
+		update_option( 'timezone_string', 'America/Chicago' );
+		$actual = $this->get_report_service()->get_course_students(
+			array(
+				'post_id' => $post,
+				'user_id' => $user,
+				'type'    => 'sensei_course_status',
+				'status'  => 'any',
+			)
+		);
+
+		$this->assertSame( '2022-05-16 14:36:12', $actual['items'][0]->completed_at );
+	}
+
+	/**
 	 * Tests that get_course_students returns reports items for a course with status.
 	 *
 	 * @covers \Sensei\Internal\Services\Comments_Based_Reports_Listing_Service::get_course_students

@@ -171,6 +171,33 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->create( $quiz_id, $user_id );
 	}
 
+	/**
+	 * Completion dates keep their recorded instant when the site timezone changes.
+	 *
+	 * @covers \Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository::get
+	 */
+	public function testGet_CompletedBeforeTimezoneChanged_ReturnsRecordedCompletionInstant(): void {
+		update_option( 'timezone_string', 'Asia/Dhaka' );
+		$lesson_id  = $this->factory->lesson->create();
+		$post_id    = $this->factory->quiz->create( array( 'post_parent' => $lesson_id ) );
+		$user_id    = $this->factory->user->create();
+		$repository = new Comments_Based_Quiz_Progress_Repository();
+		wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'user_id'          => $user_id,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'complete',
+				'comment_date'     => '2022-05-17 01:36:12',
+			)
+		);
+
+		update_option( 'timezone_string', 'America/Chicago' );
+		$actual = $repository->get( $post_id, $user_id )->get_completed_at();
+
+		self::assertSame( '2022-05-16 14:36:12 -05:00', $actual->format( 'Y-m-d H:i:s P' ) );
+	}
+
 	public function testGet_WhenStatusFound_ReturnsQuizProgress(): void {
 		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();

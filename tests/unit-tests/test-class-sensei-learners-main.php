@@ -165,6 +165,30 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Completion dates use the current site timezone in student management.
+	 *
+	 * @covers Sensei_Learners_Main::get_row_data
+	 */
+	public function testGetRowData_CompletedBeforeTimezoneChanged_RendersCurrentLocalCompletionDate() {
+		update_option( 'timezone_string', 'Asia/Dhaka' );
+		$post_id = $this->createListingPost( 'lesson' );
+		$user_id = $this->factory->user->create();
+		$this->createListingProgress( 'lesson', $post_id, $user_id );
+		$repository = Sensei()->lesson_progress_repository;
+		$progress   = $repository->get( $post_id, $user_id );
+		$progress->complete( new DateTimeImmutable( '2022-05-16 19:36:12', new DateTimeZone( 'UTC' ) ) );
+		$repository->save( $progress );
+
+		update_option( 'timezone_string', 'America/Chicago' );
+		$table = $this->prepareListing( 'lesson', $post_id );
+		ob_start();
+		$table->single_row( $table->items[0] );
+		$html = ob_get_clean();
+
+		self::assertMatchesRegularExpression( '/column-date_completed[^>]*>2022-05-16 14:36:12<\/td>/', $html );
+	}
+
+	/**
 	 * Students who passed a lesson quiz display as completed.
 	 *
 	 * @covers Sensei_Learners_Main::get_row_data

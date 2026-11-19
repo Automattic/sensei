@@ -91,6 +91,10 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 
 		$requested_post_id = null;
 
+		if ( isset( $args['orderby'] ) && 'comment_date' === $args['orderby'] ) {
+			$args['orderby'] = 'comment_date_gmt';
+		}
+
 		// WPML stores progress against the original post, while the report shows the requested translation.
 		if ( isset( $args['post_id'] ) ) {
 			$requested_post_id = (int) $args['post_id'];
@@ -184,7 +188,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 			(int) $comment->user_id,
 			$comment->comment_approved,
 			Progress_Start_Date::is_recorded( $start_date ) ? $start_date : null,
-			$comment->comment_date ? $comment->comment_date : null,
+			$comment->comment_date_gmt ? get_date_from_gmt( $comment->comment_date_gmt ) : null,
 			$grade,
 			$percent
 		);
