@@ -175,11 +175,11 @@ jobs:
                   - [ ] Cherry-pick any approved fixes from [sensei-security](https://github.com/Automattic/sensei-security/pulls) into this branch.
                   - [ ] Review the generated changelog in `changelog.txt` and `readme.txt`.
                   - [ ] Update the release date in `changelog.txt` and `readme.txt` if releasing on another day.
-                  - [ ] Build the package from this branch and run the QA checklist below in a new installation.
+                  - [ ] Download the package from the `Plugin Build Download` check and run the QA checklist below in a new installation.
                   - [ ] Check whether `Requires PHP` needs a bump. If it does, bump it in its own commit on this branch.
                   - [ ] Confirm no new commits landed on this branch after testing, and nothing was merged to `trunk` since this branch was created.
 
-                  After merging this pull request with a merge commit, run the `Release: Build and draft` workflow before anything else is merged to `trunk`. It builds the package and drafts the GitHub release. The link to the draft is posted in a comment here.
+                  After merging this pull request with a merge commit, run the `Release: Draft GitHub release` workflow before anything else is merged to `trunk`. It drafts the GitHub release with the package of the `Plugin Build Download` check. The link to the draft is posted in a comment here.
 
                   ## QA
 

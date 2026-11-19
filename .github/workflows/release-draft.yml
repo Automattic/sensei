@@ -1,6 +1,6 @@
-name: 'Release: Build and draft'
+name: 'Release: Draft GitHub release'
 
-run-name: "Release build: ${{ github.event.pull_request.head.ref || 'trunk (manual run)' }}"
+run-name: "Release draft: ${{ github.event.pull_request.head.ref || 'trunk (manual run)' }}"
 
 on:
     # Run it after merging the release pull request, before anything else is merged to trunk. The jobs
@@ -15,9 +15,9 @@ env:
     PR_NUMBER: ${{ github.event.pull_request.number }}
 
 jobs:
-    # Runs the dependency install scripts, so it only gets read access.
+    # Works with the files of the repository, so it only gets read access.
     build:
-        name: Build the package
+        name: Get the package
         # Release branches in forks don't count: only a merged release/* branch of this repository starts a release.
         if: >-
             github.event_name == 'workflow_dispatch' ||
@@ -29,6 +29,7 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 30
         permissions:
+            actions: read
             contents: read
             pull-requests: read
         outputs:
@@ -42,7 +43,6 @@ jobs:
                   ref: ${{ github.event.pull_request.merge_commit_sha || 'trunk' }}
                   # Its parents are needed to compare it with the release branch.
                   fetch-depth: 2
-                  # Keep the token out of .git/config so dependency install scripts can't read it.
                   persist-credentials: false
 
             - name: Check the release
@@ -76,14 +76,13 @@ jobs:
                       exit 1
                   fi
 
-                  # The package is built from the release branch, which is the code that was tested, and the
+                  # The package comes from the release branch, which is the code that was tested, and the
                   # tag is created on trunk. Both must have the same code.
                   RELEASE_SHA=$( git rev-parse 'HEAD^2' )
                   if ! git diff --quiet "$RELEASE_SHA" HEAD; then
                       echo "::error::trunk has changes that are not in release/$VERSION: $( git diff --name-only "$RELEASE_SHA" HEAD | head -n 20 | tr '\n' ' ' )"
                       exit 1
                   fi
-                  git checkout --quiet --detach "$RELEASE_SHA"
 
                   awk -v heading="## $VERSION " '
                       /^## / { in_section = ( index( $0, heading ) == 1 ); next }
@@ -94,25 +93,31 @@ jobs:
                       exit 1
                   fi
 
-                  echo "::notice::Building release $VERSION from $RELEASE_SHA ($( git log -1 --format=%s ))."
+                  echo "::notice::Releasing $VERSION from $RELEASE_SHA ($( git log -1 --format=%s "$RELEASE_SHA" ))."
 
                   echo "version=$VERSION" >> "$GITHUB_OUTPUT"
                   echo "sha=$RELEASE_SHA" >> "$GITHUB_OUTPUT"
                   echo "pr=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: '.nvmrc'
-                  cache: 'npm'
-
-            - name: Install JS dependencies
-              run: npm ci
-
-            - name: Install PHP dependencies and generate the third-party directory
-              uses: ./.github/actions/install-php
-
-            - name: Build the plugin
-              run: npm run build
+            - name: Download the package
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  VERSION: ${{ steps.check.outputs.version }}
+                  RELEASE_SHA: ${{ steps.check.outputs.sha }}
+              run: |
+                  # The zip of the "Plugin Build Download" check on the last commit of the release pull request,
+                  # which is the package that was tested.
+                  ARTIFACT_ID=$( gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=sensei-lms-$RELEASE_SHA" --jq "
+                      [ .artifacts[] | select(
+                          .expired == false and
+                          .workflow_run.head_branch == \"release/$VERSION\" and
+                          .workflow_run.head_repository_id == .workflow_run.repository_id
+                      ) ] | sort_by( .created_at ) | last | .id // empty" )
+                  if [[ -z "$ARTIFACT_ID" ]]; then
+                      echo "::error::No package found for $RELEASE_SHA. Re-run the Plugin Build workflow of the release pull request."
+                      exit 1
+                  fi
+                  gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > sensei-lms.zip
 
             - uses: actions/upload-artifact@v7
               with:
