@@ -1,16 +1,11 @@
 name: 'Release: Build and draft'
 
-run-name: "Release build: ${{ github.event.pull_request.head.ref || format( 'release/{0} (manual run)', inputs.version ) }}"
+run-name: "Release build: ${{ github.event.pull_request.head.ref || 'trunk (manual run)' }}"
 
 on:
-    # Run it after merging the release pull request. The jobs also handle a run started by that merge,
-    # which is not enabled yet.
+    # Run it after merging the release pull request: it builds trunk. The jobs also handle a run
+    # started by that merge, which is not enabled yet.
     workflow_dispatch:
-        inputs:
-            version:
-                description: 'Version of the merged release pull request, like 4.28.0'
-                required: true
-                type: string
 
 permissions: {}
 
@@ -35,49 +30,21 @@ jobs:
         timeout-minutes: 30
         permissions:
             contents: read
-            pull-requests: read
         outputs:
             version: ${{ steps.check.outputs.version }}
             sha: ${{ steps.check.outputs.sha }}
-            pr: ${{ github.event.pull_request.number || steps.find.outputs.pr }}
         steps:
-            - name: Find the release pull request
-              id: find
-              if: github.event_name == 'workflow_dispatch'
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  VERSION: ${{ inputs.version }}
-              run: |
-                  if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                      echo "::error::Version '$VERSION' is not in X.Y.Z format."
-                      exit 1
-                  fi
-
-                  # The branch is deleted by the merge, but its last commit stays in the pull request.
-                  read -r PR SHA < <( gh pr list --head "release/$VERSION" --base trunk --state merged \
-                      --json number,headRefOid,isCrossRepository \
-                      --jq '[ .[] | select( .isCrossRepository == false ) ][0] // empty | "\(.number) \(.headRefOid)"' ) || true
-                  if ! [[ "$PR" =~ ^[0-9]+$ && "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
-                      echo "::error::No merged pull request found for release/$VERSION."
-                      exit 1
-                  fi
-
-                  echo "pr=$PR" >> "$GITHUB_OUTPUT"
-                  echo "sha=$SHA" >> "$GITHUB_OUTPUT"
-
             - uses: actions/checkout@v7.0.1
               with:
-                  # The last commit of the release branch, which is the code that was tested. The merge
-                  # commit also has what trunk got after the release branch was created.
-                  ref: ${{ github.event.pull_request.head.sha || steps.find.outputs.sha }}
+                  # The merge commit, so changes merged to trunk afterwards stay out of the release.
+                  ref: ${{ github.event.pull_request.merge_commit_sha || 'trunk' }}
                   # Keep the token out of .git/config so dependency install scripts can't read it.
                   persist-credentials: false
 
             - name: Check the release
               id: check
               env:
-                  HEAD_REF: ${{ github.event.pull_request.head.ref || format( 'release/{0}', inputs.version ) }}
-                  PR_NUMBER: ${{ github.event.pull_request.number || steps.find.outputs.pr }}
+                  HEAD_REF: ${{ github.event.pull_request.head.ref }}
               run: |
                   VERSION=$( sed -nE 's/^ \* Version: (.+)$/\1/p' sensei-lms.php )
                   RELEASE_SHA=$( git rev-parse HEAD )
@@ -142,15 +109,14 @@ jobs:
         env:
             VERSION: ${{ needs.build.outputs.version }}
             RELEASE_SHA: ${{ needs.build.outputs.sha }}
-            PR_NUMBER: ${{ needs.build.outputs.pr }}
         steps:
             - name: Check for an existing release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                   # The build job is less trusted than this one, so its outputs are checked again.
-                  if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ && "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ && "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
-                      echo "::error::The build job returned an unexpected version, commit or pull request."
+                  if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ && "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+                      echo "::error::The build job returned an unexpected version or commit."
                       exit 1
                   fi
 
