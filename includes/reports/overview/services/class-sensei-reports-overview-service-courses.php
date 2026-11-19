@@ -395,11 +395,17 @@ class Sensei_Reports_Overview_Service_Courses {
 		$course_ids      = array_values( $course_id_map );
 		$report_statuses = Utils::get_reports_post_status_sql();
 
-		$query = "SELECT pm.meta_value as course_id, pm.post_id as lesson_id
-			FROM {$wpdb->postmeta} pm
-			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-			WHERE pm.meta_value IN ( " . implode( ',', $course_ids ) . " )
-			AND pm.meta_key = '_lesson_course'
+		$lesson_course       = Sensei()->course_lessons_sql_service->get_lesson_course_clauses( 'pm' );
+		$lesson_course_table = $lesson_course['table'];
+		$lesson_course_where = $lesson_course['where'];
+		$lesson_id_sql       = $lesson_course['lesson_id'];
+		$course_id_sql       = $lesson_course['course_id'];
+
+		$query = "SELECT {$course_id_sql} as course_id, {$lesson_id_sql} as lesson_id
+			FROM {$lesson_course_table} pm
+			INNER JOIN {$wpdb->posts} p ON p.ID = {$lesson_id_sql}
+			WHERE {$course_id_sql} IN ( " . implode( ',', $course_ids ) . " )
+			AND {$lesson_course_where}
 			AND p.post_type = 'lesson'
 			AND p.post_status IN ( {$report_statuses} )";
 
