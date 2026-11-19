@@ -178,8 +178,9 @@ jobs:
                   - [ ] Build the package from this branch and run the QA checklist below in a new installation.
                   - [ ] Check whether `Requires PHP` needs a bump. If it does, bump it in its own commit on this branch.
                   - [ ] Confirm no new commits landed after testing.
+                  - [ ] Confirm this branch is up to date with `trunk`. If it is not, update it and test again: the release is only built when `trunk` has nothing else.
 
-                  After merging this pull request, run the `Release: Build and draft` workflow from `trunk` to build the package and draft the GitHub release.
+                  After merging this pull request with a merge commit, run the `Release: Build and draft` workflow before anything else is merged to `trunk`. It builds the package and drafts the GitHub release. The link to the draft is posted in a comment here.
 
                   ## QA
 
