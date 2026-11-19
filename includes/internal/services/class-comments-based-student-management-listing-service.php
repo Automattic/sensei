@@ -64,7 +64,7 @@ class Comments_Based_Student_Management_Listing_Service implements Student_Manag
 				(int) $args['post_id'],
 				(int) $comment->user_id,
 				$comment->comment_approved,
-				'complete' === $comment->comment_approved ? $comment->comment_date : null,
+				'complete' === $comment->comment_approved ? get_date_from_gmt( $comment->comment_date_gmt ) : null,
 				$comment->comment_date
 			);
 		}

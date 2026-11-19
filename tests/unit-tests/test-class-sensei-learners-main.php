@@ -118,10 +118,23 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	/**
 	 * Course and lesson student rows display names, enrollment, status, and dates.
 	 *
-	 * @dataProvider listingTypes
+	 * @dataProvider completedStudentDetails
 	 * @covers Sensei_Learners_Main::get_row_data
+	 *
+	 * @param string $type Post type.
+	 * @param string $completion_timezone Site timezone when completing progress.
+	 * @param string $display_timezone Site timezone when displaying progress.
+	 * @param string $expected_start_date Displayed start date.
+	 * @param string $expected_completion_date Displayed completion date.
 	 */
-	public function testGetRowData_CompletedStudentListed_RendersStudentDetails( $type ) {
+	public function testGetRowData_CompletedStudentListed_RendersStudentDetails(
+		$type,
+		$completion_timezone,
+		$display_timezone,
+		$expected_start_date,
+		$expected_completion_date
+	) {
+		update_option( 'timezone_string', $completion_timezone );
 		$post_id = $this->createListingPost( $type );
 		$user_id = $this->factory->user->create(
 			array(
@@ -150,6 +163,7 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 				);
 			}
 		}
+		update_option( 'timezone_string', $display_timezone );
 		$table = $this->prepareListing( $type, $post_id );
 
 		ob_start();
@@ -159,8 +173,8 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		self::assertStringContainsString( 'Alice Student</a>', $html, 'The row displays the student name.' );
 		self::assertMatchesRegularExpression( '/column-enrolment_status[^>]*>.*?>No<\/span>/s', $html, 'The row displays the enrollment status.' );
 		self::assertMatchesRegularExpression( '/column-user_status[^>]*>Completed<\/td>/', $html, 'The row displays the progress status.' );
-		self::assertStringContainsString( 'value="2026-01-02 03:04:05"', $html, 'The row displays the start date.' );
-		self::assertMatchesRegularExpression( '/column-date_completed[^>]*>2026-01-03 04:05:06<\/td>/', $html, 'The row displays the completion date.' );
+		self::assertStringContainsString( 'value="' . $expected_start_date . '"', $html, 'The row displays the start date.' );
+		self::assertMatchesRegularExpression( '/column-date_completed[^>]*>' . preg_quote( $expected_completion_date, '/' ) . '<\/td>/', $html, 'The row displays the completion date.' );
 		self::assertSame( 1, $table->get_pagination_arg( 'total_items' ), 'The total includes the displayed student.' );
 	}
 
@@ -311,6 +325,19 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		return array(
 			'course' => array( 'course' ),
 			'lesson' => array( 'lesson' ),
+		);
+	}
+
+	/**
+	 * Student detail listings with unchanged and changed site timezones.
+	 *
+	 * @return array Named listing scenarios.
+	 */
+	public function completedStudentDetails() {
+		return array(
+			'course'                       => array( 'course', 'UTC', 'UTC', '2026-01-02 03:04:05', '2026-01-03 04:05:06' ),
+			'lesson'                       => array( 'lesson', 'UTC', 'UTC', '2026-01-02 03:04:05', '2026-01-03 04:05:06' ),
+			'lesson after timezone change' => array( 'lesson', 'Asia/Dhaka', 'America/Chicago', '2026-01-02 09:04:05', '2026-01-02 22:05:06' ),
 		);
 	}
 
