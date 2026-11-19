@@ -400,6 +400,82 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Messages are private, so the message post type is not listed among the public post types.
+	 *
+	 * @covers Sensei_PostTypes::setup_sensei_message_post_type
+	 */
+	public function testSetupSenseiMessagePostType_PublicPostTypesRequested_OmitsTheMessageType() {
+		/* Act. */
+		$public_post_types = get_post_types( array( 'public' => true ) );
+
+		/* Assert. */
+		$this->assertNotContains( 'sensei_message', $public_post_types );
+	}
+
+	/**
+	 * Only Sensei administrators can edit or delete a message of other users.
+	 *
+	 * @covers Sensei_PostTypes::setup_sensei_message_post_type
+	 *
+	 * @dataProvider providerRolesOutsideAMessage
+	 *
+	 * @param string $role     The role of the current user.
+	 * @param bool   $expected Whether that user can manage the messages of other users.
+	 */
+	public function testSetupSenseiMessagePostType_MessageOfOtherUsersGiven_LetsOnlyAdministratorsEditAndDeleteIt( string $role, bool $expected ) {
+		/* Arrange. */
+		$message_id = $this->factory->post->create(
+			array(
+				'post_type'   => 'sensei_message',
+				'post_author' => $this->factory->user->create(),
+			)
+		);
+		wp_set_current_user( $this->factory->user->create( array( 'role' => $role ) ) );
+
+		/* Act. */
+		$can_edit   = current_user_can( 'edit_post', $message_id );
+		$can_delete = current_user_can( 'delete_post', $message_id );
+
+		/* Assert. */
+		$this->assertSame( $expected, $can_edit, 'Editing the message should be limited to Sensei administrators.' );
+		$this->assertSame( $expected, $can_delete, 'Deleting the message should be limited to Sensei administrators.' );
+	}
+
+	/**
+	 * Only Sensei administrators have the capability that other plugins check before they serve a post of a non-public post type.
+	 *
+	 * @covers Sensei_PostTypes::setup_sensei_message_post_type
+	 *
+	 * @dataProvider providerRolesOutsideAMessage
+	 *
+	 * @param string $role     The role of the current user.
+	 * @param bool   $expected Whether that user can manage the messages of other users.
+	 */
+	public function testSetupSenseiMessagePostType_ReadPrivateCapabilityChecked_GrantsItOnlyToAdministrators( string $role, bool $expected ) {
+		/* Arrange. */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => $role ) ) );
+
+		/* Act. */
+		$actual = current_user_can( get_post_type_object( 'sensei_message' )->cap->read_private_posts );
+
+		/* Assert. */
+		$this->assertSame( $expected, $actual );
+	}
+
+	/**
+	 * The roles that hold the question capabilities, and whether they can manage the messages of other users.
+	 *
+	 * @return array[]
+	 */
+	public function providerRolesOutsideAMessage(): array {
+		return array(
+			'teacher'       => array( 'teacher', false ),
+			'editor'        => array( 'editor', false ),
+			'administrator' => array( 'administrator', true ),
+		);
+	}
+
+	/**
 	 * Lesson bodies are not searchable, in site search, in lesson-only queries such as the REST lessons endpoint, or when only the content is searched.
 	 *
 	 * @dataProvider providerExcludeLessonContentFromSearchQueryArgs

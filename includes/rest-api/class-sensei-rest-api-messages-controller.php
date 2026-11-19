@@ -201,7 +201,9 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 
 	/**
 	 * Whether the current user may read a private message: its sender, its receiver, or an
-	 * administrator. Mirrors the checks used by get_item_permissions_check().
+	 * administrator.
+	 *
+	 * The author of the message post is not checked, because WordPress can reassign it when a user is deleted.
 	 *
 	 * @param WP_Post $post Message post object.
 	 * @return bool
@@ -214,10 +216,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 		$user = wp_get_current_user();
 		if ( ! $user->ID ) {
 			return false;
-		}
-
-		if ( $user->ID === (int) $post->post_author ) {
-			return true;
 		}
 
 		$sender   = get_post_meta( $post->ID, '_sender', true );
@@ -254,7 +252,7 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 
 		$post = $this->get_post( $request['id'] );
 
-		if ( $current_user->ID === (int) $post->post_author || get_post_meta( $post->ID, '_receiver', true ) === $current_user->user_login || current_user_can( 'manage_options' ) ) {
+		if ( ! is_wp_error( $post ) && $this->current_user_can_read_message( $post ) ) {
 			return true;
 		}
 

@@ -701,7 +701,8 @@ class Sensei_PostTypes {
 
 			$args = array(
 				'labels'                => $this->get_all_post_type_labels( 'sensei_message' ),
-				'public'                => true,
+				// Messages are private. Other plugins read this flag to decide whether a post type is content for visitors.
+				'public'                => false,
 				'publicly_queryable'    => true,
 				'embeddable'            => false,
 				'show_ui'               => true,
@@ -725,6 +726,12 @@ class Sensei_PostTypes {
 				),
 				'map_meta_cap'          => true,
 				'capability_type'       => 'question',
+				// Teachers and Editors have the question capabilities, which would let them read, edit or delete the messages of other users.
+				'capabilities'          => array(
+					'read_private_posts'  => 'manage_sensei',
+					'edit_others_posts'   => 'manage_sensei',
+					'delete_others_posts' => 'manage_sensei',
+				),
 				'has_archive'           => true,
 				'hierarchical'          => false,
 				'menu_position'         => 50,
