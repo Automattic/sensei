@@ -44,7 +44,9 @@ use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Course_Lessons\Repositories\Course_Lessons_Repository_Interface;
 use Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository;
+use Sensei\Internal\Course_Lessons\Services\Course_Lessons_SQL_Service_Interface;
 use Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service;
+use Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_SQL_Service;
 use Sensei\Internal\Emails\Email_Customization;
 use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Migration\Migration_Job;
@@ -403,6 +405,15 @@ class Sensei_Main {
 	public $course_lessons_repository;
 
 	/**
+	 * Course lessons SQL service.
+	 *
+	 * @since $$next-version$$
+	 * @psalm-suppress PropertyNotSetInConstructor
+	 * @var Course_Lessons_SQL_Service_Interface
+	 */
+	public $course_lessons_sql_service;
+
+	/**
 	 * Course progress repository factory.
 	 *
 	 * @var Course_Progress_Repository_Factory
@@ -701,6 +712,9 @@ class Sensei_Main {
 		// Course lessons repository.
 		global $wpdb;
 		$this->course_lessons_repository = new Meta_Based_Course_Lessons_Repository( $wpdb );
+
+		// Course lessons SQL service.
+		$this->course_lessons_sql_service = new Meta_Based_Course_Lessons_SQL_Service( $wpdb );
 
 		// Setup settings.
 		$this->settings                       = new Sensei_Settings();
