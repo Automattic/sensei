@@ -5,7 +5,6 @@ namespace SenseiTest\Internal\Student_Progress\Services;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
-use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
 
 class Lesson_Deleted_Handler_Test extends \WP_UnitTestCase {
 	use \Sensei_HPPS_Helpers;
@@ -60,58 +59,55 @@ class Lesson_Deleted_Handler_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Permanently deleting a lesson clears every student's quiz data and preserves other lessons.
+	 * Quiz cleanup removes every student's submission, answers, and grades for the lesson.
 	 *
 	 * @dataProvider progress_storage_modes
 	 * @covers \Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler::delete_quiz_data
-	 * @covers \Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler::handle
 	 */
-	public function testWpDeletePost_LessonPermanentlyDeleted_RemovesAllQuizData( string $mode ): void {
+	public function testDeleteQuizData_LessonWithSubmissionsGiven_RemovesAllQuizData( string $mode ): void {
 		$fixture          = $this->create_lesson_with_submissions( $mode );
 		$lesson_id        = $fixture['lesson_ids'][0];
 		$quiz_id          = $fixture['quiz_ids'][0];
-		$before           = $this->get_quiz_row_counts( $quiz_id, $fixture['question_ids'][0] );
 		$unrelated_before = $this->get_quiz_row_counts( $fixture['quiz_ids'][1], $fixture['question_ids'][1] );
+		$handler          = new Lesson_Deleted_Handler( Sensei()->lesson_progress_repository, Sensei()->quiz_submission_repository );
 
-		wp_trash_post( $lesson_id );
-		self::assertSame( $before, $this->get_quiz_row_counts( $quiz_id, $fixture['question_ids'][0] ), 'Moving a lesson to Trash must preserve its quiz data.' );
-		wp_delete_post( $lesson_id, true );
+		$result = $handler->delete_quiz_data( null, get_post( $lesson_id ) );
 
-		self::assertNull( get_post( $lesson_id ), 'The lesson is permanently deleted.' );
-		self::assertNull( get_post( $quiz_id ), 'The associated quiz is permanently deleted.' );
-		self::assertSame( array( 0, 0, 0 ), $this->get_quiz_row_counts( $quiz_id, $fixture['question_ids'][0] ), 'Remove all HPPS submissions, answers, and grades for the deleted quiz.' );
+		self::assertNull( $result, 'Allow lesson deletion after quiz cleanup succeeds.' );
+		self::assertSame( array( 0, 0, 0 ), $this->get_quiz_row_counts( $quiz_id, $fixture['question_ids'][0] ), 'Remove all HPPS submissions, answers, and grades for the lesson\'s quiz.' );
 		self::assertSame( $unrelated_before, $this->get_quiz_row_counts( $fixture['quiz_ids'][1], $fixture['question_ids'][1] ), 'Preserve quiz data belonging to other lessons.' );
 		foreach ( $fixture['student_ids'] as $student_id ) {
+			self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $student_id ), 'Remove each student\'s submission from the active store.' );
 			self::assertNotNull( Sensei()->quiz_submission_repository->get( $fixture['quiz_ids'][1], $student_id ), 'Other lessons retain their comments-based and active-store submissions.' );
 		}
 	}
 
 	/**
-	 * A failed quiz lookup or cleanup leaves the lesson available for another deletion attempt.
+	 * Failed quiz cleanup returns false and succeeds when retried after the failure clears.
 	 *
 	 * @dataProvider deletion_failure_storage_modes
 	 * @covers \Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler::delete_quiz_data
 	 */
-	public function testWpDeletePost_QuizCleanupFails_KeepsLessonForRetry( string $mode, string $failed_query ): void {
+	public function testDeleteQuizData_QuizCleanupFails_ReturnsFalseAndAllowsRetry( string $mode, string $failed_query ): void {
 		global $wpdb;
 
 		$fixture   = $this->create_lesson_with_submissions( $mode );
 		$lesson_id = $fixture['lesson_ids'][0];
 		$quiz_id   = $fixture['quiz_ids'][0];
+		$handler   = new Lesson_Deleted_Handler( Sensei()->lesson_progress_repository, Sensei()->quiz_submission_repository );
+		$lesson    = get_post( $lesson_id );
 		$target    = sprintf( $failed_query, $wpdb->prefix );
 		$fault     = static function ( string $query ) use ( $target ): string {
 			return 0 === strpos( str_replace( '`', '', $query ), $target ) ? '' : $query;
 		};
 		add_filter( 'query', $fault );
 		try {
-			$result = wp_delete_post( $lesson_id, true );
+			$result = $handler->delete_quiz_data( null, $lesson );
 		} finally {
 			remove_filter( 'query', $fault );
 		}
 
 		self::assertFalse( $result, 'Stop deleting the lesson when quiz cleanup fails.' );
-		self::assertNotNull( get_post( $lesson_id ), 'Keep the lesson available for retry.' );
-		self::assertNotNull( get_post( $quiz_id ), 'Keep the quiz available for retry.' );
 		self::assertSame( array( 2, 2, 2 ), $this->get_quiz_row_counts( $quiz_id, $fixture['question_ids'][0] ), 'Keep linked quiz records when cleanup cannot complete.' );
 		foreach ( $fixture['student_ids'] as $student_id ) {
 			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $student_id );
@@ -120,10 +116,13 @@ class Lesson_Deleted_Handler_Test extends \WP_UnitTestCase {
 			self::assertCount( 1, Sensei()->quiz_grade_repository->get_all( $submission->get_id() ), 'Keep the primary-store grades after a failed delete.' );
 		}
 
-		wp_delete_post( $lesson_id, true );
+		$retry_result = $handler->delete_quiz_data( null, $lesson );
 
-		self::assertNull( get_post( $lesson_id ), 'A subsequent deletion succeeds.' );
+		self::assertNull( $retry_result, 'Allow lesson deletion after retrying quiz cleanup.' );
 		self::assertSame( array( 0, 0, 0 ), $this->get_quiz_row_counts( $quiz_id, $fixture['question_ids'][0] ), 'Retry removes the remaining quiz data.' );
+		foreach ( $fixture['student_ids'] as $student_id ) {
+			self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $student_id ), 'Retry removes each student\'s submission from the active store.' );
+		}
 	}
 
 	public static function deletion_failure_storage_modes(): array {
@@ -139,8 +138,6 @@ class Lesson_Deleted_Handler_Test extends \WP_UnitTestCase {
 	}
 
 	private function create_lesson_with_submissions( string $mode ): array {
-		global $wp_filter;
-
 		$this->set_progress_storage_mode( $mode );
 		$factory                = new \Sensei_Factory();
 		$course                 = $factory->get_course_with_lessons(
@@ -164,15 +161,6 @@ class Lesson_Deleted_Handler_Test extends \WP_UnitTestCase {
 				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, 1 );
 			}
 		}
-		// Replace the startup handler so deletion uses the fixture's selected storage mode.
-		foreach ( $wp_filter['pre_delete_post']->callbacks[10] ?? array() as $callback ) {
-			if ( is_array( $callback['function'] ) && $callback['function'][0] instanceof Lesson_Deleted_Handler ) {
-				remove_filter( 'pre_delete_post', $callback['function'], 10 );
-			}
-		}
-		( new Lesson_Deleted_Handler( Sensei()->lesson_progress_repository, Sensei()->quiz_submission_repository ) )->init();
-		( new Quiz_Deleted_Handler( Sensei()->quiz_progress_repository ) )->init();
-
 		return $course;
 	}
 
