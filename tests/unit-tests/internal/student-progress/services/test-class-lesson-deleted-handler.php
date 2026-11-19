@@ -113,6 +113,12 @@ class Lesson_Deleted_Handler_Test extends \WP_UnitTestCase {
 		self::assertNotNull( get_post( $lesson_id ), 'Keep the lesson available for retry.' );
 		self::assertNotNull( get_post( $quiz_id ), 'Keep the quiz available for retry.' );
 		self::assertSame( array( 2, 2, 2 ), $this->get_quiz_row_counts( $quiz_id, $fixture['question_ids'][0] ), 'Keep linked quiz records when cleanup cannot complete.' );
+		foreach ( $fixture['student_ids'] as $student_id ) {
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $student_id );
+			self::assertNotNull( $submission, 'Keep each primary-store submission available after a failed delete.' );
+			self::assertCount( 1, Sensei()->quiz_answer_repository->get_all( $submission->get_id() ), 'Keep the primary-store answers after a failed delete.' );
+			self::assertCount( 1, Sensei()->quiz_grade_repository->get_all( $submission->get_id() ), 'Keep the primary-store grades after a failed delete.' );
+		}
 
 		wp_delete_post( $lesson_id, true );
 
@@ -121,14 +127,20 @@ class Lesson_Deleted_Handler_Test extends \WP_UnitTestCase {
 	}
 
 	public static function deletion_failure_storage_modes(): array {
-		$mode = self::is_hpps_tables_mode() ? 'tables' : 'comments';
-		return array(
+		$mode      = self::is_hpps_tables_mode() ? 'tables' : 'comments';
+		$scenarios = array(
 			'submission lookup fails' => array( $mode, 'SELECT user_id FROM %ssensei_lms_quiz_submissions' ),
 			'grade deletion fails'    => array( $mode, 'DELETE FROM %ssensei_lms_quiz_grades' ),
 		);
+		if ( self::is_hpps_tables_mode() ) {
+			$scenarios['secondary comments grade deletion fails'] = array( $mode, 'DELETE FROM %scommentmeta' );
+		}
+		return $scenarios;
 	}
 
 	private function create_lesson_with_submissions( string $mode ): array {
+		global $wp_filter;
+
 		$this->set_progress_storage_mode( $mode );
 		$factory                = new \Sensei_Factory();
 		$course                 = $factory->get_course_with_lessons(
@@ -150,6 +162,12 @@ class Lesson_Deleted_Handler_Test extends \WP_UnitTestCase {
 				$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $student_id, 100 );
 				$answer     = Sensei()->quiz_answer_repository->create( $submission, $question_id, 'answer' );
 				Sensei()->quiz_grade_repository->create( $submission, $answer, $question_id, 1 );
+			}
+		}
+		// Replace the startup handler so deletion uses the fixture's selected storage mode.
+		foreach ( $wp_filter['pre_delete_post']->callbacks[10] ?? array() as $callback ) {
+			if ( is_array( $callback['function'] ) && $callback['function'][0] instanceof Lesson_Deleted_Handler ) {
+				remove_filter( 'pre_delete_post', $callback['function'], 10 );
 			}
 		}
 		( new Lesson_Deleted_Handler( Sensei()->lesson_progress_repository, Sensei()->quiz_submission_repository ) )->init();
