@@ -41,6 +41,13 @@ class Progress_Validation {
 	private array $errors = array();
 
 	/**
+	 * Non-failing validation warnings.
+	 *
+	 * @var Validation_Error[]
+	 */
+	private array $warnings = array();
+
+	/**
 	 * Run the validation.
 	 *
 	 * @internal
@@ -48,7 +55,8 @@ class Progress_Validation {
 	 * @since 4.19.1
 	 */
 	public function run(): void {
-		$this->errors = array();
+		$this->errors   = array();
+		$this->warnings = array();
 
 		if ( ! $this->is_progress_migration_complete() ) {
 			$this->add_error( 'The progress migration is not complete. Please run the progress migration first.' );
@@ -101,6 +109,18 @@ class Progress_Validation {
 	 */
 	public function get_errors(): array {
 		return $this->errors;
+	}
+
+	/**
+	 * Get warnings about progress that could not be fully verified.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @return Validation_Error[]
+	 */
+	public function get_warnings(): array {
+		return $this->warnings;
 	}
 
 	/**
@@ -282,6 +302,8 @@ class Progress_Validation {
 	 * @param object $tables_based_progress   Tables based progress.
 	 */
 	private function compare_progress( object $comments_based_progress, object $tables_based_progress ): void {
+		global $wpdb;
+
 		$comments = $this->get_progress_data( $comments_based_progress );
 		$tables   = $this->get_progress_data( $tables_based_progress );
 
@@ -292,6 +314,34 @@ class Progress_Validation {
 		) {
 			// Before submission, the lesson start in comments and the quiz start in HPPS are separate events.
 			$comments_to_compare['started_at'] = $tables['started_at'];
+		}
+
+		// Comments share one start date for the lesson and quiz. Saving quiz progress can overwrite
+		// the earlier lesson start, while HPPS keeps the two dates separately.
+		if ( 'lesson' === $comments['type']
+			&& null !== $comments['started_at']
+			&& null !== $tables['started_at']
+			&& $tables['started_at'] < $comments['started_at']
+		) {
+			$quiz_id       = (int) Sensei()->lesson->lesson_quizzes( $comments['post_id'] );
+			$quiz_progress = $quiz_id ? ( new Tables_Based_Quiz_Progress_Repository( $wpdb ) )->get( $quiz_id, $comments['user_id'] ) : null;
+			$quiz_start    = $quiz_progress ? $quiz_progress->get_started_at() : null;
+
+			// A matching quiz start explains the difference, but the lost lesson start means
+			// we cannot verify that the HPPS lesson date is correct. Report a warning instead.
+			if ( $quiz_start && gmdate( 'Y-m-d H:i:s', $quiz_start->getTimestamp() ) === $comments['started_at'] ) {
+				$this->warnings[] = new Validation_Error(
+					'Lesson start date could not be verified because the shared comment now records the quiz start.',
+					array(
+						'lesson_id' => $comments['post_id'],
+						'user_id'   => $comments['user_id'],
+					)
+				);
+
+				// Exclude only this date from comparison; still check status and completion.
+				// This changes the comparison data without saving either stored record.
+				$comments_to_compare['started_at'] = $tables['started_at'];
+			}
 		}
 
 		if ( $comments_to_compare !== $tables ) {

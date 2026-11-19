@@ -188,14 +188,79 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	public function testRun_WhenQuizWasSubmittedAndBothStoresAgree_HasNoErrors(): void {
+	/**
+	 * Quiz submission can replace the shared comment's lesson start with the quiz start.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenQuizWasSubmittedAfterLessonStarted_WarnsWhenLessonStartCannotBeVerified(): void {
 		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $student_id );
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $student_id );
+		$lesson_progress->start( new \DateTimeImmutable( '2025-01-01T00:00:00Z' ) );
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
 		$this->submit_quiz_for_grading( $lesson_id, $quiz_id, $student_id );
 		$validation = new Progress_Validation();
 
 		$validation->run();
 
 		self::assertSame( array(), $validation->get_errors() );
+		$expected_warnings = self::is_hpps_tables_mode()
+			? array(
+				array(
+					'Lesson start date could not be verified because the shared comment now records the quiz start.',
+					array(
+						'lesson_id' => $lesson_id,
+						'user_id'   => $student_id,
+					),
+				),
+			)
+			: array();
+		self::assertSame(
+			$expected_warnings,
+			array_map(
+				static function ( $warning ): array {
+					return array( $warning->get_message(), $warning->get_data() );
+				},
+				$validation->get_warnings()
+			),
+			'Report the unverifiable lesson start separately from errors, with lesson and student IDs.'
+		);
+	}
+
+	/**
+	 * Differing start dates remain errors when the shared comment does not match the quiz start.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenSubmittedQuizStartDiffersFromSharedComment_ReportsLessonAndQuizDifferences(): void {
+		global $wpdb;
+
+		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $student_id );
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $student_id );
+		$lesson_progress->start( new \DateTimeImmutable( '2025-01-01T00:00:00Z' ) );
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
+		$this->submit_quiz_for_grading( $lesson_id, $quiz_id, $student_id );
+		$lesson_repository = new Tables_Based_Lesson_Progress_Repository( $wpdb );
+		$lesson_progress   = $lesson_repository->get( $lesson_id, $student_id );
+		$lesson_progress->start( new \DateTimeImmutable( '2024-01-01T00:00:00Z' ) );
+		$lesson_repository->save( $lesson_progress );
+		$repository    = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+		$quiz_progress = $repository->get( $quiz_id, $student_id );
+		$quiz_progress->start( new \DateTimeImmutable( '@' . ( $quiz_progress->get_started_at()->getTimestamp() + 1 ) ) );
+		$quiz_progress->ungrade();
+		$repository->save( $quiz_progress );
+		$validation = new Progress_Validation();
+
+		$validation->run();
+
+		$errors = $validation->get_errors();
+		self::assertCount( 2, $errors, 'Report both start differences when the quiz start does not explain the lesson start.' );
+		self::assertSame( 'Data mismatch between comments and tables based progress.', $errors[0]->get_message(), 'Keep reporting mismatched progress.' );
+		self::assertSame( $lesson_id, $errors[0]->get_data()[0]['post_id'], 'Identify the affected lesson.' );
+		self::assertSame( $quiz_id, $errors[1]->get_data()[0]['post_id'], 'Identify the affected quiz.' );
+		self::assertSame( array(), $validation->get_warnings(), 'Unexplained date differences remain errors rather than unverifiable-date warnings.' );
 	}
 
 	/**

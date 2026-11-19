@@ -1,4 +1,4 @@
 Significance: minor
 Type: changed
 
-HPPS: Report missing and mismatched progress and quiz records in both storage backends in the Sensei WP-CLI validation commands.
+HPPS: Check both stores and warn about unverifiable lesson start dates in WP-CLI validation.
