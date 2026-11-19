@@ -111,6 +111,7 @@ jobs:
                       [ .artifacts[] | select(
                           .expired == false and
                           .workflow_run.head_branch == \"release/$VERSION\" and
+                          .workflow_run.head_sha == \"$RELEASE_SHA\" and
                           .workflow_run.head_repository_id == .workflow_run.repository_id
                       ) ] | sort_by( .created_at ) | last | .id // empty" )
                   if [[ -z "$ARTIFACT_ID" ]]; then
@@ -156,7 +157,7 @@ jobs:
                   EXISTING_RELEASE=$( gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
                       --jq ".[] | select( .tag_name == \"version/$VERSION\" ) | .html_url" )
                   if [[ -n "$EXISTING_RELEASE" ]]; then
-                      echo "::error::A release for version/$VERSION already exists. Delete it and re-run this job: $EXISTING_RELEASE"
+                      echo "::error::A release for version/$VERSION already exists. Delete it and run this workflow again: $EXISTING_RELEASE"
                       exit 1
                   fi
 
