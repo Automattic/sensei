@@ -42,16 +42,9 @@ jobs:
                       echo "::error::Tag version/$VERSION already exists."
                       exit 1
                   fi
-                  if [[ -n "$( gh pr list --repo "$GITHUB_REPOSITORY" --head "release/$VERSION" --state open --json number --jq '.[].number' )" ]]; then
-                      echo "::error::The pull request for release/$VERSION is already open."
-                      exit 1
-                  fi
-                  # A release/X.Y.Z branch that someone created is the starting point. Create it from the tag of
-                  # the last release to leave out what trunk got since then. This workflow cannot create it,
-                  # because its token is not allowed to push the workflow files of an older commit.
-                  START=trunk
                   if gh api "repos/$GITHUB_REPOSITORY/branches/release/$VERSION" --silent 2>/dev/null; then
-                      START="release/$VERSION"
+                      echo "::error::Branch release/$VERSION already exists."
+                      exit 1
                   fi
                   MILESTONE_NUMBER=$( jq -r --arg v "$VERSION" '.[] | select(.title == $v) | .number' <<< "$MILESTONES" )
                   if [[ -z "$MILESTONE_NUMBER" ]]; then
@@ -75,13 +68,12 @@ jobs:
                       exit 1
                   fi
 
-                  echo "::notice::Preparing release $VERSION from $START."
+                  echo "::notice::Preparing release $VERSION."
                   echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-                  echo "START=$START" >> "$GITHUB_ENV"
 
             - uses: actions/checkout@v7.0.1
               with:
-                  ref: ${{ env.START }}
+                  ref: trunk
                   # Changelogger needs the history to add PR numbers to the entries.
                   fetch-depth: 0
                   # Keep the token out of .git/config so dependency install scripts can't read it.
@@ -127,7 +119,7 @@ jobs:
 
                   git config user.name 'github-actions[bot]'
                   git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-                  git switch -C "release/$VERSION"
+                  git switch -c "release/$VERSION"
 
                   ./scripts/replace-next-version-tag.sh "$VERSION"
                   commit 'Replace next version tag'
@@ -149,16 +141,10 @@ jobs:
                       commit "Bump Tested up to $WP_LATEST and Requires at least $WP_MINIMUM"
                   fi
 
-                  # A release started from a tag has no changelog entries until its fixes are added to the branch.
-                  if [[ -n "$( find changelog -type f ! -name '.gitkeep' )" ]]; then
-                      ./vendor/bin/changelogger write --add-pr-num --use-version="$VERSION" --no-interaction
-                      ./scripts/changelog-unwrap-pr-links.sh
-                      ./scripts/copy-changelog-to-readme.php
-                      commit 'Update changelog'
-                  else
-                      echo "::warning::No changelog entries found. Write the changelog after adding the fixes to release/$VERSION."
-                      echo "CHANGELOG_PENDING=1" >> "$GITHUB_ENV"
-                  fi
+                  ./vendor/bin/changelogger write --add-pr-num --use-version="$VERSION" --no-interaction
+                  ./scripts/changelog-unwrap-pr-links.sh
+                  ./scripts/copy-changelog-to-readme.php
+                  commit 'Update changelog'
 
                   npm run i18n:build
                   commit 'Update translations'
@@ -174,16 +160,6 @@ jobs:
                   {
                       echo "Release $VERSION."
                       echo
-                      if [[ "$START" != 'trunk' ]]; then
-                          echo '> [!IMPORTANT]'
-                          echo "> This release starts from the \`$START\` branch as it was, not from trunk. It only has what that branch has, and the package is built from this branch."
-                          echo
-                      fi
-                      if [[ -n "$CHANGELOG_PENDING" ]]; then
-                          echo '> [!WARNING]'
-                          echo "> There were no changelog entries, so the changelog is not written yet. After adding the fixes to this branch, run \`./vendor/bin/changelogger write --add-pr-num --use-version=$VERSION\`, \`./scripts/changelog-unwrap-pr-links.sh\` and \`./scripts/copy-changelog-to-readme.php\`, and commit the result."
-                          echo
-                      fi
                       if [[ -n "$WP_LATEST" ]]; then
                           echo '> [!WARNING]'
                           echo "> Tested up to is bumped to WordPress $WP_LATEST and Requires at least to $WP_MINIMUM in their own commit. Test on $WP_LATEST during QA and revert that commit if it fails."
@@ -219,11 +195,8 @@ jobs:
                       --body-file pr-body.md \
                       --label 'No Changelog' \
                       --milestone "$VERSION"; then
-                      echo "::error::Could not open the release pull request."
-                      # Remove the branch this workflow created so it can be re-run once the cause is fixed.
-                      if [[ "$START" == 'trunk' ]]; then
-                          echo "::error::Deleting release/$VERSION."
-                          git push origin --delete "release/$VERSION"
-                      fi
+                      # Remove the pushed branch so the workflow can be re-run once the cause is fixed.
+                      echo "::error::Could not open the release pull request. Deleting release/$VERSION."
+                      git push origin --delete "release/$VERSION"
                       exit 1
                   fi
