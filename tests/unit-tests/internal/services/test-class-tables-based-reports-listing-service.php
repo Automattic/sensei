@@ -316,8 +316,15 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 		/* Arrange. */
 		global $wpdb;
 		$user_id   = $this->sensei_factory->user->create();
-		$course_id = $this->sensei_factory->course->create();
+		$created   = $this->sensei_factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$course_id = $created['course_id'];
 		$this->insert_progress( $course_id, $user_id, 'course', 'in-progress' );
+		$this->insert_progress( $created['lesson_ids'][0], $user_id, 'lesson', 'complete' );
 
 		$service = new Tables_Based_Reports_Listing_Service( $wpdb );
 
@@ -337,6 +344,7 @@ class Tables_Based_Reports_Listing_Service_Test extends \Reports_Listing_Service
 		$this->assertCount( 1, $result['items'], 'Should return exactly one item.' );
 		$this->assertSame( $course_id, $result['items'][0]->post_id, 'Post ID should match the course.' );
 		$this->assertSame( $user_id, $result['items'][0]->user_id, 'User ID should match.' );
+		$this->assertSame( 50.0, $result['items'][0]->percent, 'Percent should be the share of completed lessons.' );
 	}
 
 	protected function get_report_service(): \Sensei\Internal\Services\Reports_Listing_Service_Interface {
