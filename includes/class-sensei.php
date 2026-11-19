@@ -879,7 +879,7 @@ class Sensei_Main {
 
 		// Init student progress handlers.
 		( new Course_Deleted_Handler( $this->course_progress_repository ) )->init();
-		( new Lesson_Deleted_Handler( $this->lesson_progress_repository ) )->init();
+		( new Lesson_Deleted_Handler( $this->lesson_progress_repository, $this->quiz_submission_repository ) )->init();
 		( new Quiz_Deleted_Handler( $this->quiz_progress_repository ) )->init();
 		( new User_Deleted_Handler( $this->course_progress_repository, $this->lesson_progress_repository, $this->quiz_progress_repository ) )->init();
 

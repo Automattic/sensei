@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+HPPS: Delete quiz submissions, answers, and grades when a lesson is permanently deleted.
