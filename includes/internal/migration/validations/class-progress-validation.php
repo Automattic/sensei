@@ -10,27 +10,16 @@ namespace Sensei\Internal\Migration\Validations;
 
 use RuntimeException;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
-use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
-use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
-use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 
 /**
  * Class responsible for validation of the migrated progress data.
  *
  * @since 4.19.1
- *
- * @psalm-type Progress_Repository = Course_Progress_Repository_Interface|Lesson_Progress_Repository_Interface|Quiz_Progress_Repository_Interface
  */
 class Progress_Validation {
 	/**
@@ -62,28 +51,10 @@ class Progress_Validation {
 			$this->add_error( 'The progress migration is not complete. Please run the progress migration first.' );
 		}
 
-		global $wpdb;
-
 		try {
-			Validation_Records::with_fresh_reads(
-				function () use ( $wpdb ): void {
-					$this->validate_progress(
-						'course',
-						new Comments_Based_Course_Progress_Repository(),
-						new Tables_Based_Course_Progress_Repository( $wpdb )
-					);
-					$this->validate_progress(
-						'lesson',
-						new Comments_Based_Lesson_Progress_Repository(),
-						new Tables_Based_Lesson_Progress_Repository( $wpdb )
-					);
-					$this->validate_progress(
-						'quiz',
-						new Comments_Based_Quiz_Progress_Repository(),
-						new Tables_Based_Quiz_Progress_Repository( $wpdb )
-					);
-				}
-			);
+			$this->validate_progress( 'course' );
+			$this->validate_progress( 'lesson' );
+			$this->validate_progress( 'quiz' );
 		} catch ( RuntimeException $exception ) {
 			$this->add_error( $exception->getMessage() );
 		}
@@ -149,13 +120,9 @@ class Progress_Validation {
 	/**
 	 * Find progress missing from either store and compare records present in both.
 	 *
-	 * @param string $type                The progress type.
-	 * @param object $comments_repository The comments repository.
-	 * @param object $tables_repository   The tables repository.
-	 * @psalm-param Progress_Repository $comments_repository
-	 * @psalm-param Progress_Repository $tables_repository
+	 * @param string $type The progress type.
 	 */
-	private function validate_progress( string $type, object $comments_repository, object $tables_repository ): void {
+	private function validate_progress( string $type ): void {
 		$comment_type = 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status';
 
 		// Scan comments for progress that is missing from the tables.
@@ -163,18 +130,18 @@ class Progress_Validation {
 			$post_id = (int) $record->post_id;
 			$user_id = (int) $record->user_id;
 			if ( 'quiz' === $type ) {
-				$post_id = (int) Sensei()->lesson->lesson_quizzes( $post_id );
+				$post_id = Validation_Records::get_quiz_id( $post_id );
 				if ( ! $post_id ) {
 					continue;
 				}
 			}
 
-			$comments_progress = $comments_repository->get( $post_id, $user_id );
+			$comments_progress = Validation_Records::get_comments_progress( $type, $post_id, $user_id );
 			if ( ! $comments_progress || $comments_progress->get_id() !== (int) $record->id ) {
 				continue;
 			}
 
-			if ( $tables_repository->get( $post_id, $user_id ) ) {
+			if ( Validation_Records::get_tables_progress( $type, $post_id, $user_id ) ) {
 				continue;
 			}
 
@@ -188,11 +155,8 @@ class Progress_Validation {
 		foreach ( Validation_Records::get_progress_rows( $type ) as $record ) {
 			$post_id           = (int) $record->post_id;
 			$user_id           = (int) $record->user_id;
-			$comments_progress = $comments_repository->get( $post_id, $user_id );
-			$tables_progress   = $tables_repository->get( $post_id, $user_id );
-			if ( ! $tables_progress ) {
-				continue;
-			}
+			$comments_progress = Validation_Records::get_comments_progress( $type, $post_id, $user_id );
+			$tables_progress   = Validation_Records::create_tables_progress( $type, $record );
 
 			if ( $tables_progress instanceof Quiz_Progress_Interface
 				&& ( ! $comments_progress || $comments_progress instanceof Comments_Based_Quiz_Progress )
@@ -229,7 +193,7 @@ class Progress_Validation {
 		$quiz_id = $tables_progress->get_quiz_id();
 		if ( $comments_progress ) {
 			$comment_says_passed = Quiz_Progress_Interface::STATUS_PASSED === $comments_progress->get_status();
-			$pass_required       = (bool) get_post_meta( $quiz_id, '_pass_required', true );
+			$pass_required       = (bool) Validation_Records::get_metadata( 'post', $quiz_id, '_pass_required' );
 
 			// Only a passed comment for an optional quiz could come from completing the lesson alone.
 			// Otherwise, return false so the caller continues normal validation.
@@ -238,8 +202,7 @@ class Progress_Validation {
 			}
 		}
 
-		global $wpdb;
-		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->get( $quiz_id, $tables_progress->get_user_id() );
+		$submission = Validation_Records::get_tables_submission( $quiz_id, $tables_progress->get_user_id() );
 
 		// Saved answers should have a lesson comment even if quiz progress is still in progress.
 		if ( ! $comments_progress ) {
@@ -248,8 +211,8 @@ class Progress_Validation {
 
 		// The shared passed status alone cannot distinguish a completed lesson from a submitted quiz.
 		$comment_id        = $comments_progress->get_id();
-		$has_comment_grade = get_comment_meta( $comment_id, 'questions_asked', true )
-			&& is_numeric( get_comment_meta( $comment_id, 'grade', true ) );
+		$has_comment_grade = Validation_Records::get_metadata( 'comment', $comment_id, 'questions_asked' )
+			&& is_numeric( Validation_Records::get_metadata( 'comment', $comment_id, 'grade' ) );
 
 		return ( ! $submission || null === $submission->get_final_grade() ) && ! $has_comment_grade;
 	}
@@ -263,9 +226,11 @@ class Progress_Validation {
 	 * @return bool
 	 */
 	private function has_recorded_quiz_activity( Comments_Based_Quiz_Progress $progress ): bool {
-		if ( Quiz_Progress_Interface::STATUS_PASSED === $progress->get_status() && ! get_post_meta( $progress->get_quiz_id(), '_pass_required', true ) ) {
+		if ( Quiz_Progress_Interface::STATUS_PASSED === $progress->get_status()
+			&& ! Validation_Records::get_metadata( 'post', $progress->get_quiz_id(), '_pass_required' )
+		) {
 			// Completing a lesson can record a quiz pass without any answers.
-			return (bool) get_comment_meta( $progress->get_id(), 'questions_asked', true );
+			return (bool) Validation_Records::get_metadata( 'comment', $progress->get_id(), 'questions_asked' );
 		}
 
 		return in_array(
@@ -277,7 +242,7 @@ class Progress_Validation {
 				Quiz_Progress_Interface::STATUS_UNGRADED,
 			),
 			true
-		) || (bool) get_comment_meta( $progress->get_id(), 'questions_asked', true );
+		) || (bool) Validation_Records::get_metadata( 'comment', $progress->get_id(), 'questions_asked' );
 	}
 
 	/**
@@ -306,8 +271,6 @@ class Progress_Validation {
 	 * @param object $tables_based_progress   Tables based progress.
 	 */
 	private function compare_progress( object $comments_based_progress, object $tables_based_progress ): void {
-		global $wpdb;
-
 		$comments = $this->get_progress_data( $comments_based_progress );
 		$tables   = $this->get_progress_data( $tables_based_progress );
 
@@ -327,8 +290,8 @@ class Progress_Validation {
 			&& null !== $tables['started_at']
 			&& $tables['started_at'] < $comments['started_at']
 		) {
-			$quiz_id       = (int) Sensei()->lesson->lesson_quizzes( $comments['post_id'] );
-			$quiz_progress = $quiz_id ? ( new Tables_Based_Quiz_Progress_Repository( $wpdb ) )->get( $quiz_id, $comments['user_id'] ) : null;
+			$quiz_id       = Validation_Records::get_quiz_id( $comments['post_id'] );
+			$quiz_progress = $quiz_id ? Validation_Records::get_tables_progress( 'quiz', $quiz_id, $comments['user_id'] ) : null;
 			$quiz_start    = $quiz_progress ? $quiz_progress->get_started_at() : null;
 
 			// A matching quiz start explains the difference, but the lost lesson start means
@@ -385,11 +348,23 @@ class Progress_Validation {
 		$started_at   = $progress->get_started_at();
 		$completed_at = $progress->get_completed_at();
 
+		if ( $progress instanceof Comments_Based_Lesson_Progress && 'failed' === $progress->get_raw_status() ) {
+			// The model's failed-lesson normalization reads quiz settings through cached WordPress APIs.
+			$quiz_id       = Validation_Records::get_quiz_id( $post_id );
+			$pass_required = $quiz_id && Validation_Records::get_metadata( 'post', $quiz_id, '_pass_required' );
+
+			$status = $quiz_id && ! $pass_required
+				? Lesson_Progress_Interface::STATUS_COMPLETE
+				: Lesson_Progress_Interface::STATUS_IN_PROGRESS;
+		} else {
+			$status = $progress->get_status();
+		}
+
 		return array(
 			'type'         => $type,
 			'post_id'      => $post_id,
 			'user_id'      => $progress->get_user_id(),
-			'status'       => $progress->get_status(),
+			'status'       => $status,
 			'started_at'   => $started_at ? gmdate( 'Y-m-d H:i:s', $started_at->getTimestamp() ) : null,
 			'completed_at' => $completed_at ? gmdate( 'Y-m-d H:i:s', $completed_at->getTimestamp() ) : null,
 		);

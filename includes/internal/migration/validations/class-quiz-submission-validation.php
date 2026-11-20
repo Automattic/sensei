@@ -12,15 +12,9 @@ use DateTimeZone;
 use RuntimeException;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
-use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
-use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
-use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
-use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
 /**
  * Class responsible for validation of the migrated quiz submission data.
@@ -50,12 +44,8 @@ class Quiz_Submission_Validation {
 		}
 
 		try {
-			Validation_Records::with_fresh_reads(
-				function (): void {
-					$this->validate_quiz_submissions();
-					$this->validate_table_relationships();
-				}
-			);
+			$this->validate_quiz_submissions();
+			$this->validate_table_relationships();
 		} catch ( RuntimeException $exception ) {
 			$this->add_error( $exception->getMessage() );
 		}
@@ -110,32 +100,23 @@ class Quiz_Submission_Validation {
 	 * Find submissions missing from either store and compare records present in both.
 	 */
 	private function validate_quiz_submissions(): void {
-		global $wpdb;
-
-		$comments_repository = new Comments_Based_Submission_Repository();
-		$tables_repository   = new Tables_Based_Submission_Repository( $wpdb );
-		$comments_answers    = new Comments_Based_Answer_Repository();
-		$tables_answers      = new Tables_Based_Answer_Repository( $wpdb );
-		$comments_grades     = new Comments_Based_Grade_Repository();
-		$tables_grades       = new Tables_Based_Grade_Repository( $wpdb );
-
 		// Scan comments for quiz submissions that are missing from HPPS.
 		foreach ( Validation_Records::get_comments( 'sensei_lesson_status' ) as $record ) {
 			// Quiz data shares the lesson comment, so first resolve the lesson's quiz.
-			$quiz_id = (int) Sensei()->lesson->lesson_quizzes( (int) $record->post_id );
+			$quiz_id = Validation_Records::get_quiz_id( (int) $record->post_id );
 			if ( ! $quiz_id ) {
 				continue;
 			}
 
 			// The repository requires questions_asked metadata to recognize a quiz submission.
 			$user_id             = (int) $record->user_id;
-			$comments_submission = $comments_repository->get( $quiz_id, $user_id );
+			$comments_submission = Validation_Records::get_comments_submission( $quiz_id, $user_id );
 			// Skip other comments for the same quiz/student so the submission is reported only once.
 			if ( ! $comments_submission || $comments_submission->get_id() !== (int) $record->id ) {
 				continue;
 			}
 
-			if ( ! $tables_repository->get( $quiz_id, $user_id ) ) {
+			if ( ! Validation_Records::get_tables_submission( $quiz_id, $user_id ) ) {
 				$this->add_missing_submission_error( 'tables', $quiz_id, $user_id );
 			}
 		}
@@ -145,7 +126,7 @@ class Quiz_Submission_Validation {
 		foreach ( Validation_Records::get_submission_rows() as $record ) {
 			$quiz_id             = (int) $record->post_id;
 			$user_id             = (int) $record->user_id;
-			$comments_submission = $comments_repository->get( $quiz_id, $user_id );
+			$comments_submission = Validation_Records::get_comments_submission( $quiz_id, $user_id );
 			if ( ! $comments_submission ) {
 				$this->add_missing_submission_error( 'comments', $quiz_id, $user_id );
 				continue;
@@ -172,14 +153,26 @@ class Quiz_Submission_Validation {
 			);
 
 			$this->compare_question_data(
-				array_map( array( $this, 'get_answer_data' ), $comments_answers->get_all( $comments_submission->get_id() ) ),
-				array_map( array( $this, 'get_answer_data' ), $tables_answers->get_all( $tables_submission->get_id() ) ),
+				array_map(
+					array( $this, 'get_answer_data' ),
+					Validation_Records::get_answers( $comments_submission->get_id(), 'comments' )
+				),
+				array_map(
+					array( $this, 'get_answer_data' ),
+					Validation_Records::get_answers( $tables_submission->get_id(), 'tables' )
+				),
 				$identity,
 				'answers'
 			);
 			$this->compare_question_data(
-				array_map( array( $this, 'get_grade_data' ), $comments_grades->get_all( $comments_submission->get_id() ) ),
-				array_map( array( $this, 'get_grade_data' ), $tables_grades->get_all( $tables_submission->get_id() ) ),
+				array_map(
+					array( $this, 'get_grade_data' ),
+					Validation_Records::get_grades( $comments_submission->get_id(), 'comments' )
+				),
+				array_map(
+					array( $this, 'get_grade_data' ),
+					Validation_Records::get_grades( $tables_submission->get_id(), 'tables' )
+				),
 				$identity,
 				'grades'
 			);
