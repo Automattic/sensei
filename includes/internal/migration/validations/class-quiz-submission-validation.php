@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Migration\Validations;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use RuntimeException;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
@@ -16,6 +18,7 @@ use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 
@@ -100,7 +103,7 @@ class Quiz_Submission_Validation {
 	}
 
 	/**
-	 * Find comment-only submissions and validate each table submission once.
+	 * Find submissions missing from either store and compare records present in both.
 	 */
 	private function validate_quiz_submissions(): void {
 		global $wpdb;
@@ -112,14 +115,18 @@ class Quiz_Submission_Validation {
 		$comments_grades     = new Comments_Based_Grade_Repository();
 		$tables_grades       = new Tables_Based_Grade_Repository( $wpdb );
 
+		// Scan comments for quiz submissions that are missing from HPPS.
 		foreach ( Validation_Records::get_comments( 'sensei_lesson_status' ) as $record ) {
+			// Quiz data shares the lesson comment, so first resolve the lesson's quiz.
 			$quiz_id = (int) Sensei()->lesson->lesson_quizzes( (int) $record->post_id );
 			if ( ! $quiz_id ) {
 				continue;
 			}
 
+			// The repository requires questions_asked metadata to recognize a quiz submission.
 			$user_id             = (int) $record->user_id;
 			$comments_submission = $comments_repository->get( $quiz_id, $user_id );
+			// Skip other comments for the same quiz/student so the submission is reported only once.
 			if ( ! $comments_submission || $comments_submission->get_id() !== (int) $record->id ) {
 				continue;
 			}
@@ -129,6 +136,8 @@ class Quiz_Submission_Validation {
 			}
 		}
 
+		// Scan HPPS for missing comments submissions. Compare matching submissions here
+		// so each quiz/student pair's final grade, answers, and question grades are checked once.
 		foreach ( Validation_Records::get_submission_rows() as $record ) {
 			$quiz_id             = (int) $record->post_id;
 			$user_id             = (int) $record->user_id;
@@ -138,13 +147,19 @@ class Quiz_Submission_Validation {
 				continue;
 			}
 
-			$tables_submission = $tables_repository->get( $quiz_id, $user_id );
-			if ( ! $tables_submission ) {
-				continue;
-			}
+			// The row is already loaded; compare its stored values instead of querying or reading a cached copy.
+			$tables_submission = new Tables_Based_Submission(
+				(int) $record->id,
+				$quiz_id,
+				$user_id,
+				$record->final_grade,
+				new DateTimeImmutable( $record->created_at, new DateTimeZone( 'UTC' ) ),
+				new DateTimeImmutable( $record->updated_at, new DateTimeZone( 'UTC' ) )
+			);
 
 			$this->compare_submission( $comments_submission, $tables_submission );
 
+			// Each store has its own submission ID; answer and grade lookups must use the matching store's ID.
 			$identity = array(
 				'quiz_id'                => $quiz_id,
 				'user_id'                => $user_id,
@@ -171,6 +186,7 @@ class Quiz_Submission_Validation {
 	 * Report table rows whose parent record is missing.
 	 */
 	private function validate_table_relationships(): void {
+		// Scan child tables directly: records with missing parents cannot be reached through submission comparisons.
 		foreach ( Validation_Records::get_answers_without_submissions() as $record ) {
 			$this->add_error(
 				'Tables-based quiz answer has no submission.',

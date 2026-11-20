@@ -143,7 +143,7 @@ class Progress_Validation {
 	}
 
 	/**
-	 * Find comment-only records and validate each table record once.
+	 * Find progress missing from either store and compare records present in both.
 	 *
 	 * @param string $type                The progress type.
 	 * @param object $comments_repository The comments repository.

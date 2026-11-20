@@ -74,7 +74,7 @@ class Validation_Records {
 		global $wpdb;
 
 		return self::read(
-			'SELECT id, quiz_id AS post_id, user_id
+			'SELECT id, quiz_id AS post_id, user_id, final_grade, created_at, updated_at
 			FROM %i
 			WHERE id > %d
 			ORDER BY id
