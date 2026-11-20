@@ -30,6 +30,8 @@ use Sensei\Internal\Student_Progress\Progress_Start_Date;
 /**
  * Reads persisted validation data directly, enumerating records in bounded batches.
  *
+ * Stored IDs must stay unchanged: repository lookup filters can redirect reads to other records.
+ *
  * @internal
  * @since $$next-version$$
  */
@@ -230,7 +232,7 @@ class Validation_Records {
 	 * Read the comment selected by the comments repositories for a student and content.
 	 *
 	 * @param string $type    The progress type.
-	 * @param int    $post_id The content ID, already mapped by its retrieval hook.
+	 * @param int    $post_id The stored content ID.
 	 * @param int    $user_id The student ID.
 	 * @return object|null The stored comment.
 	 */
@@ -266,7 +268,6 @@ class Validation_Records {
 	 * @return Comments_Based_Course_Progress|Comments_Based_Lesson_Progress|Comments_Based_Quiz_Progress|null
 	 */
 	public static function get_comments_progress( string $type, int $post_id, int $user_id ): ?object {
-		$post_id   = self::map_progress_id( $type, $post_id );
 		$lesson_id = 'quiz' === $type ? self::get_lesson_id( $post_id ) : $post_id;
 		$comment   = $lesson_id ? self::get_progress_comment( $type, $lesson_id, $user_id ) : null;
 		if ( ! $comment ) {
@@ -302,28 +303,6 @@ class Validation_Records {
 	}
 
 	/**
-	 * Apply the existing content ID mapping hooks used by progress retrieval.
-	 *
-	 * @param string $type    The progress type.
-	 * @param int    $post_id The content ID.
-	 * @return int The mapped content ID.
-	 */
-	private static function map_progress_id( string $type, int $post_id ): int {
-		if ( 'course' === $type ) {
-			// This filter is documented in the course progress repositories.
-			return (int) apply_filters( 'sensei_course_progress_get_course_id', $post_id );
-		}
-
-		if ( 'lesson' === $type ) {
-			// This filter is documented in the lesson progress repositories.
-			return (int) apply_filters( 'sensei_lesson_progress_get_lesson_id', $post_id );
-		}
-
-		// This filter is documented in the quiz progress repositories.
-		return (int) apply_filters( 'sensei_quiz_progress_get_quiz_id', $post_id );
-	}
-
-	/**
 	 * Read a matching progress table row directly.
 	 *
 	 * @since $$next-version$$
@@ -336,8 +315,7 @@ class Validation_Records {
 	public static function get_tables_progress( string $type, int $post_id, int $user_id ): ?object {
 		global $wpdb;
 
-		$post_id = self::map_progress_id( $type, $post_id );
-		$rows    = self::query(
+		$rows = self::query(
 			'SELECT * FROM %i WHERE type = %s AND post_id = %d AND user_id = %d LIMIT 1',
 			array( $wpdb->prefix . 'sensei_lms_progress', $type, $post_id, $user_id ),
 			$type . ' progress table'
@@ -386,21 +364,13 @@ class Validation_Records {
 	 * @return Comments_Based_Submission|null
 	 */
 	public static function get_comments_submission( int $quiz_id, int $user_id ): ?Comments_Based_Submission {
-		// This filter is documented in the submission repositories.
-		$quiz_id   = (int) apply_filters( 'sensei_quiz_submission_get_quiz_id', $quiz_id );
 		$lesson_id = self::get_lesson_id( $quiz_id );
 		$comment   = $lesson_id ? self::get_progress_comment( 'lesson', $lesson_id, $user_id ) : null;
 		if ( ! $comment ) {
 			return null;
 		}
 
-		// This filter is documented in Comments_Based_Submission_Repository::get_question_ids().
-		$questions_id = (int) apply_filters(
-			'sensei_quiz_submission_get_question_ids_submission_id',
-			(int) $comment->comment_ID,
-			'comments'
-		);
-		if ( ! self::get_metadata( 'comment', $questions_id, 'questions_asked' ) ) {
+		if ( ! self::get_metadata( 'comment', (int) $comment->comment_ID, 'questions_asked' ) ) {
 			return null;
 		}
 
@@ -430,9 +400,7 @@ class Validation_Records {
 	public static function get_tables_submission( int $quiz_id, int $user_id ): ?Tables_Based_Submission {
 		global $wpdb;
 
-		// This filter is documented in the submission repositories.
-		$quiz_id = (int) apply_filters( 'sensei_quiz_submission_get_quiz_id', $quiz_id );
-		$rows    = self::query(
+		$rows = self::query(
 			'SELECT * FROM %i WHERE quiz_id = %d AND user_id = %d LIMIT 1',
 			array( $wpdb->prefix . 'sensei_lms_quiz_submissions', $quiz_id, $user_id ),
 			'quiz submission table'
@@ -473,9 +441,7 @@ class Validation_Records {
 	public static function get_answers( int $submission_id, string $store ): array {
 		global $wpdb;
 
-		// This filter is documented in the answer repositories.
-		$submission_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission_id, $store );
-		$answers       = array();
+		$answers = array();
 		if ( 'comments' === $store ) {
 			$values = self::get_metadata( 'comment', $submission_id, 'quiz_answers' );
 			$date   = current_datetime();
@@ -518,9 +484,7 @@ class Validation_Records {
 	public static function get_grades( int $submission_id, string $store ): array {
 		global $wpdb;
 
-		// This filter is documented in the grade repositories.
-		$submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission_id, $store );
-		$grades        = array();
+		$grades = array();
 		if ( 'comments' === $store ) {
 			$points   = self::get_metadata( 'comment', $submission_id, 'quiz_grades' );
 			$feedback = self::get_metadata( 'comment', $submission_id, 'quiz_answers_feedback' );
