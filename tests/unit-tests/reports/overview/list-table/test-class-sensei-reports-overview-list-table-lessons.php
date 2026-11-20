@@ -357,12 +357,17 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 			3,
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
+		$module_ids = $this->factory->module->create_many( 2 );
+		wp_set_object_terms( $lesson_ids[0], $module_ids[0], 'module' );
+		wp_set_object_terms( $lesson_ids[1], $module_ids[0], 'module' );
+		wp_set_object_terms( $lesson_ids[2], $module_ids[1], 'module' );
 		$days_count = 7;
 		$started    = new DateTimeImmutable( '2022-01-01 12:00:00', new DateTimeZone( 'UTC' ) );
 
 		$data_provider_instance = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
 		$lesson_table_instance  = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, $data_provider_instance );
 
+		$_GET['view']          = 'lessons';
 		$_GET['course_filter'] = $course_id;
 		// Complete a lesson for each student on a different date.
 		foreach ( $user_ids as $user_id ) {
@@ -388,6 +393,7 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 		/* Assert */
 		$expected = array(
 			'title'              => 'Lesson (3)',
+			'lesson_module'      => 'Module (2)',
 			'students'           => 'Students (3)',
 			'last_activity'      => 'Last Activity',
 			'completions'        => 'Completed (1)',
@@ -395,31 +401,6 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 			'days_to_completion' => 'Days to Completion (9)',
 		);
 		self::assertSame( $expected, $actual, 'The expected column headers for lessons table in overview report does not match the actual output' );
-	}
-
-	/**
-	 * The Module column header counts the modules of the lessons of the course.
-	 *
-	 * @covers Sensei_Reports_Overview_List_Table_Lessons::get_columns
-	 */
-	public function testGetColumns_LessonsInTwoModulesGiven_ReturnsModuleColumnWithModuleCount(): void {
-		/* Arrange. */
-		$created               = $this->factory->get_course_with_lessons(
-			array(
-				'lesson_count'   => 3,
-				'question_count' => 0,
-				'module_count'   => 2,
-			)
-		);
-		$_GET['view']          = 'lessons';
-		$_GET['course_filter'] = $created['course_id'];
-		$table                 = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course ) );
-
-		/* Act. */
-		$columns = $table->get_columns();
-
-		/* Assert. */
-		self::assertSame( 'Module (2)', $columns['lesson_module'] );
 	}
 
 	/**
