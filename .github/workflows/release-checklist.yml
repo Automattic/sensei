@@ -7,16 +7,24 @@ on:
     branches:
       - 'trunk'
 
+permissions:
+  contents: read
+
 jobs:
   checklist_job:
+    permissions:
+      contents: read
+      pull-requests: write
     if: ${{ startsWith( github.head_ref, 'release/' ) }}
     runs-on: ubuntu-latest
     name: Sensei release checklist
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Checklist
-        uses: automattic/contextual-qa-checklist-action@master
+        uses: automattic/contextual-qa-checklist-action@c063201bfa7fe8e9f72fb70ed2fe8cc0718c34c6 # master
         with:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           input-file: .github/RELEASE-CHECKLIST.yml
