@@ -34,6 +34,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 	 */
 	public function tearDown(): void {
 		parent::tearDown();
+		unset( $_REQUEST['redirect_to'], $_SERVER['HTTP_REFERER'] );
 		$this->factory->tearDown();
 		unset( $GLOBALS['wp_rest_server'] );
 
@@ -698,6 +699,99 @@ AND comments.comment_type = 'sensei_course_status'";
 		$this->assertSame( array( $own_learner ), $learner_ids, 'Only learners from the teacher-owned course should be exported.' );
 	}
 
+	/**
+	 * Teachers who log in on the My Courses page are sent to the dashboard.
+	 *
+	 * @covers Sensei_Teacher::teacher_login_redirect
+	 */
+	public function testTeacherLoginRedirect_TeacherLoggedInOnMyCoursesPageGiven_RequestsDashboardRedirect() {
+		/* Arrange. */
+		$teacher = $this->factory->user->create_and_get( array( 'role' => 'teacher' ) );
+		$this->set_login_referrer_to_my_courses_page();
+
+		/* Act. */
+		do_action( 'wp_login', $teacher->user_login, $teacher );
+
+		/* Assert. */
+		$this->assertSame( admin_url(), $this->get_requested_login_redirect() );
+	}
+
+	/**
+	 * A redirect the login request already asks for is kept.
+	 *
+	 * @covers Sensei_Teacher::teacher_login_redirect
+	 */
+	public function testTeacherLoginRedirect_RedirectAlreadyRequestedGiven_KeepsRequestedRedirect() {
+		/* Arrange. */
+		$teacher = $this->factory->user->create_and_get( array( 'role' => 'teacher' ) );
+		$this->set_login_referrer_to_my_courses_page();
+		$_REQUEST['redirect_to'] = home_url( '/requested/' );
+
+		/* Act. */
+		do_action( 'wp_login', $teacher->user_login, $teacher );
+
+		/* Assert. */
+		$this->assertSame( home_url( '/requested/' ), $this->get_requested_login_redirect() );
+	}
+
+	/**
+	 * Students who log in on the My Courses page keep the default redirect.
+	 *
+	 * @covers Sensei_Teacher::teacher_login_redirect
+	 */
+	public function testTeacherLoginRedirect_StudentLoggedInOnMyCoursesPageGiven_RequestsNoRedirect() {
+		/* Arrange. */
+		$student = $this->factory->user->create_and_get( array( 'role' => 'subscriber' ) );
+		$this->set_login_referrer_to_my_courses_page();
+
+		/* Act. */
+		do_action( 'wp_login', $student->user_login, $student );
+
+		/* Assert. */
+		$this->assertNull( $this->get_requested_login_redirect() );
+	}
+
+	/**
+	 * Teachers who log in elsewhere than the My Courses page keep the default redirect.
+	 *
+	 * @covers Sensei_Teacher::teacher_login_redirect
+	 */
+	public function testTeacherLoginRedirect_TeacherLoggedInOnAnotherPageGiven_RequestsNoRedirect() {
+		/* Arrange. */
+		$teacher = $this->factory->user->create_and_get( array( 'role' => 'teacher' ) );
+		$this->set_login_referrer_to_my_courses_page();
+		$_SERVER['HTTP_REFERER'] = home_url( '/another-page/' );
+
+		/* Act. */
+		do_action( 'wp_login', $teacher->user_login, $teacher );
+
+		/* Assert. */
+		$this->assertNull( $this->get_requested_login_redirect() );
+	}
+
+	/**
+	 * Other `wp_login` handlers, such as a two-factor code prompt, still run after a teacher logs in on the My Courses page.
+	 *
+	 * @covers Sensei_Teacher::teacher_login_redirect
+	 */
+	public function testTeacherLoginRedirect_TeacherLoggedInOnMyCoursesPageGiven_RunsLaterLoginHandlers() {
+		/* Arrange. */
+		$teacher = $this->factory->user->create_and_get( array( 'role' => 'teacher' ) );
+		$this->set_login_referrer_to_my_courses_page();
+		$later_handler_ran = false;
+		$later_handler     = function () use ( &$later_handler_ran ) {
+			$later_handler_ran = true;
+		};
+		add_action( 'wp_login', $later_handler, PHP_INT_MAX );
+
+		/* Act. */
+		do_action( 'wp_login', $teacher->user_login, $teacher );
+
+		/* Assert. */
+		remove_action( 'wp_login', $later_handler, PHP_INT_MAX );
+		$this->assertTrue( $later_handler_ran );
+	}
+
 	public function testRestrictCommentModerationCapability_TeacherOutsideTheAdminGiven_DeniesModerateComments() {
 		/* Arrange. */
 		$this->login_as_teacher();
@@ -805,5 +899,24 @@ AND comments.comment_type = 'sensei_course_status'";
 
 		/* Assert. */
 		$this->assertSame( 200, $response->get_status() );
+	}
+
+	/**
+	 * Get the redirect the current login request asks for.
+	 *
+	 * @return string|null The requested redirect, or null when none is requested.
+	 */
+	private function get_requested_login_redirect() {
+		// phpcs:ignore WordPress.Security -- Reads the test request state.
+		return isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : null;
+	}
+
+	/**
+	 * Make the current login request come from the My Courses page.
+	 */
+	private function set_login_referrer_to_my_courses_page() {
+		$my_courses_page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		Sensei()->settings->set( 'my_course_page', $my_courses_page_id );
+		$_SERVER['HTTP_REFERER'] = get_permalink( $my_courses_page_id );
 	}
 }

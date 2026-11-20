@@ -1724,6 +1724,9 @@ AND comments.comment_type = 'sensei_course_status'";
 	/**
 	 * Redirect teachers (and admins) to the WordPress dashboard after logging in on the My Courses page.
 	 *
+	 * Only sets the requested redirect. The login flow redirects once it finishes, so later
+	 * `wp_login` handlers, such as a two-factor code prompt, still run and keep the destination.
+	 *
 	 * @since 1.8.7
 	 * @access public
 	 *
@@ -1752,14 +1755,10 @@ AND comments.comment_type = 'sensei_course_status'";
 			return;
 		}
 
+		// Keep a redirect the login request already asks for.
 		// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
-		if ( isset( $_REQUEST['redirect_to'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
-			wp_safe_redirect( wp_unslash( $_REQUEST['redirect_to'] ), 303 );
-			exit;
-		} else {
-			wp_redirect( admin_url(), 303 );
-			exit;
+		if ( ! isset( $_REQUEST['redirect_to'] ) ) {
+			$_REQUEST['redirect_to'] = admin_url();
 		}
 	}
 
