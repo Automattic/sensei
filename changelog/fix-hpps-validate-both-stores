@@ -1,4 +1,4 @@
 Significance: minor
 Type: changed
 
-HPPS: Check both stores and warn about unverifiable lesson start dates in WP-CLI validation.
+HPPS: Detect missing or mismatched progress and quiz data in either store during WP-CLI validation.
