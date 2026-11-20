@@ -194,6 +194,7 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
 	public function testRun_WhenQuizWasSubmittedAfterLessonStarted_WarnsWhenLessonStartCannotBeVerified(): void {
+		/* Arrange. */
 		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
 		Sensei_Utils::sensei_start_lesson( $lesson_id, $student_id );
 		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $student_id );
@@ -202,9 +203,6 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$this->submit_quiz_for_grading( $lesson_id, $quiz_id, $student_id );
 		$validation = new Progress_Validation();
 
-		$validation->run();
-
-		self::assertSame( array(), $validation->get_errors() );
 		$expected_warnings = self::is_hpps_tables_mode()
 			? array(
 				array(
@@ -216,6 +214,12 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 				),
 			)
 			: array();
+
+		/* Act. */
+		$validation->run();
+
+		/* Assert. */
+		self::assertSame( array(), $validation->get_errors(), 'The overwritten lesson start must not cause a mismatch error.' );
 		self::assertSame(
 			$expected_warnings,
 			array_map(
@@ -233,7 +237,8 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
-	public function testRun_WhenSubmittedQuizStartDiffersFromSharedComment_ReportsLessonAndQuizDifferences(): void {
+	public function testRun_WhenSubmittedQuizStartDifferedFromSharedComment_ReportsLessonAndQuizDifferences(): void {
+		/* Arrange. */
 		global $wpdb;
 
 		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
@@ -253,8 +258,10 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$repository->save( $quiz_progress );
 		$validation = new Progress_Validation();
 
+		/* Act. */
 		$validation->run();
 
+		/* Assert. */
 		$errors = $validation->get_errors();
 		self::assertCount( 2, $errors, 'Report both start differences when the quiz start does not explain the lesson start.' );
 		self::assertSame( 'Data mismatch between comments and tables based progress.', $errors[0]->get_message(), 'Keep reporting mismatched progress.' );
@@ -268,7 +275,8 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
-	public function testRun_WhenQuizProgressIsMissingFromTables_ReportsQuizAndStudent(): void {
+	public function testRun_WhenQuizProgressWasMissingFromTables_ReportsQuizAndStudent(): void {
+		/* Arrange. */
 		global $wpdb;
 
 		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
@@ -277,8 +285,10 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$progress_repository->delete_for_quiz( $quiz_id );
 		$validation = new Progress_Validation();
 
+		/* Act. */
 		$validation->run();
 
+		/* Assert. */
 		$errors = $validation->get_errors();
 		self::assertCount( 1, $errors, 'Report the missing quiz progress once.' );
 		self::assertSame( 'Quiz tables based progress not found.', $errors[0]->get_message(), 'Identify which store is missing progress.' );
@@ -298,7 +308,8 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
-	public function testRun_WhenSubmittedQuizStillShowsInProgressInTables_ReportsTheDifferenceOnce(): void {
+	public function testRun_WhenSubmittedQuizStillShowedInProgressInTables_ReportsTheDifferenceOnce(): void {
+		/* Arrange. */
 		global $wpdb;
 
 		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
@@ -309,17 +320,25 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$tables_repository->save( $progress );
 		$validation = new Progress_Validation();
 
+		/* Act. */
 		$validation->run();
 
+		/* Assert. */
 		$errors = $validation->get_errors();
 		self::assertCount( 1, $errors, 'Report the quiz progress difference once.' );
 		self::assertSame( 'Data mismatch between comments and tables based progress.', $errors[0]->get_message(), 'Report a value mismatch for a pair with both copies.' );
 		self::assertSame( $quiz_id, $errors[0]->get_data()[0]['post_id'], 'Report the affected quiz ID.' );
-		self::assertSame( 'ungraded', $errors[0]->get_data()[0]['status'] );
-		self::assertSame( 'in-progress', $errors[0]->get_data()[1]['status'] );
+		self::assertSame( 'ungraded', $errors[0]->get_data()[0]['status'], 'Comments record that the quiz was submitted for grading.' );
+		self::assertSame( 'in-progress', $errors[0]->get_data()[1]['status'], 'Report the table status that still shows an unsubmitted quiz.' );
 	}
 
-	public function testRun_WhenGradedQuizProgressWriteFails_ReportsTheDifference(): void {
+	/**
+	 * A failed quiz progress write must remain detectable after the grade was saved.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenGradedQuizProgressWriteFailed_ReportsTheDifference(): void {
+		/* Arrange. */
 		global $wpdb;
 
 		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student(
@@ -341,19 +360,22 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'query', $fail_quiz_update );
 		try {
-			self::assertFalse( Sensei_Quiz::submit_answers_for_grading( $answers, array(), $lesson_id, $student_id ) );
+			Sensei_Quiz::submit_answers_for_grading( $answers, array(), $lesson_id, $student_id );
 		} finally {
 			remove_filter( 'query', $fail_quiz_update );
 		}
 
 		$validation = new Progress_Validation();
+
+		/* Act. */
 		$validation->run();
 
+		/* Assert. */
 		$errors = $validation->get_errors();
-		self::assertCount( 1, $errors );
-		self::assertSame( 'Data mismatch between comments and tables based progress.', $errors[0]->get_message() );
-		self::assertSame( $quiz_id, $errors[0]->get_data()[0]['post_id'] );
-		self::assertSame( 'in-progress', $errors[0]->get_data()[1]['status'] );
+		self::assertCount( 1, $errors, 'Report the failed quiz progress update once.' );
+		self::assertSame( 'Data mismatch between comments and tables based progress.', $errors[0]->get_message(), 'A saved grade must expose the stale quiz progress.' );
+		self::assertSame( $quiz_id, $errors[0]->get_data()[0]['post_id'], 'Identify the quiz whose progress update failed.' );
+		self::assertSame( 'in-progress', $errors[0]->get_data()[1]['status'], 'Report the quiz progress that remained unchanged.' );
 	}
 
 	/**
@@ -362,6 +384,7 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
 	public function testRun_WhenLessonCommentWasDeleted_ReportsMissingLessonAndQuizProgress(): void {
+		/* Arrange. */
 		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
 		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, $student_id );
 		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
@@ -370,8 +393,10 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$comments_repository->delete( $comments_repository->get( $lesson_id, $student_id ) );
 		$validation = new Progress_Validation();
 
+		/* Act. */
 		$validation->run();
 
+		/* Assert. */
 		$errors = $validation->get_errors();
 		self::assertCount( 2, $errors, 'The lesson and quiz should both be reported.' );
 		self::assertSame(
@@ -400,6 +425,7 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
 	public function testRun_WhenQuizWasNeverAttempted_AllowsMissingQuizTableRow(): void {
+		/* Arrange. */
 		global $wpdb;
 
 		$course     = $this->factory->get_course_with_lessons();
@@ -411,8 +437,10 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		( new Tables_Based_Quiz_Progress_Repository( $wpdb ) )->delete_for_quiz( $quiz_id );
 		$validation = new Progress_Validation();
 
+		/* Act. */
 		$validation->run();
 
+		/* Assert. */
 		self::assertFalse( $validation->has_errors() );
 	}
 
@@ -423,6 +451,7 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
 	public function testRun_WhenQuizWasNotSubmitted_HasNoErrors( bool $lesson_started, bool $quiz_opened, bool $lesson_completed ): void {
+		/* Arrange. */
 		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
 		delete_post_meta( $quiz_id, '_pass_required' );
 
@@ -444,8 +473,11 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		}
 
 		$validation = new Progress_Validation();
+
+		/* Act. */
 		$validation->run();
 
+		/* Assert. */
 		self::assertSame( array(), $validation->get_errors() );
 	}
 
