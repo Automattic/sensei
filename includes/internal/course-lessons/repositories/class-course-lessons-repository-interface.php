@@ -93,6 +93,16 @@ interface Course_Lessons_Repository_Interface {
 	public function has_lesson_module( int $lesson_id, int $term_id ): bool;
 
 	/**
+	 * Get the modules the given lessons are in.
+	 *
+	 * @internal
+	 *
+	 * @param array $lesson_ids Lesson IDs.
+	 * @return int[] Module term IDs, each one once.
+	 */
+	public function get_lesson_module_ids( array $lesson_ids ): array;
+
+	/**
 	 * Set the prerequisite of a lesson.
 	 *
 	 * @internal

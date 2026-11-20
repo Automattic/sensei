@@ -336,11 +336,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 
 		$lesson_count = count( $lessons );
 
-		$default_args  = array(
-			'fields' => 'ids',
-		);
-		$modules       = wp_get_object_terms( $lessons, 'module', $default_args );
-		$modules_count = is_countable( $modules ) ? count( $modules ) : 0;
+		$modules_count = count( Sensei()->course_lessons_repository->get_lesson_module_ids( $lessons ) );
 
 		$totals = $this->aggregation_service->get_lesson_totals( array_map( 'intval', $lessons ) );
 

@@ -398,6 +398,31 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The Module column header counts the modules of the lessons of the course.
+	 *
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::get_columns
+	 */
+	public function testGetColumns_LessonsInTwoModulesGiven_ReturnsModuleColumnWithModuleCount(): void {
+		/* Arrange. */
+		$created               = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 3,
+				'question_count' => 0,
+				'module_count'   => 2,
+			)
+		);
+		$_GET['view']          = 'lessons';
+		$_GET['course_filter'] = $created['course_id'];
+		$table                 = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course ) );
+
+		/* Act. */
+		$columns = $table->get_columns();
+
+		/* Assert. */
+		self::assertSame( 'Module (2)', $columns['lesson_module'] );
+	}
+
+	/**
 	 * Search requests used for displayed rows and header totals.
 	 *
 	 * @return array
