@@ -50,8 +50,12 @@ class Quiz_Submission_Validation {
 		}
 
 		try {
-			$this->validate_quiz_submissions();
-			$this->validate_table_relationships();
+			Validation_Records::with_fresh_reads(
+				function (): void {
+					$this->validate_quiz_submissions();
+					$this->validate_table_relationships();
+				}
+			);
 		} catch ( RuntimeException $exception ) {
 			$this->add_error( $exception->getMessage() );
 		}

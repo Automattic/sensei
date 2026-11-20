@@ -65,20 +65,24 @@ class Progress_Validation {
 		global $wpdb;
 
 		try {
-			$this->validate_progress(
-				'course',
-				new Comments_Based_Course_Progress_Repository(),
-				new Tables_Based_Course_Progress_Repository( $wpdb )
-			);
-			$this->validate_progress(
-				'lesson',
-				new Comments_Based_Lesson_Progress_Repository(),
-				new Tables_Based_Lesson_Progress_Repository( $wpdb )
-			);
-			$this->validate_progress(
-				'quiz',
-				new Comments_Based_Quiz_Progress_Repository(),
-				new Tables_Based_Quiz_Progress_Repository( $wpdb )
+			Validation_Records::with_fresh_reads(
+				function () use ( $wpdb ): void {
+					$this->validate_progress(
+						'course',
+						new Comments_Based_Course_Progress_Repository(),
+						new Tables_Based_Course_Progress_Repository( $wpdb )
+					);
+					$this->validate_progress(
+						'lesson',
+						new Comments_Based_Lesson_Progress_Repository(),
+						new Tables_Based_Lesson_Progress_Repository( $wpdb )
+					);
+					$this->validate_progress(
+						'quiz',
+						new Comments_Based_Quiz_Progress_Repository(),
+						new Tables_Based_Quiz_Progress_Repository( $wpdb )
+					);
+				}
 			);
 		} catch ( RuntimeException $exception ) {
 			$this->add_error( $exception->getMessage() );
