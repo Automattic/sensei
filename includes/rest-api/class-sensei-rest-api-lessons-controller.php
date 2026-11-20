@@ -283,7 +283,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 			return true;
 		}
 
-		$current_course_id = isset( $request['id'] ) ? (int) get_post_meta( (int) $request['id'], '_lesson_course', true ) : 0;
+		$current_course_id = isset( $request['id'] ) ? Sensei()->course_lessons_repository->get_course_id( (int) $request['id'] ) ?? 0 : 0;
 
 		$can_edit_course = 'course' === get_post_type( $course_id ) && Sensei_Course::can_current_user_edit_course( $course_id );
 
