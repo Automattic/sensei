@@ -1537,11 +1537,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$lesson_ids = implode( ',', $lessons );
 		};
 
-		$default_args  = array(
-			'fields' => 'ids',
-		);
-		$modules       = wp_get_object_terms( $lessons, 'module', $default_args );
-		$modules_count = is_countable( $modules ) ? count( $modules ) : 0;
+		$modules_count = count( Sensei()->course_lessons_repository->get_lesson_module_ids( $lessons ) );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		$lesson_completion_info                      = $wpdb->get_row(
 			$wpdb->prepare(

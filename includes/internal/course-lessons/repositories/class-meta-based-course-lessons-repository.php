@@ -334,6 +334,22 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	}
 
 	/**
+	 * Get the modules the given lessons are in.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $lesson_ids Lesson IDs.
+	 * @return int[] Module term IDs, each one once.
+	 */
+	public function get_lesson_module_ids( array $lesson_ids ): array {
+		$module_ids = wp_get_object_terms( $lesson_ids, 'module', array( 'fields' => 'ids' ) );
+
+		return is_array( $module_ids ) ? $module_ids : array();
+	}
+
+	/**
 	 * Set the module of a lesson, replacing any module it had.
 	 *
 	 * @internal

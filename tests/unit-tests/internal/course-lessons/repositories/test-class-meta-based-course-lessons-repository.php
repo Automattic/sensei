@@ -468,6 +468,28 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A module shared by several of the lessons is returned once.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_module_ids
+	 */
+	public function testGetLessonModuleIds_TwoLessonsSharedAModule_ReturnsEachModuleOnce(): void {
+		/* Arrange. */
+		list( $shared_module_id, $other_module_id, $unused_module_id ) = $this->factory->module->create_many( 3 );
+		list( $first_lesson_id, $second_lesson_id, $third_lesson_id )  = $this->factory->lesson->create_many( 3 );
+		wp_set_object_terms( $first_lesson_id, array( $shared_module_id ), 'module' );
+		wp_set_object_terms( $second_lesson_id, array( $shared_module_id ), 'module' );
+		wp_set_object_terms( $third_lesson_id, array( $other_module_id ), 'module' );
+		wp_set_object_terms( $this->factory->lesson->create(), array( $unused_module_id ), 'module' );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_module_ids( array( $first_lesson_id, $second_lesson_id, $third_lesson_id ) );
+
+		/* Assert. */
+		sort( $actual );
+		self::assertSame( array( $shared_module_id, $other_module_id ), $actual );
+	}
+
+	/**
 	 * Setting the module of a lesson replaces the module it had instead of adding a second one.
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::set_lesson_module
