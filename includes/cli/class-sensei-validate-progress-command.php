@@ -6,6 +6,7 @@
  */
 
 use Sensei\Internal\Migration\Validations\Progress_Validation;
+use Sensei\Internal\Migration\Validations\Validation_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -29,36 +30,38 @@ class Sensei_Validate_Progress_Command {
 		$progress_validation = new Progress_Validation();
 
 		$progress_validation->run();
+		$warnings = $progress_validation->get_warnings();
+		$this->output_validation_messages( $warnings );
 
 		if ( ! $progress_validation->has_errors() ) {
-			WP_CLI::success( 'Progress data is valid.' );
+			WP_CLI::success( $warnings ? 'No other progress mismatches found.' : 'Progress data is valid.' );
 			return;
 		}
 
-		$this->output_validation_errors( $progress_validation );
+		$this->output_validation_messages( $progress_validation->get_errors() );
 
 		WP_CLI::error( 'Progress data is not valid.' );
 	}
 
 	/**
-	 * Output the validation errors.
+	 * Output validation errors or non-failing warnings.
 	 *
 	 * @since 4.19.1
 	 *
-	 * @param Progress_Validation $progress_validation Progress validation.
+	 * @param Validation_Error[] $messages Validation messages.
 	 */
-	private function output_validation_errors( Progress_Validation $progress_validation ) {
-		foreach ( $progress_validation->get_errors() as $error ) {
-			WP_CLI::warning( $error->get_message() );
+	private function output_validation_messages( array $messages ) {
+		foreach ( $messages as $message ) {
+			WP_CLI::warning( $message->get_message() );
 
-			if ( $error->has_data() ) {
-				$error_data = $error->get_data();
-				$error_data = isset( $error_data[0] ) && is_array( $error_data[0] ) ? $error_data : [ $error_data ];
+			if ( $message->has_data() ) {
+				$message_data = $message->get_data();
+				$message_data = isset( $message_data[0] ) && is_array( $message_data[0] ) ? $message_data : array( $message_data );
 
 				WP_CLI\Utils\format_items(
 					'table',
-					$error_data,
-					array_keys( $error_data[0] )
+					$message_data,
+					array_keys( $message_data[0] )
 				);
 			}
 		}
