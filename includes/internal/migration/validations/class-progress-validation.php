@@ -283,32 +283,20 @@ class Progress_Validation {
 			$comments_to_compare['started_at'] = $tables['started_at'];
 		}
 
-		// Comments share one start date for the lesson and quiz. Saving quiz progress can overwrite
-		// the earlier lesson start, while HPPS keeps the two dates separately.
-		if ( 'lesson' === $comments['type']
-			&& null !== $comments['started_at']
-			&& null !== $tables['started_at']
-			&& $tables['started_at'] < $comments['started_at']
-		) {
-			$quiz_id       = Validation_Records::get_quiz_id( $comments['post_id'] );
-			$quiz_progress = $quiz_id ? Validation_Records::get_tables_progress( 'quiz', $quiz_id, $comments['user_id'] ) : null;
-			$quiz_start    = $quiz_progress ? $quiz_progress->get_started_at() : null;
-
+		if ( $this->has_unverifiable_lesson_start( $comments, $tables ) ) {
 			// A matching quiz start explains the difference, but the lost lesson start means
 			// we cannot verify that the HPPS lesson date is correct. Report a warning instead.
-			if ( $quiz_start && gmdate( 'Y-m-d H:i:s', $quiz_start->getTimestamp() ) === $comments['started_at'] ) {
-				$this->warnings[] = new Validation_Error(
-					'Lesson start date could not be verified because the shared comment now records the quiz start.',
-					array(
-						'lesson_id' => $comments['post_id'],
-						'user_id'   => $comments['user_id'],
-					)
-				);
+			$this->warnings[] = new Validation_Error(
+				'Lesson start date could not be verified because the shared comment now records the quiz start.',
+				array(
+					'lesson_id' => $comments['post_id'],
+					'user_id'   => $comments['user_id'],
+				)
+			);
 
-				// Exclude only this date from comparison; still check status and completion.
-				// This changes the comparison data without saving either stored record.
-				$comments_to_compare['started_at'] = $tables['started_at'];
-			}
+			// Exclude only this date from comparison; still check status and completion.
+			// This changes the comparison data without saving either stored record.
+			$comments_to_compare['started_at'] = $tables['started_at'];
 		}
 
 		if ( $comments_to_compare !== $tables ) {
@@ -320,6 +308,31 @@ class Progress_Validation {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Check whether a quiz start explains a later lesson start in comments.
+	 *
+	 * @param array $comments Comments progress data.
+	 * @param array $tables   Tables progress data.
+	 * @return bool
+	 */
+	private function has_unverifiable_lesson_start( array $comments, array $tables ): bool {
+		// Comments share one start date for the lesson and quiz. Saving quiz progress can overwrite
+		// the earlier lesson start, while HPPS keeps the two dates separately.
+		if ( 'lesson' !== $comments['type']
+			|| null === $comments['started_at']
+			|| null === $tables['started_at']
+			|| $tables['started_at'] >= $comments['started_at']
+		) {
+			return false;
+		}
+
+		$quiz_id       = Validation_Records::get_quiz_id( $comments['post_id'] );
+		$quiz_progress = $quiz_id ? Validation_Records::get_tables_progress( 'quiz', $quiz_id, $comments['user_id'] ) : null;
+		$quiz_start    = $quiz_progress ? $quiz_progress->get_started_at() : null;
+
+		return $quiz_start && gmdate( 'Y-m-d H:i:s', $quiz_start->getTimestamp() ) === $comments['started_at'];
 	}
 
 	/**
