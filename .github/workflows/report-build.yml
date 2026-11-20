@@ -6,15 +6,19 @@ on:
         types:
             - completed
 
+permissions: {}
+
 jobs:
     report-build:
+        permissions:
+            actions: read
+            statuses: write
         name: Report Plugin Build
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v7.0.1
             - name: Publish commit status with the link to download the plugin
               id: plugin_artifact
-              uses: Automattic/github-action-report-artifact@v0
+              uses: Automattic/github-action-report-artifact@07961cd3ff2862903372709b20777da79ce0b576 # v0
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   artifact-name: sensei-lms-${{ github.event.workflow_run.head_sha }}

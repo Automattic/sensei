@@ -4,11 +4,15 @@ on:
     pull_request:
         types: [closed]
 
+permissions: {}
+
 jobs:
     closeIssueOnPrMergeTrigger:
+        permissions:
+            issues: write
         runs-on: ubuntu-latest
         steps:
             - name: Closes issues related to a merged pull request.
-              uses: docker://ghcr.io/automattic/gha-mjolnir
+              uses: docker://ghcr.io/automattic/gha-mjolnir@sha256:edb5df6f173abbe875918a69eeac5da45fa5fe041fb2eb0bfe68a926c662fbd9 # latest
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
