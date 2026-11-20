@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fixed a login loop for teachers using a two-factor plugin who log in on the My Courses page.
