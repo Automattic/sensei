@@ -7,14 +7,11 @@
 
 namespace Sensei\Internal\Migration\Validations;
 
-use DateTimeImmutable;
-use DateTimeZone;
 use RuntimeException;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
-use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
 
 /**
  * Class responsible for validation of the migrated quiz submission data.
@@ -124,7 +121,7 @@ class Quiz_Submission_Validation {
 		// Scan HPPS for missing comments submissions. Compare matching submissions here
 		// so each quiz/student pair's final grade, answers, and question grades are checked once.
 		foreach ( Validation_Records::get_submission_rows() as $record ) {
-			$quiz_id             = (int) $record->post_id;
+			$quiz_id             = (int) $record->quiz_id;
 			$user_id             = (int) $record->user_id;
 			$comments_submission = Validation_Records::get_comments_submission( $quiz_id, $user_id );
 			if ( ! $comments_submission ) {
@@ -133,14 +130,7 @@ class Quiz_Submission_Validation {
 			}
 
 			// The row is already loaded; compare its stored values instead of querying or reading a cached copy.
-			$tables_submission = new Tables_Based_Submission(
-				(int) $record->id,
-				$quiz_id,
-				$user_id,
-				$record->final_grade,
-				new DateTimeImmutable( $record->created_at, new DateTimeZone( 'UTC' ) ),
-				new DateTimeImmutable( $record->updated_at, new DateTimeZone( 'UTC' ) )
-			);
+			$tables_submission = Validation_Records::create_tables_submission( $record );
 
 			$this->compare_submission( $comments_submission, $tables_submission );
 

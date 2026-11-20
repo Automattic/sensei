@@ -91,7 +91,7 @@ class Validation_Records {
 		global $wpdb;
 
 		return self::read(
-			'SELECT id, quiz_id AS post_id, user_id, final_grade, created_at, updated_at
+			'SELECT id, quiz_id, user_id, final_grade, created_at, updated_at
 			FROM %i
 			WHERE id > %d
 			ORDER BY id
@@ -437,11 +437,18 @@ class Validation_Records {
 			array( $wpdb->prefix . 'sensei_lms_quiz_submissions', $quiz_id, $user_id ),
 			'quiz submission table'
 		);
-		if ( ! $rows ) {
-			return null;
-		}
+		return $rows ? self::create_tables_submission( $rows[0] ) : null;
+	}
 
-		$row      = $rows[0];
+	/**
+	 * Hydrate an existing submission model from a freshly read table row.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param object $row The stored submission row.
+	 * @return Tables_Based_Submission
+	 */
+	public static function create_tables_submission( object $row ): Tables_Based_Submission {
 		$timezone = new DateTimeZone( 'UTC' );
 
 		return new Tables_Based_Submission(
