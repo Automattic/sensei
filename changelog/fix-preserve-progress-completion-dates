@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Preserve recorded completion dates when saving student progress.
