@@ -160,7 +160,7 @@ class Table_Reading_Aggregate_Submission_Repository implements Submission_Reposi
 	 * Delete a student's submission and its grades and answers for one quiz.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The student ID.
@@ -175,7 +175,7 @@ class Table_Reading_Aggregate_Submission_Repository implements Submission_Reposi
 	 * Delete every student's submission, grades, and answers for one quiz.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.

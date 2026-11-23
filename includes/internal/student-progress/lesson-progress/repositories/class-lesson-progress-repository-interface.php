@@ -80,7 +80,7 @@ interface Lesson_Progress_Repository_Interface {
 	 * Delete progress for a student, including when the selected read store has no record.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id   The student ID.

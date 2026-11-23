@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.28.0
  */
 class Meta_Based_Course_Lessons_SQL_Service implements Course_Lessons_SQL_Service_Interface {
 	/**
@@ -46,7 +46,7 @@ class Meta_Based_Course_Lessons_SQL_Service implements Course_Lessons_SQL_Servic
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param string $alias Alias the query gives to the table.
 	 * @return array{table: string, lesson_id: string, course_id: string, where: string} Table name, column expressions and condition.

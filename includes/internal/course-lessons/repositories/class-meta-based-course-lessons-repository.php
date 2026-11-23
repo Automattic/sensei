@@ -338,7 +338,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param array $lesson_ids Lesson IDs.
 	 * @return int[] Module term IDs, each one once.

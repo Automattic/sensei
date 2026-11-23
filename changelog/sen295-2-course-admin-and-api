@@ -1,4 +1,0 @@
-Significance: minor
-Type: deprecated
-
-Deprecate the `sensei_grading_filter_lessons`, `sensei_learners_filter_lessons` and `sensei_analysis_course_filter_lessons` filters in favor of `sensei_grading_filter_lessons_query_args`, `sensei_students_filter_lessons_query_args` and `sensei_reports_course_filter_lessons_query_args`, which get the course in the `sensei_course` argument.

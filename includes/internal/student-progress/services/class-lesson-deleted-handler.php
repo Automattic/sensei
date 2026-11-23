@@ -59,7 +59,7 @@ class Lesson_Deleted_Handler {
 	/**
 	 * Clean quiz data before WordPress removes the lesson and its quiz.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param mixed    $delete Whether an earlier filter has handled deletion, or null to continue.
 	 * @param \WP_Post $post   The post being permanently deleted.

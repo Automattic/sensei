@@ -560,7 +560,7 @@ class Sensei_Quiz {
 	 * Get the submitted question order retained after a failed form write.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $user_id Student ID.

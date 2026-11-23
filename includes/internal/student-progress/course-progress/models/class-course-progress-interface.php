@@ -48,7 +48,7 @@ interface Course_Progress_Interface {
 	 * Return the course to in-progress and retain its original start date.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 */
 	public function reopen(): void;
 

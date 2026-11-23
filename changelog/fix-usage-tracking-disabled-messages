@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fixed a PHP warning in usage tracking when messages are disabled.

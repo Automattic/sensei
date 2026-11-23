@@ -74,6 +74,10 @@ class Sensei_Messages {
 		add_filter( 'get_comments_number', array( $this, 'message_reply_count' ), 100, 2 );
 		add_filter( 'comments_open', array( $this, 'message_replies_open' ), 100, 2 );
 		add_action( 'pre_get_posts', array( $this, 'only_show_messages_to_owner' ) );
+		add_filter( 'posts_where', array( $this, 'exclude_unreadable_messages' ), 10, 2 );
+		add_action( 'pre_get_comments', array( $this, 'exclude_unreadable_message_replies' ) );
+		add_filter( 'wp_count_comments', array( $this, 'count_comments_for_current_user' ), 10, 2 );
+		add_filter( 'get_comment', array( $this, 'hide_unreadable_message_reply' ) );
 		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
 		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
 		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
@@ -103,6 +107,198 @@ class Sensei_Messages {
 		}
 
 		return $query_vars;
+	}
+
+	/**
+	 * Exclude the messages the current user cannot read from post queries.
+	 *
+	 * Runs for every WP_Query that applies filters, not only the main query, so messages stay
+	 * private in queries built by other plugins and APIs. Excluding them in the SQL keeps the
+	 * page sizes and totals of those queries correct.
+	 *
+	 * @since 4.28.0
+	 *
+	 * @internal
+	 *
+	 * @param string        $where The WHERE clause of the query.
+	 * @param WP_Query|null $query The query.
+	 * @return string
+	 */
+	public function exclude_unreadable_messages( $where, $query = null ) {
+		global $wpdb;
+
+		// Other code can apply this filter without the query.
+		if ( ! $query instanceof WP_Query || current_user_can( 'manage_sensei' ) ) {
+			return $where;
+		}
+
+		// A query for other post types cannot return messages. Neither can a query with no post type, which is for
+		// posts, pages or attachments, unless it is a taxonomy query, which searches the post types of the taxonomy.
+		$post_types = array_filter( (array) $query->get( 'post_type' ) );
+		if ( ! array_intersect( $post_types, array( $this->post_type, 'any' ) ) && ( $post_types || ! $query->is_tax ) ) {
+			return $where;
+		}
+
+		if ( ! is_user_logged_in() ) {
+			return $where . $wpdb->prepare( ' AND %i.post_type != %s', $wpdb->posts, $this->post_type );
+		}
+
+		$user_login = wp_get_current_user()->user_login;
+
+		// One subquery per meta key, so that each one uses the meta key index.
+		return $where . $wpdb->prepare(
+			' AND ( %i.post_type != %s OR %i.ID IN ( SELECT post_id FROM %i WHERE meta_key = %s AND meta_value = %s ) OR %i.ID IN ( SELECT post_id FROM %i WHERE meta_key = %s AND meta_value = %s ) )',
+			$wpdb->posts,
+			$this->post_type,
+			$wpdb->posts,
+			$wpdb->postmeta,
+			'_sender',
+			$user_login,
+			$wpdb->posts,
+			$wpdb->postmeta,
+			'_receiver',
+			$user_login
+		);
+	}
+
+	/**
+	 * Exclude the replies to the messages the current user cannot read from comment queries.
+	 *
+	 * Excluding them before the query runs keeps its page sizes and totals correct.
+	 *
+	 * @since 4.28.0
+	 *
+	 * @internal
+	 *
+	 * @param WP_Comment_Query $query The comment query.
+	 */
+	public function exclude_unreadable_message_replies( $query ) {
+		if ( ! $query instanceof WP_Comment_Query ) {
+			return;
+		}
+
+		// A query for one post that is not a message cannot return replies.
+		$post_id = absint( $query->query_vars['post_id'] );
+		if ( $post_id && get_post_type( $post_id ) !== $this->post_type ) {
+			return;
+		}
+
+		$message_ids = $this->get_unreadable_message_ids();
+		if ( $message_ids ) {
+			$query->query_vars['post__not_in'] = array_merge( wp_parse_id_list( $query->query_vars['post__not_in'] ), $message_ids );
+		}
+	}
+
+	/**
+	 * Count the comments for a user who cannot read every message, without the count cache of WordPress.
+	 *
+	 * That cache holds one count for all users, so it must only hold the count of the users who read
+	 * every reply.
+	 *
+	 * @since 4.28.0
+	 *
+	 * @internal
+	 *
+	 * @param array|object $comment_counts The counts set by other filters, empty to let WordPress count.
+	 * @param int          $post_id        The post the comments are counted for, 0 for the whole site.
+	 * @return array|object
+	 */
+	public function count_comments_for_current_user( $comment_counts, $post_id = 0 ) {
+		$post_id = absint( $post_id );
+		if ( ! empty( $comment_counts ) || ( $post_id && get_post_type( $post_id ) !== $this->post_type ) ) {
+			return $comment_counts;
+		}
+
+		if ( current_user_can( 'manage_sensei' ) || current_user_can( 'manage_options' ) ) {
+			return $comment_counts;
+		}
+
+		// The same shape that wp_count_comments() returns.
+		$comment_counts              = get_comment_count( $post_id );
+		$comment_counts['moderated'] = $comment_counts['awaiting_moderation'];
+		unset( $comment_counts['awaiting_moderation'] );
+
+		return (object) $comment_counts;
+	}
+
+	/**
+	 * Get the IDs of the messages whose replies the current user cannot read.
+	 *
+	 * @return int[]
+	 */
+	private function get_unreadable_message_ids() {
+		// Background jobs have no current user and still need the replies, for example to delete them with their message.
+		if ( wp_doing_cron() || ( defined( 'WP_CLI' ) && WP_CLI ) || current_user_can( 'manage_sensei' ) || current_user_can( 'manage_options' ) ) {
+			return array();
+		}
+
+		$query_args = array(
+			'post_type'      => $this->post_type,
+			'post_status'    => array_keys( get_post_stati() ),
+			'fields'         => 'ids',
+			'posts_per_page' => -1,
+			'orderby'        => 'none',
+		);
+
+		// A logged-out visitor cannot read any message. Other users cannot read the ones they did not send or receive.
+		if ( is_user_logged_in() ) {
+			$user_login               = wp_get_current_user()->user_login;
+			$query_args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Limited to the message post type.
+				array(
+					'key'     => '_sender',
+					'value'   => $user_login,
+					'compare' => '!=',
+				),
+				array(
+					'key'     => '_receiver',
+					'value'   => $user_login,
+					'compare' => '!=',
+				),
+			);
+		}
+
+		return get_posts( $query_args );
+	}
+
+	/**
+	 * Hide the replies to messages the current user cannot read.
+	 *
+	 * Runs wherever a comment is loaded, by ID or through a comment query, so replies stay
+	 * private in routes built by other plugins and APIs.
+	 *
+	 * @since 4.28.0
+	 *
+	 * @internal
+	 *
+	 * @param WP_Comment|null $comment The comment.
+	 * @return WP_Comment|null
+	 */
+	public function hide_unreadable_message_reply( $comment ) {
+		if ( ! $comment instanceof WP_Comment || get_post_type( (int) $comment->comment_post_ID ) !== $this->post_type ) {
+			return $comment;
+		}
+
+		return $this->can_read_message_replies( (int) $comment->comment_post_ID ) ? $comment : null;
+	}
+
+	/**
+	 * Check if the replies to a message can be read in the current request.
+	 *
+	 * @param int $message_id The message ID.
+	 * @return bool
+	 */
+	private function can_read_message_replies( int $message_id ) {
+		// Background jobs have no current user and still need the replies, for example to delete them with their message.
+		if ( wp_doing_cron() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+			return true;
+		}
+
+		if ( current_user_can( 'manage_sensei' ) || $this->view_message( $message_id ) ) {
+			return true;
+		}
+
+		// The REST API also lets site administrators post a reply, and they must be able to load it.
+		return current_user_can( 'manage_options' );
 	}
 
 	public function only_show_messages_to_owner( $query ) {
@@ -443,15 +639,15 @@ class Sensei_Messages {
 
 	public function message_reply_received( $comment_id = 0 ) {
 
-		// Get comment object.
-		$comment = get_comment( $comment_id );
+		// get_comment() hides the reply from an author who cannot read the message, and that is the reply to mark as spam.
+		$comment = WP_Comment::get_instance( (int) $comment_id );
 
-		if ( is_null( $comment ) ) {
+		if ( ! $comment ) {
 			return;
 		}
 
 		// Get message post object.
-		$message = get_post( $comment->comment_post_ID );
+		$message = get_post( (int) $comment->comment_post_ID );
 
 		if ( $message->post_type != $this->post_type ) {
 			return;
@@ -461,11 +657,11 @@ class Sensei_Messages {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verification.
 		$nonce_verified = ! empty( $_POST['sensei_message_nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['sensei_message_nonce'] ), 'sensei_post_message_reply' );
 
-		$comment_author   = get_userdata( $comment->user_id );
+		$comment_author   = get_userdata( (int) $comment->user_id );
 		$user_can_comment = in_array( $comment_author->user_login, [ get_post_meta( $message->ID, '_receiver', true ), get_post_meta( $message->ID, '_sender', true ) ], true );
 
 		if ( ( $should_verify_nonce && ! $nonce_verified ) || ! $user_can_comment ) {
-			wp_set_comment_status( $comment_id, 'spam' );
+			$this->mark_reply_as_spam( (int) $comment_id );
 			return;
 		}
 
@@ -504,8 +700,22 @@ class Sensei_Messages {
 		$user_can_comment = in_array( $comment_author->user_login, [ get_post_meta( $message->ID, '_receiver', true ), get_post_meta( $message->ID, '_sender', true ) ], true );
 
 		if ( ! $user_can_comment ) {
-			wp_set_comment_status( $comment->comment_ID, 'spam' );
+			$this->mark_reply_as_spam( (int) $comment->comment_ID );
 		}
+	}
+
+	/**
+	 * Mark a message reply as spam.
+	 *
+	 * The author of a rejected reply cannot read the message, so the reply is hidden from them
+	 * and WordPress could not load it to change its status.
+	 *
+	 * @param int $comment_id The reply ID.
+	 */
+	private function mark_reply_as_spam( int $comment_id ) {
+		remove_filter( 'get_comment', array( $this, 'hide_unreadable_message_reply' ) );
+		wp_set_comment_status( $comment_id, 'spam' );
+		add_filter( 'get_comment', array( $this, 'hide_unreadable_message_reply' ) );
 	}
 
 	/**
@@ -731,23 +941,55 @@ class Sensei_Messages {
 			$my_courses_url = get_permalink( $my_courses_page_id );
 		}
 
-		if ( is_single() && is_singular( $this->post_type )
-			|| is_post_type_archive( $this->post_type ) ) {
+		$message_id = $this->get_requested_message_id();
+
+		if ( $message_id || is_post_type_archive( $this->post_type ) ) {
 
 			// The message slug is built from the message body, so it must not reach a visitor who
 			// cannot read the message. Send them back through the ID instead of the pretty permalink.
-			$permalink = is_singular( $this->post_type )
-				? add_query_arg( 'p', get_queried_object_id(), home_url( '/' ) )
+			// Name the post type, because WordPress resolves a bare `?p=ID` only for public post types.
+			$permalink = $message_id
+				? add_query_arg(
+					array(
+						'post_type' => $this->post_type,
+						'p'         => $message_id,
+					),
+					home_url( '/' )
+				)
 				: get_post_type_archive_link( $this->post_type );
 
 			if ( isset( $my_courses_url ) ) {
-				wp_safe_redirect( add_query_arg( 'redirect_to', $permalink, $my_courses_url ), 303 );
+				wp_safe_redirect( add_query_arg( 'redirect_to', rawurlencode( (string) $permalink ), $my_courses_url ), 303 );
 				exit;
 			} else {
 				wp_safe_redirect( home_url( '/wp-login.php' ), 303 );
 				exit;
 			}
 		}
+	}
+
+	/**
+	 * Get the ID of the single message requested by the main query, if any.
+	 *
+	 * A visitor who cannot read the message gets a 404 with no queried object, so read the
+	 * request's query vars instead.
+	 *
+	 * @return int The message ID, or 0 when the request is not for a single message.
+	 */
+	private function get_requested_message_id() {
+		if ( get_query_var( 'post_type' ) !== $this->post_type ) {
+			return 0;
+		}
+
+		if ( get_query_var( 'p' ) ) {
+			$message = get_post( (int) get_query_var( 'p' ) );
+		} elseif ( get_query_var( 'name' ) ) {
+			$message = get_page_by_path( get_query_var( 'name' ), OBJECT, $this->post_type );
+		} else {
+			return 0;
+		}
+
+		return $message instanceof WP_Post && $message->post_type === $this->post_type ? $message->ID : 0;
 	}
 
 	/**
@@ -767,6 +1009,9 @@ class Sensei_Messages {
 		$post_id = (int) get_query_var( 'p' );
 		if ( ! $post_id && is_singular() ) {
 			$post_id = get_queried_object_id();
+		}
+		if ( ! $post_id ) {
+			$post_id = $this->get_requested_message_id();
 		}
 
 		if ( ! $post_id || get_post_type( $post_id ) !== $this->post_type ) {

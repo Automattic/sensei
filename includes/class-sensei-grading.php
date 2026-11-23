@@ -818,7 +818,7 @@ class Sensei_Grading {
 			/**
 			 * Filter the arguments used to query for lessons in the grading dropdown.
 			 *
-			 * @since $$next-version$$
+			 * @since 4.28.0
 			 *
 			 * @hook sensei_grading_filter_lessons_query_args
 			 *
@@ -838,7 +838,7 @@ class Sensei_Grading {
 				/**
 				 * Filter the arguments used to query for lessons in the grading dropdown.
 				 *
-				 * @deprecated $$next-version$$ Use sensei_grading_filter_lessons_query_args instead.
+				 * @deprecated 4.28.0 Use sensei_grading_filter_lessons_query_args instead.
 				 *
 				 * @hook sensei_grading_filter_lessons
 				 *
@@ -848,7 +848,7 @@ class Sensei_Grading {
 				$lesson_args = apply_filters_deprecated(
 					'sensei_grading_filter_lessons',
 					array( $lesson_args ),
-					'$$next-version$$',
+					'4.28.0',
 					'sensei_grading_filter_lessons_query_args'
 				);
 			}
@@ -1345,6 +1345,10 @@ class Sensei_Grading {
 					if ( ! in_array( $check_answer, $right_answer ) ) {
 						$all_correct = false;
 					}
+				}
+				// Repeating one right answer must not stand in for the others.
+				if ( $all_correct && array_diff( $right_answer, $answer ) ) {
+					$all_correct = false;
 				}
 				// If all correct then grade
 				if ( $all_correct ) {

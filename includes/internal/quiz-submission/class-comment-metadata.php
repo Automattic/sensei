@@ -22,13 +22,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * repeat save succeeds while a failed required write stops the operation.
  *
  * @internal
- * @since $$next-version$$
+ * @since 4.28.0
  */
 class Comment_Metadata {
 	/**
 	 * Read metadata before changing a quiz record.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int                  $comment_id Comment ID.
 	 * @param string               $key Metadata key.
@@ -64,7 +64,7 @@ class Comment_Metadata {
 	/**
 	 * Save metadata only when the requested value differs from the stored value.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int                  $comment_id Comment ID.
 	 * @param string               $key Metadata key.
@@ -102,7 +102,7 @@ class Comment_Metadata {
 	/**
 	 * Clear a final grade, accepting metadata that is already absent.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int                  $comment_id Comment ID.
 	 * @param Submission_Interface $submission Submission identity.
@@ -134,7 +134,7 @@ class Comment_Metadata {
 	/**
 	 * Delete required quiz metadata, accepting a key that is already absent.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int                  $comment_id Comment ID.
 	 * @param string               $key Metadata key.

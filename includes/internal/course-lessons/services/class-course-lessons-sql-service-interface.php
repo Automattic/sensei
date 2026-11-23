@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.28.0
  */
 interface Course_Lessons_SQL_Service_Interface {
 	/**

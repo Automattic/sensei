@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Report failed quiz resets when progress updates or quiz data deletion fails.

@@ -229,19 +229,35 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$this->assertEquals( 401, $response->get_status() );
 
-		$first_user = $this->factory->user->create(
+		$other_user = $this->factory->user->create(
 			array(
 				'role'       => 'subscriber',
-				'user_login' => 'first',
+				'user_login' => 'other',
 			)
 		);
 
-		wp_set_current_user( $first_user );
+		wp_set_current_user( $other_user );
 
 		$request  = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages/' . $message_id );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( 403, $response->get_status() );
+	}
+
+	/**
+	 * Tests that the author of a message post who is not its sender or receiver cannot read it.
+	 * WordPress can reassign the author when a user is deleted.
+	 *
+	 * @covers Sensei_REST_API_Messages_Controller::get_item_permissions_check
+	 */
+	public function testGetItemPermissionsCheck_AuthorOutsideTheConversationRequestedMessage_ReturnsForbidden() {
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'subscriber' ) ) );
+		$message_id = $this->create_sensei_message( 'Message of a deleted user', 'first' );
+		$request    = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages/' . $message_id );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 403, $response->get_status() );
 	}
 
 	/**

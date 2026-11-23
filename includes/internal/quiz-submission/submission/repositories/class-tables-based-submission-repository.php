@@ -345,7 +345,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * Delete a student's submission and its grades and answers for one quiz.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The student ID.
@@ -366,7 +366,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * Delete every student's submission, grades, and answers for one quiz.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @throws Persistence_Exception If submissions cannot be read or required data cannot be deleted.

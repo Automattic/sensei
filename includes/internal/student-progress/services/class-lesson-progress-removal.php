@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Remove a student's lesson progress and associated quiz data.
  *
  * @internal
- * @since $$next-version$$
+ * @since 4.28.0
  */
 class Lesson_Progress_Removal {
 	/**
@@ -64,7 +64,7 @@ class Lesson_Progress_Removal {
 	/**
 	 * Delete a student's lesson progress and any remaining quiz data.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id   The student ID.

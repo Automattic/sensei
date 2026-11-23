@@ -33,7 +33,7 @@ use Sensei\Internal\Student_Progress\Progress_Start_Date;
  * Stored IDs must stay unchanged: repository lookup filters can redirect reads to other records.
  *
  * @internal
- * @since $$next-version$$
+ * @since 4.28.0
  */
 class Validation_Records {
 	private const BATCH_SIZE = 200;
@@ -41,7 +41,7 @@ class Validation_Records {
 	/**
 	 * Get the comment records of a given activity type.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param string $comment_type The Sensei activity comment type.
 	 * @return Generator<int, object>
@@ -63,7 +63,7 @@ class Validation_Records {
 	/**
 	 * Get the HPPS progress records of a given type.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param string $type The progress type.
 	 * @return Generator<int, object>
@@ -85,7 +85,7 @@ class Validation_Records {
 	/**
 	 * Get the HPPS quiz submission records.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @return Generator<int, object>
 	 */
@@ -106,7 +106,7 @@ class Validation_Records {
 	/**
 	 * Get the HPPS answer rows whose submission no longer exists.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @return Generator<int, object>
 	 */
@@ -131,7 +131,7 @@ class Validation_Records {
 	/**
 	 * Get the HPPS grade rows whose answer no longer exists.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @return Generator<int, object>
 	 */
@@ -156,7 +156,7 @@ class Validation_Records {
 	/**
 	 * Get a lesson's quiz using the same status and title ordering as the lesson lookup.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @return int The quiz ID, or zero when no quiz exists.
@@ -208,7 +208,7 @@ class Validation_Records {
 	/**
 	 * Read a single metadata value without populating or consulting caches.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param string $type      The metadata type, post or comment.
 	 * @param int    $object_id The object ID.
@@ -260,7 +260,7 @@ class Validation_Records {
 	/**
 	 * Read comments progress and hydrate the existing progress model.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param string $type    The progress type.
 	 * @param int    $post_id The content ID.
@@ -305,7 +305,7 @@ class Validation_Records {
 	/**
 	 * Read a matching progress table row directly.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param string $type    The progress type.
 	 * @param int    $post_id The content ID.
@@ -327,7 +327,7 @@ class Validation_Records {
 	/**
 	 * Hydrate an existing progress model from a freshly read table row.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param string $type The progress type.
 	 * @param object $row  The stored progress row.
@@ -357,7 +357,7 @@ class Validation_Records {
 	/**
 	 * Read a comments submission, including the metadata identifying it as a submission.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The student ID.
@@ -391,7 +391,7 @@ class Validation_Records {
 	/**
 	 * Read a matching HPPS submission directly.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The student ID.
@@ -411,7 +411,7 @@ class Validation_Records {
 	/**
 	 * Hydrate an existing submission model from a freshly read table row.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param object $row The stored submission row.
 	 * @return Tables_Based_Submission
@@ -432,7 +432,7 @@ class Validation_Records {
 	/**
 	 * Read all answers for a submission from its own store.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int    $submission_id The submission ID.
 	 * @param string $store         The storage source, comments or tables.
@@ -475,7 +475,7 @@ class Validation_Records {
 	/**
 	 * Read all grades reachable through a submission's answers.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int    $submission_id The submission ID.
 	 * @param string $store         The storage source, comments or tables.

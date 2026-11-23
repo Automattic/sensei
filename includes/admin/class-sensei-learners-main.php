@@ -803,7 +803,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		/**
 		 * Filter arguments for the lesson query on the student management screen.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.28.0
 		 *
 		 * @hook sensei_students_filter_lessons_query_args
 		 *
@@ -825,7 +825,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			/**
 			 * Filter arguments for the lesson query on the student management screen.
 			 *
-			 * @deprecated $$next-version$$ Use sensei_students_filter_lessons_query_args instead.
+			 * @deprecated 4.28.0 Use sensei_students_filter_lessons_query_args instead.
 			 *
 			 * @hook sensei_learners_filter_lessons
 			 *
@@ -835,7 +835,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$lesson_args = apply_filters_deprecated(
 				'sensei_learners_filter_lessons',
 				array( $lesson_args ),
-				'$$next-version$$',
+				'4.28.0',
 				'sensei_students_filter_lessons_query_args'
 			);
 		}

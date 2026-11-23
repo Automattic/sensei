@@ -12,6 +12,7 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	use Sensei_Progress_Insert_Failure_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use Sensei_Test_Redirect_Helpers;
 
 	/**
 	 * Test factory.
@@ -434,6 +435,81 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A nonce issued while registration was open must not create an account
+	 * once the site has closed registration.
+	 *
+	 * @covers Sensei_Frontend::sensei_process_registration
+	 */
+	public function testSenseiProcessRegistration_RegistrationDisabled_DoesNotCreateUser() {
+		$this->submitRegistration();
+		add_filter( 'pre_option_users_can_register', '__return_zero' );
+
+		$this->processRegistration();
+
+		$this->assertFalse( username_exists( 'newlearner' ) );
+	}
+
+	/**
+	 * Plugins that reject registrations through the core registration hooks
+	 * also reject Sensei's registration form.
+	 *
+	 * @covers Sensei_Frontend::sensei_process_registration
+	 * @dataProvider providerCoreRegistrationHooks
+	 *
+	 * @param string $hook            Core hook that rejects the registration.
+	 * @param int    $errors_position Position of the WP_Error among the hook arguments.
+	 */
+	public function testSenseiProcessRegistration_CoreRegistrationHookRejected_DoesNotCreateUserAndShowsError( string $hook, int $errors_position ) {
+		add_filter( 'pre_option_users_can_register', '__return_true' );
+		add_filter(
+			$hook,
+			function ( ...$args ) use ( $errors_position ) {
+				$args[ $errors_position ]->add( 'test_rejected', 'Registration rejected by test.' );
+				return $args[0];
+			},
+			10,
+			3
+		);
+		$notices = array();
+		add_filter(
+			'sensei_notice',
+			function ( $notice ) use ( &$notices ) {
+				$notices[] = $notice['content'];
+
+				// Returning null keeps the notice out of the shared notices object.
+				return null;
+			}
+		);
+		$this->submitRegistration();
+
+		$this->processRegistration();
+
+		$this->assertFalse( username_exists( 'newlearner' ), 'The user should not be created.' );
+		$this->assertContains( 'Registration rejected by test.', $notices, 'The error should be shown.' );
+	}
+
+	public function providerCoreRegistrationHooks(): array {
+		return array(
+			'registration_errors filter' => array( 'registration_errors', 0 ),
+			'register_post action'       => array( 'register_post', 2 ),
+		);
+	}
+
+	/**
+	 * A visitor can still register when registration is open and no check rejects it.
+	 *
+	 * @covers Sensei_Frontend::sensei_process_registration
+	 */
+	public function testSenseiProcessRegistration_RegistrationEnabledAndNotRejected_CreatesUser() {
+		add_filter( 'pre_option_users_can_register', '__return_true' );
+		$this->submitRegistration();
+
+		$this->processRegistration();
+
+		$this->assertNotFalse( username_exists( 'newlearner' ) );
+	}
+
+	/**
 	 * Create a course with the given number of lessons and no quiz questions.
 	 *
 	 * @param int $lesson_count Lessons to create.
@@ -490,5 +566,30 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 		$_POST['course_complete']                         = 'Mark as Complete';
 		$_POST['course_complete_id']                      = $course_id;
 		$_POST['woothemes_sensei_complete_course_noonce'] = wp_create_nonce( 'woothemes_sensei_complete_course_noonce' );
+	}
+
+	/**
+	 * Populate the request as the logged-out "Register" form submission does.
+	 */
+	private function submitRegistration() {
+		$_POST['sensei_reg_username'] = 'newlearner';
+		$_POST['sensei_reg_email']    = 'newlearner@example.com';
+		$_POST['sensei_reg_password'] = 'password';
+		$_POST['_wpnonce']            = wp_create_nonce( 'sensei-register' );
+	}
+
+	/**
+	 * Run the registration handler without sending cookies or exiting on redirect.
+	 */
+	private function processRegistration() {
+		add_filter( 'send_auth_cookies', '__return_false' );
+		$this->prevent_wp_redirect();
+
+		try {
+			Sensei()->frontend->sensei_process_registration();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			// The handler redirects and exits after registering.
+			unset( $e );
+		}
 	}
 }

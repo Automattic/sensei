@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 4.27.0
+Stable tag: 4.28.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -139,6 +139,33 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 4. Quiz Editor
 
 == Changelog ==
+
+### 4.28.0 - 2026-11-23
+#### Security
+- Hide private messages and their replies from users who are not part of the conversation wherever they are loaded, not only on the messages pages.
+- Require every right answer when auto-grading multiple choice questions, so repeating one right answer no longer scores full marks.
+- Respect the site's registration setting and core registration checks in the Sensei registration form.
+
+#### Changed
+- HPPS: Delete quiz submissions, answers, and grades when a lesson is permanently deleted. [#8460](https://github.com/Automattic/sensei/pull/8460)
+- HPPS: Detect missing or mismatched progress and quiz data in either store during WP-CLI validation. [#8460](https://github.com/Automattic/sensei/pull/8460)
+- Link Sensei Pro upsells to plans and add direct checkout to the course wizard. [#8455](https://github.com/Automattic/sensei/pull/8455)
+
+#### Deprecated
+- Deprecate the `sensei_grading_filter_lessons`, `sensei_learners_filter_lessons` and `sensei_analysis_course_filter_lessons` filters in favor of `sensei_grading_filter_lessons_query_args`, `sensei_students_filter_lessons_query_args` and `sensei_reports_course_filter_lessons_query_args`, which get the course in the `sensei_course` argument. [#8447](https://github.com/Automattic/sensei/pull/8447)
+- Deprecate the `sensei_lesson_count` filter in favor of `sensei_lesson_count_query_args`, which gets the course in the `sensei_course` argument. [#8436](https://github.com/Automattic/sensei/pull/8436)
+
+#### Fixed
+- Fixed a PHP warning in usage tracking when messages are disabled. [#8458](https://github.com/Automattic/sensei/pull/8458)
+- Fixed auto-graded quizzes showing an inflated total on the admin Review Grade screen when a student answered questions incorrectly. [#8081](https://github.com/Automattic/sensei/pull/8081)
+- Fix PHP warnings in the course progress batch REST permission check when course IDs are missing. [#8462](https://github.com/Automattic/sensei/pull/8462)
+- Fix the Get Sensei Pro button on Sensei Home opening an empty cart. [#8452](https://github.com/Automattic/sensei/pull/8452)
+- HPPS: Report failed lesson deletes and let retries finish removing the student's lesson and quiz progress. [#8461](https://github.com/Automattic/sensei/pull/8461)
+- HPPS: Respect lesson progress sort options so Continue Course opens the most recently updated unfinished lesson. [#8454](https://github.com/Automattic/sensei/pull/8454)
+- Preserve unknown start dates when saving or migrating student progress. [#8456](https://github.com/Automattic/sensei/pull/8456)
+- Report failed quiz resets when progress updates or quiz data deletion fails. [#8450](https://github.com/Automattic/sensei/pull/8450)
+- Report failed quiz writes while retaining typed answers and manual grading input. [#8437](https://github.com/Automattic/sensei/pull/8437)
+- Show recorded completion dates in the current site timezone after timezone changes. [#8467](https://github.com/Automattic/sensei/pull/8467)
 
 ### 4.27.0 - 2026-11-10
 #### Security
@@ -293,32 +320,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 #### Development
 - Refactored course report lesson metrics into dedicated progress aggregation and grading statistics services. [#8249](https://github.com/Automattic/sensei/pull/8249)
 - Remove the unused sensei_question_slug filter registration from the WPML compatibility class. [#8215](https://github.com/Automattic/sensei/pull/8215)
-
-### 4.26.3 - 2026-08-20
-#### Security
-- Scope the Students management user search to student accounts. [#8174](https://github.com/Automattic/sensei/pull/8174)
-- Require the grading capability on the lessons dropdown AJAX endpoint and scope it to the caller's own lessons.
-- Restrict adding a student to a lesson so it is only allowed through the lesson's own course.
-- Prevent a teacher from deleting another teacher's unused module.
-- Remove the admin notice that exposed the administration email address to non-administrators.
-
-#### Removed
-- Remove the course and lesson editor tours. [#8150](https://github.com/Automattic/sensei/pull/8150)
-
-#### Fixed
-- Fix a false "already owned by another teacher" error that blocked saving a course containing a module without a resolvable owner. [#8180](https://github.com/Automattic/sensei/pull/8180)
-- Fix course layouts and Sensei blocks not loading when Show template is enabled. [#8139](https://github.com/Automattic/sensei/pull/8139)
-- Fix quiz results and grading showing a previous attempt's grades after a retake from another language on multilingual sites. [#8125](https://github.com/Automattic/sensei/pull/8125)
-- Fix spacing and styling of quiz question options when using the iframed block editor. [#8172](https://github.com/Automattic/sensei/pull/8172)
-- Fix the Grading screen Grade button and row titles when the admin uses a secondary language on multilingual sites. [#8121](https://github.com/Automattic/sensei/pull/8121)
-- Fix the quiz results page showing questions in the language the quiz was taken in instead of the viewer's language on multilingual sites. [#8124](https://github.com/Automattic/sensei/pull/8124)
-- Fix lesson prerequisites pointing to the original-language lesson on WPML-translated lessons. [#8132](https://github.com/Automattic/sensei/pull/8132)
-- Fix lessons appearing out of order in translated courses when a new lesson is translated with WPML, and attach WPML lesson duplicates to the translated course. [#8149](https://github.com/Automattic/sensei/pull/8149)
-- Fix PHP 8.1 deprecation notices rendered into the quiz page for unanswered Multi Line questions. [#8146](https://github.com/Automattic/sensei/pull/8146)
-- Fix quiz question titles and answers not being translated on WPML-translated lessons. [#8100](https://github.com/Automattic/sensei/pull/8100)
-- Fix the Add Student form layout on the Students page. [#8147](https://github.com/Automattic/sensei/pull/8147)
-- Fix the misaligned Reset filter button on the Grading screen. [#8122](https://github.com/Automattic/sensei/pull/8122)
-- Fix typo in My Courses Page setting description. [#8106](https://github.com/Automattic/sensei/pull/8106) 👏 @Hashim1999164
-- WordPress 7.1 Compatibility: Course and lesson block colors match the theme in the iframed post editor. [#8179](https://github.com/Automattic/sensei/pull/8179)
-- WordPress 7.1 Compatibility: Fix a PHP notice logged by Learning Mode templates. [#8179](https://github.com/Automattic/sensei/pull/8179)
-- WordPress 7.1 Compatibility: Learning Mode and email templates appear in their own group in the Site Editor. [#8179](https://github.com/Automattic/sensei/pull/8179)
