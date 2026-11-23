@@ -141,6 +141,11 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 == Changelog ==
 
 ### 4.28.0 - 2026-11-23
+#### Security
+- Hide private messages and their replies from users who are not part of the conversation wherever they are loaded, not only on the messages pages.
+- Require every right answer when auto-grading multiple choice questions, so repeating one right answer no longer scores full marks.
+- Respect the site's registration setting and core registration checks in the Sensei registration form.
+
 #### Changed
 - HPPS: Delete quiz submissions, answers, and grades when a lesson is permanently deleted. [#8460](https://github.com/Automattic/sensei/pull/8460)
 - HPPS: Detect missing or mismatched progress and quiz data in either store during WP-CLI validation. [#8460](https://github.com/Automattic/sensei/pull/8460)

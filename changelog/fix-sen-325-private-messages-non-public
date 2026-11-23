@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Hide private messages and their replies from users who are not part of the conversation wherever they are loaded, not only on the messages pages.
