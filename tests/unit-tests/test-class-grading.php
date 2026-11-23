@@ -370,10 +370,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		return array(
 			'all right answers'               => array( array( 'a', 'b' ), 1 ),
 			'all right answers in reverse'    => array( array( 'b', 'a' ), 1 ),
-			'one right answer repeated'       => array( array( 'a', 'a' ), false ),
-			'one right answer only'           => array( array( 'a' ), false ),
-			'one right and one wrong answer'  => array( array( 'a', 'c' ), false ),
-			'all right answers plus a repeat' => array( array( 'a', 'b', 'b' ), false ),
+			'one right answer repeated'       => array( array( 'a', 'a' ), 0 ),
+			'one right answer only'           => array( array( 'a' ), 0 ),
+			'one right and one wrong answer'  => array( array( 'a', 'c' ), 0 ),
+			'all right answers plus a repeat' => array( array( 'a', 'b', 'b' ), 0 ),
 		);
 	}
 
