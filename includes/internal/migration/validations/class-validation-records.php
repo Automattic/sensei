@@ -36,7 +36,8 @@ use Sensei\Internal\Student_Progress\Progress_Start_Date;
  * @since 4.28.0
  */
 class Validation_Records {
-	private const BATCH_SIZE = 200;
+	private const BATCH_SIZE        = 200;
+	private const COMMENT_META_KEYS = array( 'start', 'questions_asked', 'grade', 'quiz_answers', 'quiz_grades', 'quiz_answers_feedback' );
 
 	/**
 	 * Get the comment records of a given activity type.
@@ -210,13 +211,37 @@ class Validation_Records {
 	 *
 	 * @since 4.28.0
 	 *
-	 * @param string $type      The metadata type, post or comment.
-	 * @param int    $object_id The object ID.
-	 * @param string $key       The metadata key.
+	 * @param string     $type      The metadata type, post or comment.
+	 * @param int        $object_id The object ID.
+	 * @param string     $key       The metadata key.
+	 * @param array|null $records   Shared rows for one targeted inspection, or null for a fresh read.
 	 * @return mixed The first stored value, or an empty string when absent.
 	 */
-	public static function get_metadata( string $type, int $object_id, string $key ) {
+	public static function get_metadata( string $type, int $object_id, string $key, ?array &$records = null ) {
 		global $wpdb;
+
+		if ( 'comment' === $type && null !== $records && in_array( $key, self::COMMENT_META_KEYS, true ) ) {
+			$comment_ids = array_column( $records['comments'] ?? array(), 'comment_ID' );
+			$comment_ids = $comment_ids ? $comment_ids : array( $object_id );
+			$ids         = implode( ', ', array_fill( 0, count( $comment_ids ), '%d' ) );
+			$keys        = implode( ', ', array_fill( 0, count( self::COMMENT_META_KEYS ), '%s' ) );
+			$rows        = self::query(
+				'SELECT meta_id, comment_id, meta_key, meta_value FROM %i
+				WHERE comment_id IN (' . $ids . ') AND meta_key IN (' . $keys . ') ORDER BY comment_id, meta_id',
+				array_merge( array( $wpdb->commentmeta ), $comment_ids, self::COMMENT_META_KEYS ),
+				'comment metadata',
+				$records,
+				'comment_meta'
+			);
+
+			foreach ( $rows as $row ) {
+				if ( (int) $row->comment_id === $object_id && $row->meta_key === $key ) {
+					return maybe_unserialize( $row->meta_value );
+				}
+			}
+
+			return '';
+		}
 
 		$table = 'post' === $type ? $wpdb->postmeta : $wpdb->commentmeta;
 		$rows  = self::query(
@@ -231,12 +256,13 @@ class Validation_Records {
 	/**
 	 * Read the comment selected by the comments repositories for a student and content.
 	 *
-	 * @param string $type    The progress type.
-	 * @param int    $post_id The stored content ID.
-	 * @param int    $user_id The student ID.
+	 * @param string     $type    The progress type.
+	 * @param int        $post_id The stored content ID.
+	 * @param int        $user_id The student ID.
+	 * @param array|null $records Shared rows for one targeted inspection.
 	 * @return object|null The stored comment.
 	 */
-	private static function get_progress_comment( string $type, int $post_id, int $user_id ): ?object {
+	private static function get_progress_comment( string $type, int $post_id, int $user_id, ?array &$records = null ): ?object {
 		global $wpdb;
 
 		if ( ! $user_id ) {
@@ -245,15 +271,33 @@ class Validation_Records {
 
 		$comment_type = 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status';
 		$limit        = 'course' === $type ? 1 : 2;
-		$rows         = self::query(
-			'SELECT * FROM %i
+		$columns      = null === $records ? '*' : 'comment_ID, comment_post_ID, user_id, comment_approved, comment_date, comment_date_gmt';
+		$order        = null === $records ? ' DESC LIMIT %d' : '';
+		$args         = array( $wpdb->comments, $post_id, $user_id, $comment_type );
+		if ( null === $records ) {
+			$args[] = $limit;
+		}
+
+		$rows = self::query(
+			'SELECT ' . $columns . ' FROM %i
 			WHERE comment_post_ID = %d AND user_id = %d AND comment_type = %s
-			ORDER BY comment_ID DESC LIMIT %d',
-			array( $wpdb->comments, $post_id, $user_id, $comment_type, $limit ),
-			$comment_type . ' comment'
+			ORDER BY comment_ID' . $order,
+			$args,
+			$comment_type . ' comment',
+			$records,
+			'comments'
 		);
 
-		// Course progress selects the newest duplicate; lesson and quiz repositories require one comment.
+		if ( null !== $records && $rows ) {
+			// Retain metadata before building models so duplicate start dates do not need to be interpreted.
+			self::get_metadata( 'comment', (int) $rows[0]->comment_ID, 'start', $records );
+			$keys = array_column( $records['comment_meta'] ?? array(), 'meta_key' );
+			if ( count( $keys ) !== count( array_unique( $keys ) ) ) {
+				return null;
+			}
+		}
+
+		// Targeted inspections retain duplicates for review; ordinary course reads select only the newest.
 		return 1 === count( $rows ) ? $rows[0] : null;
 	}
 
@@ -262,14 +306,15 @@ class Validation_Records {
 	 *
 	 * @since 4.28.0
 	 *
-	 * @param string $type    The progress type.
-	 * @param int    $post_id The content ID.
-	 * @param int    $user_id The student ID.
+	 * @param string     $type    The progress type.
+	 * @param int        $post_id The content ID.
+	 * @param int        $user_id The student ID.
+	 * @param array|null $records Shared rows for one targeted inspection, or null for a fresh read.
 	 * @return Comments_Based_Course_Progress|Comments_Based_Lesson_Progress|Comments_Based_Quiz_Progress|null
 	 */
-	public static function get_comments_progress( string $type, int $post_id, int $user_id ): ?object {
+	public static function get_comments_progress( string $type, int $post_id, int $user_id, ?array &$records = null ): ?object {
 		$lesson_id = 'quiz' === $type ? self::get_lesson_id( $post_id ) : $post_id;
-		$comment   = $lesson_id ? self::get_progress_comment( $type, $lesson_id, $user_id ) : null;
+		$comment   = $lesson_id ? self::get_progress_comment( $type, $lesson_id, $user_id, $records ) : null;
 		if ( ! $comment ) {
 			return null;
 		}
@@ -280,7 +325,7 @@ class Validation_Records {
 			'quiz'   => Comments_Based_Quiz_Progress::class,
 		);
 		$class   = $classes[ $type ];
-		$start   = self::get_metadata( 'comment', (int) $comment->comment_ID, 'start' );
+		$start   = self::get_metadata( 'comment', (int) $comment->comment_ID, 'start', $records );
 		$date    = new DateTimeImmutable( $comment->comment_date, wp_timezone() );
 		$status  = $comment->comment_approved;
 
@@ -307,21 +352,24 @@ class Validation_Records {
 	 *
 	 * @since 4.28.0
 	 *
-	 * @param string $type    The progress type.
-	 * @param int    $post_id The content ID.
-	 * @param int    $user_id The student ID.
+	 * @param string     $type    The progress type.
+	 * @param int        $post_id The content ID.
+	 * @param int        $user_id The student ID.
+	 * @param array|null $records Shared rows for one targeted inspection, or null for a fresh read.
 	 * @return Tables_Based_Course_Progress|Tables_Based_Lesson_Progress|Tables_Based_Quiz_Progress|null
 	 */
-	public static function get_tables_progress( string $type, int $post_id, int $user_id ): ?object {
+	public static function get_tables_progress( string $type, int $post_id, int $user_id, ?array &$records = null ): ?object {
 		global $wpdb;
 
 		$rows = self::query(
-			'SELECT * FROM %i WHERE type = %s AND post_id = %d AND user_id = %d LIMIT 1',
+			'SELECT * FROM %i WHERE type = %s AND post_id = %d AND user_id = %d' . ( null === $records ? ' LIMIT 1' : ' ORDER BY id' ),
 			array( $wpdb->prefix . 'sensei_lms_progress', $type, $post_id, $user_id ),
-			$type . ' progress table'
+			$type . ' progress table',
+			$records,
+			'tables'
 		);
 
-		return $rows ? self::create_tables_progress( $type, $rows[0] ) : null;
+		return 1 === count( $rows ) ? self::create_tables_progress( $type, $rows[0] ) : null;
 	}
 
 	/**
@@ -359,23 +407,24 @@ class Validation_Records {
 	 *
 	 * @since 4.28.0
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The student ID.
+	 * @param int        $quiz_id The quiz ID.
+	 * @param int        $user_id The student ID.
+	 * @param array|null $records Shared rows for one targeted inspection, or null for a fresh read.
 	 * @return Comments_Based_Submission|null
 	 */
-	public static function get_comments_submission( int $quiz_id, int $user_id ): ?Comments_Based_Submission {
+	public static function get_comments_submission( int $quiz_id, int $user_id, ?array &$records = null ): ?Comments_Based_Submission {
 		$lesson_id = self::get_lesson_id( $quiz_id );
-		$comment   = $lesson_id ? self::get_progress_comment( 'lesson', $lesson_id, $user_id ) : null;
+		$comment   = $lesson_id ? self::get_progress_comment( 'lesson', $lesson_id, $user_id, $records ) : null;
 		if ( ! $comment ) {
 			return null;
 		}
 
-		if ( ! self::get_metadata( 'comment', (int) $comment->comment_ID, 'questions_asked' ) ) {
+		if ( ! self::get_metadata( 'comment', (int) $comment->comment_ID, 'questions_asked', $records ) ) {
 			return null;
 		}
 
-		$grade = self::get_metadata( 'comment', (int) $comment->comment_ID, 'grade' );
-		$start = self::get_metadata( 'comment', (int) $comment->comment_ID, 'start' );
+		$grade = self::get_metadata( 'comment', (int) $comment->comment_ID, 'grade', $records );
+		$start = self::get_metadata( 'comment', (int) $comment->comment_ID, 'start', $records );
 		$date  = new DateTimeImmutable( $start ? $start : 'now', wp_timezone() );
 
 		return new Comments_Based_Submission(
@@ -393,19 +442,22 @@ class Validation_Records {
 	 *
 	 * @since 4.28.0
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The student ID.
+	 * @param int        $quiz_id The quiz ID.
+	 * @param int        $user_id The student ID.
+	 * @param array|null $records Shared rows for one targeted inspection, or null for a fresh read.
 	 * @return Tables_Based_Submission|null
 	 */
-	public static function get_tables_submission( int $quiz_id, int $user_id ): ?Tables_Based_Submission {
+	public static function get_tables_submission( int $quiz_id, int $user_id, ?array &$records = null ): ?Tables_Based_Submission {
 		global $wpdb;
 
 		$rows = self::query(
-			'SELECT * FROM %i WHERE quiz_id = %d AND user_id = %d LIMIT 1',
+			'SELECT * FROM %i WHERE quiz_id = %d AND user_id = %d' . ( null === $records ? ' LIMIT 1' : ' ORDER BY id' ),
 			array( $wpdb->prefix . 'sensei_lms_quiz_submissions', $quiz_id, $user_id ),
-			'quiz submission table'
+			'quiz submission table',
+			$records,
+			'submissions'
 		);
-		return $rows ? self::create_tables_submission( $rows[0] ) : null;
+		return 1 === count( $rows ) ? self::create_tables_submission( $rows[0] ) : null;
 	}
 
 	/**
@@ -434,16 +486,17 @@ class Validation_Records {
 	 *
 	 * @since 4.28.0
 	 *
-	 * @param int    $submission_id The submission ID.
-	 * @param string $store         The storage source, comments or tables.
+	 * @param int        $submission_id The submission ID, or zero to collect rows for ambiguous submissions.
+	 * @param string     $store         The storage source, comments or tables.
+	 * @param array|null $records       Shared rows for one targeted inspection, or null for a fresh read.
 	 * @return Answer_Interface[]
 	 */
-	public static function get_answers( int $submission_id, string $store ): array {
+	public static function get_answers( int $submission_id, string $store, ?array &$records = null ): array {
 		global $wpdb;
 
 		$answers = array();
 		if ( 'comments' === $store ) {
-			$values = self::get_metadata( 'comment', $submission_id, 'quiz_answers' );
+			$values = self::get_metadata( 'comment', $submission_id, 'quiz_answers', $records );
 			$date   = current_datetime();
 			foreach ( is_array( $values ) ? $values : array() as $question_id => $value ) {
 				$answers[] = new Comments_Based_Answer( $submission_id, $question_id, $value, $date, $date );
@@ -452,11 +505,20 @@ class Validation_Records {
 			return $answers;
 		}
 
-		$rows     = self::query(
-			'SELECT * FROM %i WHERE submission_id = %d ORDER BY id',
-			array( $wpdb->prefix . 'sensei_lms_quiz_answers', $submission_id ),
-			'quiz answers table'
+		$submission_ids = array_column( $records['submissions'] ?? array(), 'id' );
+		$submission_ids = $submission_ids ? $submission_ids : array( $submission_id );
+		$ids            = implode( ', ', array_fill( 0, count( $submission_ids ), '%d' ) );
+		$rows           = self::query(
+			'SELECT * FROM %i WHERE submission_id IN (' . $ids . ') ORDER BY id',
+			array_merge( array( $wpdb->prefix . 'sensei_lms_quiz_answers' ), $submission_ids ),
+			'quiz answers table',
+			$records,
+			'answers'
 		);
+		if ( ! $submission_id ) {
+			return array();
+		}
+
 		$timezone = new DateTimeZone( 'UTC' );
 		foreach ( $rows as $row ) {
 			$answers[] = new Tables_Based_Answer(
@@ -477,17 +539,18 @@ class Validation_Records {
 	 *
 	 * @since 4.28.0
 	 *
-	 * @param int    $submission_id The submission ID.
-	 * @param string $store         The storage source, comments or tables.
+	 * @param int        $submission_id The submission ID, or zero to collect rows for ambiguous submissions.
+	 * @param string     $store         The storage source, comments or tables.
+	 * @param array|null $records       Shared rows for one targeted inspection, or null for a fresh read.
 	 * @return Grade_Interface[]
 	 */
-	public static function get_grades( int $submission_id, string $store ): array {
+	public static function get_grades( int $submission_id, string $store, ?array &$records = null ): array {
 		global $wpdb;
 
 		$grades = array();
 		if ( 'comments' === $store ) {
-			$points   = self::get_metadata( 'comment', $submission_id, 'quiz_grades' );
-			$feedback = self::get_metadata( 'comment', $submission_id, 'quiz_answers_feedback' );
+			$points   = self::get_metadata( 'comment', $submission_id, 'quiz_grades', $records );
+			$feedback = self::get_metadata( 'comment', $submission_id, 'quiz_answers_feedback', $records );
 			$date     = current_datetime();
 			foreach ( is_array( $points ) ? $points : array() as $question_id => $value ) {
 				$grades[] = new Comments_Based_Grade( $question_id, $value, $feedback[ $question_id ] ?? null, $date, $date );
@@ -496,13 +559,22 @@ class Validation_Records {
 			return $grades;
 		}
 
-		$rows     = self::query(
+		$submission_ids = array_column( $records['submissions'] ?? array(), 'id' );
+		$submission_ids = $submission_ids ? $submission_ids : array( $submission_id );
+		$ids            = implode( ', ', array_fill( 0, count( $submission_ids ), '%d' ) );
+		$rows           = self::query(
 			'SELECT grades.* FROM %i AS grades
 			INNER JOIN %i AS answers ON answers.id = grades.answer_id
-			WHERE answers.submission_id = %d ORDER BY grades.id',
-			array( $wpdb->prefix . 'sensei_lms_quiz_grades', $wpdb->prefix . 'sensei_lms_quiz_answers', $submission_id ),
-			'quiz grades table'
+			WHERE answers.submission_id IN (' . $ids . ') ORDER BY grades.id',
+			array_merge( array( $wpdb->prefix . 'sensei_lms_quiz_grades', $wpdb->prefix . 'sensei_lms_quiz_answers' ), $submission_ids ),
+			'quiz grades table',
+			$records,
+			'grades'
 		);
+		if ( ! $submission_id ) {
+			return array();
+		}
+
 		$timezone = new DateTimeZone( 'UTC' );
 		foreach ( $rows as $row ) {
 			$grades[] = new Tables_Based_Grade(
@@ -522,14 +594,20 @@ class Validation_Records {
 	/**
 	 * Read stored records and report database read failures.
 	 *
-	 * @param string $query  The prepared statement template.
-	 * @param array  $args   Placeholder values.
-	 * @param string $source The storage source being read.
+	 * @param string     $query   The prepared statement template.
+	 * @param array      $args    Placeholder values.
+	 * @param string     $source  The storage source being read.
+	 * @param array|null $records Shared rows for one targeted inspection.
+	 * @param string     $kind    The group of stored rows to retain and reuse.
 	 * @return object[] Stored records.
 	 * @throws RuntimeException If the records cannot be read.
 	 */
-	private static function query( string $query, array $args, string $source ): array {
+	private static function query( string $query, array $args, string $source, ?array &$records = null, string $kind = '' ): array {
 		global $wpdb;
+
+		if ( null !== $records && array_key_exists( $kind, $records ) ) {
+			return $records[ $kind ];
+		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- Validation must read stored values rather than caches.
 		$rows = $wpdb->get_results( $wpdb->prepare( $query, $args ) );
@@ -537,6 +615,11 @@ class Validation_Records {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- The source is a fixed identifier.
 			throw new RuntimeException( 'Could not read ' . $source . ' during validation.' );
 		}
+
+		if ( null !== $records ) {
+			$records[ $kind ] = $rows;
+		}
+
 		return $rows;
 	}
 

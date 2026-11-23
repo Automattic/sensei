@@ -61,6 +61,63 @@ class Progress_Validation {
 	}
 
 	/**
+	 * Inspect one stored identity using the validation comparison rules.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param string     $type    The progress type.
+	 * @param int        $post_id The stored content ID.
+	 * @param int        $user_id The student ID.
+	 * @param array|null $records Shared rows for this student and content, populated by the readers.
+	 * @return array Normalized copies, differences, and excluded fields.
+	 */
+	public function inspect( string $type, int $post_id, int $user_id, ?array &$records = null ): array {
+		$this->errors   = array();
+		$this->warnings = array();
+		$records        = $records ?? array();
+		$comments       = Validation_Records::get_comments_progress( $type, $post_id, $user_id, $records );
+		$tables         = Validation_Records::get_tables_progress( $type, $post_id, $user_id, $records );
+		$ignored_fields = array();
+
+		if ( $tables instanceof Quiz_Progress_Interface
+			&& ( ! $comments || $comments instanceof Comments_Based_Quiz_Progress )
+			&& $this->has_expected_quiz_visit_difference( $tables, $comments, $records )
+		) {
+			$ignored_fields = array( 'status', 'started_at', 'completed_at' );
+		} elseif ( ! $tables && $comments instanceof Comments_Based_Quiz_Progress
+			&& ! $this->has_recorded_quiz_activity( $comments, $records )
+		) {
+			$ignored_fields = array( 'status', 'started_at', 'completed_at' );
+		} elseif ( $comments && $tables ) {
+			$this->compare_progress( $comments, $tables );
+
+			if ( $this->get_warnings() || ( 'quiz' === $type
+				&& Quiz_Progress_Interface::STATUS_IN_PROGRESS === $comments->get_status()
+				&& Quiz_Progress_Interface::STATUS_IN_PROGRESS === $tables->get_status()
+			) ) {
+				$ignored_fields[] = 'started_at';
+			}
+		} elseif ( $comments || $tables ) {
+			$this->add_missing_progress_error( $type, $comments ? 'tables' : 'comments', $post_id, $user_id );
+		}
+
+		return array(
+			'comments'       => $comments ? array_merge(
+				array( 'id' => $comments->get_id() ),
+				$this->get_progress_data( $comments )
+			) : null,
+			'tables'         => $tables ? array_merge(
+				array( 'id' => $tables->get_id() ),
+				$this->get_progress_data( $tables )
+			) : null,
+			'errors'         => $this->errors,
+			'warnings'       => $this->warnings,
+			'ignored_fields' => $ignored_fields,
+		);
+	}
+
+	/**
 	 * Check if there are validation errors.
 	 *
 	 * @internal
@@ -183,9 +240,10 @@ class Progress_Validation {
 	 *
 	 * @param Quiz_Progress_Interface           $tables_progress   Quiz progress in the tables.
 	 * @param Comments_Based_Quiz_Progress|null $comments_progress Quiz progress from the lesson comment.
+	 * @param array|null                        $records           Shared rows for one targeted inspection.
 	 * @return bool
 	 */
-	private function has_expected_quiz_visit_difference( Quiz_Progress_Interface $tables_progress, ?Comments_Based_Quiz_Progress $comments_progress ): bool {
+	private function has_expected_quiz_visit_difference( Quiz_Progress_Interface $tables_progress, ?Comments_Based_Quiz_Progress $comments_progress, ?array &$records = null ): bool {
 		if ( Quiz_Progress_Interface::STATUS_IN_PROGRESS !== $tables_progress->get_status() ) {
 			return false;
 		}
@@ -202,7 +260,7 @@ class Progress_Validation {
 			}
 		}
 
-		$submission = Validation_Records::get_tables_submission( $quiz_id, $tables_progress->get_user_id() );
+		$submission = Validation_Records::get_tables_submission( $quiz_id, $tables_progress->get_user_id(), $records );
 
 		// Saved answers should have a lesson comment even if quiz progress is still in progress.
 		if ( ! $comments_progress ) {
@@ -211,8 +269,8 @@ class Progress_Validation {
 
 		// The shared passed status alone cannot distinguish a completed lesson from a submitted quiz.
 		$comment_id        = $comments_progress->get_id();
-		$has_comment_grade = Validation_Records::get_metadata( 'comment', $comment_id, 'questions_asked' )
-			&& is_numeric( Validation_Records::get_metadata( 'comment', $comment_id, 'grade' ) );
+		$has_comment_grade = Validation_Records::get_metadata( 'comment', $comment_id, 'questions_asked', $records )
+			&& is_numeric( Validation_Records::get_metadata( 'comment', $comment_id, 'grade', $records ) );
 
 		return ( ! $submission || null === $submission->get_final_grade() ) && ! $has_comment_grade;
 	}
@@ -223,14 +281,15 @@ class Progress_Validation {
 	 * A lesson start or completion alone can appear as quiz progress in the comments repository.
 	 *
 	 * @param Comments_Based_Quiz_Progress $progress Comments-based quiz progress.
+	 * @param array|null                   $records  Shared rows for one targeted inspection.
 	 * @return bool
 	 */
-	private function has_recorded_quiz_activity( Comments_Based_Quiz_Progress $progress ): bool {
+	private function has_recorded_quiz_activity( Comments_Based_Quiz_Progress $progress, ?array &$records = null ): bool {
 		if ( Quiz_Progress_Interface::STATUS_PASSED === $progress->get_status()
 			&& ! Validation_Records::get_metadata( 'post', $progress->get_quiz_id(), '_pass_required' )
 		) {
 			// Completing a lesson can record a quiz pass without any answers.
-			return (bool) Validation_Records::get_metadata( 'comment', $progress->get_id(), 'questions_asked' );
+			return (bool) Validation_Records::get_metadata( 'comment', $progress->get_id(), 'questions_asked', $records );
 		}
 
 		return in_array(
@@ -242,7 +301,7 @@ class Progress_Validation {
 				Quiz_Progress_Interface::STATUS_UNGRADED,
 			),
 			true
-		) || (bool) Validation_Records::get_metadata( 'comment', $progress->get_id(), 'questions_asked' );
+		) || (bool) Validation_Records::get_metadata( 'comment', $progress->get_id(), 'questions_asked', $records );
 	}
 
 	/**
