@@ -90,7 +90,7 @@ class Progress_Validation {
 	 * Get warnings about progress that could not be fully verified.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @return Validation_Error[]
 	 */

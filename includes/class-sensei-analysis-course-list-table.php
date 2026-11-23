@@ -784,7 +784,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		/**
 		 * Filter the lessons arguments for the lessons table of a course on the Reports screen.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.28.0
 		 *
 		 * @hook sensei_reports_course_filter_lessons_query_args
 		 *
@@ -806,7 +806,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			/**
 			 * Filter the lessons arguments for the Course Analysis list table.
 			 *
-			 * @deprecated $$next-version$$ Use sensei_reports_course_filter_lessons_query_args instead.
+			 * @deprecated 4.28.0 Use sensei_reports_course_filter_lessons_query_args instead.
 			 *
 			 * @hook sensei_analysis_course_filter_lessons
 			 *
@@ -816,7 +816,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			$lessons_args = apply_filters_deprecated(
 				'sensei_analysis_course_filter_lessons',
 				array( $lessons_args ),
-				'$$next-version$$',
+				'4.28.0',
 				'sensei_reports_course_filter_lessons_query_args'
 			);
 		}

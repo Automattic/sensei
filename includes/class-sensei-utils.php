@@ -114,7 +114,7 @@ class Sensei_Utils {
 		 * Fires after logging the activity, unless an existing comment update fails.
 		 *
 		 * @hook sensei_log_activity_after
-		 * @since $$next-version$$ No longer fires when an existing comment update fails.
+		 * @since 4.28.0 No longer fires when an existing comment update fails.
 		 *
 		 * @param {array} $args Initial arguments.
 		 * @param {array} $data Processed data to log.

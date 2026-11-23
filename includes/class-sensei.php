@@ -374,7 +374,7 @@ class Sensei_Main {
 	/**
 	 * Course lessons SQL service.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 * @psalm-suppress PropertyNotSetInConstructor
 	 * @var Course_Lessons_SQL_Service_Interface
 	 */
@@ -411,7 +411,7 @@ class Sensei_Main {
 	/**
 	 * Lesson progress removal service.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 * @psalm-suppress PropertyNotSetInConstructor
 	 * @var Lesson_Progress_Removal
 	 */
@@ -916,7 +916,7 @@ class Sensei_Main {
 	/**
 	 * Configure lesson progress removal for the resolved storage settings.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @return Lesson_Progress_Removal The configured removal service.
 	 */

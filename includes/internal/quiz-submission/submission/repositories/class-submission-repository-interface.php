@@ -95,7 +95,7 @@ interface Submission_Repository_Interface {
 	 * Delete a student's submission and its grades and answers for one quiz.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The student ID.
@@ -107,7 +107,7 @@ interface Submission_Repository_Interface {
 	 * Delete every student's submission, grades, and answers for one quiz.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.

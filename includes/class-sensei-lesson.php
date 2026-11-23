@@ -3679,7 +3679,7 @@ class Sensei_Lesson {
 		/**
 		 * Filter the query arguments for getting the lesson count.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.28.0
 		 *
 		 * @hook sensei_lesson_count_query_args
 		 *
@@ -3701,7 +3701,7 @@ class Sensei_Lesson {
 			/**
 			 * Filter the query arguments for getting the lesson count.
 			 *
-			 * @deprecated $$next-version$$ Use sensei_lesson_count_query_args instead.
+			 * @deprecated 4.28.0 Use sensei_lesson_count_query_args instead.
 			 *
 			 * @hook sensei_lesson_count
 			 *
@@ -3711,7 +3711,7 @@ class Sensei_Lesson {
 			$post_args = apply_filters_deprecated(
 				'sensei_lesson_count',
 				array( $post_args ),
-				'$$next-version$$',
+				'4.28.0',
 				'sensei_lesson_count_query_args'
 			);
 		}

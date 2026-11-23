@@ -311,7 +311,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * Delete a student's quiz progress by identity.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The student ID.

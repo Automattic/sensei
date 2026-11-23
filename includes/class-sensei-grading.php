@@ -818,7 +818,7 @@ class Sensei_Grading {
 			/**
 			 * Filter the arguments used to query for lessons in the grading dropdown.
 			 *
-			 * @since $$next-version$$
+			 * @since 4.28.0
 			 *
 			 * @hook sensei_grading_filter_lessons_query_args
 			 *
@@ -838,7 +838,7 @@ class Sensei_Grading {
 				/**
 				 * Filter the arguments used to query for lessons in the grading dropdown.
 				 *
-				 * @deprecated $$next-version$$ Use sensei_grading_filter_lessons_query_args instead.
+				 * @deprecated 4.28.0 Use sensei_grading_filter_lessons_query_args instead.
 				 *
 				 * @hook sensei_grading_filter_lessons
 				 *
@@ -848,7 +848,7 @@ class Sensei_Grading {
 				$lesson_args = apply_filters_deprecated(
 					'sensei_grading_filter_lessons',
 					array( $lesson_args ),
-					'$$next-version$$',
+					'4.28.0',
 					'sensei_grading_filter_lessons_query_args'
 				);
 			}
