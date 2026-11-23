@@ -1,4 +1,0 @@
-Significance: minor
-Type: deprecated
-
-Deprecate the `sensei_lesson_count` filter in favor of `sensei_lesson_count_query_args`, which gets the course in the `sensei_course` argument.

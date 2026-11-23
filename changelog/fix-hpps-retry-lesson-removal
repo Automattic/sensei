@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-HPPS: Report failed lesson deletes and let retries finish removing the student's lesson and quiz progress.
