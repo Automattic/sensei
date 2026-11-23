@@ -116,7 +116,7 @@ class Sensei_Messages {
 	 * private in queries built by other plugins and APIs. Excluding them in the SQL keeps the
 	 * page sizes and totals of those queries correct.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @internal
 	 *
@@ -166,7 +166,7 @@ class Sensei_Messages {
 	 *
 	 * Excluding them before the query runs keeps its page sizes and totals correct.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @internal
 	 *
@@ -195,7 +195,7 @@ class Sensei_Messages {
 	 * That cache holds one count for all users, so it must only hold the count of the users who read
 	 * every reply.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @internal
 	 *
@@ -266,7 +266,7 @@ class Sensei_Messages {
 	 * Runs wherever a comment is loaded, by ID or through a comment query, so replies stay
 	 * private in routes built by other plugins and APIs.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.28.0
 	 *
 	 * @internal
 	 *
