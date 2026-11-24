@@ -152,7 +152,7 @@ trait Sensei_Progress_Insert_Failure_Helpers {
 		$replacement = $replacement ?? 'INSERT INTO sensei_missing_progress_table (id) VALUES (1)';
 
 		$this->progress_insert_filter = static function ( $query ) use ( $table, $replacement, $type ) {
-			if ( preg_match( '/^INSERT INTO `?' . preg_quote( $table, '/' ) . '`?\s/i', $query )
+			if ( preg_match( '/^INSERT(?: IGNORE)? INTO `?' . preg_quote( $table, '/' ) . '`?\s/i', $query )
 				&& ( null === $type || false !== strpos( $query, $type ) ) ) {
 				return $replacement;
 			}

@@ -165,7 +165,7 @@ class Quiz_Migration extends Migration_Abstract {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$quiz_meta = $wpdb->get_results( $quiz_meta_query );
-		$quiz_data = [];
+		$quiz_data = array();
 		foreach ( $quiz_meta as $meta ) {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- We're not doing a meta query here, phpcs is confused.
 			$quiz_data[ $meta->comment_id ][ $meta->meta_key ] = $meta->meta_value;
@@ -215,14 +215,33 @@ class Quiz_Migration extends Migration_Abstract {
 			return 1;
 		}
 
+		global $wpdb;
+
 		$result = $this->db_query( $query );
-		if ( ! $result ) {
+		if ( $result ) {
+			return $wpdb->insert_id;
+		}
+
+		if ( '' !== $wpdb->last_error ) {
 			return null;
 		}
 
-		global $wpdb;
+		// A previous attempt may have inserted the submission before its children.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$submission_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT id FROM {$wpdb->prefix}sensei_lms_quiz_submissions WHERE quiz_id = %d AND user_id = %d",
+				$quiz_id,
+				$comment->user_id
+			)
+		);
 
-		return $wpdb->insert_id;
+		if ( '' !== $wpdb->last_error ) {
+			$this->add_error( $wpdb->last_error );
+			return null;
+		}
+
+		return $submission_id ? (int) $submission_id : null;
 	}
 
 	/**
@@ -281,6 +300,27 @@ class Quiz_Migration extends Migration_Abstract {
 			$result = $this->db_query( $query );
 			if ( $result ) {
 				$answer_ids[ $question_id ] = $wpdb->insert_id;
+				continue;
+			}
+
+			if ( '' !== $wpdb->last_error ) {
+				continue;
+			}
+
+			// Reuse the existing answer so an interrupted grade write can be retried.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$answer_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT id FROM {$wpdb->prefix}sensei_lms_quiz_answers WHERE submission_id = %d AND question_id = %d",
+					$submission_id,
+					$question_id
+				)
+			);
+
+			if ( '' !== $wpdb->last_error ) {
+				$this->add_error( $wpdb->last_error );
+			} elseif ( $answer_id ) {
+				$answer_ids[ $question_id ] = (int) $answer_id;
 			}
 		}
 
@@ -313,6 +353,10 @@ class Quiz_Migration extends Migration_Abstract {
 
 		$grade_ids = array();
 		foreach ( $quiz_grades as $question_id => $points ) {
+			if ( ! isset( $answer_ids[ $question_id ] ) ) {
+				continue;
+			}
+
 			$columns = array(
 				'answer_id'   => '%d',
 				'question_id' => '%d',
