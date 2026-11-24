@@ -82,6 +82,16 @@ interface Course_Lessons_Repository_Interface {
 	public function get_lesson_module( int $lesson_id ): ?\WP_Term;
 
 	/**
+	 * Get every module of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @return \WP_Term[] The module terms, or an empty array when the lesson has none.
+	 */
+	public function get_lesson_modules( int $lesson_id ): array;
+
+	/**
 	 * Whether a lesson is in the given module.
 	 *
 	 * @internal

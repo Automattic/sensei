@@ -939,14 +939,11 @@ class Sensei_Abilities {
 			}
 
 			$item['modules'] = array();
-			$module_terms    = wp_get_post_terms( $post->ID, 'module' );
-			if ( is_array( $module_terms ) ) {
-				foreach ( $module_terms as $term ) {
-					$item['modules'][] = array(
-						'id'   => (int) $term->term_id,
-						'name' => $term->name,
-					);
-				}
+			foreach ( Sensei()->course_lessons_repository->get_lesson_modules( $post->ID ) as $term ) {
+				$item['modules'][] = array(
+					'id'   => (int) $term->term_id,
+					'name' => $term->name,
+				);
 			}
 
 			$items[] = $item;
