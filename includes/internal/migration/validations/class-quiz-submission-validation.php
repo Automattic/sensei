@@ -60,6 +60,7 @@ class Quiz_Submission_Validation {
 	 * @return array The normalized bundles and validation differences.
 	 */
 	public function inspect( int $quiz_id, int $user_id, ?array &$records = null ): array {
+		// Share freshly read rows with progress inspection and the raw output so they use the same copies.
 		$this->errors = array();
 		$records      = $records ?? array();
 		$models       = array(
@@ -74,6 +75,8 @@ class Quiz_Submission_Validation {
 		foreach ( $models as $store => $submission ) {
 			if ( ! $submission ) {
 				if ( 'tables' === $store && ! empty( $records['submissions'] ) ) {
+					// Duplicate submissions cannot produce one model. Retain their child rows for
+					// inspection without choosing a submission or losing the surviving quiz data.
 					Validation_Records::get_answers( 0, $store, $records );
 					Validation_Records::get_grades( 0, $store, $records );
 				}
@@ -95,6 +98,7 @@ class Quiz_Submission_Validation {
 				)
 			);
 
+			// Question identity determines equality; insertion order must not create repair differences.
 			foreach ( array( 'answers', 'grades' ) as $kind ) {
 				usort(
 					$copies[ $store ][ $kind ],

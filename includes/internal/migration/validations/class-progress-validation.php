@@ -78,28 +78,37 @@ class Progress_Validation {
 		$records        = $records ?? array();
 		$comments       = Validation_Records::get_comments_progress( $type, $post_id, $user_id, $records );
 		$tables         = Validation_Records::get_tables_progress( $type, $post_id, $user_id, $records );
+		// Excluded fields stay visible in the output, but cannot become proposed repair changes.
 		$ignored_fields = array();
 
-		if ( $tables instanceof Quiz_Progress_Interface
+		// HPPS records quiz visits separately. The shared comment can also say passed
+		// after an optional lesson is completed, without proving that its quiz was submitted.
+		$has_expected_quiz_visit_difference = $tables instanceof Quiz_Progress_Interface
 			&& ( ! $comments || $comments instanceof Comments_Based_Quiz_Progress )
-			&& $this->has_expected_quiz_visit_difference( $tables, $comments, $records )
-		) {
-			$ignored_fields = array( 'status', 'started_at', 'completed_at' );
-		} elseif ( ! $tables && $comments instanceof Comments_Based_Quiz_Progress
-			&& ! $this->has_recorded_quiz_activity( $comments, $records )
-		) {
-			$ignored_fields = array( 'status', 'started_at', 'completed_at' );
-		} elseif ( $comments && $tables ) {
-			$this->compare_progress( $comments, $tables );
+			&& $this->has_expected_quiz_visit_difference( $tables, $comments, $records );
 
-			if ( $this->get_warnings() || ( 'quiz' === $type
-				&& Quiz_Progress_Interface::STATUS_IN_PROGRESS === $comments->get_status()
-				&& Quiz_Progress_Interface::STATUS_IN_PROGRESS === $tables->get_status()
-			) ) {
-				$ignored_fields[] = 'started_at';
+		// A shared comment may describe lesson activity before the quiz was attempted.
+		// A missing HPPS quiz row is expected in that case.
+		$has_only_lesson_activity = ! $tables && $comments instanceof Comments_Based_Quiz_Progress
+			&& ! $this->has_recorded_quiz_activity( $comments, $records );
+
+		// Only report progress mismatches outside these expected differences between stores.
+		if ( ! $has_expected_quiz_visit_difference && ! $has_only_lesson_activity ) {
+			if ( $comments && $tables ) {
+				$this->compare_progress( $comments, $tables );
+
+				// The original lesson start may be unverifiable, or these may be separate
+				// lesson/quiz start events. Keep either date out of proposed repairs.
+				$cannot_compare_start = $this->get_warnings() || ( 'quiz' === $type
+					&& Quiz_Progress_Interface::STATUS_IN_PROGRESS === $comments->get_status()
+					&& Quiz_Progress_Interface::STATUS_IN_PROGRESS === $tables->get_status()
+				);
+				if ( $cannot_compare_start ) {
+					$ignored_fields[] = 'started_at';
+				}
+			} elseif ( $comments || $tables ) {
+				$this->add_missing_progress_error( $type, $comments ? 'tables' : 'comments', $post_id, $user_id );
 			}
-		} elseif ( $comments || $tables ) {
-			$this->add_missing_progress_error( $type, $comments ? 'tables' : 'comments', $post_id, $user_id );
 		}
 
 		return array(
