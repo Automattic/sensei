@@ -77,8 +77,8 @@ class Quiz_Submission_Validation {
 				if ( 'tables' === $store && ! empty( $records['submissions'] ) ) {
 					// Duplicate submissions cannot produce one model. Retain their child rows for
 					// inspection without choosing a submission or losing the surviving quiz data.
-					Validation_Records::get_answers( 0, $store, $records );
-					Validation_Records::get_grades( 0, $store, $records );
+					Validation_Records::get_tables_answer_rows( 0, $records );
+					Validation_Records::get_tables_grade_rows( 0, $records );
 				}
 				continue;
 			}

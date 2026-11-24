@@ -221,20 +221,7 @@ class Validation_Records {
 		global $wpdb;
 
 		if ( 'comment' === $type && null !== $records && in_array( $key, self::COMMENT_META_KEYS, true ) ) {
-			$comment_ids = array_column( $records['comments'] ?? array(), 'comment_ID' );
-			$comment_ids = $comment_ids ? $comment_ids : array( $object_id );
-			$ids         = implode( ', ', array_fill( 0, count( $comment_ids ), '%d' ) );
-			$keys        = implode( ', ', array_fill( 0, count( self::COMMENT_META_KEYS ), '%s' ) );
-			$rows        = self::query(
-				'SELECT meta_id, comment_id, meta_key, meta_value FROM %i
-				WHERE comment_id IN (' . $ids . ') AND meta_key IN (' . $keys . ') ORDER BY comment_id, meta_id',
-				array_merge( array( $wpdb->commentmeta ), $comment_ids, self::COMMENT_META_KEYS ),
-				'comment metadata',
-				$records,
-				'comment_meta'
-			);
-
-			foreach ( $rows as $row ) {
+			foreach ( self::get_comment_metadata_rows( $object_id, $records ) as $row ) {
 				if ( (int) $row->comment_id === $object_id && $row->meta_key === $key ) {
 					return maybe_unserialize( $row->meta_value );
 				}
@@ -251,6 +238,31 @@ class Validation_Records {
 		);
 
 		return $rows ? maybe_unserialize( $rows[0]->meta_value ) : '';
+	}
+
+	/**
+	 * Read relevant metadata for all inspected comments, retaining duplicate rows.
+	 *
+	 * @param int   $comment_id The comment ID to use when no comments have been collected.
+	 * @param array $records    Shared rows for one targeted inspection.
+	 * @return object[] Stored metadata rows.
+	 */
+	private static function get_comment_metadata_rows( int $comment_id, array &$records ): array {
+		global $wpdb;
+
+		$comment_ids = array_column( $records['comments'] ?? array(), 'comment_ID' );
+		$comment_ids = $comment_ids ? $comment_ids : array( $comment_id );
+		$ids         = implode( ', ', array_fill( 0, count( $comment_ids ), '%d' ) );
+		$keys        = implode( ', ', array_fill( 0, count( self::COMMENT_META_KEYS ), '%s' ) );
+
+		return self::query(
+			'SELECT meta_id, comment_id, meta_key, meta_value FROM %i
+			WHERE comment_id IN (' . $ids . ') AND meta_key IN (' . $keys . ') ORDER BY comment_id, meta_id',
+			array_merge( array( $wpdb->commentmeta ), $comment_ids, self::COMMENT_META_KEYS ),
+			'comment metadata',
+			$records,
+			'comment_meta'
+		);
 	}
 
 	/**
@@ -290,8 +302,8 @@ class Validation_Records {
 
 		if ( null !== $records && $rows ) {
 			// Retain metadata before building models so duplicate start dates do not need to be interpreted.
-			self::get_metadata( 'comment', (int) $rows[0]->comment_ID, 'start', $records );
-			$keys = array_column( $records['comment_meta'] ?? array(), 'meta_key' );
+			$metadata_rows = self::get_comment_metadata_rows( (int) $rows[0]->comment_ID, $records );
+			$keys          = array_column( $metadata_rows, 'meta_key' );
 			if ( count( $keys ) !== count( array_unique( $keys ) ) ) {
 				return null;
 			}
@@ -492,8 +504,6 @@ class Validation_Records {
 	 * @return Answer_Interface[]
 	 */
 	public static function get_answers( int $submission_id, string $store, ?array &$records = null ): array {
-		global $wpdb;
-
 		$answers = array();
 		if ( 'comments' === $store ) {
 			$values = self::get_metadata( 'comment', $submission_id, 'quiz_answers', $records );
@@ -505,16 +515,7 @@ class Validation_Records {
 			return $answers;
 		}
 
-		$submission_ids = array_column( $records['submissions'] ?? array(), 'id' );
-		$submission_ids = $submission_ids ? $submission_ids : array( $submission_id );
-		$ids            = implode( ', ', array_fill( 0, count( $submission_ids ), '%d' ) );
-		$rows           = self::query(
-			'SELECT * FROM %i WHERE submission_id IN (' . $ids . ') ORDER BY id',
-			array_merge( array( $wpdb->prefix . 'sensei_lms_quiz_answers' ), $submission_ids ),
-			'quiz answers table',
-			$records,
-			'answers'
-		);
+		$rows = self::get_tables_answer_rows( $submission_id, $records );
 		if ( ! $submission_id ) {
 			return array();
 		}
@@ -535,6 +536,31 @@ class Validation_Records {
 	}
 
 	/**
+	 * Read answer rows for the inspected submissions, retaining duplicate identities.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int        $submission_id The submission ID to use when no submissions have been collected.
+	 * @param array|null $records       Shared rows for one targeted inspection, or null for a fresh read.
+	 * @return object[] Stored answer rows.
+	 */
+	public static function get_tables_answer_rows( int $submission_id, ?array &$records = null ): array {
+		global $wpdb;
+
+		$submission_ids = array_column( $records['submissions'] ?? array(), 'id' );
+		$submission_ids = $submission_ids ? $submission_ids : array( $submission_id );
+		$ids            = implode( ', ', array_fill( 0, count( $submission_ids ), '%d' ) );
+
+		return self::query(
+			'SELECT * FROM %i WHERE submission_id IN (' . $ids . ') ORDER BY id',
+			array_merge( array( $wpdb->prefix . 'sensei_lms_quiz_answers' ), $submission_ids ),
+			'quiz answers table',
+			$records,
+			'answers'
+		);
+	}
+
+	/**
 	 * Read all grades reachable through a submission's answers.
 	 *
 	 * @since 4.28.0
@@ -545,8 +571,6 @@ class Validation_Records {
 	 * @return Grade_Interface[]
 	 */
 	public static function get_grades( int $submission_id, string $store, ?array &$records = null ): array {
-		global $wpdb;
-
 		$grades = array();
 		if ( 'comments' === $store ) {
 			$points   = self::get_metadata( 'comment', $submission_id, 'quiz_grades', $records );
@@ -559,18 +583,7 @@ class Validation_Records {
 			return $grades;
 		}
 
-		$submission_ids = array_column( $records['submissions'] ?? array(), 'id' );
-		$submission_ids = $submission_ids ? $submission_ids : array( $submission_id );
-		$ids            = implode( ', ', array_fill( 0, count( $submission_ids ), '%d' ) );
-		$rows           = self::query(
-			'SELECT grades.* FROM %i AS grades
-			INNER JOIN %i AS answers ON answers.id = grades.answer_id
-			WHERE answers.submission_id IN (' . $ids . ') ORDER BY grades.id',
-			array_merge( array( $wpdb->prefix . 'sensei_lms_quiz_grades', $wpdb->prefix . 'sensei_lms_quiz_answers' ), $submission_ids ),
-			'quiz grades table',
-			$records,
-			'grades'
-		);
+		$rows = self::get_tables_grade_rows( $submission_id, $records );
 		if ( ! $submission_id ) {
 			return array();
 		}
@@ -589,6 +602,33 @@ class Validation_Records {
 		}
 
 		return $grades;
+	}
+
+	/**
+	 * Read grade rows through the inspected submissions' answers, retaining duplicate identities.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int        $submission_id The submission ID to use when no submissions have been collected.
+	 * @param array|null $records       Shared rows for one targeted inspection, or null for a fresh read.
+	 * @return object[] Stored grade rows.
+	 */
+	public static function get_tables_grade_rows( int $submission_id, ?array &$records = null ): array {
+		global $wpdb;
+
+		$submission_ids = array_column( $records['submissions'] ?? array(), 'id' );
+		$submission_ids = $submission_ids ? $submission_ids : array( $submission_id );
+		$ids            = implode( ', ', array_fill( 0, count( $submission_ids ), '%d' ) );
+
+		return self::query(
+			'SELECT grades.* FROM %i AS grades
+			INNER JOIN %i AS answers ON answers.id = grades.answer_id
+			WHERE answers.submission_id IN (' . $ids . ') ORDER BY grades.id',
+			array_merge( array( $wpdb->prefix . 'sensei_lms_quiz_grades', $wpdb->prefix . 'sensei_lms_quiz_answers' ), $submission_ids ),
+			'quiz grades table',
+			$records,
+			'grades'
+		);
 	}
 
 	/**
