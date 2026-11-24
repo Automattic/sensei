@@ -243,11 +243,11 @@ class Validation_Records {
 	/**
 	 * Read relevant metadata for all inspected comments, retaining duplicate rows.
 	 *
-	 * @param int   $comment_id The comment ID to use when no comments have been collected.
-	 * @param array $records    Shared rows for one targeted inspection.
+	 * @param int        $comment_id The comment ID to use when no comments have been collected.
+	 * @param array|null $records    Shared rows for one targeted inspection, or null for a fresh read.
 	 * @return object[] Stored metadata rows.
 	 */
-	private static function get_comment_metadata_rows( int $comment_id, array &$records ): array {
+	private static function get_comment_metadata_rows( int $comment_id, ?array &$records = null ): array {
 		global $wpdb;
 
 		$comment_ids = array_column( $records['comments'] ?? array(), 'comment_ID' );
