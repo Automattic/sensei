@@ -336,6 +336,26 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A lesson with more than one module term gets all of them, not only the first.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_modules
+	 */
+	public function testGetLessonModules_LessonHadTwoModules_ReturnsBothTerms(): void {
+		/* Arrange. */
+		$module_ids = $this->factory->module->create_many( 2 );
+		$lesson_id  = $this->factory->lesson->create();
+		wp_set_object_terms( $lesson_id, $module_ids, 'module' );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_modules( $lesson_id );
+
+		/* Assert. */
+		$actual_ids = wp_list_pluck( $actual, 'term_id' );
+		sort( $actual_ids );
+		self::assertSame( $module_ids, $actual_ids );
+	}
+
+	/**
 	 * Setting a prerequisite replaces the one the lesson had.
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::set_lesson_prerequisite

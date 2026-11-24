@@ -150,6 +150,37 @@ class Sensei_Abilities_Test extends WP_UnitTestCase {
 		$factory->tearDown();
 	}
 
+	/**
+	 * Each lesson of the list comes with the module it is in.
+	 *
+	 * @covers Sensei_Abilities::execute_lessons_list
+	 */
+	public function testExecuteLessonsList_LessonInAModuleGiven_ReturnsItsModule() {
+		/* Arrange. */
+		$factory   = new Sensei_Factory();
+		$module    = $factory->module->create_and_get( array( 'name' => 'Basics' ) );
+		$lesson_id = $factory->lesson->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $lesson_id, $module->term_id );
+		$this->login_as_admin();
+
+		/* Act. */
+		$result = wp_get_ability( 'sensei/lessons-list' )->execute( array() );
+
+		/* Assert. */
+		$items = wp_list_pluck( $result['items'], 'modules', 'id' );
+		$this->assertSame(
+			array(
+				array(
+					'id'   => $module->term_id,
+					'name' => 'Basics',
+				),
+			),
+			$items[ $lesson_id ]
+		);
+
+		$factory->tearDown();
+	}
+
 	public function testGetQuestions_WhenCalled_ReturnsQuestionsInOrder() {
 		$factory   = new Sensei_Factory();
 		$lesson_id = $factory->lesson->create();

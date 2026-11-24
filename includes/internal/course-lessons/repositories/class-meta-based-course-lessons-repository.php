@@ -203,6 +203,24 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	}
 
 	/**
+	 * Get every module of a lesson.
+	 *
+	 * Reads with `wp_get_post_terms()`, so the `get_object_terms` filters apply.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @return WP_Term[] The lesson's module terms, or an empty array when it has none.
+	 */
+	public function get_lesson_modules( int $lesson_id ): array {
+		$terms = wp_get_post_terms( $lesson_id, 'module' );
+
+		return is_array( $terms ) ? $terms : array();
+	}
+
+	/**
 	 * Set the prerequisite of a lesson.
 	 *
 	 * @internal
