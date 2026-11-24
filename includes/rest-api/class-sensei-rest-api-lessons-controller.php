@@ -158,16 +158,15 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 			$meta_value = $request->get_param( 'metaValue' );
 			$meta_key   = esc_sql( $meta_key );
 
-			$is_course_id = is_scalar( $meta_value ) && preg_match( '/^[1-9][0-9]*$/', (string) $meta_value );
-
-			if ( '_lesson_course' === $meta_key && $is_course_id ) {
-				$args['sensei_course'] = (int) $meta_value;
-
-				return $args;
-			}
-
-			if ( '_lesson_course' === $meta_key && empty( $meta_value ) ) {
-				$args['sensei_without_course'] = true;
+			if ( '_lesson_course' === $meta_key ) {
+				if ( is_scalar( $meta_value ) && preg_match( '/^[1-9][0-9]*$/', (string) $meta_value ) ) {
+					$args['sensei_course'] = (int) $meta_value;
+				} elseif ( empty( $meta_value ) ) {
+					$args['sensei_without_course'] = true;
+				} else {
+					// Any other value cannot be a course, so no lesson matches.
+					$args['post__in'] = array( 0 );
+				}
 
 				return $args;
 			}
