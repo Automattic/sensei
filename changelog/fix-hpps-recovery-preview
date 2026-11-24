@@ -1,4 +1,4 @@
 Significance: minor
 Type: added
 
-Add read-only WP-CLI previews for HPPS progress recovery.
+Add HPPS recovery previews and validation command aliases.

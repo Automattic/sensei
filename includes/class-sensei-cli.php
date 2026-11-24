@@ -28,6 +28,10 @@ class Sensei_CLI {
 	private function register() {
 		WP_CLI::add_command( 'sensei db seed', Sensei_DB_Seed_Command::class );
 		WP_CLI::add_command( 'sensei progress preview', Sensei_Progress_Preview_Command::class );
+		WP_CLI::add_command( 'sensei progress validate', Sensei_Validate_Progress_Command::class );
+		WP_CLI::add_command( 'sensei quiz-submission validate', Sensei_Validate_Quiz_Submission_Command::class );
+
+		// Keep the original names available for existing scripts.
 		WP_CLI::add_command( 'sensei validate progress', Sensei_Validate_Progress_Command::class );
 		WP_CLI::add_command( 'sensei validate quiz-submission', Sensei_Validate_Quiz_Submission_Command::class );
 		WP_CLI::add_command( 'sensei enrolment calculate-course', Sensei_Enrolment_Course_Calculation_Command::class );

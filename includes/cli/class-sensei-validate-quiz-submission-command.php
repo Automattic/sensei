@@ -21,6 +21,12 @@ class Sensei_Validate_Quiz_Submission_Command {
 	/**
 	 * Validate the quiz submission migrated data.
 	 *
+	 * Also available as `wp sensei validate quiz-submission`.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp sensei quiz-submission validate
+	 *
 	 * @since 4.19.2
 	 *
 	 * @param array $args       Command arguments.
