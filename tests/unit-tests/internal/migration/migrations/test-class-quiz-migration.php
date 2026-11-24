@@ -159,7 +159,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	public function testRun_PartialQuizCached_InsertsMissingData( array $missing_tables, string $retained_table ): void {
 		/* Arrange. */
 		global $wpdb;
-		list( $user_id, , $quiz_id ) = $this->create_migrated_quiz_data();
+		list( $user_id, $lesson_id, $quiz_id, , $answers, $grades, $feedback ) = $this->create_migrated_quiz_data( 2 );
 
 		$expected = $this->get_quiz_data( $quiz_id, $user_id );
 
@@ -169,17 +169,26 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 
 		$retained_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}{$retained_table} ORDER BY id" );
 		foreach ( $missing_tables as $table ) {
-			$wpdb->query( "DELETE FROM {$wpdb->prefix}{$table}" );
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}{$table} WHERE question_id = %d", array_key_last( $answers ) ) );
 		}
 
+		// Replace fixture caches with the partial data before migration.
 		wp_cache_flush();
 		$this->set_progress_storage_mode( 'tables' );
-		$this->get_quiz_data( $quiz_id, $user_id );
+		foreach ( array( 'sensei_answers_', 'quiz_grades_', 'sensei_answers_feedback_' ) as $prefix ) {
+			delete_transient( $prefix . $user_id . '_' . $lesson_id );
+		}
+		Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
+		Sensei()->quiz->get_user_grades( $lesson_id, $user_id );
+		Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id );
 
 		/* Act. */
 		$this->migration->run( false );
 
 		/* Assert. */
+		$this->assertSame( $answers, Sensei()->quiz->get_user_answers( $lesson_id, $user_id ), 'Public reads should include the restored answers.' );
+		$this->assertSame( $grades, Sensei()->quiz->get_user_grades( $lesson_id, $user_id ), 'Public reads should include the restored grades.' );
+		$this->assertSame( $feedback, Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id ), 'Public reads should include the restored feedback.' );
 		$this->assertSame( $expected, $this->get_quiz_data( $quiz_id, $user_id ), 'Missing quiz data should migrate without overwriting the existing final grade.' );
 		$this->assertSame( $retained_ids, $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}{$retained_table} ORDER BY id" ), 'Previously saved records should retain their IDs.' );
 		// phpcs:enable WordPress.DB
@@ -295,12 +304,13 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	/**
 	 * Create source comments without also populating the migration destination.
 	 *
+	 * @param int $question_count Number of questions to create.
 	 * @return array Quiz fixture IDs and source values.
 	 */
-	private function create_quiz_data() {
-		$user_id     = 1;
-		$lesson_id   = $this->factory->lesson->create();
-		$quiz_id     = $this->factory->quiz->create(
+	private function create_quiz_data( int $question_count = 1 ) {
+		$user_id      = 1;
+		$lesson_id    = $this->factory->lesson->create();
+		$quiz_id      = $this->factory->quiz->create(
 			[
 				'post_parent' => $lesson_id,
 				'meta_input'  => [
@@ -308,10 +318,11 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 				],
 			]
 		);
-		$question_id = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
-		$answers     = $this->factory->generate_user_quiz_answers( $quiz_id );
-		$grades      = $this->factory->generate_user_quiz_grades( $answers );
-		$feedback    = $this->factory->generate_user_answers_feedback( $quiz_id );
+		$question_ids = $this->factory->question->create_many( $question_count, array( 'quiz_id' => $quiz_id ) );
+		$question_id  = $question_ids[0];
+		$answers      = $this->factory->generate_user_quiz_answers( $quiz_id );
+		$grades       = $this->factory->generate_user_quiz_grades( $answers );
+		$feedback     = $this->factory->generate_user_answers_feedback( $quiz_id );
 
 		$this->set_progress_storage_mode( 'comments-only' );
 		try {
@@ -329,10 +340,11 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	/**
 	 * Populate both stores, then rewind the migration for another pass.
 	 *
+	 * @param int $question_count Number of questions to create.
 	 * @return array Quiz fixture IDs and source values.
 	 */
-	private function create_migrated_quiz_data(): array {
-		$fixture = $this->create_quiz_data();
+	private function create_migrated_quiz_data( int $question_count = 1 ): array {
+		$fixture = $this->create_quiz_data( $question_count );
 		$this->migration->run( false );
 		wp_cache_flush();
 		update_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME, $this->initial_comment_id );

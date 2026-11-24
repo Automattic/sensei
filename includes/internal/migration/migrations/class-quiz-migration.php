@@ -305,6 +305,8 @@ class Quiz_Migration extends Migration_Abstract {
 				$answer_ids[ $question_id ] = $wpdb->insert_id;
 				$cache_submission_id        = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission_id, 'tables' );
 				wp_cache_delete( self::get_prefixed_key( (string) $cache_submission_id, 'sensei_quiz_answers' ), 'sensei_quiz_answers' );
+				$cache_lesson_id = (int) apply_filters( 'sensei_quiz_cache_key_lesson_id', (int) $comment->comment_post_ID );
+				delete_transient( 'sensei_answers_' . $comment->user_id . '_' . $cache_lesson_id );
 				continue;
 			}
 
@@ -404,6 +406,9 @@ class Quiz_Migration extends Migration_Abstract {
 				$grade_ids[ $question_id ] = $wpdb->insert_id;
 				$cache_submission_id       = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission_id, 'tables' );
 				wp_cache_delete( self::get_prefixed_key( (string) $cache_submission_id, 'sensei_quiz_grades' ), 'sensei_quiz_grades' );
+				$cache_lesson_id = (int) apply_filters( 'sensei_quiz_cache_key_lesson_id', (int) $comment->comment_post_ID );
+				delete_transient( 'quiz_grades_' . $comment->user_id . '_' . $cache_lesson_id );
+				delete_transient( 'sensei_answers_feedback_' . $comment->user_id . '_' . $cache_lesson_id );
 			}
 		}
 
