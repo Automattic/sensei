@@ -21,6 +21,12 @@ class Sensei_Validate_Progress_Command {
 	/**
 	 * Validate the progress migrated data.
 	 *
+	 * Also available as `wp sensei validate progress`.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp sensei progress validate
+	 *
 	 * @since 4.19.1
 	 *
 	 * @param array $args       Command arguments.

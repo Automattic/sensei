@@ -49,6 +49,84 @@ class Quiz_Submission_Validation {
 	}
 
 	/**
+	 * Inspect a quiz submission and its question data in both stores.
+	 *
+	 * @internal
+	 * @since $$next-version$$
+	 *
+	 * @param int        $quiz_id The stored quiz ID.
+	 * @param int        $user_id The student ID.
+	 * @param array|null $records Shared rows for this student and quiz, populated by the readers.
+	 * @return array The normalized bundles and validation differences.
+	 */
+	public function inspect( int $quiz_id, int $user_id, ?array &$records = null ): array {
+		// Share freshly read rows with progress inspection and the raw output so they use the same copies.
+		$this->errors = array();
+		$records      = $records ?? array();
+		$models       = array(
+			'comments' => Validation_Records::get_comments_submission( $quiz_id, $user_id, $records ),
+			'tables'   => Validation_Records::get_tables_submission( $quiz_id, $user_id, $records ),
+		);
+		$copies       = array(
+			'comments' => null,
+			'tables'   => null,
+		);
+
+		foreach ( $models as $store => $submission ) {
+			if ( ! $submission ) {
+				if ( 'tables' === $store && ! empty( $records['submissions'] ) ) {
+					// Duplicate submissions cannot produce one model. Retain their child rows for
+					// inspection without choosing a submission or losing the surviving quiz data.
+					Validation_Records::get_tables_answer_rows( 0, $records );
+					Validation_Records::get_tables_grade_rows( 0, $records );
+				}
+				continue;
+			}
+
+			$copies[ $store ] = array_merge(
+				array( 'id' => $submission->get_id() ),
+				$this->get_submission_data( $submission ),
+				array(
+					'answers' => array_map(
+						array( $this, 'get_answer_data' ),
+						Validation_Records::get_answers( $submission->get_id(), $store, $records )
+					),
+					'grades'  => array_map(
+						array( $this, 'get_grade_data' ),
+						Validation_Records::get_grades( $submission->get_id(), $store, $records )
+					),
+				)
+			);
+
+			// Question identity determines equality; insertion order must not create repair differences.
+			foreach ( array( 'answers', 'grades' ) as $kind ) {
+				usort(
+					$copies[ $store ][ $kind ],
+					static function ( array $left, array $right ): int {
+						return $left['question_id'] <=> $right['question_id'];
+					}
+				);
+			}
+		}
+
+		if ( $models['comments'] && $models['tables'] && $copies['comments'] && $copies['tables'] ) {
+			$this->compare_submission( $models['comments'], $models['tables'] );
+			$identity = array(
+				'quiz_id' => $quiz_id,
+				'user_id' => $user_id,
+			);
+
+			foreach ( array( 'answers', 'grades' ) as $kind ) {
+				$this->compare_question_data( $copies['comments'][ $kind ], $copies['tables'][ $kind ], $identity, $kind );
+			}
+		} elseif ( $models['comments'] || $models['tables'] ) {
+			$this->add_missing_submission_error( $models['comments'] ? 'tables' : 'comments', $quiz_id, $user_id );
+		}
+
+		return array_merge( $copies, array( 'errors' => $this->errors ) );
+	}
+
+	/**
 	 * Check if there are validation errors.
 	 *
 	 * @internal
