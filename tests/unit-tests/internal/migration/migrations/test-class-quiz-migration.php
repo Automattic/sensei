@@ -151,12 +151,13 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Repeated migration fills missing quiz data while retaining saved records.
+	 * Migration refreshes cached quiz data when filling missing answers or grades.
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
 	 * @dataProvider partial_quizzes
 	 */
-	public function testRun_PartialQuizGiven_InsertsMissingData( array $missing_tables, string $retained_table ): void {
+	public function testRun_PartialQuizCached_InsertsMissingData( array $missing_tables, string $retained_table ): void {
+		/* Arrange. */
 		global $wpdb;
 		list( $user_id, , $quiz_id ) = $this->create_migrated_quiz_data();
 
@@ -171,9 +172,14 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			$wpdb->query( "DELETE FROM {$wpdb->prefix}{$table}" );
 		}
 
-		$this->migration->run( false );
 		wp_cache_flush();
+		$this->set_progress_storage_mode( 'tables' );
+		$this->get_quiz_data( $quiz_id, $user_id );
 
+		/* Act. */
+		$this->migration->run( false );
+
+		/* Assert. */
 		$this->assertSame( $expected, $this->get_quiz_data( $quiz_id, $user_id ), 'Missing quiz data should migrate without overwriting the existing final grade.' );
 		$this->assertSame( $retained_ids, $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}{$retained_table} ORDER BY id" ), 'Previously saved records should retain their IDs.' );
 		// phpcs:enable WordPress.DB

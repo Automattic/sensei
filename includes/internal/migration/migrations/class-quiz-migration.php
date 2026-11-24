@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Sensei\Internal\Cache_Prefix;
 use Sensei\Internal\Migration\Migration_Abstract;
 
 /**
@@ -21,6 +22,8 @@ use Sensei\Internal\Migration\Migration_Abstract;
  * @since 4.17.0
  */
 class Quiz_Migration extends Migration_Abstract {
+	use Cache_Prefix;
+
 	/**
 	 * The name of the option that stores the last comment ID that was migrated.
 	 *
@@ -87,7 +90,7 @@ class Quiz_Migration extends Migration_Abstract {
 			}
 
 			$answer_ids = $this->insert_quiz_answers( $comment, $quiz_data, $submission_id );
-			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids );
+			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids, $submission_id );
 
 			$last_processed_id = $comment->comment_ID;
 			++$processed;
@@ -300,6 +303,8 @@ class Quiz_Migration extends Migration_Abstract {
 			$result = $this->db_query( $query );
 			if ( $result ) {
 				$answer_ids[ $question_id ] = $wpdb->insert_id;
+				$cache_submission_id        = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission_id, 'tables' );
+				wp_cache_delete( self::get_prefixed_key( (string) $cache_submission_id, 'sensei_quiz_answers' ), 'sensei_quiz_answers' );
 				continue;
 			}
 
@@ -333,10 +338,11 @@ class Quiz_Migration extends Migration_Abstract {
 	 * @param object $comment The comment object.
 	 * @param array  $quiz_data The quiz metadata.
 	 * @param array  $answer_ids The answer ids.
+	 * @param int    $submission_id The quiz submission id.
 	 *
 	 * @return array
 	 */
-	private function insert_quiz_grades( object $comment, array $quiz_data, array $answer_ids ): array {
+	private function insert_quiz_grades( object $comment, array $quiz_data, array $answer_ids, int $submission_id ): array {
 		$quiz_grades = ! empty( $quiz_data[ $comment->comment_ID ]['quiz_grades'] )
 			? maybe_unserialize( $quiz_data[ $comment->comment_ID ]['quiz_grades'] )
 			: array();
@@ -385,6 +391,8 @@ class Quiz_Migration extends Migration_Abstract {
 			$result = $this->db_query( $query );
 			if ( $result ) {
 				$grade_ids[ $question_id ] = $wpdb->insert_id;
+				$cache_submission_id       = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission_id, 'tables' );
+				wp_cache_delete( self::get_prefixed_key( (string) $cache_submission_id, 'sensei_quiz_grades' ), 'sensei_quiz_grades' );
 			}
 		}
 

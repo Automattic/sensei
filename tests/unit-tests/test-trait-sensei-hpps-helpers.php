@@ -48,4 +48,42 @@ class Sensei_HPPS_Helpers_Test extends WP_UnitTestCase {
 		/* Assert. */
 		self::assertFalse( $actual );
 	}
+
+	/**
+	 * Storage switches update caching and restore its previous setting.
+	 *
+	 * @covers Sensei_HPPS_Helpers::set_progress_storage_mode
+	 * @covers Sensei_HPPS_Helpers::restore_progress_storage_mode
+	 * @dataProvider storage_cache_modes
+	 */
+	public function testSetProgressStorageMode_CacheFlagPrimed_UpdatesAndRestoresCaching( string $mode, string $original_repository, bool $expected ): void {
+		/* Arrange. */
+		$original_settings = Sensei()->settings->settings;
+		Sensei()->settings->settings['experimental_progress_storage_repository'] = $original_repository;
+		Progress_Storage_Settings::reset_cache_enabled();
+		$original_cache_enabled = Progress_Storage_Settings::is_cache_enabled();
+
+		/* Act. */
+		try {
+			$this->set_progress_storage_mode( $mode );
+			$selected = Progress_Storage_Settings::is_cache_enabled();
+			$this->restore_progress_storage_mode();
+			$restored = Progress_Storage_Settings::is_cache_enabled();
+		} finally {
+			$this->restore_progress_storage_mode();
+			Sensei()->settings->settings = $original_settings;
+			Progress_Storage_Settings::reset_cache_enabled();
+		}
+
+		/* Assert. */
+		self::assertSame( $expected, $selected, 'Caching should follow the selected storage mode.' );
+		self::assertSame( $original_cache_enabled, $restored, 'Restoring storage should restore its caching behavior.' );
+	}
+
+	public static function storage_cache_modes(): array {
+		return array(
+			'tables from comments' => array( 'tables', Progress_Storage_Settings::COMMENTS_STORAGE, true ),
+			'comments from tables' => array( 'comments', Progress_Storage_Settings::TABLES_STORAGE, false ),
+		);
+	}
 }
