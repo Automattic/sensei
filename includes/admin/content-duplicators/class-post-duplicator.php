@@ -117,7 +117,11 @@ class Post_Duplicator {
 			$terms = get_the_terms( $post->ID, $slug );
 			if ( is_array( $terms ) && 0 < count( $terms ) ) {
 				foreach ( $terms as $term ) {
-					wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
+					if ( 'lesson' === $post->post_type && 'module' === $slug ) {
+						Sensei()->course_lessons_repository->add_lesson_module( $new_post_id, $term->term_id );
+					} else {
+						wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
+					}
 				}
 			}
 		}

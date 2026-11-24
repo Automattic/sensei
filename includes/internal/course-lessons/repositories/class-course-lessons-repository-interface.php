@@ -194,6 +194,19 @@ interface Course_Lessons_Repository_Interface {
 	public function set_lesson_module( int $lesson_id, int $term_id );
 
 	/**
+	 * Add a module to a lesson, keeping any module it had.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return true|\WP_Error True, or the error WordPress returned.
+	 */
+	public function add_lesson_module( int $lesson_id, int $term_id );
+
+	/**
 	 * Remove a lesson from its module.
 	 *
 	 * Fires the term relationship deletion hooks only; see `unset_lesson_module()`.

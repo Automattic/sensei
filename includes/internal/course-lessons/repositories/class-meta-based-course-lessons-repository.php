@@ -385,6 +385,23 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	}
 
 	/**
+	 * Add a module to a lesson, keeping any module it had.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return true|WP_Error True, or the error `wp_set_object_terms()` returned.
+	 */
+	public function add_lesson_module( int $lesson_id, int $term_id ) {
+		$result = wp_set_object_terms( $lesson_id, array( $term_id ), 'module', true );
+
+		return is_wp_error( $result ) ? $result : true;
+	}
+
+	/**
 	 * Remove a lesson from its module through `wp_delete_object_term_relationships()`.
 	 *
 	 * Unlike `unset_lesson_module()`, the `set_object_terms` action does not fire.
