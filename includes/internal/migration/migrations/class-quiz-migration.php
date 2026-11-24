@@ -312,11 +312,11 @@ class Quiz_Migration extends Migration_Abstract {
 				continue;
 			}
 
-			// Reuse the existing answer so an interrupted grade write can be retried.
+			// Only reuse matching answers so grades stay attached to the right response.
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$answer_id = $wpdb->get_var(
+			$answer = $wpdb->get_row(
 				$wpdb->prepare(
-					"SELECT id FROM {$wpdb->prefix}sensei_lms_quiz_answers WHERE submission_id = %d AND question_id = %d",
+					"SELECT id, value FROM {$wpdb->prefix}sensei_lms_quiz_answers WHERE submission_id = %d AND question_id = %d",
 					$submission_id,
 					$question_id
 				)
@@ -324,8 +324,19 @@ class Quiz_Migration extends Migration_Abstract {
 
 			if ( '' !== $wpdb->last_error ) {
 				$this->add_error( $wpdb->last_error );
-			} elseif ( $answer_id ) {
-				$answer_ids[ $question_id ] = (int) $answer_id;
+			} elseif ( $answer ) {
+				if ( $answer->value !== (string) $value ) {
+					$this->add_error(
+						sprintf(
+							/* translators: 1: Quiz submission ID, 2: Question ID. */
+							__( 'Quiz answer conflict for submission ID %1$d and question ID %2$d: the saved answer differs from the source answer.', 'sensei-lms' ),
+							$submission_id,
+							$question_id
+						)
+					);
+					continue;
+				}
+				$answer_ids[ $question_id ] = (int) $answer->id;
 			}
 		}
 

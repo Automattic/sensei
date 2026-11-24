@@ -198,6 +198,38 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A source grade must not be attached to a different preserved answer.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
+	 */
+	public function testRun_ExistingAnswerMismatched_SkipsGradeAndReportsConflict(): void {
+		/* Arrange. */
+		global $wpdb;
+		list( $user_id, $lesson_id, , $question_id ) = $this->create_migrated_quiz_data();
+		$this->set_progress_storage_mode( 'comments-only' );
+		Sensei()->quiz->save_user_answers( array( $question_id => 'Source answer B' ), array(), $lesson_id, $user_id );
+		Sensei()->quiz->set_user_grades( array( $question_id => 7 ), $lesson_id, $user_id );
+		$this->restore_progress_storage_mode();
+
+		// phpcs:disable WordPress.DB -- Model a preserved answer that differs from the migration source.
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}sensei_lms_quiz_grades" );
+		$expected_answer = $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}sensei_lms_quiz_answers", ARRAY_A );
+
+		/* Act. */
+		$this->migration->run( false );
+
+		/* Assert. */
+		$this->assertSame( $expected_answer, $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}sensei_lms_quiz_answers", ARRAY_A ), 'The preserved answer and its ID must remain unchanged.' );
+		$this->assertSame( array(), $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}sensei_lms_quiz_grades", ARRAY_A ), 'A grade for a different source answer must not be inserted.' );
+		// phpcs:enable WordPress.DB
+		$this->assertSame(
+			array( sprintf( 'Quiz answer conflict for submission ID %1$d and question ID %2$d: the saved answer differs from the source answer.', $expected_answer['submission_id'], $expected_answer['question_id'] ) ),
+			$this->migration->get_errors(),
+			'The mismatched answer must be reported as a migration conflict.'
+		);
+	}
+
+	/**
 	 * Failed parent inserts must not attach grades through existing or stale IDs.
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
