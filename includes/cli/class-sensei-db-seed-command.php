@@ -104,11 +104,12 @@ class Sensei_DB_Seed_Command {
 						'post_type'   => 'lesson',
 						'post_status' => 'publish',
 						'meta_input'  => [
-							'_lesson_course' => $course_id,
-							'_seeded'        => true,
+							'_seeded' => true,
 						],
 					]
 				);
+
+				Sensei()->course_lessons_repository->attach_lesson( $lesson_id, $course_id );
 
 				$this->log( "Inserted '$lesson_title' ($lesson_id)." );
 			}

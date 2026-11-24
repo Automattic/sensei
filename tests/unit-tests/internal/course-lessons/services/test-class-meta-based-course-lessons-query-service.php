@@ -198,6 +198,38 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A lesson query with the `sensei_has_course` query var leaves out the lessons without a course.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_with_course
+	 */
+	public function testFilterLessonsWithCourse_HasCourseQueryVarGiven_ReturnsOnlyTheLessonsWithACourse(): void {
+		/* Arrange. */
+		$course = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		$this->factory->lesson->create();
+		// An empty or zero course is how a lesson that lost its course is stored.
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => '' ) ) );
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => '0' ) ) );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'         => 'lesson',
+				'posts_per_page'    => -1,
+				'fields'            => 'ids',
+				'sensei_has_course' => true,
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( $course['lesson_ids'], $actual );
+	}
+
+	/**
 	 * A lesson query with the module query var returns the lessons of that module only.
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_by_module
