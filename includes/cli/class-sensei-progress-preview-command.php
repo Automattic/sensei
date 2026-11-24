@@ -5,6 +5,10 @@
  * @package sensei
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Preview differences and conditional repairs without changing either store.
  *

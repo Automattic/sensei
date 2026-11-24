@@ -10,6 +10,10 @@ use Sensei\Internal\Migration\Validations\Quiz_Submission_Validation;
 use Sensei\Internal\Migration\Validations\Validation_Error;
 use Sensei\Internal\Migration\Validations\Validation_Records;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Inspect both copies without choosing an authoritative store or writing data.
  *
