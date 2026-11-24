@@ -29,7 +29,7 @@ class Sensei_Progress_Preview_Command {
 	 * : Hypothetical source: comments or tables. Still requires review of intent.
 	 *
 	 * [--format=<format>]
-	 * : Output format: table or json. Defaults to table.
+	 * : Summary table or complete JSON report. Defaults to table.
 	 * ---
 	 * default: table
 	 * options:
@@ -89,25 +89,14 @@ class Sensei_Progress_Preview_Command {
 	 * @param array $preview The read-only preview.
 	 */
 	private function output_table( array $preview ): void {
-		WP_CLI::line( $preview['requires_review'] );
+		WP_CLI::line( 'Read-only preview. Neither store is assumed correct; --from only previews a possible repair.' );
+		WP_CLI::line( 'Use --format=json for stored rows and full answer and grade values.' );
 
 		foreach ( $preview['records'] as $record ) {
 			WP_CLI::line( sprintf( '%s %d, student %d', ucfirst( $record['type'] ), $record['content_id'], $preview['student_id'] ) );
 
 			if ( isset( $record['status'] ) ) {
 				WP_CLI::warning( $record['review'] );
-				$rows = array();
-				foreach ( $record['stored'] as $kind => $stored_rows ) {
-					foreach ( $stored_rows as $row ) {
-						$rows[] = array(
-							'kind' => $kind,
-							'id'   => $row->id ?? $row->comment_ID ?? $row->meta_id,
-						);
-					}
-				}
-
-				WP_CLI\Utils\format_items( 'table', $rows, array( 'kind', 'id' ) );
-				WP_CLI::line( 'Use --format=json to inspect all stored values.' );
 				continue;
 			}
 
@@ -127,21 +116,21 @@ class Sensei_Progress_Preview_Command {
 	private function output_comparison( string $label, array $comparison ): void {
 		WP_CLI::line( $label . ': ' . $comparison['status'] );
 
-		$comments = $this->get_table_values( $comparison['comments'] ?? array() );
-		$tables   = $this->get_table_values( $comparison['tables'] ?? array() );
+		$comments = $comparison['comments'] ?? array();
+		$tables   = $comparison['tables'] ?? array();
 		$rows     = array();
-		foreach ( array_keys( $comments + $tables ) as $field ) {
+		foreach ( array_intersect( array( 'status', 'started_at', 'completed_at', 'final_grade', 'answers', 'grades' ), array_keys( $comments + $tables ) ) as $field ) {
 			$rows[] = array(
 				'field'    => $field,
-				'comments' => array_key_exists( $field, $comments ) ? $this->format_value( $comments[ $field ] ) : '(missing)',
-				'tables'   => array_key_exists( $field, $tables ) ? $this->format_value( $tables[ $field ] ) : '(missing)',
+				'comments' => array_key_exists( $field, $comments ) ? $this->format_value( $comments[ $field ] ) : '(not found)',
+				'tables'   => array_key_exists( $field, $tables ) ? $this->format_value( $tables[ $field ] ) : '(not found)',
 			);
 		}
 
 		if ( $rows ) {
 			WP_CLI\Utils\format_items( 'table', $rows, array( 'field', 'comments', 'tables' ) );
 		} else {
-			WP_CLI::line( 'No records in either store.' );
+			WP_CLI::line( 'No records found in either store.' );
 		}
 
 		foreach ( $comparison['warnings'] as $warning ) {
@@ -149,9 +138,6 @@ class Sensei_Progress_Preview_Command {
 		}
 		if ( isset( $comparison['review'] ) ) {
 			WP_CLI::warning( $comparison['review'] );
-		}
-		foreach ( $comparison['alternatives'] ?? array() as $alternative ) {
-			WP_CLI::line( 'Alternative: ' . $alternative );
 		}
 		if ( ! empty( $comparison['missing_children'] ) ) {
 			WP_CLI\Utils\format_items( 'table', $comparison['missing_children'], array( 'kind', 'question_id', 'missing_from' ) );
@@ -161,57 +147,27 @@ class Sensei_Progress_Preview_Command {
 		}
 
 		if ( ! $comparison['changes'] ) {
-			WP_CLI::line( 'No changes proposed.' );
+			if ( isset( $comparison['review'] ) ) {
+				WP_CLI::line( 'No changes proposed.' );
+			}
 			return;
 		}
 
-		WP_CLI::line( 'Conditional changes, only if the intended outcome is confirmed:' );
-		$changes = $comparison['changes'];
-		foreach ( $changes as &$change ) {
-			$change['before'] = $this->format_value( $change['before'] );
-			$change['after']  = $this->format_value( $change['after'] );
-		}
-		unset( $change );
-
-		WP_CLI\Utils\format_items( 'table', $changes, array( 'if_confirmed', 'from', 'to', 'field', 'before', 'after' ) );
+		WP_CLI::line( 'Proposed changes, only if the source values are confirmed correct (nothing will be written):' );
+		WP_CLI\Utils\format_items( 'table', $comparison['changes'], array( 'field', 'if_confirmed', 'from', 'to' ) );
 	}
 
 	/**
-	 * Put question values on separate rows while retaining their stored identities.
-	 *
-	 * @param array $copy One normalized copy.
-	 * @return array Table values indexed by field.
-	 */
-	private function get_table_values( array $copy ): array {
-		$values = array();
-		foreach ( $copy as $field => $value ) {
-			if ( in_array( $field, array( 'type', 'post_id', 'quiz_id', 'user_id' ), true ) ) {
-				continue;
-			}
-
-			if ( in_array( $field, array( 'answers', 'grades' ), true ) ) {
-				foreach ( $value as $question ) {
-					foreach ( $question as $key => $question_value ) {
-						if ( 'question_id' !== $key ) {
-							$values[ $field . '.' . $question['question_id'] . '.' . $key ] = $question_value;
-						}
-					}
-				}
-			} else {
-				$values[ $field ] = $value;
-			}
-		}
-
-		return $values;
-	}
-
-	/**
-	 * Keep null, empty strings, and structured values distinguishable in tables.
+	 * Summarize collections and keep null and empty strings distinguishable.
 	 *
 	 * @param mixed $value A compared value.
 	 * @return string The display value.
 	 */
 	private function format_value( $value ): string {
+		if ( is_array( $value ) ) {
+			return count( $value ) . ' records (count only)';
+		}
+
 		return is_string( $value ) && '' !== $value ? $value : (string) wp_json_encode( $value, JSON_UNESCAPED_SLASHES );
 	}
 }
