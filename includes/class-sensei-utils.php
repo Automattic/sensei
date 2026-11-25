@@ -132,7 +132,7 @@ class Sensei_Utils {
 
 					return $updated_data;
 				};
-			$has_explicit_dates = isset( $args['comment_date_gmt'] );
+			$has_explicit_dates = isset( $args['comment_date'], $args['comment_date_gmt'] );
 			if ( $has_explicit_dates ) {
 				add_filter( 'wp_update_comment_data', $preserve_dates, PHP_INT_MAX );
 			}

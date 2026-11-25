@@ -42,8 +42,9 @@ final class Progress_Start_Date {
 	/**
 	 * Interpret a legacy local start using its comment's recorded timezone offset.
 	 *
-	 * A matching offset supports using the site's historical daylight saving rules.
-	 * Otherwise the recorded fixed offset is the only timezone evidence available.
+	 * A matching offset does not identify the original timezone. Assume the
+	 * configured timezone to preserve ordinary daylight saving transitions;
+	 * otherwise use the recorded fixed offset.
 	 *
 	 * @since $$next-version$$
 	 *
