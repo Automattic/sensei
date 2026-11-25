@@ -111,7 +111,7 @@ class Migration_Job_Scheduler {
 	 *
 	 * @var Migration_Job[]
 	 */
-	private $jobs = [];
+	private $jobs = array();
 
 	/**
 	 * Migration_Job_Scheduler constructor.
@@ -128,7 +128,7 @@ class Migration_Job_Scheduler {
 	 * @return void
 	 */
 	public function init(): void {
-		add_action( 'action_scheduler_unexpected_shutdown', [ $this, 'collect_failed_job_errors' ], 10, 2 );
+		add_action( 'action_scheduler_unexpected_shutdown', array( $this, 'collect_failed_job_errors' ), 10, 2 );
 	}
 
 	/**
@@ -139,7 +139,7 @@ class Migration_Job_Scheduler {
 	public function register_job( Migration_Job $job ): void {
 		$this->jobs[ $job->get_name() ] = $job;
 
-		add_action( $this->get_job_hook_name( $job ), [ $this, 'run_job' ] );
+		add_action( $this->get_job_hook_name( $job ), array( $this, 'run_job' ) );
 	}
 
 	/**
@@ -206,7 +206,7 @@ class Migration_Job_Scheduler {
 	}
 
 	/**
-	 * Get the migration errors.
+	 * Get the unique migration errors.
 	 *
 	 * @internal
 	 *
@@ -215,7 +215,7 @@ class Migration_Job_Scheduler {
 	 * @return array
 	 */
 	public function get_errors(): array {
-		return (array) get_option( self::ERRORS_OPTION_NAME, [] );
+		return array_values( array_unique( (array) get_option( self::ERRORS_OPTION_NAME, array() ) ) );
 	}
 
 	/**
@@ -226,7 +226,7 @@ class Migration_Job_Scheduler {
 	private function schedule_job( Migration_Job $job ): void {
 		$this->action_scheduler->schedule_single_action(
 			$this->get_job_hook_name( $job ),
-			[ 'job_name' => $job->get_name() ],
+			array( 'job_name' => $job->get_name() ),
 			false
 		);
 	}
@@ -417,8 +417,8 @@ class Migration_Job_Scheduler {
 	 * @param array $errors The errors to add.
 	 */
 	private function add_error( array $errors ) {
-		$migration_errors = (array) get_option( self::ERRORS_OPTION_NAME, [] );
-		$migration_errors = array_merge( $migration_errors, $errors );
+		$migration_errors = (array) get_option( self::ERRORS_OPTION_NAME, array() );
+		$migration_errors = array_values( array_unique( array_merge( $migration_errors, $errors ) ) );
 		update_option( self::ERRORS_OPTION_NAME, $migration_errors );
 	}
 
