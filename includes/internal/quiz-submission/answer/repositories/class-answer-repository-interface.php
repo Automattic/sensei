@@ -32,6 +32,7 @@ interface Answer_Repository_Interface {
 	 * @param string               $value       The answer value.
 	 *
 	 * @return Answer_Interface The answer model.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface;
 
@@ -52,6 +53,7 @@ interface Answer_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function delete_all( Submission_Interface $submission ): void;
 }

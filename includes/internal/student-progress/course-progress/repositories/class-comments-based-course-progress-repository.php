@@ -11,6 +11,7 @@ use Sensei\Internal\Persistence_Exception;
 use DateTime;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use Sensei_Utils;
 use WP_Comment;
 
@@ -32,12 +33,13 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 *
 	 * @internal
 	 *
-	 * @param int $course_id The course ID.
-	 * @param int $user_id The user ID.
+	 * @param int  $course_id The course ID.
+	 * @param int  $user_id The user ID.
+	 * @param bool $record_start Whether creation also records a start event.
 	 * @return Course_Progress_Interface The course progress.
 	 * @throws Persistence_Exception If required progress creation fails.
 	 */
-	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
+	public function create( int $course_id, int $user_id, bool $record_start = true ): Course_Progress_Interface {
 		/**
 		 * Filter the course ID for a created course progress.
 		 *
@@ -50,11 +52,14 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		 */
 		$course_id = (int) apply_filters( 'sensei_course_progress_create_course_id', $course_id );
 
-		$metadata   = [
-			'start'    => current_time( 'mysql' ),
+		$metadata = array(
 			'percent'  => 0,
 			'complete' => 0,
-		];
+		);
+		if ( $record_start ) {
+			$metadata['start'] = current_time( 'mysql' );
+		}
+
 		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, Course_Progress_Interface::STATUS_IN_PROGRESS, $metadata );
 		if ( ! $comment_id ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
@@ -130,11 +135,12 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 */
 	private function create_progress_from_comment( WP_Comment $comment ): Comments_Based_Course_Progress {
 		$meta_start = get_comment_meta( (int) $comment->comment_ID, 'start', true );
-		$started_at = $meta_start ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
+		$started_at = Progress_Start_Date::is_recorded( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : null;
 
 		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
 		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
-			$completed_at = $comment_date;
+			$completed_at = new DateTime( $comment->comment_date_gmt, new \DateTimeZone( 'UTC' ) );
+			$completed_at->setTimezone( wp_timezone() );
 		} else {
 			$completed_at = null;
 		}
@@ -209,16 +215,34 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @internal
 	 *
 	 * @param Course_Progress_Interface $course_progress The course progress.
+	 * @throws Persistence_Exception If a required progress comment cannot be inserted.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {
 		$this->assert_comments_based_course_progress( $course_progress );
+
+		$status = $course_progress->get_status();
+		if ( empty( $status ) ) {
+			return;
+		}
+
 		$metadata   = [];
 		$started_at = $course_progress->get_started_at();
 		if ( $started_at ) {
 			// Comment dates are stored in the site timezone.
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
-		Sensei_Utils::update_course_status( $course_progress->get_user_id(), $course_progress->get_course_id(), $course_progress->get_status(), $metadata );
+
+		$comment_id = Sensei_Utils::update_course_status(
+			$course_progress->get_user_id(),
+			$course_progress->get_course_id(),
+			$status,
+			$metadata
+		);
+
+		if ( ! $comment_id ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'course', 'comments', $course_progress->get_course_id(), $course_progress->get_user_id(), 'write_failed', 'save' );
+		}
 	}
 
 	/**
@@ -378,6 +402,8 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 				case 'started_at':
 					throw new \InvalidArgumentException( 'Ordering by started_at is not supported in comments-based version.' );
 				case 'completed_at':
+					$comments_args['orderby'] = 'comment_date_gmt';
+					break;
 				case 'created_at':
 				case 'updated_at':
 					$comments_args['orderby'] = 'comment_date';

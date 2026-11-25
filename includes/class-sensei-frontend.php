@@ -730,6 +730,11 @@ class Sensei_Frontend {
 
 		switch ( $sanitized_submit ) {
 			case 'lesson-complete':
+				// Lessons whose quiz requires a passing grade cannot be self-completed.
+				if ( Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) ) {
+					break;
+				}
+
 				if ( false === Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true ) ) {
 					Sensei()->notices->add_notice( __( 'Unable to complete the lesson. Reload this page to check its status, or contact your instructor for help.', 'sensei-lms' ), 'alert' );
 					return;
@@ -841,6 +846,11 @@ class Sensei_Frontend {
 			// Handle submit data.
 			switch ( $sanitized_submit ) {
 				case __( 'Mark as Complete', 'sensei-lms' ):
+					// Self-completion is only available when courses are set to complete on demand.
+					if ( 'complete' !== Sensei()->settings->get( 'course_completion' ) ) {
+						break;
+					}
+
 					// Only students enrolled in the course may mark it as complete.
 					if ( ! Sensei_Course::is_user_enrolled( $sanitized_course_id, $current_user->ID ) ) {
 						break;
@@ -851,7 +861,7 @@ class Sensei_Frontend {
 						try {
 							$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
 						} catch ( Persistence_Exception $exception ) {
-							$exception->log();
+							$exception->log( 'completing a course' );
 							Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this course as complete. Reload this page and check its status. Try Mark as Complete again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
 							return;
 						}
@@ -879,7 +889,7 @@ class Sensei_Frontend {
 					try {
 						Sensei()->course_progress_repository->save( $course_progress );
 					} catch ( Persistence_Exception $exception ) {
-						$exception->log();
+						$exception->log( 'completing a course' );
 						Sensei()->notices->add_notice( __( 'We couldn\'t finish marking this course as complete. Reload this page and check its status. Try Mark as Complete again if it is available, or contact your instructor if it isn\'t.', 'sensei-lms' ), 'alert' );
 						return;
 					}
@@ -1640,6 +1650,11 @@ class Sensei_Frontend {
 			return;
 		}
 
+		// The form is only shown when registration is open, but a nonce issued earlier stays valid after it closes.
+		if ( ! get_option( 'users_can_register' ) ) {
+			return;
+		}
+
 		// Validate the registration request nonce.
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sensei_request_text( $_POST['_wpnonce'] ), 'sensei-register' ) ) {
 			return;
@@ -1695,6 +1710,22 @@ class Sensei_Frontend {
 		// exit on email address error.
 		if ( empty( $new_user_password ) ) {
 			Sensei()->notices->add_notice( __( '<strong>ERROR</strong>: The password field is empty.', 'sensei-lms' ), 'alert' );
+			return;
+		}
+
+		// Run the same checks as core registration so CAPTCHA and allowlist plugins apply here too.
+		$registration_errors = new WP_Error();
+
+		/** This action is documented in wp-includes/user.php */
+		do_action( 'register_post', $new_user_name, $new_user_email, $registration_errors ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook.
+
+		/** This filter is documented in wp-includes/user.php */
+		$registration_errors = apply_filters( 'registration_errors', $registration_errors, $new_user_name, $new_user_email ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook.
+
+		if ( $registration_errors->has_errors() ) {
+			foreach ( $registration_errors->get_error_messages() as $registration_error_message ) {
+				Sensei()->notices->add_notice( $registration_error_message, 'alert' );
+			}
 			return;
 		}
 

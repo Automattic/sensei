@@ -60,6 +60,7 @@ class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repo
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		$submission = $this->comments_based_repository->create( $quiz_id, $user_id, $final_grade );
@@ -78,6 +79,7 @@ class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repo
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		return $this->comments_based_repository->get_or_create( $quiz_id, $user_id, $final_grade );
@@ -116,6 +118,7 @@ class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repo
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function save( Submission_Interface $submission ): void {
 		$this->comments_based_repository->save( $submission );
@@ -150,7 +153,36 @@ class Comment_Reading_Aggregate_Submission_Repository implements Submission_Repo
 	 * @param Submission_Interface $submission The quiz submission.
 	 */
 	public function delete( Submission_Interface $submission ): void {
-		$this->comments_based_repository->delete( $submission );
 		$this->tables_based_repository->delete( $submission );
+		$this->comments_based_repository->delete( $submission );
+	}
+
+	/**
+	 * Delete a student's submission and its grades and answers for one quiz.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void {
+		$this->tables_based_repository->delete_for_student( $quiz_id, $user_id );
+		$this->comments_based_repository->delete_for_student( $quiz_id, $user_id );
+	}
+
+	/**
+	 * Delete every student's submission, grades, and answers for one quiz.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void {
+		$this->tables_based_repository->delete_for_quiz( $quiz_id );
+		$this->comments_based_repository->delete_for_quiz( $quiz_id );
 	}
 }

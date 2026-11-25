@@ -425,6 +425,35 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * An empty Module cell removes the lesson from its module.
+	 *
+	 * @covers Sensei_Import_Lesson_Model::sync_post
+	 */
+	public function testSyncPost_ModuleCellWasEmpty_RemovesTheLessonFromItsModule(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create( array( 'post_name' => 'lesson-with-module' ) );
+		Sensei()->course_lessons_repository->set_lesson_module( $lesson_id, $module_id );
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model = Sensei_Import_Lesson_Model::from_source_array(
+			1,
+			array(
+				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Lesson with module',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'lesson-with-module',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE => '',
+			),
+			new Sensei_Data_Port_Lesson_Schema(),
+			$task
+		);
+
+		/* Act. */
+		$model->sync_post();
+
+		/* Assert. */
+		self::assertNull( Sensei()->course_lessons_repository->get_lesson_module( $lesson_id ) );
+	}
+
+	/**
 	 * Tests lesson length validation.
 	 */
 	public function testLessonLengthValidation() {

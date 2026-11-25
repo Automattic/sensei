@@ -49,7 +49,7 @@ class Comments_Based_Quiz_Progress extends Quiz_Progress_Abstract {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @return string|null
 	 */

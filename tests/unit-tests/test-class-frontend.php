@@ -1,5 +1,6 @@
 <?php
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
 
 /**
  * Tests for Sensei_Frontend.
@@ -8,8 +9,10 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  */
 class Sensei_Frontend_Test extends WP_UnitTestCase {
 	use Sensei_HPPS_Helpers;
+	use Sensei_Progress_Insert_Failure_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use Sensei_Test_Redirect_Helpers;
 
 	/**
 	 * Test factory.
@@ -18,15 +21,28 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	 */
 	protected $factory;
 
+	/**
+	 * Course completion setting as found before the test, restored on teardown.
+	 *
+	 * @var string|bool
+	 */
+	private $initial_course_completion;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 		self::resetEnrolmentProviders();
 		$this->prepareEnrolmentManager();
+
+		$this->initial_course_completion = Sensei()->settings->get( 'course_completion' );
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+		Sensei()->settings->set( 'course_completion', $this->initial_course_completion );
+
 		unset(
 			$_POST['course_complete'],
 			$_POST['course_complete_id'],
@@ -88,7 +104,8 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * An enrolled student can mark the course as complete.
+	 * An enrolled student can mark the course as complete when the site allows
+	 * on-demand completion.
 	 *
 	 * @covers Sensei_Frontend::sensei_complete_course
 	 */
@@ -102,6 +119,8 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 					'question_count' => 0,
 				)
 			)['course_id'];
+
+			Sensei()->settings->set( 'course_completion', 'complete' );
 
 			wp_set_current_user( $student_id );
 			$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
@@ -123,6 +142,41 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A failed course save must show an error without announcing completion.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Frontend::sensei_complete_course
+	 */
+	public function testSenseiCompleteCourse_CommentInsertFailedDuringSave_ShowsErrorWithoutCompletion( string $mode ): void {
+		$this->set_progress_storage_mode( $mode );
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course_id  = $this->factory->course->create();
+
+		Sensei()->settings->set( 'course_completion', 'complete' );
+
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
+		Sensei_Utils::user_start_course( $student_id, $course_id );
+		$this->submitCompletion( $course_id );
+		$completed = did_action( 'sensei_user_course_end' );
+		$messages  = Sensei()->frontend->messages;
+		Sensei()->notices->clear_notices();
+		$this->fail_progress_comment_insert( 'course', $course_id, $student_id, 'complete' );
+
+		ob_start();
+		try {
+			Sensei()->frontend->sensei_complete_course();
+			Sensei()->notices->maybe_print_notices();
+		} finally {
+			$notice = ob_get_clean();
+		}
+
+		self::assertStringContainsString( "We couldn't finish marking this course as complete.", $notice, 'The student must see the save failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'A failed save must not announce course completion.' );
+		self::assertSame( $messages, Sensei()->frontend->messages, 'A failed save must not add a completion message.' );
+	}
+
+	/**
 	 * A student who is not enrolled cannot mark the course as complete.
 	 */
 	public function testSenseiCompleteCourse_StudentNotEnrolled_DoesNotCompleteCourse() {
@@ -134,6 +188,9 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 			)
 		)['course_id'];
 
+		// On-demand completion is allowed, so enrolment is the only gate under test.
+		Sensei()->settings->set( 'course_completion', 'complete' );
+
 		wp_set_current_user( $student_id );
 		$this->submitCompletion( $course_id );
 
@@ -142,6 +199,34 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 		self::assertFalse(
 			Sensei_Utils::user_completed_course( $course_id, $student_id ),
 			'A student who is not enrolled should not be able to complete the course.'
+		);
+	}
+
+	/**
+	 * When the site completes courses by passing the lessons, an enrolled student
+	 * cannot short-circuit the gate with the "Mark as Complete" request.
+	 */
+	public function testSenseiCompleteCourse_CompletionByPassingGiven_DoesNotCompleteCourse() {
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course_id  = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		)['course_id'];
+
+		// The default mode: courses are complete once their lessons are passed.
+		Sensei()->settings->set( 'course_completion', 'passed' );
+
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course_id );
+		$this->submitCompletion( $course_id );
+
+		Sensei()->frontend->sensei_complete_course();
+
+		self::assertFalse(
+			Sensei_Utils::user_completed_course( $course_id, $student_id ),
+			'On-demand completion should be rejected when the site completes courses by passing.'
 		);
 	}
 
@@ -253,6 +338,58 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 		);
 	}
 
+	public function testSenseiCompleteLesson_QuizPassRequiredGiven_DoesNotCompleteLesson() {
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course     = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 1,
+			)
+		);
+		$lesson_id  = $course['lesson_ids'][0];
+
+		// The lesson's quiz must be passed, so "Complete Lesson" cannot be used to skip it.
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		update_post_meta( $quiz_id, '_pass_required', 'on' );
+
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course['course_id'] );
+		$this->submitLessonCompletion( $lesson_id );
+
+		Sensei()->frontend->sensei_complete_lesson();
+
+		self::assertFalse(
+			Sensei_Utils::user_completed_lesson( $lesson_id, $student_id ),
+			'A lesson whose quiz requires a passing grade should not be completable on demand.'
+		);
+	}
+
+	public function testSenseiCompleteLesson_QuizWithQuestionsAndNoPassRequiredGiven_CompletesLesson() {
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course     = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 1,
+			)
+		);
+		$lesson_id  = $course['lesson_ids'][0];
+
+		// The quiz has questions but does not have to be passed, so the lesson stays self-completable.
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		update_post_meta( $quiz_id, '_pass_required', '' );
+
+		wp_set_current_user( $student_id );
+		$this->manuallyEnrolStudentInCourse( $student_id, $course['course_id'] );
+		$this->submitLessonCompletion( $lesson_id );
+
+		Sensei()->frontend->sensei_complete_lesson();
+
+		self::assertTrue(
+			Sensei_Utils::user_completed_lesson( $lesson_id, $student_id ),
+			'A lesson whose quiz does not require a passing grade should still be completable.'
+		);
+	}
+
 	/**
 	 * The lesson meta links to the lesson's course.
 	 *
@@ -295,6 +432,81 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		self::assertSame( 'Lesson', $title );
+	}
+
+	/**
+	 * A nonce issued while registration was open must not create an account
+	 * once the site has closed registration.
+	 *
+	 * @covers Sensei_Frontend::sensei_process_registration
+	 */
+	public function testSenseiProcessRegistration_RegistrationDisabled_DoesNotCreateUser() {
+		$this->submitRegistration();
+		add_filter( 'pre_option_users_can_register', '__return_zero' );
+
+		$this->processRegistration();
+
+		$this->assertFalse( username_exists( 'newlearner' ) );
+	}
+
+	/**
+	 * Plugins that reject registrations through the core registration hooks
+	 * also reject Sensei's registration form.
+	 *
+	 * @covers Sensei_Frontend::sensei_process_registration
+	 * @dataProvider providerCoreRegistrationHooks
+	 *
+	 * @param string $hook            Core hook that rejects the registration.
+	 * @param int    $errors_position Position of the WP_Error among the hook arguments.
+	 */
+	public function testSenseiProcessRegistration_CoreRegistrationHookRejected_DoesNotCreateUserAndShowsError( string $hook, int $errors_position ) {
+		add_filter( 'pre_option_users_can_register', '__return_true' );
+		add_filter(
+			$hook,
+			function ( ...$args ) use ( $errors_position ) {
+				$args[ $errors_position ]->add( 'test_rejected', 'Registration rejected by test.' );
+				return $args[0];
+			},
+			10,
+			3
+		);
+		$notices = array();
+		add_filter(
+			'sensei_notice',
+			function ( $notice ) use ( &$notices ) {
+				$notices[] = $notice['content'];
+
+				// Returning null keeps the notice out of the shared notices object.
+				return null;
+			}
+		);
+		$this->submitRegistration();
+
+		$this->processRegistration();
+
+		$this->assertFalse( username_exists( 'newlearner' ), 'The user should not be created.' );
+		$this->assertContains( 'Registration rejected by test.', $notices, 'The error should be shown.' );
+	}
+
+	public function providerCoreRegistrationHooks(): array {
+		return array(
+			'registration_errors filter' => array( 'registration_errors', 0 ),
+			'register_post action'       => array( 'register_post', 2 ),
+		);
+	}
+
+	/**
+	 * A visitor can still register when registration is open and no check rejects it.
+	 *
+	 * @covers Sensei_Frontend::sensei_process_registration
+	 */
+	public function testSenseiProcessRegistration_RegistrationEnabledAndNotRejected_CreatesUser() {
+		add_filter( 'pre_option_users_can_register', '__return_true' );
+		$this->submitRegistration();
+
+		$this->processRegistration();
+
+		$this->assertNotFalse( username_exists( 'newlearner' ) );
 	}
 
 	/**
@@ -354,5 +566,30 @@ class Sensei_Frontend_Test extends WP_UnitTestCase {
 		$_POST['course_complete']                         = 'Mark as Complete';
 		$_POST['course_complete_id']                      = $course_id;
 		$_POST['woothemes_sensei_complete_course_noonce'] = wp_create_nonce( 'woothemes_sensei_complete_course_noonce' );
+	}
+
+	/**
+	 * Populate the request as the logged-out "Register" form submission does.
+	 */
+	private function submitRegistration() {
+		$_POST['sensei_reg_username'] = 'newlearner';
+		$_POST['sensei_reg_email']    = 'newlearner@example.com';
+		$_POST['sensei_reg_password'] = 'password';
+		$_POST['_wpnonce']            = wp_create_nonce( 'sensei-register' );
+	}
+
+	/**
+	 * Run the registration handler without sending cookies or exiting on redirect.
+	 */
+	private function processRegistration() {
+		add_filter( 'send_auth_cookies', '__return_false' );
+		$this->prevent_wp_redirect();
+
+		try {
+			Sensei()->frontend->sensei_process_registration();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			// The handler redirects and exits after registering.
+			unset( $e );
+		}
 	}
 }

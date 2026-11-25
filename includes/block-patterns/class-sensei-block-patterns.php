@@ -91,7 +91,7 @@ class Sensei_Block_Patterns {
 	/**
 	 * Get the names of the patterns Sensei provides for a post type.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string $post_type Post type (`course`, `lesson` or `page`).
 	 *
@@ -141,7 +141,7 @@ class Sensei_Block_Patterns {
 	 * Patterns are only registered on `current_screen`, so code that runs outside the
 	 * editor (REST, WP-CLI, abilities) reads the pattern file instead of the registry.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string $post_type Post type the pattern belongs to (`course`, `lesson` or `page`).
 	 * @param string $name      Pattern name without the `sensei-lms/` prefix.
@@ -172,7 +172,7 @@ class Sensei_Block_Patterns {
 	 * the markup their attributes describe. Values are inserted as-is, so the caller
 	 * escapes them.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string $content  Block markup.
 	 * @param array  $replaces Map of className placeholder to escaped content.

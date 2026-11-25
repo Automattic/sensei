@@ -1784,8 +1784,7 @@ class Sensei_Course {
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'author'           => $author_id,
-			'meta_key'         => '_lesson_course',
-			'meta_value'       => $course_id,
+			'sensei_course'    => (int) $course_id,
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
 			'fields'           => 'ids', // less data to retrieve
@@ -1807,8 +1806,7 @@ class Sensei_Course {
 		$lesson_args   = [
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
-			'meta_key'         => '_lesson_course',
-			'meta_value'       => $course_id,
+			'sensei_course'    => (int) $course_id,
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
 			'fields'           => 'ids', // less data to retrieve
@@ -1834,11 +1832,8 @@ class Sensei_Course {
 			'posts_per_page'   => -1,
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
+			'sensei_course'    => (int) $course_id,
 			'meta_query'       => [
-				[
-					'key'   => '_lesson_course',
-					'value' => $course_id,
-				],
 				[
 					'key'   => '_lesson_preview',
 					'value' => 'preview',
@@ -2719,7 +2714,8 @@ class Sensei_Course {
 	public function save_course_notification_meta_box( $course_id ) {
 
 		if ( ! isset( $_POST['_sensei_course_notification'] )
-			|| ! wp_verify_nonce( sensei_request_text( $_POST['_sensei_course_notification'] ), 'update-course-notification-setting' ) ) {
+			|| ! wp_verify_nonce( sensei_request_text( $_POST['_sensei_course_notification'] ), 'update-course-notification-setting' )
+			|| ! current_user_can( 'edit_post', $course_id ) ) {
 			return;
 		}
 
@@ -3698,12 +3694,7 @@ class Sensei_Course {
 			'posts_per_page'   => 500,
 			'orderby'          => 'date',
 			'order'            => 'ASC',
-			'meta_query'       => [
-				[
-					'key'   => '_lesson_course',
-					'value' => intval( $course_id ),
-				],
-			],
+			'sensei_course'    => intval( $course_id ),
 			'suppress_filters' => 0,
 		];
 
@@ -3718,14 +3709,7 @@ class Sensei_Course {
 
 			}
 
-			$course_lesson_query_args['tax_query'] = [
-				[
-					'taxonomy' => 'module',
-					'field'    => 'id',
-					'terms'    => $terms_ids,
-					'operator' => 'NOT IN',
-				],
-			];
+			$course_lesson_query_args['sensei_module__not_in'] = $terms_ids;
 		}
 
 		// setting lesson order
@@ -3735,8 +3719,7 @@ class Sensei_Course {
 				'post_type'      => 'lesson',
 				'posts_per_page' => -1,
 				'fields'         => 'ids',
-				'meta_key'       => '_lesson_course',
-				'meta_value'     => intval( $course_id ),
+				'sensei_course'  => intval( $course_id ),
 			]
 		);
 		if ( ! empty( $course_lesson_order ) ) {
@@ -4301,7 +4284,7 @@ class Sensei_Course {
 			. sprintf(
 				// translators: Placeholder is the item title.
 				esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ),
-				$course_title
+				esc_attr( $course_title )
 			)
 			. '">' . $course_title . '</a>';
 

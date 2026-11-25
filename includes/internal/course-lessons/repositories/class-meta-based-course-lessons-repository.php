@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Course_Lessons\Repositories;
 
 use wpdb;
+use WP_Error;
 use WP_Term;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.27.0
  */
 class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_Interface {
 	/**
@@ -45,7 +46,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @return int|null Course ID, or null when the lesson has no course.
@@ -61,7 +62,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @return int|null Prerequisite lesson ID, or null when none is stored.
@@ -77,7 +78,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $lesson_ids Lesson IDs.
 	 * @return array<int, int|false> Course ID keyed by lesson ID, or false when the lesson has no existing course.
@@ -130,7 +131,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int             $course_id   Course ID.
 	 * @param string|string[] $post_status Lesson post status or statuses. Default 'publish'.
@@ -160,7 +161,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
@@ -179,7 +180,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @return WP_Term|null The lesson's module term, or null when it has none or a filter returns no term.
@@ -202,11 +203,29 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	}
 
 	/**
-	 * Set the prerequisite of a lesson.
+	 * Get every module of a lesson.
+	 *
+	 * Reads with `wp_get_post_terms()`, so the `get_object_terms` filters apply.
 	 *
 	 * @internal
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @return WP_Term[] The lesson's module terms, or an empty array when it has none.
+	 */
+	public function get_lesson_modules( int $lesson_id ): array {
+		$terms = wp_get_post_terms( $lesson_id, 'module' );
+
+		return is_array( $terms ) ? $terms : array();
+	}
+
+	/**
+	 * Set the prerequisite of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id              Lesson ID.
 	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
@@ -220,7 +239,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 */
@@ -233,7 +252,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $prerequisite_lesson_id Prerequisite lesson ID.
 	 * @return int[] Lesson IDs, in no particular order. Trashed lessons are left out.
@@ -260,7 +279,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
@@ -275,7 +294,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @param int $course_id Course ID.
@@ -289,7 +308,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int   $course_id  Course ID.
 	 * @param int[] $lesson_ids Lesson IDs, in order.
@@ -303,7 +322,7 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $course_id Course ID.
 	 * @return int[] Lesson IDs, in order. Empty when none is stored.
@@ -315,5 +334,255 @@ class Meta_Based_Course_Lessons_Repository implements Course_Lessons_Repository_
 		}
 
 		return array_map( 'intval', explode( ',', $lesson_order ) );
+	}
+
+	/**
+	 * Whether a lesson is in the given module.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return bool
+	 */
+	public function has_lesson_module( int $lesson_id, int $term_id ): bool {
+		return has_term( $term_id, 'module', $lesson_id );
+	}
+
+	/**
+	 * Get the modules the given lessons are in.
+	 *
+	 * @internal
+	 *
+	 * @since 4.28.0
+	 *
+	 * @param array $lesson_ids Lesson IDs.
+	 * @return int[] Module term IDs, each one once.
+	 */
+	public function get_lesson_module_ids( array $lesson_ids ): array {
+		$module_ids = wp_get_object_terms( $lesson_ids, 'module', array( 'fields' => 'ids' ) );
+
+		return is_array( $module_ids ) ? $module_ids : array();
+	}
+
+	/**
+	 * Set the module of a lesson, replacing any module it had.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return true|WP_Error True, or the error `wp_set_object_terms()` returned.
+	 */
+	public function set_lesson_module( int $lesson_id, int $term_id ) {
+		$result = wp_set_object_terms( $lesson_id, array( $term_id ), 'module' );
+
+		return is_wp_error( $result ) ? $result : true;
+	}
+
+	/**
+	 * Add a module to a lesson, keeping any module it had.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return true|WP_Error True, or the error `wp_set_object_terms()` returned.
+	 */
+	public function add_lesson_module( int $lesson_id, int $term_id ) {
+		$result = wp_set_object_terms( $lesson_id, array( $term_id ), 'module', true );
+
+		return is_wp_error( $result ) ? $result : true;
+	}
+
+	/**
+	 * Remove a lesson from its module through `wp_delete_object_term_relationships()`.
+	 *
+	 * Unlike `unset_lesson_module()`, the `set_object_terms` action does not fire.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_lesson_module( int $lesson_id ): void {
+		wp_delete_object_term_relationships( $lesson_id, 'module' );
+	}
+
+	/**
+	 * Remove a lesson from its module through `wp_set_object_terms()` with no terms.
+	 *
+	 * Same result as `delete_lesson_module()`, but the `set_object_terms` action fires as well, with
+	 * the old terms as term taxonomy IDs. Both fire the term relationship deletion hooks.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function unset_lesson_module( int $lesson_id ): void {
+		wp_set_object_terms( $lesson_id, array(), 'module' );
+	}
+
+	/**
+	 * Get the order of a lesson in a module.
+	 *
+	 * Non-canonical values such as `'3abc'` are read as 3, like `intval()`.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return int|null Order, or null when the meta is missing or empty.
+	 */
+	public function get_lesson_module_order( int $lesson_id, int $term_id ): ?int {
+		$order = get_post_meta( $lesson_id, '_order_module_' . $term_id, true );
+
+		return '' === $order ? null : (int) $order;
+	}
+
+	/**
+	 * Set the order of a lesson in a module.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @param int $order     Order.
+	 */
+	public function set_lesson_module_order( int $lesson_id, int $term_id, int $order ): void {
+		update_post_meta( $lesson_id, '_order_module_' . $term_id, $order );
+	}
+
+	/**
+	 * Delete the order of a lesson in a module.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 */
+	public function delete_lesson_module_order( int $lesson_id, int $term_id ): void {
+		delete_post_meta( $lesson_id, '_order_module_' . $term_id );
+	}
+
+	/**
+	 * Delete the order of a lesson in each module it is in.
+	 *
+	 * Reads the modules with `get_the_terms()`, so the term cache and its filters apply.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_all_lesson_module_orders( int $lesson_id ): void {
+		$modules = get_the_terms( $lesson_id, 'module' );
+
+		if ( ! is_array( $modules ) ) {
+			return;
+		}
+
+		foreach ( $modules as $module ) {
+			delete_post_meta( $lesson_id, '_order_module_' . $module->term_id );
+		}
+	}
+
+	/**
+	 * Attach a lesson to a course, replacing the course it had.
+	 *
+	 * Writes `_lesson_course` only; orders, module and prerequisite are left as they are.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 */
+	public function attach_lesson( int $lesson_id, int $course_id ): void {
+		update_post_meta( $lesson_id, '_lesson_course', $course_id );
+	}
+
+	/**
+	 * Detach a lesson from its course.
+	 *
+	 * Deletes `_lesson_course` only; orders, module and prerequisite are left as they are.
+	 *
+	 * @internal
+	 *
+	 * @since 4.27.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function detach_lesson( int $lesson_id ): void {
+		delete_post_meta( $lesson_id, '_lesson_course' );
+	}
+
+	/**
+	 * Copy the structure of a lesson or a course to another post, as it is stored.
+	 *
+	 * Every row of every structure meta is copied with its stored value, so the copy has exactly
+	 * what the original has.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int      $post_id     The lesson or course to copy from.
+	 * @param int      $new_post_id The post to copy to.
+	 * @param string[] $ignore      Meta keys not to copy.
+	 * @return string[] The meta keys that were copied, so the caller does not copy them again.
+	 */
+	public function copy_structure( int $post_id, int $new_post_id, array $ignore = array() ): array {
+		$post_type = (string) get_post_type( $post_id );
+		if ( ! in_array( $post_type, array( 'course', 'lesson' ), true ) ) {
+			return array();
+		}
+
+		$copied_keys = array();
+		foreach ( (array) get_post_meta( $post_id ) as $key => $values ) {
+			if ( in_array( $key, $ignore, true ) || ! $this->is_structure_meta( $post_type, $key ) ) {
+				continue;
+			}
+
+			foreach ( $values as $value ) {
+				add_post_meta( $new_post_id, $key, maybe_unserialize( $value ) );
+			}
+
+			$copied_keys[] = $key;
+		}
+
+		return $copied_keys;
+	}
+
+	/**
+	 * Whether a meta key is a structure meta of a course or a lesson.
+	 *
+	 * @param string $post_type The post type, course or lesson.
+	 * @param string $key       The meta key.
+	 * @return bool
+	 */
+	private function is_structure_meta( string $post_type, string $key ): bool {
+		if ( 'course' === $post_type ) {
+			return '_lesson_order' === $key;
+		}
+
+		return in_array( $key, array( '_lesson_course', '_lesson_prerequisite' ), true ) || 1 === preg_match( '/^_order_(module_)?\d+$/', $key );
 	}
 }

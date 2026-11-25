@@ -14,6 +14,7 @@ use Sensei\Internal\Cache_Prefix;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Tables_Based_Course_Progress;
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -62,12 +63,13 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param int $course_id The course ID.
-	 * @param int $user_id The user ID.
+	 * @param int  $course_id The course ID.
+	 * @param int  $user_id The user ID.
+	 * @param bool $record_start Whether creation also records a start event.
 	 * @return Course_Progress_Interface The course progress.
 	 * @throws Persistence_Exception If required progress creation fails.
 	 */
-	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
+	public function create( int $course_id, int $user_id, bool $record_start = true ): Course_Progress_Interface {
 		/**
 		 * Filter the course ID for a created course progress.
 		 *
@@ -90,7 +92,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				'parent_post_id' => null,
 				'type'           => 'course',
 				'status'         => Course_Progress_Interface::STATUS_IN_PROGRESS,
-				'started_at'     => $current_datetime->format( $date_format ),
+				'started_at'     => $record_start ? $current_datetime->format( $date_format ) : null,
 				'completed_at'   => null,
 				'created_at'     => $current_datetime->format( $date_format ),
 				'updated_at'     => $current_datetime->format( $date_format ),
@@ -118,7 +120,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			$course_id,
 			$user_id,
 			Course_Progress_Interface::STATUS_IN_PROGRESS,
-			$current_datetime,
+			$record_start ? $current_datetime : null,
 			null,
 			$current_datetime,
 			$current_datetime
@@ -188,7 +190,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			(int) $row->post_id,
 			(int) $row->user_id,
 			$row->status,
-			$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+			Progress_Start_Date::is_recorded( $row->started_at ) ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
 			$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
 			new DateTimeImmutable( $row->created_at, $timezone ),
 			new DateTimeImmutable( $row->updated_at, $timezone )
@@ -242,6 +244,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 * @internal
 	 *
 	 * @param Course_Progress_Interface $course_progress The course progress.
+	 * @throws Persistence_Exception If the progress update fails.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {
 		$this->assert_tables_based_course_progress( $course_progress );
@@ -251,7 +254,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$course_progress->set_updated_at( $updated_at );
 
-		$this->wpdb->update(
+		$result = $this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'status'       => $course_progress->get_status(),
@@ -273,6 +276,10 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				'%d',
 			]
 		);
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'course', 'tables', $course_progress->get_course_id(), $course_progress->get_user_id(), 'update_failed', 'update' );
+		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $course_progress->get_course_id(), $course_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
@@ -466,7 +473,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				(int) $row->post_id,
 				(int) $row->user_id,
 				$row->status,
-				$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
 				$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
 				new DateTimeImmutable( $row->created_at, $timezone ),
 				new DateTimeImmutable( $row->updated_at, $timezone )

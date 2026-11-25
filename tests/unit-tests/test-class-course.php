@@ -262,11 +262,13 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			]
 		);
 
-		// Add some lessons to the course.
+		// Add some lessons to the course, and one to another (unpublished) course.
 		$lesson_ids = $this->factory->lesson->create_many( 2 );
 		foreach ( $lesson_ids as $lesson_id ) {
 			add_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
+		$other_course_id = $this->factory->course->create( array( 'post_status' => 'draft' ) );
+		Sensei()->course_lessons_repository->attach_lesson( $this->factory->lesson->create(), $other_course_id );
 
 		// Publish course.
 		wp_update_post(
@@ -1198,5 +1200,107 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( $lesson_order, $actual );
+	}
+
+	/**
+	 * Without a stored root lesson order, the legacy single course page lists the lessons of that course only.
+	 *
+	 * @covers Sensei_Course::load_single_course_lessons_query
+	 */
+	public function testLoadSingleCourseLessonsQuery_NoRootLessonOrderStored_QueriesTheCourseLessonsOnly() {
+		/* Arrange. */
+		global $post, $wp_query;
+		$course = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		Sensei()->course_lessons_repository->set_root_lesson_order( $course['course_id'], array() );
+		$post = get_post( $course['course_id'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		/* Act. */
+		Sensei_Course::load_single_course_lessons_query();
+
+		/* Assert. */
+		self::assertEqualsCanonicalizing( $course['lesson_ids'], wp_list_pluck( $wp_query->posts, 'ID' ) );
+	}
+
+	/**
+	 * The legacy single course page lists the course lessons outside its modules only.
+	 *
+	 * @covers Sensei_Course::load_single_course_lessons_query
+	 */
+	public function testLoadSingleCourseLessonsQuery_CourseWithModuleGiven_QueriesTheLessonsOutsideModulesOnly() {
+		/* Arrange. */
+		global $post, $wp_query;
+		$course                = $this->factory->get_course_with_lessons(
+			array(
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$lesson_outside_module = $this->factory->lesson->create();
+		Sensei()->course_lessons_repository->attach_lesson( $lesson_outside_module, $course['course_id'] );
+		$post = get_post( $course['course_id'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		/* Act. */
+		Sensei_Course::load_single_course_lessons_query();
+
+		/* Assert. */
+		self::assertSame( array( $lesson_outside_module ), wp_list_pluck( $wp_query->posts, 'ID' ) );
+	}
+
+	/**
+	 * The preview lesson count of a course ignores the preview lessons of other courses.
+	 *
+	 * @covers Sensei_Course::course_lesson_preview_count
+	 */
+	public function testCourseLessonPreviewCount_PreviewLessonsInTwoCoursesGiven_CountsTheCourseOnes() {
+		/* Arrange. */
+		$course       = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$other_course = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		update_post_meta( $course['lesson_ids'][0], '_lesson_preview', 'preview' );
+		update_post_meta( $other_course['lesson_ids'][0], '_lesson_preview', 'preview' );
+
+		/* Act. */
+		$actual = Sensei()->course->course_lesson_preview_count( $course['course_id'] );
+
+		/* Assert. */
+		self::assertSame( 1, $actual );
+	}
+
+	public function testSaveCourseNotificationMetaBox_UserWhoCannotEditTheCourseGiven_DoesNotSaveTheSetting() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_author' => $this->get_user_by_role( 'teacher' ) ) );
+		$this->login_as_teacher_b();
+		$_POST['_sensei_course_notification']        = wp_create_nonce( 'update-course-notification-setting' );
+		$_POST['disable_sensei_course_notification'] = 'on';
+
+		/* Act. */
+		Sensei()->course->save_course_notification_meta_box( $course_id );
+
+		/* Assert. */
+		$this->assertSame( '', get_post_meta( $course_id, 'disable_notification', true ) );
+	}
+
+	public function testSaveCourseNotificationMetaBox_CourseAuthorGiven_SavesTheSetting() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_author' => $this->get_user_by_role( 'teacher' ) ) );
+		$this->login_as_teacher();
+		$_POST['_sensei_course_notification']        = wp_create_nonce( 'update-course-notification-setting' );
+		$_POST['disable_sensei_course_notification'] = 'on';
+
+		/* Act. */
+		Sensei()->course->save_course_notification_meta_box( $course_id );
+
+		/* Assert. */
+		$this->assertSame( '1', get_post_meta( $course_id, 'disable_notification', true ) );
 	}
 }

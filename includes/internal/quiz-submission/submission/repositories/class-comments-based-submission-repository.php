@@ -7,9 +7,12 @@
 
 namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 
+use Sensei\Internal\Quiz_Submission\Comment_Metadata;
 use DateTimeImmutable;
 use DateTimeInterface;
-use RuntimeException;
+use Sensei\Internal\Persistence_Exception;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei_Utils;
@@ -37,7 +40,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
-	 * @throws RuntimeException     In case the lesson status is missing.
+	 * @throws Persistence_Exception If lesson progress is missing or the grade cannot be saved.
 	 */
 	public function create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
@@ -55,23 +58,26 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
 
 		if ( ! $status_comment ) {
-			throw new RuntimeException( 'Missing lesson status.' );
-		}
-
-		if ( null !== $final_grade ) {
-			update_comment_meta( $status_comment->comment_ID, 'grade', $final_grade );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz_submission', 'comments', $quiz_id, $user_id, 'lesson_progress_missing' );
 		}
 
 		$created_at = $this->get_created_date( $status_comment );
 
-		return new Comments_Based_Submission(
-			$status_comment->comment_ID,
+		$submission = new Comments_Based_Submission(
+			(int) $status_comment->comment_ID,
 			$quiz_id,
 			$user_id,
 			$final_grade,
 			$created_at,
 			$created_at
 		);
+
+		if ( null !== $final_grade ) {
+			Comment_Metadata::update( $status_comment->comment_ID, 'grade', $final_grade, $submission );
+		}
+
+		return $submission;
 	}
 
 	/**
@@ -84,6 +90,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
@@ -143,7 +150,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		$created_at  = $this->get_created_date( $status_comment );
 
 		return new Comments_Based_Submission(
-			$status_comment->comment_ID,
+			(int) $status_comment->comment_ID,
 			$quiz_id,
 			$user_id,
 			is_numeric( $final_grade ) ? $final_grade : null,
@@ -193,19 +200,20 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 *
 	 * @param Submission_Interface $submission The quiz submission.
 	 *
-	 * @throws RuntimeException In case the lesson status is missing.
+	 * @throws Persistence_Exception If lesson progress is missing or the grade cannot be saved.
 	 */
 	public function save( Submission_Interface $submission ): void {
 		$status_comment = $this->get_status_comment( $submission->get_quiz_id(), $submission->get_user_id() );
 
 		if ( ! $status_comment ) {
-			throw new RuntimeException( 'Missing lesson status.' );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz_submission', 'comments', $submission->get_quiz_id(), $submission->get_user_id(), 'lesson_progress_missing', 'save' );
 		}
 
 		if ( null !== $submission->get_final_grade() ) {
-			update_comment_meta( $status_comment->comment_ID, 'grade', $submission->get_final_grade() );
+			Comment_Metadata::update( (int) $status_comment->comment_ID, 'grade', $submission->get_final_grade(), $submission );
 		} else {
-			delete_comment_meta( $status_comment->comment_ID, 'grade' );
+			Comment_Metadata::clear_grade( (int) $status_comment->comment_ID, $submission );
 		}
 	}
 
@@ -215,9 +223,78 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The quiz submission.
+	 * @throws Persistence_Exception If required submission metadata cannot be deleted.
 	 */
 	public function delete( Submission_Interface $submission ): void {
-		delete_comment_meta( $submission->get_id(), 'grade' );
+		if ( $submission instanceof Comments_Based_Submission ) {
+			$comment_id = $submission->get_id();
+		} else {
+			// A table submission ID is not a comment ID.
+			$status_comment = $this->get_status_comment( $submission->get_quiz_id(), $submission->get_user_id() );
+			if ( ! $status_comment ) {
+				return;
+			}
+			$comment_id = (int) $status_comment->comment_ID;
+		}
+
+		Comment_Metadata::delete( $comment_id, 'grade', $submission, 'quiz_submission' );
+
+		// This key makes the comments-based submission discoverable, so clear it last.
+		Comment_Metadata::delete( $comment_id, 'questions_asked', $submission, 'quiz_submission' );
+	}
+
+	/**
+	 * Delete a student's submission and its grades and answers for one quiz.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @throws Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void {
+		$submission = $this->get( $quiz_id, $user_id );
+		if ( ! $submission ) {
+			return;
+		}
+
+		( new Comments_Based_Grade_Repository() )->delete_all( $submission );
+		( new Comments_Based_Answer_Repository() )->delete_all( $submission );
+		$this->delete( $submission );
+	}
+
+	/**
+	 * Delete every student's submission, grades, and answers for one quiz.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @throws Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void {
+		$lesson_id = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
+		if ( ! $lesson_id ) {
+			return;
+		}
+
+		/**
+		 * Lesson comments identify the students whose quiz data needs cleanup.
+		 *
+		 * @var \WP_Comment[] $comments
+		 */
+		$comments = get_comments(
+			array(
+				'post_id' => $lesson_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => 'any',
+				'number'  => 0,
+			)
+		);
+		foreach ( $comments as $comment ) {
+			$this->delete_for_student( $quiz_id, (int) $comment->user_id );
+		}
 	}
 
 	/**

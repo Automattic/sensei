@@ -70,6 +70,9 @@ class Sensei_Abilities {
 		self::register_questions_list_ability();
 		self::register_students_list_ability();
 		self::register_course_create_ability();
+		self::register_course_structure_get_ability();
+		self::register_course_structure_set_ability();
+		self::register_quiz_questions_set_ability();
 	}
 
 	/**
@@ -455,7 +458,7 @@ class Sensei_Abilities {
 	/**
 	 * Register the sensei/course-create ability.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 */
 	private static function register_course_create_ability(): void {
 		wp_register_ability(
@@ -504,6 +507,294 @@ class Sensei_Abilities {
 					),
 				),
 			)
+		);
+	}
+
+	/**
+	 * Register the `sensei/course-structure-get` ability.
+	 *
+	 * @since 4.27.0
+	 */
+	private static function register_course_structure_get_ability(): void {
+		wp_register_ability(
+			'sensei/course-structure-get',
+			array(
+				'label'               => __( 'Get course structure', 'sensei-lms' ),
+				'description'         => __( 'Get the modules and lessons of a Sensei course in order, including drafts. Pass the returned ids to sensei/course-structure-set to update items in place instead of creating duplicates.', 'sensei-lms' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => array(
+					'type'                 => 'object',
+					'required'             => array( 'course' ),
+					'properties'           => array(
+						'course' => array(
+							'type'        => 'integer',
+							'description' => __( 'Course ID.', 'sensei-lms' ),
+						),
+					),
+					'additionalProperties' => false,
+				),
+				'output_schema'       => self::get_course_structure_output_schema(),
+				'execute_callback'    => array( __CLASS__, 'execute_course_structure_get' ),
+				'permission_callback' => array( __CLASS__, 'can_get_course_structure' ),
+				'meta'                => array(
+					'annotations'  => array(
+						'readonly'    => true,
+						'destructive' => false,
+						'idempotent'  => true,
+					),
+					'show_in_rest' => true,
+					'mcp'          => array(
+						'public' => true,
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Register the `sensei/course-structure-set` ability.
+	 *
+	 * @since 4.27.0
+	 */
+	private static function register_course_structure_set_ability(): void {
+		$lesson_item_schema = array(
+			'type'                 => 'object',
+			'required'             => array( 'type', 'title' ),
+			'properties'           => array(
+				'type'  => array(
+					'type' => 'string',
+					'enum' => array( 'lesson' ),
+				),
+				'id'    => array(
+					'type'        => 'integer',
+					'description' => __( 'ID of an existing lesson to keep or move into this course. Omit to create a new draft lesson.', 'sensei-lms' ),
+				),
+				'title' => array(
+					'type'        => 'string',
+					'minLength'   => 1,
+					'description' => __( 'Lesson title.', 'sensei-lms' ),
+				),
+			),
+			'additionalProperties' => false,
+		);
+
+		$ignored_description = __( 'Returned by sensei/course-structure-get and ignored here, so a returned structure can be sent back as is.', 'sensei-lms' );
+		foreach ( array( 'draft', 'preview' ) as $key ) {
+			$lesson_item_schema['properties'][ $key ] = array(
+				'type'        => 'boolean',
+				'readonly'    => true,
+				'description' => $ignored_description,
+			);
+		}
+		$lesson_item_schema['properties']['initialContent'] = array(
+			'type'        => 'string',
+			'readonly'    => true,
+			'description' => $ignored_description,
+		);
+
+		$module_item_schema = array(
+			'type'                 => 'object',
+			'required'             => array( 'type', 'title', 'lessons' ),
+			'properties'           => array(
+				'type'        => array(
+					'type' => 'string',
+					'enum' => array( 'module' ),
+				),
+				'id'          => array(
+					'type'        => 'integer',
+					'description' => __( 'ID of an existing module. Omit to create one, or reuse an existing module of the same name by the same teacher.', 'sensei-lms' ),
+				),
+				'title'       => array(
+					'type'        => 'string',
+					'minLength'   => 1,
+					'description' => __( 'Module title.', 'sensei-lms' ),
+				),
+				'description' => array(
+					'type'        => 'string',
+					'description' => __( 'Module description. Overwrites the description of a reused module.', 'sensei-lms' ),
+				),
+				'lessons'     => array(
+					'type'        => 'array',
+					'description' => __( 'Lessons in the module, in order.', 'sensei-lms' ),
+					'items'       => $lesson_item_schema,
+				),
+			),
+			'additionalProperties' => false,
+		);
+		foreach ( array( 'teacher', 'lastTitle', 'slug' ) as $key ) {
+			$module_item_schema['properties'][ $key ] = array(
+				'type'        => 'string',
+				'readonly'    => true,
+				'description' => $ignored_description,
+			);
+		}
+		$module_item_schema['properties']['teacherId'] = array(
+			'type'        => 'integer',
+			'readonly'    => true,
+			'description' => $ignored_description,
+		);
+
+		wp_register_ability(
+			'sensei/course-structure-set',
+			array(
+				'label'               => __( 'Set course structure', 'sensei-lms' ),
+				'description'         => __( 'Replace the modules and lessons of a Sensei course, in order: modules first, then lessons outside any module, which Sensei shows after the modules. Lessons without an id are created as drafts, each with an empty quiz. Modules without an id reuse an existing module of the same name by the same teacher. Lessons and modules left out are detached from the course, not deleted. Pass the ids this ability returns to update items in place; repeating a call with id-less items creates duplicates. The structure sensei/course-structure-get returns can be sent back as is.', 'sensei-lms' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => array(
+					'type'                 => 'object',
+					'required'             => array( 'course', 'structure' ),
+					'properties'           => array(
+						'course'    => array(
+							'type'        => 'integer',
+							'description' => __( 'Course ID.', 'sensei-lms' ),
+						),
+						'structure' => array(
+							'type'        => 'array',
+							'description' => __( 'Modules first, then lessons outside any module, each list in order.', 'sensei-lms' ),
+							'items'       => array(
+								'oneOf' => array( $module_item_schema, $lesson_item_schema ),
+							),
+						),
+					),
+					'additionalProperties' => false,
+				),
+				'output_schema'       => self::get_course_structure_output_schema(),
+				'execute_callback'    => array( __CLASS__, 'execute_course_structure_set' ),
+				'permission_callback' => array( __CLASS__, 'can_set_course_structure' ),
+				'meta'                => array(
+					'annotations'  => array(
+						'readonly'    => false,
+						'destructive' => true,
+						'idempotent'  => false,
+					),
+					'show_in_rest' => true,
+					'mcp'          => array(
+						'public' => true,
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Register the `sensei/quiz-questions-set` ability.
+	 *
+	 * @since 4.27.0
+	 */
+	private static function register_quiz_questions_set_ability(): void {
+		$saver = new Sensei_Lesson_Quiz_Saver();
+
+		$options_schema = $saver->get_options_schema();
+		unset( $options_schema['properties']['pagination']['required'] );
+		$options_schema['description'] = __( 'Quiz settings. Settings left out keep their current value, or the default for a new quiz.', 'sensei-lms' );
+
+		wp_register_ability(
+			'sensei/quiz-questions-set',
+			array(
+				'label'               => __( 'Set quiz questions', 'sensei-lms' ),
+				'description'         => __( 'Replace the settings and questions of a Sensei lesson\'s quiz, creating the quiz if the lesson has none. Questions without an id are created; questions left out are removed from the quiz but kept in the question bank, except category-question placeholders, which are deleted. Settings you omit keep their current values. Pass the ids this ability returns to update questions in place; an id that does not name a question you can edit is an error.', 'sensei-lms' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => array(
+					'type'                 => 'object',
+					'required'             => array( 'lesson', 'questions' ),
+					'properties'           => array(
+						'lesson'    => array(
+							'type'        => 'integer',
+							'description' => __( 'Lesson ID.', 'sensei-lms' ),
+						),
+						'options'   => $options_schema,
+						'questions' => array(
+							'type'        => 'array',
+							'description' => __( 'Questions in order. Each has a type (multiple-choice, boolean, gap-fill, single-line, multi-line, file-upload or category-question), a title, an optional description and type-specific answer and options.', 'sensei-lms' ),
+							'items'       => $saver->get_single_question_schema(),
+						),
+					),
+					'additionalProperties' => false,
+				),
+				'output_schema'       => array(
+					'type'       => 'object',
+					'properties' => array(
+						'lesson'    => array(
+							'type'       => 'object',
+							'properties' => array(
+								'id'     => array( 'type' => 'integer' ),
+								'title'  => array( 'type' => 'string' ),
+								'status' => array( 'type' => 'string' ),
+							),
+						),
+						'quiz_id'   => array( 'type' => 'integer' ),
+						'options'   => array( 'type' => 'object' ),
+						'questions' => array(
+							'type'  => 'array',
+							'items' => array( 'type' => 'object' ),
+						),
+					),
+				),
+				'execute_callback'    => array( __CLASS__, 'execute_quiz_questions_set' ),
+				'permission_callback' => array( __CLASS__, 'can_set_quiz_questions' ),
+				'meta'                => array(
+					'annotations'  => array(
+						'readonly'    => false,
+						'destructive' => true,
+						'idempotent'  => false,
+					),
+					'show_in_rest' => true,
+					'mcp'          => array(
+						'public' => true,
+					),
+				),
+			)
+		);
+	}
+	/**
+	 * Output schema shared by the course structure abilities.
+	 *
+	 * Extra keys are allowed: the structure carries editor bookkeeping too.
+	 *
+	 * @since 4.27.0
+	 *
+	 * @return array
+	 */
+	private static function get_course_structure_output_schema(): array {
+		$lesson_schema = array(
+			'type'       => 'object',
+			'properties' => array(
+				'type'  => array( 'type' => 'string' ),
+				'id'    => array( 'type' => 'integer' ),
+				'title' => array( 'type' => 'string' ),
+				'draft' => array( 'type' => 'boolean' ),
+			),
+		);
+
+		return array(
+			'type'       => 'object',
+			'properties' => array(
+				'course'    => array(
+					'type'       => 'object',
+					'properties' => array(
+						'id'     => array( 'type' => 'integer' ),
+						'title'  => array( 'type' => 'string' ),
+						'status' => array( 'type' => 'string' ),
+					),
+				),
+				'structure' => array(
+					'type'  => 'array',
+					'items' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'type'        => array( 'type' => 'string' ),
+							'id'          => array( 'type' => 'integer' ),
+							'title'       => array( 'type' => 'string' ),
+							'description' => array( 'type' => 'string' ),
+							'draft'       => array( 'type' => 'boolean' ),
+							'lessons'     => array(
+								'type'  => 'array',
+								'items' => $lesson_schema,
+							),
+						),
+					),
+				),
+			),
 		);
 	}
 
@@ -609,12 +900,7 @@ class Sensei_Abilities {
 		}
 
 		if ( ! empty( $input['course'] ) ) {
-			$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-				array(
-					'key'   => '_lesson_course',
-					'value' => (int) $input['course'],
-				),
-			);
+			$args['sensei_course'] = (int) $input['course'];
 		}
 
 		if ( ! empty( $input['search'] ) ) {
@@ -653,14 +939,11 @@ class Sensei_Abilities {
 			}
 
 			$item['modules'] = array();
-			$module_terms    = wp_get_post_terms( $post->ID, 'module' );
-			if ( is_array( $module_terms ) ) {
-				foreach ( $module_terms as $term ) {
-					$item['modules'][] = array(
-						'id'   => (int) $term->term_id,
-						'name' => $term->name,
-					);
-				}
+			foreach ( Sensei()->course_lessons_repository->get_lesson_modules( $post->ID ) as $term ) {
+				$item['modules'][] = array(
+					'id'   => (int) $term->term_id,
+					'name' => $term->name,
+				);
 			}
 
 			$items[] = $item;
@@ -873,7 +1156,7 @@ class Sensei_Abilities {
 	 * cannot reach through it what the editor would not let them publish.
 	 *
 	 * @access private
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $input Ability input.
 	 *
@@ -947,6 +1230,240 @@ class Sensei_Abilities {
 		return Sensei_Block_Patterns::replace_placeholders(
 			$content,
 			array( 'sensei-content-description' => esc_html( $description ) )
+		);
+	}
+
+	/**
+	 * Execute the course structure get ability.
+	 *
+	 * @since 4.27.0
+	 * @access private
+	 *
+	 * @param array $input Ability input.
+	 * @return array|WP_Error
+	 */
+	public static function execute_course_structure_get( $input ) {
+		$course = self::get_course_post( (int) ( $input['course'] ?? 0 ) );
+		if ( ! $course ) {
+			return new WP_Error( 'sensei_course_not_found', __( 'No course exists with the given ID.', 'sensei-lms' ) );
+		}
+
+		return self::prepare_course_structure( $course, false );
+	}
+
+	/**
+	 * Execute the course structure set ability.
+	 *
+	 * @since 4.27.0
+	 * @access private
+	 *
+	 * @param array $input Ability input.
+	 * @return array|WP_Error
+	 */
+	public static function execute_course_structure_set( $input ) {
+		$course = self::get_course_post( (int) ( $input['course'] ?? 0 ) );
+		if ( ! $course ) {
+			return new WP_Error( 'sensei_course_not_found', __( 'No course exists with the given ID.', 'sensei-lms' ) );
+		}
+
+		$structure = self::strip_structure_bookkeeping( is_array( $input['structure'] ?? null ) ? $input['structure'] : array() );
+
+		$order_error = self::find_structure_order_error( $structure );
+		if ( $order_error ) {
+			return $order_error;
+		}
+
+		$result = Sensei_Course_Structure::instance( $course->ID )->save( $structure );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		if ( false === $result ) {
+			return new WP_Error(
+				'sensei_course_structure_unknown_error',
+				__( 'An error occurred while saving the course structure. Earlier items may have been saved: read the structure back with sensei/course-structure-get before retrying.', 'sensei-lms' )
+			);
+		}
+
+		return self::prepare_course_structure( $course, (bool) wp_using_ext_object_cache() );
+	}
+
+	/**
+	 * Drop the keys a returned structure carries that are not input.
+	 *
+	 * `sensei/course-structure-get` returns the editor's bookkeeping (`lastTitle`, `slug`,
+	 * `teacherId`, `initialContent`, …) so the output matches the REST route. The input
+	 * schema accepts those keys so a returned structure can be sent back, but only the
+	 * documented keys reach Sensei_Course_Structure::save().
+	 *
+	 * @param array $structure Structure as given to the ability.
+	 *
+	 * @return array Structure with only `type`, `id`, `title`, `description` and `lessons`.
+	 */
+	private static function strip_structure_bookkeeping( array $structure ): array {
+		$stripped = array();
+
+		foreach ( $structure as $item ) {
+			if ( ! is_array( $item ) ) {
+				$stripped[] = $item;
+				continue;
+			}
+
+			$keys = 'module' === ( $item['type'] ?? null )
+				? array( 'type', 'id', 'title', 'description', 'lessons' )
+				: array( 'type', 'id', 'title' );
+			$kept = array_intersect_key( $item, array_flip( $keys ) );
+
+			if ( isset( $kept['lessons'] ) && is_array( $kept['lessons'] ) ) {
+				$kept['lessons'] = self::strip_structure_bookkeeping( $kept['lessons'] );
+			}
+
+			$stripped[] = $kept;
+		}
+
+		return $stripped;
+	}
+
+	/**
+	 * Check that no module follows a lesson outside a module.
+	 *
+	 * Sensei stores module order and top-level lesson order separately and always shows
+	 * the modules first, so a mixed order could not be kept. Rejecting it is better than
+	 * silently reordering what the caller asked for.
+	 *
+	 * @param array $structure Structure as given to the ability.
+	 *
+	 * @return WP_Error|null Error naming the misplaced module, or null when the order can be kept.
+	 */
+	private static function find_structure_order_error( array $structure ): ?WP_Error {
+		$lesson_seen = false;
+
+		foreach ( $structure as $item ) {
+			$type = is_array( $item ) ? ( $item['type'] ?? null ) : null;
+
+			if ( 'lesson' === $type ) {
+				$lesson_seen = true;
+			} elseif ( 'module' === $type && $lesson_seen ) {
+				return new WP_Error(
+					'sensei_course_structure_module_after_lesson',
+					sprintf(
+						/* translators: %s: module title. */
+						__( 'Modules must come before lessons outside modules, because Sensei shows all modules first. Move the module "%s" before the top-level lessons.', 'sensei-lms' ),
+						(string) ( $item['title'] ?? '' )
+					)
+				);
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get a course post by ID.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return WP_Post|null The course, or null when the ID is not a course.
+	 */
+	private static function get_course_post( int $course_id ): ?WP_Post {
+		// get_post( 0 ) falls back to the global post, which must never stand in for a course id.
+		if ( $course_id <= 0 ) {
+			return null;
+		}
+
+		$course = get_post( $course_id );
+
+		if ( ! $course instanceof WP_Post || 'course' !== $course->post_type ) {
+			return null;
+		}
+
+		return $course;
+	}
+
+	/**
+	 * Build the course structure ability output.
+	 *
+	 * @param WP_Post $course   Course post.
+	 * @param bool    $no_cache Whether to bypass the query cache, as the editor does right after a save.
+	 *
+	 * @return array
+	 */
+	private static function prepare_course_structure( WP_Post $course, bool $no_cache ): array {
+		return array(
+			'course'    => array(
+				'id'     => $course->ID,
+				'title'  => $course->post_title,
+				'status' => $course->post_status,
+			),
+			'structure' => Sensei_Course_Structure::instance( $course->ID )->get( 'edit', $no_cache ),
+		);
+	}
+
+	/**
+	 * Execute the quiz questions set ability.
+	 *
+	 * @since 4.27.0
+	 * @access private
+	 *
+	 * @param array $input Ability input.
+	 * @return array|WP_Error
+	 */
+	public static function execute_quiz_questions_set( $input ) {
+		$lesson_id = (int) ( $input['lesson'] ?? 0 );
+		// get_post( 0 ) falls back to the global post, which must never stand in for a lesson id.
+		$lesson = $lesson_id > 0 ? get_post( $lesson_id ) : null;
+		if ( ! $lesson instanceof WP_Post || 'lesson' !== $lesson->post_type ) {
+			return new WP_Error( 'sensei_lesson_not_found', __( 'No lesson exists with the given ID.', 'sensei-lms' ) );
+		}
+
+		$saver = new Sensei_Lesson_Quiz_Saver();
+
+		// The Abilities API validates input against the schema but does not sanitize it.
+		$questions = is_array( $input['questions'] ?? null ) ? $input['questions'] : array();
+		$valid     = $saver->validate_questions( $questions );
+		if ( is_wp_error( $valid ) ) {
+			return $valid;
+		}
+		$questions = $saver->sanitize_questions( $questions );
+		if ( is_wp_error( $questions ) ) {
+			return $questions;
+		}
+
+		$options = is_array( $input['options'] ?? null ) ? $input['options'] : array();
+		$options = rest_sanitize_value_from_schema( $options, $saver->get_options_schema() );
+		if ( ! is_array( $options ) ) {
+			return new WP_Error( 'sensei_quiz_invalid_options', __( 'The quiz options could not be sanitized.', 'sensei-lms' ) );
+		}
+
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+		$quiz    = $quiz_id ? get_post( $quiz_id ) : null;
+		$options = $saver->get_options_for_update( $quiz instanceof WP_Post ? $quiz : null, $options );
+
+		// The editor drops a question id the user may not edit; an agent is told instead.
+		$quiz_id = $saver->save(
+			$lesson,
+			array(
+				'options'   => $options,
+				'questions' => $questions,
+			),
+			true
+		);
+		if ( is_wp_error( $quiz_id ) ) {
+			return $quiz_id;
+		}
+
+		$quiz_data = $saver->get_quiz_data( get_post( $quiz_id ), $lesson );
+
+		return array(
+			'lesson'    => array(
+				'id'     => $lesson->ID,
+				'title'  => $lesson->post_title,
+				'status' => $lesson->post_status,
+			),
+			'quiz_id'   => $quiz_id,
+			'options'   => $quiz_data['options'],
+			'questions' => $quiz_data['questions'],
 		);
 	}
 
@@ -1060,7 +1577,7 @@ class Sensei_Abilities {
 	 * ability only creates drafts.
 	 *
 	 * @access private
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 */
 	public static function can_create_courses(): bool {
 		$post_type_object = get_post_type_object( 'course' );
@@ -1069,5 +1586,54 @@ class Sensei_Abilities {
 		}
 
 		return current_user_can( $post_type_object->cap->create_posts );
+	}
+
+	/**
+	 * Permission check: user can read a course's structure for editing.
+	 *
+	 * Mirrors the structure REST endpoint with `context=edit`: the course must exist
+	 * and the user must be able to edit it.
+	 *
+	 * @access private
+	 * @since 4.27.0
+	 *
+	 * @param array $input Ability input.
+	 */
+	public static function can_get_course_structure( $input = array() ): bool {
+		return Sensei_Course_Structure::can_current_user_save( (int) ( $input['course'] ?? 0 ), array() );
+	}
+
+	/**
+	 * Permission check: user can save a course's structure.
+	 *
+	 * Shares the check with the structure REST endpoint: the user can edit the
+	 * course, every lesson id in the structure and every module the save would
+	 * update or delete. The structure is checked as execute_course_structure_set()
+	 * saves it, without the read-only bookkeeping keys.
+	 *
+	 * @access private
+	 * @since 4.27.0
+	 *
+	 * @param array $input Ability input.
+	 */
+	public static function can_set_course_structure( $input = array() ): bool {
+		$structure = self::strip_structure_bookkeeping( is_array( $input['structure'] ?? null ) ? $input['structure'] : array() );
+
+		return Sensei_Course_Structure::can_current_user_save( (int) ( $input['course'] ?? 0 ), $structure );
+	}
+
+	/**
+	 * Permission check: user can save the quiz of the given lesson.
+	 *
+	 * Shares the check with the lesson-quiz REST endpoint: the lesson must exist and
+	 * the user must be able to edit it, which limits teachers to their own lessons.
+	 *
+	 * @access private
+	 * @since 4.27.0
+	 *
+	 * @param array $input Ability input.
+	 */
+	public static function can_set_quiz_questions( $input = array() ): bool {
+		return Sensei_Lesson_Quiz_Saver::can_current_user_save( (int) ( $input['lesson'] ?? 0 ) );
 	}
 }

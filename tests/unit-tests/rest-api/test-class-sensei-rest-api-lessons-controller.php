@@ -40,32 +40,32 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 
 		do_action( 'rest_api_init' );
 
+		// The lesson meta is unregistered after each test, and the controller registers it.
+		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
+
 		$this->factory = new Sensei_Factory();
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
-
-		global $HTTP_RAW_POST_DATA; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved -- This is used in the WP REST API to get the raw post data.
-		$HTTP_RAW_POST_DATA = null; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved
 	}
 
 	public function testGet_MetaQueryProvided_AppliesMetaQuery() {
 		/* Arrange. */
 		$this->login_as_teacher();
 
-		$has_course_id            = false;
-		$rest_lesson_query_filter = function ( $args ) use ( &$has_course_id ) {
+		$has_meta_clause          = false;
+		$rest_lesson_query_filter = function ( $args ) use ( &$has_meta_clause ) {
 			$meta_query = $args['meta_query'] ?? array();
 			if ( ! empty( $meta_query ) ) {
 				foreach ( $meta_query as $meta_query_item ) {
 					if ( isset( $meta_query_item['key'] )
-						&& '_lesson_course' === $meta_query_item['key']
+						&& '_lesson_complexity' === $meta_query_item['key']
 						&& isset( $meta_query_item['value'] )
-						&& 1 === (int) $meta_query_item['value']
+						&& 'easy' === $meta_query_item['value']
 					) {
-						$has_course_id = true;
+						$has_meta_clause = true;
 					}
 				}
 			}
@@ -79,44 +79,72 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 		$request = new WP_REST_Request( 'GET', '/wp/v2/lessons' );
 		$request->set_query_params(
 			array(
-				'metaKey'   => '_lesson_course',
-				'metaValue' => 1,
+				'metaKey'   => '_lesson_complexity',
+				'metaValue' => 'easy',
 			)
 		);
 		$this->server->dispatch( $request );
 		remove_filter( 'rest_lesson_query', $rest_lesson_query_filter, 11 );
 
 		/* Assert. */
-		$this->assertTrue( $has_course_id );
+		$this->assertTrue( $has_meta_clause );
 	}
 
-	public function testGet_MetaQueryWithEmptyCourseProvided_AppliesMetaQuery() {
+	/**
+	 * Filtering the lessons route by course returns the lessons of that course only.
+	 *
+	 * @covers Sensei_REST_API_Lessons_Controller::add_meta_query_args
+	 */
+	public function testAddMetaQueryArgs_LessonCourseMetaProvided_ReturnsTheLessonsOfThatCourse() {
 		/* Arrange. */
 		$this->login_as_teacher();
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
 
-		$has_compare_not_exists   = false;
-		$rest_lesson_query_filter = function ( $args ) use ( &$has_compare_not_exists ) {
-			$meta_query = $args['meta_query'] ?? array();
-			if ( ! empty( $meta_query ) ) {
-				foreach ( $meta_query as $meta_query_item ) {
-					foreach ( $meta_query_item as $sub_item ) {
-						if ( ! is_array( $sub_item ) ) {
-							continue;
-						}
+		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
 
-						if ( isset( $sub_item['key'] )
-							&& '_lesson_course' === $sub_item['key']
-							&& isset( $sub_item['compare'] )
-							&& 'NOT EXISTS' === $sub_item['compare']
-						) {
-							$has_compare_not_exists = true;
-						}
-					}
-				}
-			}
-			return $args;
-		};
-		add_filter( 'rest_lesson_query', $rest_lesson_query_filter, 11, 1 );
+		/* Act. */
+		$request = new WP_REST_Request( 'GET', '/wp/v2/lessons' );
+		$request->set_query_params(
+			array(
+				'metaKey'   => '_lesson_course',
+				'metaValue' => $course_lessons['course_id'],
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$actual   = wp_list_pluck( $response->get_data(), 'id' );
+		sort( $actual );
+
+		/* Assert. */
+		$expected = $course_lessons['lesson_ids'];
+		sort( $expected );
+		$this->assertSame( $expected, $actual );
+	}
+
+	/**
+	 * Filtering the lessons route by an empty course returns only the lessons without a course: with no course meta, with an empty one or with course 0.
+	 *
+	 * @covers Sensei_REST_API_Lessons_Controller::add_meta_query_args
+	 */
+	public function testAddMetaQueryArgs_EmptyLessonCourseMetaProvided_ReturnsTheLessonsWithoutCourse() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		$this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$lesson_without_course_meta = $this->factory->lesson->create();
+		$lesson_of_course_zero      = $this->factory->lesson->create();
+		Sensei()->course_lessons_repository->attach_lesson( $lesson_of_course_zero, 0 );
+		// An empty course meta is legacy data: the repository does not write it.
+		$lesson_with_empty_course = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => '' ) ) );
 
 		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
 
@@ -128,94 +156,103 @@ class Sensei_REST_API_Lessons_Controller_Test extends \WP_UnitTestCase {
 				'metaValue' => 0,
 			)
 		);
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		$this->assertEqualsCanonicalizing(
+			array( $lesson_without_course_meta, $lesson_of_course_zero, $lesson_with_empty_course ),
+			wp_list_pluck( $response->get_data(), 'id' )
+		);
+	}
+
+	public function testUpdateItemPermissionsCheck_UneditableCourseGiven_ReturnsForbidden() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$this->login_as_teacher();
+		$lesson_id = $this->factory->lesson->create( array( 'post_author' => get_current_user_id() ) );
+
+		$request = new WP_REST_Request( 'POST', '/wp/v2/lessons/' . $lesson_id );
+		$request->set_body_params( array( 'meta' => array( '_lesson_course' => $course_id ) ) );
+
+		/* Act. */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	public function testUpdateItemPermissionsCheck_EditableNonCoursePostGiven_ReturnsForbidden() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		$other_lesson_id = $this->factory->lesson->create( array( 'post_author' => get_current_user_id() ) );
+		$lesson_id       = $this->factory->lesson->create( array( 'post_author' => get_current_user_id() ) );
+
+		$request = new WP_REST_Request( 'POST', '/wp/v2/lessons/' . $lesson_id );
+		$request->set_body_params( array( 'meta' => array( '_lesson_course' => $other_lesson_id ) ) );
+
+		/* Act. */
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	public function testUpdateItemPermissionsCheck_EditableCourseGiven_UpdatesTheLessonCourse() {
+		/* Arrange. */
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create( array( 'post_author' => get_current_user_id() ) );
+		$lesson_id = $this->factory->lesson->create( array( 'post_author' => get_current_user_id() ) );
+
+		$request = new WP_REST_Request( 'POST', '/wp/v2/lessons/' . $lesson_id );
+		$request->set_body_params( array( 'meta' => array( '_lesson_course' => $course_id ) ) );
+
+		/* Act. */
 		$this->server->dispatch( $request );
-		remove_filter( 'rest_lesson_query', $rest_lesson_query_filter, 11 );
 
 		/* Assert. */
-		$this->assertTrue( $has_compare_not_exists );
+		$this->assertSame( $course_id, (int) get_post_meta( $lesson_id, '_lesson_course', true ) );
 	}
 
-	public function testLessonCourseMetaAuthCallback_WhenUserCantEditCourse_RequestIsUnauthorized() {
+	public function testUpdateItemPermissionsCheck_CurrentUneditableCourseGiven_ReturnsSuccess() {
 		/* Arrange. */
+		$course_id = $this->factory->course->create();
 		$this->login_as_teacher();
-		$user_id   = get_current_user_id();
-		$course_id = $this->factory->course->create(
-			[
-				'post_author' => $user_id,
-			]
-		);
 		$lesson_id = $this->factory->lesson->create(
-			[
-				'post_author' => $user_id,
-				'meta_input'  => [
+			array(
+				'post_author' => get_current_user_id(),
+				'meta_input'  => array(
 					'_lesson_course' => $course_id,
-				],
-			]
+				),
+			)
 		);
 
-		$request_body = wp_json_encode(
-			[
-				'meta' => [
-					'_lesson_course' => 111, // Simulate a course that the user can't edit.
-				],
-			]
-		);
-
-		global $HTTP_RAW_POST_DATA; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved -- This is used in the WP REST API to get the raw post data.
-		$HTTP_RAW_POST_DATA = $request_body; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved
-
-		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
+		$request = new WP_REST_Request( 'POST', '/wp/v2/lessons/' . $lesson_id );
+		$request->set_body_params( array( 'meta' => array( '_lesson_course' => $course_id ) ) );
 
 		/* Act. */
-		$request = new WP_REST_Request( 'POST', '/wp/v2/lessons/' . $lesson_id );
-		$request->set_header( 'content-type', 'application/json' );
-		$request->set_body( $request_body );
-
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$this->assertEquals( 403, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 	}
 
-	public function testLessonCourseMetaAuthCallback_WhenUserCanEditCourse_RequestIsAuthorized() {
+	public function testCreateItemPermissionsCheck_UneditableCourseGiven_ReturnsForbidden() {
 		/* Arrange. */
+		$course_id = $this->factory->course->create();
 		$this->login_as_teacher();
-		$user_id   = get_current_user_id();
-		$course_id = $this->factory->course->create(
-			[
-				'post_author' => $user_id,
-			]
-		);
-		$lesson_id = $this->factory->lesson->create(
-			[
-				'post_author' => $user_id,
-				'meta_input'  => [
-					'_lesson_course' => $course_id,
-				],
-			]
-		);
 
-		$request_body = wp_json_encode(
-			[
-				'meta' => [
-					'_lesson_course' => $course_id,
-				],
-			]
+		$request = new WP_REST_Request( 'POST', '/wp/v2/lessons' );
+		$request->set_body_params(
+			array(
+				'title' => 'A lesson',
+				'meta'  => array( '_lesson_course' => $course_id ),
+			)
 		);
-
-		global $HTTP_RAW_POST_DATA; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved -- This is used in the WP REST API to get the raw post data.
-		$HTTP_RAW_POST_DATA = $request_body; // phpcs:ignore PHPCompatibility.Variables.RemovedPredefinedGlobalVariables.http_raw_post_dataDeprecatedRemoved
-
-		new \Sensei_REST_API_Lessons_Controller( 'lesson' );
 
 		/* Act. */
-		$request = new WP_REST_Request( 'POST', '/wp/v2/lessons/' . $lesson_id );
-		$request->set_header( 'content-type', 'application/json' );
-		$request->set_body( $request_body );
-
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 403, $response->get_status() );
 	}
 }

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Course or lesson progress displayed in student management.
  *
  * @internal
- * @since $$next-version$$
+ * @since 4.27.0
  */
 class Students_Item {
 
@@ -68,7 +68,7 @@ class Students_Item {
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int         $post_id      Course or lesson ID.
 	 * @param int         $user_id      Student ID.
@@ -89,7 +89,7 @@ class Students_Item {
 	 *
 	 * Unmapped properties trigger a _doing_it_wrong notice.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string $key The property name.
 	 * @return mixed|null The property value, or null if not mapped.
@@ -99,7 +99,7 @@ class Students_Item {
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_argument handles its own output.
 			_deprecated_argument(
 				'Students_Item::$' . $key,
-				'$$next-version$$',
+				'4.27.0',
 				sprintf(
 					/* translators: 1: old property name, 2: new property name */
 					'Accessing Students_Item via legacy WP_Comment property "%1$s" is deprecated. Use "%2$s" instead.',
@@ -120,7 +120,7 @@ class Students_Item {
 				'Property "%s" does not exist on Students_Item. The student list table no longer uses WP_Comment objects.',
 				$key
 			),
-			'$$next-version$$'
+			'4.27.0'
 		);
 		// phpcs:enable
 

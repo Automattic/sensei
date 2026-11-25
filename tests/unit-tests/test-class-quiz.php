@@ -3,7 +3,6 @@
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
 
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
-use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
@@ -45,6 +44,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	 * Tear down.
 	 */
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
 
@@ -253,6 +255,104 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 				self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'No dependent submission may be created.' );
 			}
 		);
+	}
+
+	/**
+	 * Failed quiz writes must report failure without caching a successful answer submission.
+	 *
+	 * @dataProvider quiz_answer_write_failures
+	 * @covers Sensei_Quiz::save_user_answers
+	 */
+	public function testSaveUserAnswers_RequiredQuizWriteFailed_ReturnsFalseAndAllowsLaterSave( string $mode, string $table, ?string $metadata_key ): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		$answers     = array( $question_id => 'The student answer' );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		/* Act. */
+		$this->with_failed_insert(
+			$GLOBALS['wpdb']->prefix . $table,
+			function () use ( $answers, $lesson_id, $user_id ) {
+				$result = Sensei_Quiz::save_user_answers( $answers, array(), $lesson_id, $user_id );
+
+				/* Assert. */
+				self::assertFalse( $result, 'The public helper must report the failed quiz write.' );
+			},
+			null,
+			$metadata_key
+		);
+		$result     = Sensei_Quiz::save_user_answers( $answers, array(), $lesson_id, $user_id );
+		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+
+		self::assertTrue( $result, 'A later ordinary save must succeed after removing the fault.' );
+		self::assertCount( 1, Sensei()->quiz_answer_repository->get_all( $submission->get_id() ), 'A later save must not duplicate a partially saved answer.' );
+	}
+
+	/**
+	 * Failed replacement saves must expose persisted answers rather than the old transient.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Quiz::save_user_answers
+	 */
+	public function testSaveUserAnswers_LaterMetadataWriteFailed_ExposesPersistedAnswers( string $mode ): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id    = $this->factory->lesson->create();
+		$quiz_id      = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_ids = $this->factory->question->create_many( 2, array( 'quiz_id' => $quiz_id ) );
+		$user_id      = $this->factory->user->create();
+		$old_answers  = array(
+			$question_ids[0] => 'Old first answer',
+			$question_ids[1] => 'Old second answer',
+		);
+		$new_answers  = array(
+			$question_ids[0] => 'New first answer',
+			$question_ids[1] => 'New second answer',
+		);
+		Sensei_Quiz::save_user_answers( $old_answers, array(), $lesson_id, $user_id );
+		$wpdb            = $GLOBALS['wpdb'];
+		$fault           = static function ( $query ) use ( $wpdb ) {
+			return 0 === strpos( $query, "UPDATE `{$wpdb->commentmeta}`" ) && false !== strpos( $query, 'questions_asked' )
+				? 'UPDATE sensei_missing_quiz_table SET id = 1'
+				: $query;
+		};
+		$previous_errors = $wpdb->suppress_errors( true );
+		add_filter( 'query', $fault );
+
+		/* Act. */
+		try {
+			$result = Sensei_Quiz::save_user_answers( $new_answers, array(), $lesson_id, $user_id );
+
+			/* Assert. */
+			self::assertFalse( $result, 'The incomplete save must report failure.' );
+			self::assertSame( array( $question_ids[0] => 'New first answer' ), Sensei()->quiz->get_user_answers( $lesson_id, $user_id ), 'Only the persisted answer may replace the old cached answers.' );
+		} finally {
+			remove_filter( 'query', $fault );
+			$wpdb->suppress_errors( $previous_errors );
+		}
+	}
+
+	/**
+	 * Required quiz answer writes in each storage configuration.
+	 *
+	 * @return array
+	 */
+	public static function quiz_answer_write_failures(): array {
+		$cases = array();
+		foreach ( self::progress_storage_modes() as $name => $arguments ) {
+			$mode                           = $arguments[0];
+			$cases[ $name . ' answer map' ] = array( $mode, 'commentmeta', 'quiz_answers' );
+			$cases[ $name . ' questions' ]  = array( $mode, 'commentmeta', 'questions_asked' );
+			if ( 'comments-only' !== $mode ) {
+				$cases[ $name . ' submission' ] = array( $mode, 'sensei_lms_quiz_submissions', null );
+				$cases[ $name . ' answer' ]     = array( $mode, 'sensei_lms_quiz_answers', null );
+			}
+		}
+		return $cases;
 	}
 
 	/**
@@ -683,11 +783,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 					},
 					Sensei()->quiz_answer_repository->get_all( $submission->get_id() )
 				);
+				$reset      = did_action( 'sensei_user_lesson_reset' );
 				add_filter( 'query', $fault_filter );
 
 				$result = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
 				self::assertFalse( $result, 'Reset must report the required progress failure.' );
+				self::assertSame( $reset, did_action( 'sensei_user_lesson_reset' ), 'A failed reset must not announce success.' );
 				self::assertSame(
 					$before,
 					array_map(
@@ -701,6 +803,108 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			},
 			$failed_store
 		);
+	}
+
+	/**
+	 * A failed progress update must stop reset before deleting quiz answers.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 */
+	public function testResetUserLessonData_FailedProgressUpdate_PreservesAnswers( string $mode ): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		$progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+		$progress->complete();
+		Sensei()->lesson_progress_repository->save( $progress );
+		$table = 'tables' === $mode ? $GLOBALS['wpdb']->prefix . 'sensei_lms_progress' : $GLOBALS['wpdb']->comments;
+
+		/* Act. */
+		$result = $this->with_failed_reset_query(
+			'UPDATE',
+			$table,
+			static function () use ( $lesson_id, $user_id ) {
+				return Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+			}
+		);
+
+		/* Assert. */
+		self::assertFalse( $result, 'A failed progress update must report reset failure.' );
+		self::assertTrue( Sensei()->lesson_progress_repository->get( $lesson_id, $user_id )->is_complete(), 'The failed update must leave the lesson complete.' );
+		self::assertNotNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'Quiz answers must remain available for retry.' );
+	}
+
+	/**
+	 * A failed quiz data delete must keep the submission and report reset failure.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 */
+	public function testResetUserLessonData_FailedQuizDelete_KeepsSubmissionForRetry( string $mode ): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		$table         = 'tables' === $mode ? $GLOBALS['wpdb']->prefix . 'sensei_lms_quiz_answers' : $GLOBALS['wpdb']->commentmeta;
+		$submission_id = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_id();
+
+		/* Act. */
+		$result = $this->with_failed_reset_query(
+			'DELETE',
+			$table,
+			static function () use ( $lesson_id, $user_id ) {
+				return Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+			}
+		);
+
+		/* Assert. */
+		self::assertFalse( $result, 'A failed delete must report reset failure.' );
+		self::assertNotNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'The submission must remain available for retry.' );
+		self::assertNotEmpty( Sensei()->quiz_answer_repository->get_all( $submission_id ), 'The failed delete must leave answers accessible.' );
+		self::assertTrue( Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id ), 'A later reset must succeed after the fault is removed.' );
+		self::assertEmpty( Sensei()->quiz_answer_repository->get_all( $submission_id ), 'A successful retry must clear the old answer rows.' );
+	}
+
+	/**
+	 * A failed mirrored delete must leave the primary submission available for retry.
+	 *
+	 * @dataProvider dual_write_storage_modes
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 */
+	public function testResetUserLessonData_FailedMirroredDelete_KeepsSubmissionForRetry( string $mode, string $failed_store ): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		$table               = 'tables' === $failed_store ? $GLOBALS['wpdb']->prefix . 'sensei_lms_quiz_answers' : $GLOBALS['wpdb']->commentmeta;
+		$wpdb                = $GLOBALS['wpdb'];
+		$table_submission_id = ( new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository( $wpdb ) )->get( $quiz_id, $user_id )->get_id();
+
+		/* Act. */
+		$result = $this->with_failed_reset_query(
+			'DELETE',
+			$table,
+			static function () use ( $lesson_id, $user_id ) {
+				return Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+			}
+		);
+
+		/* Assert. */
+		self::assertFalse( $result, 'A failed mirror delete must report reset failure.' );
+		self::assertNotNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'The primary submission must remain available for retry.' );
+		self::assertTrue( Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id ), 'A later reset must finish after the fault is removed.' );
+		self::assertEmpty( ( new \Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository( $wpdb ) )->get_all( $table_submission_id ), 'A successful retry must not leave orphaned table answers.' );
 	}
 
 	/**
@@ -765,6 +969,36 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$transient_key  = 'sensei_answers_' . $test_user_id . '_' . $test_lesson_id;
 		$transient_data = get_transient( $transient_key );
 		$this->assertFalse( $transient_data, 'The transient was not reset along with the users saved data. The result should be false.' );
+	}
+
+	/**
+	 * Reset must stop when clearing answers cannot create a required mirrored submission.
+	 *
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 */
+	public function testResetUserLessonData_RequiredMirroredSubmissionInsertFailed_ReturnsFalseWithoutSuccess(): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( 'comments' );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		$tables = new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository( $GLOBALS['wpdb'] );
+		$tables->delete( $tables->get( $quiz_id, $user_id ) );
+		$reset_events = did_action( 'sensei_user_lesson_reset' );
+
+		/* Act. */
+		$this->with_failed_insert(
+			$GLOBALS['wpdb']->prefix . 'sensei_lms_quiz_submissions',
+			function () use ( $lesson_id, $user_id, $reset_events ) {
+				$result = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+
+				/* Assert. */
+				self::assertFalse( $result, 'A required synchronization insert must stop reset.' );
+				self::assertSame( $reset_events, did_action( 'sensei_user_lesson_reset' ), 'A failed reset must not publish success.' );
+			}
+		);
 	}
 
 	/**
@@ -902,6 +1136,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		$_POST['quiz_save']                        = '';
 		$_POST['questions_asked']                  = array( $question_id );
+		$_POST['questions_asked_signature']        = $this->get_quiz_form_signature();
 		$_POST['sensei_question']                  = array( $question_id => 'Rewritten answer' );
 		$_POST['woothemes_sensei_save_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' );
 
@@ -950,6 +1185,99 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 				self::assertSame( array( $ids['question_id'] => 'Rewritten answer' ), Sensei()->quiz->get_user_answers( $ids['lesson_id'], $ids['user_id'] ), 'The form must retain the submitted text for retry.' );
 				self::assertEquals( $submission_before, Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] ), 'Retaining input must not change the persisted submission.' );
 			}
+		);
+	}
+
+	/**
+	 * Failed answer writes must not hide submitted questions when a durable question list is partial.
+	 *
+	 * @dataProvider failed_answer_form_requests
+	 * @covers Sensei_Quiz::start_quiz_questions_loop
+	 * @covers Sensei_Lesson::lesson_quiz_questions
+	 */
+	public function testStartQuizQuestionsLoop_RequiredAnswerWriteFailed_RendersSubmittedQuestions(
+		string $listener,
+		string $button,
+		string $nonce,
+		array $quiz_options
+	): void {
+		/* Arrange. */
+		global $sensei_question_loop;
+		global $wpdb;
+
+		$this->set_progress_storage_mode( 'comments-only' );
+		Sensei_Course_Enrolment_Manager::instance()->collect_enrolment_providers();
+		$course_data = $this->factory->get_course_with_lessons( $quiz_options );
+		$lesson_id   = $course_data['lesson_ids'][0];
+		$quiz_id     = $course_data['quiz_ids'][0];
+		$user_id     = $this->factory->user->create();
+		Sensei_Course_Enrolment::get_course_instance( $course_data['course_id'] )->enrol( $user_id );
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		wp_set_current_user( $user_id );
+		$this->go_to( get_permalink( $quiz_id ) );
+		// Capture the questions chosen for this form before the failed save.
+		$signature    = $this->get_quiz_form_signature();
+		$question_ids = $sensei_question_loop['questions_asked'];
+		$answers      = array(
+			$question_ids[0] => 'First submitted answer',
+			$question_ids[1] => 'Second submitted answer',
+		);
+		$_POST        = array(
+			$button                     => get_permalink( $quiz_id ),
+			'questions_asked'           => $question_ids,
+			'questions_asked_signature' => $signature,
+			'sensei_question'           => $answers,
+			$nonce                      => wp_create_nonce( $nonce ),
+		);
+
+		$fault           = static function ( $query ) use ( $wpdb ) {
+			return 0 === strpos( $query, "UPDATE `{$wpdb->commentmeta}`" ) && false !== strpos( $query, 'quiz_answers' )
+				? 'UPDATE sensei_missing_quiz_table SET meta_value = 1'
+				: $query;
+		};
+		$previous_errors = $wpdb->suppress_errors( true );
+		add_filter( 'query', $fault );
+		$this->prevent_wp_redirect();
+
+		/* Act. */
+		try {
+			Sensei()->quiz->$listener();
+			Sensei_Quiz::start_quiz_questions_loop();
+
+			/* Assert. */
+			self::assertSame( $question_ids, $sensei_question_loop['questions_asked'], 'The form must retain every submitted question despite the partial durable list.' );
+			self::assertSame( $answers, Sensei()->quiz->get_user_answers( $lesson_id, $user_id ), 'The form must retain every submitted answer.' );
+			self::assertSame( $question_ids[0], $sensei_question_loop['questions'][0]->ID, 'The form must render the first submitted question.' );
+			self::assertSame( $question_ids[1], $sensei_question_loop['questions'][1]->ID, 'The form must render the second submitted question.' );
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			self::assertSame( array( $question_ids[0] ), Sensei()->quiz_submission_repository->get_question_ids( $submission->get_id() ), 'Retaining input must not persist a successful complete question list.' );
+		} finally {
+			remove_filter( 'query', $fault );
+			$wpdb->suppress_errors( $previous_errors );
+		}
+	}
+
+	/**
+	 * Student actions and quiz layouts that must keep submitted questions on a failed save.
+	 *
+	 * @return array
+	 */
+	public static function failed_answer_form_requests(): array {
+		$plain_quiz    = array(
+			'question_count' => 2,
+			'question_args'  => array( 'question_type' => 'multi-line' ),
+		);
+		$category_quiz = array(
+			'question_count'          => 0,
+			'multiple_question_count' => 1,
+			'multiple_question_args'  => array( 'question_number' => 2 ),
+			'quiz_args'               => array( 'meta_input' => array( '_random_question_order' => 'yes' ) ),
+		);
+
+		return array(
+			'save'          => array( 'user_save_quiz_answers_listener', 'quiz_save', 'woothemes_sensei_save_quiz_nonce', $plain_quiz ),
+			'submit'        => array( 'user_quiz_submit_listener', 'quiz_complete', 'woothemes_sensei_complete_quiz_nonce', $plain_quiz ),
+			'category save' => array( 'user_save_quiz_answers_listener', 'quiz_save', 'woothemes_sensei_save_quiz_nonce', $category_quiz ),
 		);
 	}
 
@@ -1046,6 +1374,35 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A failed lesson-comment insert during quiz save must stop completion and submission events.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Quiz::submit_answers_for_grading
+	 */
+	public function testSubmitAnswersForGrading_CommentInsertFailedDuringSave_DoesNotAnnounceCompletionOrSubmission( string $mode ): void {
+		$lesson_id = $this->factory->get_random_lesson_id();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$user_id   = $this->factory->user->create();
+		update_post_meta( $quiz_id, '_quiz_grade_type', 'auto' );
+		update_post_meta( $quiz_id, '_pass_required', '' );
+		$submitted = did_action( 'sensei_user_quiz_submitted' );
+		$completed = did_action( 'sensei_user_lesson_end' );
+
+		$this->set_progress_storage_mode( $mode );
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		Sensei()->quiz_progress_repository->create( $quiz_id, $user_id );
+
+		$this->fail_progress_comment_insert( 'lesson', $lesson_id, $user_id, 'graded' );
+
+		$result = Sensei_Quiz::submit_answers_for_grading( array(), array(), $lesson_id, $user_id );
+
+		self::assertFalse( $result, 'The quiz caller must report the required insert failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'Failed quiz progress must not announce lesson completion.' );
+		self::assertSame( $submitted, did_action( 'sensei_user_quiz_submitted' ), 'Failed quiz progress must not announce submission.' );
+	}
+
+	/**
 	 * Failed lesson creation must leave quiz submissions untouched.
 	 *
 	 * @dataProvider progress_storage_modes
@@ -1119,6 +1476,139 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			'The function should return true for valid parameters'
 		);
 
+	}
+
+	/**
+	 * Get the signature the form of the current quiz page carries for its asked questions.
+	 *
+	 * @return string
+	 */
+	private function get_quiz_form_signature(): string {
+		Sensei_Quiz::start_quiz_questions_loop();
+		ob_start();
+		Sensei_Quiz::output_quiz_hidden_fields();
+		preg_match( '/name="questions_asked_signature"[^>]*value="(\w+)"/', ob_get_clean(), $matches );
+
+		return $matches[1];
+	}
+
+	/**
+	 * Arrange a learner on a quiz page posting a tampered form: only the first question is declared as asked.
+	 *
+	 * @return array The quiz_id and user_id.
+	 */
+	private function arrange_tampered_quiz_form(): array {
+		$quiz_id      = Sensei()->lesson->lesson_quizzes( $this->factory->get_random_lesson_id() );
+		$question_ids = wp_list_pluck( Sensei()->lesson->lesson_quiz_questions( $quiz_id ), 'ID' );
+
+		$user_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		wp_set_current_user( $user_id );
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		$_POST['questions_asked']           = array( $question_ids[0] );
+		$_POST['questions_asked_signature'] = $this->get_quiz_form_signature();
+		$_POST['sensei_question']           = array( $question_ids[0] => 'true' );
+
+		return array(
+			'quiz_id' => $quiz_id,
+			'user_id' => $user_id,
+		);
+	}
+
+	public function testUserQuizSubmitListener_QuestionsAskedChanged_SavesNothing() {
+		/* Arrange. */
+		$ids = $this->arrange_tampered_quiz_form();
+		add_filter( 'sensei_is_enrolled', '__return_true' );
+
+		$_POST['quiz_complete']                        = '1';
+		$_POST['woothemes_sensei_complete_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' );
+
+		/* Act. */
+		Sensei()->quiz->user_quiz_submit_listener();
+
+		/* Assert. */
+		$this->assertNull( Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] ) );
+
+		remove_filter( 'sensei_is_enrolled', '__return_true' );
+	}
+
+	public function testUserQuizSubmitListener_QuestionsAskedUnchanged_SavesTheAnswers() {
+		/* Arrange. */
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $this->factory->get_random_lesson_id() );
+		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
+
+		$user_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		wp_set_current_user( $user_id );
+		add_filter( 'sensei_is_enrolled', '__return_true' );
+		$this->go_to( get_permalink( $quiz_id ) );
+
+		$_POST['quiz_complete']                        = '1';
+		$_POST['questions_asked']                      = array_keys( $answers );
+		$_POST['questions_asked_signature']            = $this->get_quiz_form_signature();
+		$_POST['sensei_question']                      = $answers;
+		$_POST['woothemes_sensei_complete_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' );
+
+		$this->prevent_wp_redirect();
+
+		/* Act. */
+		try {
+			Sensei()->quiz->user_quiz_submit_listener();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			// The listener redirects after submitting the answers.
+			$redirected = true;
+		}
+
+		/* Assert. */
+		$this->assertTrue( $redirected ?? false, 'The listener should redirect after submitting the answers.' );
+		$this->assertNotNull(
+			Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ),
+			'The answers should be saved when the question set is the one the quiz asked.'
+		);
+
+		remove_filter( 'sensei_is_enrolled', '__return_true' );
+	}
+
+	public function testPageChangeListener_QuestionsAskedChanged_SavesNothing() {
+		/* Arrange. */
+		$ids = $this->arrange_tampered_quiz_form();
+		add_filter( 'sensei_is_enrolled', '__return_true' );
+
+		$_POST['quiz_target_page']              = get_permalink( $ids['quiz_id'] );
+		$_POST['sensei_quiz_page_change_nonce'] = wp_create_nonce( 'sensei_quiz_page_change_nonce' );
+
+		$this->prevent_wp_redirect();
+
+		/* Act. */
+		try {
+			Sensei()->quiz->page_change_listener();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			// The listener always redirects to the target page and exits.
+			$redirected = true;
+		}
+
+		/* Assert. */
+		$this->assertTrue( $redirected ?? false, 'The listener should still redirect to the target page.' );
+		$this->assertNull(
+			Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] ),
+			'No answers should be saved when the question set was changed.'
+		);
+
+		remove_filter( 'sensei_is_enrolled', '__return_true' );
+	}
+
+	public function testUserSaveQuizAnswersListener_QuestionsAskedChanged_SavesNothing() {
+		/* Arrange. */
+		$ids = $this->arrange_tampered_quiz_form();
+		add_filter( 'sensei_is_enrolled', '__return_true' );
+
+		$_POST['quiz_save']                        = '1';
+		$_POST['woothemes_sensei_save_quiz_nonce'] = wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' );
+
+		/* Act. */
+		Sensei()->quiz->user_save_quiz_answers_listener();
+
+		/* Assert. */
+		$this->assertNull( Sensei()->quiz_submission_repository->get( $ids['quiz_id'], $ids['user_id'] ) );
 	}
 
 	public function testSubmitAnswersForGrading_WhenNoQuizProgressExist_CreatesQuizProgress(): void {
@@ -1669,7 +2159,12 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$user_id     = $this->factory->user->create();
 		$lesson_id   = $this->factory->get_random_lesson_id();
 		$quiz_id     = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$question_id = Sensei()->quiz->get_questions( $quiz_id )[0]->ID;
+		$question_id = $this->factory->question->create(
+			array(
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'single-line',
+			)
+		);
 
 		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 		$submission = Sensei()->quiz_submission_repository->create( $quiz_id, $user_id );
@@ -1805,6 +2300,58 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			$retrieved_grade,
 			'Should return the correct grade if has no user_id argument but user is logged in'
 		);
+	}
+
+	/**
+	 * Grade synchronization reached through save_many must stop on a failed required insert.
+	 *
+	 * @dataProvider dual_write_storage_modes
+	 * @covers Sensei_Quiz::save_user_answers_feedback
+	 */
+	public function testSaveUserAnswersFeedback_SecondaryGradeInsertFails_ReportsFailureAndCanRetry( string $mode, string $secondary ): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		Sensei()->quiz->set_user_grades( array( $question_id => 1 ), $lesson_id, $user_id );
+		$wpdb = $GLOBALS['wpdb'];
+
+		// Force save_many() to create the missing mirror grade when feedback is saved.
+		if ( 'tables' === $secondary ) {
+			$secondary_submission = ( new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository( $wpdb ) )->get( $quiz_id, $user_id );
+			( new \Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository( $wpdb ) )->delete_all( $secondary_submission );
+			$table        = $wpdb->prefix . 'sensei_lms_quiz_grades';
+			$metadata_key = null;
+		} else {
+			$secondary_submission = ( new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository() )->get( $quiz_id, $user_id );
+			delete_comment_meta( $secondary_submission->get_id(), 'quiz_grades' );
+			$table        = $wpdb->commentmeta;
+			$metadata_key = 'quiz_grades';
+		}
+		$feedback = array( $question_id => 'Saved feedback' );
+
+		/* Act. */
+		$failed_save = $this->with_failed_insert(
+			$table,
+			function () use ( $feedback, $lesson_id, $user_id ) {
+				return Sensei()->quiz->save_user_answers_feedback( $feedback, $lesson_id, $user_id );
+			},
+			null,
+			$metadata_key
+		);
+
+		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		$grades     = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
+
+		/* Assert. */
+		self::assertFalse( $failed_save, 'A failed mirror insert must report failure.' );
+		self::assertCount( 1, $grades, 'The primary grade must survive the failed mirror insert.' );
+		self::assertSame( 1, $grades[0]->get_points(), 'Already saved points must remain available.' );
+
+		self::assertTrue( Sensei()->quiz->save_user_answers_feedback( $feedback, $lesson_id, $user_id ), 'A later save must complete after removing the fault.' );
 	}
 
 	/**
@@ -2426,82 +2973,49 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertEmpty( $quiz_grades );
 	}
 
-	public function testResetUserLessonData_WhenCourseAlreadyStarted_DoesNotResetTheCourseStartDate() {
-		/* Arrange. */
-		$user_id   = $this->factory->user->create();
-		$course_id = $this->factory->course->create();
-		$lesson_id = $this->factory->lesson->create(
-			[
-				'meta_input' => [
-					'_lesson_course' => $course_id,
-				],
-			]
-		);
+	/**
+	 * Resetting a lesson reopens the course and preserves its recorded or unknown start date.
+	 *
+	 * @covers Sensei_Quiz::reset_user_lesson_data
+	 * @dataProvider course_start_dates_on_lesson_reset
+	 *
+	 * @param string|null $started_at The original course start, if recorded.
+	 */
+	public function testResetUserLessonData_CompletedCourseGiven_ReopensWithOriginalStartDate( ?string $started_at ): void {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$user_id    = $this->factory->user->create();
+			$course     = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+			$course_id  = $course['course_id'];
+			$lesson_id  = $course['lesson_ids'][0];
+			$start_date = $started_at ? new DateTimeImmutable( $started_at, wp_timezone() ) : null;
 
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+			$this->factory->create_completed_course_progress( $course_id, $user_id, $start_date );
+			Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 
-		$course_start_date    = new DateTime( '-1 day' );
-		$course_progress_mock = $this->createMock( Course_Progress_Interface::class );
-		$course_progress_mock->method( 'get_started_at' )
-			->willReturn( $course_start_date );
+			Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
-		$_course_progress_repository     = Sensei()->course_progress_repository;
-		$course_progress_repository_mock = $this->createMock( Course_Progress_Repository_Interface::class );
-		$course_progress_repository_mock
-			->method( 'get' )
-			->with( $course_id, $user_id )
-			->willReturn( $course_progress_mock );
+			$progress       = Sensei()->course_progress_repository->get( $course_id, $user_id );
+			$reopened_start = $progress->get_started_at();
 
-		/* Assert. */
-		$course_progress_mock
-			->expects( $this->once() )
-			->method( 'start' )
-			->with( $course_start_date );
-
-		/* Act. */
-		Sensei()->course_progress_repository = $course_progress_repository_mock;
-		ob_start();
-		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
-		ob_end_clean();
-		Sensei()->course_progress_repository = $_course_progress_repository; // Reset.
+			self::assertSame( Course_Progress_Interface::STATUS_IN_PROGRESS, $progress->get_status(), 'The course should return to in-progress.' );
+			self::assertSame( $started_at, $reopened_start ? wp_date( 'Y-m-d H:i:s', $reopened_start->getTimestamp() ) : null, 'The original start should be preserved.' );
+			self::assertNull( $progress->get_completed_at(), 'The reopened course should no longer have a completion date.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
 	}
 
-	public function testResetUserLessonData_WhenCourseCompleted_ResetsTheCourseStatus() {
-		/* Arrange. */
-		$user_id   = $this->factory->user->create();
-		$course_id = $this->factory->course->create();
-		$lesson_id = $this->factory->lesson->create(
-			[
-				'meta_input' => [
-					'_lesson_course' => $course_id,
-				],
-			]
+	/**
+	 * Original course start dates.
+	 *
+	 * @return array
+	 */
+	public static function course_start_dates_on_lesson_reset(): array {
+		return array(
+			'known start'   => array( '2024-04-01 08:00:00' ),
+			'unknown start' => array( null ),
 		);
-
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id, true );
-
-		$course_progress_mock = $this->createMock( Course_Progress_Interface::class );
-		$course_progress_mock->method( 'get_started_at' )
-			->willReturn( new DateTime() );
-
-		$_course_progress_repository     = Sensei()->course_progress_repository;
-		$course_progress_repository_mock = $this->createMock( Course_Progress_Repository_Interface::class );
-		$course_progress_repository_mock
-			->method( 'get' )
-			->with( $course_id, $user_id )
-			->willReturn( $course_progress_mock );
-
-		/* Assert. */
-		$course_progress_mock
-			->expects( $this->once() )
-			->method( 'start' );
-
-		/* Act. */
-		Sensei()->course_progress_repository = $course_progress_repository_mock;
-		ob_start();
-		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
-		ob_end_clean();
-		Sensei()->course_progress_repository = $_course_progress_repository; // Reset.
 	}
 
 	public function testSetQuizAuthorOnCreate_WhenCreatingQuiz_SetsAuthorToLessonTeacher() {
@@ -3310,5 +3824,58 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$this->assertTrue( wp_style_is( 'sensei-single-quiz-style' ) );
+	}
+
+	public function testPrepareFormSubmittedAnswers_OtherUsersAttachmentGiven_DiscardsTheAnswer() {
+		/* Arrange. */
+		$user_id       = $this->factory->user->create();
+		$question_id   = $this->factory->question->create( array( 'question_type' => 'file-upload' ) );
+		$attachment_id = $this->factory->attachment->create( array( 'post_author' => $this->factory->user->create() ) );
+
+		/* Act. */
+		$prepared_answers = Sensei_Quiz::prepare_form_submitted_answers( array( $question_id => (string) $attachment_id ), array(), $user_id );
+
+		/* Assert. */
+		$this->assertSame( '', $prepared_answers[ $question_id ] );
+	}
+
+	public function testPrepareFormSubmittedAnswers_OwnAttachmentGiven_KeepsTheAnswer() {
+		/* Arrange. */
+		$user_id       = $this->factory->user->create();
+		$question_id   = $this->factory->question->create( array( 'question_type' => 'file-upload' ) );
+		$attachment_id = $this->factory->attachment->create( array( 'post_author' => $user_id ) );
+
+		/* Act. */
+		$prepared_answers = Sensei_Quiz::prepare_form_submitted_answers( array( $question_id => (string) $attachment_id ), array(), $user_id );
+
+		/* Assert. */
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding the prepared answer.
+		$this->assertSame( (string) $attachment_id, base64_decode( $prepared_answers[ $question_id ] ) );
+	}
+
+	/**
+	 * Fail a reset write with a real database error.
+	 *
+	 * @param string   $verb SQL verb.
+	 * @param string   $table Table name.
+	 * @param callable $operation Reset operation.
+	 * @return mixed Operation result.
+	 */
+	private function with_failed_reset_query( string $verb, string $table, callable $operation ) {
+		$filter   = static function ( $query ) use ( $verb, $table ) {
+			if ( preg_match( '/^' . $verb . '\\s+(?:FROM\\s+)?`?' . preg_quote( $table, '/' ) . '`?\\s/i', $query ) ) {
+				return 'UPDATE sensei_missing_progress_table SET id = 1';
+			}
+			return $query;
+		};
+		$previous = $GLOBALS['wpdb']->suppress_errors( true );
+		add_filter( 'query', $filter );
+		try {
+			return $operation();
+		} finally {
+			remove_filter( 'query', $filter );
+			$GLOBALS['wpdb']->suppress_errors( $previous );
+			wp_cache_flush();
+		}
 	}
 }

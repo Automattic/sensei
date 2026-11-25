@@ -8,6 +8,9 @@ concurrency:
     group: psalm-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
     cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+permissions:
+    contents: read
+
 jobs:
     tests:
         name: Psalm
@@ -20,16 +23,17 @@ jobs:
                 php: ${{ github.event_name == 'pull_request' && fromJSON('["8.2"]') || fromJSON('["7.4", "8.2"]') }}
         steps:
             - name: Checkout code
-              uses: actions/checkout@v7.0.1
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
+                  persist-credentials: false
                   fetch-depth: 0
 
             - name: Get cached composer directories
-              uses: actions/cache@v6.1.0
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: ~/.cache/composer/
                   key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-            - uses: actions/cache@v6.1.0
+            - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: vendor/
                   key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}

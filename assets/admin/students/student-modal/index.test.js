@@ -350,6 +350,7 @@ describe( '<StudentModal />', () => {
 			'Select the course(s) you would like to reset progress from for ';
 
 		beforeEach( () => {
+			onClose.mockClear();
 			render(
 				<StudentModal
 					action="reset-progress"
@@ -397,7 +398,11 @@ describe( '<StudentModal />', () => {
 				} )
 				.matchHeader( 'x-http-method-override', 'DELETE' )
 				.once()
-				.reply( 200, { status: 'ok' } );
+				.reply( 200, {
+					1: { 1: true },
+					2: { 1: true },
+					3: { 1: true },
+				} );
 
 			fireEvent.click( await courseOptionAt( 0 ) );
 
@@ -406,6 +411,37 @@ describe( '<StudentModal />', () => {
 			await waitFor( () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
 			} );
+		} );
+
+		it( 'Shows an error and keeps the selection when a reset fails', async () => {
+			nock( NOCK_HOST_URL )
+				.post( '/sensei-internal/v1/course-progress/batch', {
+					student_ids: students,
+					course_ids: [ courses[ 0 ].id ],
+				} )
+				.query( { _locale: 'user' } )
+				.matchHeader( 'x-http-method-override', 'DELETE' )
+				.reply( 200, {
+					1: { 1: true },
+					2: { 1: false },
+					3: { 1: true },
+				} );
+
+			fireEvent.click( await courseOptionAt( 0 ) );
+			fireEvent.click( await buttonByLabel( 'Reset Progress' ) );
+
+			expect(
+				await findAllByText(
+					"We couldn't finish resetting progress. Some progress or quiz answers may already have been cleared. Refresh the page and review student progress before taking further action. If it looks inconsistent, contact your site administrator."
+				)
+			).toBeTruthy();
+			expect( onClose ).not.toHaveBeenCalled();
+			expect( await buttonByLabel( 'Reset Progress' ) ).toBeEnabled();
+
+			fireEvent.click( await buttonByLabel( 'Close' ) );
+			await waitFor( () =>
+				expect( onClose ).toHaveBeenCalledWith( true )
+			);
 		} );
 	} );
 
@@ -504,7 +540,7 @@ describe( '<StudentModal />', () => {
 				expect(
 					// In addition to the notice, there is an ARIA element that has this text.
 					await findAllByText(
-						'Unable to reset progress for this student. Please try again.'
+						"We couldn't finish resetting progress. Some progress or quiz answers may already have been cleared. Refresh the page and review student progress before taking further action. If it looks inconsistent, contact your site administrator."
 					)
 				).toBeTruthy();
 			} );
@@ -605,7 +641,7 @@ describe( '<StudentModal />', () => {
 
 				expect(
 					await findAllByText(
-						'Unable to reset progress for these students. Please try again.'
+						"We couldn't finish resetting progress. Some progress or quiz answers may already have been cleared. Refresh the page and review student progress before taking further action. If it looks inconsistent, contact your site administrator."
 					)
 				).toBeTruthy();
 			} );

@@ -8,6 +8,7 @@
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Installer\Schema;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
 
 /**
  * Class for testing Sensei Settings.
@@ -15,6 +16,8 @@ use Sensei\Internal\Migration\Migration_Job_Scheduler;
  * @covers \Sensei_Settings
  */
 class Sensei_Settings_Test extends WP_UnitTestCase {
+	private $synchronization_fixture;
+
 	/**
 	 * Tracking original request method.
 	 *
@@ -43,6 +46,28 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 	 * Tear down after tests.
 	 */
 	public function tearDown(): void {
+		if ( null !== $this->synchronization_fixture ) {
+			global $wpdb;
+
+			$this->resetSimulateSettingsRequest();
+			update_option( 'sensei-settings', $this->synchronization_fixture['option'] );
+			Sensei()->settings->settings = $this->synchronization_fixture['settings'];
+
+			if ( isset( $this->synchronization_fixture['progress'] ) ) {
+				$progress = $this->synchronization_fixture['progress'];
+
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->delete( $wpdb->prefix . 'sensei_lms_progress', array( 'id' => $progress->get_id() ) );
+				wp_delete_post( $progress->get_course_id(), true );
+			}
+
+			_as_reset();
+
+			// Schema changes commit transactions, so persist the fixture cleanup too.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->query( 'COMMIT' );
+		}
+
 		parent::tearDown();
 
 		Sensei_Test_Events::reset();
@@ -90,19 +115,29 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		$this->assertEquals( [ 'course_archive_featured_enable', 'course_archive_more_link_text' ], $changed );
 	}
 
-	public function testExperimentalFeaturesSaved_HppsSettingHasEnabled_CreatesTables() {
+	/**
+	 * Enabling HPPS or synchronization initializes missing tables.
+	 *
+	 * @covers Sensei_Settings::experimental_features_saved
+	 * @dataProvider enabled_hpps_settings
+	 */
+	public function testExperimentalFeaturesSaved_HppsSettingEnabled_CreatesTables( string $setting ) {
 		/* Arrange. */
 		$settings = Sensei()->settings;
 
 		$new                                  = $settings->get_settings();
 		$new['experimental_progress_storage'] = true;
+		$new[ $setting ]                      = true;
 
-		$old                                  = $settings->get_settings();
-		$old['experimental_progress_storage'] = false;
+		$old             = $new;
+		$old[ $setting ] = false;
 
 		$this->simulateSettingsRequest();
 
 		global $wpdb;
+		// SHOW TABLES must inspect the recreated tables, rather than an older physical copy.
+		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
+		remove_filter( 'query', array( $this, '_drop_temporary_tables' ) );
 		$tables = ( new Schema( Sensei()->feature_flags ) )->get_tables();
 		foreach ( $tables as $table ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.SchemaChange
@@ -122,6 +157,62 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 			}
 		}
 		$this->assertEqualSets( $tables, $created_tables );
+	}
+
+	/**
+	 * Both HPPS controls initialize the schema.
+	 *
+	 * @return array Settings that initialize the HPPS schema.
+	 */
+	public static function enabled_hpps_settings(): array {
+		return array(
+			'HPPS enabled'            => array( 'experimental_progress_storage' ),
+			'synchronization enabled' => array( 'experimental_progress_storage_synchronization' ),
+		);
+	}
+
+	/**
+	 * Enabling synchronization must not discard existing HPPS progress.
+	 *
+	 * @covers Sensei_Settings::experimental_features_saved
+	 */
+	public function testExperimentalFeaturesSaved_SynchronizationEnabled_PreservesProgress(): void {
+		/* Arrange. */
+		global $wpdb;
+		$this->synchronization_fixture = array(
+			'option'   => get_option( 'sensei-settings' ),
+			'settings' => Sensei()->settings->settings,
+		);
+
+		// The eraser discovers physical tables with SHOW TABLES.
+		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
+		remove_filter( 'query', array( $this, '_drop_temporary_tables' ) );
+		( new Schema( Sensei()->feature_flags ) )->create_tables();
+
+		remove_filter( 'option_sensei-settings', array( Sensei_Unit_Tests_Bootstrap::instance(), 'enable_hpps_settings' ) );
+		$settings = array( 'experimental_progress_storage' => true );
+		update_option( 'sensei-settings', $settings );
+
+		$course_id = ( new Sensei_Factory() )->course->create();
+		$progress  = ( new Tables_Based_Course_Progress_Repository( $wpdb ) )->create( $course_id, 1 );
+		$id        = $progress->get_id();
+
+		$this->synchronization_fixture['progress'] = $progress;
+		// phpcs:disable WordPress.DB -- Verify the persisted row rather than a cached model.
+		$before = $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}sensei_lms_progress WHERE id = {$id}", ARRAY_A );
+		$this->simulateSettingsRequest();
+
+		/* Act. */
+		$settings['experimental_progress_storage_synchronization'] = true;
+		update_option( 'sensei-settings', $settings );
+
+		/* Assert. */
+		$this->assertSame(
+			$before,
+			$wpdb->get_row( "SELECT * FROM {$wpdb->prefix}sensei_lms_progress WHERE id = {$id}", ARRAY_A ),
+			'Enabling synchronization should preserve the progress record and its ID.'
+		);
+		// phpcs:enable WordPress.DB
 	}
 
 	public function testExperimentalFeaturesSaved_HppsSettingHasEnabled_LogsEvent() {
@@ -360,5 +451,31 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 
 		$this->original_request_method = null;
 		$this->original_screen         = null;
+	}
+
+	public function testMarkSectionAsVisited_SubscriberWithNonceGiven_DoesNotStoreTheSection() {
+		/* Arrange. */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'subscriber' ) ) );
+		$_POST['nonce']      = wp_create_nonce( 'sensei-mark-settings-section-visited' );
+		$_POST['section_id'] = 'email-notification-settings';
+
+		/* Act. */
+		Sensei()->settings->mark_section_as_visited();
+
+		/* Assert. */
+		$this->assertSame( array(), get_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY, array() ) );
+	}
+
+	public function testMarkSectionAsVisited_AdministratorWithNonceGiven_StoresTheSection() {
+		/* Arrange. */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$_POST['nonce']      = wp_create_nonce( 'sensei-mark-settings-section-visited' );
+		$_POST['section_id'] = 'email-notification-settings';
+
+		/* Act. */
+		Sensei()->settings->mark_section_as_visited();
+
+		/* Assert. */
+		$this->assertSame( array( 'email-notification-settings' ), get_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY, array() ) );
 	}
 }

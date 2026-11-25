@@ -56,80 +56,88 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	public function testRun_WhenTablesBasedSubmissinDidntExist_HasErrors(): void {
+	/**
+	 * Find quiz submissions without a table copy.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
+	 */
+	public function testRun_WhenQuizSubmissionWasMissingFromTables_ReportsQuizAndStudent(): void {
 		/* Arrange. */
-		$lesson_id    = $this->factory->lesson->create();
-		$quiz_id      = $this->factory->quiz->create(
-			array(
-				'post_parent' => $lesson_id,
-				'meta_input'  => array(
-					'_quiz_lesson' => $lesson_id,
-				),
-			)
-		);
-		$question_ids = $this->factory->question->create_many(
-			3,
-			array(
-				'quiz_id' => $quiz_id,
-			)
-		);
-
-		$comments_based_lesson_progress_repository = new Comments_Based_Lesson_Progress_Repository();
-		$submission                                = $comments_based_lesson_progress_repository->create( $lesson_id, 2 );
-		update_comment_meta( $submission->get_id(), 'questions_asked', implode( ',', $question_ids ) );
-
-		$comments_based_submission_repository = new Comments_Based_Submission_Repository();
-		$comments_based_submission_repository->create( $quiz_id, 2 );
-
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$student_id  = 2;
+		$progress    = ( new Comments_Based_Lesson_Progress_Repository() )->create( $lesson_id, $student_id );
+		// The legacy repository uses this metadata to identify a submission.
+		update_comment_meta( $progress->get_id(), 'questions_asked', (string) $question_id );
 		$this->mask_migration_as_complete();
-		$quiz_submission_validation = new Quiz_Submission_Validation();
+		$validation = new Quiz_Submission_Validation();
 
 		/* Act. */
-		$quiz_submission_validation->run();
+		$validation->run();
 
 		/* Assert. */
-		$this->assertSame(
-			'Tables-based quiz submission not found.',
-			$this->get_first_error_message( $quiz_submission_validation )
+		$errors = $validation->get_errors();
+		self::assertCount( 1, $errors, 'Report the missing submission once.' );
+		self::assertSame( 'Tables-based quiz submission not found.', $errors[0]->get_message(), 'Identify which store is missing the submission.' );
+		self::assertSame(
+			array(
+				'quiz_id' => $quiz_id,
+				'user_id' => $student_id,
+				'source'  => 'tables',
+			),
+			$errors[0]->get_data(),
+			'Report the missing quiz and student record.'
 		);
 	}
 
-	public function testRun_WhenCommentsBasedSubmissionDidntExist_HasErrors(): void {
+	/**
+	 * Find a graded table submission after its lesson comment has been deleted.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
+	 */
+	public function testRun_WhenLessonCommentWasDeleted_ReportsMissingCommentsSubmission(): void {
 		/* Arrange. */
-		$lesson_id = $this->factory->lesson->create();
-		$quiz_id   = $this->factory->quiz->create(
-			array(
-				'post_parent' => $lesson_id,
-				'meta_input'  => array(
-					'_quiz_lesson' => $lesson_id,
-				),
-			)
-		);
-		$this->factory->question->create_many(
-			3,
-			array(
-				'quiz_id' => $quiz_id,
-			)
-		);
-
 		global $wpdb;
-		$tables_based_submission_repository = new Tables_Based_Submission_Repository( $wpdb );
-		$tables_based_submission_repository->create( $quiz_id, 2 );
 
-		$comments_based_lesson_progress_repository = new Comments_Based_Lesson_Progress_Repository();
-		$comments_based_lesson_progress_repository->create( $lesson_id, 2 );
-
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$student_id  = 2;
+		$comments    = new Comments_Based_Lesson_Progress_Repository();
+		$comments->create( $lesson_id, $student_id );
+		$tables_submissions = new Tables_Based_Submission_Repository( $wpdb );
+		$tables_answers     = new Tables_Based_Answer_Repository( $wpdb );
+		$tables_grades      = new Tables_Based_Grade_Repository( $wpdb );
+		$submission         = $tables_submissions->create( $quiz_id, $student_id, 50 );
+		$answer             = $tables_answers->create( $submission, $question_id, 'answer' );
+		$tables_grades->create( $submission, $answer, $question_id, 1 );
+		$comments->delete( $comments->get( $lesson_id, $student_id ) );
 		$this->mask_migration_as_complete();
-		$quiz_submission_validation = new Quiz_Submission_Validation();
+		$validation = new Quiz_Submission_Validation();
 
 		/* Act. */
-		$quiz_submission_validation->run();
+		$validation->run();
 
 		/* Assert. */
-		$this->assertSame(
+		$errors = $validation->get_errors();
+		self::assertCount( 1, $errors, 'The table-only submission should be reported once.' );
+		self::assertSame(
 			'Comments-based quiz submission not found.',
-			$this->get_first_error_message( $quiz_submission_validation )
+			$errors[0]->get_message(),
+			'The report should explain which store is missing the submission.'
 		);
+		self::assertSame(
+			array(
+				'quiz_id' => $quiz_id,
+				'user_id' => $student_id,
+				'source'  => 'comments',
+			),
+			$errors[0]->get_data(),
+			'The report should include the quiz and student IDs.'
+		);
+		self::assertCount( 1, $tables_answers->get_all( $submission->get_id() ), 'Validation should preserve the answer.' );
+		self::assertCount( 1, $tables_grades->get_all( $submission->get_id() ), 'Validation should preserve the grade.' );
 	}
 
 	public function testRun_WhenBothSubmissionsExist_HasNoErrors(): void {
@@ -169,6 +177,36 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertFalse( $quiz_submission_validation->has_errors() );
+	}
+
+	/**
+	 * An ungraded submission differs from one that received zero.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
+	 */
+	public function testRun_WhenOneFinalGradeWasZeroAndOneWasAbsent_ReportsMismatchedGrades(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$student_id  = 2;
+		$progress    = ( new Comments_Based_Lesson_Progress_Repository() )->create( $lesson_id, $student_id );
+		update_comment_meta( $progress->get_id(), 'questions_asked', (string) $question_id );
+		( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $student_id, 0.0 );
+		$this->mask_migration_as_complete();
+		$validation = new Quiz_Submission_Validation();
+
+		/* Act. */
+		$validation->run();
+
+		/* Assert. */
+		self::assertSame(
+			'Data mismatch between comments and tables based submissions.',
+			$this->get_first_error_message( $validation ),
+			'A recorded zero grade must differ from an absent grade.'
+		);
 	}
 
 	public function testRun_WhenTablesBasedAnswerDidntExist_HasErrors(): void {
@@ -484,6 +522,85 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( array(), $this->export_errors( $quiz_submission_validation ) );
+	}
+
+	/**
+	 * An answer with no submission remains discoverable by its own row ID.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
+	 */
+	public function testRun_WhenAnswerSubmissionWasDeleted_ReportsTheOrphanedAnswer(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$quiz_id     = $this->factory->quiz->create();
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$submissions = new Tables_Based_Submission_Repository( $wpdb );
+		$answers     = new Tables_Based_Answer_Repository( $wpdb );
+		$submission  = $submissions->create( $quiz_id, 2 );
+		$answer      = $answers->create( $submission, $question_id, 'answer' );
+		$submissions->delete( $submission );
+		$this->mask_migration_as_complete();
+		$validation = new Quiz_Submission_Validation();
+
+		/* Act. */
+		$validation->run();
+
+		/* Assert. */
+		$errors = $validation->get_errors();
+		self::assertCount( 1, $errors, 'Report the orphaned answer even when neither store has a submission.' );
+		self::assertSame( 'Tables-based quiz answer has no submission.', $errors[0]->get_message(), 'Explain why the answer is orphaned.' );
+		self::assertSame(
+			array(
+				'answer_id'     => $answer->get_id(),
+				'submission_id' => $submission->get_id(),
+				'question_id'   => $question_id,
+				'source'        => 'tables',
+			),
+			$errors[0]->get_data(),
+			'Report only the identities linked to the surviving answer row.'
+		);
+	}
+
+	/**
+	 * A grade with no answer remains discoverable by its own row ID.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
+	 */
+	public function testRun_WhenGradeAnswerWasDeleted_ReportsTheOrphanedGrade(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$quiz_id     = $this->factory->quiz->create();
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$submissions = new Tables_Based_Submission_Repository( $wpdb );
+		$answers     = new Tables_Based_Answer_Repository( $wpdb );
+		$grades      = new Tables_Based_Grade_Repository( $wpdb );
+		$submission  = $submissions->create( $quiz_id, 2 );
+		$answer      = $answers->create( $submission, $question_id, 'answer' );
+		$grade       = $grades->create( $submission, $answer, $question_id, 1 );
+		$answers->delete_all( $submission );
+		$submissions->delete( $submission );
+		$this->mask_migration_as_complete();
+		$validation = new Quiz_Submission_Validation();
+
+		/* Act. */
+		$validation->run();
+
+		/* Assert. */
+		$errors = $validation->get_errors();
+		self::assertCount( 1, $errors, 'Report the orphaned grade even when neither store has a submission.' );
+		self::assertSame( 'Tables-based quiz grade has no answer.', $errors[0]->get_message(), 'Explain why the grade is orphaned.' );
+		self::assertSame(
+			array(
+				'grade_id'    => $grade->get_id(),
+				'answer_id'   => $answer->get_id(),
+				'question_id' => $question_id,
+				'source'      => 'tables',
+			),
+			$errors[0]->get_data(),
+			'Report only the identities linked to the surviving grade row.'
+		);
 	}
 
 	private function mask_migration_as_complete(): void {

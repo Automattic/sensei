@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.27.0
  */
 interface Course_Lessons_Repository_Interface {
 	/**
@@ -80,6 +80,37 @@ interface Course_Lessons_Repository_Interface {
 	 * @return \WP_Term|null The module term, or null when the lesson has none or a filter returns no term.
 	 */
 	public function get_lesson_module( int $lesson_id ): ?\WP_Term;
+
+	/**
+	 * Get every module of a lesson.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @return \WP_Term[] The module terms, or an empty array when the lesson has none.
+	 */
+	public function get_lesson_modules( int $lesson_id ): array;
+
+	/**
+	 * Whether a lesson is in the given module.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return bool
+	 */
+	public function has_lesson_module( int $lesson_id, int $term_id ): bool;
+
+	/**
+	 * Get the modules the given lessons are in.
+	 *
+	 * @internal
+	 *
+	 * @param array $lesson_ids Lesson IDs.
+	 * @return int[] Module term IDs, each one once.
+	 */
+	public function get_lesson_module_ids( array $lesson_ids ): array;
 
 	/**
 	 * Set the prerequisite of a lesson.
@@ -150,4 +181,127 @@ interface Course_Lessons_Repository_Interface {
 	 * @return int[] Lesson IDs, in order. Empty when none is stored.
 	 */
 	public function get_root_lesson_order( int $course_id ): array;
+
+	/**
+	 * Set the module of a lesson, replacing any module it had.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return true|\WP_Error True, or the error WordPress returned.
+	 */
+	public function set_lesson_module( int $lesson_id, int $term_id );
+
+	/**
+	 * Add a module to a lesson, keeping any module it had.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return true|\WP_Error True, or the error WordPress returned.
+	 */
+	public function add_lesson_module( int $lesson_id, int $term_id );
+
+	/**
+	 * Remove a lesson from its module.
+	 *
+	 * Fires the term relationship deletion hooks only; see `unset_lesson_module()`.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_lesson_module( int $lesson_id ): void;
+
+	/**
+	 * Remove a lesson from its module by setting its modules to none.
+	 *
+	 * Same result as `delete_lesson_module()`, but the `set_object_terms` action fires as well.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function unset_lesson_module( int $lesson_id ): void;
+
+	/**
+	 * Get the order of a lesson in a module.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return int|null Order, or null when none is stored for that module.
+	 */
+	public function get_lesson_module_order( int $lesson_id, int $term_id ): ?int;
+
+	/**
+	 * Set the order of a lesson in a module.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @param int $order     Order.
+	 */
+	public function set_lesson_module_order( int $lesson_id, int $term_id, int $order ): void;
+
+	/**
+	 * Delete the order of a lesson in a module.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 */
+	public function delete_lesson_module_order( int $lesson_id, int $term_id ): void;
+
+	/**
+	 * Delete the order of a lesson in each module it is in.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function delete_all_lesson_module_orders( int $lesson_id ): void;
+
+	/**
+	 * Attach a lesson to a course, replacing the course it had.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 */
+	public function attach_lesson( int $lesson_id, int $course_id ): void;
+
+	/**
+	 * Detach a lesson from its course.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 */
+	public function detach_lesson( int $lesson_id ): void;
+
+	/**
+	 * Copy the structure of a lesson or a course to another post, as it is stored.
+	 *
+	 * The structure of a lesson is its course, its orders and its prerequisite; the structure of a
+	 * course is the order of its root lessons. The module terms of a lesson are not part of it.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int      $post_id     The lesson or course to copy from.
+	 * @param int      $new_post_id The post to copy to.
+	 * @param string[] $ignore      Meta keys not to copy.
+	 * @return string[] The meta keys that were copied, so the caller does not copy them again.
+	 */
+	public function copy_structure( int $post_id, int $new_post_id, array $ignore = array() ): array;
 }

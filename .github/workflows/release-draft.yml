@@ -1,0 +1,204 @@
+name: 'Release: Draft GitHub release'
+
+run-name: "Release draft: ${{ github.event.pull_request.head.ref || 'trunk (manual run)' }}"
+
+on:
+    # Run it after merging the release pull request, before anything else is merged to trunk. The jobs
+    # also handle a run started by that merge, which is not enabled yet.
+    workflow_dispatch:
+
+permissions: {}
+
+env:
+    # Lets gh find the repository in the jobs that have no checkout.
+    GH_REPO: ${{ github.repository }}
+    PR_NUMBER: ${{ github.event.pull_request.number }}
+
+jobs:
+    # Works with the files of the repository, so it only gets read access.
+    build:
+        name: Get the package
+        # Release branches in forks don't count: only a merged release/* branch of this repository starts a release.
+        if: >-
+            github.event_name == 'workflow_dispatch' ||
+            (
+                github.event.pull_request.merged == true &&
+                startsWith( github.event.pull_request.head.ref, 'release/' ) &&
+                github.event.pull_request.head.repo.full_name == github.repository
+            )
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        permissions:
+            actions: read
+            contents: read
+            pull-requests: read
+        outputs:
+            version: ${{ steps.check.outputs.version }}
+            sha: ${{ steps.check.outputs.sha }}
+            pr: ${{ steps.check.outputs.pr }}
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  # The merge commit of the release pull request, which is the last commit of trunk in a run started by hand.
+                  ref: ${{ github.event.pull_request.merge_commit_sha || 'trunk' }}
+                  # Its parents are needed to compare it with the release branch.
+                  fetch-depth: 2
+                  persist-credentials: false
+
+            - name: Check the release
+              id: check
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  HEAD_REF: ${{ github.event.pull_request.head.ref }}
+              run: |
+                  VERSION=$( sed -nE 's/^ \* Version: (.+)$/\1/p' sensei-lms.php )
+
+                  # Validated before writing to GITHUB_OUTPUT so the file content can't inject other outputs.
+                  if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                      echo "::error::Version '$VERSION' in sensei-lms.php is not in X.Y.Z format."
+                      exit 1
+                  fi
+                  # A release only comes from its own release pull request.
+                  if [[ "$GITHUB_EVENT_NAME" == 'workflow_dispatch' ]]; then
+                      read -r PR_NUMBER MERGE_SHA < <( gh pr list --head "release/$VERSION" --base trunk --state merged \
+                          --json number,mergeCommit,isCrossRepository \
+                          --jq '[ .[] | select( .isCrossRepository == false ) ][0] // empty | "\(.number) \(.mergeCommit.oid)"' ) || true
+                      if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+                          echo "::error::No merged pull request found for release/$VERSION."
+                          exit 1
+                      fi
+                      if [[ "$MERGE_SHA" != "$( git rev-parse HEAD )" ]]; then
+                          echo "::error::trunk has commits after the merge of #$PR_NUMBER, so the release cannot be created from trunk."
+                          exit 1
+                      fi
+                  elif [[ "$HEAD_REF" != "release/$VERSION" ]]; then
+                      echo "::error::The merged branch is $HEAD_REF and sensei-lms.php has version $VERSION, so release/$VERSION was expected."
+                      exit 1
+                  fi
+
+                  # The package comes from the release branch, which is the code that was tested, and the
+                  # tag is created on trunk. Both must have the same code.
+                  RELEASE_SHA=$( git rev-parse 'HEAD^2' )
+                  if ! git diff --quiet "$RELEASE_SHA" HEAD; then
+                      echo "::error::trunk has changes that are not in release/$VERSION: $( git diff --name-only "$RELEASE_SHA" HEAD | head -n 20 | tr '\n' ' ' )"
+                      exit 1
+                  fi
+
+                  awk -v heading="## $VERSION " '
+                      /^## / { in_section = ( index( $0, heading ) == 1 ); next }
+                      in_section
+                  ' changelog.txt > release-notes.md
+                  if ! grep -q '[^[:space:]]' release-notes.md; then
+                      echo "::error::No changelog found for $VERSION in changelog.txt."
+                      exit 1
+                  fi
+
+                  echo "::notice::Releasing $VERSION from $RELEASE_SHA ($( git log -1 --format=%s "$RELEASE_SHA" ))."
+
+                  echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+                  echo "sha=$RELEASE_SHA" >> "$GITHUB_OUTPUT"
+                  echo "pr=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+            - name: Download the package
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  VERSION: ${{ steps.check.outputs.version }}
+                  RELEASE_SHA: ${{ steps.check.outputs.sha }}
+              run: |
+                  # The zip of the "Plugin Build Download" check on the last commit of the release pull request,
+                  # which is the package that was tested.
+                  ARTIFACT_ID=$( gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=sensei-lms-$RELEASE_SHA" --jq "
+                      [ .artifacts[] | select(
+                          .expired == false and
+                          .workflow_run.head_branch == \"release/$VERSION\" and
+                          .workflow_run.head_sha == \"$RELEASE_SHA\" and
+                          .workflow_run.head_repository_id == .workflow_run.repository_id
+                      ) ] | sort_by( .created_at ) | last | .id // empty" )
+                  if [[ -z "$ARTIFACT_ID" ]]; then
+                      echo "::error::No package found for $RELEASE_SHA. Re-run the Plugin Build workflow of the release pull request."
+                      exit 1
+                  fi
+                  gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > sensei-lms.zip
+
+            - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+              with:
+                  name: release-package
+                  path: |
+                      sensei-lms.zip
+                      release-notes.md
+                  if-no-files-found: error
+                  retention-days: 7
+
+    # Holds the write token, so it runs no code from the repository or its dependencies.
+    draft:
+        name: Draft the release
+        needs: build
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        permissions:
+            contents: write
+            pull-requests: write
+        env:
+            VERSION: ${{ needs.build.outputs.version }}
+            RELEASE_SHA: ${{ needs.build.outputs.sha }}
+            PR_NUMBER: ${{ needs.build.outputs.pr }}
+        steps:
+            - name: Check for an existing release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  # The build job is less trusted than this one, so its outputs are checked again.
+                  if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ && "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ && "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+                      echo "::error::The build job returned an unexpected version, commit or pull request."
+                      exit 1
+                  fi
+
+                  # Draft releases have no tag yet, and only a token with write access can list them.
+                  EXISTING_RELEASE=$( gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+                      --jq ".[] | select( .tag_name == \"version/$VERSION\" ) | .html_url" )
+                  if [[ -n "$EXISTING_RELEASE" ]]; then
+                      echo "::error::A release for version/$VERSION already exists. Delete it and run this workflow again: $EXISTING_RELEASE"
+                      exit 1
+                  fi
+
+            - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+              with:
+                  name: release-package
+
+            - name: Draft the release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  # GitHub creates the version/X.Y.Z tag on the last commit of trunk when the draft is published.
+                  RELEASE_URL=$( gh release create "version/$VERSION" sensei-lms.zip \
+                      --draft \
+                      --target trunk \
+                      --title "$VERSION" \
+                      --notes-file release-notes.md )
+
+                  MESSAGE="The draft release for $VERSION is ready, built from $RELEASE_SHA. [Review and publish it]($RELEASE_URL) before anything else is merged to trunk. Publishing creates the \`version/$VERSION\` tag on the last commit of trunk."
+                  echo "$MESSAGE" >> "$GITHUB_STEP_SUMMARY"
+
+                  # The draft exists at this point, so a failed comment must not fail the run.
+                  if ! gh pr comment "$PR_NUMBER" --body "$MESSAGE"; then
+                      echo "::warning::Could not comment on #$PR_NUMBER. The draft release is at $RELEASE_URL"
+                  fi
+
+    # Nobody is watching the run that a merge starts.
+    report-failure:
+        name: Report the failure on the pull request
+        needs: [build, draft]
+        # Reads the job results because a job that times out can end as cancelled, which failure() does not cover.
+        if: >-
+            always() && github.event_name == 'pull_request' &&
+            ( contains( needs.*.result, 'failure' ) || contains( needs.*.result, 'cancelled' ) )
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            pull-requests: write
+        steps:
+            - env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+              run: |
+                  gh pr comment "$PR_NUMBER" --body "The draft release could not be created. [See what failed in the run]($RUN_URL), fix it and use \"Re-run failed jobs\" there: it builds the same commit again."

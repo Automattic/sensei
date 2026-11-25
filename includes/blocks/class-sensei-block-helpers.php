@@ -93,11 +93,40 @@ class Sensei_Block_Helpers {
 		$inline_styles = isset( $css['inline_styles'] ) && is_array( $css['inline_styles'] ) ? $css['inline_styles'] : [];
 
 		$class_names = array_merge( is_array( $class_names ) ? $class_names : [ $class_names ], $css_classes );
+
+		$safe_inline_styles = array();
+		foreach ( $inline_styles as $declaration ) {
+			if ( ! is_scalar( $declaration ) ) {
+				continue;
+			}
+
+			$declaration = rtrim( trim( (string) $declaration ), ';' );
+			if ( self::is_safe_css_value( $declaration ) ) {
+				$safe_inline_styles[] = $declaration;
+			}
+		}
+
 		return sprintf(
 			'class="%s" style="%s"',
 			esc_attr( implode( ' ', $class_names ) ),
-			esc_attr( implode( '; ', $inline_styles ) )
+			esc_attr( implode( '; ', $safe_inline_styles ) )
 		);
+	}
+
+	/**
+	 * Whether a CSS value or declaration composed from a block attribute can be printed as is.
+	 *
+	 * The property names are fixed by our code, so the only way a value can escape its own
+	 * declaration is by containing a `;` or braces. `safecss_filter_attr()` is not used because
+	 * it allows a second declaration such as `background: url(https://...)` and drops `rgb()`
+	 * and `hsl()` colours.
+	 *
+	 * @param mixed $value CSS value or declaration.
+	 *
+	 * @return bool
+	 */
+	private static function is_safe_css_value( $value ): bool {
+		return is_scalar( $value ) && ! preg_match( '/[;{}]/', (string) $value );
 	}
 
 	/**
@@ -139,7 +168,7 @@ class Sensei_Block_Helpers {
 		$style   = '';
 		$classes = '';
 		foreach ( $variables as $variable => $value ) {
-			if ( ! isset( $value ) || '' === $value ) {
+			if ( ! isset( $value ) || '' === $value || ! self::is_safe_css_value( $value ) ) {
 				continue;
 			}
 			$style   .= $prefix . $variable . ': ' . $value . ';' . $separator;

@@ -28,6 +28,8 @@ class Sensei_Course_Results {
 		// Setup permalink structure for course results
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 
+		add_filter( 'request', array( $this, 'restrict_to_readable_courses' ) );
+
 		// Support older WordPress theme (< 4.4)
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
@@ -60,6 +62,39 @@ class Sensei_Course_Results {
 		// Setup permalinks structure.
 		add_rewrite_rule( '^' . $this->courses_url_base . '/([^/]*)/results/?', 'index.php?course_results=$matches[1]', 'top' );
 		add_rewrite_tag( '%course_results%', '([^&]+)' );
+	}
+
+	/**
+	 * Return a 404 when the requested course does not exist or the user cannot read it.
+	 *
+	 * The query var is removed too, so the title filter and the templates do not load the course.
+	 *
+	 * @since 4.27.0
+	 * @access private
+	 *
+	 * @param array $query_vars The query variables of the request.
+	 * @return array
+	 */
+	public function restrict_to_readable_courses( $query_vars ) {
+		if ( ! isset( $query_vars['course_results'] ) ) {
+			return $query_vars;
+		}
+
+		$course = is_string( $query_vars['course_results'] )
+			? get_page_by_path( $query_vars['course_results'], OBJECT, 'course' )
+			: null;
+
+		if (
+			$course
+			&& ( 'publish' === $course->post_status || current_user_can( 'read_post', $course->ID ) )
+		) {
+			return $query_vars;
+		}
+
+		unset( $query_vars['course_results'] );
+		$query_vars['error'] = '404';
+
+		return $query_vars;
 	}
 
 	/**

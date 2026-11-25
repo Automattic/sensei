@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix report searches, CSV export filters, and HTML entities in exported titles.

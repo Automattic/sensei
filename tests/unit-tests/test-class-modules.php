@@ -99,6 +99,59 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A module with a lesson is in use.
+	 *
+	 * @covers Sensei_Core_Modules::is_term_used
+	 */
+	public function testIsTermUsed_ModuleWithLessonGiven_ReturnsTrue() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $this->factory->lesson->create(), $module_id );
+
+		/* Act. */
+		$actual = Sensei()->modules->is_term_used( $module_id );
+
+		/* Assert. */
+		self::assertTrue( $actual );
+	}
+
+	/**
+	 * A module of a course is in use, although it has no lessons.
+	 *
+	 * @covers Sensei_Core_Modules::is_term_used
+	 */
+	public function testIsTermUsed_ModuleOfCourseGiven_ReturnsTrue() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		wp_set_object_terms( $this->factory->course->create(), array( $module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->is_term_used( $module_id );
+
+		/* Assert. */
+		self::assertTrue( $actual );
+	}
+
+	/**
+	 * A module without lessons or courses is not in use, although other modules have them.
+	 *
+	 * @covers Sensei_Core_Modules::is_term_used
+	 */
+	public function testIsTermUsed_ModuleWithoutLessonsOrCoursesGiven_ReturnsFalse() {
+		/* Arrange. */
+		$module_id       = $this->factory->module->create();
+		$other_module_id = $this->factory->module->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $this->factory->lesson->create(), $other_module_id );
+		wp_set_object_terms( $this->factory->course->create(), array( $other_module_id ), 'module' );
+
+		/* Act. */
+		$actual = Sensei()->modules->is_term_used( $module_id );
+
+		/* Assert. */
+		self::assertFalse( $actual );
+	}
+
+	/**
 	 * Completing the only lesson of a module saves the full module progress of the student in the lesson course.
 	 *
 	 * @covers Sensei_Core_Modules::save_lesson_module_progress
@@ -111,8 +164,14 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 				'module_count'   => 1,
 			)
 		);
-		$user_id        = $this->factory->user->create();
-		$progress       = Sensei()->lesson_progress_repository->create( $course_lessons['lesson_ids'][0], $user_id );
+		// The same module in another course, with a lesson the student has not completed.
+		$other_course = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		Sensei()->course_lessons_repository->set_lesson_module( $other_course['lesson_ids'][0], $course_lessons['modules'][0] );
+		// A lesson of the course outside the module, which the student has not completed either.
+		Sensei()->course_lessons_repository->attach_lesson( $this->factory->lesson->create(), $course_lessons['course_id'] );
+
+		$user_id  = $this->factory->user->create();
+		$progress = Sensei()->lesson_progress_repository->create( $course_lessons['lesson_ids'][0], $user_id );
 		$progress->complete();
 		Sensei()->lesson_progress_repository->save( $progress );
 
@@ -269,6 +328,23 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The lessons query of a module is flagged as a query of that module, as with a `tax_query` argument.
+	 *
+	 * @covers Sensei_Core_Modules::get_lessons_query
+	 */
+	public function testGetLessonsQuery_ModuleGiven_FlagsTheQueryAsAModuleTaxonomyQuery() {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$course_id = $this->factory->course->create();
+
+		/* Act. */
+		$actual = Sensei()->modules->get_lessons_query( $course_id, $module_id );
+
+		/* Assert. */
+		self::assertTrue( $actual->is_tax( 'module', $module_id ) );
+	}
+
+	/**
 	 * The lessons of a module are only those of the given course, ordered by their module position.
 	 *
 	 * @covers Sensei_Core_Modules::get_lessons_query
@@ -312,6 +388,34 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( array( $recent_lesson, $older_lesson ), wp_list_pluck( $actual->posts, 'ID' ) );
+	}
+
+	/**
+	 * The module archive filtered by course lists the lessons of that course only, in module order, although the module is shared.
+	 *
+	 * @covers Sensei_Core_Modules::module_archive_filter
+	 */
+	public function testModuleArchiveFilter_CourseIdRequested_ListsTheCourseLessonsInModuleOrder() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+				'module_count'   => 1,
+			)
+		);
+		$other_course   = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$module_id      = $course_lessons['modules'][0];
+		Sensei()->course_lessons_repository->set_lesson_module( $other_course['lesson_ids'][0], $module_id );
+		Sensei()->course_lessons_repository->set_lesson_module_order( $other_course['lesson_ids'][0], $module_id, 0 );
+		Sensei()->course_lessons_repository->set_lesson_module_order( $course_lessons['lesson_ids'][0], $module_id, 2 );
+		Sensei()->course_lessons_repository->set_lesson_module_order( $course_lessons['lesson_ids'][1], $module_id, 1 );
+
+		/* Act. */
+		$this->go_to( add_query_arg( 'course_id', $course_lessons['course_id'], get_term_link( $module_id, 'module' ) ) );
+
+		/* Assert. */
+		self::assertSame( array( $course_lessons['lesson_ids'][1], $course_lessons['lesson_ids'][0] ), wp_list_pluck( $GLOBALS['wp_query']->posts, 'ID' ) );
 	}
 
 	/**
@@ -860,5 +964,83 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 		/* Assert: the whole hierarchy, not only the teacher's terms — core caches this map site-wide. */
 		self::assertSame( array( $parent['term_id'] => array( $child['term_id'] ) ), $hierarchy );
+	}
+
+	public function testModuleOrderScreen_CourseOfAnotherTeacherGiven_DiesWithInsufficientPermissions() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create( array( 'post_author' => $this->get_user_by_role( 'teacher', '_b' ) ) );
+		$this->login_as_teacher();
+		set_current_screen( 'admin_page_module-order' );
+		$_GET['course_id'] = $course_id;
+
+		/* Act. */
+		$exception = null;
+		ob_start();
+		try {
+			Sensei()->modules->module_order_screen();
+		} catch ( WPDieException $e ) {
+			$exception = $e;
+		} finally {
+			ob_end_clean();
+		}
+
+		/* Assert. */
+		$this->assertSame( 'Insufficient permissions', $exception ? $exception->getMessage() : null );
+	}
+
+	public function testModuleOrderScreen_OwnCourseGiven_RendersItsModules() {
+		/* Arrange. */
+		$teacher_id = $this->get_user_by_role( 'teacher' );
+		$course_id  = $this->factory->course->create( array( 'post_author' => $teacher_id ) );
+		$term       = wp_insert_term( 'Own module', 'module' );
+		update_term_meta( $term['term_id'], 'module_author', $teacher_id );
+		wp_set_object_terms( $course_id, array( $term['term_id'] ), 'module' );
+		$this->login_as_teacher();
+		set_current_screen( 'admin_page_module-order' );
+		$_GET['course_id'] = $course_id;
+
+		/* Act. */
+		ob_start();
+		Sensei()->modules->module_order_screen();
+		$output = ob_get_clean();
+
+		/* Assert. */
+		$this->assertStringContainsString( 'Own module', $output );
+	}
+
+	public function testModuleBreadcrumbLink_WhenModuleIsLinked_EscapesTheModuleName() {
+		/* Arrange. */
+		global $wpdb;
+
+		$lesson_id = $this->factory->lesson->create();
+		$module    = wp_insert_term( 'Module', 'module', array( 'description' => 'Description' ) );
+		wp_set_object_terms( $lesson_id, $module['term_id'], 'module' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Bypasses the sanitization of term names on save.
+		$wpdb->update( $wpdb->terms, array( 'name' => '<b>Module</b>' ), array( 'term_id' => $module['term_id'] ) );
+		$this->go_to( get_permalink( $lesson_id ) );
+
+		/* Act. */
+		$html = Sensei()->modules->module_breadcrumb_link( '', '>' );
+
+		/* Assert. */
+		$this->assertStringContainsString( '&lt;b&gt;Module&lt;/b&gt;</a>', $html );
+	}
+
+	public function testModuleBreadcrumbLink_WhenModuleIsNotLinked_EscapesTheModuleName() {
+		/* Arrange. */
+		global $wpdb;
+
+		$lesson_id = $this->factory->lesson->create();
+		$module    = wp_insert_term( 'Module', 'module', array( 'description' => '' ) );
+		wp_set_object_terms( $lesson_id, $module['term_id'], 'module' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Bypasses the sanitization of term names on save.
+		$wpdb->update( $wpdb->terms, array( 'name' => '<b>Module</b>' ), array( 'term_id' => $module['term_id'] ) );
+		$this->go_to( get_permalink( $lesson_id ) );
+
+		/* Act. */
+		$html = Sensei()->modules->module_breadcrumb_link( '', '>' );
+
+		/* Assert. */
+		$this->assertSame( ' > &lt;b&gt;Module&lt;/b&gt;', $html );
 	}
 }

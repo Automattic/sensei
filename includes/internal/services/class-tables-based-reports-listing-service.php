@@ -7,6 +7,8 @@
 
 namespace Sensei\Internal\Services;
 
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -112,7 +114,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$post_id,
 				(int) $row->user_id,
 				$row->effective_status ?? 'in-progress',
-				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 				null !== $row->grade ? (float) $row->grade : null,
 				null
@@ -146,6 +148,12 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 		$pagination      = $this->progress_query->build_pagination( $where, $args );
 		$total_lessons   = count( Sensei()->course->course_lessons( $progress_id, 'publish', 'ids' ) );
 
+		$lesson_course       = Sensei()->course_lessons_sql_service->get_lesson_course_clauses( 'pm' );
+		$lesson_course_table = $lesson_course['table'];
+		$lesson_course_where = $lesson_course['where'];
+		$lesson_id_sql       = $lesson_course['lesson_id'];
+		$course_id_sql       = $lesson_course['course_id'];
+
 		/** Query result rows. @var object[] $rows */
 		// Table names are trusted $wpdb properties; value clauses use $wpdb->prepare().
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -161,7 +169,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. ' LEFT JOIN ('
 				. '   SELECT lp.user_id, COUNT(*) AS cnt'
 				. "   FROM `$table` lp"
-				. "   INNER JOIN `{$wpdb->postmeta}` pm ON pm.post_id = lp.post_id AND pm.meta_key = '_lesson_course' AND pm.meta_value = %d"
+				. "   INNER JOIN `{$lesson_course_table}` pm ON {$lesson_id_sql} = lp.post_id AND {$lesson_course_where} AND {$course_id_sql} = %d"
 				. "   INNER JOIN `{$wpdb->posts}` lpost ON lpost.ID = lp.post_id AND lpost.post_status = 'publish'"
 				. "   WHERE lp.type = 'lesson' AND lp.status = 'complete'"
 				. '   GROUP BY lp.user_id'
@@ -182,7 +190,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				$course_id,
 				(int) $row->user_id,
 				$row->status ?? 'in-progress',
-				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 				null,
 				null !== $row->percent ? round( (float) $row->percent, 0 ) : null
@@ -239,7 +247,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 			$post_id,
 			$user_id,
 			$row->effective_status ?? 'in-progress',
-			$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
+			Progress_Start_Date::is_recorded( $row->started_at ) ? get_date_from_gmt( $row->started_at ) : null,
 			$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 			null !== $row->grade ? (float) $row->grade : null,
 			null
@@ -257,6 +265,12 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 	public function get_user_courses( array $args ): array {
 		$wpdb  = $this->wpdb;
 		$table = $this->get_progress_table_name();
+
+		$lesson_course       = Sensei()->course_lessons_sql_service->get_lesson_course_clauses( 'pm' );
+		$lesson_course_table = $lesson_course['table'];
+		$lesson_course_where = $lesson_course['where'];
+		$lesson_id_sql       = $lesson_course['lesson_id'];
+		$course_id_sql       = $lesson_course['course_id'];
 
 		$user_id = (int) ( $args['user_id'] ?? 0 );
 
@@ -286,24 +300,22 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				. ' COALESCE( completed.cnt * 100.0 / NULLIF( total.cnt, 0 ), 0 ) AS percent'
 				. " FROM `$table` p"
 				// Derived table: count completed published lessons per course for this user.
-				// Lessons are mapped to courses via the _lesson_course postmeta.
 				. ' LEFT JOIN ('
-				. '   SELECT pm.meta_value AS course_id, COUNT(*) AS cnt'
+				. "   SELECT {$course_id_sql} AS course_id, COUNT(*) AS cnt"
 				. "   FROM `$table` lp"
-				. "   INNER JOIN `{$wpdb->postmeta}` pm ON pm.post_id = lp.post_id AND pm.meta_key = '_lesson_course'"
+				. "   INNER JOIN `{$lesson_course_table}` pm ON {$lesson_id_sql} = lp.post_id AND {$lesson_course_where}"
 				. "   INNER JOIN `{$wpdb->posts}` lpost ON lpost.ID = lp.post_id AND lpost.post_status = 'publish'"
 				. "   WHERE lp.type = 'lesson' AND lp.user_id = %d"
 				. "   AND lp.status = 'complete'"
-				. '   GROUP BY pm.meta_value'
+				. "   GROUP BY {$course_id_sql}"
 				. ' ) completed ON completed.course_id = p.post_id'
-				// Derived table: count total published lessons per course
-				// via the _lesson_course postmeta that maps each lesson to its course.
+				// Derived table: count total published lessons per course.
 				. ' LEFT JOIN ('
-				. '   SELECT pm.meta_value AS course_id, COUNT(*) AS cnt'
-				. "   FROM `{$wpdb->postmeta}` pm"
-				. "   INNER JOIN `{$wpdb->posts}` lpost ON lpost.ID = pm.post_id AND lpost.post_status = 'publish'"
-				. "   WHERE pm.meta_key = '_lesson_course'"
-				. '   GROUP BY pm.meta_value'
+				. "   SELECT {$course_id_sql} AS course_id, COUNT(*) AS cnt"
+				. "   FROM `{$lesson_course_table}` pm"
+				. "   INNER JOIN `{$wpdb->posts}` lpost ON lpost.ID = {$lesson_id_sql} AND lpost.post_status = 'publish'"
+				. "   WHERE {$lesson_course_where}"
+				. "   GROUP BY {$course_id_sql}"
 				. ' ) total ON total.course_id = p.post_id',
 				$user_id
 			)
@@ -321,7 +333,7 @@ class Tables_Based_Reports_Listing_Service implements Reports_Listing_Service_In
 				(int) $row->post_id,
 				$user_id,
 				$row->status ?? 'in-progress',
-				$row->started_at ? get_date_from_gmt( $row->started_at ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? get_date_from_gmt( $row->started_at ) : null,
 				$row->completed_at ? get_date_from_gmt( $row->completed_at ) : null,
 				null,
 				null !== $row->percent ? round( (float) $row->percent, 0 ) : null

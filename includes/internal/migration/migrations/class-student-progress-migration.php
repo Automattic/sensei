@@ -11,9 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Sensei\Internal\Cache_Prefix;
 use Sensei\Internal\Migration\Migration_Abstract;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 
 /**
@@ -22,6 +24,8 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interfac
  * @since 4.16.1
  */
 class Student_Progress_Migration extends Migration_Abstract {
+	use Cache_Prefix;
+
 	/**
 	 * The name of the option that stores the last comment ID that was migrated.
 	 *
@@ -94,31 +98,40 @@ class Student_Progress_Migration extends Migration_Abstract {
 		$pending_rows       = array();
 		$last_processed_id  = null;
 
-		foreach ( $progress_comments as $progress_comment ) {
-			$meta = isset( $mapped_meta[ $progress_comment->comment_ID ] )
-				? $mapped_meta[ $progress_comment->comment_ID ]
-				: array();
+		try {
+			foreach ( $progress_comments as $progress_comment ) {
+				$meta = isset( $mapped_meta[ $progress_comment->comment_ID ] )
+					? $mapped_meta[ $progress_comment->comment_ID ]
+					: array();
 
-			$rows = $this->prepare_comment_rows( $progress_comment, $meta );
+				$rows = $this->prepare_comment_rows( $progress_comment, $meta );
 
-			$pending_rows = array_merge( $pending_rows, $rows );
-			++$comments_processed;
-			$last_processed_id = $progress_comment->comment_ID;
+				$pending_rows = array_merge( $pending_rows, $rows );
+				++$comments_processed;
+				$last_processed_id = $progress_comment->comment_ID;
 
-			// Flush when the buffer is full or time is running out.
-			if ( count( $pending_rows ) >= $this->insert_batch_size || $this->is_time_exceeded() ) {
-				$this->insert_comment_rows( $pending_rows, $dry_run );
-				$pending_rows = array();
+				// Flush when the buffer is full or time is running out.
+				if ( count( $pending_rows ) >= $this->insert_batch_size || $this->is_time_exceeded() ) {
+					$this->insert_comment_rows( $pending_rows, $dry_run );
+					$pending_rows = array();
 
-				if ( $this->is_time_exceeded() ) {
-					break;
+					if ( $this->is_time_exceeded() ) {
+						break;
+					}
 				}
 			}
-		}
 
-		// Flush any remaining rows.
-		if ( ! empty( $pending_rows ) ) {
-			$this->insert_comment_rows( $pending_rows, $dry_run );
+			// Flush any remaining rows.
+			if ( ! empty( $pending_rows ) ) {
+				$this->insert_comment_rows( $pending_rows, $dry_run );
+			}
+		} finally {
+			// Refresh once per run, including duplicate-only retries and partial writes.
+			if ( ! $dry_run ) {
+				self::invalidate_cache_group( 'sensei_course_progress' );
+				self::invalidate_cache_group( 'sensei_lesson_progress' );
+				self::invalidate_cache_group( 'sensei_quiz_progress' );
+			}
 		}
 
 		// Always advance the cursor to the last fully processed comment.
@@ -212,7 +225,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		}
 
 		// Map different meta keys to the comment ID.
-		$mapped_meta = [];
+		$mapped_meta = array();
 
 		// Map comment meta to the comment ID.
 		foreach ( $progress_comment_meta as $meta ) {
@@ -299,10 +312,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 			$completed_at = null;
 		}
 
-		$started_at = 0;
-		if ( isset( $meta['start'] ) ) {
+		$started_at = null;
+		$meta_start = $meta['start'] ?? null;
+		if ( Progress_Start_Date::is_recorded( $meta_start ) ) {
 			try {
-				$started_at = $this->convert_to_utc( $meta['start'] );
+				$started_at = $this->convert_to_utc( $meta_start );
 			} catch ( \Exception $e ) {
 				$this->add_error(
 					sprintf(
@@ -339,7 +353,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	private function prepare_lesson_progress_rows( $comment, $meta ): array {
 		$lesson_status = 'in-progress';
 		$completed_at  = null;
-		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
+		if ( in_array( $comment->comment_approved, array( 'complete', 'passed', 'graded' ), true ) ) {
 			$completed_at  = $comment->comment_date_gmt;
 			$lesson_status = 'complete';
 		}
@@ -354,10 +368,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 			}
 		}
 
-		$started_at = 0;
-		if ( isset( $meta['start'] ) ) {
+		$started_at = null;
+		$meta_start = $meta['start'] ?? null;
+		if ( Progress_Start_Date::is_recorded( $meta_start ) ) {
 			try {
-				$started_at = $this->convert_to_utc( $meta['start'] );
+				$started_at = $this->convert_to_utc( $meta_start );
 			} catch ( \Exception $e ) {
 				$this->add_error(
 					sprintf(
@@ -389,7 +404,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		// Because of that, by default we set the status to in-progress.
 		if ( isset( $meta['_lesson_quiz'] ) ) {
 			$quiz_id            = $meta['_lesson_quiz'];
-			$supported_statuses = [
+			$supported_statuses = array(
 				Quiz_Progress_Interface::STATUS_IN_PROGRESS,
 				Quiz_Progress_Interface::STATUS_FAILED,
 				Quiz_Progress_Interface::STATUS_GRADED,
@@ -397,7 +412,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 				Quiz_Progress_Interface::STATUS_UNGRADED,
 				// We need to map lesson statuses to quiz' passed status.
 				Lesson_Progress_Interface::STATUS_COMPLETE,
-			];
+			);
 			$quiz_status        = in_array( $comment->comment_approved, $supported_statuses, true )
 				? $comment->comment_approved
 				: Quiz_Progress_Interface::STATUS_IN_PROGRESS;
@@ -506,7 +521,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 	private function generate_column_clauses( array $batch ): string {
 		global $wpdb;
 
-		$column_placeholders = [
+		$column_placeholders = array(
 			'post_id'        => '%d',
 			'user_id'        => '%d',
 			'parent_post_id' => '%d',
@@ -516,7 +531,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 			'completed_at'   => '%s',
 			'created_at'     => '%s',
 			'updated_at'     => '%s',
-		];
+		);
 
 		$values = array();
 		foreach ( array_values( $batch ) as $row ) {

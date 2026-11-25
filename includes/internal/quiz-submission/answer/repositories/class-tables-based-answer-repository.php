@@ -10,6 +10,7 @@ namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 use DateTimeImmutable;
 use DateTimeZone;
 use Sensei\Internal\Cache_Prefix;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
@@ -67,6 +68,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @param string               $value       The answer value.
 	 *
 	 * @return Answer_Interface The answer model.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( Submission_Interface $submission, int $question_id, string $value ): Answer_Interface {
 		/**
@@ -97,7 +99,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
-		$this->wpdb->insert(
+		$result = $this->wpdb->insert(
 			$this->get_table_name(),
 			[
 				'submission_id' => $submission_id,
@@ -114,6 +116,19 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 				'%s',
 			]
 		);
+
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception(
+				'quiz_answer',
+				'tables',
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
+				$submission->get_quiz_id(),
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
+				$submission->get_user_id(),
+				'insert_failed'
+			);
+		}
 
 		$answer = new Tables_Based_Answer(
 			$this->wpdb->insert_id,
@@ -196,6 +211,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The submission.
+	 * @throws Persistence_Exception If answer rows cannot be deleted.
 	 */
 	public function delete_all( Submission_Interface $submission ): void {
 		/**
@@ -211,7 +227,7 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 		 */
 		$submission_id = (int) apply_filters( 'sensei_quiz_answer_delete_all_submission_id', $submission->get_id(), 'tables' );
 
-		$this->wpdb->delete(
+		$result = $this->wpdb->delete(
 			$this->get_table_name(),
 			[
 				'submission_id' => $submission_id,
@@ -220,6 +236,10 @@ class Tables_Based_Answer_Repository implements Answer_Repository_Interface {
 				'%d',
 			]
 		);
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'quiz_answer', 'tables', $submission->get_quiz_id(), $submission->get_user_id(), 'delete_failed', 'delete' );
+		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			$cache_submission_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission->get_id(), 'tables' );

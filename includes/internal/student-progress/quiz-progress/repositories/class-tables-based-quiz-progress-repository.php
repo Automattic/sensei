@@ -10,9 +10,11 @@ namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 use DateTimeImmutable;
 use DateTimeZone;
 use Sensei\Internal\Cache_Prefix;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -61,11 +63,13 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 *
 	 * @internal
 	 *
-	 * @param int $quiz_id Quiz identifier.
-	 * @param int $user_id User identifier.
+	 * @param int  $quiz_id Quiz identifier.
+	 * @param int  $user_id User identifier.
+	 * @param bool $record_start Whether creation also records a start event.
+	 * @throws Persistence_Exception If the required insert fails.
 	 * @return Quiz_Progress_Interface
 	 */
-	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
+	public function create( int $quiz_id, int $user_id, bool $record_start = true ): Quiz_Progress_Interface {
 		/**
 		 * Filter quiz id for quiz progress creation.
 		 *
@@ -80,7 +84,8 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
-		$this->wpdb->insert(
+
+		$result = $this->wpdb->insert(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'post_id'        => $quiz_id,
@@ -88,7 +93,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'parent_post_id' => null,
 				'type'           => 'quiz',
 				'status'         => Quiz_Progress_Interface::STATUS_IN_PROGRESS,
-				'started_at'     => $current_datetime->format( $date_format ),
+				'started_at'     => $record_start ? $current_datetime->format( $date_format ) : null,
 				'completed_at'   => null,
 				'created_at'     => $current_datetime->format( $date_format ),
 				'updated_at'     => $current_datetime->format( $date_format ),
@@ -105,20 +110,25 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'%s',
 			]
 		);
+
 		$id = (int) $this->wpdb->insert_id;
+		if ( false === $result || $id <= 0 ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz', 'tables', $quiz_id, $user_id, false === $result ? 'insert_failed' : 'invalid_insert_id' );
+		}
 
 		$progress = new Tables_Based_Quiz_Progress(
 			$id,
 			$quiz_id,
 			$user_id,
 			Quiz_Progress_Interface::STATUS_IN_PROGRESS,
-			$current_datetime,
+			$record_start ? $current_datetime : null,
 			null,
 			$current_datetime,
 			$current_datetime
 		);
 
-		if ( $id && Progress_Storage_Settings::is_cache_enabled() ) {
+		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_set( self::get_prefixed_key( $this->get_cache_key( $quiz_id, $user_id ), self::CACHE_GROUP ), $progress, self::CACHE_GROUP );
 		}
 
@@ -186,7 +196,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			(int) $row->post_id,
 			(int) $row->user_id,
 			$row->status,
-			new DateTimeImmutable( $row->started_at, $timezone ),
+			Progress_Start_Date::is_recorded( $row->started_at ) ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
 			$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
 			new DateTimeImmutable( $row->created_at, $timezone ),
 			new DateTimeImmutable( $row->updated_at, $timezone )
@@ -244,6 +254,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @internal
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
+	 * @throws Persistence_Exception If the progress update fails.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->assert_tables_based_quiz_progress( $quiz_progress );
@@ -252,7 +263,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		$quiz_progress->set_updated_at( $updated_at );
 
 		$date_format = 'Y-m-d H:i:s';
-		$this->wpdb->update(
+		$result      = $this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'status'       => $quiz_progress->get_status(),
@@ -274,6 +285,10 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'%d',
 			]
 		);
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'quiz', 'tables', $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id(), 'update_failed', 'update' );
+		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
@@ -286,24 +301,40 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @internal
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
 	 */
 	public function delete( Quiz_Progress_Interface $quiz_progress ): void {
-		$this->wpdb->delete(
+		$this->delete_for_student( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
+	}
+
+	/**
+	 * Delete a student's quiz progress by identity.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void {
+		$result = $this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
-			[
-				'post_id' => $quiz_progress->get_quiz_id(),
-				'user_id' => $quiz_progress->get_user_id(),
+			array(
+				'post_id' => $quiz_id,
+				'user_id' => $user_id,
 				'type'    => 'quiz',
-			],
-			[
-				'%d',
-				'%d',
-				'%s',
-			]
+			),
+			array( '%d', '%d', '%s' )
 		);
 
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz', 'tables', $quiz_id, $user_id, 'delete_failed', 'delete' );
+		}
+
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $quiz_id, $user_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -468,7 +499,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				(int) $row->post_id,
 				(int) $row->user_id,
 				$row->status,
-				$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
 				$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
 				new DateTimeImmutable( $row->created_at, $timezone ),
 				new DateTimeImmutable( $row->updated_at, $timezone )

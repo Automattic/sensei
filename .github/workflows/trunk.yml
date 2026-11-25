@@ -3,21 +3,32 @@ on:
   push:
     branches:
       - trunk
+
+permissions:
+  contents: read
+
 jobs:
   unit-js:
     uses: ./.github/workflows/js.yml
-    secrets: inherit
+    secrets:
+      SLACK_SENSEI_CHANNEL: ${{ secrets.SLACK_SENSEI_CHANNEL }}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   unit-php:
     uses: ./.github/workflows/php.yml
-    secrets: inherit
+    secrets:
+      SLACK_SENSEI_CHANNEL: ${{ secrets.SLACK_SENSEI_CHANNEL }}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   psalm:
     uses: ./.github/workflows/psalm.yml
-    secrets: inherit
   e2e:
     uses: ./.github/workflows/e2e.yml
-    secrets: inherit
+    secrets:
+      SLACK_SENSEI_CHANNEL: ${{ secrets.SLACK_SENSEI_CHANNEL }}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   docs:
     needs: [ unit-js, unit-php, e2e ]
+    permissions:
+      contents: write
     uses: ./.github/workflows/build-docs.yml
   build:
     needs: [ unit-js, unit-php, e2e ]

@@ -128,7 +128,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	/**
 	 * Add lesson progress fields to the report query.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 * @access private
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
@@ -143,13 +143,13 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	 *
 	 * @since 4.3.0
 	 * @access private
-	 * @deprecated $$next-version$$ Use add_progress_to_lessons_query() for report queries.
+	 * @deprecated 4.27.0 Use add_progress_to_lessons_query() for report queries.
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_days_to_complete_to_lessons_query( array $clauses ): array {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Reports_Overview_Data_Provider_Lessons::add_progress_to_lessons_query' );
+		_deprecated_function( __METHOD__, '4.27.0', 'Sensei_Reports_Overview_Data_Provider_Lessons::add_progress_to_lessons_query' );
 
 		return $this->progress_clauses_service->add_days_to_completion_to_lessons_clauses( $clauses );
 	}
@@ -159,13 +159,13 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	 *
 	 * @since 4.4.1
 	 * @access private
-	 * @deprecated $$next-version$$ Use add_progress_to_lessons_query() for report queries.
+	 * @deprecated 4.27.0 Use add_progress_to_lessons_query() for report queries.
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_last_activity_to_lessons_query( array $clauses ): array {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Reports_Overview_Data_Provider_Lessons::add_progress_to_lessons_query' );
+		_deprecated_function( __METHOD__, '4.27.0', 'Sensei_Reports_Overview_Data_Provider_Lessons::add_progress_to_lessons_query' );
 
 		return $this->progress_clauses_service->add_last_activity_to_lessons_clauses( $clauses );
 	}

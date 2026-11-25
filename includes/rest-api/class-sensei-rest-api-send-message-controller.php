@@ -89,17 +89,17 @@ class Sensei_REST_API_Send_Message_Controller extends \WP_REST_Controller {
 
 		// If it is a quiz post then get it's lesson post.
 		$post = get_post( $post_id );
-		if ( 'quiz' === $post->post_type ) {
+		if ( $post instanceof WP_Post && 'quiz' === $post->post_type ) {
 			$post = get_post( \Sensei()->quiz->get_lesson_id( $post->ID ) );
 		}
 
 		// If it is a lesson post then get it's course post.
-		if ( 'lesson' === $post->post_type ) {
+		if ( $post instanceof WP_Post && 'lesson' === $post->post_type ) {
 			$post = get_post( \Sensei()->lesson->get_course_id( $post->ID ) );
 		}
 
 		// If we did not get the course post till now then not allowed.
-		if ( 'course' !== $post->post_type ) {
+		if ( ! $post instanceof WP_Post || 'course' !== $post->post_type ) {
 			return false;
 		}
 
@@ -126,16 +126,16 @@ class Sensei_REST_API_Send_Message_Controller extends \WP_REST_Controller {
 		];
 
 		$post = get_post( $post_id );
-		if ( is_wp_error( $post ) ) {
+		if ( ! $post instanceof WP_Post ) {
 			return $fail_response;
 		}
 
 		// Save the message.
 		$message_id = \Sensei()->messages->save_new_message_post(
 			get_current_user_id(),
-			$post->post_author,
+			(int) $post->post_author,
 			$message,
-			$post->ID
+			(string) $post->ID
 		);
 
 		// Return success object with message_id on success.

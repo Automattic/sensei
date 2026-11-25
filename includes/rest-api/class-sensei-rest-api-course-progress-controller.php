@@ -76,7 +76,8 @@ class Sensei_REST_API_Course_Progress_Controller extends \WP_REST_Controller {
 			if ( $student->exists() ) {
 				$result[ $student_id ] = array();
 				foreach ( $course_ids as $course_id ) {
-					$result[ $student_id ][ $course_id ] = false;
+					// A course with no progress needs no reset and is not a failure.
+					$result[ $student_id ][ $course_id ] = true;
 					if ( Sensei_Utils::has_started_course( $course_id, $student_id ) ) {
 						$result[ $student_id ][ $course_id ] = Sensei_Utils::reset_course_for_user( $course_id, $student_id );
 					}
@@ -95,8 +96,13 @@ class Sensei_REST_API_Course_Progress_Controller extends \WP_REST_Controller {
 	 * @return boolean|WP_Error
 	 */
 	public function batch_delete_items_permissions_check( WP_REST_Request $request ) {
-		$params          = $request->get_params();
-		$course_ids      = $params['course_ids'];
+		$course_ids = $request->get_param( 'course_ids' );
+
+		// Core also calls this for the `Allow` header on requests that failed validation.
+		if ( empty( $course_ids ) || ! is_array( $course_ids ) ) {
+			return false;
+		}
+
 		$edit_course_cap = get_post_type_object( 'course' )->cap->edit_post;
 		foreach ( $course_ids as $course_id ) {
 			$course = get_post( absint( $course_id ) );

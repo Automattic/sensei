@@ -48,7 +48,7 @@ class Sensei_Usage_Tracking_Data {
 				'lesson_length'                  => self::get_lesson_has_length_count(),
 				'lesson_complexity'              => self::get_lesson_with_complexity_count(),
 				'lesson_videos'                  => self::get_lesson_with_video_count(),
-				'messages'                       => wp_count_posts( 'sensei_message' )->publish,
+				'messages'                       => post_type_exists( 'sensei_message' ) ? wp_count_posts( 'sensei_message' )->publish : 0,
 				'modules'                        => wp_count_terms( 'module' ),
 				'modules_max'                    => self::get_max_module_count(),
 				'modules_min'                    => self::get_min_module_count(),
@@ -137,26 +137,17 @@ class Sensei_Usage_Tracking_Data {
 	private static function get_quiz_stats() {
 		$query = new WP_Query(
 			array(
-				'post_type'      => 'lesson',
-				'fields'         => 'ids',
-				'posts_per_page' => -1,
-				'no_found_rows'  => true,
-				'meta_query'     => array(
+				'post_type'         => 'lesson',
+				'fields'            => 'ids',
+				'posts_per_page'    => -1,
+				'no_found_rows'     => true,
+				'meta_query'        => array(
 					array(
 						'key'   => '_quiz_has_questions',
 						'value' => true,
 					),
-					array(
-						'key'     => '_lesson_course',
-						'value'   => '',
-						'compare' => '!=',
-					),
-					array(
-						'key'     => '_lesson_course',
-						'value'   => '0',
-						'compare' => '!=',
-					),
 				),
+				'sensei_has_course' => true,
 			)
 		);
 
@@ -661,15 +652,9 @@ class Sensei_Usage_Tracking_Data {
 	private static function get_lesson_prerequisite_count() {
 		$query = new WP_Query(
 			array(
-				'post_type'  => 'lesson',
-				'fields'     => 'ids',
-				'meta_query' => array(
-					array(
-						'key'     => '_lesson_prerequisite',
-						'value'   => 0,
-						'compare' => '>',
-					),
-				),
+				'post_type'               => 'lesson',
+				'fields'                  => 'ids',
+				'sensei_has_prerequisite' => true,
 			)
 		);
 
@@ -711,14 +696,9 @@ class Sensei_Usage_Tracking_Data {
 	private static function get_lesson_module_count() {
 		$query = new WP_Query(
 			array(
-				'post_type' => 'lesson',
-				'fields'    => 'ids',
-				'tax_query' => array(
-					array(
-						'taxonomy' => 'module',
-						'operator' => 'EXISTS',
-					),
-				),
+				'post_type'         => 'lesson',
+				'fields'            => 'ids',
+				'sensei_has_module' => true,
 			)
 		);
 

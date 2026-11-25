@@ -448,7 +448,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @return string The customization url.
 	 */
-	public static function get_learning_mode_fse_url( ?string $post_type = null ) : string {
+	public static function get_learning_mode_fse_url( ?string $post_type = null ): string {
 		// Get the post type manually if not provided.
 		if ( ! $post_type ) {
 			$post_type = get_post_type();
@@ -476,10 +476,10 @@ class Sensei_Course_Theme {
 	/**
 	 * Returns the url for customizing Learning Mode template colors.
 	 *
-	 * @deprecated $$next-version$$ Unused since the Customize Colors link was removed.
+	 * @deprecated 4.27.0 Unused since the Customize Colors link was removed.
 	 */
 	public static function get_learning_mode_customizer_url(): string {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.27.0' );
 
 			// Get the last modified lesson.
 		$result = get_posts(

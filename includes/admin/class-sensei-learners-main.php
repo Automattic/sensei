@@ -71,7 +71,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * Constructor
 	 *
 	 * @since  1.6.0
-	 * @since $$next-version$$ Accepts an optional student listing service.
+	 * @since 4.27.0 Accepts an optional student listing service.
 	 *
 	 * @param Student_Management_Listing_Service_Interface|null $student_listing_service Student listing service.
 	 */
@@ -575,7 +575,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				 * This filter runs on the learner management screen for a specific course.
 				 * It provides the student row column details.
 				 *
-				 * @since $$next-version$$ The $item argument is a Students_Item.
+				 * @since 4.27.0 The $item argument is a Students_Item.
 				 *
 				 * @param {array}   $columns {
 				 *   @type {string}   $title             Learner name.
@@ -720,7 +720,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 *
 	 * @psalm-suppress InternalProperty This global table consumes the internal student row model.
 	 */
-	private function get_edit_start_date_form( Students_Item $student, $post_id, $post_type ) : string {
+	private function get_edit_start_date_form( Students_Item $student, $post_id, $post_type ): string {
 		$submit_button_text = __( 'Update Student', 'sensei-lms' );
 
 		return '<form class="edit-start-date">
@@ -793,10 +793,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		);
 
 		if ( $this->course_id ) {
-			$lesson_args['meta_query'][] = array(
-				'key'   => '_lesson_course',
-				'value' => $this->course_id,
-			);
+			$lesson_args['sensei_course'] = $this->course_id;
 		}
 
 		if ( $args['search'] ) {
@@ -806,12 +803,44 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		/**
 		 * Filter arguments for the lesson query on the student management screen.
 		 *
-		 * @hook sensei_learners_filter_lessons
+		 * @since 4.28.0
 		 *
-		 * @param {array} $lesson_args Lesson query arguments.
+		 * @hook sensei_students_filter_lessons_query_args
+		 *
+		 * @param {array} $lesson_args Lesson query arguments. The course, if any, is in the `sensei_course` argument.
 		 * @return {array} The modified arguments.
 		 */
-		$lessons_query = new WP_Query( apply_filters( 'sensei_learners_filter_lessons', $lesson_args ) );
+		$lesson_args = apply_filters( 'sensei_students_filter_lessons_query_args', $lesson_args );
+
+		if ( has_filter( 'sensei_learners_filter_lessons' ) ) {
+			// The deprecated filter gets the course in a `_lesson_course` meta clause, as it always did.
+			if ( isset( $lesson_args['sensei_course'] ) ) {
+				$lesson_args['meta_query'][] = array(
+					'key'   => '_lesson_course',
+					'value' => $lesson_args['sensei_course'],
+				);
+				unset( $lesson_args['sensei_course'] );
+			}
+
+			/**
+			 * Filter arguments for the lesson query on the student management screen.
+			 *
+			 * @deprecated 4.28.0 Use sensei_students_filter_lessons_query_args instead.
+			 *
+			 * @hook sensei_learners_filter_lessons
+			 *
+			 * @param {array} $lesson_args Lesson query arguments.
+			 * @return {array} The modified arguments.
+			 */
+			$lesson_args = apply_filters_deprecated(
+				'sensei_learners_filter_lessons',
+				array( $lesson_args ),
+				'4.28.0',
+				'sensei_students_filter_lessons_query_args'
+			);
+		}
+
+		$lessons_query = new WP_Query( $lesson_args );
 
 		$this->total_items = $lessons_query->found_posts;
 		return $lessons_query->posts;

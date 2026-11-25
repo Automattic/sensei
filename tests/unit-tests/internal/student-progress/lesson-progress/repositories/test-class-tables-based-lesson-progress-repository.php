@@ -105,7 +105,6 @@ class Tables_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Repos
 	public function testCreate_InsertReturnedWithoutId_Throws(): void {
 		$repository = $this->get_repository();
 		$this->expectException( Persistence_Exception::class );
-		$this->expectExceptionMessage( 'diagnostic=invalid_insert_id' );
 
 		// SELECT 1 succeeds without inserting a row, leaving no valid insert ID.
 		$this->with_failed_cached_insert(
@@ -824,5 +823,22 @@ class Tables_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Repos
 	 */
 	protected function get_insert_table(): string {
 		return $GLOBALS['wpdb']->prefix . 'sensei_lms_progress';
+	}
+
+	/**
+	 * Set the timestamp used to sort table-backed progress.
+	 *
+	 * @param int    $progress_id Progress record ID.
+	 * @param string $timestamp Update time.
+	 */
+	protected function set_progress_update_time( int $progress_id, string $timestamp ): void {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Set a fixed timestamp because save() uses the current time.
+		$wpdb->update(
+			$this->get_insert_table(),
+			array( 'updated_at' => $timestamp ),
+			array( 'id' => $progress_id )
+		);
 	}
 }

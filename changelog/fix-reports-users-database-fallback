@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Fix the Courses report showing an unrelated student's Last Activity date when the course and student share the same numeric ID and the users-table relationship is unavailable.

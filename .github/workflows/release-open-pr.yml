@@ -51,19 +51,27 @@ jobs:
                       echo "::error::Open milestone '$VERSION' not found."
                       exit 1
                   fi
-                  OPEN_ITEMS=$( gh api "repos/$GITHUB_REPOSITORY/issues?milestone=$MILESTONE_NUMBER&state=open&per_page=100" \
-                      --jq '[.[] | "#\(.number)"] | join(", ")' )
-                  if [[ -n "$OPEN_ITEMS" ]]; then
-                      MILESTONE_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/milestone/$MILESTONE_NUMBER"
-                      echo "::error::Milestone $VERSION has open items: $OPEN_ITEMS. Merge them or move them to another milestone: $MILESTONE_URL"
-                      echo "Milestone $VERSION has open items. [See them in the milestone]($MILESTONE_URL)." >> "$GITHUB_STEP_SUMMARY"
+                  # The issues endpoint returns pull requests too; only those carry a pull_request key.
+                  # --slurp wraps the pages in an outer array, hence the .[][] below.
+                  OPEN_ITEMS=$( gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/issues?milestone=$MILESTONE_NUMBER&state=open&per_page=100" )
+                  OPEN_PRS=$( jq -r '[.[][] | select(.pull_request) | "#\(.number)"] | join(", ")' <<< "$OPEN_ITEMS" )
+                  OPEN_ISSUES=$( jq -r '[.[][] | select(.pull_request | not) | "#\(.number)"] | join(", ")' <<< "$OPEN_ITEMS" )
+                  MILESTONE_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/milestone/$MILESTONE_NUMBER"
+                  # Open issues don't change what ships, so they don't block the release.
+                  if [[ -n "$OPEN_ISSUES" ]]; then
+                      echo "::warning::Milestone $VERSION has open issues: $OPEN_ISSUES. Move them to another milestone: $MILESTONE_URL"
+                      echo "Milestone $VERSION has open issues: $OPEN_ISSUES. [See them in the milestone]($MILESTONE_URL)." >> "$GITHUB_STEP_SUMMARY"
+                  fi
+                  if [[ -n "$OPEN_PRS" ]]; then
+                      echo "::error::Milestone $VERSION has open pull requests: $OPEN_PRS. Merge them or move them to another milestone: $MILESTONE_URL"
+                      echo "Milestone $VERSION has open pull requests: $OPEN_PRS. [See them in the milestone]($MILESTONE_URL)." >> "$GITHUB_STEP_SUMMARY"
                       exit 1
                   fi
 
                   echo "::notice::Preparing release $VERSION."
                   echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
-            - uses: actions/checkout@v7.0.1
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   ref: trunk
                   # Changelogger needs the history to add PR numbers to the entries.
@@ -86,7 +94,7 @@ jobs:
                       echo "WP_MINIMUM=$MINIMUM" >> "$GITHUB_ENV"
                   fi
 
-            - uses: actions/setup-node@v7
+            - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
               with:
                   node-version-file: '.nvmrc'
                   cache: 'npm'
@@ -95,7 +103,7 @@ jobs:
 
             - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
               with:
-                  php-version: '7.4'
+                  php-version: '8.2'
                   tools: wp-cli
                   coverage: none
 
@@ -167,9 +175,11 @@ jobs:
                   - [ ] Cherry-pick any approved fixes from [sensei-security](https://github.com/Automattic/sensei-security/pulls) into this branch.
                   - [ ] Review the generated changelog in `changelog.txt` and `readme.txt`.
                   - [ ] Update the release date in `changelog.txt` and `readme.txt` if releasing on another day.
-                  - [ ] Build the package from this branch and run the QA checklist below in a new installation.
+                  - [ ] Download the package from the `Plugin Build Download` check and run the QA checklist below in a new installation.
                   - [ ] Check whether `Requires PHP` needs a bump. If it does, bump it in its own commit on this branch.
-                  - [ ] Confirm no new commits landed after testing.
+                  - [ ] Confirm no new commits landed on this branch after testing, and nothing was merged to `trunk` since this branch was created.
+
+                  After merging this pull request with a merge commit, run the `Release: Draft GitHub release` workflow before anything else is merged to `trunk`. It drafts the GitHub release with the package of the `Plugin Build Download` check. The link to the draft is posted in a comment here.
 
                   ## QA
 

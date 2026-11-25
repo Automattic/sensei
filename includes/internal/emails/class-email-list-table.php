@@ -123,7 +123,7 @@ class Email_List_Table extends Sensei_List_Table {
 			// translators: %1s: Title of the Email.
 			'<label class="screen-reader-text">' . __( 'Select %1s', 'sensei-lms' ) . '</label>' .
 			'<input id="cb-select-%2$s" type="checkbox" name="email[]" value="%2$s" />',
-			$post->post_title,
+			$title,
 			$post->ID
 		);
 

@@ -43,7 +43,7 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 		$service->init();
 
 		/* Assert. */
-		self::assertSame( 10, has_action( 'pre_get_posts', array( $service, 'filter_lessons_by_course' ) ) );
+		self::assertSame( 999, has_action( 'pre_get_posts', array( $service, 'filter_lessons_by_course' ) ) );
 	}
 
 	/**
@@ -158,5 +158,257 @@ class Meta_Based_Course_Lessons_Query_Service_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		self::assertSame( array( $preview_lesson ), $actual );
+	}
+
+	/**
+	 * A query whose own meta clauses are joined with OR still requires the course.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_by_course
+	 */
+	public function testFilterLessonsByCourse_QueryWithOrMetaClausesGiven_StillRequiresTheCourse(): void {
+		/* Arrange. */
+		$course = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		update_post_meta( $course['lesson_ids'][0], '_lesson_preview', 'preview' );
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_preview' => 'preview' ) ) );
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_complexity' => 'hard' ) ) );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'sensei_course'  => $course['course_id'],
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Test fixture.
+					'relation' => 'OR',
+					array(
+						'key'   => '_lesson_preview',
+						'value' => 'preview',
+					),
+					array(
+						'key'   => '_lesson_complexity',
+						'value' => 'hard',
+					),
+				),
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $course['lesson_ids'][0] ), $actual );
+	}
+
+	/**
+	 * A lesson query with the `sensei_has_course` query var leaves out the lessons without a course.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_with_course
+	 */
+	public function testFilterLessonsWithCourse_HasCourseQueryVarGiven_ReturnsOnlyTheLessonsWithACourse(): void {
+		/* Arrange. */
+		$course = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		$this->factory->lesson->create();
+		// An empty or zero course is how a lesson that lost its course is stored.
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => '' ) ) );
+		$this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => '0' ) ) );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'         => 'lesson',
+				'posts_per_page'    => -1,
+				'fields'            => 'ids',
+				'sensei_has_course' => true,
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( $course['lesson_ids'], $actual );
+	}
+
+	/**
+	 * A lesson query with the module query var returns the lessons of that module only.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_by_module
+	 */
+	public function testFilterLessonsByModule_ModuleQueryVarGiven_ReturnsTheLessonsOfThatModule(): void {
+		/* Arrange. */
+		$module_id           = $this->factory->module->create();
+		$other_module_id     = $this->factory->module->create();
+		$module_lesson       = $this->factory->lesson->create();
+		$other_module_lesson = $this->factory->lesson->create();
+		$this->factory->lesson->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $module_lesson, $module_id );
+		Sensei()->course_lessons_repository->set_lesson_module( $other_module_lesson, $other_module_id );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'sensei_module'  => $module_id,
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $module_lesson ), $actual );
+	}
+
+	/**
+	 * A query for module 0 returns no lessons instead of every lesson.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_by_module
+	 */
+	public function testFilterLessonsByModule_ZeroModuleGiven_ReturnsNoLessons(): void {
+		/* Arrange. */
+		Sensei()->course_lessons_repository->set_lesson_module( $this->factory->lesson->create(), $this->factory->module->create() );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'sensei_module'  => 0,
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array(), $actual );
+	}
+
+	/**
+	 * A query whose own tax clauses are joined with OR still requires the module.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_by_module
+	 */
+	public function testFilterLessonsByModule_QueryWithOrTaxClausesGiven_StillRequiresTheModule(): void {
+		/* Arrange. */
+		$module_id            = $this->factory->module->create();
+		$tag_ids              = $this->factory->term->create_many( 2, array( 'taxonomy' => 'lesson-tag' ) );
+		$tagged_lesson        = $this->factory->lesson->create();
+		$module_lesson        = $this->factory->lesson->create();
+		$tagged_module_lesson = $this->factory->lesson->create();
+		wp_set_object_terms( $tagged_lesson, array( $tag_ids[0] ), 'lesson-tag' );
+		wp_set_object_terms( $tagged_module_lesson, array( $tag_ids[0] ), 'lesson-tag' );
+		Sensei()->course_lessons_repository->set_lesson_module( $module_lesson, $module_id );
+		Sensei()->course_lessons_repository->set_lesson_module( $tagged_module_lesson, $module_id );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'sensei_module'  => $module_id,
+				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Test fixture.
+					'relation' => 'OR',
+					array(
+						'taxonomy' => 'lesson-tag',
+						'terms'    => $tag_ids[0],
+					),
+					array(
+						'taxonomy' => 'lesson-tag',
+						'terms'    => $tag_ids[1],
+					),
+				),
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $tagged_module_lesson ), $actual );
+	}
+
+	/**
+	 * A lesson query with the excluded modules query var returns the lessons outside those modules only.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::filter_lessons_outside_modules
+	 */
+	public function testFilterLessonsOutsideModules_ModulesQueryVarGiven_ReturnsTheLessonsOutsideThoseModules(): void {
+		/* Arrange. */
+		$module_id           = $this->factory->module->create();
+		$other_module_id     = $this->factory->module->create();
+		$module_lesson       = $this->factory->lesson->create();
+		$other_module_lesson = $this->factory->lesson->create();
+		$lesson_without      = $this->factory->lesson->create();
+		Sensei()->course_lessons_repository->set_lesson_module( $module_lesson, $module_id );
+		Sensei()->course_lessons_repository->set_lesson_module( $other_module_lesson, $other_module_id );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'             => 'lesson',
+				'posts_per_page'        => -1,
+				'fields'                => 'ids',
+				'orderby'               => 'ID',
+				'order'                 => 'ASC',
+				'sensei_module__not_in' => array( $module_id ),
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $other_module_lesson, $lesson_without ), $actual );
+	}
+
+	/**
+	 * A lesson query with the lesson order course query var returns the lessons that have an order in that course, in that order.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::order_lessons_in_course
+	 */
+	public function testOrderLessonsInCourse_LessonOrderStored_ReturnsOnlyTheOrderedLessonsInOrder(): void {
+		/* Arrange. */
+		$second_lesson = $this->factory->lesson->create();
+		$first_lesson  = $this->factory->lesson->create();
+		$this->factory->lesson->create();
+		Sensei()->course_lessons_repository->set_lesson_order( $second_lesson, 5, 10 );
+		Sensei()->course_lessons_repository->set_lesson_order( $first_lesson, 5, 2 );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'                  => 'lesson',
+				'posts_per_page'             => -1,
+				'fields'                     => 'ids',
+				'sensei_lesson_order_course' => 5,
+				'orderby'                    => 'date',
+				'order'                      => 'ASC',
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $first_lesson, $second_lesson ), $actual );
+	}
+
+	/**
+	 * A lesson query with the lesson order module query var returns the lessons that have an order in that module, in that order.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service::order_lessons_in_module
+	 */
+	public function testOrderLessonsInModule_LessonOrderStored_ReturnsOnlyTheOrderedLessonsInOrder(): void {
+		/* Arrange. */
+		$second_lesson = $this->factory->lesson->create();
+		$first_lesson  = $this->factory->lesson->create();
+		$this->factory->lesson->create();
+		Sensei()->course_lessons_repository->set_lesson_module_order( $second_lesson, 5, 10 );
+		Sensei()->course_lessons_repository->set_lesson_module_order( $first_lesson, 5, 2 );
+
+		/* Act. */
+		$actual = ( new WP_Query(
+			array(
+				'post_type'                  => 'lesson',
+				'posts_per_page'             => -1,
+				'fields'                     => 'ids',
+				'sensei_lesson_order_module' => 5,
+				'orderby'                    => 'date',
+				'order'                      => 'ASC',
+			)
+		) )->posts;
+
+		/* Assert. */
+		self::assertSame( array( $first_lesson, $second_lesson ), $actual );
 	}
 }

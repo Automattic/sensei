@@ -172,6 +172,39 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The admin lessons list filtered by course lists the lessons of that course only.
+	 *
+	 * @covers Sensei_Admin::lesson_filter_actions
+	 */
+	public function testLessonFilterActions_CourseRequested_ListsTheCourseLessonsOnly() {
+		/* Arrange. */
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		set_current_screen( 'edit-lesson' );
+		$_GET['lesson_course'] = $course_lessons['course_id'];
+
+		/* Act. */
+		$request = ( new Sensei_Admin() )->lesson_filter_actions( array( 'post_type' => 'lesson' ) );
+		$actual  = wp_list_pluck( ( new WP_Query( $request ) )->posts, 'ID' );
+		sort( $actual );
+
+		/* Assert. */
+		$expected = $course_lessons['lesson_ids'];
+		sort( $expected );
+		self::assertSame( $expected, $actual );
+	}
+
+	/**
 	 * A trashed lesson is cleared as the prerequisite of the lessons that required it.
 	 *
 	 * @covers Sensei_Admin::delete_content
@@ -569,5 +602,64 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 			'per_page'    => 1,
 		);
 		return get_posts( $duplicated_lesson_args )[0];
+	}
+
+	public function testLessonOrderScreen_CourseOfAnotherTeacherGiven_DiesWithInsufficientPermissions() {
+		/* Arrange. */
+		$course_id = $this->create_course_with_draft_lesson( $this->get_user_by_role( 'teacher', '_b' ), 'Secret draft lesson' );
+		$this->login_as_teacher();
+		set_current_screen( 'admin_page_lesson-order' );
+		$_GET['course_id'] = $course_id;
+
+		/* Act. */
+		$exception = null;
+		ob_start();
+		try {
+			( new Sensei_Admin() )->lesson_order_screen();
+		} catch ( WPDieException $e ) {
+			$exception = $e;
+		} finally {
+			ob_end_clean();
+		}
+
+		/* Assert. */
+		$this->assertSame( 'Insufficient permissions', $exception ? $exception->getMessage() : null );
+	}
+
+	public function testLessonOrderScreen_OwnCourseGiven_RendersItsDraftLessons() {
+		/* Arrange. */
+		$course_id = $this->create_course_with_draft_lesson( $this->get_user_by_role( 'teacher' ), 'Own draft lesson' );
+		$this->login_as_teacher();
+		set_current_screen( 'admin_page_lesson-order' );
+		$_GET['course_id'] = $course_id;
+
+		/* Act. */
+		ob_start();
+		( new Sensei_Admin() )->lesson_order_screen();
+		$output = ob_get_clean();
+
+		/* Assert. */
+		$this->assertStringContainsString( 'Own draft lesson', $output );
+	}
+
+	/**
+	 * Create a course owned by the given user with one draft lesson attached to it.
+	 *
+	 * @param int    $author_id    Author of both the course and the lesson.
+	 * @param string $lesson_title Title of the draft lesson.
+	 * @return int Course ID.
+	 */
+	private function create_course_with_draft_lesson( int $author_id, string $lesson_title ): int {
+		$course_id = $this->factory->course->create( array( 'post_author' => $author_id ) );
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'post_title'  => $lesson_title,
+				'post_status' => 'draft',
+				'post_author' => $author_id,
+			)
+		);
+		update_post_meta( $lesson_id, '_lesson_course', $course_id );
+
+		return $course_id;
 	}
 }

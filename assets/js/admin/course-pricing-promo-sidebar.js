@@ -38,7 +38,7 @@ const CoursePricingPromoSidebar = () => {
 				<ExternalLink
 					href={ getSenseiProUpsellUrl( 'course_pricing' ) }
 				>
-					{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
+					{ __( 'Sell with Sensei Pro', 'sensei-lms' ) }
 				</ExternalLink>
 			</p>
 			<p className="sensei-pricing-promo__upgrade-new-course-text">

@@ -177,9 +177,11 @@ class Sensei_Db_Query_Learners {
 		}
 
 		$sql .= ' GROUP BY `u`.`ID`';
-		if ( ! empty( $this->order_by ) && in_array( $this->order_type, array( 'ASC', 'DESC' ), true ) ) {
+
+		// A single column name, optionally prefixed with its table.
+		$order_by = (string) $this->order_by;
+		if ( preg_match( '/^[A-Za-z0-9_.]+$/', $order_by ) && in_array( $this->order_type, array( 'ASC', 'DESC' ), true ) ) {
 			$order_type = $this->order_type;
-			$order_by   = $this->order_by;
 			// Switch case to be used when the value in the 'order_by' param needs modifying to work in the db.
 			switch ( $this->order_by ) {
 				case 'learner':

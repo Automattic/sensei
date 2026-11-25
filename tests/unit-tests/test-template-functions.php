@@ -83,6 +83,31 @@ class Sensei_Template_Functions_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The other lessons are those of the given course, ordered by their lesson order in the course.
+	 *
+	 * @covers sensei_get_other_lessons
+	 */
+	public function testGetOtherLessons_LessonOrderStored_ReturnsTheCourseLessonsInThatOrder() {
+		/* Arrange. */
+		$course       = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$other_course = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		Sensei()->course_lessons_repository->set_lesson_order( $course['lesson_ids'][0], $course['course_id'], 2 );
+		Sensei()->course_lessons_repository->set_lesson_order( $course['lesson_ids'][1], $course['course_id'], 1 );
+		Sensei()->course_lessons_repository->set_lesson_order( $other_course['lesson_ids'][0], $course['course_id'], 3 );
+
+		/* Act. */
+		$actual = wp_list_pluck( sensei_get_other_lessons( $course['course_id'], array() ), 'ID' );
+
+		/* Assert. */
+		self::assertSame( array( $course['lesson_ids'][1], $course['lesson_ids'][0] ), $actual );
+	}
+
+	/**
 	 * @covers sensei_get_navigation_url
 	 */
 	public function testGetNavigationModuleURL() {

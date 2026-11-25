@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.27.0
  */
 class Tables_Based_Progress_Query {
 
@@ -30,7 +30,7 @@ class Tables_Based_Progress_Query {
 	/**
 	 * Constructor.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param \wpdb $wpdb WordPress database object.
 	 */
@@ -51,7 +51,7 @@ class Tables_Based_Progress_Query {
 	 * Run the count query, snap the offset if it exceeds the total, and build
 	 * ORDER BY / LIMIT clauses. Shared by all paginated query methods.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string      $where SQL WHERE clause (already prepared).
 	 * @param array       $args  Activity args containing number, offset, orderby, order.
@@ -87,7 +87,7 @@ class Tables_Based_Progress_Query {
 	 * Applies post_id, user_id, status, and the meta_query entry with key 'start'
 	 * (used by the course list table for start-date range filtering).
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $args Activity args.
 	 * @return string SQL clauses, each prefixed with ' AND '.

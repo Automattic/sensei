@@ -2,6 +2,9 @@
 
 namespace SenseiTest\Internal\Student_Progress\Quiz_Progress\Repositories;
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
+use Sensei\Internal\Persistence_Exception;
 use DateTimeImmutable;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
@@ -14,6 +17,8 @@ use wpdb;
  * @covers \Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository
  */
 class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
+	use \Sensei_Progress_Insert_Failure_Helpers;
+
 	/**
 	 * Sensei factory.
 	 *
@@ -37,8 +42,9 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_ParamsGiven_InsertsToWpdb(): void {
 		/* Arrange. */
-		$wpdb       = $this->createMock( wpdb::class );
-		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+		$wpdb            = $this->createMock( wpdb::class );
+		$wpdb->insert_id = 1;
+		$repository      = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
 		/* Expect & Act. */
 		$wpdb
@@ -89,6 +95,44 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 			'status'  => 'in-progress',
 		];
 		self::assertSame( $expected, $this->export_progress( $progress ) );
+	}
+
+	/**
+	 * Failed inserts must not return or cache an invalid record, and a later insert must succeed.
+	 *
+	 * @dataProvider failed_insert_responses
+	 * @covers \Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository::create
+	 */
+	public function testCreate_InsertFailedOrReturnedWithoutId_ThrowsAndAllowsLaterCreation( ?string $replacement ): void {
+		$repository = new Tables_Based_Quiz_Progress_Repository( $GLOBALS['wpdb'] );
+
+		$this->with_failed_cached_insert(
+			$GLOBALS['wpdb']->prefix . 'sensei_lms_progress',
+			function () use ( $repository ) {
+				try {
+					$repository->create( 123, 456 );
+					self::fail( 'The required insert must report failure.' );
+				} catch ( Persistence_Exception $exception ) {
+					self::assertNull( $repository->get( 123, 456 ), 'A failed insert must not expose an invalid cached record.' );
+				}
+			},
+			$replacement
+		);
+		$record = $repository->create( 123, 456 );
+
+		self::assertGreaterThan( 0, $record->get_id() );
+	}
+
+	/**
+	 * Database failures and successful queries that did not insert a row.
+	 *
+	 * @return array
+	 */
+	public static function failed_insert_responses(): array {
+		return array(
+			'failed insert' => array( null ),
+			'no insert ID'  => array( 'SELECT 1' ),
+		);
 	}
 
 	public function testGet_NotFound_ReturnsNull(): void {

@@ -279,4 +279,34 @@ class Sensei_Import_Associations_Tests extends WP_UnitTestCase {
 			$order_index++;
 		}
 	}
+
+	/**
+	 * A lesson of the course that is missing from the import is detached from it.
+	 *
+	 * @covers Sensei_Import_Associations::handle_course_lessons
+	 */
+	public function testHandleCourseLessons_LessonMissingFromTheImport_DetachesIt() {
+		/* Arrange. */
+		$course_data = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$course_id   = $course_data['course_id'];
+		$kept_id     = $course_data['lesson_ids'][0];
+		$removed_id  = $course_data['lesson_ids'][1];
+		$job         = Sensei_Import_Job::create( 'test', 0 );
+		$job->set_import_id( Sensei_Data_Port_Lesson_Schema::POST_TYPE, '1', $kept_id );
+		$task   = new Sensei_Import_Associations( $job );
+		$method = new ReflectionMethod( $task, 'handle_course_lessons' );
+		Sensei_Unit_Tests_Bootstrap::make_reflection_accessible( $method );
+
+		/* Act. */
+		$method->invokeArgs( $task, array( $course_id, array( 'id:1', 1, 'Post title' ) ) );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'post', $removed_id, '_lesson_course' ), 'The lesson missing from the import should be detached.' );
+		self::assertSame( $course_id, Sensei()->course_lessons_repository->get_course_id( $kept_id ), 'The imported lesson should stay in the course.' );
+	}
 }

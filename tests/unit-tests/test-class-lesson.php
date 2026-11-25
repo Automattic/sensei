@@ -1879,6 +1879,110 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual );
 	}
 
+	/**
+	 * Saving the lesson meta boxes with a course attaches the lesson to it.
+	 *
+	 * @covers Sensei_Lesson::meta_box_save
+	 */
+	public function testMetaBoxSave_CourseGiven_AttachesTheLesson(): void {
+		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		$_POST     = array(
+			'woo_lesson_nonce' => wp_create_nonce( 'sensei-save-post-meta' ),
+			'lesson_course'    => $course_id,
+		);
+
+		/* Act */
+		Sensei()->lesson->meta_box_save( $lesson_id );
+
+		/* Assert */
+		self::assertSame( $course_id, Sensei()->course_lessons_repository->get_course_id( $lesson_id ) );
+	}
+
+	/**
+	 * Choosing "None" in the course meta box detaches the lesson.
+	 *
+	 * @covers Sensei_Lesson::meta_box_save
+	 */
+	public function testMetaBoxSave_NoCourseGiven_DetachesTheLesson(): void {
+		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		$lesson_id      = $course_lessons['lesson_ids'][0];
+		$_POST          = array(
+			'woo_lesson_nonce' => wp_create_nonce( 'sensei-save-post-meta' ),
+			'lesson_course'    => '',
+		);
+
+		/* Act */
+		Sensei()->lesson->meta_box_save( $lesson_id );
+
+		/* Assert */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_lesson_course' ) );
+	}
+
+	/**
+	 * A "no change" course value leaves the lesson's course untouched.
+	 *
+	 * @covers Sensei_Lesson::meta_box_save
+	 */
+	public function testMetaBoxSave_NoCourseChangeGiven_KeepsTheLessonCourse(): void {
+		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		$lesson_id      = $course_lessons['lesson_ids'][0];
+		$_POST          = array(
+			'woo_lesson_nonce' => wp_create_nonce( 'sensei-save-post-meta' ),
+			'lesson_course'    => '-1',
+		);
+
+		/* Act */
+		Sensei()->lesson->meta_box_save( $lesson_id );
+
+		/* Assert */
+		self::assertSame( $course_lessons['course_id'], Sensei()->course_lessons_repository->get_course_id( $lesson_id ) );
+	}
+
+	/**
+	 * Choosing "None" in the prerequisite meta box removes the prerequisite.
+	 *
+	 * @covers Sensei_Lesson::meta_box_save
+	 */
+	public function testMetaBoxSave_NoPrerequisiteGiven_DeletesTheLessonPrerequisite(): void {
+		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 2,
+				'question_count' => 0,
+			)
+		);
+		$lesson_id      = $course_lessons['lesson_ids'][1];
+		Sensei()->course_lessons_repository->set_lesson_prerequisite( $lesson_id, $course_lessons['lesson_ids'][0] );
+		$_POST = array(
+			'woo_lesson_nonce'    => wp_create_nonce( 'sensei-save-post-meta' ),
+			'lesson_prerequisite' => '',
+		);
+
+		/* Act */
+		Sensei()->lesson->meta_box_save( $lesson_id );
+
+		/* Assert */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_lesson_prerequisite' ) );
+	}
+
 	public function testQuizPanelQuestion_WhenMultipleChoiceQuestion_OutputsQuestion(): void {
 		/* Arrange */
 		$question = $this->factory->quiz->create_and_get( [ 'post_title' => 'Test Question' ] );
@@ -1951,6 +2055,43 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( [ $question_1, $question_2 ], $question_ids );
+	}
+
+	public function testLessonQuizQuestions_NonQuestionPostStoredInSubmission_ReturnsOnlyQuestions(): void {
+		/* Arrange. */
+		$user_id = $this->factory->user->create();
+		wp_set_current_user( $user_id );
+
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'meta_input'  => array(
+					'_quiz_lesson' => $lesson_id,
+				),
+			)
+		);
+
+		$question_id     = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$private_post_id = $this->factory->post->create( array( 'post_status' => 'private' ) );
+
+		// A tampered quiz save stores the private post as one of the asked questions.
+		Sensei_Quiz::save_user_answers(
+			array(
+				$question_id     => 'answer',
+				$private_post_id => '',
+			),
+			array(),
+			$lesson_id,
+			$user_id
+		);
+
+		/* Act. */
+		$questions    = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+		$question_ids = wp_list_pluck( $questions, 'ID' );
+
+		/* Assert. */
+		$this->assertSame( array( $question_id ), $question_ids );
 	}
 
 	public function testSaveAllLessonsEditFields_WhenCalled_UpdatesPostMeta(): void {
@@ -2267,6 +2408,60 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Choosing "None" as the course in Quick Edit or Bulk Edit detaches the lesson.
+	 *
+	 * @covers Sensei_Lesson::save_all_lessons_edit_fields
+	 */
+	public function testSaveAllLessonsEditFields_NoneGiven_DetachesTheLesson(): void {
+		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		$lesson_id      = $course_lessons['lesson_ids'][0];
+		$data           = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => '',
+		);
+
+		/* Act */
+		Sensei()->lesson->save_all_lessons_edit_fields( array( $lesson_id ), $data );
+
+		/* Assert */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_lesson_course' ) );
+	}
+
+	/**
+	 * A "no change" course value in Bulk Edit leaves the lesson's course untouched.
+	 *
+	 * @covers Sensei_Lesson::save_all_lessons_edit_fields
+	 */
+	public function testSaveAllLessonsEditFields_NoChangeGiven_KeepsTheLessonCourse(): void {
+		/* Arrange */
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			)
+		);
+		$lesson_id      = $course_lessons['lesson_ids'][0];
+		$data           = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => '-1',
+		);
+
+		/* Act */
+		Sensei()->lesson->save_all_lessons_edit_fields( array( $lesson_id ), $data );
+
+		/* Assert */
+		self::assertSame( $course_lessons['course_id'], Sensei()->course_lessons_repository->get_course_id( $lesson_id ) );
+	}
+
+	/**
 	 * A quiz ID coming from the request must never become the write target: the handler only
 	 * ever writes to the quiz that belongs to the lesson the save_post hook fired for.
 	 *
@@ -2492,5 +2687,54 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		self::assertSame( implode( ' ', range( 1, 30 ) ) . '…', $actual );
+	}
+
+	public function testLessonSaveQuestion_UnknownQuestionTypeGiven_DoesNotSaveTheQuestion() {
+		/* Arrange. */
+		$quiz_id = $this->factory->quiz->create();
+
+		/* Act. */
+		$result = Sensei()->lesson->lesson_save_question(
+			array(
+				'question_type'  => 'not-a-type',
+				'question'       => 'Question text',
+				'question_media' => '',
+				'question_count' => 0,
+				'quiz_id'        => $quiz_id,
+			)
+		);
+
+		/* Assert. */
+		$this->assertFalse( $result, 'An unknown question type should not be saved.' );
+		$this->assertEmpty(
+			get_posts(
+				array(
+					'post_type' => 'question',
+					'title'     => 'Question text',
+				)
+			),
+			'No question should be created.'
+		);
+	}
+
+	public function testLessonSaveQuestion_UnregisteredTypeTheQuestionAlreadyHasGiven_SavesTheQuestion() {
+		/* Arrange. */
+		$question_id = $this->factory->question->create();
+		wp_set_post_terms( $question_id, array( 'retired-type' ), 'question-type' );
+
+		/* Act. */
+		$result = Sensei()->lesson->lesson_save_question(
+			array(
+				'question_id'    => $question_id,
+				'question_type'  => 'retired-type',
+				'question'       => 'Updated title',
+				'question_media' => '',
+				'question_count' => 0,
+				'quiz_id'        => $this->factory->quiz->create(),
+			)
+		);
+
+		/* Assert. */
+		$this->assertSame( $question_id, $result );
 	}
 }

@@ -952,6 +952,26 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertSame( $body['options']['pagination'], $response_data['options']['pagination'], 'Deprecated progress bar settings should round-trip through the API.' );
 	}
 
+	public function testSaveQuiz_WhenColorWithExtraDeclarationGiven_DoesNotStoreIt() {
+		$this->login_as_teacher();
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = array(
+			'options'   => array(
+				'button_text_color'       => 'red; background: url(https://example.com/x.gif)',
+				'button_background_color' => 'rgb(1, 2, 3)',
+			),
+			'questions' => array(),
+		);
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		$this->assertSame( '', get_post_meta( $quiz_id, '_button_text_color', true ), 'A color with another declaration should not be stored.' );
+		$this->assertSame( 'rgb(1, 2, 3)', get_post_meta( $quiz_id, '_button_background_color', true ), 'A color without extra declarations should be kept.' );
+	}
+
 	/**
 	 * Tests default values for quiz pagination settings.
 	 */
@@ -971,6 +991,29 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertNull( $pagination_settings['progress_bar_background'] );
 	}
 
+	/**
+	 * A question without a title fails the request before the quiz is created.
+	 */
+	public function testSaveQuiz_QuestionWithoutTitleGiven_CreatesNoQuiz() {
+		$this->login_as_teacher();
+		$lesson_id = $this->factory->lesson->create();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			array(
+				'options'   => array(),
+				'questions' => array(
+					array(
+						'title' => '',
+						'type'  => 'multi-line',
+					),
+				),
+			)
+		);
+
+		$this->assertSame( 'sensei_lesson_quiz_question_missing_title', $response->get_data()['code'] );
+		$this->assertNull( Sensei()->lesson->lesson_quizzes( $lesson_id ), 'No quiz should be created.' );
+	}
 	/**
 	 * Tests that invalid question data are validated.
 	 */
@@ -1040,5 +1083,29 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$quiz_id   = $this->factory->quiz->create( array_merge( [ 'post_parent' => $lesson_id ], $quiz_args ) );
 
 		return [ $lesson_id, $quiz_id ];
+	}
+
+	/**
+	 * The deprecated single question schema method still returns the saver's schema.
+	 *
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::get_single_question_schema
+	 */
+	public function testGetSingleQuestionSchema_WhenCalled_ReturnsSaverSchemaAndDeprecates() {
+		$this->setExpectedDeprecated( 'Sensei_REST_API_Lesson_Quiz_Controller::get_single_question_schema' );
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
+
+		$this->assertSame( ( new Sensei_Lesson_Quiz_Saver() )->get_single_question_schema(), $controller->get_single_question_schema() );
+	}
+
+	/**
+	 * The deprecated common question properties schema method still returns the saver's schema.
+	 *
+	 * @covers Sensei_REST_API_Lesson_Quiz_Controller::get_common_question_properties_schema
+	 */
+	public function testGetCommonQuestionPropertiesSchema_WhenCalled_ReturnsSaverSchemaAndDeprecates() {
+		$this->setExpectedDeprecated( 'Sensei_REST_API_Lesson_Quiz_Controller::get_common_question_properties_schema' );
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
+
+		$this->assertSame( ( new Sensei_Lesson_Quiz_Saver() )->get_common_question_properties_schema(), $controller->get_common_question_properties_schema() );
 	}
 }

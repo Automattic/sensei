@@ -111,4 +111,51 @@ class Sensei_Class_Question_Test extends WP_UnitTestCase {
 		$this->assertEquals( 'unknown', $event['url_args']['page'] );
 		$this->assertEquals( Sensei()->question->get_question_type( $question_id ), $event['url_args']['question_type'] );
 	}
+
+	public function testFileUploadLoadQuestionData_OtherUsersAttachmentGiven_ReturnsNoMediaUrl() {
+		/* Arrange. */
+		$question_id   = $this->factory->question->create( array( 'question_type' => 'file-upload' ) );
+		$attachment_id = $this->factory->attachment->create(
+			array(
+				'file'        => 'other-user-answer.pdf',
+				'post_author' => $this->factory->user->create(),
+			)
+		);
+		wp_set_current_user( $this->factory->user->create() );
+
+		$question_data = array(
+			'user_answer_entry'      => (string) $attachment_id,
+			'question_wrong_answers' => array(),
+		);
+
+		/* Act. */
+		$question_data = Sensei_Question::file_upload_load_question_data( $question_data, $question_id, 0 );
+
+		/* Assert. */
+		$this->assertSame( '', $question_data['answer_media_url'] );
+	}
+
+	public function testFileUploadLoadQuestionData_OwnAttachmentGiven_ReturnsTheMediaUrl() {
+		/* Arrange. */
+		$user_id       = $this->factory->user->create();
+		$question_id   = $this->factory->question->create( array( 'question_type' => 'file-upload' ) );
+		$attachment_id = $this->factory->attachment->create(
+			array(
+				'file'        => 'own-answer.pdf',
+				'post_author' => $user_id,
+			)
+		);
+		wp_set_current_user( $user_id );
+
+		$question_data = array(
+			'user_answer_entry'      => (string) $attachment_id,
+			'question_wrong_answers' => array(),
+		);
+
+		/* Act. */
+		$question_data = Sensei_Question::file_upload_load_question_data( $question_data, $question_id, 0 );
+
+		/* Assert. */
+		$this->assertStringEndsWith( 'own-answer.pdf', $question_data['answer_media_url'] );
+	}
 }

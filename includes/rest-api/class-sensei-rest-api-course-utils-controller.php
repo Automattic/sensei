@@ -101,6 +101,16 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 		$teacher             = $request->get_param( 'teacher' );
 		$module_custom_slugs = $request->get_param( 'custom_slugs' );
 
+		// Checked here, after the permission check, so the response does not reveal who can teach.
+		if ( ! $this->is_teacher_option( $teacher ) ) {
+			return new WP_REST_Response(
+				array(
+					'message' => 'Update Teacher Failed: Invalid teacher.',
+				),
+				WP_Http::BAD_REQUEST
+			);
+		}
+
 		// If a custom slug is of a module that belongs to another teacher from another course, don't process farther.
 		if ( isset( $module_custom_slugs ) ) {
 			$module_custom_slugs = json_decode( sanitize_text_field( wp_unslash( $module_custom_slugs ) ) );
@@ -137,6 +147,18 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 	 */
 	public function validate_nonce_value( $nonce ) {
 		return wp_verify_nonce( $nonce, \Sensei_Teacher::NONCE_ACTION_NAME );
+	}
+
+	/**
+	 * Whether the teacher is one of the users the teacher dropdown offers.
+	 *
+	 * @param mixed $teacher The teacher user ID.
+	 * @return boolean
+	 */
+	private function is_teacher_option( $teacher ) {
+		$teacher_ids = array_map( 'intval', Sensei()->teacher->get_teachers_and_authors() );
+
+		return is_numeric( $teacher ) && in_array( (int) $teacher, $teacher_ids, true );
 	}
 
 	/**

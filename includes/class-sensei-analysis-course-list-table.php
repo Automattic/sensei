@@ -771,12 +771,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'offset'           => $args['offset'],
 			'order'            => $args['order'],
 			'orderby'          => $args['orderby'],
-			'meta_query'       => array(
-				array(
-					'key'   => '_lesson_course',
-					'value' => intval( $this->course_id ),
-				),
-			),
+			'sensei_course'    => intval( $this->course_id ),
 			'post_status'      => array( 'publish', 'private' ),
 			'suppress_filters' => 0,
 		);
@@ -787,14 +782,46 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 		// Using WP_Query as get_posts() doesn't support 'found_posts'
 		/**
-		 * Filter the lessons arguments for the Course Analysis list table.
+		 * Filter the lessons arguments for the lessons table of a course on the Reports screen.
 		 *
-		 * @hook sensei_analysis_course_filter_lessons
+		 * @since 4.28.0
 		 *
-		 * @param {array} $lessons_args The lessons arguments.
+		 * @hook sensei_reports_course_filter_lessons_query_args
+		 *
+		 * @param {array} $lessons_args The lessons arguments. The course is in the `sensei_course` argument.
 		 * @return {array} The lessons arguments.
 		 */
-		$lessons_query     = new WP_Query( apply_filters( 'sensei_analysis_course_filter_lessons', $lessons_args ) );
+		$lessons_args = apply_filters( 'sensei_reports_course_filter_lessons_query_args', $lessons_args );
+
+		if ( has_filter( 'sensei_analysis_course_filter_lessons' ) ) {
+			// The deprecated filter gets the course in a `_lesson_course` meta clause, as it always did.
+			if ( isset( $lessons_args['sensei_course'] ) ) {
+				$lessons_args['meta_query'][] = array(
+					'key'   => '_lesson_course',
+					'value' => $lessons_args['sensei_course'],
+				);
+				unset( $lessons_args['sensei_course'] );
+			}
+
+			/**
+			 * Filter the lessons arguments for the Course Analysis list table.
+			 *
+			 * @deprecated 4.28.0 Use sensei_reports_course_filter_lessons_query_args instead.
+			 *
+			 * @hook sensei_analysis_course_filter_lessons
+			 *
+			 * @param {array} $lessons_args The lessons arguments.
+			 * @return {array} The lessons arguments.
+			 */
+			$lessons_args = apply_filters_deprecated(
+				'sensei_analysis_course_filter_lessons',
+				array( $lessons_args ),
+				'4.28.0',
+				'sensei_reports_course_filter_lessons_query_args'
+			);
+		}
+
+		$lessons_query     = new WP_Query( $lessons_args );
 		$this->total_items = $lessons_query->found_posts;
 
 		return $lessons_query->posts;

@@ -15,14 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Reads student management activity from comments.
  *
  * @internal
- * @since $$next-version$$
+ * @since 4.27.0
  */
 class Comments_Based_Student_Management_Listing_Service implements Student_Management_Listing_Service_Interface {
 
 	/**
 	 * Get student activity and its pagination total.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return array{items: Students_Item[], total_count: int|false} Activity rows and total.
@@ -64,7 +64,7 @@ class Comments_Based_Student_Management_Listing_Service implements Student_Manag
 				(int) $args['post_id'],
 				(int) $comment->user_id,
 				$comment->comment_approved,
-				'complete' === $comment->comment_approved ? $comment->comment_date : null,
+				'complete' === $comment->comment_approved ? get_date_from_gmt( $comment->comment_date_gmt ) : null,
 				$comment->comment_date
 			);
 		}
@@ -78,7 +78,7 @@ class Comments_Based_Student_Management_Listing_Service implements Student_Manag
 	/**
 	 * Count student activity.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $args Arguments for the query (see interface).
 	 * @return int|false Activity count, or false for an invalid user ID.

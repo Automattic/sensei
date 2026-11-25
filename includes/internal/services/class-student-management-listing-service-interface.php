@@ -15,14 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Reads student activity for course and lesson management.
  *
  * @internal
- * @since $$next-version$$
+ * @since 4.27.0
  */
 interface Student_Management_Listing_Service_Interface {
 
 	/**
 	 * Get student activity and its pagination total.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $args Activity arguments. post_id is a course or lesson ID; type is
 	 *                    sensei_course_status or sensei_lesson_status, respectively.
@@ -34,7 +34,7 @@ interface Student_Management_Listing_Service_Interface {
 	/**
 	 * Count student activity.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param array $args Student activity arguments. post_id is a course or lesson ID;
 	 *                    type is sensei_course_status or sensei_lesson_status, respectively.

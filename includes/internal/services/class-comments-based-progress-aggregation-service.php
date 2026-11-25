@@ -44,7 +44,10 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count progress records grouped by status.
 	 *
+	 * Deprecated `query` conditions are applied to the comments table before grouping.
+	 *
 	 * @since 4.26.0
+	 * @since 4.27.0 The `query` argument is deprecated. Use structured filtering arguments instead.
 	 *
 	 * @param array $args {
 	 *     Arguments for the query.
@@ -55,7 +58,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	 *     @type int|array $user_id                      Restrict to specific user IDs.
 	 *     @type string[]  $exclude_user_login_prefixes  User login prefixes to exclude.
 	 *     @type string[]  $include_statuses_override    Statuses that bypass user exclusion.
-	 *     @type string    $query                        Raw SQL to append (backward compat).
+	 *     @type string    $query                        Deprecated raw SQL conditions on the comments table.
 	 * }
 	 * @return array Associative array of status => count.
 	 */
@@ -74,18 +77,37 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 
 		$reports_statuses = Utils::get_reports_post_status_sql();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb.
-		$query = $wpdb->prepare( "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->comments}.comment_post_ID AND {$wpdb->posts}.post_status IN ( {$reports_statuses} ) WHERE comment_type = %s", $comment_type );
+		$filters  = $this->build_post_filter_clause( $args );
+		$filters .= $this->build_user_filter_clause( $args );
+		$filters .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
 
-		$query .= $this->build_post_filter_clause( $args );
-		$query .= $this->build_user_filter_clause( $args );
-		$query .= Utils::build_comment_author_exclusion_clause( $wpdb, $args );
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name and filters contain trusted, prepared clauses.
+		$progress_query = $wpdb->prepare(
+			"SELECT comment_post_ID, comment_approved, COUNT(*) AS total
+			FROM {$wpdb->comments}
+			WHERE comment_type = %s {$filters}",
+			$comment_type
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-		if ( isset( $args['query'] ) ) {
-			$query .= $args['query'];
+		if ( ! empty( $args['query'] ) ) {
+			_deprecated_argument(
+				__METHOD__,
+				'4.27.0',
+				'The "query" argument is deprecated. Use "post_id", "post__in", "user_id", "exclude_user_login_prefixes", or "include_statuses_override" where applicable.'
+			);
+
+			$progress_query .= $args['query'];
 		}
 
-		$query .= ' GROUP BY comment_approved';
+		$progress_query .= ' GROUP BY comment_post_ID, comment_approved';
+
+		// Check post visibility once per post/status group instead of once per progress comment.
+		$query = "SELECT progress.comment_approved, SUM(progress.total) AS total
+			FROM ( {$progress_query} ) progress
+			INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = progress.comment_post_ID
+				AND {$wpdb->posts}.post_status IN ( {$reports_statuses} )
+			GROUP BY progress.comment_approved";
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL prepared in advance. Caching handled by callers.
 		$results = (array) $wpdb->get_results( $query, ARRAY_A );
@@ -143,7 +165,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count course progress records grouped by post and status.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Course IDs to count; an empty list counts all courses.
 	 * @param array $args {
@@ -186,7 +208,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Get report status counts for a lesson, excluding temporary users.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int $lesson_id Requested lesson post ID.
 	 * @return array<string, int> Counts keyed by progress status.
@@ -374,7 +396,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Count completed lesson progress per lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $lesson_ids Lesson post IDs.
 	 * @param array $args       Optional query filters (see interface).
@@ -393,6 +415,12 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 		$wpdb             = $this->wpdb;
 		$placeholders     = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
 
+		$lesson_course       = Sensei()->course_lessons_sql_service->get_lesson_course_clauses( 'wpm' );
+		$lesson_course_table = $lesson_course['table'];
+		$lesson_course_where = $lesson_course['where'];
+		$lesson_id_sql       = $lesson_course['lesson_id'];
+		$course_id_sql       = $lesson_course['course_id'];
+
 		// Submitted quizzes count as lesson completions even while awaiting grading.
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names from wpdb. Placeholders created dynamically.
 		$query  = $wpdb->prepare(
@@ -402,9 +430,9 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 			AND c.comment_type = 'sensei_lesson_status'
 			AND c.comment_post_ID IN ( $placeholders )
 			AND c.comment_post_ID IN (
-				SELECT wpm.post_id FROM {$wpdb->posts} wpc
-				JOIN {$wpdb->postmeta} wpm ON wpm.meta_value = wpc.id
-				WHERE wpm.meta_key = '_lesson_course'
+				SELECT {$lesson_id_sql} FROM {$wpdb->posts} wpc
+				JOIN {$lesson_course_table} wpm ON {$course_id_sql} = wpc.id
+				WHERE {$lesson_course_where}
 				AND wpc.post_status IN ( {$reports_statuses} )
 			)",
 			$lesson_ids
@@ -428,7 +456,7 @@ class Comments_Based_Progress_Aggregation_Service implements Progress_Aggregatio
 	/**
 	 * Get rounded completion-day averages keyed by requested course ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Course post IDs.
 	 * @param array $args       Optional query filters (see interface).

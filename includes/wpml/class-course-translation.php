@@ -155,8 +155,10 @@ class Course_Translation {
 	 * @param int $course_id Course ID.
 	 */
 	private function detach_lesson_from_course( $lesson_id, $course_id ) {
-		delete_post_meta( $lesson_id, '_lesson_course' );
-		delete_post_meta( $lesson_id, '_order_' . $course_id );
+		$repository = Sensei()->course_lessons_repository;
+
+		$repository->detach_lesson( (int) $lesson_id );
+		$repository->delete_lesson_order( (int) $lesson_id, (int) $course_id );
 
 		// WPML swaps term IDs for their translation in the current language,
 		// which during a translation job is not the lesson's language, so the
@@ -168,14 +170,8 @@ class Course_Translation {
 
 		add_filter( 'wpml_disable_term_adjust_id', $disable_term_adjustment );
 
-		$modules = get_the_terms( $lesson_id, 'module' );
-		if ( is_array( $modules ) ) {
-			foreach ( $modules as $module ) {
-				delete_post_meta( $lesson_id, '_order_module_' . $module->term_id );
-			}
-		}
-
-		wp_set_object_terms( $lesson_id, array(), 'module' );
+		$repository->delete_all_lesson_module_orders( (int) $lesson_id );
+		$repository->unset_lesson_module( (int) $lesson_id );
 
 		remove_filter( 'wpml_disable_term_adjust_id', $disable_term_adjustment );
 	}

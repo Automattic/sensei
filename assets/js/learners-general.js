@@ -1,3 +1,13 @@
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import { resetProgressErrorMessage } from '../shared/reset-progress-error';
+
 jQuery( document ).ready( function ( $ ) {
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
@@ -185,11 +195,16 @@ jQuery( document ).ready( function ( $ ) {
 				course: window.woo_learners_general_data
 					.remove_progress_confirm,
 				action: 'remove_user_from_post',
+				errorMessage: __(
+					"We couldn't finish removing progress. Some progress or quiz answers may already have been cleared. Refresh the page and review student progress before taking further action. If it looks inconsistent, contact your site administrator.",
+					'sensei-lms'
+				),
 			},
 			reset_progress: {
 				lesson: window.woo_learners_general_data.reset_lesson_confirm,
 				course: window.woo_learners_general_data.reset_course_confirm,
 				action: 'reset_user_post',
+				errorMessage: resetProgressErrorMessage(),
 			},
 		};
 
@@ -209,46 +224,58 @@ jQuery( document ).ready( function ( $ ) {
 		const userId = jQuery( this ).attr( 'data-user-id' );
 		const postId = jQuery( this ).attr( 'data-post-id' );
 		const tableRow = jQuery( this ).closest( 'tr' );
+		const showProgressError = () => {
+			const $table = tableRow.closest( 'table' );
+			$table.prev( '.sensei-progress-action-error' ).remove();
+			$( '<div>', {
+				class: 'sensei-progress-action-error notice notice-error',
+				role: 'alert',
+			} )
+				.append(
+					$( '<p>' ).text( actions[ currentAction ].errorMessage )
+				)
+				.insertBefore( $table );
+		};
 
 		if ( userId && postId && postType ) {
 			dataToPost += 'user_id=' + userId;
 			dataToPost += '&post_id=' + postId;
 			dataToPost += '&post_type=' + postType;
 
-			jQuery.post(
-				ajaxurl,
-				{
-					action: actions[ currentAction ].action,
-					data: dataToPost,
-					security:
-						window.woo_learners_general_data.modify_user_post_nonce,
-				},
-				function ( response ) {
-					if ( response ) {
-						if ( 'removed' === response ) {
-							tableRow.fadeTo( 400, 0, function () {
-								tableRow.remove();
-							} );
+			const request = jQuery.post( ajaxurl, {
+				action: actions[ currentAction ].action,
+				data: dataToPost,
+				security:
+					window.woo_learners_general_data.modify_user_post_nonce,
+			} );
 
-							return;
-						}
-						switch ( currentAction ) {
-							case 'reset_progress':
-								tableRow
-									.find( '.column-user_status' )
-									.text(
-										'course' === postType
-											? window.slgL10n.notstarted
-											: window.slgL10n.inprogress
-									);
-								tableRow
-									.find( '.column-date_completed' )
-									.text( '-' );
-								break;
-						}
-					}
+			request.done( function ( response ) {
+				if ( 'removed' !== response && 'altered' !== response ) {
+					// The legacy handlers return an empty body when the action fails.
+					showProgressError();
+					return;
 				}
-			);
+
+				if ( 'removed' === response ) {
+					tableRow.fadeTo( 400, 0, function () {
+						tableRow.remove();
+					} );
+					return;
+				}
+
+				if ( 'reset_progress' === currentAction ) {
+					tableRow
+						.find( '.column-user_status' )
+						.text(
+							'course' === postType
+								? window.slgL10n.notstarted
+								: window.slgL10n.inprogress
+						);
+					tableRow.find( '.column-date_completed' ).text( '-' );
+				}
+			} );
+
+			request.fail( showProgressError );
 
 			window.sensei_log_event( 'learner_management_' + currentAction );
 		}

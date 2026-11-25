@@ -14,6 +14,14 @@ import apiFetch from '@wordpress/api-fetch';
 import CourseList from './course-list';
 import InputControl from '../../../blocks/editor-components/input-control';
 import useAbortController from '../hooks/use-abort-controller';
+import { resetProgressErrorMessage } from '../../../shared/reset-progress-error';
+
+const getBatchOutcomes = ( result, students, courses ) =>
+	students.flatMap( ( studentId ) =>
+		courses.map(
+			( course ) => result?.[ studentId ]?.[ course.id ] === true
+		)
+	);
 
 const getAction = ( action, studentCount, studentDisplayName ) => {
 	const safeStudentDisplayName = escapeHTML( studentDisplayName );
@@ -112,13 +120,7 @@ const getAction = ( action, studentCount, studentDisplayName ) => {
 							safeStudentDisplayName
 					  ),
 			buttonLabel: __( 'Reset Progress', 'sensei-lms' ),
-			errorMessage: ( students ) =>
-				_n(
-					'Unable to reset progress for this student. Please try again.',
-					'Unable to reset progress for these students. Please try again.',
-					students.length,
-					'sensei-lms'
-				),
+			errorMessage: resetProgressErrorMessage,
 			sendAction: ( students, courses, { signal } ) =>
 				apiFetch( {
 					path: '/sensei-internal/v1/course-progress/batch',
@@ -174,12 +176,10 @@ export const StudentModal = ( {
 			);
 
 			if ( action === 'add' ) {
-				// A completed request can contain failed or missing student/course results.
-				const outcomes = students.flatMap( ( studentId ) =>
-					selectedCourses.map(
-						( course ) =>
-							result?.[ studentId ]?.[ course.id ] === true
-					)
+				const outcomes = getBatchOutcomes(
+					result,
+					students,
+					selectedCourses
 				);
 
 				if ( outcomes.includes( false ) ) {
@@ -210,6 +210,27 @@ export const StudentModal = ( {
 					setIsSending( false );
 
 					// Keep the modal and selection available for retry.
+					return;
+				}
+			}
+
+			if ( action === 'reset-progress' ) {
+				// A 200 response can contain failed or missing student/course results.
+				// Keep the selection visible; refresh if any reset persisted.
+				const outcomes = getBatchOutcomes(
+					result,
+					students,
+					selectedCourses
+				);
+
+				if ( outcomes.includes( false ) ) {
+					const hasSuccess = outcomes.includes( true );
+					if ( hasSuccess ) {
+						setNeedsReload( true );
+					}
+
+					setError( errorMessage( students ) );
+					setIsSending( false );
 					return;
 				}
 			}

@@ -90,7 +90,7 @@ class Sensei_Grading {
 	 * Create a grading controller with its query-service dependencies.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param string                                 $file                    The main plugin file path.
 	 * @param Grading_Listing_Service_Interface      $grading_listing_service The grading listing service.
@@ -401,6 +401,8 @@ class Sensei_Grading {
 		}
 
 		$sensei_grading_user_profile = new Sensei_Grading_User_Quiz( $user_id, $quiz_id );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The grading handler validates this request before setting the failure flag; the form sanitizes each submitted value.
+		$submitted_input = $this->progress_save_failed ? wp_unslash( $_POST ) : array();
 
 		// Wrappers
 		/**
@@ -432,7 +434,7 @@ class Sensei_Grading {
 		?>
 		<div id="poststuff" class="sensei-grading-wrap user-profile">
 			<div class="sensei-grading-main">
-				<?php $sensei_grading_user_profile->display(); ?>
+				<?php $sensei_grading_user_profile->display( $submitted_input ); ?>
 			</div>
 		</div>
 		<?php
@@ -801,8 +803,7 @@ class Sensei_Grading {
 				'posts_per_page'   => -1,
 				'orderby'          => 'title',
 				'order'            => 'ASC',
-				'meta_key'         => '_lesson_course',
-				'meta_value'       => $course_id,
+				'sensei_course'    => $course_id,
 				'post_status'      => array( 'publish', 'private' ),
 				'suppress_filters' => 0,
 				'fields'           => 'ids',
@@ -817,12 +818,42 @@ class Sensei_Grading {
 			/**
 			 * Filter the arguments used to query for lessons in the grading dropdown.
 			 *
-			 * @hook sensei_grading_filter_lessons
+			 * @since 4.28.0
 			 *
-			 * @param {array} $lesson_args Array of arguments for the query.
+			 * @hook sensei_grading_filter_lessons_query_args
+			 *
+			 * @param {array} $lesson_args Array of arguments for the query. The course is in the `sensei_course` argument.
 			 * @return {array} Filtered arguments.
 			 */
-			$lessons = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
+			$lesson_args = apply_filters( 'sensei_grading_filter_lessons_query_args', $lesson_args );
+
+			if ( has_filter( 'sensei_grading_filter_lessons' ) ) {
+				// The deprecated filter gets the course in the `meta_key` and `meta_value` arguments, as it always did.
+				if ( isset( $lesson_args['sensei_course'] ) ) {
+					$lesson_args['meta_key']   = '_lesson_course'; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Argument shape of the deprecated filter.
+					$lesson_args['meta_value'] = $lesson_args['sensei_course']; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Argument shape of the deprecated filter.
+					unset( $lesson_args['sensei_course'] );
+				}
+
+				/**
+				 * Filter the arguments used to query for lessons in the grading dropdown.
+				 *
+				 * @deprecated 4.28.0 Use sensei_grading_filter_lessons_query_args instead.
+				 *
+				 * @hook sensei_grading_filter_lessons
+				 *
+				 * @param {array} $lesson_args Array of arguments for the query.
+				 * @return {array} Filtered arguments.
+				 */
+				$lesson_args = apply_filters_deprecated(
+					'sensei_grading_filter_lessons',
+					array( $lesson_args ),
+					'4.28.0',
+					'sensei_grading_filter_lessons_query_args'
+				);
+			}
+
+			$lessons = get_posts( $lesson_args );
 
 			$html .= '<option value="">' . esc_html__( 'Select a lesson', 'sensei-lms' ) . '</option>';
 			if ( $lessons ) {
@@ -921,11 +952,21 @@ class Sensei_Grading {
 
 			}
 
-			// store all question grades on the lesson status
-			Sensei()->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id, $user_id );
+			$has_submission = (bool) Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 
-			// store the feedback from grading
-			Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id );
+			// No submission and no grades means there is nothing to save.
+			if ( ! Sensei()->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id, $user_id )
+				&& ( $all_question_grades || $has_submission ) ) {
+				$this->progress_save_failed = true;
+				return false;
+			}
+
+			// No submission and no feedback means there is nothing to save.
+			if ( ! Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id )
+				&& ( $all_answers_feedback || $has_submission ) ) {
+				$this->progress_save_failed = true;
+				return false;
+			}
 
 			$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 			if ( ! $quiz_progress ) {
@@ -942,7 +983,7 @@ class Sensei_Grading {
 
 				// Set the users total quiz grade.
 				$grade = Sensei_Utils::quotient_as_absolute_rounded_percentage( $quiz_grade, $quiz_grade_total, 2 );
-				if ( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )
+				if ( $has_submission
 					&& ! Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id ) ) {
 					$this->progress_save_failed = true;
 					return false;
@@ -962,10 +1003,8 @@ class Sensei_Grading {
 					} else {
 						$quiz_progress->fail();
 					}
-				}
-
-				// Student only has to partake the quiz.
-				else {
+				} else {
+					// Student only has to partake the quiz.
 					$lesson_progress->complete();
 					$quiz_progress->grade();
 				}
@@ -1020,13 +1059,17 @@ class Sensei_Grading {
 			wp_safe_redirect( esc_url_raw( $load_url ) );
 			exit;
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( 'manually grading a quiz' );
 			$this->progress_save_failed = true;
 			return false;
 		}
 	}
 
 	public function get_redirect_url() {
+		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
+			wp_die( '', '', 403 );
+		}
+
 		if ( ! isset( $_GET['course_id'] ) || ! isset( $_GET['lesson_id'] ) ) {
 			// Try deprecated functionality as a fallback.
 			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
@@ -1106,7 +1149,7 @@ class Sensei_Grading {
 
 	public function add_grading_notices() {
 		if ( $this->progress_save_failed ) {
-			wp_admin_notice( __( 'We couldn\'t save these grading changes. Keep this page open and copy any feedback before reloading. Contact your site administrator for help.', 'sensei-lms' ), array( 'type' => 'error' ) );
+			wp_admin_notice( __( 'We couldn\'t save all grading changes. Your entered grades and feedback are shown below, but they may not all be saved. Keep this page open, review them, and try again. Contact your site administrator if the problem continues.', 'sensei-lms' ), array( 'type' => 'error' ) );
 			return;
 		}
 
@@ -1161,7 +1204,7 @@ class Sensei_Grading {
 		}
 
 		$user_id           = get_current_user_id();
-		$lesson_id         = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$lesson_id         = (int) Sensei()->quiz->get_lesson_id( $quiz_id );
 		$quiz_autogradable = true;
 
 		/**
@@ -1200,11 +1243,29 @@ class Sensei_Grading {
 			}
 		}
 
+		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( $submission ) {
+			// Check required progress before replacing any saved question grades.
+			$course_id = Sensei()->course_lessons_repository->get_course_id( (int) $lesson_id );
+			if ( $course_id && false === Sensei_Utils::user_start_course( $user_id, $course_id ) ) {
+				return new WP_Error( 'sensei_progress_save_failed', __( 'The quiz grade could not be saved.', 'sensei-lms' ) );
+			}
+			if ( ! Sensei()->lesson_progress_repository->has( $lesson_id, $user_id )
+				&& false === Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id ) ) {
+				return new WP_Error( 'sensei_progress_save_failed', __( 'The quiz grade could not be saved.', 'sensei-lms' ) );
+			}
+
+			// Final-grade observers can complete the course and redirect, so save question grades first.
+			if ( ! Sensei()->quiz->set_user_grades( $all_question_grades, $lesson_id, $user_id ) ) {
+				return new WP_Error( 'sensei_progress_save_failed', __( 'The quiz grade could not be saved.', 'sensei-lms' ) );
+			}
+		}
+
 		// Only if the whole quiz was autogradable do we set a grade
 		if ( $quiz_autogradable ) {
 			$quiz_total = Sensei_Utils::sensei_get_quiz_total( $quiz_id );
 			$grade      = Sensei_Utils::quotient_as_absolute_rounded_percentage( $grade_total, $quiz_total, 2 );
-			if ( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )
+			if ( $submission
 				&& ! Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type ) ) {
 				return new WP_Error( 'sensei_progress_save_failed', __( 'The quiz grade could not be saved.', 'sensei-lms' ) );
 			}
@@ -1213,10 +1274,6 @@ class Sensei_Grading {
 			$grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'sensei-lms' ) );
 
 		}
-
-		// store the auto gradable grades. If the quiz is not auto gradable the grades can be use as the default
-		// when doing manual grading.
-		Sensei()->quiz->set_user_grades( $all_question_grades, $lesson_id, $user_id );
 
 		return $grade;
 	}
@@ -1289,6 +1346,10 @@ class Sensei_Grading {
 						$all_correct = false;
 					}
 				}
+				// Repeating one right answer must not stand in for the others.
+				if ( $all_correct && array_diff( $right_answer, $answer ) ) {
+					$all_correct = false;
+				}
 				// If all correct then grade
 				if ( $all_correct ) {
 					$question_grade = Sensei()->question->get_question_grade( $question_id );
@@ -1318,7 +1379,7 @@ class Sensei_Grading {
 
 		}
 
-		return $question_grade;
+		return (int) $question_grade;
 	}
 
 	/**

@@ -96,6 +96,20 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 		$this->assertSame( 'auto', get_post_meta( $quiz_id, '_quiz_grade_type', true ), 'The lesson owner should change the quiz grade type.' );
 	}
 
+	public function testUpdateGradeType_WhenValueIsNotAGradeType_DoesNotChangeQuiz() {
+		$owner             = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		list( , $quiz_id ) = $this->create_quiz_for_owner( $owner );
+		update_post_meta( $quiz_id, '_quiz_grade_type', 'manual' );
+
+		wp_set_current_user( $owner );
+		$_POST['lesson_update_grade_type_nonce'] = wp_create_nonce( 'lesson_update_grade_type_nonce' );
+		$_POST['data']                           = "quiz_id={$quiz_id}&quiz_grade_type=" . rawurlencode( '<script>alert(1)</script>' );
+
+		$this->dispatch( 'lesson_update_grade_type' );
+
+		$this->assertSame( 'manual', get_post_meta( $quiz_id, '_quiz_grade_type', true ), 'Only auto or manual may be stored as the grade type.' );
+	}
+
 	public function testUpdateQuestionOrderRandom_WhenNotLessonOwner_DoesNotChangeQuiz() {
 		$non_owner         = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		$owner             = $this->factory->user->create( array( 'role' => 'teacher' ) );
@@ -123,6 +137,20 @@ class Sensei_Lesson_Quiz_Editor_AJAX_Test extends WP_Ajax_UnitTestCase {
 		$this->dispatch( 'lesson_update_question_order_random' );
 
 		$this->assertSame( 'yes', get_post_meta( $quiz_id, '_random_question_order', true ), 'The lesson owner should change the random question order.' );
+	}
+
+	public function testUpdateQuestionOrderRandom_WhenValueIsNotYesOrNo_DoesNotChangeQuiz() {
+		$owner             = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		list( , $quiz_id ) = $this->create_quiz_for_owner( $owner );
+		update_post_meta( $quiz_id, '_random_question_order', 'no' );
+
+		wp_set_current_user( $owner );
+		$_POST['lesson_update_question_order_random_nonce'] = wp_create_nonce( 'lesson_update_question_order_random_nonce' );
+		$_POST['data']                                      = "quiz_id={$quiz_id}&random_question_order=maybe";
+
+		$this->dispatch( 'lesson_update_question_order_random' );
+
+		$this->assertSame( 'no', get_post_meta( $quiz_id, '_random_question_order', true ), 'Only yes or no may be stored as the random question order.' );
 	}
 
 	public function testAddMultipleQuestions_WhenNotLessonOwner_DoesNotAddQuestionGroup() {

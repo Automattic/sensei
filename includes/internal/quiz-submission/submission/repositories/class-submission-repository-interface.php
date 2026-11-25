@@ -31,6 +31,7 @@ interface Submission_Repository_Interface {
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface;
 
@@ -44,6 +45,7 @@ interface Submission_Repository_Interface {
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface;
 
@@ -76,6 +78,7 @@ interface Submission_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function save( Submission_Interface $submission ): void;
 
@@ -87,4 +90,27 @@ interface Submission_Repository_Interface {
 	 * @param Submission_Interface $submission The quiz submission.
 	 */
 	public function delete( Submission_Interface $submission ): void;
+
+	/**
+	 * Delete a student's submission and its grades and answers for one quiz.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void;
+
+	/**
+	 * Delete every student's submission, grades, and answers for one quiz.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @throws \Sensei\Internal\Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void;
 }

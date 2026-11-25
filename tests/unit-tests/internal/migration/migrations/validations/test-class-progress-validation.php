@@ -6,8 +6,10 @@ use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
 use Sensei\Internal\Migration\Validations\Progress_Validation;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
+use Sensei_Course_Enrolment;
 use Sensei_Factory;
 use Sensei_Quiz;
 use Sensei_Utils;
@@ -19,6 +21,7 @@ use Sensei_Utils;
  */
 class Progress_Validation_Test extends \WP_UnitTestCase {
 	use \Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use \Sensei_HPPS_Helpers;
 
 	/**
 	 * Factory for creating test data.
@@ -30,7 +33,13 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
+		self::resetCourseEnrolmentManager();
 		$this->factory = new Sensei_Factory();
+	}
+
+	public function tearDown(): void {
+		$this->restore_progress_storage_mode();
+		parent::tearDown();
 	}
 
 	public function testRun_WhenProgressMigrationIsComplete_HasNoErrors(): void {
@@ -179,75 +188,329 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	public function testRun_WhenHasQuizProgressInTable_HasNoErrors(): void {
+	/**
+	 * Quiz submission can replace the shared comment's lesson start with the quiz start.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenQuizWasSubmittedAfterLessonStarted_WarnsWhenLessonStartCannotBeVerified(): void {
 		/* Arrange. */
-		$course_data         = $this->factory->get_course_with_lessons();
-		$lesson_id           = $course_data['lesson_ids'][0];
-		$quiz_id             = $course_data['quiz_ids'][0];
-		$progress_validation = new Progress_Validation();
+		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $student_id );
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $student_id );
+		$lesson_progress->start( new \DateTimeImmutable( '2025-01-01T00:00:00Z' ) );
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
+		$this->submit_quiz_for_grading( $lesson_id, $quiz_id, $student_id );
+		$validation = new Progress_Validation();
 
-		add_filter( 'sensei_is_enrolled', '__return_true' );
-		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
-		Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, 1 );
-		$this->migrate_progress();
+		$expected_warnings = self::is_hpps_tables_mode()
+			? array(
+				array(
+					'Lesson start date could not be verified because the shared comment now records the quiz start.',
+					array(
+						'lesson_id' => $lesson_id,
+						'user_id'   => $student_id,
+					),
+				),
+			)
+			: array();
 
 		/* Act. */
-		$progress_validation->run();
+		$validation->run();
 
 		/* Assert. */
-		$this->assertFalse( $progress_validation->has_errors() );
+		self::assertSame( array(), $validation->get_errors(), 'The overwritten lesson start must not cause a mismatch error.' );
+		self::assertSame(
+			$expected_warnings,
+			array_map(
+				static function ( $warning ): array {
+					return array( $warning->get_message(), $warning->get_data() );
+				},
+				$validation->get_warnings()
+			),
+			'Report the unverifiable lesson start separately from errors, with lesson and student IDs.'
+		);
 	}
 
-	public function testRun_WhenHasNoQuizProgressInTable_HasError(): void {
+	/**
+	 * Differing start dates remain errors when the shared comment does not match the quiz start.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenSubmittedQuizStartDifferedFromSharedComment_ReportsLessonAndQuizDifferences(): void {
 		/* Arrange. */
 		global $wpdb;
-		$course_data         = $this->factory->get_course_with_lessons();
-		$lesson_id           = $course_data['lesson_ids'][0];
-		$quiz_id             = $course_data['quiz_ids'][0];
-		$progress_validation = new Progress_Validation();
-		$progress_repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
-		add_filter( 'sensei_is_enrolled', '__return_true' );
-		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
-		Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, 1 );
-		$this->migrate_progress();
+		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $student_id );
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $student_id );
+		$lesson_progress->start( new \DateTimeImmutable( '2025-01-01T00:00:00Z' ) );
+		Sensei()->lesson_progress_repository->save( $lesson_progress );
+		$this->submit_quiz_for_grading( $lesson_id, $quiz_id, $student_id );
+		$lesson_repository = new Tables_Based_Lesson_Progress_Repository( $wpdb );
+		$lesson_progress   = $lesson_repository->get( $lesson_id, $student_id );
+		$lesson_progress->start( new \DateTimeImmutable( '2024-01-01T00:00:00Z' ) );
+		$lesson_repository->save( $lesson_progress );
+		$repository    = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+		$quiz_progress = $repository->get( $quiz_id, $student_id );
+		$quiz_progress->start( new \DateTimeImmutable( '@' . ( $quiz_progress->get_started_at()->getTimestamp() + 1 ) ) );
+		$quiz_progress->ungrade();
+		$repository->save( $quiz_progress );
+		$validation = new Progress_Validation();
+
+		/* Act. */
+		$validation->run();
+
+		/* Assert. */
+		$errors = $validation->get_errors();
+		self::assertCount( 2, $errors, 'Report both start differences when the quiz start does not explain the lesson start.' );
+		self::assertSame( 'Data mismatch between comments and tables based progress.', $errors[0]->get_message(), 'Keep reporting mismatched progress.' );
+		self::assertSame( $lesson_id, $errors[0]->get_data()[0]['post_id'], 'Identify the affected lesson.' );
+		self::assertSame( $quiz_id, $errors[1]->get_data()[0]['post_id'], 'Identify the affected quiz.' );
+		self::assertSame( array(), $validation->get_warnings(), 'Unexplained date differences remain errors rather than unverifiable-date warnings.' );
+	}
+
+	/**
+	 * Find attempted quiz progress without an HPPS copy.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenQuizProgressWasMissingFromTables_ReportsQuizAndStudent(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
+		$this->submit_quiz_for_grading( $lesson_id, $quiz_id, $student_id );
+		$progress_repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 		$progress_repository->delete_for_quiz( $quiz_id );
+		$validation = new Progress_Validation();
 
 		/* Act. */
-		$progress_validation->run();
+		$validation->run();
 
 		/* Assert. */
-		$this->assertSame(
-			'Quiz tables based progress not found.',
-			$this->get_first_error_message( $progress_validation )
+		$errors = $validation->get_errors();
+		self::assertCount( 1, $errors, 'Report the missing quiz progress once.' );
+		self::assertSame( 'Quiz tables based progress not found.', $errors[0]->get_message(), 'Identify which store is missing progress.' );
+		self::assertSame(
+			array(
+				'quiz_id' => $quiz_id,
+				'user_id' => $student_id,
+				'source'  => 'tables',
+			),
+			$errors[0]->get_data(),
+			'Report the missing quiz and student record.'
 		);
 	}
 
-	public function testRun_WhenHasQuizProgressButDataIsNotMatching_HasError(): void {
+	/**
+	 * Report differing quiz progress once when both stores have a copy.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenSubmittedQuizStillShowedInProgressInTables_ReportsTheDifferenceOnce(): void {
 		/* Arrange. */
 		global $wpdb;
-		$course_data         = $this->factory->get_course_with_lessons();
-		$lesson_id           = $course_data['lesson_ids'][0];
-		$quiz_id             = $course_data['quiz_ids'][0];
-		$progress_validation = new Progress_Validation();
-		$progress_repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
-		add_filter( 'sensei_is_enrolled', '__return_true' );
-		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
-		Sensei_Quiz::save_user_answers( $answers, [], $lesson_id, 1 );
-		$this->migrate_progress();
-		$progress = $progress_repository->get( $quiz_id, 1 );
-		$progress->pass();
-		$progress_repository->save( $progress );
+		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
+		$this->submit_quiz_for_grading( $lesson_id, $quiz_id, $student_id );
+		$tables_repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+		$progress          = $tables_repository->get( $quiz_id, $student_id );
+		$progress->start( $progress->get_started_at() );
+		$tables_repository->save( $progress );
+		$validation = new Progress_Validation();
 
 		/* Act. */
-		$progress_validation->run();
+		$validation->run();
 
 		/* Assert. */
-		$this->assertSame(
-			'Data mismatch between comments and tables based progress.',
-			$this->get_first_error_message( $progress_validation )
+		$errors = $validation->get_errors();
+		self::assertCount( 1, $errors, 'Report the quiz progress difference once.' );
+		self::assertSame( 'Data mismatch between comments and tables based progress.', $errors[0]->get_message(), 'Report a value mismatch for a pair with both copies.' );
+		self::assertSame( $quiz_id, $errors[0]->get_data()[0]['post_id'], 'Report the affected quiz ID.' );
+		self::assertSame( 'ungraded', $errors[0]->get_data()[0]['status'], 'Comments record that the quiz was submitted for grading.' );
+		self::assertSame( 'in-progress', $errors[0]->get_data()[1]['status'], 'Report the table status that still shows an unsubmitted quiz.' );
+	}
+
+	/**
+	 * A failed quiz progress write must remain detectable after the grade was saved.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenGradedQuizProgressWriteFailed_ReportsTheDifference(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student(
+			array(
+				'question_count' => 1,
+				'question_args'  => array( 'question_type' => 'boolean' ),
+			)
 		);
+		wp_set_current_user( $student_id );
+		update_post_meta( $quiz_id, '_quiz_grade_type', 'auto' );
+		delete_post_meta( $quiz_id, '_pass_required' );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $student_id );
+		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, $student_id );
+
+		$answers          = $this->factory->generate_user_quiz_answers( $quiz_id );
+		$fail_quiz_update = static function ( string $query ) use ( $wpdb ): string {
+			$graded_progress_update = "UPDATE `{$wpdb->prefix}sensei_lms_progress` SET `status` = 'graded'";
+			return 0 === strpos( $query, $graded_progress_update ) ? '' : $query;
+		};
+		add_filter( 'query', $fail_quiz_update );
+		try {
+			Sensei_Quiz::submit_answers_for_grading( $answers, array(), $lesson_id, $student_id );
+		} finally {
+			remove_filter( 'query', $fail_quiz_update );
+		}
+
+		$validation = new Progress_Validation();
+
+		/* Act. */
+		$validation->run();
+
+		/* Assert. */
+		$errors = $validation->get_errors();
+		self::assertCount( 1, $errors, 'Report the failed quiz progress update once.' );
+		self::assertSame( 'Data mismatch between comments and tables based progress.', $errors[0]->get_message(), 'A saved grade must expose the stale quiz progress.' );
+		self::assertSame( $quiz_id, $errors[0]->get_data()[0]['post_id'], 'Identify the quiz whose progress update failed.' );
+		self::assertSame( 'in-progress', $errors[0]->get_data()[1]['status'], 'Report the quiz progress that remained unchanged.' );
+	}
+
+	/**
+	 * Find lesson and quiz progress that outlives the shared status comment.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenLessonCommentWasDeleted_ReportsMissingLessonAndQuizProgress(): void {
+		/* Arrange. */
+		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
+		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, $student_id );
+		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
+		self::assertTrue( Sensei_Quiz::save_user_answers( $answers, array(), $lesson_id, $student_id ) );
+		$comments_repository = new Comments_Based_Lesson_Progress_Repository();
+		$comments_repository->delete( $comments_repository->get( $lesson_id, $student_id ) );
+		$validation = new Progress_Validation();
+
+		/* Act. */
+		$validation->run();
+
+		/* Assert. */
+		$errors = $validation->get_errors();
+		self::assertCount( 2, $errors, 'The lesson and quiz should both be reported.' );
+		self::assertSame(
+			array(
+				'lesson_id' => $lesson_id,
+				'user_id'   => $student_id,
+				'source'    => 'comments',
+			),
+			$errors[0]->get_data(),
+			'The missing lesson record should identify the student and store.'
+		);
+		self::assertSame(
+			array(
+				'quiz_id' => $quiz_id,
+				'user_id' => $student_id,
+				'source'  => 'comments',
+			),
+			$errors[1]->get_data(),
+			'The missing quiz record should identify the student and store.'
+		);
+	}
+
+	/**
+	 * Starting a lesson creates a shared comment even when the student has not opened its quiz.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenQuizWasNeverAttempted_AllowsMissingQuizTableRow(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$course     = $this->factory->get_course_with_lessons();
+		$lesson_id  = $course['lesson_ids'][0];
+		$quiz_id    = $course['quiz_ids'][0];
+		$student_id = 1;
+		( new Comments_Based_Lesson_Progress_Repository() )->create( $lesson_id, $student_id );
+		$this->migrate_progress();
+		( new Tables_Based_Quiz_Progress_Repository( $wpdb ) )->delete_for_quiz( $quiz_id );
+		$validation = new Progress_Validation();
+
+		/* Act. */
+		$validation->run();
+
+		/* Assert. */
+		self::assertFalse( $validation->has_errors() );
+	}
+
+	/**
+	 * Opening a quiz can record a quiz start in HPPS and leave comments tracking the lesson.
+	 *
+	 * @dataProvider quiz_visit_scenarios
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_WhenQuizWasNotSubmitted_HasNoErrors( bool $lesson_started, bool $quiz_opened, bool $lesson_completed ): void {
+		/* Arrange. */
+		[ $lesson_id, $quiz_id, $student_id ] = $this->create_enrolled_quiz_student();
+		delete_post_meta( $quiz_id, '_pass_required' );
+
+		if ( $lesson_started ) {
+			Sensei_Utils::sensei_start_lesson( $lesson_id, $student_id );
+			$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $student_id );
+			$lesson_progress->start( new \DateTimeImmutable( '2025-01-01T00:00:00Z' ) );
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
+		}
+		if ( $quiz_opened ) {
+			Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, $student_id );
+		}
+		if ( $quiz_opened && $lesson_completed ) {
+			$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
+			self::assertTrue( Sensei_Quiz::save_user_answers( $answers, array(), $lesson_id, $student_id ) );
+		}
+		if ( $lesson_completed ) {
+			self::assertNotFalse( Sensei_Utils::sensei_start_lesson( $lesson_id, $student_id, true ) );
+		}
+
+		$validation = new Progress_Validation();
+
+		/* Act. */
+		$validation->run();
+
+		/* Assert. */
+		self::assertSame( array(), $validation->get_errors() );
+	}
+
+	public static function quiz_visit_scenarios(): array {
+		return array(
+			'quiz opened before the lesson'             => array( false, true, false ),
+			'quiz opened after the lesson'              => array( true, true, false ),
+			'lesson completed without opening the quiz' => array( true, false, true ),
+			'lesson completed with a saved quiz draft'  => array( true, true, true ),
+		);
+	}
+
+	private function create_enrolled_quiz_student( array $course_args = array() ): array {
+		$this->set_progress_storage_mode( self::is_hpps_tables_mode() ? 'tables' : 'comments' );
+		add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+
+		$course     = $this->factory->get_course_with_lessons( $course_args );
+		$student_id = $this->factory->user->create();
+		Sensei_Course_Enrolment::get_course_instance( $course['course_id'] )->enrol( $student_id );
+		$course_progress = Sensei()->course_progress_repository->get( $course['course_id'], $student_id );
+		// Synchronize the fixture dates after the two inserts, which can cross a second boundary.
+		Sensei()->course_progress_repository->save( $course_progress );
+		$this->mask_migration_as_complete();
+
+		return array( $course['lesson_ids'][0], $course['quiz_ids'][0], $student_id );
+	}
+
+	private function submit_quiz_for_grading( int $lesson_id, int $quiz_id, int $student_id ): void {
+		update_post_meta( $quiz_id, '_quiz_grade_type', 'manual' );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $student_id );
+		Sensei()->quiz->maybe_create_quiz_progress( $quiz_id, $student_id );
+		$answers = $this->factory->generate_user_quiz_answers( $quiz_id );
+		self::assertTrue( Sensei_Quiz::submit_answers_for_grading( $answers, array(), $lesson_id, $student_id ) );
 	}
 
 	private function migrate_progress() {
@@ -260,11 +523,12 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 
 	private function cleanup_custom_tables() {
 		global $wpdb;
+		// Keep cleanup inside the test transaction.
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_progress" );
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades" );
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_answers" );
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}sensei_lms_quiz_submissions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}sensei_lms_progress" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}sensei_lms_quiz_grades" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}sensei_lms_quiz_answers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}sensei_lms_quiz_submissions" );
 		// phpcs:enable
 	}
 

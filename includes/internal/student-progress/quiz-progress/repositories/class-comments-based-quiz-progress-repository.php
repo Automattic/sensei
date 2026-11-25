@@ -8,8 +8,10 @@
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
 use DateTime;
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Comments_Based_Quiz_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use Sensei_Utils;
 use WP_Comment;
 
@@ -34,7 +36,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
 	 * @return Quiz_Progress_Interface
-	 * @throws \RuntimeException When the quiz progress doesn't exist. In this implementation we re-use lesson progress.
+	 * @throws Persistence_Exception If the required lesson progress is missing.
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		/**
@@ -55,7 +57,8 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			 * In comments-based implementation we don't have a separate quiz progress.
 			 * It depends on the lesson progress. If it doesn't exist yet, throw an exception.
 			 */
-			throw new \RuntimeException( 'Cannot create quiz progress' );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz', 'comments', $quiz_id, $user_id, 'lesson_progress_missing' );
 		}
 
 		return $progress;
@@ -151,9 +154,15 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @internal
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress Quiz progress.
+	 * @throws Persistence_Exception If a required lesson progress comment cannot be inserted.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->assert_comments_based_quiz_progress( $quiz_progress );
+
+		$status = (string) $quiz_progress->get_raw_status();
+		if ( empty( $status ) ) {
+			return;
+		}
 
 		$lesson_id  = (int) Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
 		$metadata   = [];
@@ -163,9 +172,17 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
 
-		$status = (string) $quiz_progress->get_raw_status();
+		$comment_id = Sensei_Utils::update_lesson_status(
+			$quiz_progress->get_user_id(),
+			$lesson_id,
+			$status,
+			$metadata
+		);
 
-		Sensei_Utils::update_lesson_status( $quiz_progress->get_user_id(), $lesson_id, $status, $metadata );
+		if ( ! $comment_id ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'lesson', 'comments', $lesson_id, $quiz_progress->get_user_id(), 'write_failed', 'save' );
+		}
 	}
 
 	/**
@@ -323,6 +340,8 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 				case 'started_at':
 					throw new \InvalidArgumentException( 'Ordering by started_at is not supported in comments-based version.' );
 				case 'completed_at':
+					$comments_args['orderby'] = 'comment_date_gmt';
+					break;
 				case 'created_at':
 				case 'updated_at':
 					$comments_args['orderby'] = 'comment_date';
@@ -380,10 +399,11 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	private function create_progress_from_comment( WP_Comment $comment, ?int $quiz_id = null ): Comments_Based_Quiz_Progress {
 		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
 		$meta_start   = get_comment_meta( (int) $comment->comment_ID, 'start', true );
-		$started_at   = ! empty( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
+		$started_at   = Progress_Start_Date::is_recorded( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : null;
 
 		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
-			$completed_at = $comment_date;
+			$completed_at = new DateTime( $comment->comment_date_gmt, new \DateTimeZone( 'UTC' ) );
+			$completed_at->setTimezone( wp_timezone() );
 		} else {
 			$completed_at = null;
 		}

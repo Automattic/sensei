@@ -37,8 +37,8 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 		$this->guest_user = new Sensei_Guest_User();
 	}
 
-	private function setup_course( $open_access ) {
-		$course_data = $this->factory->get_course_with_lessons();
+	private function setup_course( $open_access, $course_args = array() ) {
+		$course_data = $this->factory->get_course_with_lessons( $course_args );
 		$course_id   = $course_data['course_id'];
 		update_post_meta( $course_id, '_open_access', $open_access );
 		global $post;
@@ -78,7 +78,8 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 	 */
 	public function testGuestUserEnrolledOnCompleteLessonRequest() {
 
-		[ 'course_id' => $course_id, 'lesson_ids' => [ $lesson_id ] ] = $this->setup_course( true );
+		// A lesson with no quiz questions, so completing it does not depend on a quiz pass requirement.
+		[ 'course_id' => $course_id, 'lesson_ids' => [ $lesson_id ] ] = $this->setup_course( true, array( 'question_count' => 0 ) );
 		$this->logout();
 
 		global $post;

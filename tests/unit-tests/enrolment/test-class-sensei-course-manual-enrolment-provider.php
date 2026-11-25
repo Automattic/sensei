@@ -25,6 +25,15 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Restore progress storage after each test.
+	 */
+	public function tearDown(): void {
+		$this->restore_progress_storage_mode();
+
+		parent::tearDown();
+	}
+
+	/**
 	 * Clean up after all tests.
 	 */
 	public static function tearDownAfterClass(): void {
@@ -193,6 +202,57 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 		$is_enrolled = $provider->is_enrolled( $student_id, $course_id );
 		$this->assertTrue( $this->wasLegacyEnrolmentChecked( $student_id, $course_id ), 'Legacy enrolment status for user should have been checked.' );
 		$this->assertTrue( $is_enrolled, 'The user should have been enrolled due to legacy enrolment from course progress.' );
+	}
+
+	/**
+	 * Legacy enrolment filters receive a comment ID even when tables supply progress.
+	 *
+	 * @covers Sensei_Course_Manual_Enrolment_Provider::get_initial_enrolment_status
+	 */
+	public function testIsEnrolled_TableProgressSelected_PassesCommentIdToLegacyFilter(): void {
+		$this->set_progress_storage_mode( 'tables' );
+		$provider            = $this->getManualEnrolmentProvider();
+		$course_id           = $this->getSimpleCourseId();
+		$student_id          = $this->getStandardStudentUserId();
+		$table_progress      = Sensei()->course_progress_repository->create( $course_id, $student_id );
+		$comments_repository = Sensei()->course_progress_repository_factory->create_comments_based_repository();
+		$comment_progress    = $comments_repository->get( $course_id, $student_id );
+
+		if ( $table_progress->get_id() === $comment_progress->get_id() ) {
+			$comments_repository->delete( $comment_progress );
+			$comment_progress = $comments_repository->create( $course_id, $student_id );
+		}
+
+		self::assertNotSame(
+			$table_progress->get_id(),
+			$comment_progress->get_id(),
+			'The fixture must use distinct table and comment IDs.'
+		);
+
+		$started_at = '2020-01-02 03:04:05';
+		update_comment_meta( $comment_progress->get_id(), 'start', $started_at );
+		$this->simulateUpgradingFromSensei2ToSensei3();
+
+		$filtered_start = null;
+		$observer       = static function (
+			$is_enrolled,
+			$user_id,
+			$filtered_course_id,
+			$progress_comment_id
+		) use ( &$filtered_start ) {
+			$filtered_start = get_comment_meta( $progress_comment_id, 'start', true );
+
+			return $is_enrolled;
+		};
+		add_filter( 'sensei_is_legacy_enrolled', $observer, 10, 4 );
+
+		try {
+			$provider->is_enrolled( $student_id, $course_id );
+
+			self::assertSame( $started_at, $filtered_start );
+		} finally {
+			remove_filter( 'sensei_is_legacy_enrolled', $observer, 10 );
+		}
 	}
 
 	/**

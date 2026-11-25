@@ -115,7 +115,7 @@ class Progress_Query_Service_Factory {
 	/**
 	 * Create a student management listing service.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @return Student_Management_Listing_Service_Interface The student listing service.
 	 */

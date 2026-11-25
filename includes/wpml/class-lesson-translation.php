@@ -131,7 +131,7 @@ class Lesson_Translation {
 		}
 
 		// The order meta copied from the master belongs to the master course.
-		delete_post_meta( $new_lesson_id, '_order_' . $master_course_id );
+		Sensei()->course_lessons_repository->delete_lesson_order( (int) $new_lesson_id, $master_course_id );
 
 		$this->update_lesson_course( $new_lesson_id, $new_course_id );
 		$this->update_translated_lesson_properties( $new_lesson_id, $master_post_id );

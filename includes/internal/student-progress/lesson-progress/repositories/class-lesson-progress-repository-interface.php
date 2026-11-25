@@ -72,8 +72,21 @@ interface Lesson_Progress_Repository_Interface {
 	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
 	 */
 	public function delete( Lesson_Progress_Interface $lesson_progress ): void;
+
+	/**
+	 * Delete progress for a student, including when the selected read store has no record.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id   The student ID.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
+	 */
+	public function delete_for_student( int $lesson_id, int $user_id ): void;
 
 	/**
 	 * Delete all lesson progress for a lesson.

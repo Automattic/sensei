@@ -6,7 +6,9 @@ Tests that load WordPress and exercise its APIs or database are integration test
 
 ## 1. Select meaningful scenarios
 
-Before adding or extending a test, read the existing tests for the method or behavior being changed. Identify the requirement or regression the proposed case protects and why existing coverage does not already protect it. If it adds no distinct coverage, omit it.
+Before writing a test, identify a specific way the behavior could break. What input would expose the problem? What observable result would be wrong? Which assertion would fail? Check whether an existing test already catches that failure. If it does, rerun it. If you can’t identify a distinct failure the proposed test would catch, skip it.
+
+For example, if a bug causes a quiz grade to disappear after reload, a test that only checks whether the save method was called would pass with the bug still present. Exercise the save and read the grade back. If an existing test already does that for the affected case, rerun it.
 
 Apply this check throughout implementation, refinement, and review. For small refinements to already-tested behavior, reuse and rerun existing tests. Added production code, branches, or dependency calls do not by themselves justify more tests. For example, adding cache priming that preserves existing results calls for rerunning relevant tests and focused performance measurements where appropriate, rather than a new test asserting that the priming method was called. If the change fixes an uncovered failure, test the observable result of that failure instead.
 
@@ -35,8 +37,7 @@ Test Sensei's expected behavior, rather than its internal implementation. A test
 - Assert dependency calls or call counts only when the interaction is itself a requirement. Otherwise, stub dependencies and assert the resulting behavior.
 - Do not retest WordPress or third-party APIs themselves. Test Sensei's use of them: for example, the capability assigned to a Sensei menu or the conditions under which Sensei enqueues an asset.
 - Do not invent behavior for unsupported inputs. Only expect a fallback, exception, or rejection when Sensei's contract requires it.
-- For bug fixes that require tests under `AGENTS.md`'s testing rules, first write a regression test that reproduces the bug and fails, then verify that it passes after the fix.
-- For regression tests, confirm the failure comes from the incorrect behavior, rather than broken setup, and that the fix makes the same test pass.
+- Regression tests should detect the incorrect behavior and pass with the fix applied. A failure caused by broken test setup does not demonstrate regression coverage.
 
 For example, test a formatter's expected output for supported amounts, rather than asserting that it calls a regex or string replacement function.
 

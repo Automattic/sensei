@@ -583,23 +583,22 @@ class Sensei_Teacher {
 				}
 
 				foreach ( $lessons as $lesson ) {
-					if ( has_term( $term->term_id, 'module', $lesson ) ) {
-						// Add the new term, the false at the end says to replace all terms on this module
-						// with the new term.
-						wp_set_object_terms( $lesson->ID, $term_id, 'module', false );
+					if ( Sensei()->course_lessons_repository->has_lesson_module( $lesson->ID, (int) $term->term_id ) ) {
+						// Replace the lesson's module with the new term.
+						Sensei()->course_lessons_repository->set_lesson_module( $lesson->ID, (int) $term_id );
 
 						$order_module     = 0;
-						$old_order_module = get_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ), true );
+						$old_order_module = Sensei()->course_lessons_repository->get_lesson_module_order( $lesson->ID, (int) $term->term_id );
 
 						if ( $old_order_module ) {
 							$order_module = $old_order_module;
 
 							if ( intval( $term->term_id ) !== intval( $term_id ) ) {
-								delete_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ) );
+								Sensei()->course_lessons_repository->delete_lesson_module_order( $lesson->ID, (int) $term->term_id );
 							}
 						}
 
-						update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), $order_module );
+						Sensei()->course_lessons_repository->set_lesson_module_order( $lesson->ID, (int) $term_id, $order_module );
 					}
 				}
 

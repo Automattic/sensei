@@ -153,4 +153,53 @@ class Sensei_REST_API_Course_Utils_Controller_Test extends WP_Test_REST_TestCase
 		$this->assertSame( 400, $response->get_status() );
 		$this->assertArrayNotHasKey( 'Allow', $response->get_headers() );
 	}
+
+	public function testUpdateTeacher_PostDoesNotExist_ReturnsForbiddenResponse() {
+		/* Arrange. */
+		$teacher_id = $this->get_user_by_role( 'teacher', '_c' );
+
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'PUT', '/sensei-internal/v1/course-utils/update-teacher' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				array(
+					'teacher'           => $teacher_id,
+					'post_id'           => 999999,
+					'sensei_meta_nonce' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
+				)
+			)
+		);
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	public function testUpdateTeacher_TeacherCannotEditCourses_ReturnsBadRequestResponse() {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'PUT', '/sensei-internal/v1/course-utils/update-teacher' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				array(
+					'teacher'           => $student_id,
+					'post_id'           => $course_id,
+					'sensei_meta_nonce' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
+				)
+			)
+		);
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		$this->assertSame( 400, $response->get_status() );
+	}
 }

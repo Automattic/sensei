@@ -102,6 +102,7 @@ class Table_Reading_Aggregate_Grade_Repository implements Grade_Repository_Inter
 	 * @param string|null          $feedback    The feedback.
 	 *
 	 * @return Grade_Interface The grade.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, ?string $feedback = null ): Grade_Interface {
 		$grade = $this->tables_based_repository->create( $submission, $answer, $question_id, $points, $feedback );
@@ -170,6 +171,7 @@ class Table_Reading_Aggregate_Grade_Repository implements Grade_Repository_Inter
 	 *
 	 * @param Submission_Interface $submission The submission.
 	 * @param Grade_Interface[]    $grades     An array of grades.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function save_many( Submission_Interface $submission, array $grades ): void {
 		$this->tables_based_repository->save_many( $submission, $grades );
@@ -257,6 +259,7 @@ class Table_Reading_Aggregate_Grade_Repository implements Grade_Repository_Inter
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function delete_all( Submission_Interface $submission ): void {
 		$this->tables_based_repository->delete_all( $submission );

@@ -2,6 +2,9 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Answer\Repositories;
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-progress-insert-failure-helpers.php';
+
+use Sensei\Internal\Persistence_Exception;
 use DateTimeImmutable;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Tables_Based_Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
@@ -14,6 +17,8 @@ use wpdb;
  * @covers \Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository
  */
 class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
+	use \Sensei_Progress_Insert_Failure_Helpers;
+
 	protected $factory;
 
 	public function setUp(): void {
@@ -83,6 +88,36 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 		$this->assertSame( $expected, $this->export_answer( $answer ) );
 	}
+
+	/**
+	 * Failed inserts must not return or cache an invalid record, and a later insert must succeed.
+	 *
+	 * @covers \Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository::create
+	 */
+	public function testCreate_InsertFailed_ThrowsAndAllowsLaterCreation(): void {
+		/* Arrange. */
+		$submission = ( new \Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository( $GLOBALS['wpdb'] ) )->create( 123, 456 );
+		$repository = new Tables_Based_Answer_Repository( $GLOBALS['wpdb'] );
+
+		/* Act. */
+		$this->with_failed_cached_insert(
+			$GLOBALS['wpdb']->prefix . 'sensei_lms_quiz_answers',
+			function () use ( $repository, $submission ) {
+				try {
+					$repository->create( $submission, 789, 'Saved answer' );
+
+					/* Assert. */
+					self::fail( 'The required insert must report failure.' );
+				} catch ( Persistence_Exception $exception ) {
+					self::assertEmpty( $repository->get_all( $submission->get_id() ), 'A failed insert must not expose an invalid cached record.' );
+				}
+			}
+		);
+		$record = $repository->create( $submission, 789, 'Saved answer' );
+
+		self::assertGreaterThan( 0, $record->get_id() );
+	}
+
 
 	public function testGetAll_WhenHasNoAnswers_ReturnsEmptyArray(): void {
 		/* Arrange. */

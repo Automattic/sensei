@@ -15,6 +15,7 @@ use Sensei\Internal\Cache_Prefix;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Tables_Based_Lesson_Progress;
+use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -63,13 +64,14 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param int $lesson_id The lesson ID.
-	 * @param int $user_id The user ID.
+	 * @param int  $lesson_id The lesson ID.
+	 * @param int  $user_id The user ID.
+	 * @param bool $record_start Whether creation also records a start event.
 	 *
 	 * @return Lesson_Progress_Interface The lesson progress.
 	 * @throws Persistence_Exception If required progress creation fails.
 	 */
-	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
+	public function create( int $lesson_id, int $user_id, bool $record_start = true ): Lesson_Progress_Interface {
 		/**
 		 * Filter lesson id for lesson progress creation.
 		 *
@@ -92,7 +94,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				'parent_post_id' => null,
 				'type'           => 'lesson',
 				'status'         => Lesson_Progress_Interface::STATUS_IN_PROGRESS,
-				'started_at'     => $current_datetime->format( $date_format ),
+				'started_at'     => $record_start ? $current_datetime->format( $date_format ) : null,
 				'completed_at'   => null,
 				'created_at'     => $current_datetime->format( $date_format ),
 				'updated_at'     => $current_datetime->format( $date_format ),
@@ -120,7 +122,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			$lesson_id,
 			$user_id,
 			Lesson_Progress_Interface::STATUS_IN_PROGRESS,
-			$current_datetime,
+			$record_start ? $current_datetime : null,
 			null,
 			$current_datetime,
 			$current_datetime
@@ -191,7 +193,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			(int) $row->post_id,
 			(int) $row->user_id,
 			$row->status,
-			$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+			Progress_Start_Date::is_recorded( $row->started_at ) ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
 			$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
 			new DateTimeImmutable( $row->created_at, $timezone ),
 			new DateTimeImmutable( $row->updated_at, $timezone )
@@ -245,6 +247,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If the progress update fails.
 	 */
 	public function save( Lesson_Progress_Interface $lesson_progress ): void {
 		$this->assert_tables_based_lesson_progress( $lesson_progress );
@@ -253,7 +256,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		$lesson_progress->set_updated_at( $updated_at );
 
 		$date_format = 'Y-m-d H:i:s';
-		$this->wpdb->update(
+		$result      = $this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'status'       => $lesson_progress->get_status(),
@@ -275,6 +278,10 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				'%d',
 			]
 		);
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'lesson', 'tables', $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id(), 'update_failed', 'update' );
+		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
@@ -287,24 +294,40 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
 	 */
 	public function delete( Lesson_Progress_Interface $lesson_progress ): void {
-		$this->wpdb->delete(
+		$this->delete_for_student( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() );
+	}
+
+	/**
+	 * Delete progress for a student, including when the selected read store has no record.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id   The student ID.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
+	 */
+	public function delete_for_student( int $lesson_id, int $user_id ): void {
+		$result = $this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
-			[
-				'post_id' => $lesson_progress->get_lesson_id(),
-				'user_id' => $lesson_progress->get_user_id(),
+			array(
+				'post_id' => $lesson_id,
+				'user_id' => $user_id,
 				'type'    => 'lesson',
-			],
-			[
-				'%d',
-				'%d',
-				'%s',
-			]
+			),
+			array( '%d', '%d', '%s' )
 		);
 
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'lesson', 'tables', $lesson_id, $user_id, 'delete_failed', 'delete' );
+		}
+
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
-			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
+			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $lesson_id, $user_id ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
 	}
 
@@ -437,7 +460,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 *
 	 * @internal
 	 *
-	 * @param array $args The arguments.
+	 * @param array $args The filters, including 'orderby' (id, lesson_id, status, created_at, updated_at, or completed_at)
+	 *                    and 'order' (ASC or DESC).
 	 * @return Lesson_Progress_Interface[]
 	 */
 	public function find( array $args ): array {
@@ -490,8 +514,25 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			$query_string .= 'WHERE ' . implode( ' AND ', $where_clause ) . ' ';
 		}
 
-		$query_string  .= 'ORDER BY id ASC ';
-		$query_string  .= 'LIMIT %d OFFSET %d';
+		$sort_columns = array(
+			'id'           => 'id',
+			'lesson_id'    => 'post_id',
+			'status'       => 'status',
+			'created_at'   => 'created_at',
+			'updated_at'   => 'updated_at',
+			'completed_at' => 'completed_at',
+		);
+		$orderby      = $args['orderby'] ?? 'id';
+		$column       = is_string( $orderby ) ? ( $sort_columns[ $orderby ] ?? 'id' ) : 'id';
+		$order        = $args['order'] ?? 'ASC';
+		$direction    = is_string( $order ) && 'DESC' === strtoupper( $order ) ? 'DESC' : 'ASC';
+		$ordering     = "{$column} {$direction}";
+
+		if ( 'id' !== $column ) {
+			$ordering .= ', id ASC';
+		}
+
+		$query_string  .= "ORDER BY {$ordering} LIMIT %d OFFSET %d";
 		$query_params[] = $limit;
 		$query_params[] = $offset;
 
@@ -517,7 +558,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				(int) $row->post_id,
 				(int) $row->user_id,
 				$row->status,
-				$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+				Progress_Start_Date::is_recorded( $row->started_at ) ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
 				$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
 				new DateTimeImmutable( $row->created_at, $timezone ),
 				new DateTimeImmutable( $row->updated_at, $timezone )

@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Tables_Based_Quiz_Progress;
 
@@ -59,6 +60,7 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 * @return Quiz_Progress_Interface The quiz progress.
+	 * @throws Persistence_Exception If required quiz progress cannot be created.
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		$this->tables_based_repository->create( $quiz_id, $user_id );
@@ -97,6 +99,7 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 	 * @internal
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress The quiz progress.
+	 * @throws Persistence_Exception If required quiz or lesson progress cannot be created.
 	 */
 	public function save( Quiz_Progress_Interface $quiz_progress ): void {
 		$this->comments_based_repository->save( $quiz_progress );
@@ -105,11 +108,12 @@ class Comment_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progres
 		if ( ! $tables_based_progress ) {
 			$tables_based_progress = $this->tables_based_repository->create(
 				$quiz_progress->get_quiz_id(),
-				$quiz_progress->get_user_id()
+				$quiz_progress->get_user_id(),
+				false
 			);
 		}
 
-		$started_at = null;
+		$started_at = $tables_based_progress->get_started_at();
 		if ( $quiz_progress->get_started_at() ) {
 			$started_at = new \DateTimeImmutable( '@' . $quiz_progress->get_started_at()->getTimestamp() );
 		}

@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Avoid duplicate HPPS migration error notices in settings.

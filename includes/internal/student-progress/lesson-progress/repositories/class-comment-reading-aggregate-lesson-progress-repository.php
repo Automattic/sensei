@@ -110,11 +110,12 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 		if ( ! $tables_based_progress ) {
 			$tables_based_progress = $this->tables_based_repository->create(
 				$lesson_progress->get_lesson_id(),
-				$lesson_progress->get_user_id()
+				$lesson_progress->get_user_id(),
+				false
 			);
 		}
 
-		$started_at = null;
+		$started_at = $tables_based_progress->get_started_at();
 		if ( $lesson_progress->get_started_at() ) {
 			$started_at = new \DateTimeImmutable( '@' . $lesson_progress->get_started_at()->getTimestamp() );
 		}
@@ -140,13 +141,29 @@ class Comment_Reading_Aggregate_Lesson_Progress_Repository implements Lesson_Pro
 	/**
 	 * Deletes a lesson progress.
 	 *
-	 * @intenal
+	 * @internal
 	 *
 	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
 	 */
 	public function delete( Lesson_Progress_Interface $lesson_progress ): void {
-		$this->comments_based_repository->delete( $lesson_progress );
 		$this->tables_based_repository->delete( $lesson_progress );
+		$this->comments_based_repository->delete( $lesson_progress );
+	}
+
+	/**
+	 * Delete progress for a student, including when the selected read store has no record.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id   The student ID.
+	 * @throws Persistence_Exception If required progress cannot be deleted.
+	 */
+	public function delete_for_student( int $lesson_id, int $user_id ): void {
+		$this->tables_based_repository->delete_for_student( $lesson_id, $user_id );
+		$this->comments_based_repository->delete_for_student( $lesson_id, $user_id );
 	}
 
 	/**

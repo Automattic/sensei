@@ -429,4 +429,293 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertSame( array(), $actual );
 	}
+
+	/**
+	 * A lesson is in the module it was assigned to.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::has_lesson_module
+	 */
+	public function testHasLessonModule_LessonHadTheModule_ReturnsTrue(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->set_lesson_module( $lesson_id, $module_id );
+
+		/* Act. */
+		$actual = $this->repository->has_lesson_module( $lesson_id, $module_id );
+
+		/* Assert. */
+		self::assertTrue( $actual );
+	}
+
+	/**
+	 * A lesson is not in a module it was not assigned to.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::has_lesson_module
+	 */
+	public function testHasLessonModule_LessonHadAnotherModule_ReturnsFalse(): void {
+		/* Arrange. */
+		$module_id       = $this->factory->module->create();
+		$other_module_id = $this->factory->module->create();
+		$lesson_id       = $this->factory->lesson->create();
+		$this->repository->set_lesson_module( $lesson_id, $other_module_id );
+
+		/* Act. */
+		$actual = $this->repository->has_lesson_module( $lesson_id, $module_id );
+
+		/* Assert. */
+		self::assertFalse( $actual );
+	}
+
+	/**
+	 * A module shared by several of the lessons is returned once.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_module_ids
+	 */
+	public function testGetLessonModuleIds_TwoLessonsSharedAModule_ReturnsEachModuleOnce(): void {
+		/* Arrange. */
+		list( $shared_module_id, $other_module_id, $unused_module_id ) = $this->factory->module->create_many( 3 );
+		list( $first_lesson_id, $second_lesson_id, $third_lesson_id )  = $this->factory->lesson->create_many( 3 );
+		wp_set_object_terms( $first_lesson_id, array( $shared_module_id ), 'module' );
+		wp_set_object_terms( $second_lesson_id, array( $shared_module_id ), 'module' );
+		wp_set_object_terms( $third_lesson_id, array( $other_module_id ), 'module' );
+		wp_set_object_terms( $this->factory->lesson->create(), array( $unused_module_id ), 'module' );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_module_ids( array( $first_lesson_id, $second_lesson_id, $third_lesson_id ) );
+
+		/* Assert. */
+		sort( $actual );
+		self::assertSame( array( $shared_module_id, $other_module_id ), $actual );
+	}
+
+	/**
+	 * Setting the module of a lesson replaces the module it had instead of adding a second one.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::set_lesson_module
+	 */
+	public function testSetLessonModule_LessonHadModule_ReplacesIt(): void {
+		/* Arrange. */
+		$old_module_id = $this->factory->module->create();
+		$new_module_id = $this->factory->module->create();
+		$lesson_id     = $this->factory->lesson->create();
+		$this->repository->set_lesson_module( $lesson_id, $old_module_id );
+
+		/* Act. */
+		$this->repository->set_lesson_module( $lesson_id, $new_module_id );
+
+		/* Assert. */
+		self::assertSame( array( $new_module_id ), wp_get_object_terms( $lesson_id, 'module', array( 'fields' => 'ids' ) ) );
+	}
+
+	/**
+	 * Deleting the lesson module leaves the lesson with no module.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::delete_lesson_module
+	 */
+	public function testDeleteLessonModule_LessonHadModule_RemovesIt(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->set_lesson_module( $lesson_id, $module_id );
+
+		/* Act. */
+		$this->repository->delete_lesson_module( $lesson_id );
+
+		/* Assert. */
+		self::assertSame( array(), wp_get_object_terms( $lesson_id, 'module', array( 'fields' => 'ids' ) ) );
+	}
+
+	/**
+	 * Unsetting the lesson module leaves the lesson with no module and fires `set_object_terms`.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::unset_lesson_module
+	 */
+	public function testUnsetLessonModule_LessonHadModule_RemovesItThroughSetObjectTerms(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->set_lesson_module( $lesson_id, $module_id );
+		$set_object_terms_calls = array();
+		add_action(
+			'set_object_terms',
+			function ( $object_id ) use ( &$set_object_terms_calls ) {
+				$set_object_terms_calls[] = $object_id;
+			}
+		);
+
+		/* Act. */
+		$this->repository->unset_lesson_module( $lesson_id );
+
+		/* Assert. */
+		self::assertSame( array(), wp_get_object_terms( $lesson_id, 'module', array( 'fields' => 'ids' ) ), 'The lesson should have no module.' );
+		self::assertSame( array( $lesson_id ), $set_object_terms_calls, 'set_object_terms should fire once, for the lesson.' );
+	}
+
+	/**
+	 * A stored module order is cast to an integer like `intval()`, including zero and non-canonical numbers.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_module_order
+	 * @dataProvider storedOrdersProvider
+	 *
+	 * @param string $meta_value Value stored in the meta.
+	 * @param int    $expected   Expected order.
+	 */
+	public function testGetLessonModuleOrder_OrderStored_ReturnsItAsInteger( string $meta_value, int $expected ): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_order_module_' . $module_id => $meta_value ) ) );
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_module_order( $lesson_id, $module_id );
+
+		/* Assert. */
+		self::assertSame( $expected, $actual );
+	}
+
+	/**
+	 * A lesson without a stored order in a module has no order, not an order of zero.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::get_lesson_module_order
+	 */
+	public function testGetLessonModuleOrder_NoOrderStored_ReturnsNull(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$actual = $this->repository->get_lesson_module_order( $lesson_id, $module_id );
+
+		/* Assert. */
+		self::assertNull( $actual );
+	}
+
+	/**
+	 * Deleting a lesson module order removes the stored value instead of storing an empty one.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::delete_lesson_module_order
+	 */
+	public function testDeleteLessonModuleOrder_LessonHadOrder_DeletesIt(): void {
+		/* Arrange. */
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->set_lesson_module_order( $lesson_id, $module_id, 2 );
+
+		/* Act. */
+		$this->repository->delete_lesson_module_order( $lesson_id, $module_id );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_order_module_' . $module_id ) );
+	}
+
+	/**
+	 * Deleting all the module orders of a lesson deletes the order stored for each of its modules.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::delete_all_lesson_module_orders
+	 */
+	public function testDeleteAllLessonModuleOrders_LessonHadTwoModules_DeletesBoth(): void {
+		/* Arrange. */
+		$module_ids = array( $this->factory->module->create(), $this->factory->module->create() );
+		$lesson_id  = $this->factory->lesson->create();
+		wp_set_object_terms( $lesson_id, $module_ids, 'module' );
+		$this->repository->set_lesson_module_order( $lesson_id, $module_ids[0], 1 );
+		$this->repository->set_lesson_module_order( $lesson_id, $module_ids[1], 2 );
+
+		/* Act. */
+		$this->repository->delete_all_lesson_module_orders( $lesson_id );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_order_module_' . $module_ids[0] ), 'The order in the first module should be deleted.' );
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_order_module_' . $module_ids[1] ), 'The order in the second module should be deleted.' );
+	}
+
+	/**
+	 * Attaching a lesson to a course replaces the course it had.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::attach_lesson
+	 */
+	public function testAttachLesson_LessonHadCourse_ReplacesIt(): void {
+		/* Arrange. */
+		$old_course_id = $this->factory->course->create();
+		$new_course_id = $this->factory->course->create();
+		$lesson_id     = $this->factory->lesson->create();
+		$this->repository->attach_lesson( $lesson_id, $old_course_id );
+
+		/* Act. */
+		$this->repository->attach_lesson( $lesson_id, $new_course_id );
+
+		/* Assert. */
+		self::assertSame( $new_course_id, $this->repository->get_course_id( $lesson_id ) );
+	}
+
+	/**
+	 * Detaching a lesson removes its course instead of storing an empty one.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::detach_lesson
+	 */
+	public function testDetachLesson_LessonHadCourse_DeletesIt(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		$this->repository->attach_lesson( $lesson_id, $course_id );
+
+		/* Act. */
+		$this->repository->detach_lesson( $lesson_id );
+
+		/* Assert. */
+		self::assertFalse( metadata_exists( 'post', $lesson_id, '_lesson_course' ) );
+	}
+
+	/**
+	 * Copying the structure copies every structure row as stored, leaves the other metas alone and
+	 * returns the keys it copied.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::copy_structure
+	 */
+	public function testCopyStructure_LessonWithStructureAndOtherMetasGiven_CopiesTheStructureRowsAndReturnsTheirKeys(): void {
+		/* Arrange. */
+		$course_id       = $this->factory->course->create();
+		$module_id       = $this->factory->module->create();
+		$prerequisite_id = $this->factory->lesson->create();
+		$lesson_id       = $this->factory->lesson->create();
+		$copy_id         = $this->factory->lesson->create();
+		$this->repository->attach_lesson( $lesson_id, $course_id );
+		// Values the repository never writes, seeded directly: every row is copied as stored.
+		add_post_meta( $lesson_id, '_order_' . $course_id, '' );
+		add_post_meta( $lesson_id, '_order_' . $course_id, '4' );
+		$this->repository->set_lesson_module_order( $lesson_id, $module_id, 2 );
+		$this->repository->set_lesson_prerequisite( $lesson_id, $prerequisite_id );
+		add_post_meta( $lesson_id, '_lesson_length', '15' );
+
+		/* Act. */
+		$copied_keys = $this->repository->copy_structure( $lesson_id, $copy_id );
+
+		/* Assert. */
+		self::assertEqualsCanonicalizing( array( '_lesson_course', '_order_' . $course_id, '_order_module_' . $module_id, '_lesson_prerequisite' ), $copied_keys, 'The copied keys should be returned.' );
+		self::assertSame( array( (string) $course_id ), get_post_meta( $copy_id, '_lesson_course', false ), 'The course should be copied.' );
+		self::assertSame( array( '', '4' ), get_post_meta( $copy_id, '_order_' . $course_id, false ), 'Every row of the order should be copied as stored.' );
+		self::assertSame( array( '2' ), get_post_meta( $copy_id, '_order_module_' . $module_id, false ), 'The module order should be copied.' );
+		self::assertSame( array( (string) $prerequisite_id ), get_post_meta( $copy_id, '_lesson_prerequisite', false ), 'The prerequisite should be copied.' );
+		self::assertFalse( metadata_exists( 'post', $copy_id, '_lesson_length' ), 'A meta that is not structure should not be copied.' );
+	}
+
+	/**
+	 * The structure of a course is the order of its root lessons.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::copy_structure
+	 */
+	public function testCopyStructure_CourseWithALessonOrderGiven_CopiesTheLessonOrderAndReturnsItsKey(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$copy_id   = $this->factory->course->create();
+		$this->repository->set_root_lesson_order( $course_id, array( 11, 12 ) );
+		add_post_meta( $course_id, '_course_featured', 'featured' );
+
+		/* Act. */
+		$copied_keys = $this->repository->copy_structure( $course_id, $copy_id );
+
+		/* Assert. */
+		self::assertSame( array( '_lesson_order' ), $copied_keys, 'The copied key should be returned.' );
+		self::assertSame( array( 11, 12 ), $this->repository->get_root_lesson_order( $copy_id ), 'The lesson order should be copied.' );
+	}
 }

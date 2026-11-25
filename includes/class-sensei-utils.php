@@ -105,13 +105,16 @@ class Sensei_Utils {
 			if ( empty( $args['keep_time'] ) ) {
 				$data['comment_date'] = current_time( 'mysql' );
 			}
-			wp_update_comment( $data );
+			if ( false === wp_update_comment( $data ) ) {
+				return false;
+			}
 		}
 
 		/**
-		 * Fires after logging the activity.
+		 * Fires after logging the activity, unless an existing comment update fails.
 		 *
 		 * @hook sensei_log_activity_after
+		 * @since 4.28.0 No longer fires when an existing comment update fails.
 		 *
 		 * @param {array} $args Initial arguments.
 		 * @param {array} $data Processed data to log.
@@ -508,7 +511,7 @@ class Sensei_Utils {
 
 			return true;
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( 'grading a quiz' );
 			return false;
 		}
 	}
@@ -687,7 +690,7 @@ class Sensei_Utils {
 
 			return $lesson_progress->get_id();
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( $complete ? 'completing a lesson' : 'starting a lesson' );
 			return false;
 		}
 	}
@@ -710,8 +713,7 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		// Process quiz
-		$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$lesson_quiz_id = (int) Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$has_progress = Sensei()->lesson_progress_repository->has( $lesson_id, $user_id )
 			|| ( $lesson_quiz_id && Sensei()->quiz_progress_repository->has( $lesson_quiz_id, $user_id ) );
@@ -719,13 +721,13 @@ class Sensei_Utils {
 			return false;
 		}
 
-		// Delete quiz answers and their grading metadata after progress can be reset.
-		self::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id );
-
-		// Delete lesson progress.
-		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
-		if ( $lesson_progress ) {
-			Sensei()->lesson_progress_repository->delete( $lesson_progress );
+		try {
+			if ( $user_id ) {
+				Sensei()->lesson_progress_removal->remove_for_student( $lesson_id, $user_id, $lesson_quiz_id );
+			}
+		} catch ( Persistence_Exception $exception ) {
+			$exception->log( 'removing lesson progress' );
+			return false;
 		}
 
 		if ( ! $from_course ) {
@@ -746,7 +748,7 @@ class Sensei_Utils {
 					return false;
 				}
 			} catch ( Persistence_Exception $exception ) {
-				$exception->log();
+				$exception->log( 'removing lesson progress' );
 				return false;
 			}
 		}
@@ -880,29 +882,22 @@ class Sensei_Utils {
 			return false;
 		}
 
-		$deleted   = false;
-		$questions = self::sensei_get_quiz_questions( $quiz_id );
-		foreach ( $questions as $question ) {
-			// Fallback for pre 1.7.4 data.
-			$deleted = self::sensei_delete_activities(
-				array(
-					'post_id' => $question->ID,
-					'user_id' => $user_id,
-					'type'    => 'sensei_user_answer',
-				)
-			);
-		}
+		try {
+			$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			if ( ! $quiz_submission ) {
+				return false;
+			}
 
-		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-		if ( $quiz_submission ) {
-			Sensei()->quiz_submission_repository->delete( $quiz_submission );
-			Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
 			Sensei()->quiz_grade_repository->delete_all( $quiz_submission );
+			Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
+			Sensei()->quiz_submission_repository->delete( $quiz_submission );
 
-			$deleted = true;
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			$exception->log( 'clearing quiz answers' );
+			return false;
 		}
 
-		return $deleted;
 	}
 
 	/**
@@ -927,10 +922,16 @@ class Sensei_Utils {
 			return false;
 		}
 
-		$quiz_submission->set_final_grade( null );
-		Sensei()->quiz_submission_repository->save( $quiz_submission );
+		try {
+			$quiz_submission->set_final_grade( null );
+			Sensei()->quiz_submission_repository->save( $quiz_submission );
 
-		return true;
+			return true;
+		} catch ( Persistence_Exception $exception ) {
+			$exception->log( 'clearing a quiz grade' );
+			return false;
+		}
+
 	}
 
 	/**
@@ -1391,7 +1392,7 @@ class Sensei_Utils {
 						. esc_url( get_permalink( $lesson_prerequisite ) )
 						. '" title="'
 						// translators: Placeholder is the item title.
-						. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
+						. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), esc_attr( get_the_title( $lesson_prerequisite ) ) )
 						. '">'
 						. esc_html__( 'prerequisites', 'sensei-lms' )
 						. '</a>';
@@ -1540,21 +1541,21 @@ class Sensei_Utils {
 	 * @since  1.4.8
 	 * @param  integer $user_id   User ID
 	 * @param  integer $course_id Course ID
-	 * @return bool|int False if they haven't started; Comment ID of course progress if they have.
+	 * @return bool|int False if they haven't started; course progress ID from the selected storage backend otherwise.
 	 */
 	public static function user_start_course( $user_id = 0, $course_id = 0 ) {
 
-		$activity_comment_id = false;
+		$course_progress_id = false;
 
 		if ( $user_id && $course_id ) {
 			// Check if user is already on the Course.
-			$activity_comment_id = self::get_course_progress_comment_id( $course_id, $user_id );
-			if ( false === $activity_comment_id ) {
-				$activity_comment_id = self::start_user_on_course( $user_id, $course_id );
+			$course_progress_id = self::get_course_progress_id( $course_id, $user_id );
+			if ( false === $course_progress_id ) {
+				$course_progress_id = self::start_user_on_course( $user_id, $course_id );
 			}
 		}
 
-		return $activity_comment_id;
+		return $course_progress_id;
 	}
 
 	/**
@@ -1579,15 +1580,17 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Get the course progress comment ID, if it exists.
+	 * Get the course progress ID from the selected storage backend, if it exists.
 	 *
-	 * @since 3.0.0
+	 * The ID may belong to a comment or a progress table row, depending on the active repository.
 	 *
-	 * @param int $course_id Course ID.
-	 * @param int $user_id   User ID.
-	 * @return int|false false or comment_ID
+	 * @since 4.27.0
+	 *
+	 * @param int      $course_id Course ID.
+	 * @param int|null $user_id   User ID. Defaults to the current user when empty.
+	 * @return int|false Course progress ID, or false if no progress exists.
 	 */
-	public static function get_course_progress_comment_id( $course_id, $user_id = null ) {
+	public static function get_course_progress_id( $course_id, $user_id = null ) {
 		if ( empty( $course_id ) ) {
 			return false;
 		}
@@ -1609,16 +1612,32 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Get the course progress ID from the selected storage backend, if it exists.
+	 *
+	 * @since 3.0.0
+	 * @deprecated 4.27.0 Use Sensei_Utils::get_course_progress_id() instead.
+	 *
+	 * @param int      $course_id Course ID.
+	 * @param int|null $user_id   User ID. Defaults to the current user when empty.
+	 * @return int|false Course progress ID, which is not necessarily a comment ID, or false if no progress exists.
+	 */
+	public static function get_course_progress_comment_id( $course_id, $user_id = null ) {
+		_deprecated_function( __METHOD__, '4.27.0', 'Sensei_Utils::get_course_progress_id' );
+
+		return self::get_course_progress_id( $course_id, $user_id );
+	}
+
+	/**
 	 * Check if a user has started a course or not.
 	 *
 	 * @since 3.0.0
 	 *
 	 * @param int $course_id Course ID.
 	 * @param int $user_id   User ID.
-	 * @return int|bool false or comment_ID
+	 * @return int|bool False or a course progress ID from the selected storage backend, subject to filtering.
 	 */
 	public static function has_started_course( $course_id = 0, $user_id = 0 ) {
-		$user_started_course = self::get_course_progress_comment_id( $course_id, $user_id );
+		$user_started_course = self::get_course_progress_id( $course_id, $user_id );
 
 		/**
 		 * Filter the user started course value
@@ -1627,7 +1646,7 @@ class Sensei_Utils {
 		 *
 		 * @hook sensei_user_started_course
 		 *
-		 * @param {bool|int} $user_started_course False if the user has not started the course, otherwise the comment ID of the course progress.
+		 * @param {bool|int} $user_started_course False if the user has not started the course, otherwise the course progress ID from the selected storage backend.
 		 * @param {int}      $course_id           The course ID.
 		 * @param {int}      $user_id             The user ID.
 		 * @return {bool|int} Filtered user started course ID.
@@ -1659,9 +1678,6 @@ class Sensei_Utils {
 			$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
 			if ( ! $course_progress ) {
 				$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
-			}
-			if ( ! $course_progress->get_started_at() ) {
-				$course_progress->start();
 			}
 
 			$lessons_completed = 0;
@@ -1708,7 +1724,7 @@ class Sensei_Utils {
 			Sensei()->course_progress_repository->save( $course_progress );
 
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( 'recalculating course progress' );
 			return false;
 		}
 
@@ -2685,7 +2701,6 @@ class Sensei_Utils {
 	public static function restore_wp_query() {
 
 		wp_reset_query();
-
 	}
 
 	/**
@@ -2778,7 +2793,7 @@ class Sensei_Utils {
 		try {
 			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
 		} catch ( Persistence_Exception $exception ) {
-			$exception->log();
+			$exception->log( 'starting a course' );
 			return false;
 		}
 
@@ -3173,7 +3188,6 @@ class Sensei_Utils {
 		}
 		$video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
 		return $video_embed ? self::render_video_embed( $video_embed ) : null;
-
 	}
 
 	/**

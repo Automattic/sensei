@@ -108,11 +108,12 @@ class Comment_Reading_Aggregate_Course_Progress_Repository implements Course_Pro
 		if ( ! $tables_based_progress ) {
 			$tables_based_progress = $this->tables_based_repository->create(
 				$course_progress->get_course_id(),
-				$course_progress->get_user_id()
+				$course_progress->get_user_id(),
+				false
 			);
 		}
 
-		$started_at = null;
+		$started_at = $tables_based_progress->get_started_at();
 		if ( ! is_null( $course_progress->get_started_at() ) ) {
 			$started_at = new \DateTimeImmutable( '@' . $course_progress->get_started_at()->getTimestamp() );
 		}

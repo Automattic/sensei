@@ -183,11 +183,12 @@ class Tables_Based_Grading_Listing_Service implements Grading_Listing_Service_In
 		$wpdb             = $this->wpdb;
 		$grading_statuses = Utils::get_grading_post_status_sql();
 
-		$query  = 'SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT(*) AS total';
-		$query .= " FROM {$table} p";
+		$query = 'SELECT COALESCE( q.status, p.status ) AS effective_status, COUNT(*) AS total';
+		// Join quiz metadata by post so it can be reused across students.
+		$query .= " FROM {$wpdb->posts} post";
+		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = post.ID AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from wpdb prefix; statuses come from a fixed constant.
-		$query .= " INNER JOIN {$wpdb->posts} post ON post.ID = p.post_id AND post.post_status IN ( {$grading_statuses} )";
-		$query .= " LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.post_id AND pm.meta_key = '_lesson_quiz' AND pm.meta_value > 0";
+		$query .= " INNER JOIN {$table} p ON p.post_id = post.ID AND post.post_status IN ( {$grading_statuses} )";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.
 		$query .= " LEFT JOIN {$submissions_table} qs ON qs.quiz_id = pm.meta_value AND qs.user_id = p.user_id";
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from wpdb prefix.

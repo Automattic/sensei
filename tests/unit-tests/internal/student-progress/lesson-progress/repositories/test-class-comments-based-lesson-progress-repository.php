@@ -2,6 +2,7 @@
 
 namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
+use Sensei\Internal\Persistence_Exception;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
@@ -23,8 +24,81 @@ class Comments_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Rep
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
+	}
+
+	/**
+	 * A missing status comment must be persisted before save can succeed.
+	 *
+	 * @dataProvider missing_comment_save_modes
+	 * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository::save
+	 */
+	public function testSave_MissingCommentInsertFailed_ThrowsAndRetries( string $mode, ?string $table_status ): void {
+		$lesson_id = $this->factory->lesson->create();
+		$user_id   = $this->factory->user->create();
+
+		$this->set_progress_storage_mode( $mode );
+
+		$repository = \Sensei()->lesson_progress_repository;
+		$progress   = $repository->create( $lesson_id, $user_id );
+		$progress->complete();
+		$events_before = did_action( 'sensei_lesson_status_updated' );
+		$failure       = null;
+
+		$this->fail_progress_comment_insert( 'lesson', $lesson_id, $user_id );
+
+		try {
+			$repository->save( $progress );
+		} catch ( Persistence_Exception $exception ) {
+			$failure = $exception;
+		}
+
+		self::assertInstanceOf( Persistence_Exception::class, $failure, 'A missing comment insert must report failure.' );
+		self::assertSame(
+			$events_before,
+			did_action( 'sensei_lesson_status_updated' ),
+			'Failed status inserts must not notify observers.'
+		);
+
+		$wpdb = $GLOBALS['wpdb'];
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Inspect persisted rows after an injected insert failure.
+		$saved_status = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT status FROM {$wpdb->prefix}sensei_lms_progress WHERE post_id = %d AND user_id = %d AND type = %s",
+				$lesson_id,
+				$user_id,
+				'lesson'
+			)
+		);
+		self::assertSame( $table_status, $saved_status, 'Writes before the failure must be retained; dependent writes must stop.' );
+
+		$this->restore_progress_insert_failure();
+		$repository->save( $progress );
+		self::assertSame(
+			'complete',
+			$repository->get( $lesson_id, $user_id )->get_status(),
+			'Retry should persist the requested status.'
+		);
+	}
+
+	/**
+	 * Storage modes and the table state retained after a failed comment insert.
+	 *
+	 * @return array
+	 */
+	public static function missing_comment_save_modes(): array {
+		if ( self::is_hpps_tables_mode() ) {
+			return array( 'tables primary' => array( 'tables', 'complete' ) );
+		}
+
+		return array(
+			'comments only'    => array( 'comments-only', null ),
+			'comments primary' => array( 'comments', 'in-progress' ),
+		);
 	}
 
 	public function testSave_DatesInDifferentTimezone_StoresCommentDatesInSiteTimezone(): void {
@@ -63,6 +137,32 @@ class Comments_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Rep
 			get_comment( $created->get_id() )->comment_date,
 			'Comment date should be stored in the site timezone, not UTC.'
 		);
+	}
+
+	/**
+	 * Completion dates keep their recorded instant when the site timezone changes.
+	 *
+	 * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository::get
+	 */
+	public function testGet_CompletedBeforeTimezoneChanged_ReturnsRecordedCompletionInstant(): void {
+		update_option( 'timezone_string', 'Asia/Dhaka' );
+		$post_id    = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Comments_Based_Lesson_Progress_Repository();
+		wp_insert_comment(
+			array(
+				'comment_post_ID'  => $post_id,
+				'user_id'          => $user_id,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'complete',
+				'comment_date'     => '2022-05-17 01:36:12',
+			)
+		);
+
+		update_option( 'timezone_string', 'America/Chicago' );
+		$actual = $repository->get( $post_id, $user_id )->get_completed_at();
+
+		self::assertSame( '2022-05-16 14:36:12 -05:00', $actual->format( 'Y-m-d H:i:s P' ) );
 	}
 
 	public function testGet_WhenStatusFound_ReturnsLessonProgress(): void {
@@ -324,5 +424,21 @@ class Comments_Based_Lesson_Progress_Repository_Test extends Lesson_Progress_Rep
 	 */
 	protected function get_insert_table(): string {
 		return $GLOBALS['wpdb']->comments;
+	}
+
+	/**
+	 * Set the comment date used to sort progress.
+	 *
+	 * @param int    $progress_id Progress record ID.
+	 * @param string $timestamp Update time.
+	 */
+	protected function set_progress_update_time( int $progress_id, string $timestamp ): void {
+		wp_update_comment(
+			array(
+				'comment_ID'       => $progress_id,
+				'comment_date'     => $timestamp,
+				'comment_date_gmt' => get_gmt_from_date( $timestamp ),
+			)
+		);
 	}
 }

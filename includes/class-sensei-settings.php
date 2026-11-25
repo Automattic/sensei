@@ -1,6 +1,5 @@
 <?php
 
-use Sensei\Internal\Installer\Eraser;
 use Sensei\Internal\Installer\Schema;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 
@@ -1213,11 +1212,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$old_sync = (bool) ( $old_value['experimental_progress_storage_synchronization'] ?? false );
 		$new_sync = (bool) ( $value['experimental_progress_storage_synchronization'] ?? false );
 		if ( $new_sync !== $old_sync && $new_sync ) {
-			// Drop existing tables and clear the migration state.
-			( new Eraser() )->drop_tables();
+			// Restart the insert-only migration without removing existing progress or quiz data.
 			$migration_scheduler->clear_state();
 
-			// Recreate tables and  schedule the migration.
+			// Create missing tables and schedule the migration.
 			( new Schema( Sensei()->feature_flags ) )->create_tables();
 			$migration_scheduler->schedule();
 		}
@@ -1583,6 +1581,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Marks the given section as visited.
 	 */
 	public function mark_section_as_visited() {
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			return;
+		}
+
 		if ( isset( $_POST['nonce'] ) && wp_verify_nonce( sensei_request_text( $_POST['nonce'] ), 'sensei-mark-settings-section-visited' ) ) {
 			if ( isset( $_POST['section_id'] ) ) {
 				$section_id = sanitize_key( $_POST['section_id'] );

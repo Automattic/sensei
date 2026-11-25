@@ -3,6 +3,7 @@
 namespace SenseiTest\Internal\Migration\Migrations;
 
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
 use Sensei_Factory;
 use Sensei_Utils;
 
@@ -12,6 +13,7 @@ use Sensei_Utils;
  * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration
  */
 class Student_Progress_Migration_Test extends \WP_UnitTestCase {
+	use \Sensei_HPPS_Helpers;
 
 	/**
 	 * Migration instance.
@@ -31,6 +33,12 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( 'TRUNCATE TABLE ' . $wpdb->prefix . 'sensei_lms_progress' );
+	}
+
+	protected function tearDown(): void {
+		$this->restore_progress_storage_mode();
+
+		parent::tearDown();
 	}
 
 	public function testGetErrors_MigrationDidntRun_ReturnsEmptyArray(): void {
@@ -78,6 +86,11 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 	}
 
 
+	/**
+	 * Migrated progress is readable even when missing rows were cached earlier.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration::run
+	 */
 	public function testRun_CommentsExist_CreatesProgressMatchingEntriesInCustomTables(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
@@ -100,6 +113,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 
 		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
 
+		$this->set_progress_storage_mode( 'comments-only' );
 		Sensei_Utils::start_user_on_course( $user_1, $course_id );
 		Sensei_Utils::user_start_lesson( $user_1, $lesson_id, true );
 		Sensei_Utils::user_passed_quiz( $quiz_id, $user_1 );
@@ -107,6 +121,12 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		Sensei_Utils::start_user_on_course( $user_2, $course_id );
 		Sensei_Utils::user_start_lesson( $user_2, $lesson_id, true );
 		Sensei_Utils::user_passed_quiz( $quiz_id, $user_2 );
+		$this->restore_progress_storage_mode();
+
+		$this->set_progress_storage_mode( 'tables' );
+		Sensei()->course_progress_repository->get( $course_id, $user_1 );
+		Sensei()->lesson_progress_repository->get( $lesson_id, $user_1 );
+		Sensei()->quiz_progress_repository->get( $quiz_id, $user_1 );
 
 		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
 
@@ -114,6 +134,9 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
 
 		/* Assert. */
+		$this->assertNotNull( Sensei()->course_progress_repository->get( $course_id, $user_1 ), 'The migrated course progress should replace its cached miss.' );
+		$this->assertNotNull( Sensei()->lesson_progress_repository->get( $lesson_id, $user_1 ), 'The migrated lesson progress should replace its cached miss.' );
+		$this->assertNotNull( Sensei()->quiz_progress_repository->get( $quiz_id, $user_1 ), 'The migrated quiz progress should replace its cached miss.' );
 		$actual_rows = $this->get_table_based_progress();
 		$expected    = array(
 			array(
@@ -154,6 +177,57 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 			),
 		);
 		$this->assertSame( $expected, $actual_rows );
+	}
+
+	/**
+	 * Migration preserves completion and leaves absent start metadata unknown.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration::run
+	 */
+	public function testRun_ProgressCommentsWithoutStartMetadata_PreservesUnknownStartsAndCompletionDates(): void {
+		global $wpdb;
+
+		update_option( 'timezone_string', 'America/Toronto' );
+		$user_id      = $this->factory->user->create();
+		$course       = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$completed_at = '2024-05-01 15:45:00';
+		$fixtures     = array(
+			'sensei_course_status' => $course['course_id'],
+			'sensei_lesson_status' => $course['lesson_ids'][0],
+		);
+
+		foreach ( $fixtures as $type => $post_id ) {
+			wp_insert_comment(
+				array(
+					'comment_post_ID'  => $post_id,
+					'user_id'          => $user_id,
+					'comment_type'     => $type,
+					'comment_approved' => 'complete',
+					'comment_date'     => '2024-05-01 11:45:00',
+					'comment_date_gmt' => $completed_at,
+				)
+			);
+		}
+
+		$this->migration->run( false );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT type, started_at, completed_at FROM {$wpdb->prefix}sensei_lms_progress WHERE user_id = %d ORDER BY type",
+				$user_id
+			),
+			ARRAY_N
+		);
+
+		self::assertSame(
+			array(
+				array( 'course', null, $completed_at ),
+				array( 'lesson', null, $completed_at ),
+				array( 'quiz', null, $completed_at ),
+			),
+			$rows
+		);
 	}
 
 	public function testRun_TimeExceeded_StopsEarlyAndAdvancesCursor(): void {
@@ -207,6 +281,11 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->assertLessThan( 5, $result, 'Expected fewer than 5 rows because time budget should stop processing early.' );
 	}
 
+	/**
+	 * Duplicate-only retries still process comments and refresh cached misses.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration::run
+	 */
 	public function testRun_AllRowsWereDuplicates_ReturnsGreaterThanZero(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
@@ -219,6 +298,16 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		// First run: inserts rows normally.
 		$this->migration->run( false );
 
+		$this->set_progress_storage_mode( 'tables' );
+		$repository = new Tables_Based_Course_Progress_Repository( $GLOBALS['wpdb'] );
+		// phpcs:disable WordPress.DB -- Restore the existing row while retaining a cached miss.
+		global $wpdb;
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}sensei_lms_progress WHERE post_id = %d AND user_id = %d AND type = 'course'", $course_id, $user_id ), ARRAY_A );
+		$repository->delete( $repository->get( $course_id, $user_id ) );
+		$repository->get( $course_id, $user_id );
+		$wpdb->insert( $wpdb->prefix . 'sensei_lms_progress', $row );
+		// phpcs:enable WordPress.DB
+
 		// Simulate a crash before cursor update by resetting the cursor.
 		update_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
 
@@ -228,6 +317,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertGreaterThan( 0, $result, 'run() should return > 0 when comments were processed, even if all inserts were duplicates' );
+		$this->assertNotNull( $repository->get( $course_id, $user_id ), 'A duplicate-only batch should clear an existing progress cache miss.' );
 	}
 
 	public function testRun_AllRowsWereDuplicates_AdvancesCursorPastDuplicates(): void {

@@ -38,7 +38,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * Create a courses overview service with its dependencies.
 	 *
 	 * @internal
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param Grading_Stats_Service_Interface        $grading_stats_service Grading statistics service.
 	 * @param Progress_Aggregation_Service_Interface $aggregation_service   Progress aggregation service.
@@ -74,7 +74,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get the average lesson progress grouped by course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Course IDs.
 	 * @return float[] Average progress keyed by course ID.
@@ -136,7 +136,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get eligible completion counts keyed by requested course ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Requested course IDs.
 	 * @return array<int, int> Completion counts including zero for courses without completions.
@@ -148,7 +148,7 @@ class Sensei_Reports_Overview_Service_Courses {
 
 		if ( has_filter( 'sensei_analysis_course_completions' ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_hook handles its own output.
-			_deprecated_hook( 'sensei_analysis_course_completions', '$$next-version$$', '', __( 'This filter is no longer used. Course completion counts now use the progress aggregation service.', 'sensei-lms' ) );
+			_deprecated_hook( 'sensei_analysis_course_completions', '4.27.0', '', __( 'This filter is no longer used. Course completion counts now use the progress aggregation service.', 'sensei-lms' ) );
 		}
 
 		$counts = $this->get_aggregation_service()->count_statuses_by_post(
@@ -192,7 +192,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 *
 	 * Courses without eligible grades are omitted; a zero grade is included.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Requested course IDs.
 	 * @return array<int, float> Average grades before display rounding.
@@ -213,7 +213,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 *
 	 * Includes published and private lessons.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Requested course IDs.
 	 * @return array<int, array{count:int, sum:float}> Grade totals for each requested course.
@@ -225,7 +225,7 @@ class Sensei_Reports_Overview_Service_Courses {
 
 		if ( has_filter( 'sensei_analysis_course_percentage' ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- _deprecated_hook handles its own output.
-			_deprecated_hook( 'sensei_analysis_course_percentage', '$$next-version$$', '', __( 'This filter is no longer used. Course grades now use the grading statistics service.', 'sensei-lms' ) );
+			_deprecated_hook( 'sensei_analysis_course_percentage', '4.27.0', '', __( 'This filter is no longer used. Course grades now use the grading statistics service.', 'sensei-lms' ) );
 		}
 
 		$course_ids        = array_map( 'intval', $course_ids );
@@ -306,7 +306,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get rounded completion-day averages grouped by requested course ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.27.0
 	 *
 	 * @param int[] $course_ids Course IDs.
 	 * @return array<int, float> Rounded completion days keyed by requested course ID.
@@ -395,11 +395,17 @@ class Sensei_Reports_Overview_Service_Courses {
 		$course_ids      = array_values( $course_id_map );
 		$report_statuses = Utils::get_reports_post_status_sql();
 
-		$query = "SELECT pm.meta_value as course_id, pm.post_id as lesson_id
-			FROM {$wpdb->postmeta} pm
-			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-			WHERE pm.meta_value IN ( " . implode( ',', $course_ids ) . " )
-			AND pm.meta_key = '_lesson_course'
+		$lesson_course       = Sensei()->course_lessons_sql_service->get_lesson_course_clauses( 'pm' );
+		$lesson_course_table = $lesson_course['table'];
+		$lesson_course_where = $lesson_course['where'];
+		$lesson_id_sql       = $lesson_course['lesson_id'];
+		$course_id_sql       = $lesson_course['course_id'];
+
+		$query = "SELECT {$course_id_sql} as course_id, {$lesson_id_sql} as lesson_id
+			FROM {$lesson_course_table} pm
+			INNER JOIN {$wpdb->posts} p ON p.ID = {$lesson_id_sql}
+			WHERE {$course_id_sql} IN ( " . implode( ',', $course_ids ) . " )
+			AND {$lesson_course_where}
 			AND p.post_type = 'lesson'
 			AND p.post_status IN ( {$report_statuses} )";
 

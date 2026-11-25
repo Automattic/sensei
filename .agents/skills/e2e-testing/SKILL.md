@@ -5,7 +5,7 @@ description: Use when verifying a Sensei UI or behavior change end-to-end agains
 
 # Sensei E2E Verification
 
-This skill verifies that a change actually behaves correctly from a user's perspective. Use it after the unit-test loop passes and before relying on Playwright for full regression.
+This skill verifies that a change actually behaves correctly from a user's perspective. Choose the order of browser verification, unit tests, and Playwright runs according to the change and investigation.
 
 ## Prerequisites
 
@@ -13,6 +13,13 @@ This skill verifies that a change actually behaves correctly from a user's persp
 - Verify that the active theme is `course` before frontend checks. New sites use the WordPress.org release pinned in `.wp-env.json`; an adopted primary retains its existing theme and activation state. If a change requires Course, activate it only in the isolated test environment.
 - Browser tools are available, such as Chrome DevTools MCP or the harness's browser automation tools. Read their usage instructions before driving the browser. If none are available, report that agent-driven browser verification is unavailable and provide manual steps.
 - For PHP changes that touch built assets, run `npm run build:assets` first. For changes that affect the scoped vendor tree, run `make build`.
+
+## Learning Mode coverage
+
+For browser checks and targeted Playwright specs that use a course, check
+`Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id )` for the
+test course. If it returns false, enable Learning Mode for that course and
+confirm it returns true before testing.
 
 ## Sensei surface map
 

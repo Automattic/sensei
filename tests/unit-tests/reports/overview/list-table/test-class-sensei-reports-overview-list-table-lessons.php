@@ -357,12 +357,17 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 			3,
 			array( 'meta_input' => array( '_lesson_course' => $course_id ) )
 		);
+		$module_ids = $this->factory->module->create_many( 2 );
+		wp_set_object_terms( $lesson_ids[0], $module_ids[0], 'module' );
+		wp_set_object_terms( $lesson_ids[1], $module_ids[0], 'module' );
+		wp_set_object_terms( $lesson_ids[2], $module_ids[1], 'module' );
 		$days_count = 7;
 		$started    = new DateTimeImmutable( '2022-01-01 12:00:00', new DateTimeZone( 'UTC' ) );
 
 		$data_provider_instance = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
 		$lesson_table_instance  = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, $data_provider_instance );
 
+		$_GET['view']          = 'lessons';
 		$_GET['course_filter'] = $course_id;
 		// Complete a lesson for each student on a different date.
 		foreach ( $user_ids as $user_id ) {
@@ -388,6 +393,7 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 		/* Assert */
 		$expected = array(
 			'title'              => 'Lesson (3)',
+			'lesson_module'      => 'Module (2)',
 			'students'           => 'Students (3)',
 			'last_activity'      => 'Last Activity',
 			'completions'        => 'Completed (1)',

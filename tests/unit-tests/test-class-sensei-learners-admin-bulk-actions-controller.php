@@ -9,6 +9,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  */
 class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
 
 	private $controller;
@@ -18,6 +19,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 
 		$this->factory = new Sensei_Factory();
 		self::resetEnrolmentProviders();
+		self::resetLearnerTerms();
 
 		$this->controller = $this->getMockBuilder( Sensei_Learners_Admin_Bulk_Actions_Controller::class )
 			->setConstructorArgs( [ new Sensei_Learner_Management( '' ), Sensei_Learner::instance() ] )

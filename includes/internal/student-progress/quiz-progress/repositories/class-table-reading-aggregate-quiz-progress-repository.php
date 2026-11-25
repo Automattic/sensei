@@ -70,7 +70,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 * @return Quiz_Progress_Interface The quiz progress.
-	 * @throws Persistence_Exception If required lesson progress creation fails.
+	 * @throws Persistence_Exception If required quiz or lesson progress cannot be created.
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress_Interface {
 		// We don't try to create comments-based quiz progress: it is part of lesson progress.
@@ -113,7 +113,7 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 	 * Save quiz progress.
 	 *
 	 * @param Quiz_Progress_Interface $quiz_progress The quiz progress.
-	 * @throws Persistence_Exception If required lesson progress creation fails.
+	 * @throws Persistence_Exception If a required lesson progress comment cannot be inserted.
 	 * @throws RuntimeException If secondary quiz progress is still missing.
 	 *
 	 * phpcs:ignore Squiz.Commenting.FunctionCommentThrowTag.WrongNumber -- Includes the persistence exception propagated by lesson creation.
@@ -127,7 +127,11 @@ class Table_Reading_Aggregate_Quiz_Progress_Repository implements Quiz_Progress_
 			if ( $lesson_id ) {
 				$lesson_progress_exists = $this->comments_based_lesson_progress_repository->has( $lesson_id, $quiz_progress->get_user_id() );
 				if ( ! $lesson_progress_exists ) {
-					$this->comments_based_lesson_progress_repository->create( $lesson_id, $quiz_progress->get_user_id() );
+					$this->comments_based_lesson_progress_repository->create(
+						$lesson_id,
+						$quiz_progress->get_user_id(),
+						false
+					);
 				}
 			}
 			$comments_based_quiz_progress = $this->comments_based_repository->get(

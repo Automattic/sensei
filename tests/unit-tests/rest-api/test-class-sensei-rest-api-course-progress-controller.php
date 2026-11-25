@@ -147,7 +147,12 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		self::assertSame( $expected, $response->get_data() );
 	}
 
-	public function testDeleteCourseProgress_StudentHasntEnrolledToCourse_ReturnsMatchingResponseData() {
+	/**
+	 * An unstarted course has no progress to reset, so the request succeeds.
+	 *
+	 * @covers Sensei_REST_API_Course_Progress_Controller::batch_delete_items
+	 */
+	public function testDeleteCourseProgress_StudentHasNotStartedCourse_ReturnsSuccessForNoOp() {
 		/* Arrange. */
 		$course_id  = $this->factory->course->create();
 		$student_id = $this->factory->user->create();
@@ -172,7 +177,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		/* Assert. */
 		$expected = [
 			$student_id => [
-				$course_id => false,
+				$course_id => true,
 			],
 		];
 		self::assertSame( $expected, $response->get_data() );
@@ -276,5 +281,22 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 			'error_code'  => 'sensei_course_student_batch_action_missing_course',
 		];
 		self::assertSame( $expected, $this->getResponseAndStatusCode( $response ) );
+	}
+
+	public function testDeleteCourseProgress_CourseIdsMissing_AllowHeaderOmitsDelete() {
+		/* Arrange. */
+		$this->login_as_admin();
+
+		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'student_ids' => array( 1 ) ) ) );
+
+		/* Act. */
+		$response = $this->server->dispatch( $request );
+		$response = apply_filters( 'rest_post_dispatch', rest_ensure_response( $response ), $this->server, $request );
+
+		/* Assert. */
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertArrayNotHasKey( 'Allow', $response->get_headers() );
 	}
 }

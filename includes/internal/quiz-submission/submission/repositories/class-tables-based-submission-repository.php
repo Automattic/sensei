@@ -10,6 +10,9 @@ namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 use DateTimeImmutable;
 use DateTimeZone;
 use Sensei\Internal\Cache_Prefix;
+use Sensei\Internal\Persistence_Exception;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
 use Sensei\Internal\Services\Progress_Storage_Settings;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
@@ -66,6 +69,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
@@ -83,7 +87,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 
-		$this->wpdb->insert(
+		$result = $this->wpdb->insert(
 			$this->get_table_name(),
 			[
 				'quiz_id'     => $quiz_id,
@@ -100,6 +104,19 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 				'%s',
 			]
 		);
+
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception(
+				'quiz_submission',
+				'tables',
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
+				$quiz_id,
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception context contains numeric IDs.
+				$user_id,
+				'insert_failed'
+			);
+		}
 
 		$submission = new Tables_Based_Submission(
 			$this->wpdb->insert_id,
@@ -127,6 +144,7 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission_Interface The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, ?float $final_grade = null ): Submission_Interface {
 		/**
@@ -259,12 +277,13 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The quiz submission.
+	 * @throws \Sensei\Internal\Persistence_Exception If required quiz data cannot be persisted.
 	 */
 	public function save( Submission_Interface $submission ): void {
 		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$submission->set_updated_at( $updated_at );
 
-		$this->wpdb->update(
+		$result = $this->wpdb->update(
 			$this->get_table_name(),
 			[
 				'final_grade' => $submission->get_final_grade(),
@@ -285,6 +304,11 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission->get_quiz_id(), $submission->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
 		}
+
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz_submission', 'tables', $submission->get_quiz_id(), $submission->get_user_id(), 'update_failed', 'save' );
+		}
 	}
 
 	/**
@@ -293,9 +317,10 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 	 * @internal
 	 *
 	 * @param Submission_Interface $submission The quiz submission.
+	 * @throws Persistence_Exception If the submission row cannot be deleted.
 	 */
 	public function delete( Submission_Interface $submission ): void {
-		$this->wpdb->delete(
+		$result = $this->wpdb->delete(
 			$this->get_table_name(),
 			[
 				'quiz_id' => $submission->get_quiz_id(),
@@ -306,9 +331,59 @@ class Tables_Based_Submission_Repository implements Submission_Repository_Interf
 				'%d',
 			]
 		);
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages contain safe diagnostics and are not rendered.
+			throw new Persistence_Exception( 'quiz_submission', 'tables', $submission->get_quiz_id(), $submission->get_user_id(), 'delete_failed', 'delete' );
+		}
 
 		if ( Progress_Storage_Settings::is_cache_enabled() ) {
 			wp_cache_delete( self::get_prefixed_key( $this->get_cache_key( $submission->get_quiz_id(), $submission->get_user_id() ), self::CACHE_GROUP ), self::CACHE_GROUP );
+		}
+	}
+
+	/**
+	 * Delete a student's submission and its grades and answers for one quiz.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The student ID.
+	 * @throws Persistence_Exception If required data cannot be deleted.
+	 */
+	public function delete_for_student( int $quiz_id, int $user_id ): void {
+		$submission = $this->get( $quiz_id, $user_id );
+		if ( ! $submission ) {
+			return;
+		}
+
+		( new Tables_Based_Grade_Repository( $this->wpdb ) )->delete_all( $submission );
+		( new Tables_Based_Answer_Repository( $this->wpdb ) )->delete_all( $submission );
+		$this->delete( $submission );
+	}
+
+	/**
+	 * Delete every student's submission, grades, and answers for one quiz.
+	 *
+	 * @internal
+	 * @since 4.28.0
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @throws Persistence_Exception If submissions cannot be read or required data cannot be deleted.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void {
+		$query = $this->wpdb->prepare( 'SELECT user_id FROM %i WHERE quiz_id = %d', $this->get_table_name(), $quiz_id );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Prepared with placeholders above.
+		$result = $this->wpdb->query( $query );
+		if ( false === $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Safe persistence diagnostics.
+			throw new Persistence_Exception( 'quiz_submission', 'tables', $quiz_id, 0, 'lookup_failed', 'delete' );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Read the successful SELECT above without running another query.
+		$user_ids = $this->wpdb->get_col( null );
+		foreach ( $user_ids as $user_id ) {
+			$this->delete_for_student( $quiz_id, (int) $user_id );
 		}
 	}
 

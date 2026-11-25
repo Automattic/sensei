@@ -110,15 +110,15 @@ class Sensei_Message_Comments_REST_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * An anonymous visitor reading a reply by comment id must be denied.
+	 * An anonymous visitor reading a reply by comment id must not learn that it exists.
 	 */
-	public function testCheckReadPermission_AnonymousRequestedMessageCommentById_ReturnsUnauthorized() {
+	public function testCheckReadPermission_AnonymousRequestedMessageCommentById_ReturnsNotFound() {
 		wp_set_current_user( 0 );
 		$request = new WP_REST_Request( 'GET', '/wp/v2/comments/' . $this->reply_id );
 
 		$response = $this->server->dispatch( $request );
 
-		$this->assertSame( 401, $response->get_status(), 'Anonymous direct comment read must be denied.' );
+		$this->assertSame( 404, $response->get_status(), 'Anonymous direct comment read must be denied.' );
 	}
 
 	/**
@@ -178,9 +178,9 @@ class Sensei_Message_Comments_REST_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * A teacher who is not a participant of the message must be denied a reply by comment id.
+	 * A teacher who is not a participant of the message must not learn that a reply exists by comment id.
 	 */
-	public function testCheckReadPermission_NonParticipantTeacherRequestedMessageCommentById_ReturnsForbidden() {
+	public function testCheckReadPermission_NonParticipantTeacherRequestedMessageCommentById_ReturnsNotFound() {
 		$teacher = $this->factory->user->create(
 			array(
 				'role'       => 'teacher',
@@ -192,7 +192,7 @@ class Sensei_Message_Comments_REST_Tests extends WP_Test_REST_TestCase {
 
 		$response = $this->server->dispatch( $request );
 
-		$this->assertSame( 403, $response->get_status(), 'A teacher who is not a participant must be denied the message reply.' );
+		$this->assertSame( 404, $response->get_status(), 'A teacher who is not a participant must be denied the message reply.' );
 	}
 
 	/**

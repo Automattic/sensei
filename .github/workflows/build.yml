@@ -8,20 +8,25 @@ concurrency:
     group: plugin-build-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
     cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+permissions:
+    contents: read
+
 jobs:
     build:
         name: Plugin Build
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v7.0.1
-            - uses: actions/setup-node@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
               with:
                   node-version-file: '.nvmrc'
             - name: Get npm cache directory
               id: npm-cache
               run: |
                   echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v6.1.0
+            - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: ${{ steps.npm-cache.outputs.dir }}
                   key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
@@ -36,7 +41,7 @@ jobs:
             - name: Decompress plugin
               run: unzip sensei-lms.zip -d sensei-lms
             - name: Store Artifact
-              uses: actions/upload-artifact@v7
+              uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
               with:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
                   path: ${{ github.workspace }}/sensei-lms/
@@ -52,7 +57,7 @@ jobs:
                 php: [7.4, 8.2]
         steps:
             - name: Download Build Artifact
-              uses: actions/download-artifact@v8
+              uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
               with:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
 

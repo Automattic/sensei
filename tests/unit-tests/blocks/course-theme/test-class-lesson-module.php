@@ -83,4 +83,20 @@ class Lesson_Module_Test extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'Test Module', $html, 'Should render the module title' );
 	}
+
+	public function testRender_ModuleTitleContainsHtml_EscapesTheTitle() {
+		global $wpdb;
+
+		$lesson_id = $this->factory->lesson->create();
+		$module    = wp_insert_term( 'Module', Sensei()->modules->taxonomy );
+		wp_set_object_terms( $lesson_id, $module['term_id'], Sensei()->modules->taxonomy );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Bypasses the sanitization of term names on save.
+		$wpdb->update( $wpdb->terms, array( 'name' => '<b>Module</b>' ), array( 'term_id' => $module['term_id'] ) );
+		$GLOBALS['post'] = get_post( $lesson_id );
+		$block           = new Lesson_Module();
+
+		$html = $block->render();
+
+		$this->assertStringContainsString( '&lt;b&gt;Module&lt;/b&gt;', $html );
+	}
 }

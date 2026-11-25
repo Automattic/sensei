@@ -6,6 +6,8 @@ use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interf
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
 
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-file-system-helper.php';
 
@@ -40,6 +42,9 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
+		$this->restore_progress_insert_failure();
+		$this->restore_progress_storage_mode();
+
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -338,6 +343,107 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A failed final-grade write must stop grading before publishing success.
+	 *
+	 * @dataProvider final_grade_write_failures
+	 * @covers Sensei_Utils::sensei_grade_quiz
+	 */
+	public function testSenseiGradeQuiz_RequiredGradeWriteFailed_ReturnsFalseWithoutSuccessEvent( string $mode, string $store ): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		Sensei_Utils::sensei_grade_quiz( $quiz_id, 25, $user_id );
+		$graded_events   = did_action( 'sensei_user_quiz_grade' );
+		$wpdb            = $GLOBALS['wpdb'];
+		$table           = 'tables' === $store ? $wpdb->prefix . 'sensei_lms_quiz_submissions' : $wpdb->commentmeta;
+		$fault           = static function ( $query ) use ( $table ) {
+			return 0 === strpos( $query, "UPDATE `{$table}`" )
+				? 'UPDATE sensei_missing_quiz_table SET id = 1'
+				: $query;
+		};
+		$previous_errors = $wpdb->suppress_errors( true );
+		add_filter( 'query', $fault );
+
+		/* Act. */
+		try {
+			$result = Sensei_Utils::sensei_grade_quiz( $quiz_id, 75, $user_id );
+
+			/* Assert. */
+			self::assertFalse( $result, 'A failed final-grade write must report failure.' );
+			self::assertSame( $graded_events, did_action( 'sensei_user_quiz_grade' ), 'A failed write must not fire a grading success event.' );
+		} finally {
+			remove_filter( 'query', $fault );
+			$wpdb->suppress_errors( $previous_errors );
+		}
+
+		self::assertTrue( Sensei_Utils::sensei_grade_quiz( $quiz_id, 75, $user_id ), 'A later ordinary grade must succeed.' );
+		self::assertTrue( Sensei_Utils::sensei_grade_quiz( $quiz_id, 75, $user_id ), 'An unchanged grade must also succeed.' );
+		self::assertEquals( 75, Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'The final grade must be persisted.' );
+	}
+
+	/**
+	 * Clearing a grade must report failure and allow an already cleared grade.
+	 *
+	 * @dataProvider final_grade_write_failures
+	 * @covers Sensei_Utils::sensei_delete_quiz_grade
+	 */
+	public function testSenseiDeleteQuizGrade_RequiredWriteFailed_ReturnsFalseAndAllowsLaterClear( string $mode, string $store ): void {
+		/* Arrange. */
+		$this->set_progress_storage_mode( $mode );
+		$lesson_id   = $this->factory->lesson->create();
+		$quiz_id     = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+		$user_id     = $this->factory->user->create();
+		Sensei_Quiz::save_user_answers( array( $question_id => 'Saved answer' ), array(), $lesson_id, $user_id );
+		Sensei_Utils::sensei_grade_quiz( $quiz_id, 75, $user_id );
+		$wpdb            = $GLOBALS['wpdb'];
+		$statement       = 'tables' === $store ? "UPDATE `{$wpdb->prefix}sensei_lms_quiz_submissions`" : "DELETE FROM {$wpdb->commentmeta}";
+		$fault           = static function ( $query ) use ( $statement ) {
+			return 0 === strpos( $query, $statement )
+				? 'UPDATE sensei_missing_quiz_table SET id = 1'
+				: $query;
+		};
+		$previous_errors = $wpdb->suppress_errors( true );
+		add_filter( 'query', $fault );
+
+		/* Act. */
+		try {
+			$result = Sensei_Utils::sensei_delete_quiz_grade( $quiz_id, $user_id );
+
+			/* Assert. */
+			self::assertFalse( $result, 'A failed required write must reject clearing the grade.' );
+		} finally {
+			remove_filter( 'query', $fault );
+			$wpdb->suppress_errors( $previous_errors );
+		}
+
+		self::assertTrue( Sensei_Utils::sensei_delete_quiz_grade( $quiz_id, $user_id ), 'A later clear must succeed.' );
+		self::assertTrue( Sensei_Utils::sensei_delete_quiz_grade( $quiz_id, $user_id ), 'An already cleared grade must also succeed.' );
+		self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'The final grade must be cleared.' );
+	}
+
+	/**
+	 * Required final-grade writes in each active storage configuration.
+	 *
+	 * @return array
+	 */
+	public static function final_grade_write_failures(): array {
+		$cases = array();
+		foreach ( self::progress_storage_modes() as $name => $arguments ) {
+			$cases[ $name . ' comment grade' ] = array( $arguments[0], 'comments' );
+			if ( 'comments-only' !== $arguments[0] ) {
+				$cases[ $name . ' table grade' ] = array( $arguments[0], 'tables' );
+			}
+		}
+
+		return $cases;
+	}
+
+	/**
 	 * A missing course record must be created before changing an existing grade.
 	 *
 	 * @dataProvider progress_storage_modes
@@ -366,6 +472,29 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 				self::assertEquals( 75, Sensei()->quiz_submission_repository->get( $quiz_id, $user_id )->get_final_grade(), 'An existing grade must remain unchanged.' );
 			}
 		);
+	}
+
+	/**
+	 * A comment lost after progress was read must not produce completion success.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::sensei_start_lesson
+	 */
+	public function testSenseiStartLesson_CommentInsertFailedDuringSave_ReturnsFalseWithoutCompletion( string $mode ): void {
+		$lesson_id = $this->factory->lesson->create();
+		$user_id   = $this->factory->user->create();
+		$completed = did_action( 'sensei_user_lesson_end' );
+
+		$this->set_progress_storage_mode( $mode );
+
+		Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
+
+		$this->fail_progress_comment_insert( 'lesson', $lesson_id, $user_id, 'complete' );
+
+		$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+
+		self::assertFalse( $result, 'The caller must report the required insert failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_lesson_end' ), 'Completion must not be announced after failure.' );
 	}
 
 	/**
@@ -747,6 +876,29 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A comment lost after progress was read must not produce completion success.
+	 *
+	 * @dataProvider progress_storage_modes
+	 * @covers Sensei_Utils::user_complete_course
+	 */
+	public function testUserCompleteCourse_CommentInsertFailedDuringSave_ReturnsFalseWithoutCompletion( string $mode ): void {
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+		$completed = did_action( 'sensei_user_course_end' );
+
+		$this->set_progress_storage_mode( $mode );
+
+		Sensei()->course_progress_repository->create( $course_id, $user_id );
+
+		$this->fail_progress_comment_insert( 'course', $course_id, $user_id, 'complete' );
+
+		$result = Sensei_Utils::user_complete_course( $course_id, $user_id );
+
+		self::assertFalse( $result, 'The caller must report the required insert failure.' );
+		self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'Completion must not be announced after failure.' );
+	}
+
+	/**
 	 * Missing course progress must not become a completed invalid model.
 	 *
 	 * @dataProvider progress_storage_modes
@@ -767,6 +919,41 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 				self::assertSame( $completed, did_action( 'sensei_user_course_end' ), 'The failed course must not announce completion.' );
 			}
 		);
+	}
+
+	/**
+	 * Adding an unfinished lesson does not undo historical course completion.
+	 *
+	 * @covers Sensei_Utils::user_complete_course
+	 */
+	public function testUserCompleteCourse_CompletedCourseWithUnknownStartAndNewLesson_PreservesCompletion(): void {
+		$this->maybe_enable_hpps_tables_repository();
+		try {
+			$user_id   = $this->factory->user->create();
+			$course    = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+			$course_id = $course['course_id'];
+
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $course['lesson_ids'][0], $user_id );
+			$lesson_progress->complete();
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
+			$this->factory->create_completed_course_progress( $course_id, $user_id, null );
+
+			$this->factory->lesson->create(
+				array(
+					'meta_input' => array( '_lesson_course' => $course_id ),
+				)
+			);
+			wp_cache_flush();
+
+			Sensei_Utils::user_complete_course( $course_id, $user_id, false );
+
+			$progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+
+			self::assertSame( 'complete', $progress->get_status(), 'The new lesson should leave the course complete.' );
+			self::assertNull( $progress->get_started_at(), 'Recalculating the course should leave its start unknown.' );
+		} finally {
+			$this->maybe_reset_hpps_repository();
+		}
 	}
 
 	/**
@@ -1019,7 +1206,9 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 	public function testUpdateCourseStatus_WhenPreviousStatusFound_PassesSameStatusAsPreviousStatusToTheAction(): void {
 		/* Arrange. */
-		Sensei()->course_progress_repository->create( 2, 1 );
+		$course_id = $this->factory->course->create();
+		$user_id   = $this->factory->user->create();
+		Sensei()->course_progress_repository->create( $course_id, $user_id );
 
 		$previous_status = 'not-set';
 		$action          = function ( $status, $user_id, $course_id, $comment_id, $prev_status ) use ( &$previous_status ) {
@@ -1028,7 +1217,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		add_action( 'sensei_course_status_updated', $action, 10, 5 );
 
 		/* Act. */
-		Sensei_Utils::update_course_status( 1, 2, 'complete' );
+		Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
 
 		/* Assert. */
 		$this->assertSame( 'in-progress', $previous_status );
@@ -1076,6 +1265,99 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		/* Clean up & Assert. */
 		remove_filter( 'posts_where', $language_filter );
 		$this->assertSame( 80.0, (float) $course_grade, 'The course grade should count the quiz when it is hidden from post queries.' );
+	}
+
+	/**
+	 * Report an HPPS delete fault and complete the removal on retry, even with no comment.
+	 *
+	 * @dataProvider lesson_progress_delete_failures
+	 * @covers Sensei_Utils::sensei_remove_user_from_lesson
+	 */
+	public function testSenseiRemoveUserFromLesson_WhenTableDeleteFailed_ReturnsFailureAndAllowsRetry( string $mode, bool $has_comment ): void {
+		global $wpdb;
+
+		$this->set_progress_storage_mode( $mode );
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		$user_id   = $this->factory->user->create();
+		$comments  = new Comments_Based_Lesson_Progress_Repository();
+		$tables    = new Tables_Based_Lesson_Progress_Repository( $wpdb );
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		if ( ! $has_comment ) {
+			// Recreate a partial removal where the lesson comment was deleted first.
+			$comments->delete_for_student( $lesson_id, $user_id );
+		}
+
+		$statement = "DELETE FROM `{$wpdb->prefix}sensei_lms_progress`";
+		$fault     = static function ( $query ) use ( $statement ) {
+			return 0 === strpos( $query, $statement ) && false !== strpos( $query, "`type` = 'lesson'" )
+				? 'DELETE FROM sensei_missing_lesson_progress_table WHERE id = 1'
+				: $query;
+		};
+
+		$previous_errors = $wpdb->suppress_errors( true );
+		add_filter( 'query', $fault );
+
+		try {
+			$result = Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id );
+		} finally {
+			remove_filter( 'query', $fault );
+			$wpdb->suppress_errors( $previous_errors );
+		}
+
+		self::assertFalse( $result, 'A failed required HPPS delete should reach the caller.' );
+		self::assertNotNull( $tables->get( $lesson_id, $user_id ), 'The failed delete should leave the table row.' );
+		if ( $has_comment ) {
+			self::assertNotNull( $comments->get( $lesson_id, $user_id ), 'A required table delete should finish before removing the comment.' );
+		}
+
+		self::assertTrue( Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id ), 'The removal should succeed after the failure clears.' );
+		self::assertNull( $tables->get( $lesson_id, $user_id ), 'The retry should remove the table row.' );
+		self::assertNull( $comments->get( $lesson_id, $user_id ), 'The retry should remove any remaining comment.' );
+	}
+
+	/**
+	 * Check the failure with both copies and when only table progress survives.
+	 *
+	 * @return array
+	 */
+	public static function lesson_progress_delete_failures(): array {
+		$cases = array();
+		foreach ( self::dual_write_storage_modes() as $name => $arguments ) {
+			$cases[ $name . ' with both copies' ]  = array( $arguments[0], true );
+			$cases[ $name . ' with only a table' ] = array( $arguments[0], false );
+		}
+
+		return $cases;
+	}
+
+	/**
+	 * Removing a lesson also removes the separate HPPS quiz progress.
+	 *
+	 * @dataProvider dual_write_storage_modes
+	 * @covers Sensei_Utils::sensei_remove_user_from_lesson
+	 */
+	public function testSenseiRemoveUserFromLesson_WhenQuizProgressExists_RemovesQuizProgressAndSubmission( string $mode ): void {
+		$this->set_progress_storage_mode( $mode );
+		$course    = $this->factory->get_course_with_lessons( array( 'question_count' => 1 ) );
+		$lesson_id = $course['lesson_ids'][0];
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$user_id   = $this->factory->user->create();
+		$answers   = $this->factory->generate_user_quiz_answers( $quiz_id );
+		Sensei_Course_Manual_Enrolment_Provider::instance()->enrol_learner( $user_id, $course['course_id'] );
+
+		// Opening the quiz creates its HPPS progress record before the student submits.
+		$quiz_repository = Sensei()->quiz_progress_repository_factory->create_tables_based_repository();
+		$quiz_repository->create( $quiz_id, $user_id );
+		self::assertTrue( Sensei_Quiz::submit_answers_for_grading( $answers, array(), $lesson_id, $user_id ), 'The student should have a quiz submission before removal.' );
+
+		$result = Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id );
+
+		self::assertTrue( $result, 'Lesson and quiz removal should succeed.' );
+		self::assertNull( $quiz_repository->get( $quiz_id, $user_id ), 'The HPPS quiz row should be removed with the lesson.' );
+		self::assertNull( Sensei()->quiz_submission_repository->get( $quiz_id, $user_id ), 'The quiz submission should be removed with the lesson.' );
+		self::assertNull( Sensei()->lesson_progress_repository->get( $lesson_id, $user_id ), 'The lesson progress should be removed after quiz cleanup.' );
 	}
 
 	public function testSenseiRemoveUserFromCourse_LessonsHiddenByQueryFilters_DeletesTheLessonProgress(): void {
