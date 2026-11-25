@@ -232,6 +232,11 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
 
+		$completed_at = $course_progress->get_completed_at();
+		if ( Course_Progress_Interface::STATUS_COMPLETE === $status && $completed_at ) {
+			$metadata['_sensei_completed_at'] = $completed_at;
+		}
+
 		$comment_id = Sensei_Utils::update_course_status(
 			$course_progress->get_user_id(),
 			$course_progress->get_course_id(),

@@ -172,6 +172,11 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
 		}
 
+		$completed_at = $quiz_progress->get_completed_at();
+		if ( in_array( $status, array( 'complete', 'passed', 'graded' ), true ) && $completed_at ) {
+			$metadata['_sensei_completed_at'] = $completed_at;
+		}
+
 		$comment_id = Sensei_Utils::update_lesson_status(
 			$quiz_progress->get_user_id(),
 			$lesson_id,

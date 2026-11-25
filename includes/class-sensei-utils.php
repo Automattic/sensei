@@ -46,7 +46,8 @@ class Sensei_Utils {
 	 *
 	 * @access public
 	 * @since  1.0.0
-	 * @param  array $args (default: array())
+	 * @since  $$next-version$$ Supports explicit local and UTC activity timestamps.
+	 * @param  array $args Activity arguments, optionally including explicit comment_date and comment_date_gmt.
 	 * @return bool | int
 	 */
 	public static function sensei_log_activity( $args = array() ) {
@@ -76,6 +77,11 @@ class Sensei_Utils {
 		if ( ! empty( $args['parent'] ) ) {
 			$data['comment_parent'] = $args['parent'];
 		}
+		if ( isset( $args['comment_date'], $args['comment_date_gmt'] ) ) {
+			$data['comment_date']     = $args['comment_date'];
+			$data['comment_date_gmt'] = $args['comment_date_gmt'];
+		}
+
 		// Sanity check
 		if ( empty( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
@@ -102,11 +108,43 @@ class Sensei_Utils {
 			// Update the comment if an update was requested
 			$data['comment_ID'] = $comment_id;
 			// By default update the timestamp of the comment
-			if ( empty( $args['keep_time'] ) ) {
+			if ( empty( $args['keep_time'] ) && ! isset( $args['comment_date'] ) ) {
 				$data['comment_date'] = current_time( 'mysql' );
 			}
-			if ( false === wp_update_comment( $data ) ) {
-				return false;
+
+			// WordPress recalculates GMT from the local clock, which can be ambiguous at DST changes.
+			$preserve_dates =
+				/**
+				 * Preserve the supplied timestamp pair after WordPress processes the comment.
+				 *
+				 * @param array|WP_Error $updated_data Processed comment data.
+				 * @return array|WP_Error
+				 */
+				static function ( $updated_data ) use ( $data ) {
+					if (
+						! is_wp_error( $updated_data )
+						&& (int) $updated_data['comment_ID'] === (int) $data['comment_ID']
+						&& isset( $data['comment_date'], $data['comment_date_gmt'] )
+					) {
+						$updated_data['comment_date']     = $data['comment_date'];
+						$updated_data['comment_date_gmt'] = $data['comment_date_gmt'];
+					}
+
+					return $updated_data;
+				};
+			$has_explicit_dates = isset( $args['comment_date_gmt'] );
+			if ( $has_explicit_dates ) {
+				add_filter( 'wp_update_comment_data', $preserve_dates, PHP_INT_MAX );
+			}
+
+			try {
+				if ( false === wp_update_comment( $data ) ) {
+					return false;
+				}
+			} finally {
+				if ( $has_explicit_dates ) {
+					remove_filter( 'wp_update_comment_data', $preserve_dates, PHP_INT_MAX );
+				}
 			}
 		}
 
@@ -2124,6 +2162,7 @@ class Sensei_Utils {
 				unset( $args['keep_time'] ); // Keep updating what's happened
 			}
 
+			$args       = self::with_progress_completion_date( $args, $metadata );
 			$comment_id = self::sensei_log_activity( $args );
 			if ( ! $comment_id ) {
 				return false;
@@ -2176,6 +2215,7 @@ class Sensei_Utils {
 				'action'   => 'update', // Update the existing status...
 			);
 
+			$args       = self::with_progress_completion_date( $args, $metadata );
 			$comment_id = self::sensei_log_activity( $args );
 			if ( ! $comment_id ) {
 				return false;
@@ -2204,6 +2244,24 @@ class Sensei_Utils {
 			do_action( 'sensei_course_status_updated', $status, $user_id, $course_id, $comment_id, $previous_status );
 		}
 		return $comment_id;
+	}
+
+	/**
+	 * Extract an internal completion instant before persisting ordinary progress metadata.
+	 *
+	 * @param array $args     Activity arguments.
+	 * @param array $metadata Metadata, with the internal date transport removed.
+	 * @return array Activity arguments with an explicit local/UTC timestamp pair.
+	 */
+	private static function with_progress_completion_date( array $args, array &$metadata ): array {
+		$completed_at = $metadata['_sensei_completed_at'] ?? null;
+		unset( $metadata['_sensei_completed_at'] );
+		if ( $completed_at instanceof \DateTimeInterface ) {
+			$args['comment_date']     = wp_date( 'Y-m-d H:i:s', $completed_at->getTimestamp() );
+			$args['comment_date_gmt'] = gmdate( 'Y-m-d H:i:s', $completed_at->getTimestamp() );
+		}
+
+		return $args;
 	}
 
 	/**
