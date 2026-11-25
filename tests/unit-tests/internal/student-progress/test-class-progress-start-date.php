@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Sensei\Internal\Student_Progress\Progress_Start_Date;
 
 /**
- * Tests whether a stored start date is recorded.
+ * Tests recorded start dates and comment timezone conversion.
  */
 class Progress_Start_Date_Test extends TestCase {
 	/**

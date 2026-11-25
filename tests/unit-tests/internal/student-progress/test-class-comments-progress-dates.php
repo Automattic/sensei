@@ -43,6 +43,22 @@ class Comments_Progress_Dates_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * An unusable offset must not cause a read to invent or overwrite a start date.
+	 *
+	 * @covers \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository::get
+	 */
+	public function testGet_UnusableCommentTimestampPairGiven_RetainsUnknownStartMetadata(): void {
+		list( $post_id, $user_id, $comment_id, $comments ) = $this->create_progress( 'course', 'in-progress' );
+		$GLOBALS['wpdb']->update( $GLOBALS['wpdb']->comments, array( 'comment_date_gmt' => '0000-00-00 00:00:00' ), array( 'comment_ID' => $comment_id ) );
+		clean_comment_cache( $comment_id );
+
+		$actual = $comments->get( $post_id, $user_id );
+
+		self::assertNull( $actual->get_started_at(), 'An unusable timestamp pair cannot establish an absolute start.' );
+		self::assertSame( '2022-05-17 01:00:00', get_comment_meta( $comment_id, 'start', true ), 'Reading unknown progress must retain its legacy metadata.' );
+	}
+
+	/**
 	 * Each reader must apply the same rule before and after completion.
 	 *
 	 * @return array
@@ -184,22 +200,6 @@ class Comments_Progress_Dates_Test extends \WP_UnitTestCase {
 		$actual = $comments->get( $post_id, $user_id );
 
 		self::assertSame( '2022-05-16 14:00:00 -05:00', $actual->get_started_at()->format( 'Y-m-d H:i:s P' ) );
-	}
-
-	/**
-	 * An unusable offset must not cause a read to invent or overwrite a start date.
-	 *
-	 * @covers \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository::get
-	 */
-	public function testGet_UnusableCommentTimestampPairGiven_RetainsUnknownStartMetadata(): void {
-		list( $post_id, $user_id, $comment_id, $comments ) = $this->create_progress( 'course', 'in-progress' );
-		$GLOBALS['wpdb']->update( $GLOBALS['wpdb']->comments, array( 'comment_date_gmt' => '0000-00-00 00:00:00' ), array( 'comment_ID' => $comment_id ) );
-		clean_comment_cache( $comment_id );
-
-		$actual = $comments->get( $post_id, $user_id );
-
-		self::assertNull( $actual->get_started_at(), 'An unusable timestamp pair cannot establish an absolute start.' );
-		self::assertSame( '2022-05-17 01:00:00', get_comment_meta( $comment_id, 'start', true ), 'Reading unknown progress must retain its legacy metadata.' );
 	}
 
 	/**
