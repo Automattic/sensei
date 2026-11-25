@@ -92,7 +92,7 @@ trait Sensei_HPPS_Helpers {
 	}
 
 	/**
-	 * Select a test storage mode until restore_progress_storage_mode() is called.
+	 * Select a test storage mode and its caching until restore_progress_storage_mode() is called.
 	 *
 	 * @param string $mode Storage configuration.
 	 */
@@ -106,16 +106,20 @@ trait Sensei_HPPS_Helpers {
 		);
 
 		$original_configuration = Sensei()->progress_storage_configuration;
-		$original               = $this->set_progress_repositories( $configuration );
+		$original_repository    = Sensei()->settings->settings['experimental_progress_storage_repository'] ?? null;
+		Sensei()->settings->settings['experimental_progress_storage_repository'] = 'tables' === $mode ? Progress_Storage_Settings::TABLES_STORAGE : Progress_Storage_Settings::COMMENTS_STORAGE;
+		Progress_Storage_Settings::reset_cache_enabled();
+		$original = $this->set_progress_repositories( $configuration );
 
 		$this->_original_progress_storage_state = array(
 			'configuration' => $original_configuration,
 			'repositories'  => $original,
+			'repository'    => $original_repository,
 		);
 	}
 
 	/**
-	 * Restore the storage objects and configuration saved before selecting a test mode.
+	 * Restore the storage objects, configuration and caching saved before selecting a test mode.
 	 */
 	protected function restore_progress_storage_mode(): void {
 		if ( null === $this->_original_progress_storage_state ) {
@@ -126,7 +130,13 @@ trait Sensei_HPPS_Helpers {
 			Sensei()->$property = $repository;
 		}
 		Sensei()->progress_storage_configuration = $this->_original_progress_storage_state['configuration'];
-		$this->_original_progress_storage_state  = null;
+		if ( null === $this->_original_progress_storage_state['repository'] ) {
+			unset( Sensei()->settings->settings['experimental_progress_storage_repository'] );
+		} else {
+			Sensei()->settings->settings['experimental_progress_storage_repository'] = $this->_original_progress_storage_state['repository'];
+		}
+		Progress_Storage_Settings::reset_cache_enabled();
+		$this->_original_progress_storage_state = null;
 	}
 
 	/**

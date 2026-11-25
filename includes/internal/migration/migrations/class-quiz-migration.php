@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Sensei\Internal\Cache_Prefix;
 use Sensei\Internal\Migration\Migration_Abstract;
 
 /**
@@ -21,6 +22,8 @@ use Sensei\Internal\Migration\Migration_Abstract;
  * @since 4.17.0
  */
 class Quiz_Migration extends Migration_Abstract {
+	use Cache_Prefix;
+
 	/**
 	 * The name of the option that stores the last comment ID that was migrated.
 	 *
@@ -88,6 +91,18 @@ class Quiz_Migration extends Migration_Abstract {
 
 			$answer_ids = $this->insert_quiz_answers( $comment, $quiz_data, $submission_id );
 			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids );
+
+			// Cached misses and partial results can remain even when every row already exists.
+			if ( ! $this->dry_run ) {
+				$answer_cache_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission_id, 'tables' );
+				$grade_cache_id  = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission_id, 'tables' );
+				wp_cache_delete( self::get_prefixed_key( (string) $answer_cache_id, 'sensei_quiz_answers' ), 'sensei_quiz_answers' );
+				wp_cache_delete( self::get_prefixed_key( (string) $grade_cache_id, 'sensei_quiz_grades' ), 'sensei_quiz_grades' );
+				$cache_lesson_id = (int) apply_filters( 'sensei_quiz_cache_key_lesson_id', (int) $comment->comment_post_ID );
+				foreach ( array( 'sensei_answers_', 'quiz_grades_', 'sensei_answers_feedback_' ) as $prefix ) {
+					delete_transient( $prefix . $comment->user_id . '_' . $cache_lesson_id );
+				}
+			}
 
 			$last_processed_id = $comment->comment_ID;
 			++$processed;
@@ -165,7 +180,7 @@ class Quiz_Migration extends Migration_Abstract {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$quiz_meta = $wpdb->get_results( $quiz_meta_query );
-		$quiz_data = [];
+		$quiz_data = array();
 		foreach ( $quiz_meta as $meta ) {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- We're not doing a meta query here, phpcs is confused.
 			$quiz_data[ $meta->comment_id ][ $meta->meta_key ] = $meta->meta_value;
@@ -215,14 +230,37 @@ class Quiz_Migration extends Migration_Abstract {
 			return 1;
 		}
 
+		global $wpdb;
+
 		$result = $this->db_query( $query );
-		if ( ! $result ) {
+		if ( $result ) {
+			wp_cache_delete( self::get_prefixed_key( $quiz_id . '_' . $comment->user_id, 'sensei_quiz_submissions' ), 'sensei_quiz_submissions' );
+			return $wpdb->insert_id;
+		}
+
+		if ( '' !== $wpdb->last_error ) {
 			return null;
 		}
 
-		global $wpdb;
+		// A previous attempt may have inserted the submission before its children.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$submission_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT id FROM {$wpdb->prefix}sensei_lms_quiz_submissions WHERE quiz_id = %d AND user_id = %d",
+				$quiz_id,
+				$comment->user_id
+			)
+		);
 
-		return $wpdb->insert_id;
+		if ( '' !== $wpdb->last_error ) {
+			$this->add_error( $wpdb->last_error );
+			return null;
+		}
+
+		if ( $submission_id ) {
+			wp_cache_delete( self::get_prefixed_key( $quiz_id . '_' . $comment->user_id, 'sensei_quiz_submissions' ), 'sensei_quiz_submissions' );
+		}
+		return $submission_id ? (int) $submission_id : null;
 	}
 
 	/**
@@ -281,6 +319,38 @@ class Quiz_Migration extends Migration_Abstract {
 			$result = $this->db_query( $query );
 			if ( $result ) {
 				$answer_ids[ $question_id ] = $wpdb->insert_id;
+				continue;
+			}
+
+			if ( '' !== $wpdb->last_error ) {
+				continue;
+			}
+
+			// Only reuse matching answers so grades stay attached to the right response.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$answer = $wpdb->get_row(
+				$wpdb->prepare(
+					"SELECT id, value FROM {$wpdb->prefix}sensei_lms_quiz_answers WHERE submission_id = %d AND question_id = %d",
+					$submission_id,
+					$question_id
+				)
+			);
+
+			if ( '' !== $wpdb->last_error ) {
+				$this->add_error( $wpdb->last_error );
+			} elseif ( $answer ) {
+				if ( $answer->value !== (string) $value ) {
+					$this->add_error(
+						sprintf(
+							/* translators: 1: Quiz submission ID, 2: Question ID. */
+							__( 'Quiz answer conflict for submission ID %1$d and question ID %2$d: the saved answer differs from the source answer.', 'sensei-lms' ),
+							$submission_id,
+							$question_id
+						)
+					);
+					continue;
+				}
+				$answer_ids[ $question_id ] = (int) $answer->id;
 			}
 		}
 
@@ -313,6 +383,10 @@ class Quiz_Migration extends Migration_Abstract {
 
 		$grade_ids = array();
 		foreach ( $quiz_grades as $question_id => $points ) {
+			if ( ! isset( $answer_ids[ $question_id ] ) ) {
+				continue;
+			}
+
 			$columns = array(
 				'answer_id'   => '%d',
 				'question_id' => '%d',
