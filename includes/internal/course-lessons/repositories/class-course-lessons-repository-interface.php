@@ -287,4 +287,21 @@ interface Course_Lessons_Repository_Interface {
 	 * @param int $lesson_id Lesson ID.
 	 */
 	public function detach_lesson( int $lesson_id ): void;
+
+	/**
+	 * Copy the structure of a lesson or a course to another post, as it is stored.
+	 *
+	 * The structure of a lesson is its course, its orders and its prerequisite; the structure of a
+	 * course is the order of its root lessons. The module terms of a lesson are not part of it.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int      $post_id     The lesson or course to copy from.
+	 * @param int      $new_post_id The post to copy to.
+	 * @param string[] $ignore      Meta keys not to copy.
+	 * @return string[] The meta keys that were copied, so the caller does not copy them again.
+	 */
+	public function copy_structure( int $post_id, int $new_post_id, array $ignore = array() ): array;
 }
