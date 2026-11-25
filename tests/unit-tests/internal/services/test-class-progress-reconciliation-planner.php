@@ -106,18 +106,29 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 	 * @dataProvider unsupported_comment_completions
 	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
 	 */
-	public function testInspect_SourceCompletionWasNotRepresentable_WithholdsUnsafeStatusAndCompletion( string $type, bool $comment_exists ): void {
+	public function testInspect_SourceCompletionWasNotRepresentable_WithholdsUnsafeStatusAndCompletion( string $type, bool $comment_exists, string $quiz_status = 'failed' ): void {
 		global $wpdb;
 		$this->select_source( 'tables' );
 		$content_id = $this->post( $type );
 		if ( $comment_exists ) {
-			$this->progress( $type, $content_id, 'comments', 'lesson' === $type ? 'passed' : 'in-progress' );
+			$comment = $this->progress( $type, $content_id, 'comments', 'lesson' === $type && 'failed' === $quiz_status ? 'passed' : 'in-progress' );
 		}
 		$progress_id = $this->progress( $type, $content_id, 'tables', 'complete' );
 		if ( 'lesson' === $type ) {
 			$quiz_id = $this->post( 'quiz', $content_id );
 			update_post_meta( $quiz_id, '_pass_required', '' );
-			$this->progress( 'quiz', $quiz_id, 'tables', 'failed' );
+			$quiz_progress = $this->progress( 'quiz', $quiz_id, 'tables', $quiz_status );
+			if ( 'passed' === $quiz_status ) {
+				$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'completed_at' => '2024-01-03 12:00:00' ), array( 'id' => $quiz_progress ) );
+				$wpdb->update(
+					$wpdb->comments,
+					array(
+						'comment_date'     => '2024-01-04 12:00:00',
+						'comment_date_gmt' => '2024-01-04 12:00:00',
+					),
+					array( 'comment_ID' => $comment )
+				);
+			}
 		} else {
 			$wpdb->update(
 				$wpdb->prefix . 'sensei_lms_progress',
@@ -170,6 +181,39 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		if ( 'tables' === $source ) {
 			self::assertSame( array( 'final_grade' => 80.0 ), $result['changes'][0]['data'], 'Unresolved feedback must not block the final-grade proposal.' );
 		}
+	}
+
+	/**
+	 * A missing submission marker must not hide or overwrite surviving quiz metadata.
+	 *
+	 * @dataProvider quiz_data_without_submission_markers
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_QuizDataSurvivedWithoutSubmissionMarker_PreservesItForReview( string $source, array $collections, ?int $grade, bool $table_submission ): void {
+		global $wpdb;
+		$this->select_source( $source );
+		$lesson_id = $this->post( 'lesson' );
+		$quiz_id   = $this->post( 'quiz', $lesson_id );
+		$question  = $this->post( 'question' );
+		$comment   = $this->progress( 'lesson', $lesson_id, 'comments', 'in-progress' );
+		$this->progress( 'lesson', $lesson_id, 'tables', 'in-progress' );
+		$this->progress( 'quiz', $quiz_id, 'tables', 'in-progress' );
+		if ( null !== $grade ) {
+			update_comment_meta( $comment, 'grade', $grade );
+		}
+		foreach ( $collections as $key => $value ) {
+			update_comment_meta( $comment, $key, array( $question => $value ) );
+		}
+		if ( $table_submission ) {
+			$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $this->student_id );
+			( new Tables_Based_Answer_Repository( $wpdb ) )->create( $submission, $question, 'answer' );
+		}
+
+		$result = ( new Progress_Reconciliation_Planner() )->inspect( 'lesson', $lesson_id, $this->student_id, $source );
+
+		self::assertFalse( $result['equivalent'], 'A missing questions_asked marker must not hide surviving quiz data from verification.' );
+		self::assertContains( 'Quiz data without a submission question marker is preserved for review.', $result['unresolved'], 'The caller must be told why the incomplete submission cannot be copied.' );
+		self::assertSame( array(), $result['changes'], 'Missing submission metadata must not cause a surviving final grade, including zero, or its children to be replaced.' );
 	}
 
 	/**
@@ -655,6 +699,25 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 			'completed course without a completion date'   => array( 'course', true ),
 			'missing course comment without a completion date' => array( 'course', false ),
 			'completed lesson with a failed optional quiz' => array( 'lesson', true ),
+			'lesson and quiz completion timestamps conflict' => array( 'lesson', true, 'passed' ),
+		);
+	}
+
+	/**
+	 * Cover overlooked source data and an unmodeled destination final grade.
+	 *
+	 * @return array
+	 */
+	public static function quiz_data_without_submission_markers(): array {
+		$collections = array(
+			'quiz_answers'          => 'surviving answer',
+			'quiz_grades'           => 2,
+			'quiz_answers_feedback' => 'surviving feedback',
+		);
+		return array(
+			'unmodeled comments source'               => array( 'comments', $collections, null, false ),
+			'unmodeled comments destination'          => array( 'tables', $collections, null, false ),
+			'zero grade without children or a marker' => array( 'tables', array(), 0, true ),
 		);
 	}
 

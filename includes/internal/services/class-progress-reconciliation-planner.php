@@ -440,12 +440,13 @@ class Progress_Reconciliation_Planner {
 		$lesson_status   = in_array( $raw_status, array( 'complete', 'passed', 'graded' ), true )
 			|| ( 'failed' === $raw_status && ! $pass_required ) ? 'complete' : 'in-progress';
 		$compatible      = ! $lesson || $lesson_status === $lesson['status'];
-		// Comment readers expose completion only for these raw statuses. Changing
-		// status can therefore invent or hide a completion without changing a date.
+		// The lesson and quiz share one comment completion time. A status change
+		// must not expose a time that disagrees with either source record.
 		$has_completion = 'course' === $identity['type']
 			? 'complete' === $raw_status : in_array( $raw_status, array( 'complete', 'passed', 'graded' ), true );
 		if ( ( $lesson && ( null !== $lesson['completed_at'] ) !== $has_completion )
-			|| ( $quiz_has_status && ( null !== $quiz['completed_at'] ) !== $has_completion ) ) {
+			|| ( $quiz_has_status && ( null !== $quiz['completed_at'] ) !== $has_completion )
+			|| ( $lesson && $quiz_has_status && $lesson['completed_at'] !== $quiz['completed_at'] ) ) {
 			$compatible           = false;
 			$plan['unresolved'][] = 'Source status and completion cannot share one comment.';
 		}
@@ -538,6 +539,20 @@ class Progress_Reconciliation_Planner {
 				$plan['unresolved'][] = 'Malformed quiz collections are preserved for review.';
 				return;
 			}
+		}
+
+		// A missing questions_asked marker prevents a submission from loading.
+		// Saved answers and grades can survive without it and must be preserved.
+		if ( ! $inspection['comments'] && ( '' !== ( $metadata['grade'] ?? '' )
+			|| ! empty( $metadata['quiz_answers'] ) || ! empty( $metadata['quiz_grades'] ) || ! empty( $metadata['quiz_answers_feedback'] ) ) ) {
+			$plan['unresolved'][] = 'Quiz data without a submission question marker is preserved for review.';
+			if ( 'comments' === $destination || $to ) {
+				$plan['destination_only'][] = array(
+					'kind'    => 'submission',
+					'quiz_id' => $identity['quiz_id'],
+				);
+			}
+			return;
 		}
 
 		// Grade models omit feedback whose points are missing. Keep that raw
