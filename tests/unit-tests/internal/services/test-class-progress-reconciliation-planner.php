@@ -101,6 +101,78 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A status change must not invent or hide a completion the source cannot represent.
+	 *
+	 * @dataProvider unsupported_comment_completions
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_SourceCompletionWasNotRepresentable_WithholdsUnsafeStatusAndCompletion( string $type, bool $comment_exists ): void {
+		global $wpdb;
+		$this->select_source( 'tables' );
+		$content_id = $this->post( $type );
+		if ( $comment_exists ) {
+			$this->progress( $type, $content_id, 'comments', 'lesson' === $type ? 'passed' : 'in-progress' );
+		}
+		$progress_id = $this->progress( $type, $content_id, 'tables', 'complete' );
+		if ( 'lesson' === $type ) {
+			$quiz_id = $this->post( 'quiz', $content_id );
+			update_post_meta( $quiz_id, '_pass_required', '' );
+			$this->progress( 'quiz', $quiz_id, 'tables', 'failed' );
+		} else {
+			$wpdb->update(
+				$wpdb->prefix . 'sensei_lms_progress',
+				array(
+					'started_at'   => '2024-01-03 12:00:00',
+					'completed_at' => null,
+				),
+				array( 'id' => $progress_id )
+			);
+		}
+
+		$result = ( new Progress_Reconciliation_Planner() )->inspect( $type, $content_id, $this->student_id, 'tables' );
+
+		$expected = 'course' === $type && $comment_exists ? array( array( 'start' => '2024-01-03 12:00:00' ) ) : array();
+		self::assertSame( $expected, array_column( $result['changes'], 'data' ), 'Withhold status and completion together, keeping a representable independent start on an existing comment.' );
+		self::assertSame( 'unresolved', $result['outcome'], 'An unsupported completion must remain unresolved.' );
+		self::assertNotEmpty( $result['unresolved'], 'The caller must receive the reason the comment cannot be copied.' );
+	}
+
+	/**
+	 * Feedback surviving without points must stay visible and must not be overwritten.
+	 *
+	 * @dataProvider directions
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_CommentFeedbackSurvivedWithoutPoints_PreservesItForReview( string $source ): void {
+		global $wpdb;
+		$this->select_source( $source );
+		$lesson_id = $this->post( 'lesson' );
+		$quiz_id   = $this->post( 'quiz', $lesson_id );
+		$question  = $this->post( 'question' );
+		$comment   = $this->progress( 'lesson', $lesson_id, 'comments', 'in-progress' );
+		$this->progress( 'lesson', $lesson_id, 'tables', 'in-progress' );
+		$this->progress( 'quiz', $quiz_id, 'tables', 'in-progress' );
+		update_comment_meta( $comment, 'questions_asked', (string) $question );
+		update_comment_meta( $comment, 'quiz_answers', array( $question => 'answer' ) );
+		update_comment_meta( $comment, 'quiz_answers_feedback', array( $question => 'surviving feedback' ) );
+		update_comment_meta( $comment, 'grade', 20 );
+		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $this->student_id, 'tables' === $source ? 80 : 20 );
+		$answer     = ( new Tables_Based_Answer_Repository( $wpdb ) )->create( $submission, $question, 'answer' );
+		if ( 'tables' === $source ) {
+			( new Tables_Based_Grade_Repository( $wpdb ) )->create( $submission, $answer, $question, 1 );
+		}
+
+		$result = ( new Progress_Reconciliation_Planner() )->inspect( 'lesson', $lesson_id, $this->student_id, $source );
+
+		self::assertFalse( $result['equivalent'], 'Feedback omitted from normalized grades must prevent full equivalence.' );
+		self::assertContains( 'Feedback for question ' . $question . ' has no comment grade and is preserved for review.', $result['unresolved'], 'The caller must be told which surviving feedback cannot be copied safely.' );
+		self::assertSame( 'tables' === $source ? array( 'submission' ) : array(), array_column( $result['changes'], 'kind' ), 'A grade must not erase the feedback, while an independent final-grade change remains supported.' );
+		if ( 'tables' === $source ) {
+			self::assertSame( array( 'final_grade' => 80.0 ), $result['changes'][0]['data'], 'Unresolved feedback must not block the final-grade proposal.' );
+		}
+	}
+
+	/**
 	 * A missing source grade must not erase a destination grade, including zero.
 	 *
 	 * @dataProvider directions
@@ -514,6 +586,34 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Equal answers do not establish equal submission question identities.
+	 *
+	 * @dataProvider directions
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::verify
+	 */
+	public function testVerify_SubmittedQuestionIdsDiffered_ReportsUnresolvedIdentity( string $source ): void {
+		global $wpdb;
+		$this->select_source( $source );
+		$lesson_id = $this->post( 'lesson' );
+		$quiz_id   = $this->post( 'quiz', $lesson_id );
+		$question  = $this->post( 'question' );
+		$other     = $this->post( 'question' );
+		$comment   = $this->progress( 'lesson', $lesson_id, 'comments', 'in-progress' );
+		$this->progress( 'lesson', $lesson_id, 'tables', 'in-progress' );
+		$this->progress( 'quiz', $quiz_id, 'tables', 'in-progress' );
+		update_comment_meta( $comment, 'questions_asked', (string) $other );
+		update_comment_meta( $comment, 'quiz_answers', array( $question => 'answer' ) );
+		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $this->student_id );
+		( new Tables_Based_Answer_Repository( $wpdb ) )->create( $submission, $question, 'answer' );
+
+		$result = ( new Progress_Reconciliation_Planner() )->verify( 'lesson', $lesson_id, $this->student_id, $source );
+
+		self::assertSame( 'unresolved', $result['outcome'], 'Different persisted question lists must not pass verification.' );
+		self::assertFalse( $result['equivalent'], 'Matching answer values do not make different question lists equivalent.' );
+		self::assertContains( 'Submitted question identities differ between comments and tables and are preserved for review.', $result['unresolved'], 'The caller must receive an explanation of the identity difference.' );
+	}
+
+	/**
 	 * Visiting a quiz does not require creating shared lesson progress.
 	 *
 	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::verify
@@ -542,6 +642,19 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		return array(
 			'missing content' => array( 'content' ),
 			'missing student' => array( 'student' ),
+		);
+	}
+
+	/**
+	 * Cover an absent completion on creation and update, and a conflicting shared completion.
+	 *
+	 * @return array
+	 */
+	public static function unsupported_comment_completions(): array {
+		return array(
+			'completed course without a completion date'   => array( 'course', true ),
+			'missing course comment without a completion date' => array( 'course', false ),
+			'completed lesson with a failed optional quiz' => array( 'lesson', true ),
 		);
 	}
 

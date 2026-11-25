@@ -440,11 +440,20 @@ class Progress_Reconciliation_Planner {
 		$lesson_status   = in_array( $raw_status, array( 'complete', 'passed', 'graded' ), true )
 			|| ( 'failed' === $raw_status && ! $pass_required ) ? 'complete' : 'in-progress';
 		$compatible      = ! $lesson || $lesson_status === $lesson['status'];
+		// Comment readers expose completion only for these raw statuses. Changing
+		// status can therefore invent or hide a completion without changing a date.
+		$has_completion = 'course' === $identity['type']
+			? 'complete' === $raw_status : in_array( $raw_status, array( 'complete', 'passed', 'graded' ), true );
+		if ( ( $lesson && ( null !== $lesson['completed_at'] ) !== $has_completion )
+			|| ( $quiz_has_status && ( null !== $quiz['completed_at'] ) !== $has_completion ) ) {
+			$compatible           = false;
+			$plan['unresolved'][] = 'Source status and completion cannot share one comment.';
+		}
 
 		$data = array();
 		if ( $compatible ) {
 			$data['comment_approved'] = $raw_status;
-		} else {
+		} elseif ( $lesson && $lesson_status !== $lesson['status'] ) {
 			$plan['unresolved'][] = 'Lesson and quiz statuses cannot share one comment.';
 		}
 
@@ -520,12 +529,39 @@ class Progress_Reconciliation_Planner {
 		$destination = 'comments' === $source ? 'tables' : 'comments';
 		$from        = $inspection[ $source ];
 		$to          = $inspection[ $destination ];
+		$metadata    = array();
 
 		foreach ( $record['rows']['comment_meta'] as $meta ) {
+			$metadata[ $meta->meta_key ] = maybe_unserialize( $meta->meta_value );
 			if ( in_array( $meta->meta_key, array( 'quiz_answers', 'quiz_grades', 'quiz_answers_feedback' ), true )
-				&& '' !== $meta->meta_value && ! is_array( maybe_unserialize( $meta->meta_value ) ) ) {
+				&& '' !== $meta->meta_value && ! is_array( $metadata[ $meta->meta_key ] ) ) {
 				$plan['unresolved'][] = 'Malformed quiz collections are preserved for review.';
 				return;
+			}
+		}
+
+		// Grade models omit feedback whose points are missing. Keep that raw
+		// feedback visible, including when there is no submission model to compare.
+		$unmatched_feedback = array_diff_key( (array) ( $metadata['quiz_answers_feedback'] ?? array() ), (array) ( $metadata['quiz_grades'] ?? array() ) );
+		foreach ( $unmatched_feedback as $question_id => $feedback ) {
+			if ( null === $feedback || '' === $feedback ) {
+				unset( $unmatched_feedback[ $question_id ] );
+				continue;
+			}
+			$plan['unresolved'][] = 'Feedback for question ' . $question_id . ' has no comment grade and is preserved for review.';
+		}
+
+		if ( $inspection['comments'] && $inspection['tables'] ) {
+			// Comments keep the submitted question list separately from answers;
+			// tables derive it from answer rows. Compare sets without replacing either.
+			$questions_asked   = $metadata['questions_asked'] ?? '';
+			$comment_questions = is_scalar( $questions_asked )
+				? array_unique( array_map( 'intval', explode( ',', (string) $questions_asked ) ) ) : array();
+			$table_questions   = array_unique( array_column( $inspection['tables']['answers'], 'question_id' ) );
+			sort( $comment_questions );
+			sort( $table_questions );
+			if ( ! is_scalar( $questions_asked ) || $comment_questions !== $table_questions ) {
+				$plan['unresolved'][] = 'Submitted question identities differ between comments and tables and are preserved for review.';
 			}
 		}
 
@@ -589,6 +625,12 @@ class Progress_Reconciliation_Planner {
 				);
 			}
 			foreach ( $children['changed'] as $question_id => $child ) {
+				if ( 'grades' === $kind && 'comments' === $destination && isset( $unmatched_feedback[ $question_id ] )
+					&& $child['feedback'] !== $unmatched_feedback[ $question_id ] ) {
+					// Copying points also writes feedback; do not erase or replace a
+					// surviving value that the destination grade model could not read.
+					continue;
+				}
 				// Table grades point to answer rows, so a grade needs either an
 				// existing destination answer or one we can copy from the source.
 				$available_answers = array_column( $from['answers'], null, 'question_id' )
