@@ -122,6 +122,9 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	public function testRun_HasQuizSubmission_CreatesQuizDataInCustomTables(): void {
 		/* Arrange. */
 		[ $user_id, $lesson_id, $quiz_id, $question_id, $answers, $grades, $feedback ] = $this->create_quiz_data();
+		$this->set_progress_storage_mode( 'tables' );
+		$repository = new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] );
+		$repository->get( $quiz_id, $user_id );
 
 		/* Act. */
 		$this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found

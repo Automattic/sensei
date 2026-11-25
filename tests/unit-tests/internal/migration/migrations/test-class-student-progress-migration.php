@@ -12,6 +12,7 @@ use Sensei_Utils;
  * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration
  */
 class Student_Progress_Migration_Test extends \WP_UnitTestCase {
+	use \Sensei_HPPS_Helpers;
 
 	/**
 	 * Migration instance.
@@ -31,6 +32,12 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( 'TRUNCATE TABLE ' . $wpdb->prefix . 'sensei_lms_progress' );
+	}
+
+	protected function tearDown(): void {
+		$this->restore_progress_storage_mode();
+
+		parent::tearDown();
 	}
 
 	public function testGetErrors_MigrationDidntRun_ReturnsEmptyArray(): void {
@@ -78,6 +85,11 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 	}
 
 
+	/**
+	 * Migrated progress is readable even when missing rows were cached earlier.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration::run
+	 */
 	public function testRun_CommentsExist_CreatesProgressMatchingEntriesInCustomTables(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
@@ -100,6 +112,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 
 		update_post_meta( $quiz_id, '_quiz_lesson', $lesson_id );
 
+		$this->set_progress_storage_mode( 'comments-only' );
 		Sensei_Utils::start_user_on_course( $user_1, $course_id );
 		Sensei_Utils::user_start_lesson( $user_1, $lesson_id, true );
 		Sensei_Utils::user_passed_quiz( $quiz_id, $user_1 );
@@ -107,6 +120,12 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		Sensei_Utils::start_user_on_course( $user_2, $course_id );
 		Sensei_Utils::user_start_lesson( $user_2, $lesson_id, true );
 		Sensei_Utils::user_passed_quiz( $quiz_id, $user_2 );
+		$this->restore_progress_storage_mode();
+
+		$this->set_progress_storage_mode( 'tables' );
+		Sensei()->course_progress_repository->get( $course_id, $user_1 );
+		Sensei()->lesson_progress_repository->get( $lesson_id, $user_1 );
+		Sensei()->quiz_progress_repository->get( $quiz_id, $user_1 );
 
 		update_option( 'sensei_migrated_progress_last_comment_id', 0 );
 
@@ -114,6 +133,9 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
 
 		/* Assert. */
+		$this->assertNotNull( Sensei()->course_progress_repository->get( $course_id, $user_1 ), 'The migrated course progress should replace its cached miss.' );
+		$this->assertNotNull( Sensei()->lesson_progress_repository->get( $lesson_id, $user_1 ), 'The migrated lesson progress should replace its cached miss.' );
+		$this->assertNotNull( Sensei()->quiz_progress_repository->get( $quiz_id, $user_1 ), 'The migrated quiz progress should replace its cached miss.' );
 		$actual_rows = $this->get_table_based_progress();
 		$expected    = array(
 			array(

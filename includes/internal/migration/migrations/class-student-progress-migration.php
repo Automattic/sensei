@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Sensei\Internal\Cache_Prefix;
 use Sensei\Internal\Migration\Migration_Abstract;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
@@ -23,6 +24,8 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interfac
  * @since 4.16.1
  */
 class Student_Progress_Migration extends Migration_Abstract {
+	use Cache_Prefix;
+
 	/**
 	 * The name of the option that stores the last comment ID that was migrated.
 	 *
@@ -459,7 +462,13 @@ class Student_Progress_Migration extends Migration_Abstract {
 			return 0;
 		}
 
-		return $this->db_query( $insert_query );
+		$result = $this->db_query( $insert_query );
+		if ( $result ) {
+			self::invalidate_cache_group( 'sensei_course_progress' );
+			self::invalidate_cache_group( 'sensei_lesson_progress' );
+			self::invalidate_cache_group( 'sensei_quiz_progress' );
+		}
+		return $result;
 	}
 
 	/**

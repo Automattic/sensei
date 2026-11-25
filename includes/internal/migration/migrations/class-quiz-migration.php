@@ -222,6 +222,7 @@ class Quiz_Migration extends Migration_Abstract {
 
 		$result = $this->db_query( $query );
 		if ( $result ) {
+			wp_cache_delete( self::get_prefixed_key( $quiz_id . '_' . $comment->user_id, 'sensei_quiz_submissions' ), 'sensei_quiz_submissions' );
 			return $wpdb->insert_id;
 		}
 
