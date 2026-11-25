@@ -404,7 +404,12 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	private function create_progress_from_comment( WP_Comment $comment, ?int $quiz_id = null ): Comments_Based_Quiz_Progress {
 		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
 		$meta_start   = get_comment_meta( (int) $comment->comment_ID, 'start', true );
-		$started_at   = Progress_Start_Date::is_recorded( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : null;
+		$started_at   = Progress_Start_Date::from_comment(
+			$meta_start,
+			$comment->comment_date,
+			$comment->comment_date_gmt,
+			wp_timezone()
+		);
 
 		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
 			$completed_at = new DateTime( $comment->comment_date_gmt, new \DateTimeZone( 'UTC' ) );

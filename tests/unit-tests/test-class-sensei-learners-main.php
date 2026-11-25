@@ -337,7 +337,7 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 		return array(
 			'course'                       => array( 'course', 'UTC', 'UTC', '2026-01-02 03:04:05', '2026-01-03 04:05:06' ),
 			'lesson'                       => array( 'lesson', 'UTC', 'UTC', '2026-01-02 03:04:05', '2026-01-03 04:05:06' ),
-			'lesson after timezone change' => array( 'lesson', 'Asia/Dhaka', 'America/Chicago', '2026-01-02 09:04:05', '2026-01-02 22:05:06' ),
+			'lesson after timezone change' => array( 'lesson', 'Asia/Dhaka', 'America/Chicago', '2026-01-01 21:04:05', '2026-01-02 22:05:06' ),
 		);
 	}
 
