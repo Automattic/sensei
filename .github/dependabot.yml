@@ -32,6 +32,10 @@ updates:
       - dependency-name: "@wordpress/plugins"
       - dependency-name: "@wordpress/token-list"
       - dependency-name: "@wordpress/url"
+      # Major compiler upgrades need coordinated build and lint tooling updates.
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
     groups:
       security-updates:
         applies-to: security-updates
