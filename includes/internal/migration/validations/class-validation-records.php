@@ -303,14 +303,58 @@ class Validation_Records {
 		if ( null !== $records && $rows ) {
 			// Retain metadata before building models so duplicate start dates do not need to be interpreted.
 			$metadata_rows = self::get_comment_metadata_rows( (int) $rows[0]->comment_ID, $records );
-			$keys          = array_column( $metadata_rows, 'meta_key' );
-			if ( count( $keys ) !== count( array_unique( $keys ) ) ) {
+			if ( self::has_duplicates( array( 'comment_meta' => $metadata_rows ) ) ) {
 				return null;
 			}
 		}
 
 		// Targeted inspections retain duplicates for review; ordinary course reads select only the newest.
 		return 1 === count( $rows ) ? $rows[0] : null;
+	}
+
+	/**
+	 * Check for duplicate records, metadata keys, answers or grades before choosing values.
+	 *
+	 * @since $$next-version$$
+	 * @param array $rows The original rows read from the database.
+	 * @return bool Whether more than one row claims the same record, key or question.
+	 */
+	public static function has_duplicates( array $rows ): bool {
+		foreach ( array( 'comments', 'tables', 'submissions' ) as $kind ) {
+			if ( count( $rows[ $kind ] ?? array() ) > 1 ) {
+				return true;
+			}
+		}
+		foreach ( array(
+			'comment_meta' => 'meta_key',
+			'answers'      => 'question_id',
+			'grades'       => 'question_id',
+		) as $kind => $key ) {
+			$keys = array_column( $rows[ $kind ] ?? array(), $key );
+			if ( count( $keys ) !== count( array_unique( $keys ) ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Read progress rows before parsing dates, keeping duplicates for review.
+	 *
+	 * @since $$next-version$$
+	 * @param string $type The progress type.
+	 * @param int    $post_id The stored content ID.
+	 * @param int    $user_id The student ID.
+	 * @return array The original comment, metadata and progress table rows.
+	 */
+	public static function get_progress_records( string $type, int $post_id, int $user_id ): array {
+		$records   = array();
+		$lesson_id = 'quiz' === $type ? self::get_lesson_id( $post_id ) : $post_id;
+		if ( $lesson_id ) {
+			self::get_progress_comment( $type, $lesson_id, $user_id, $records );
+		}
+		self::get_progress_table_rows( $type, $post_id, $user_id, $records );
+		return $records ?? array();
 	}
 
 	/**
@@ -371,17 +415,30 @@ class Validation_Records {
 	 * @return Tables_Based_Course_Progress|Tables_Based_Lesson_Progress|Tables_Based_Quiz_Progress|null
 	 */
 	public static function get_tables_progress( string $type, int $post_id, int $user_id, ?array &$records = null ): ?object {
+		$rows = self::get_progress_table_rows( $type, $post_id, $user_id, $records );
+
+		return 1 === count( $rows ) ? self::create_tables_progress( $type, $rows[0] ) : null;
+	}
+
+	/**
+	 * Use the same table query for progress models and inspections.
+	 *
+	 * @param string     $type The progress type.
+	 * @param int        $post_id The stored content ID.
+	 * @param int        $user_id The student ID.
+	 * @param array|null $records Rows already read for this inspection, or null for a separate read.
+	 * @return object[] Stored progress rows.
+	 */
+	private static function get_progress_table_rows( string $type, int $post_id, int $user_id, ?array &$records ): array {
 		global $wpdb;
 
-		$rows = self::query(
+		return self::query(
 			'SELECT * FROM %i WHERE type = %s AND post_id = %d AND user_id = %d' . ( null === $records ? ' LIMIT 1' : ' ORDER BY id' ),
 			array( $wpdb->prefix . 'sensei_lms_progress', $type, $post_id, $user_id ),
 			$type . ' progress table',
 			$records,
 			'tables'
 		);
-
-		return 1 === count( $rows ) ? self::create_tables_progress( $type, $rows[0] ) : null;
 	}
 
 	/**

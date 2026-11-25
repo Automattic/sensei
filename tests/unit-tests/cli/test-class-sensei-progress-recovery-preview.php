@@ -480,6 +480,25 @@ class Sensei_Progress_Recovery_Preview_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A bad start date must not stop the preview from showing other differences.
+	 *
+	 * @covers \Sensei_Progress_Recovery_Preview::inspect
+	 */
+	public function testInspect_SourceStartWasInvalid_PreservesDateAndPreviewsStatus(): void {
+		$this->create_progress( 'course', 123, 456, 'comments', 'complete', 'unknown historical date' );
+		$this->create_progress( 'course', 123, 456, 'tables', 'in-progress' );
+		$before = $this->snapshot_database();
+
+		$preview = ( new Sensei_Progress_Recovery_Preview() )->inspect( 'course', 123, 456, 'comments' );
+
+		$record = $preview['records'][0];
+		self::assertSame( array( 'status', 'completed_at' ), array_column( $record['progress']['changes'], 'field' ), 'An invalid start must not prevent independent status and completion proposals.' );
+		self::assertSame( 'unknown historical date', $record['stored']['comment_meta'][0]->meta_value, 'Keep the actual invalid value available for inspection.' );
+		self::assertContains( 'Invalid started_at is preserved for review.', $record['progress']['warnings'], 'Explain why the date is excluded from proposals.' );
+		self::assertSame( $before, $this->snapshot_database(), 'Inspection must not repair the invalid date or other stored data.' );
+	}
+
+	/**
 	 * Duplicate rows need review before any copy is selected.
 	 *
 	 * @covers \Sensei_Progress_Recovery_Preview::inspect

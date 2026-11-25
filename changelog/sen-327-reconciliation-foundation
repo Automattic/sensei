@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Prevent invalid stored start dates from blocking progress previews.
