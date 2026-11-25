@@ -463,7 +463,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 		}
 
 		$result = $this->db_query( $insert_query );
-		// Retries must refresh caches even when every row already exists.
+		// A previous run may have inserted rows before it could clear cached misses.
 		self::invalidate_cache_group( 'sensei_course_progress' );
 		self::invalidate_cache_group( 'sensei_lesson_progress' );
 		self::invalidate_cache_group( 'sensei_quiz_progress' );

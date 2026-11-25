@@ -92,6 +92,7 @@ class Quiz_Migration extends Migration_Abstract {
 			$answer_ids = $this->insert_quiz_answers( $comment, $quiz_data, $submission_id );
 			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids );
 
+			// Cached misses and partial results can remain even when every row already exists.
 			if ( ! $this->dry_run ) {
 				$answer_cache_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission_id, 'tables' );
 				$grade_cache_id  = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission_id, 'tables' );
