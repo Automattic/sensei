@@ -194,6 +194,19 @@ interface Course_Lessons_Repository_Interface {
 	public function set_lesson_module( int $lesson_id, int $term_id );
 
 	/**
+	 * Add a module to a lesson, keeping any module it had.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $term_id   Module term ID.
+	 * @return true|\WP_Error True, or the error WordPress returned.
+	 */
+	public function add_lesson_module( int $lesson_id, int $term_id );
+
+	/**
 	 * Remove a lesson from its module.
 	 *
 	 * Fires the term relationship deletion hooks only; see `unset_lesson_module()`.
@@ -274,4 +287,21 @@ interface Course_Lessons_Repository_Interface {
 	 * @param int $lesson_id Lesson ID.
 	 */
 	public function detach_lesson( int $lesson_id ): void;
+
+	/**
+	 * Copy the structure of a lesson or a course to another post, as it is stored.
+	 *
+	 * The structure of a lesson is its course, its orders and its prerequisite; the structure of a
+	 * course is the order of its root lessons. The module terms of a lesson are not part of it.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int      $post_id     The lesson or course to copy from.
+	 * @param int      $new_post_id The post to copy to.
+	 * @param string[] $ignore      Meta keys not to copy.
+	 * @return string[] The meta keys that were copied, so the caller does not copy them again.
+	 */
+	public function copy_structure( int $post_id, int $new_post_id, array $ignore = array() ): array;
 }

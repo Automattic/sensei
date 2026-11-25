@@ -99,12 +99,16 @@ class Post_Duplicator {
 				$ignore_meta[] = '_lesson_course';
 			}
 
+			// The repository copies the structure, minus the ignored metas; the loop copies the other metas.
+			$copied_keys = Sensei()->course_lessons_repository->copy_structure( $post->ID, $new_post_id, $ignore_meta );
+
 			foreach ( $post_meta as $key => $meta ) {
+				if ( in_array( $key, $ignore_meta, true ) || in_array( $key, $copied_keys, true ) ) {
+					continue;
+				}
+
 				foreach ( $meta as $value ) {
-					$value = maybe_unserialize( $value );
-					if ( ! in_array( $key, $ignore_meta, true ) ) {
-						add_post_meta( $new_post_id, $key, $value );
-					}
+					add_post_meta( $new_post_id, $key, maybe_unserialize( $value ) );
 				}
 			}
 		}
@@ -117,7 +121,11 @@ class Post_Duplicator {
 			$terms = get_the_terms( $post->ID, $slug );
 			if ( is_array( $terms ) && 0 < count( $terms ) ) {
 				foreach ( $terms as $term ) {
-					wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
+					if ( 'lesson' === $post->post_type && 'module' === $slug ) {
+						Sensei()->course_lessons_repository->add_lesson_module( $new_post_id, $term->term_id );
+					} else {
+						wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
+					}
 				}
 			}
 		}

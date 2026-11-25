@@ -665,4 +665,57 @@ class Meta_Based_Course_Lessons_Repository_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		self::assertFalse( metadata_exists( 'post', $lesson_id, '_lesson_course' ) );
 	}
+
+	/**
+	 * Copying the structure copies every structure row as stored, leaves the other metas alone and
+	 * returns the keys it copied.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::copy_structure
+	 */
+	public function testCopyStructure_LessonWithStructureAndOtherMetasGiven_CopiesTheStructureRowsAndReturnsTheirKeys(): void {
+		/* Arrange. */
+		$course_id       = $this->factory->course->create();
+		$module_id       = $this->factory->module->create();
+		$prerequisite_id = $this->factory->lesson->create();
+		$lesson_id       = $this->factory->lesson->create();
+		$copy_id         = $this->factory->lesson->create();
+		$this->repository->attach_lesson( $lesson_id, $course_id );
+		// Values the repository never writes, seeded directly: every row is copied as stored.
+		add_post_meta( $lesson_id, '_order_' . $course_id, '' );
+		add_post_meta( $lesson_id, '_order_' . $course_id, '4' );
+		$this->repository->set_lesson_module_order( $lesson_id, $module_id, 2 );
+		$this->repository->set_lesson_prerequisite( $lesson_id, $prerequisite_id );
+		add_post_meta( $lesson_id, '_lesson_length', '15' );
+
+		/* Act. */
+		$copied_keys = $this->repository->copy_structure( $lesson_id, $copy_id );
+
+		/* Assert. */
+		self::assertEqualsCanonicalizing( array( '_lesson_course', '_order_' . $course_id, '_order_module_' . $module_id, '_lesson_prerequisite' ), $copied_keys, 'The copied keys should be returned.' );
+		self::assertSame( array( (string) $course_id ), get_post_meta( $copy_id, '_lesson_course', false ), 'The course should be copied.' );
+		self::assertSame( array( '', '4' ), get_post_meta( $copy_id, '_order_' . $course_id, false ), 'Every row of the order should be copied as stored.' );
+		self::assertSame( array( '2' ), get_post_meta( $copy_id, '_order_module_' . $module_id, false ), 'The module order should be copied.' );
+		self::assertSame( array( (string) $prerequisite_id ), get_post_meta( $copy_id, '_lesson_prerequisite', false ), 'The prerequisite should be copied.' );
+		self::assertFalse( metadata_exists( 'post', $copy_id, '_lesson_length' ), 'A meta that is not structure should not be copied.' );
+	}
+
+	/**
+	 * The structure of a course is the order of its root lessons.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository::copy_structure
+	 */
+	public function testCopyStructure_CourseWithALessonOrderGiven_CopiesTheLessonOrderAndReturnsItsKey(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$copy_id   = $this->factory->course->create();
+		$this->repository->set_root_lesson_order( $course_id, array( 11, 12 ) );
+		add_post_meta( $course_id, '_course_featured', 'featured' );
+
+		/* Act. */
+		$copied_keys = $this->repository->copy_structure( $course_id, $copy_id );
+
+		/* Assert. */
+		self::assertSame( array( '_lesson_order' ), $copied_keys, 'The copied key should be returned.' );
+		self::assertSame( array( 11, 12 ), $this->repository->get_root_lesson_order( $copy_id ), 'The lesson order should be copied.' );
+	}
 }
