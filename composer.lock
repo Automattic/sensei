@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c19c7361c28d06e3f0800b605b27a100",
+    "content-hash": "de530d75aefa2cd071307ef8e8554fc2",
     "packages": [
         {
             "name": "woocommerce/action-scheduler",
@@ -212,16 +212,16 @@
         },
         {
             "name": "automattic/jetpack-changelogger",
-            "version": "v7.0.4",
+            "version": "v7.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Automattic/jetpack-changelogger.git",
-                "reference": "c678744274bb83945113eb44a5cc479034884771"
+                "reference": "9a71296eeab91596a032a3bad09898827011b218"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Automattic/jetpack-changelogger/zipball/c678744274bb83945113eb44a5cc479034884771",
-                "reference": "c678744274bb83945113eb44a5cc479034884771",
+                "url": "https://api.github.com/repos/Automattic/jetpack-changelogger/zipball/9a71296eeab91596a032a3bad09898827011b218",
+                "reference": "9a71296eeab91596a032a3bad09898827011b218",
                 "shasum": ""
             },
             "require": {
@@ -239,7 +239,6 @@
             ],
             "type": "project",
             "extra": {
-                "autotagger": true,
                 "mirror-repo": "Automattic/jetpack-changelogger",
                 "branch-alias": {
                     "dev-trunk": "7.0.x-dev"
@@ -274,9 +273,9 @@
                 "keepachangelog"
             ],
             "support": {
-                "source": "https://github.com/Automattic/jetpack-changelogger/tree/v7.0.4"
+                "source": "https://github.com/Automattic/jetpack-changelogger/tree/v7.0.5"
             },
-            "time": "2026-09-18T17:57:09+00:00"
+            "time": "2026-10-20T16:01:37+00:00"
         },
         {
             "name": "bamarni/composer-bin-plugin",
@@ -4508,16 +4507,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v5.4.54",
+            "version": "v5.4.56",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "c4a6cc5733386414f6d17d744ee5ad8b445e349d"
+                "reference": "97768a0b5c3495c2a2469dfc1f3db00e006fc5d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/c4a6cc5733386414f6d17d744ee5ad8b445e349d",
-                "reference": "c4a6cc5733386414f6d17d744ee5ad8b445e349d",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/97768a0b5c3495c2a2469dfc1f3db00e006fc5d5",
+                "reference": "97768a0b5c3495c2a2469dfc1f3db00e006fc5d5",
                 "shasum": ""
             },
             "require": {
@@ -4555,7 +4554,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/v5.4.54"
+                "source": "https://github.com/symfony/filesystem/tree/v5.4.56"
             },
             "funding": [
                 {
@@ -4575,7 +4574,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-30T06:54:06+00:00"
+            "time": "2026-11-03T06:18:36+00:00"
         },
         {
             "name": "symfony/finder",
