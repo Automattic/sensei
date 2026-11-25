@@ -463,11 +463,10 @@ class Student_Progress_Migration extends Migration_Abstract {
 		}
 
 		$result = $this->db_query( $insert_query );
-		if ( $result ) {
-			self::invalidate_cache_group( 'sensei_course_progress' );
-			self::invalidate_cache_group( 'sensei_lesson_progress' );
-			self::invalidate_cache_group( 'sensei_quiz_progress' );
-		}
+		// Retries must refresh caches even when every row already exists.
+		self::invalidate_cache_group( 'sensei_course_progress' );
+		self::invalidate_cache_group( 'sensei_lesson_progress' );
+		self::invalidate_cache_group( 'sensei_quiz_progress' );
 		return $result;
 	}
 

@@ -3,6 +3,7 @@
 namespace SenseiTest\Internal\Migration\Migrations;
 
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
 use Sensei_Factory;
 use Sensei_Utils;
 
@@ -280,6 +281,11 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		$this->assertLessThan( 5, $result, 'Expected fewer than 5 rows because time budget should stop processing early.' );
 	}
 
+	/**
+	 * Duplicate-only retries still process comments and refresh cached misses.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration::run
+	 */
 	public function testRun_AllRowsWereDuplicates_ReturnsGreaterThanZero(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create( array( 'post_title' => 'Course 1' ) );
@@ -292,6 +298,16 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		// First run: inserts rows normally.
 		$this->migration->run( false );
 
+		$this->set_progress_storage_mode( 'tables' );
+		$repository = new Tables_Based_Course_Progress_Repository( $GLOBALS['wpdb'] );
+		// phpcs:disable WordPress.DB -- Restore the existing row while retaining a cached miss.
+		global $wpdb;
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}sensei_lms_progress WHERE post_id = %d AND user_id = %d AND type = 'course'", $course_id, $user_id ), ARRAY_A );
+		$repository->delete( $repository->get( $course_id, $user_id ) );
+		$repository->get( $course_id, $user_id );
+		$wpdb->insert( $wpdb->prefix . 'sensei_lms_progress', $row );
+		// phpcs:enable WordPress.DB
+
 		// Simulate a crash before cursor update by resetting the cursor.
 		update_option( Student_Progress_Migration::LAST_COMMENT_ID_OPTION_NAME, 0 );
 
@@ -301,6 +317,7 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertGreaterThan( 0, $result, 'run() should return > 0 when comments were processed, even if all inserts were duplicates' );
+		$this->assertNotNull( $repository->get( $course_id, $user_id ), 'A duplicate-only batch should clear an existing progress cache miss.' );
 	}
 
 	public function testRun_AllRowsWereDuplicates_AdvancesCursorPastDuplicates(): void {

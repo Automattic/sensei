@@ -90,7 +90,18 @@ class Quiz_Migration extends Migration_Abstract {
 			}
 
 			$answer_ids = $this->insert_quiz_answers( $comment, $quiz_data, $submission_id );
-			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids, $submission_id );
+			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids );
+
+			if ( ! $this->dry_run ) {
+				$answer_cache_id = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission_id, 'tables' );
+				$grade_cache_id  = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission_id, 'tables' );
+				wp_cache_delete( self::get_prefixed_key( (string) $answer_cache_id, 'sensei_quiz_answers' ), 'sensei_quiz_answers' );
+				wp_cache_delete( self::get_prefixed_key( (string) $grade_cache_id, 'sensei_quiz_grades' ), 'sensei_quiz_grades' );
+				$cache_lesson_id = (int) apply_filters( 'sensei_quiz_cache_key_lesson_id', (int) $comment->comment_post_ID );
+				foreach ( array( 'sensei_answers_', 'quiz_grades_', 'sensei_answers_feedback_' ) as $prefix ) {
+					delete_transient( $prefix . $comment->user_id . '_' . $cache_lesson_id );
+				}
+			}
 
 			$last_processed_id = $comment->comment_ID;
 			++$processed;
@@ -245,6 +256,9 @@ class Quiz_Migration extends Migration_Abstract {
 			return null;
 		}
 
+		if ( $submission_id ) {
+			wp_cache_delete( self::get_prefixed_key( $quiz_id . '_' . $comment->user_id, 'sensei_quiz_submissions' ), 'sensei_quiz_submissions' );
+		}
 		return $submission_id ? (int) $submission_id : null;
 	}
 
@@ -304,10 +318,6 @@ class Quiz_Migration extends Migration_Abstract {
 			$result = $this->db_query( $query );
 			if ( $result ) {
 				$answer_ids[ $question_id ] = $wpdb->insert_id;
-				$cache_submission_id        = (int) apply_filters( 'sensei_quiz_answer_get_all_submission_id', $submission_id, 'tables' );
-				wp_cache_delete( self::get_prefixed_key( (string) $cache_submission_id, 'sensei_quiz_answers' ), 'sensei_quiz_answers' );
-				$cache_lesson_id = (int) apply_filters( 'sensei_quiz_cache_key_lesson_id', (int) $comment->comment_post_ID );
-				delete_transient( 'sensei_answers_' . $comment->user_id . '_' . $cache_lesson_id );
 				continue;
 			}
 
@@ -352,11 +362,10 @@ class Quiz_Migration extends Migration_Abstract {
 	 * @param object $comment The comment object.
 	 * @param array  $quiz_data The quiz metadata.
 	 * @param array  $answer_ids The answer ids.
-	 * @param int    $submission_id The quiz submission id.
 	 *
 	 * @return array
 	 */
-	private function insert_quiz_grades( object $comment, array $quiz_data, array $answer_ids, int $submission_id ): array {
+	private function insert_quiz_grades( object $comment, array $quiz_data, array $answer_ids ): array {
 		$quiz_grades = ! empty( $quiz_data[ $comment->comment_ID ]['quiz_grades'] )
 			? maybe_unserialize( $quiz_data[ $comment->comment_ID ]['quiz_grades'] )
 			: array();
@@ -405,11 +414,6 @@ class Quiz_Migration extends Migration_Abstract {
 			$result = $this->db_query( $query );
 			if ( $result ) {
 				$grade_ids[ $question_id ] = $wpdb->insert_id;
-				$cache_submission_id       = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission_id, 'tables' );
-				wp_cache_delete( self::get_prefixed_key( (string) $cache_submission_id, 'sensei_quiz_grades' ), 'sensei_quiz_grades' );
-				$cache_lesson_id = (int) apply_filters( 'sensei_quiz_cache_key_lesson_id', (int) $comment->comment_post_ID );
-				delete_transient( 'quiz_grades_' . $comment->user_id . '_' . $cache_lesson_id );
-				delete_transient( 'sensei_answers_feedback_' . $comment->user_id . '_' . $cache_lesson_id );
 			}
 		}
 

@@ -130,26 +130,26 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
 
 		/* Assert. */
-		$expected = [
-			'submission' => [
+		$expected = array(
+			'submission' => array(
 				'quiz_id'     => $quiz_id,
 				'user_id'     => $user_id,
 				'final_grade' => 12.34,
-			],
-			'answers'    => [
-				[
+			),
+			'answers'    => array(
+				array(
 					'question_id' => $question_id,
 					'value'       => $answers[ $question_id ],
-				],
-			],
-			'grades'     => [
-				[
+				),
+			),
+			'grades'     => array(
+				array(
 					'question_id' => $question_id,
 					'points'      => $grades[ $question_id ],
 					'feedback'    => $feedback[ $question_id ],
-				],
-			],
-		];
+				),
+			),
+		);
 		$this->assertSame( $expected, $this->get_quiz_data( $quiz_id, $user_id ) );
 	}
 
@@ -164,11 +164,8 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		list( $user_id, $lesson_id, $quiz_id, , $answers, $grades, $feedback ) = $this->create_migrated_quiz_data( 2 );
 
-		$expected = $this->get_quiz_data( $quiz_id, $user_id );
-
 		// phpcs:disable WordPress.DB -- Model saved parents with missing quiz data and verify persisted IDs.
 		$wpdb->update( $wpdb->prefix . 'sensei_lms_quiz_submissions', array( 'final_grade' => 98.76 ), array( 'quiz_id' => $quiz_id ) );
-		$expected['submission']['final_grade'] = 98.76;
 
 		$retained_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}{$retained_table} ORDER BY id" );
 		foreach ( $missing_tables as $table ) {
@@ -176,7 +173,6 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		}
 
 		// Replace fixture caches with the partial data before migration.
-		wp_cache_flush();
 		$this->set_progress_storage_mode( 'tables' );
 		foreach ( array( 'sensei_answers_', 'quiz_grades_', 'sensei_answers_feedback_' ) as $prefix ) {
 			delete_transient( $prefix . $user_id . '_' . $lesson_id );
@@ -185,6 +181,13 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		Sensei()->quiz->get_user_grades( $lesson_id, $user_id );
 		Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id );
 
+		// Restore the existing row without refreshing its cached miss.
+		$submission = $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}sensei_lms_quiz_submissions", ARRAY_A );
+		$repository = new Tables_Based_Submission_Repository( $wpdb );
+		$repository->delete( $repository->get( $quiz_id, $user_id ) );
+		$repository->get( $quiz_id, $user_id );
+		$wpdb->insert( $wpdb->prefix . 'sensei_lms_quiz_submissions', $submission );
+
 		/* Act. */
 		$this->migration->run( false );
 
@@ -192,7 +195,8 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$this->assertSame( $answers, Sensei()->quiz->get_user_answers( $lesson_id, $user_id ), 'Public reads should include the restored answers.' );
 		$this->assertSame( $grades, Sensei()->quiz->get_user_grades( $lesson_id, $user_id ), 'Public reads should include the restored grades.' );
 		$this->assertSame( $feedback, Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id ), 'Public reads should include the restored feedback.' );
-		$this->assertSame( $expected, $this->get_quiz_data( $quiz_id, $user_id ), 'Missing quiz data should migrate without overwriting the existing final grade.' );
+		$final_grade = $wpdb->get_var( $wpdb->prepare( "SELECT final_grade FROM {$wpdb->prefix}sensei_lms_quiz_submissions WHERE quiz_id = %d", $quiz_id ) );
+		$this->assertSame( '98.76', $final_grade, 'Missing quiz data should migrate without overwriting the existing final grade.' );
 		$this->assertSame( $retained_ids, $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}{$retained_table} ORDER BY id" ), 'Previously saved records should retain their IDs.' );
 		// phpcs:enable WordPress.DB
 	}
@@ -204,8 +208,8 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	 */
 	public static function partial_quizzes(): array {
 		return array(
-			'submission saved' => array( array( 'sensei_lms_quiz_grades', 'sensei_lms_quiz_answers' ), 'sensei_lms_quiz_submissions' ),
-			'answer saved'     => array( array( 'sensei_lms_quiz_grades' ), 'sensei_lms_quiz_answers' ),
+			'answer and grade missing' => array( array( 'sensei_lms_quiz_grades', 'sensei_lms_quiz_answers' ), 'sensei_lms_quiz_submissions' ),
+			'grade missing'            => array( array( 'sensei_lms_quiz_grades' ), 'sensei_lms_quiz_answers' ),
 		);
 	}
 
@@ -314,12 +318,12 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$user_id      = 1;
 		$lesson_id    = $this->factory->lesson->create();
 		$quiz_id      = $this->factory->quiz->create(
-			[
+			array(
 				'post_parent' => $lesson_id,
-				'meta_input'  => [
+				'meta_input'  => array(
 					'_quiz_lesson' => $lesson_id,
-				],
-			]
+				),
+			)
 		);
 		$question_ids = $this->factory->question->create_many( $question_count, array( 'quiz_id' => $quiz_id ) );
 		$question_id  = $question_ids[0];
@@ -337,7 +341,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			$this->restore_progress_storage_mode();
 		}
 
-		return [ $user_id, $lesson_id, $quiz_id, $question_id, $answers, $grades, $feedback ];
+		return array( $user_id, $lesson_id, $quiz_id, $question_id, $answers, $grades, $feedback );
 	}
 
 	/**
@@ -349,7 +353,6 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	private function create_migrated_quiz_data( int $question_count = 1 ): array {
 		$fixture = $this->create_quiz_data( $question_count );
 		$this->migration->run( false );
-		wp_cache_flush();
 		update_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME, $this->initial_comment_id );
 
 		return $fixture;
@@ -364,34 +367,34 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 
 		$submission = $submission_repository->get( $quiz_id, $user_id );
 		if ( ! $submission ) {
-			return [];
+			return array();
 		}
 
-		$quiz_data = [
-			'submission' => [
+		$quiz_data = array(
+			'submission' => array(
 				'quiz_id'     => $submission->get_quiz_id(),
 				'user_id'     => $submission->get_user_id(),
 				'final_grade' => $submission->get_final_grade(),
-			],
-		];
+			),
+		);
 
 		$answers = $answer_repository->get_all( $submission->get_id() );
 		foreach ( $answers as $answer ) {
-			$quiz_data['answers'][] = [
+			$quiz_data['answers'][] = array(
 				'question_id' => $answer->get_question_id(),
 				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 				'value'       => maybe_unserialize( base64_decode( $answer->get_value() ) ),
-			];
+			);
 		}
 
 		$grades = $grade_repository->get_all( $submission->get_id() );
 		foreach ( $grades as $grade ) {
-			$quiz_data['grades'][] = [
+			$quiz_data['grades'][] = array(
 				'question_id' => $grade->get_question_id(),
 				'points'      => $grade->get_points(),
 				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 				'feedback'    => maybe_unserialize( base64_decode( $grade->get_feedback() ) ),
-			];
+			);
 		}
 
 		return $quiz_data;
