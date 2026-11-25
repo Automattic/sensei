@@ -118,10 +118,14 @@ class Post_Duplicator {
 		$taxonomies = get_object_taxonomies( $post->post_type, 'objects' );
 
 		foreach ( $taxonomies as $slug => $tax ) {
-			$terms = get_the_terms( $post->ID, $slug );
+			$is_lesson_module = 'lesson' === $post->post_type && 'module' === $slug;
+			$terms            = $is_lesson_module
+				? Sensei()->course_lessons_repository->get_lesson_modules( $post->ID )
+				: get_the_terms( $post->ID, $slug );
+
 			if ( is_array( $terms ) && 0 < count( $terms ) ) {
 				foreach ( $terms as $term ) {
-					if ( 'lesson' === $post->post_type && 'module' === $slug ) {
+					if ( $is_lesson_module ) {
 						Sensei()->course_lessons_repository->add_lesson_module( $new_post_id, $term->term_id );
 					} else {
 						wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
