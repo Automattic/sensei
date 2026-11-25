@@ -37,7 +37,6 @@
 
 		"typeRoots": [ "./typings", "./node_modules/@types" ]
 	},
-	"exclude": [ "assets/vendor/underscore/underscore-min.js" ],
 	"include": [
 		"assets/**/*.js",
 		"assets/**/*.ts",
