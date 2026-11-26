@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Preserve saved progress for trashed courses and validate trashed progress against its original status.
+Fix HPPS migration and validation of trashed progress, duplicate records, and completion dates.

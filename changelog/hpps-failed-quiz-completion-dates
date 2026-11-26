@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Keep completion dates consistent for lessons with failed optional quizzes while leaving failed quizzes undated.

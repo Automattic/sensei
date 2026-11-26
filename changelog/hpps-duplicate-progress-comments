@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Report ambiguous duplicate progress comments and metadata during migration validation.
