@@ -37,6 +37,13 @@ class Progress_Validation {
 	private array $warnings = array();
 
 	/**
+	 * Comment IDs whose missing pre-trash status has already been reported.
+	 *
+	 * @var array<int, bool>
+	 */
+	private array $reported_trash_comments = array();
+
+	/**
 	 * Run the validation.
 	 *
 	 * @internal
@@ -44,8 +51,9 @@ class Progress_Validation {
 	 * @since 4.19.1
 	 */
 	public function run(): void {
-		$this->errors   = array();
-		$this->warnings = array();
+		$this->errors                  = array();
+		$this->warnings                = array();
+		$this->reported_trash_comments = array();
 
 		if ( ! $this->is_progress_migration_complete() ) {
 			$this->add_error( 'The progress migration is not complete. Please run the progress migration first.' );
@@ -73,8 +81,9 @@ class Progress_Validation {
 	 * @return array Normalized copies, differences, and excluded fields.
 	 */
 	public function inspect( string $type, int $post_id, int $user_id, ?array &$records = null ): array {
-		$this->errors   = array();
-		$this->warnings = array();
+		$this->errors                  = array();
+		$this->warnings                = array();
+		$this->reported_trash_comments = array();
 
 		return $this->inspect_progress( $type, $post_id, $user_id, $records );
 	}
@@ -98,17 +107,19 @@ class Progress_Validation {
 		$cannot_verify  = isset( $records['unverifiable_trash_status'] );
 
 		if ( isset( $records['unverifiable_trash_status'] ) ) {
-			$this->add_error(
-				'Original progress status could not be established for the trashed comment.',
-				array(
-					$type . '_id' => $post_id,
-					'user_id'     => $user_id,
-					'comment_id'  => $records['unverifiable_trash_status'],
-				)
-			);
-		}
-
-		if ( $cannot_verify ) {
+			$comment_id = (int) $records['unverifiable_trash_status'];
+			// Lesson and quiz validation can inspect the same shared comment.
+			if ( ! isset( $this->reported_trash_comments[ $comment_id ] ) ) {
+				$this->add_error(
+					'Original progress status could not be established for the trashed comment.',
+					array(
+						$type . '_id' => $post_id,
+						'user_id'     => $user_id,
+						'comment_id'  => $comment_id,
+					)
+				);
+				$this->reported_trash_comments[ $comment_id ] = true;
+			}
 			$ignored_fields = array( 'status', 'started_at', 'completed_at' );
 		}
 
@@ -201,7 +212,7 @@ class Progress_Validation {
 	 * @param string $message Error message.
 	 * @param array  $data    Error data.
 	 */
-	private function add_error( string $message, array $data = [] ): void {
+	private function add_error( string $message, array $data = array() ): void {
 		$this->errors[] = new Validation_Error( $message, $data );
 	}
 

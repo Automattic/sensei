@@ -534,6 +534,47 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Missing history on a shared lesson/quiz comment is one problem per validation run.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_TrashedLessonHistoryWasMissing_ReportsSharedCommentOncePerRun(): void {
+		$course     = $this->factory->get_course_with_lessons();
+		$lesson_id  = $course['lesson_ids'][0];
+		$student_id = $this->factory->user->create();
+		$comment_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'post-trashed',
+			)
+		);
+		$this->mask_migration_as_complete();
+		$validation = new Progress_Validation();
+		$reports    = array();
+
+		for ( $run = 0; $run < 2; ++$run ) {
+			$validation->run();
+			$reports[] = array_map(
+				static function ( $error ): array {
+					return $error->get_data();
+				},
+				$validation->get_errors()
+			);
+		}
+
+		$expected = array(
+			array(
+				'lesson_id'  => $lesson_id,
+				'user_id'    => $student_id,
+				'comment_id' => $comment_id,
+			),
+		);
+		self::assertSame( array( $expected, $expected ), $reports );
+	}
+
+	/**
 	 * A saved completion must still expose a previously migrated incomplete copy.
 	 *
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::inspect
@@ -577,9 +618,13 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 			)
 		);
 
-		$result = ( new Progress_Validation() )->inspect( 'course', $course_id, $student_id );
+		$validation = new Progress_Validation();
 
-		self::assertSame( 'Original progress status could not be established for the trashed comment.', $result['errors'][0]->get_message() );
+		$result        = $validation->inspect( 'course', $course_id, $student_id );
+		$second_result = $validation->inspect( 'course', $course_id, $student_id );
+
+		self::assertSame( 'Original progress status could not be established for the trashed comment.', $result['errors'][0]->get_message(), 'Explain why the status cannot be compared.' );
+		self::assertCount( 1, $second_result['errors'], 'Each targeted inspection must report its own uncertainty.' );
 	}
 
 	/**
