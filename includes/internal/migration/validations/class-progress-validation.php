@@ -93,9 +93,35 @@ class Progress_Validation {
 		$comments = Validation_Records::get_comments_progress( $type, $post_id, $user_id, $records );
 		$tables   = Validation_Records::get_tables_progress( $type, $post_id, $user_id, $records );
 		// Excluded fields stay visible in the output, but cannot become proposed repair changes.
-		$ignored_fields = array();
-		$cannot_verify  = isset( $records['unverifiable_trash_status'] );
-		if ( $cannot_verify ) {
+		$ignored_fields         = array();
+		$has_duplicates         = count( $records['comments'] ?? array() ) > 1;
+		$has_duplicate_metadata = ! $has_duplicates && ! empty( $records['ambiguous_comment_metadata'] );
+		$cannot_verify          = $has_duplicates || $has_duplicate_metadata || isset( $records['unverifiable_trash_status'] );
+
+		if ( $has_duplicates ) {
+			$this->add_error(
+				'Multiple comments match this progress identity; the original progress is ambiguous.',
+				array(
+					$type . '_id' => $post_id,
+					'user_id'     => $user_id,
+					'comment_ids' => array_map( 'intval', array_column( $records['comments'], 'comment_ID' ) ),
+				)
+			);
+		}
+
+		if ( $has_duplicate_metadata ) {
+			$this->add_error(
+				'Multiple metadata values match this progress comment; the original progress is ambiguous.',
+				array(
+					$type . '_id'   => $post_id,
+					'user_id'       => $user_id,
+					'comment_id'    => (int) $records['comments'][0]->comment_ID,
+					'metadata_keys' => $records['ambiguous_comment_metadata'],
+				)
+			);
+		}
+
+		if ( isset( $records['unverifiable_trash_status'] ) ) {
 			$this->add_error(
 				'Original progress status could not be established for the trashed comment.',
 				array(
@@ -104,6 +130,9 @@ class Progress_Validation {
 					'comment_id'  => $records['unverifiable_trash_status'],
 				)
 			);
+		}
+
+		if ( $cannot_verify ) {
 			$ignored_fields = array( 'status', 'started_at', 'completed_at' );
 		}
 

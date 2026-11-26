@@ -582,6 +582,135 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		self::assertSame( 'Original progress status could not be established for the trashed comment.', $result['errors'][0]->get_message() );
 	}
 
+	/**
+	 * Multiple progress comments establish ambiguity rather than missing progress.
+	 *
+	 * @dataProvider duplicate_comment_cases
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_DuplicateProgressCommentsWereStored_ReportsAmbiguity( string $type, bool $migrate ): void {
+		$course      = $this->factory->get_course_with_lessons();
+		$student_id  = $this->factory->user->create();
+		$post_id     = 'course' === $type ? $course['course_id'] : $course['lesson_ids'][0];
+		$content_id  = 'quiz' === $type ? $course['quiz_ids'][0] : $post_id;
+		$comment_ids = array();
+		foreach ( array( 'in-progress', 'complete' ) as $status ) {
+			$comment_ids[] = wp_insert_comment(
+				array(
+					'comment_post_ID'  => $post_id,
+					'user_id'          => $student_id,
+					'comment_type'     => 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status',
+					'comment_approved' => $status,
+				)
+			);
+		}
+		if ( $migrate ) {
+			$this->migrate_progress();
+		}
+		$this->mask_migration_as_complete();
+		$validation = new Progress_Validation();
+
+		$validation->run();
+
+		$errors = array_values(
+			array_filter(
+				$validation->get_errors(),
+				static function ( $error ) use ( $type ): bool {
+					return isset( $error->get_data()[ $type . '_id' ] );
+				}
+			)
+		);
+		self::assertCount( 1, $errors, 'Report each ambiguous identity once.' );
+		self::assertSame( 'Multiple comments match this progress identity; the original progress is ambiguous.', $errors[0]->get_message(), 'Do not describe duplicate comments as missing progress.' );
+		self::assertSame(
+			array(
+				$type . '_id' => $content_id,
+				'user_id'     => $student_id,
+				'comment_ids' => $comment_ids,
+			),
+			$errors[0]->get_data(),
+			'Identify all competing comments without choosing one.'
+		);
+	}
+
+	/**
+	 * Duplicate course, lesson, and quiz identities, including absent HPPS copies.
+	 *
+	 * @return array
+	 */
+	public static function duplicate_comment_cases(): array {
+		return array(
+			'course'                      => array( 'course', true ),
+			'lesson'                      => array( 'lesson', true ),
+			'quiz'                        => array( 'quiz', true ),
+			'lesson without an HPPS copy' => array( 'lesson', false ),
+		);
+	}
+
+	/**
+	 * Conflicting metadata cannot be treated as absent comments progress.
+	 *
+	 * @dataProvider duplicate_metadata_cases
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_DuplicateStartMetadataWasStored_ReportsAmbiguity( bool $has_tables_copy ): void {
+		global $wpdb;
+		$course_id  = $this->factory->course->create();
+		$student_id = $this->factory->user->create();
+		$comment_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => 'in-progress',
+			)
+		);
+		add_comment_meta( $comment_id, 'start', 'unparseable date' );
+		add_comment_meta( $comment_id, 'start', '2025-01-01 00:00:00' );
+		if ( $has_tables_copy ) {
+			( new Tables_Based_Course_Progress_Repository( $wpdb ) )->create( $course_id, $student_id );
+		}
+		$this->mask_migration_as_complete();
+		$validation = new Progress_Validation();
+
+		$validation->run();
+
+		$errors = $validation->get_errors();
+		self::assertCount( 1, $errors, 'Report ambiguity even when no HPPS copy exists.' );
+		self::assertSame(
+			'Multiple metadata values match this progress comment; the original progress is ambiguous.',
+			$errors[0]->get_message(),
+			'The existing comment must not be reported as missing.'
+		);
+		self::assertSame(
+			array(
+				'course_id'     => $course_id,
+				'user_id'       => $student_id,
+				'comment_id'    => $comment_id,
+				'metadata_keys' => array( 'start' ),
+			),
+			$errors[0]->get_data(),
+			'Identify the conflicting metadata without choosing a value.'
+		);
+		self::assertSame(
+			array( 'unparseable date', '2025-01-01 00:00:00' ),
+			get_comment_meta( $comment_id, 'start', false ),
+			'Validation must retain both original metadata values.'
+		);
+	}
+
+	/**
+	 * Duplicate metadata is ambiguous independently of HPPS copy presence.
+	 *
+	 * @return array
+	 */
+	public static function duplicate_metadata_cases(): array {
+		return array(
+			'no tables copy'     => array( false ),
+			'tables copy exists' => array( true ),
+		);
+	}
+
 	private function create_enrolled_quiz_student( array $course_args = array() ): array {
 		$this->set_progress_storage_mode( self::is_hpps_tables_mode() ? 'tables' : 'comments' );
 		add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );

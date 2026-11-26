@@ -305,6 +305,14 @@ class Validation_Records {
 			$metadata_rows = self::get_comment_metadata_rows( (int) $rows[0]->comment_ID, $records );
 			$keys          = array_column( $metadata_rows, 'meta_key' );
 			if ( count( $keys ) !== count( array_unique( $keys ) ) ) {
+				$records['ambiguous_comment_metadata'] = array_keys(
+					array_filter(
+						array_count_values( $keys ),
+						static function ( int $count ): bool {
+							return $count > 1;
+						}
+					)
+				);
 				return null;
 			}
 		}
