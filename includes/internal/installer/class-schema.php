@@ -147,6 +147,21 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 	UNIQUE KEY question_answer (answer_id, question_id)
 ) $collate;
 ",
+			"{$wpdb->prefix}sensei_lms_course_lessons"   => "
+CREATE TABLE {$wpdb->prefix}sensei_lms_course_lessons (
+	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+	course_id bigint UNSIGNED NOT NULL,
+	lesson_id bigint UNSIGNED NOT NULL,
+	module_term_id bigint UNSIGNED NOT NULL DEFAULT 0,
+	lesson_order int,
+	prerequisite_lesson_id bigint UNSIGNED NOT NULL DEFAULT 0,
+	created_at datetime NOT NULL,
+	updated_at datetime NOT NULL,
+	PRIMARY KEY  (id),
+	UNIQUE KEY course_lesson (course_id, lesson_id),
+	KEY lesson_id (lesson_id)
+) $collate;
+",
 		];
 
 		$query = '';
@@ -179,6 +194,7 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_answers";
 			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_grades";
 		}
+		$tables[] = "{$wpdb->prefix}sensei_lms_course_lessons";
 
 		/**
 		 * Filter the list of known tables.
