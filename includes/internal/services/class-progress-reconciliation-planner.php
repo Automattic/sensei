@@ -202,13 +202,15 @@ class Progress_Reconciliation_Planner {
 	/**
 	 * Check whether the current copies agree, without returning a change list.
 	 *
+	 * Unexpected errors and exceptions propagate to the caller for diagnosis.
+	 *
 	 * @since $$next-version$$
 	 * @param string $type Course, lesson, or quiz.
 	 * @param int    $content_id The course, lesson or quiz ID.
 	 * @param int    $student_id The student ID.
 	 * @param string $source Store to copy from: comments or tables.
 	 * @return array Whether the copies agree now and what still needs review.
-	 * @throws \Throwable If inspection raises an unexpected error or exception.
+	 * @throws InvalidArgumentException If the content type, IDs or source are invalid.
 	 */
 	public function verify( string $type, int $content_id, int $student_id, string $source ): array {
 		$result = $this->inspect( $type, $content_id, $student_id, $source );
