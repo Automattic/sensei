@@ -1,4 +1,0 @@
-Significance: minor
-Type: added
-
-HPPS: Add a shared service that compares progress in comments and tables and suggests repairs without changing saved data.
