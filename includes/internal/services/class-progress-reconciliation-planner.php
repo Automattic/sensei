@@ -33,6 +33,15 @@ class Progress_Reconciliation_Planner {
 	private DateTimeZone $timezone;
 
 	/**
+	 * Initialize the timezone before inspection loads the saved settings.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function __construct() {
+		$this->timezone = new DateTimeZone( 'UTC' );
+	}
+
+	/**
 	 * Find the next batch of records to check in both stores.
 	 *
 	 * The same student and content can appear in more than one batch. Checking
