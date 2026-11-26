@@ -194,7 +194,9 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_course_lessons (
 			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_answers";
 			$tables[] = "{$wpdb->prefix}sensei_lms_quiz_grades";
 		}
-		$tables[] = "{$wpdb->prefix}sensei_lms_course_lessons";
+		if ( $this->feature_flags->is_enabled( 'course_lessons_table' ) ) {
+			$tables[] = "{$wpdb->prefix}sensei_lms_course_lessons";
+		}
 
 		/**
 		 * Filter the list of known tables.
