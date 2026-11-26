@@ -132,7 +132,8 @@ class Quiz_Migration extends Migration_Abstract {
 		global $wpdb;
 
 		$since_comment_id = (int) get_option( self::LAST_COMMENT_ID_OPTION_NAME, 0 );
-		// Keep the submission and its children tied to the comment selected for progress.
+		// Match Sensei_Learner::remove_duplicate_progress() by keeping the lowest comment ID.
+		// Keep its quiz data together so later duplicates cannot add to the same submission.
 		$comments_query = $wpdb->prepare(
 			"SELECT comments.* FROM $wpdb->comments AS comments
 			WHERE comments.comment_type = 'sensei_lesson_status'

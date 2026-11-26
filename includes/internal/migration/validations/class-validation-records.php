@@ -269,6 +269,10 @@ class Validation_Records {
 	/**
 	 * Read the lowest-ID progress comment, matching migration and duplicate cleanup.
 	 *
+	 * Historical duplicates can remain until progress is updated again.
+	 *
+	 * @see \Sensei_Learner::remove_duplicate_progress()
+	 *
 	 * @param string     $type    The progress type.
 	 * @param int        $post_id The stored content ID.
 	 * @param int        $user_id The student ID.
