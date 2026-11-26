@@ -10,6 +10,7 @@ use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Reposi
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Migration\Validations\Quiz_Submission_Validation;
+use Sensei\Internal\Migration\Validations\Validation_Records;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei_Factory;
 use Sensei_Utils;
@@ -189,19 +190,15 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$validation->run();
 		$run_errors = $validation->get_errors();
 		$inspection = $validation->inspect( $quiz_id, $student_id );
+		wp_cache_delete( $comment_id, 'comment_meta' );
 
 		self::assertSame( $expected_grade, $submission->get_final_grade(), 'The copied grade must retain the stored meaning.' );
 		self::assertSame( $source_grade ?? '', get_comment_meta( $comment_id, 'grade', true ), 'Migration must retain the original source value.' );
-		self::assertSame(
-			array_map(
-				static function ( string $error ) use ( $comment_id ): string {
-					return sprintf( $error, $comment_id );
-				},
-				$migration_errors
-			),
-			$this->migration->get_errors(),
-			'Migration must report invalid grades without turning them into scores.'
-		);
+		self::assertSame( null !== $source_grade, metadata_exists( 'comment', $comment_id, 'grade' ), 'An absent source grade must remain absent.' );
+		self::assertCount( count( $migration_errors ), $this->migration->get_errors(), 'Migration must report each invalid source value.' );
+		foreach ( $migration_errors as $message ) {
+			self::assertStringContainsString( $message, implode( ' ', $this->migration->get_errors() ), 'The migration diagnostic must identify the unresolved grade.' );
+		}
 		self::assertSame(
 			$validation_errors,
 			array_map(
@@ -212,6 +209,9 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			),
 			'Full validation must keep invalid source values unresolved.'
 		);
+		foreach ( $run_errors as $error ) {
+			self::assertSame( $source_grade, $error->get_data()['stored_grade'], 'The unresolved diagnostic must retain the original invalid value.' );
+		}
 		self::assertSame(
 			$validation_errors,
 			array_map(
@@ -237,10 +237,179 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			'invalid grade' => array(
 				'NAN',
 				null,
-				array( 'Invalid final grade for comment ID %d: the source value was retained without a numeric grade.' ),
+				array( 'Comments-based quiz submission has an invalid final grade.' ),
 				array( 'Comments-based quiz submission has an invalid final grade.' ),
 			),
 		);
+	}
+
+	/**
+	 * Incomplete source history stays available for investigation without new table rows.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
+	 * @dataProvider incomplete_submissions
+	 * @param mixed  $answers Stored answer metadata, or null when absent.
+	 * @param bool   $questions_asked Whether the discoverability key survives.
+	 * @param string $message Expected unresolved source diagnostic.
+	 */
+	public function testRun_IncompleteSubmissionWasStored_LeavesItUncopied( $answers, bool $questions_asked, string $message ): void {
+		[ $student_id, , $quiz_id, $question_id ] = $this->create_quiz_data();
+		$comment_id                               = ( new Comments_Based_Submission_Repository() )->get( $quiz_id, $student_id )->get_id();
+		update_comment_meta( $comment_id, 'grade', '100' );
+		update_comment_meta( $comment_id, 'quiz_grades', array( $question_id => 2 ) );
+		update_comment_meta( $comment_id, 'quiz_answers_feedback', array( $question_id => 'retained feedback' ) );
+		if ( null === $answers ) {
+			delete_comment_meta( $comment_id, 'quiz_answers' );
+		} else {
+			update_comment_meta( $comment_id, 'quiz_answers', $answers );
+		}
+		if ( ! $questions_asked ) {
+			delete_comment_meta( $comment_id, 'questions_asked' );
+		}
+		$before = get_comment_meta( $comment_id );
+		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, true );
+		$validation = new Quiz_Submission_Validation();
+
+		$this->migration->run( false );
+		$validation->run();
+		$messages = array_map(
+			static function ( $error ): string {
+				return $error->get_message();
+			},
+			$validation->get_errors()
+		);
+		$preview  = ( new \Sensei_Progress_Recovery_Preview() )->inspect( 'quiz', $quiz_id, $student_id, 'comments' );
+		wp_cache_delete( $comment_id, 'comment_meta' );
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Check all destination children, including any unreachable rows.
+		$child_count = $wpdb->get_var( "SELECT (SELECT COUNT(*) FROM {$wpdb->prefix}sensei_lms_quiz_answers) + (SELECT COUNT(*) FROM {$wpdb->prefix}sensei_lms_quiz_grades)" );
+
+		self::assertNull( ( new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] ) )->get( $quiz_id, $student_id ), 'Incomplete history must not create a normal submission.' );
+		self::assertSame( '0', $child_count, 'Incomplete history must not create answers or orphaned grades.' );
+		self::assertSame( $before, get_comment_meta( $comment_id ), 'All historical fields must remain in comments.' );
+		self::assertContains( $message, $messages, 'Validation must identify why the source remains unresolved.' );
+		self::assertNotEmpty( $this->migration->get_errors(), 'Migration must report the incomplete copy.' );
+		self::assertSame( 'unresolved', $preview['records'][0]['submission']['status'], 'The preview must not describe incomplete history as equivalent or absent.' );
+		self::assertSame( array(), $preview['records'][0]['submission']['changes'], 'The preview must not propose copying an incomplete submission.' );
+	}
+
+	/**
+	 * Source metadata presence does not establish retained answer history.
+	 *
+	 * @return array
+	 */
+	public static function incomplete_submissions(): array {
+		return array(
+			'missing answers'         => array( null, true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
+			'empty answers'           => array( array(), true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
+			'malformed answers'       => array( 'broken answer map', true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
+			'missing questions asked' => array( array( 123 => 'saved answer' ), false, 'Comments-based quiz submission is incomplete: questions asked are missing.' ),
+		);
+	}
+
+	/**
+	 * Question data needs real answer links and points; other valid children still migrate.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
+	 * @dataProvider unsupported_question_data
+	 * @param bool        $has_answer Whether the second answer survives.
+	 * @param string|null $points Stored second-question points, or null when absent.
+	 * @param string      $message Expected unresolved source diagnostic.
+	 */
+	public function testRun_QuestionDataCannotBeRepresented_PreservesOnlySupportedChildren( bool $has_answer, ?string $points, string $message ): void {
+		[ $student_id, , $quiz_id ] = $this->create_quiz_data( 2 );
+		$comment_id                 = ( new Comments_Based_Submission_Repository() )->get( $quiz_id, $student_id )->get_id();
+		$answers                    = get_comment_meta( $comment_id, 'quiz_answers', true );
+		$question_ids               = array_keys( $answers );
+		$question_id                = $question_ids[0];
+		$second_id                  = $question_ids[1];
+		$comment_id                 = ( new Comments_Based_Submission_Repository() )->get( $quiz_id, $student_id )->get_id();
+		$grades                     = array( $question_id => 7 );
+		if ( ! $has_answer ) {
+			unset( $answers[ $second_id ] );
+		}
+		if ( null !== $points ) {
+			$grades[ $second_id ] = $points;
+		}
+		update_comment_meta( $comment_id, 'quiz_answers', $answers );
+		update_comment_meta( $comment_id, 'quiz_grades', $grades );
+		update_comment_meta( $comment_id, 'quiz_answers_feedback', array( $second_id => 'retained feedback' ) );
+		$before = get_comment_meta( $comment_id );
+		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, true );
+		$validation = new Quiz_Submission_Validation();
+
+		$this->migration->run( false );
+		$validation->run();
+		$messages = array_map(
+			static function ( $error ): string {
+				return $error->get_message();
+			},
+			$validation->get_errors()
+		);
+		$copied   = $this->get_quiz_data( $quiz_id, $student_id );
+		wp_cache_delete( $comment_id, 'comment_meta' );
+
+		self::assertSame(
+			array(
+				array(
+					'question_id' => $question_id,
+					'points'      => 7,
+					'feedback'    => '',
+				),
+			),
+			$copied['grades'],
+			'Only the grade linked to a saved answer with numeric points may be copied.'
+		);
+		self::assertSame( $before, get_comment_meta( $comment_id ), 'Unsupported source data must survive intact.' );
+		self::assertContains( $message, $messages, 'The incomplete child copy must remain unresolved.' );
+		self::assertNotEmpty( $this->migration->get_errors(), 'Migration must report each unrepresentable source field.' );
+		self::assertSame( array(), iterator_to_array( Validation_Records::get_grades_without_answers() ), 'No copied grade may lose its real answer link.' );
+	}
+
+	/**
+	 * Distinct ways a grade or feedback cannot be represented safely.
+	 *
+	 * @return array
+	 */
+	public static function unsupported_question_data(): array {
+		return array(
+			'grade without answer'    => array( false, '2', 'Comments-based question grade cannot be copied without its saved answer.' ),
+			'feedback without points' => array( true, null, 'Comments-based question feedback cannot be copied without numeric points and a saved answer.' ),
+			'invalid question points' => array( true, 'NAN', 'Comments-based question grade has invalid points.' ),
+		);
+	}
+
+	/**
+	 * Duplicate comments are ambiguous even when one has answers and another does not.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
+	 */
+	public function testRun_DuplicateLessonCommentsWereStored_ReportsAmbiguityWithoutCopying(): void {
+		[ $student_id, $lesson_id, $quiz_id ] = $this->create_quiz_data();
+		$duplicate_id                         = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'passed',
+			)
+		);
+		update_comment_meta( $duplicate_id, 'grade', '100' );
+		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, true );
+		$validation = new Quiz_Submission_Validation();
+
+		$this->migration->run( false );
+		$validation->run();
+		$messages = array_map(
+			static function ( $error ): string {
+				return $error->get_message();
+			},
+			$validation->get_errors()
+		);
+
+		self::assertSame( array( 'Comments-based quiz submission is ambiguous: duplicate lesson comments or metadata exist.' ), $messages, 'Duplicates must be reported once as ambiguous, never missing.' );
+		self::assertNull( ( new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] ) )->get( $quiz_id, $student_id ), 'Migration must not select or combine duplicate source copies.' );
+		self::assertSame( '100', get_comment_meta( $duplicate_id, 'grade', true ), 'The duplicate source grade must remain untouched.' );
 	}
 
 	/**

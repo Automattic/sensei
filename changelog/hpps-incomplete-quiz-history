@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Flag incomplete historical quiz submissions and unsupported question data without copying answerless records or combining duplicates.

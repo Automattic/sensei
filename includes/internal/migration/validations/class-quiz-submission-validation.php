@@ -9,6 +9,8 @@ namespace Sensei\Internal\Migration\Validations;
 
 use RuntimeException;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
+use Sensei\Internal\Migration\Quiz_Submission_Source;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Comments_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
@@ -63,8 +65,10 @@ class Quiz_Submission_Validation {
 		// Share freshly read rows with progress inspection and the raw output so they use the same copies.
 		$this->errors = array();
 		$records      = $records ?? array();
+		$source       = Quiz_Submission_Source::inspect( $quiz_id, $user_id, $records );
+		$this->errors = $source['errors'];
 		$models       = array(
-			'comments' => Validation_Records::get_comments_submission( $quiz_id, $user_id, $records ),
+			'comments' => $source['submission'],
 			'tables'   => Validation_Records::get_tables_submission( $quiz_id, $user_id, $records ),
 		);
 		$copies       = array(
@@ -87,11 +91,11 @@ class Quiz_Submission_Validation {
 				array( 'id' => $submission->get_id() ),
 				$this->get_submission_data( $submission ),
 				array(
-					'answers' => array_map(
+					'answers' => 'comments' === $store ? $this->get_source_answers( $source, $records ) : array_map(
 						array( $this, 'get_answer_data' ),
 						Validation_Records::get_answers( $submission->get_id(), $store, $records )
 					),
-					'grades'  => array_map(
+					'grades'  => 'comments' === $store ? $this->get_source_grades( $source ) : array_map(
 						array( $this, 'get_grade_data' ),
 						Validation_Records::get_grades( $submission->get_id(), $store, $records )
 					),
@@ -109,10 +113,6 @@ class Quiz_Submission_Validation {
 			}
 		}
 
-		if ( $models['comments'] ) {
-			$this->validate_source_final_grade( $models['comments'], $records );
-		}
-
 		if ( $models['comments'] && $models['tables'] && $copies['comments'] && $copies['tables'] ) {
 			$this->compare_submission( $models['comments'], $models['tables'] );
 			$identity = array(
@@ -123,11 +123,17 @@ class Quiz_Submission_Validation {
 			foreach ( array( 'answers', 'grades' ) as $kind ) {
 				$this->compare_question_data( $copies['comments'][ $kind ], $copies['tables'][ $kind ], $identity, $kind );
 			}
-		} elseif ( $models['comments'] || $models['tables'] ) {
+		} elseif ( ( ! $source['errors'] || $source['can_copy'] ) && ( $models['comments'] || $models['tables'] ) ) {
 			$this->add_missing_submission_error( $models['comments'] ? 'tables' : 'comments', $quiz_id, $user_id );
 		}
 
-		return array_merge( $copies, array( 'errors' => $this->errors ) );
+		return array_merge(
+			$copies,
+			array(
+				'errors'     => $this->errors,
+				'unresolved' => (bool) $source['errors'],
+			)
+		);
 	}
 
 	/**
@@ -179,58 +185,48 @@ class Quiz_Submission_Validation {
 	 * Find submissions missing from either store and compare records present in both.
 	 */
 	private function validate_quiz_submissions(): void {
-		// Scan comments for quiz submissions that are missing from HPPS.
 		foreach ( Validation_Records::get_comments( 'sensei_lesson_status' ) as $record ) {
-			// Quiz data shares the lesson comment, so first resolve the lesson's quiz.
 			$quiz_id = Validation_Records::get_quiz_id( (int) $record->post_id );
 			if ( ! $quiz_id ) {
 				continue;
 			}
 
-			// The repository requires questions_asked metadata to recognize a quiz submission.
-			$user_id             = (int) $record->user_id;
-			$comments_submission = Validation_Records::get_comments_submission( $quiz_id, $user_id );
-			// Skip other comments for the same quiz/student so the submission is reported only once.
-			if ( ! $comments_submission || $comments_submission->get_id() !== (int) $record->id ) {
+			$user_id = (int) $record->user_id;
+			$records = array();
+			$source  = Quiz_Submission_Source::inspect( $quiz_id, $user_id, $records );
+			$first   = $records['comments'][0]->comment_ID ?? 0;
+			if ( (int) $first !== (int) $record->id ) {
 				continue;
 			}
 
-			$this->validate_source_final_grade( $comments_submission );
-
-			if ( ! Validation_Records::get_tables_submission( $quiz_id, $user_id ) ) {
+			$this->errors = array_merge( $this->errors, $source['errors'] );
+			if ( $source['can_copy'] && ! Validation_Records::get_tables_submission( $quiz_id, $user_id ) ) {
 				$this->add_missing_submission_error( 'tables', $quiz_id, $user_id );
 			}
 		}
 
-		// Scan HPPS for missing comments submissions. Compare matching submissions here
-		// so each quiz/student pair's final grade, answers, and question grades are checked once.
 		foreach ( Validation_Records::get_submission_rows() as $record ) {
-			$quiz_id             = (int) $record->quiz_id;
-			$user_id             = (int) $record->user_id;
-			$comments_submission = Validation_Records::get_comments_submission( $quiz_id, $user_id );
-			if ( ! $comments_submission ) {
-				$this->add_missing_submission_error( 'comments', $quiz_id, $user_id );
+			$quiz_id = (int) $record->quiz_id;
+			$user_id = (int) $record->user_id;
+			$records = array();
+			$source  = Quiz_Submission_Source::inspect( $quiz_id, $user_id, $records );
+			if ( ! $source['submission'] ) {
+				if ( ! $source['has_history'] && ! $source['ambiguous'] ) {
+					$this->add_missing_submission_error( 'comments', $quiz_id, $user_id );
+				}
 				continue;
 			}
 
-			// The row is already loaded; compare its stored values instead of querying or reading a cached copy.
 			$tables_submission = Validation_Records::create_tables_submission( $record );
-
-			$this->compare_submission( $comments_submission, $tables_submission );
-
-			// Each store has its own submission ID; answer and grade lookups must use the matching store's ID.
+			$this->compare_submission( $source['submission'], $tables_submission );
 			$identity = array(
 				'quiz_id'                => $quiz_id,
 				'user_id'                => $user_id,
-				'comments_submission_id' => $comments_submission->get_id(),
+				'comments_submission_id' => $source['submission']->get_id(),
 				'tables_submission_id'   => $tables_submission->get_id(),
 			);
-
 			$this->compare_question_data(
-				array_map(
-					array( $this, 'get_answer_data' ),
-					Validation_Records::get_answers( $comments_submission->get_id(), 'comments' )
-				),
+				$this->get_source_answers( $source, $records ),
 				array_map(
 					array( $this, 'get_answer_data' ),
 					Validation_Records::get_answers( $tables_submission->get_id(), 'tables' )
@@ -239,10 +235,7 @@ class Quiz_Submission_Validation {
 				'answers'
 			);
 			$this->compare_question_data(
-				array_map(
-					array( $this, 'get_grade_data' ),
-					Validation_Records::get_grades( $comments_submission->get_id(), 'comments' )
-				),
+				$this->get_source_grades( $source ),
 				array_map(
 					array( $this, 'get_grade_data' ),
 					Validation_Records::get_grades( $tables_submission->get_id(), 'tables' )
@@ -254,27 +247,43 @@ class Quiz_Submission_Validation {
 	}
 
 	/**
-	 * Keep invalid stored grades visible after the model reads them as no grade.
+	 * Normalize saved source answers using the same persisted identity and value fields.
 	 *
-	 * @param Submission_Interface $submission The comments submission.
-	 * @param array|null           $records Shared rows for a targeted inspection.
+	 * @param array $source The inspected source history.
+	 * @param array $records Shared persisted rows for this identity.
+	 * @return array
 	 */
-	private function validate_source_final_grade( Submission_Interface $submission, ?array &$records = null ): void {
-		$grade = Validation_Records::get_metadata( 'comment', $submission->get_id(), 'grade', $records );
-		if ( '' === $grade || is_numeric( $grade ) ) {
-			return;
+	private function get_source_answers( array $source, array &$records ): array {
+		if ( ! $source['answers'] ) {
+			return array();
 		}
 
-		$this->add_error(
-			'Comments-based quiz submission has an invalid final grade.',
-			array(
-				'quiz_id'      => $submission->get_quiz_id(),
-				'user_id'      => $submission->get_user_id(),
-				'comment_id'   => $submission->get_id(),
-				'source'       => 'comments',
-				'stored_grade' => $grade,
-			)
+		return array_map(
+			array( $this, 'get_answer_data' ),
+			Validation_Records::get_answers( $source['submission']->get_id(), 'comments', $records )
 		);
+	}
+
+	/**
+	 * Normalize representable source points without coercing invalid stored values.
+	 *
+	 * @param array $source The inspected source history.
+	 * @return array
+	 */
+	private function get_source_grades( array $source ): array {
+		$grades = array();
+		$date   = current_datetime();
+		foreach ( $source['grades'] as $question_id => $points ) {
+			$grade    = new Comments_Based_Grade(
+				$question_id,
+				$points,
+				$source['feedback'][ $question_id ] ?? null,
+				$date,
+				$date
+			);
+			$grades[] = $this->get_grade_data( $grade );
+		}
+		return $grades;
 	}
 
 	/**

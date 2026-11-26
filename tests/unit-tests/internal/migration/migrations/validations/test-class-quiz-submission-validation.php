@@ -70,6 +70,7 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 		$progress    = ( new Comments_Based_Lesson_Progress_Repository() )->create( $lesson_id, $student_id );
 		// The legacy repository uses this metadata to identify a submission.
 		update_comment_meta( $progress->get_id(), 'questions_asked', (string) $question_id );
+		update_comment_meta( $progress->get_id(), 'quiz_answers', array( $question_id => 'saved answer' ) );
 		$this->mask_migration_as_complete();
 		$validation = new Quiz_Submission_Validation();
 
@@ -140,6 +141,11 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 		self::assertCount( 1, $tables_grades->get_all( $submission->get_id() ), 'Validation should preserve the grade.' );
 	}
 
+	/**
+	 * Matching submissions with real saved answers compare without differences.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
+	 */
 	public function testRun_WhenBothSubmissionsExist_HasNoErrors(): void {
 		/* Arrange. */
 		$lesson_id    = $this->factory->lesson->create();
@@ -164,10 +170,14 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 
 		global $wpdb;
 		$tables_based_submission_repository = new Tables_Based_Submission_Repository( $wpdb );
-		$tables_based_submission_repository->create( $quiz_id, 2 );
+		$tables_submission                  = $tables_based_submission_repository->create( $quiz_id, 2 );
 
 		$comments_based_submission_repository = new Comments_Based_Submission_Repository();
-		$comments_based_submission_repository->create( $quiz_id, 2 );
+		$comments_submission                  = $comments_based_submission_repository->create( $quiz_id, 2 );
+		foreach ( $question_ids as $question_id ) {
+			( new Comments_Based_Answer_Repository() )->create( $comments_submission, $question_id, 'saved answer' );
+			( new Tables_Based_Answer_Repository( $wpdb ) )->create( $tables_submission, $question_id, 'saved answer' );
+		}
 
 		$this->mask_migration_as_complete();
 		$quiz_submission_validation = new Quiz_Submission_Validation();
@@ -194,7 +204,9 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 		$student_id  = 2;
 		$progress    = ( new Comments_Based_Lesson_Progress_Repository() )->create( $lesson_id, $student_id );
 		update_comment_meta( $progress->get_id(), 'questions_asked', (string) $question_id );
-		( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $student_id, 0.0 );
+		update_comment_meta( $progress->get_id(), 'quiz_answers', array( $question_id => 'saved answer' ) );
+		$tables_submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $student_id, 0.0 );
+		( new Tables_Based_Answer_Repository( $wpdb ) )->create( $tables_submission, $question_id, 'saved answer' );
 		$this->mask_migration_as_complete();
 		$validation = new Quiz_Submission_Validation();
 
@@ -261,6 +273,11 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Missing source answers leave history unresolved and expose surviving table children.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Quiz_Submission_Validation::run
+	 */
 	public function testRun_WhenCommentsBasedAnswerDidntExist_HasErrors(): void {
 		/* Arrange. */
 		$lesson_id    = $this->factory->lesson->create();
@@ -304,6 +321,7 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame(
 			array(
+				'Comments-based quiz submission is incomplete: saved answers are missing or malformed.',
 				'Number of answers does not match.',
 				'Answers missing in comments based answers.',
 				'Answers missing in comments based answers.',

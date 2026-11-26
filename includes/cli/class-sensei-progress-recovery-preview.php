@@ -159,6 +159,20 @@ class Sensei_Progress_Recovery_Preview {
 			'changes'  => array(),
 		);
 
+		if ( ! empty( $inspection['unresolved'] ) ) {
+			$result['status'] = 'unresolved';
+			$result['review'] = implode(
+				' ',
+				array_map(
+					static function ( Validation_Error $error ): string {
+						return $error->get_message();
+					},
+					$errors
+				)
+			);
+			return $result;
+		}
+
 		if ( ! $comments && ! $tables ) {
 			$result['status'] = 'absent';
 			return $result;
