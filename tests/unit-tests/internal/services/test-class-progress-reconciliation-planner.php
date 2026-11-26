@@ -42,20 +42,32 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Scan both stores in small batches and resume where the last batch stopped.
+	 * Find course, lesson and submission identities from both stores.
 	 *
 	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::discover
 	 */
 	public function testDiscover_RecordsWereStoredInBothStores_ResumesWithinTheBatchLimit(): void {
 		// Arrange.
+		global $wpdb;
 		$this->select_source( 'comments' );
 		$expected = array();
 		foreach ( range( 1, 3 ) as $unused ) {
 			$course_id  = $this->post( 'course' );
-			$expected[] = $course_id;
+			$expected[] = array(
+				'type'       => 'course',
+				'content_id' => $course_id,
+				'student_id' => $this->student_id,
+				'quiz_id'    => 0,
+			);
 			$this->progress( 'course', $course_id, 'comments', 'in-progress' );
 			$this->progress( 'course', $course_id, 'tables', 'in-progress' );
 		}
+		$lesson_id = $this->post( 'lesson' );
+		$quiz_id   = $this->post( 'quiz', $lesson_id );
+		$this->progress( 'lesson', $lesson_id, 'comments', 'in-progress' );
+		$submission_lesson = $this->post( 'lesson' );
+		$submission_quiz   = $this->post( 'quiz', $submission_lesson );
+		( new Tables_Based_Submission_Repository( $wpdb ) )->create( $submission_quiz, $this->student_id );
 		$service = new Progress_Reconciliation_Planner();
 		$cursor  = array();
 		$seen    = array();
@@ -68,7 +80,7 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 			$sizes[] = count( $page['identities'] );
 			foreach ( $page['identities'] as $identity ) {
 				if ( $identity['student_id'] === $this->student_id ) {
-					$seen[] = $identity['content_id'];
+					$seen[] = $identity;
 				}
 			}
 			if ( $page['complete'] ) {
@@ -79,7 +91,30 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		// Assert.
 		self::assertTrue( $page['complete'], 'A persisted cursor must reach scan completion.' );
 		self::assertSame( 1, max( $sizes ), 'Each discovery call must respect the requested physical row bound.' );
-		self::assertSame( array_merge( $expected, $expected ), $seen, 'The comments and tables scans must both discover each persisted identity.' );
+		self::assertSame(
+			array_merge(
+				$expected,
+				array(
+					array(
+						'type'       => 'lesson',
+						'content_id' => $lesson_id,
+						'student_id' => $this->student_id,
+						'quiz_id'    => $quiz_id,
+					),
+				),
+				$expected,
+				array(
+					array(
+						'type'       => 'lesson',
+						'content_id' => $submission_lesson,
+						'student_id' => $this->student_id,
+						'quiz_id'    => $submission_quiz,
+					),
+				)
+			),
+			$seen,
+			'Discover course and lesson comments, table progress, and submissions without progress rows.'
+		);
 	}
 
 	/**
