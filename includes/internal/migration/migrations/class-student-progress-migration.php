@@ -188,7 +188,7 @@ class Student_Progress_Migration extends Migration_Abstract {
 			// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 			$comment_meta_query = $wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT * FROM {$wpdb->commentmeta} WHERE meta_key IN ( %s ) AND comment_id IN ( {$placeholders} )",
+				"SELECT * FROM {$wpdb->commentmeta} WHERE meta_key IN ( %s ) AND comment_id IN ( {$placeholders} ) ORDER BY meta_id",
 				'start',
 				...$comment_ids
 			);
@@ -226,8 +226,11 @@ class Student_Progress_Migration extends Migration_Abstract {
 
 		// Map comment meta to the comment ID.
 		foreach ( $progress_comment_meta as $meta ) {
-			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-			$mapped_meta[ $meta->comment_id ][ $meta->meta_key ] = $meta->meta_value;
+			// Match WordPress single-value metadata reads by retaining the lowest meta_id.
+			if ( ! array_key_exists( $meta->meta_key, $mapped_meta[ $meta->comment_id ] ?? array() ) ) {
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				$mapped_meta[ $meta->comment_id ][ $meta->meta_key ] = $meta->meta_value;
+			}
 		}
 
 		// Map post meta to the comment ID.

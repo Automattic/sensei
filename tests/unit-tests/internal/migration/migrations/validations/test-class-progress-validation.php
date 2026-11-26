@@ -583,78 +583,89 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Multiple progress comments establish ambiguity rather than missing progress.
+	 * Duplicate progress is compared against the lowest-ID comment used by migration.
 	 *
 	 * @dataProvider duplicate_comment_cases
-	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::inspect
 	 */
-	public function testRun_DuplicateProgressCommentsWereStored_ReportsAmbiguity( string $type, bool $migrate ): void {
-		$course      = $this->factory->get_course_with_lessons();
-		$student_id  = $this->factory->user->create();
-		$post_id     = 'course' === $type ? $course['course_id'] : $course['lesson_ids'][0];
-		$content_id  = 'quiz' === $type ? $course['quiz_ids'][0] : $post_id;
-		$comment_ids = array();
-		foreach ( array( 'in-progress', 'complete' ) as $status ) {
-			$comment_ids[] = wp_insert_comment(
+	public function testInspect_DuplicateProgressCommentsWereStored_ValidatesLowestIdCopy( string $type, bool $migrate, bool $change_copy, array $expected_errors ): void {
+		global $wpdb;
+		$course     = $this->factory->get_course_with_lessons();
+		$student_id = $this->factory->user->create();
+		$post_id    = 'course' === $type ? $course['course_id'] : $course['lesson_ids'][0];
+		$content_id = 'quiz' === $type ? $course['quiz_ids'][0] : $post_id;
+		$statuses   = array( 'course' === $type ? 'complete' : 'graded', 'in-progress' );
+		foreach ( $statuses as $index => $status ) {
+			$comment_id = wp_insert_comment(
 				array(
 					'comment_post_ID'  => $post_id,
 					'user_id'          => $student_id,
 					'comment_type'     => 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status',
 					'comment_approved' => $status,
+					'comment_date'     => $index ? '2025-01-01 00:00:00' : '2025-02-01 00:00:00',
+					'comment_date_gmt' => $index ? '2025-01-01 00:00:00' : '2025-02-01 00:00:00',
 				)
 			);
+			add_comment_meta( $comment_id, 'start', $index ? '2025-01-01 00:00:00' : '2025-02-01 00:00:00' );
 		}
 		if ( $migrate ) {
 			$this->migrate_progress();
 		}
-		$this->mask_migration_as_complete();
-		$validation = new Progress_Validation();
+		if ( $change_copy ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->update(
+				$wpdb->prefix . 'sensei_lms_progress',
+				array(
+					'status'       => 'in-progress',
+					'completed_at' => null,
+				),
+				array(
+					'post_id' => $content_id,
+					'user_id' => $student_id,
+					'type'    => $type,
+				)
+			);
+		}
 
-		$validation->run();
+		$result = ( new Progress_Validation() )->inspect( $type, $content_id, $student_id );
 
-		$errors = array_values(
-			array_filter(
-				$validation->get_errors(),
-				static function ( $error ) use ( $type ): bool {
-					return isset( $error->get_data()[ $type . '_id' ] );
-				}
-			)
-		);
-		self::assertCount( 1, $errors, 'Report each ambiguous identity once.' );
-		self::assertSame( 'Multiple comments match this progress identity; the original progress is ambiguous.', $errors[0]->get_message(), 'Do not describe duplicate comments as missing progress.' );
 		self::assertSame(
-			array(
-				$type . '_id' => $content_id,
-				'user_id'     => $student_id,
-				'comment_ids' => $comment_ids,
-			),
-			$errors[0]->get_data(),
-			'Identify all competing comments without choosing one.'
+			$expected_errors,
+			array_map(
+				static function ( $error ): string {
+					return $error->get_message();
+				},
+				$result['errors']
+			)
 		);
 	}
 
 	/**
-	 * Duplicate course, lesson, and quiz identities, including absent HPPS copies.
+	 * Matching, missing, and different HPPS copies of duplicate progress.
 	 *
 	 * @return array
 	 */
 	public static function duplicate_comment_cases(): array {
+		$mismatch = array( 'Data mismatch between comments and tables based progress.' );
+
 		return array(
-			'course'                      => array( 'course', true ),
-			'lesson'                      => array( 'lesson', true ),
-			'quiz'                        => array( 'quiz', true ),
-			'lesson without an HPPS copy' => array( 'lesson', false ),
+			'course matches first comment' => array( 'course', true, false, array() ),
+			'lesson matches first comment' => array( 'lesson', true, false, array() ),
+			'quiz matches first comment'   => array( 'quiz', true, false, array() ),
+			'lesson without an HPPS copy'  => array( 'lesson', false, false, array( 'Lesson tables based progress not found.' ) ),
+			'course matches later comment' => array( 'course', true, true, $mismatch ),
+			'lesson matches later comment' => array( 'lesson', true, true, $mismatch ),
+			'quiz matches later comment'   => array( 'quiz', true, true, $mismatch ),
 		);
 	}
 
 	/**
-	 * Conflicting metadata cannot be treated as absent comments progress.
+	 * Repeated metadata uses the first stored value, as migration does.
 	 *
 	 * @dataProvider duplicate_metadata_cases
 	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
 	 */
-	public function testRun_DuplicateStartMetadataWasStored_ReportsAmbiguity( bool $has_tables_copy ): void {
-		global $wpdb;
+	public function testRun_DuplicateStartMetadataWasStored_ValidatesFirstValue( bool $has_tables_copy, bool $has_duplicate_comment ): void {
 		$course_id  = $this->factory->course->create();
 		$student_id = $this->factory->user->create();
 		$comment_id = wp_insert_comment(
@@ -665,10 +676,20 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 				'comment_approved' => 'in-progress',
 			)
 		);
-		add_comment_meta( $comment_id, 'start', 'unparseable date' );
 		add_comment_meta( $comment_id, 'start', '2025-01-01 00:00:00' );
+		add_comment_meta( $comment_id, 'start', 'unparseable date' );
+		if ( $has_duplicate_comment ) {
+			wp_insert_comment(
+				array(
+					'comment_post_ID'  => $course_id,
+					'user_id'          => $student_id,
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'complete',
+				)
+			);
+		}
 		if ( $has_tables_copy ) {
-			( new Tables_Based_Course_Progress_Repository( $wpdb ) )->create( $course_id, $student_id );
+			$this->migrate_progress();
 		}
 		$this->mask_migration_as_complete();
 		$validation = new Progress_Validation();
@@ -676,38 +697,33 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		$validation->run();
 
 		$errors = $validation->get_errors();
-		self::assertCount( 1, $errors, 'Report ambiguity even when no HPPS copy exists.' );
 		self::assertSame(
-			'Multiple metadata values match this progress comment; the original progress is ambiguous.',
-			$errors[0]->get_message(),
-			'The existing comment must not be reported as missing.'
-		);
-		self::assertSame(
-			array(
-				'course_id'     => $course_id,
-				'user_id'       => $student_id,
-				'comment_id'    => $comment_id,
-				'metadata_keys' => array( 'start' ),
+			$has_tables_copy ? array() : array( 'Course tables based progress not found.' ),
+			array_map(
+				static function ( $error ): string {
+					return $error->get_message();
+				},
+				$errors
 			),
-			$errors[0]->get_data(),
-			'Identify the conflicting metadata without choosing a value.'
+			'Duplicates should not require review, but missing progress must still be reported.'
 		);
 		self::assertSame(
-			array( 'unparseable date', '2025-01-01 00:00:00' ),
+			array( '2025-01-01 00:00:00', 'unparseable date' ),
 			get_comment_meta( $comment_id, 'start', false ),
 			'Validation must retain both original metadata values.'
 		);
 	}
 
 	/**
-	 * Duplicate metadata is ambiguous independently of HPPS copy presence.
+	 * Repeated metadata is resolved independently of HPPS copy presence.
 	 *
 	 * @return array
 	 */
 	public static function duplicate_metadata_cases(): array {
 		return array(
-			'no tables copy'     => array( false ),
-			'tables copy exists' => array( true ),
+			'no tables copy'           => array( false, false ),
+			'tables copy exists'       => array( true, false ),
+			'duplicate comment exists' => array( true, true ),
 		);
 	}
 

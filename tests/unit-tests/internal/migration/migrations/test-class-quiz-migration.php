@@ -115,19 +115,52 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Migration copies the source submission, answers, grades and feedback.
+	 * Migration copies one coherent source submission, answers, grades and feedback.
+	 *
+	 * @dataProvider quiz_source_cases
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
 	 */
-	public function testRun_HasQuizSubmission_CreatesQuizDataInCustomTables(): void {
+	public function testRun_HasQuizSubmission_CreatesQuizDataInCustomTables( bool $duplicate_metadata, bool $duplicate_comment, int $batch_size ): void {
 		/* Arrange. */
 		[ $user_id, $lesson_id, $quiz_id, $question_id, $answers, $grades, $feedback ] = $this->create_quiz_data();
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$comment_id = (int) $wpdb->get_var( $wpdb->prepare( "SELECT comment_ID FROM {$wpdb->comments} WHERE comment_post_ID = %d AND user_id = %d ORDER BY comment_ID LIMIT 1", $lesson_id, $user_id ) );
+		// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions -- Match the legacy quiz metadata encoding.
+		$later_answer   = base64_encode( serialize( array( 'later answer' ) ) );
+		$later_feedback = base64_encode( serialize( 'later feedback' ) );
+		// phpcs:enable
+		if ( $duplicate_metadata ) {
+			add_comment_meta( $comment_id, 'grade', 98.76 );
+			add_comment_meta( $comment_id, 'quiz_answers', array( $question_id => $later_answer ) );
+			add_comment_meta( $comment_id, 'quiz_grades', array( $question_id => 999 ) );
+			add_comment_meta( $comment_id, 'quiz_answers_feedback', array( $question_id => $later_feedback ) );
+		}
+		if ( $duplicate_comment ) {
+			$extra_question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+			$later_comment_id  = wp_insert_comment(
+				array(
+					'comment_post_ID'  => $lesson_id,
+					'user_id'          => $user_id,
+					'comment_type'     => 'sensei_lesson_status',
+					'comment_approved' => 'graded',
+				)
+			);
+			add_comment_meta( $later_comment_id, 'grade', 98.76 );
+			add_comment_meta( $later_comment_id, 'quiz_answers', get_comment_meta( $comment_id, 'quiz_answers', true ) + array( $extra_question_id => $later_answer ) );
+			add_comment_meta( $later_comment_id, 'quiz_grades', get_comment_meta( $comment_id, 'quiz_grades', true ) + array( $extra_question_id => 999 ) );
+			add_comment_meta( $later_comment_id, 'quiz_answers_feedback', get_comment_meta( $comment_id, 'quiz_answers_feedback', true ) + array( $extra_question_id => $later_feedback ) );
+		}
+		$this->migration = new Quiz_Migration( $batch_size );
 		$this->set_progress_storage_mode( 'tables' );
 		$repository = new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] );
 		$repository->get( $quiz_id, $user_id );
 
 		/* Act. */
-		$this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
+		do {
+			$processed = $this->migration->run( false );
+		} while ( $processed );
 
 		/* Assert. */
 		$expected = array(
@@ -151,6 +184,20 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			),
 		);
 		$this->assertSame( $expected, $this->get_quiz_data( $quiz_id, $user_id ) );
+	}
+
+	/**
+	 * Source duplication must not change the copied quiz bundle.
+	 *
+	 * @return array
+	 */
+	public static function quiz_source_cases(): array {
+		return array(
+			'one source comment'                  => array( false, false, 50 ),
+			'repeated metadata on source comment' => array( true, false, 50 ),
+			'duplicate comments in one batch'     => array( false, true, 50 ),
+			'duplicate comments across batches'   => array( false, true, 1 ),
+		);
 	}
 
 	/**
