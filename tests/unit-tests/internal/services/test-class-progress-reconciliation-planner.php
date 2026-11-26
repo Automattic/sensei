@@ -427,22 +427,31 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Stop when the supplied source does not match the saved setting.
+	 * Stop when the supplied source conflicts with saved settings or a reading override.
 	 *
+	 * @dataProvider source_conflicts
 	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
 	 */
-	public function testInspect_SavedSourceDiffered_StopsWithoutWritingEitherStore(): void {
+	public function testInspect_ReadingSourceDisagreed_StopsWithoutWritingEitherStore( string $saved_source, string $source, string $override, string $expected_error ): void {
 		// Arrange.
-		$this->select_source( 'tables' );
+		$this->select_source( $saved_source );
 		$course_id = $this->post( 'course' );
 		$this->progress( 'course', $course_id, 'comments', 'complete' );
 		$before = $this->source_rows( 'comments', $course_id );
+		add_filter( 'sensei_student_progress_read_from_tables', $override );
 
 		// Act.
-		$result = ( new Progress_Reconciliation_Planner() )->inspect( 'course', $course_id, $this->student_id, 'comments' );
+		try {
+			$result = ( new Progress_Reconciliation_Planner() )->inspect( 'course', $course_id, $this->student_id, $source );
+		} finally {
+			remove_filter( 'sensei_student_progress_read_from_tables', $override );
+		}
 
 		// Assert.
 		self::assertSame( 'conflicting', $result['outcome'], wp_json_encode( $result ) );
+		self::assertSame( $expected_error, $result['error'], 'Explain which source configuration disagrees.' );
+		self::assertSame( $source, $result['source'], 'A conflict must not reverse the supplied copy direction.' );
+		self::assertSame( array(), $result['changes'], 'A conflicting source must not produce copy proposals.' );
 		self::assertSame( $before, $this->source_rows( 'comments', $course_id ), 'A changed source policy must not mutate comments.' );
 		self::assertSame( array(), $this->source_rows( 'tables', $course_id ), 'A changed source policy must not copy to tables.' );
 	}
@@ -1170,6 +1179,19 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		return array(
 			'missing content' => array( 'posts' ),
 			'missing student' => array( 'users' ),
+		);
+	}
+
+	/**
+	 * The saved source stays authoritative even when a filter changes application reads.
+	 *
+	 * @return array
+	 */
+	public static function source_conflicts(): array {
+		return array(
+			'caller differs from saved source'      => array( 'tables', 'comments', '__return_true', 'The saved storage source changed; stop this reconciliation direction.' ),
+			'filter overrides comments with tables' => array( 'comments', 'comments', '__return_true', 'A read override conflicts with the saved storage source; stop reconciliation.' ),
+			'filter overrides tables with comments' => array( 'tables', 'tables', '__return_false', 'A read override conflicts with the saved storage source; stop reconciliation.' ),
 		);
 	}
 

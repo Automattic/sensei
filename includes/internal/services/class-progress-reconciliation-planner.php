@@ -297,7 +297,7 @@ class Progress_Reconciliation_Planner {
 	}
 
 	/**
-	 * Stop if the saved settings no longer allow copying from this source.
+	 * Stop if saved settings or a read override conflict with this source.
 	 *
 	 * @since $$next-version$$
 	 * @param string $source The store to copy from.
@@ -326,6 +326,10 @@ class Progress_Reconciliation_Planner {
 
 		if ( $saved_source !== $source ) {
 			throw new RuntimeException( 'The saved storage source changed; stop this reconciliation direction.', 409 );
+		}
+		// A filter can change application reads, but must not reverse the supplied source.
+		if ( Progress_Storage_Configuration::resolve( $raw )->get_read_backend() !== $source ) {
+			throw new RuntimeException( 'A read override conflicts with the saved storage source; stop reconciliation.', 409 );
 		}
 
 		// Match WordPress's fixed-offset fallback without reloading unrelated options.
