@@ -10,6 +10,7 @@ namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 use Sensei\Internal\Persistence_Exception;
 use DateTime;
 use InvalidArgumentException;
+use Sensei\Internal\Student_Progress\Comment_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Progress_Start_Date;
@@ -472,14 +473,15 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		$meta_start   = get_comment_meta( (int) $comment->comment_ID, 'start', true );
 		$started_at   = Progress_Start_Date::is_recorded( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : null;
 
-		$completed = in_array( $comment->comment_approved, array( 'complete', 'passed', 'graded' ), true );
+		$pass_required = true;
 		if ( 'failed' === $comment->comment_approved ) {
-			$quiz_id   = Sensei()->lesson->lesson_quizzes( (int) $comment->comment_post_ID );
-			$completed = $quiz_id && ! get_post_meta( $quiz_id, '_pass_required', true );
+			$quiz_id       = Sensei()->lesson->lesson_quizzes( (int) $comment->comment_post_ID );
+			$pass_required = ! $quiz_id || (bool) get_post_meta( $quiz_id, '_pass_required', true );
 		}
+		$completed_date = Comment_Progress::get_completed_at( 'lesson', $comment->comment_approved, $comment->comment_date_gmt, $pass_required );
 
-		if ( $completed ) {
-			$completed_at = new DateTime( $comment->comment_date_gmt, new \DateTimeZone( 'UTC' ) );
+		if ( null !== $completed_date ) {
+			$completed_at = new DateTime( $completed_date, new \DateTimeZone( 'UTC' ) );
 			$completed_at->setTimezone( wp_timezone() );
 		} else {
 			$completed_at = null;

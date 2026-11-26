@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Sensei\Internal\Cache_Prefix;
 use Sensei\Internal\Migration\Migration_Abstract;
-use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
+use Sensei\Internal\Student_Progress\Comment_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei\Internal\Student_Progress\Progress_Start_Date;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
@@ -268,12 +268,9 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 * @return array The rows to insert.
 	 */
 	private function prepare_comment_rows( $progress_comment, $meta ): array {
-		// Process comments for trashed posts.
-		if ( 'post-trashed' === $progress_comment->comment_approved ) {
-			$progress_comment->comment_approved = isset( $meta['status'] )
-				? $meta['status']
-				: 'in-progress';
-		}
+		$type = 'sensei_course_status' === $progress_comment->comment_type ? 'course' : 'lesson';
+
+		$progress_comment->comment_approved = Comment_Progress::resolve_status( $type, $progress_comment->comment_approved, $meta['status'] ?? null ) ?? 'in-progress';
 
 		switch ( $progress_comment->comment_type ) {
 			case 'sensei_course_status':
@@ -301,16 +298,8 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 * @return array The rows to insert.
 	 */
 	private function prepare_course_progress_row( $comment, $meta ): array {
-		$course_status = 'in-progress';
-		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
-			$course_status = 'complete';
-		}
-
-		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
-			$completed_at = $comment->comment_date_gmt;
-		} else {
-			$completed_at = null;
-		}
+		$completed_at  = Comment_Progress::get_completed_at( 'course', $comment->comment_approved, $comment->comment_date_gmt );
+		$course_status = null !== $completed_at ? 'complete' : 'in-progress';
 
 		$started_at = null;
 		$meta_start = $meta['start'] ?? null;
@@ -351,22 +340,13 @@ class Student_Progress_Migration extends Migration_Abstract {
 	 * @return array The rows to insert.
 	 */
 	private function prepare_lesson_progress_rows( $comment, $meta ): array {
-		$lesson_status = 'in-progress';
-		$completed_at  = null;
-		if ( in_array( $comment->comment_approved, array( 'complete', 'passed', 'graded' ), true ) ) {
-			$completed_at  = $comment->comment_date_gmt;
-			$lesson_status = 'complete';
-		}
-
+		$pass_required = true;
 		if ( 'failed' === $comment->comment_approved ) {
 			$quiz_id       = Sensei()->lesson->lesson_quizzes( $comment->comment_post_ID );
-			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
-			if ( empty( $pass_required ) ) {
-				// If pass is not required, we consider the lesson as complete.
-				$completed_at  = $comment->comment_date_gmt;
-				$lesson_status = 'complete';
-			}
+			$pass_required = (bool) get_post_meta( $quiz_id, '_pass_required', true );
 		}
+		$completed_at  = Comment_Progress::get_completed_at( 'lesson', $comment->comment_approved, $comment->comment_date_gmt, $pass_required );
+		$lesson_status = null !== $completed_at ? 'complete' : 'in-progress';
 
 		$started_at = null;
 		$meta_start = $meta['start'] ?? null;
@@ -416,13 +396,8 @@ class Student_Progress_Migration extends Migration_Abstract {
 			$quiz_status        = in_array( $comment->comment_approved, $supported_statuses, true )
 				? $comment->comment_approved
 				: Quiz_Progress_Interface::STATUS_IN_PROGRESS;
-			$quiz_completed_at  = $completed_at;
-			if ( Quiz_Progress_Interface::STATUS_IN_PROGRESS === $quiz_status
-				|| Quiz_Progress_Interface::STATUS_FAILED === $quiz_status
-			) {
-				// A failed optional quiz completes its lesson, but fail() clears the quiz completion date.
-				$quiz_completed_at = null;
-			}
+			$quiz_completed_at  = Comment_Progress::get_completed_at( 'quiz', $comment->comment_approved, $comment->comment_date_gmt );
+
 			if ( Lesson_Progress_Interface::STATUS_COMPLETE === $quiz_status ) {
 				$quiz_status = Quiz_Progress_Interface::STATUS_PASSED;
 			}

@@ -19,6 +19,7 @@ use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Tables_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
+use Sensei\Internal\Student_Progress\Comment_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Tables_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
@@ -326,32 +327,24 @@ class Validation_Records {
 		$class   = $classes[ $type ];
 		$start   = self::get_metadata( 'comment', (int) $comment->comment_ID, 'start', $records );
 		$date    = new DateTimeImmutable( $comment->comment_date, wp_timezone() );
-		$status  = $comment->comment_approved;
+		$saved   = null;
 
-		if ( 'post-trashed' === $status ) {
+		if ( 'post-trashed' === $comment->comment_approved ) {
 			$statuses = self::get_metadata( 'post', (int) $comment->comment_post_ID, '_wp_trash_meta_comments_status' );
 			$saved    = is_array( $statuses ) ? ( $statuses[ $comment->comment_ID ] ?? null ) : null;
-			$allowed  = 'course' === $type
-				? array( 'complete', 'in-progress' )
-				: array( 'complete', 'in-progress', 'passed', 'graded', 'failed', 'ungraded' );
-
-			if ( in_array( $saved, $allowed, true ) ) {
-				$status = $saved;
-			} else {
-				$records['unverifiable_trash_status'] = (int) $comment->comment_ID;
-				return null;
-			}
+		}
+		$status = Comment_Progress::resolve_status( $type, $comment->comment_approved, $saved );
+		if ( null === $status ) {
+			$records['unverifiable_trash_status'] = (int) $comment->comment_ID;
+			return null;
 		}
 
-		if ( 'course' === $type ) {
-			$completed = 'complete' === $status;
-		} else {
-			$completed = in_array( $status, array( 'complete', 'passed', 'graded' ), true );
-		}
+		$pass_required = true;
 		if ( 'lesson' === $type && 'failed' === $status ) {
-			$quiz_id   = self::get_quiz_id( (int) $comment->comment_post_ID );
-			$completed = $quiz_id && ! self::get_metadata( 'post', $quiz_id, '_pass_required' );
+			$quiz_id       = self::get_quiz_id( (int) $comment->comment_post_ID );
+			$pass_required = ! $quiz_id || (bool) self::get_metadata( 'post', $quiz_id, '_pass_required' );
 		}
+		$completed_at = Comment_Progress::get_completed_at( $type, $status, $comment->comment_date_gmt, $pass_required );
 
 		return new $class(
 			(int) $comment->comment_ID,
@@ -359,7 +352,7 @@ class Validation_Records {
 			(int) $comment->user_id,
 			$status,
 			Progress_Start_Date::is_recorded( $start ) ? new DateTimeImmutable( $start, wp_timezone() ) : null,
-			$completed ? new DateTimeImmutable( $comment->comment_date_gmt, new DateTimeZone( 'UTC' ) ) : null,
+			null !== $completed_at ? new DateTimeImmutable( $completed_at, new DateTimeZone( 'UTC' ) ) : null,
 			$date,
 			$date
 		);
