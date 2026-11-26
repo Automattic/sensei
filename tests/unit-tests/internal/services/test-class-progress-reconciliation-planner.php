@@ -479,6 +479,76 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A replaced quiz must not exchange historical data with the current lesson comment.
+	 *
+	 * @dataProvider directions
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_QuizWasTrashedAndReplaced_PreservesBothQuizCopies( string $source ): void {
+		// Arrange.
+		global $wpdb;
+		$this->select_source( $source );
+		$lesson_id = $this->post( 'lesson' );
+		$old_quiz  = $this->post( 'quiz', $lesson_id );
+		$question  = $this->post( 'question' );
+		$this->progress( 'quiz', $old_quiz, 'tables', 'passed' );
+		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $old_quiz, $this->student_id, 20 );
+		( new Tables_Based_Answer_Repository( $wpdb ) )->create( $submission, $question, 'historical answer' );
+		wp_trash_post( $old_quiz );
+		$quiz_id = $this->post( 'quiz', $lesson_id );
+		$comment = $this->progress( 'lesson', $lesson_id, 'comments', 'passed' );
+		$this->progress( 'lesson', $lesson_id, 'tables', 'complete' );
+		$this->progress( 'quiz', $quiz_id, 'tables', 'passed' );
+		update_comment_meta( $comment, 'questions_asked', (string) $question );
+		update_comment_meta( $comment, 'grade', 80 );
+		update_comment_meta( $comment, 'quiz_answers', array( $question => 'current answer' ) );
+		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $this->student_id, 80 );
+		( new Tables_Based_Answer_Repository( $wpdb ) )->create( $submission, $question, 'current answer' );
+		$before = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) );
+
+		// Act.
+		$result = ( new Progress_Reconciliation_Planner() )->inspect( 'quiz', $old_quiz, $this->student_id, $source );
+
+		// Assert.
+		self::assertSame( array(), $result['changes'], 'Historical quiz data must not be copied into or out of the replacement comment.' );
+		self::assertSame( 'unresolved', $result['outcome'], 'The superseded quiz has no independent comments copy.' );
+		self::assertContains( 'The quiz and lesson do not have a consistent persisted mapping.', $result['unresolved'], 'Explain why the bundle cannot be copied.' );
+		self::assertSame( $before, array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) ), 'Both quiz copies must remain untouched.' );
+	}
+
+	/**
+	 * A stale lesson link must not mix progress belonging to different lessons.
+	 *
+	 * @dataProvider directions
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_QuizMetadataPointedToAnotherLesson_PreservesBothLessons( string $source ): void {
+		// Arrange.
+		global $wpdb;
+		$this->select_source( $source );
+		$lesson_id = $this->post( 'lesson' );
+		list( $other_lesson, $quiz_id, $question, $comment ) = $this->create_quiz_progress();
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+		$this->progress( 'lesson', $lesson_id, 'comments', 'in-progress' );
+		$this->progress( 'lesson', $lesson_id, 'tables', 'in-progress' );
+		update_comment_meta( $comment, 'questions_asked', (string) $question );
+		update_comment_meta( $comment, 'grade', 80 );
+		update_comment_meta( $comment, 'quiz_answers', array( $question => 'comment answer' ) );
+		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $this->student_id, 20 );
+		( new Tables_Based_Answer_Repository( $wpdb ) )->create( $submission, $question, 'table answer' );
+		$before = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'comments', $other_lesson ), $this->source_rows( 'tables', $lesson_id ) );
+
+		// Act.
+		$result = ( new Progress_Reconciliation_Planner() )->inspect( 'lesson', $lesson_id, $this->student_id, $source );
+
+		// Assert.
+		self::assertSame( array(), $result['changes'], 'An inconsistent link must not propose changes for another lesson.' );
+		self::assertSame( 'unresolved', $result['outcome'], 'The conflicting lesson and quiz identities need review.' );
+		self::assertContains( 'The quiz and lesson do not have a consistent persisted mapping.', $result['unresolved'], 'Explain the conflicting identity.' );
+		self::assertSame( $before, array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'comments', $other_lesson ), $this->source_rows( 'tables', $lesson_id ) ), 'Progress for both lessons must remain untouched.' );
+	}
+
+	/**
 	 * A missing tables copy needs progress, answers, grades and feedback planned together.
 	 *
 	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect

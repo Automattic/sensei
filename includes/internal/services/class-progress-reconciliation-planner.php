@@ -139,6 +139,9 @@ class Progress_Reconciliation_Planner {
 			} elseif ( ! $this->identity_exists( $identity ) ) {
 				$result['outcome']      = 'unresolved';
 				$result['unresolved'][] = 'The persisted content or student no longer exists; surviving data is preserved.';
+			} elseif ( ! $this->quiz_matches_lesson( $identity ) ) {
+				$result['outcome']      = 'unresolved';
+				$result['unresolved'][] = 'The quiz and lesson do not have a consistent persisted mapping.';
 			} else {
 				// Supported fields can match while an uncertain date or an extra
 				// destination record still needs review.
@@ -177,6 +180,26 @@ class Progress_Reconciliation_Planner {
 		$result = $this->inspect( $type, $content_id, $student_id, $source );
 		unset( $result['changes'] );
 		return $result;
+	}
+
+	/**
+	 * A shared lesson comment can represent only the lesson's current quiz.
+	 *
+	 * @param array $identity The course or lesson and quiz IDs.
+	 * @return bool Whether the quiz is eligible and both mappings agree.
+	 */
+	private function quiz_matches_lesson( array $identity ): bool {
+		global $wpdb;
+
+		if ( ! $identity['quiz_id'] ) {
+			return true;
+		}
+		if ( Validation_Records::get_quiz_id( $identity['content_id'] ) !== $identity['quiz_id'] ) {
+			return false;
+		}
+
+		$rows = $this->query( $wpdb->prepare( 'SELECT post_parent FROM %i WHERE ID = %d AND post_type = %s', $wpdb->posts, $identity['quiz_id'], 'quiz' ) );
+		return $rows && (int) $rows[0]->post_parent === $identity['content_id'];
 	}
 
 	/**
