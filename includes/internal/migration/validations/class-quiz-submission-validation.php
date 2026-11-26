@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Migration\Validations;
 
+use DateTimeZone;
 use RuntimeException;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
@@ -54,17 +55,18 @@ class Quiz_Submission_Validation {
 	 * @internal
 	 * @since $$next-version$$
 	 *
-	 * @param int        $quiz_id The stored quiz ID.
-	 * @param int        $user_id The student ID.
-	 * @param array|null $records Shared rows for this student and quiz, populated by the readers.
+	 * @param int               $quiz_id The stored quiz ID.
+	 * @param int               $user_id The student ID.
+	 * @param array|null        $records Shared rows for this student and quiz, populated by the readers.
+	 * @param DateTimeZone|null $timezone Saved site timezone, or null to use the current WordPress option.
 	 * @return array The normalized bundles and validation differences.
 	 */
-	public function inspect( int $quiz_id, int $user_id, ?array &$records = null ): array {
+	public function inspect( int $quiz_id, int $user_id, ?array &$records = null, ?DateTimeZone $timezone = null ): array {
 		// Share freshly read rows with progress inspection and the raw output so they use the same copies.
 		$this->errors = array();
 		$records      = $records ?? array();
 		$models       = array(
-			'comments' => Validation_Records::get_comments_submission( $quiz_id, $user_id, $records ),
+			'comments' => Validation_Records::get_comments_submission( $quiz_id, $user_id, $records, $timezone ),
 			'tables'   => Validation_Records::get_tables_submission( $quiz_id, $user_id, $records ),
 		);
 		$copies       = array(

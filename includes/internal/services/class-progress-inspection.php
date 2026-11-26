@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Services;
 
 use DateTimeImmutable;
+use DateTimeZone;
 use Sensei\Internal\Migration\Validations\Progress_Validation;
 use Sensei\Internal\Migration\Validations\Quiz_Submission_Validation;
 use Sensei\Internal\Migration\Validations\Validation_Records;
@@ -24,12 +25,13 @@ class Progress_Inspection {
 	 * Read progress and quiz data using the existing validation readers.
 	 *
 	 * @since $$next-version$$
-	 * @param string $type The course, lesson or quiz type.
-	 * @param int    $post_id The stored content ID.
-	 * @param int    $student_id The student ID.
+	 * @param string            $type The course, lesson or quiz type.
+	 * @param int               $post_id The stored content ID.
+	 * @param int               $student_id The student ID.
+	 * @param DateTimeZone|null $timezone Saved site timezone, or null to use the current WordPress option.
 	 * @return array Comparison results, original rows and dates that need review.
 	 */
-	public static function inspect( string $type, int $post_id, int $student_id ): array {
+	public static function inspect( string $type, int $post_id, int $student_id, ?DateTimeZone $timezone = null ): array {
 		$stored  = Validation_Records::get_progress_records( $type, $post_id, $student_id );
 		$records = $stored;
 		$dates   = array();
@@ -52,9 +54,9 @@ class Progress_Inspection {
 			}
 		}
 
-		$progress                   = ( new Progress_Validation() )->inspect( $type, $post_id, $student_id, $records );
+		$progress                   = ( new Progress_Validation() )->inspect( $type, $post_id, $student_id, $records, $timezone );
 		$progress['ignored_fields'] = array_unique( array_merge( $progress['ignored_fields'], $dates ) );
-		$submission                 = 'quiz' === $type ? ( new Quiz_Submission_Validation() )->inspect( $post_id, $student_id, $records ) : null;
+		$submission                 = 'quiz' === $type ? ( new Quiz_Submission_Validation() )->inspect( $post_id, $student_id, $records, $timezone ) : null;
 		$groups                     = 'quiz' === $type
 			? array( 'comments', 'tables', 'submissions', 'comment_meta', 'answers', 'grades' )
 			: array( 'comments', 'tables', 'comment_meta' );

@@ -26,6 +26,13 @@ use Throwable;
 class Progress_Reconciliation_Planner {
 
 	/**
+	 * Saved timezone for the current inspection, independent of option caches.
+	 *
+	 * @var DateTimeZone
+	 */
+	private DateTimeZone $timezone;
+
+	/**
 	 * Find the next batch of records to check in both stores.
 	 *
 	 * The same student and content can appear in more than one batch. Checking
@@ -288,10 +295,14 @@ class Progress_Reconciliation_Planner {
 			throw new RuntimeException( 'The saved storage source changed; stop this reconciliation direction.', 409 );
 		}
 
-		// Use the saved timezone when reading dates, even if the option cache is old.
-		wp_cache_delete( 'alloptions', 'options' );
-		wp_cache_delete( 'timezone_string', 'options' );
-		wp_cache_delete( 'gmt_offset', 'options' );
+		// Match WordPress's fixed-offset fallback without reloading unrelated options.
+		$timezone = $data['timezone_string'] ?? '';
+		if ( ! $timezone ) {
+			$offset   = (float) ( $data['gmt_offset'] ?? 0 );
+			$hours    = (int) $offset;
+			$timezone = sprintf( '%s%02d:%02d', $offset < 0 ? '-' : '+', abs( $hours ), abs( ( $offset - $hours ) * 60 ) );
+		}
+		$this->timezone = new DateTimeZone( $timezone );
 	}
 
 	/**
@@ -307,7 +318,7 @@ class Progress_Reconciliation_Planner {
 
 		$bundle = array();
 		foreach ( $scopes as $type => $post_id ) {
-			$bundle[ $type ] = Progress_Inspection::inspect( $type, $post_id, $identity['student_id'] );
+			$bundle[ $type ] = Progress_Inspection::inspect( $type, $post_id, $identity['student_id'], $this->timezone );
 		}
 
 		return $bundle;
@@ -504,7 +515,7 @@ class Progress_Reconciliation_Planner {
 					// When clocks go back, two UTC times can share one local time.
 					// Only copy it if converting back gives the original UTC value.
 					$local_start = $this->local_date( $value );
-					$round_trip  = new DateTimeImmutable( $local_start, wp_timezone() );
+					$round_trip  = new DateTimeImmutable( $local_start, $this->timezone );
 					if ( $round_trip->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' ) !== $value ) {
 						$plan['unresolved'][] = 'The source start cannot be represented unambiguously in the comment timezone.';
 						continue;
@@ -715,7 +726,7 @@ class Progress_Reconciliation_Planner {
 	 */
 	private function local_date( string $utc ): string {
 		$date = new DateTimeImmutable( $utc, new DateTimeZone( 'UTC' ) );
-		return $date->setTimezone( wp_timezone() )->format( 'Y-m-d H:i:s' );
+		return $date->setTimezone( $this->timezone )->format( 'Y-m-d H:i:s' );
 	}
 
 	/**

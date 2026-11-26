@@ -413,6 +413,43 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Date proposals use the persisted timezone even when this request cached older options.
+	 *
+	 * @dataProvider saved_timezones
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_TimezoneOptionsWereCached_ProposesDatesUsingSavedTimezone( string $source, string $timezone, float $offset, string $comment_start, string $table_start, string $field, string $expected ): void {
+		// Arrange.
+		global $wpdb;
+		$this->select_source( $source );
+		$original_timezone = get_option( 'timezone_string' );
+		$original_offset   = get_option( 'gmt_offset' );
+		update_option( 'timezone_string', 'UTC' );
+		update_option( 'gmt_offset', 0 );
+		$course_id = $this->post( 'course' );
+		$comment   = $this->progress( 'course', $course_id, 'comments', 'in-progress' );
+		$progress  = $this->progress( 'course', $course_id, 'tables', 'in-progress' );
+		update_comment_meta( $comment, 'start', $comment_start );
+		$wpdb->update( $wpdb->prefix . 'sensei_lms_progress', array( 'started_at' => $table_start ), array( 'id' => $progress ) );
+		$wpdb->update( $wpdb->options, array( 'option_value' => $timezone ), array( 'option_name' => 'timezone_string' ) );
+		$wpdb->update( $wpdb->options, array( 'option_value' => $offset ), array( 'option_name' => 'gmt_offset' ) );
+
+		// Act.
+		try {
+			$result = ( new Progress_Reconciliation_Planner() )->inspect( 'course', $course_id, $this->student_id, $source );
+		} finally {
+			wp_cache_delete( 'alloptions', 'options' );
+			wp_cache_delete( 'timezone_string', 'options' );
+			wp_cache_delete( 'gmt_offset', 'options' );
+			update_option( 'timezone_string', $original_timezone );
+			update_option( 'gmt_offset', $original_offset );
+		}
+
+		// Assert.
+		self::assertSame( $expected, $result['changes'][0]['data'][ $field ], 'Convert the proposed start using the saved timezone, including fractional offsets.' );
+	}
+
+	/**
 	 * Keep destination progress when the source copy is missing.
 	 *
 	 * @dataProvider opposite_stores
@@ -645,7 +682,9 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		global $wpdb;
 		$this->select_source( 'tables' );
 		$original_timezone = get_option( 'timezone_string' );
-		update_option( 'timezone_string', 'America/New_York' );
+		update_option( 'timezone_string', 'UTC' );
+		// Another request can save a timezone while this request still has the old option cached.
+		$wpdb->update( $wpdb->options, array( 'option_value' => 'America/New_York' ), array( 'option_name' => 'timezone_string' ) );
 		$course_id = $this->post( 'course' );
 		$comment   = $this->progress( 'course', $course_id, 'comments', 'in-progress' );
 		$this->progress( 'course', $course_id, 'tables', 'complete' );
@@ -665,6 +704,8 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		try {
 			$result = ( new Progress_Reconciliation_Planner() )->inspect( 'course', $course_id, $this->student_id, 'tables' );
 		} finally {
+			wp_cache_delete( 'alloptions', 'options' );
+			wp_cache_delete( 'timezone_string', 'options' );
 			update_option( 'timezone_string', $original_timezone );
 		}
 
@@ -861,6 +902,19 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		return array(
 			'missing content' => array( 'posts' ),
 			'missing student' => array( 'users' ),
+		);
+	}
+
+	/**
+	 * Named zones and signed fractional offsets must use the same saved-option rules.
+	 *
+	 * @return array
+	 */
+	public static function saved_timezones(): array {
+		return array(
+			'named zone, comments source'      => array( 'comments', 'America/New_York', -5.0, '2024-01-01 12:00:00', '2024-01-01 00:00:00', 'started_at', '2024-01-01 17:00:00' ),
+			'positive offset, tables source'   => array( 'tables', '', 5.75, '2024-01-01 00:00:00', '2024-01-01 06:15:00', 'start', '2024-01-01 12:00:00' ),
+			'negative offset, comments source' => array( 'comments', '', -3.5, '2024-01-01 12:00:00', '2024-01-01 00:00:00', 'started_at', '2024-01-01 15:30:00' ),
 		);
 	}
 
