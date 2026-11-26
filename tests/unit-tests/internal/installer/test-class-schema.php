@@ -85,6 +85,30 @@ class Schema_Test extends \WP_UnitTestCase {
 		}
 	}
 
+	public function testGetTables_WhenCourseLessonsTableFeatureIsEnabled_ShouldReturnTheCourseLessonsTable(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		/* Act. */
+		$tables = $this->schema->get_tables();
+
+		/* Assert. */
+		$this->assertContains( "{$wpdb->prefix}sensei_lms_course_lessons", $tables );
+	}
+
+	public function testGetTables_WhenCourseLessonsTableFeatureIsDisabled_ShouldNotReturnTheCourseLessonsTable(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		add_filter( 'sensei_feature_flag_course_lessons_table', '__return_false' );
+
+		/* Act. */
+		$tables = $this->schema->get_tables();
+
+		/* Assert. */
+		$this->assertNotContains( "{$wpdb->prefix}sensei_lms_course_lessons", $tables );
+	}
+
 	protected function reset_schema(): void {
 		global $wpdb;
 

@@ -42,6 +42,7 @@ class Sensei_Unit_Tests_Bootstrap {
 
 		// Enable features.
 		tests_add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );
+		tests_add_filter( 'sensei_feature_flag_course_lessons_table', '__return_true' );
 
 		// Enable HPPS tables mode when env var is set.
 		if ( getenv( 'ENABLE_HPPS' ) ) {
