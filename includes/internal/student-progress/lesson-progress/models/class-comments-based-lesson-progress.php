@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Models;
 
 use DateTimeInterface;
+use Sensei\Internal\Student_Progress\Comment_Progress;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
 use Sensei_Lesson;
 
@@ -44,29 +45,15 @@ class Comments_Based_Lesson_Progress extends Lesson_Progress_Abstract {
 	 * @return string|null
 	 */
 	public function get_status(): ?string {
-		switch ( $this->status ) {
-			case 'complete':
-			case 'graded':
-			case 'passed':
-				return self::STATUS_COMPLETE;
-
-			case 'failed':
-				// This may be 'completed' depending on...
-				// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson.
-				$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $this->lesson_id );
-				if ( $lesson_quiz_id ) {
-					// ...the quiz pass setting.
-					$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
-					if ( empty( $pass_required ) ) {
-						// We just require the user to have done the quiz, not to have passed.
-						return self::STATUS_COMPLETE;
-					}
-				}
-				return self::STATUS_IN_PROGRESS;
-
-			default:
-				return self::STATUS_IN_PROGRESS;
+		$pass_required = true;
+		if ( 'failed' === $this->status ) {
+			$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $this->lesson_id );
+			$pass_required  = ! $lesson_quiz_id || (bool) get_post_meta( $lesson_quiz_id, '_pass_required', true );
 		}
+
+		return Comment_Progress::is_complete( 'lesson', $this->status, $pass_required )
+			? self::STATUS_COMPLETE
+			: self::STATUS_IN_PROGRESS;
 	}
 
 	/**

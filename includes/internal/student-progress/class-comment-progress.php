@@ -50,14 +50,27 @@ final class Comment_Progress {
 	 * @return string|null The stored UTC completion date, or null for incomplete progress.
 	 */
 	public static function get_completed_at( string $type, string $status, string $comment_date_gmt, bool $pass_required = true ): ?string {
+		return self::is_complete( $type, $status, $pass_required ) ? $comment_date_gmt : null;
+	}
+
+	/**
+	 * Check whether a resolved comment status represents completed progress.
+	 *
+	 * @since $$next-version$$
+	 * @param string      $type          Course, lesson, or quiz progress.
+	 * @param string|null $status        Resolved comment status.
+	 * @param bool        $pass_required Whether the lesson requires a quiz pass to complete.
+	 * @return bool
+	 */
+	public static function is_complete( string $type, ?string $status, bool $pass_required = true ): bool {
 		if ( 'course' === $type ) {
-			$completed = 'complete' === $status;
-		} elseif ( 'lesson' === $type && 'failed' === $status ) {
-			$completed = ! $pass_required;
-		} else {
-			$completed = in_array( $status, array( 'complete', 'passed', 'graded' ), true );
+			return 'complete' === $status;
 		}
 
-		return $completed ? $comment_date_gmt : null;
+		if ( 'lesson' === $type && 'failed' === $status ) {
+			return ! $pass_required;
+		}
+
+		return in_array( $status, array( 'complete', 'passed', 'graded' ), true );
 	}
 }
