@@ -62,6 +62,50 @@ class Sensei_Progress_Recovery_Preview_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Missing trash history cannot provide values for a conditional repair.
+	 *
+	 * @dataProvider missing_trash_history_cases
+	 * @covers \Sensei_Progress_Recovery_Preview::inspect
+	 */
+	public function testInspect_TrashedCommentHadNoSavedStatus_WithholdsChanges( bool $has_tables_copy ): void {
+		$course_id  = ( new \Sensei_Factory() )->course->create();
+		$student_id = self::factory()->user->create();
+		wp_insert_comment(
+			array(
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => 'post-trashed',
+			)
+		);
+		if ( $has_tables_copy ) {
+			$this->create_progress( 'course', $course_id, $student_id, 'tables' );
+		}
+
+		$preview = ( new Sensei_Progress_Recovery_Preview() )->inspect( 'course', $course_id, $student_id, 'tables' );
+
+		self::assertSame( array(), $preview['records'][0]['progress']['changes'], 'Unknown original status must not become a repair value.' );
+		self::assertSame( 'unverifiable', $preview['records'][0]['progress']['status'], 'Unknown history must not be described as a missing comment.' );
+		self::assertSame(
+			'Original progress status could not be established for the trashed comment.',
+			$preview['records'][0]['progress']['review'],
+			'Explain the unknown original status even when neither copy can be hydrated.'
+		);
+	}
+
+	/**
+	 * Unknown trash history remains unverifiable with or without a tables copy.
+	 *
+	 * @return array
+	 */
+	public static function missing_trash_history_cases(): array {
+		return array(
+			'tables copy exists' => array( true ),
+			'no tables copy'     => array( false ),
+		);
+	}
+
+	/**
 	 * An absent hypothetical source must never propose deleting the surviving copy.
 	 *
 	 * @covers \Sensei_Progress_Recovery_Preview::inspect

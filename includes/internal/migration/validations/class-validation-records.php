@@ -341,6 +341,21 @@ class Validation_Records {
 		$date    = new DateTimeImmutable( $comment->comment_date, wp_timezone() );
 		$status  = $comment->comment_approved;
 
+		if ( 'post-trashed' === $status ) {
+			$statuses = self::get_metadata( 'post', (int) $comment->comment_post_ID, '_wp_trash_meta_comments_status' );
+			$saved    = is_array( $statuses ) ? ( $statuses[ $comment->comment_ID ] ?? null ) : null;
+			$allowed  = 'course' === $type
+				? array( 'complete', 'in-progress' )
+				: array( 'complete', 'in-progress', 'passed', 'graded', 'failed', 'ungraded' );
+
+			if ( in_array( $saved, $allowed, true ) ) {
+				$status = $saved;
+			} else {
+				$records['unverifiable_trash_status'] = (int) $comment->comment_ID;
+				return null;
+			}
+		}
+
 		if ( 'course' === $type ) {
 			$completed = 'complete' === $status;
 		} else {

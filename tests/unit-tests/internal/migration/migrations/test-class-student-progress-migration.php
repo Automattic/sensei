@@ -230,6 +230,35 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Trashing content must not discard its saved progress or publish the content.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration::run
+	 */
+	public function testRun_CompletedCourseWasTrashed_PreservesCompletion(): void {
+		$course_id  = $this->factory->course->create();
+		$student_id = $this->factory->user->create();
+		$comment_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => 'complete',
+				'comment_date_gmt' => '2024-05-01 15:45:00',
+			)
+		);
+		wp_trash_post( $course_id );
+
+		$this->migration->run( false );
+
+		global $wpdb;
+		$progress = ( new Tables_Based_Course_Progress_Repository( $wpdb ) )->get( $course_id, $student_id );
+		self::assertSame( 'complete', $progress->get_status(), 'The saved course completion survives trashing.' );
+		self::assertSame( '2024-05-01 15:45:00', $progress->get_completed_at()->format( 'Y-m-d H:i:s' ), 'The original completion date survives migration.' );
+		self::assertSame( 'trash', get_post_status( $course_id ), 'Migration keeps the course in Trash.' );
+		self::assertSame( 'post-trashed', get_comment( $comment_id )->comment_approved, 'Migration leaves the source comment untouched.' );
+	}
+
 	public function testRun_TimeExceeded_StopsEarlyAndAdvancesCursor(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();

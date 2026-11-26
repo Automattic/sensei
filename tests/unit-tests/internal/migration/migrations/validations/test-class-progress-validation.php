@@ -490,6 +490,98 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Saved pre-trash progress must be compared, including completion dates.
+	 *
+	 * @dataProvider trashed_progress_cases
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_ProgressWasTrashed_ValidatesSavedStatus( string $type, string $status ): void {
+		$course     = $this->factory->get_course_with_lessons();
+		$student_id = $this->factory->user->create();
+		$post_id    = 'course' === $type ? $course['course_id'] : $course['lesson_ids'][0];
+		wp_insert_comment(
+			array(
+				'comment_post_ID'  => $post_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status',
+				'comment_approved' => $status,
+				'comment_date_gmt' => '2024-05-01 15:45:00',
+			)
+		);
+		wp_trash_post( $post_id );
+		$this->migrate_progress();
+		$validation = new Progress_Validation();
+
+		$validation->run();
+
+		self::assertSame( array(), $validation->get_errors() );
+	}
+
+	/**
+	 * Saved statuses with distinct course, lesson, and quiz normalization.
+	 *
+	 * @return array
+	 */
+	public static function trashed_progress_cases(): array {
+		return array(
+			'completed course'     => array( 'course', 'complete' ),
+			'course in progress'   => array( 'course', 'in-progress' ),
+			'completed lesson'     => array( 'lesson', 'complete' ),
+			'passed lesson quiz'   => array( 'lesson', 'passed' ),
+			'ungraded lesson quiz' => array( 'lesson', 'ungraded' ),
+		);
+	}
+
+	/**
+	 * A saved completion must still expose a previously migrated incomplete copy.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::inspect
+	 */
+	public function testInspect_CompletedTrashedCourseWasMigratedIncomplete_ReportsMismatch(): void {
+		global $wpdb;
+		$course_id  = $this->factory->course->create();
+		$student_id = $this->factory->user->create();
+		wp_insert_comment(
+			array(
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => 'complete',
+			)
+		);
+		wp_trash_post( $course_id );
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+		$repository->create( $course_id, $student_id );
+
+		$result = ( new Progress_Validation() )->inspect( 'course', $course_id, $student_id );
+
+		self::assertSame( 'complete', $result['comments']['status'], 'Validation uses the saved pre-trash status.' );
+		self::assertSame( 'Data mismatch between comments and tables based progress.', $result['errors'][0]->get_message(), 'The incomplete HPPS copy must remain an error.' );
+	}
+
+	/**
+	 * Missing trash history cannot establish an expected progress value.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::inspect
+	 */
+	public function testInspect_TrashedStatusHistoryWasMissing_ReportsUncertainty(): void {
+		$course_id  = $this->factory->course->create();
+		$student_id = $this->factory->user->create();
+		wp_insert_comment(
+			array(
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => 'post-trashed',
+			)
+		);
+
+		$result = ( new Progress_Validation() )->inspect( 'course', $course_id, $student_id );
+
+		self::assertSame( 'Original progress status could not be established for the trashed comment.', $result['errors'][0]->get_message() );
+	}
+
 	private function create_enrolled_quiz_student( array $course_args = array() ): array {
 		$this->set_progress_storage_mode( self::is_hpps_tables_mode() ? 'tables' : 'comments' );
 		add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );

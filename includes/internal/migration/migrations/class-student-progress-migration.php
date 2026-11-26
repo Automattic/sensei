@@ -178,11 +178,8 @@ class Student_Progress_Migration extends Migration_Abstract {
 		foreach ( $progress_comments as $progress_comment ) {
 			$comment_ids[] = $progress_comment->comment_ID;
 
-			// At the moment we don't care about post meta for course progress.
-			if ( 'sensei_lesson_status' === $progress_comment->comment_type ) {
-				// Map the post ID to the comment ID. Is used later to map post meta to the comment ID.
-				$post_ids[ $progress_comment->comment_post_ID ][] = $progress_comment->comment_ID;
-			}
+			// Both courses and lessons can have saved pre-trash comment statuses.
+			$post_ids[ $progress_comment->comment_post_ID ][] = $progress_comment->comment_ID;
 		}
 
 		$progress_comment_meta = array();

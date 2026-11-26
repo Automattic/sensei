@@ -159,6 +159,20 @@ class Sensei_Progress_Recovery_Preview {
 			'changes'  => array(),
 		);
 
+		if ( in_array( 'status', $inspection['ignored_fields'] ?? array(), true ) ) {
+			$result['status'] = 'unverifiable';
+			$result['review'] = implode(
+				' ',
+				array_map(
+					static function ( Validation_Error $error ): string {
+						return $error->get_message();
+					},
+					$errors
+				)
+			);
+			return $result;
+		}
+
 		if ( ! $comments && ! $tables ) {
 			$result['status'] = 'absent';
 			return $result;

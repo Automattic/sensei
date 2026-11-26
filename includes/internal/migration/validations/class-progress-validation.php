@@ -75,11 +75,37 @@ class Progress_Validation {
 	public function inspect( string $type, int $post_id, int $user_id, ?array &$records = null ): array {
 		$this->errors   = array();
 		$this->warnings = array();
-		$records        = $records ?? array();
-		$comments       = Validation_Records::get_comments_progress( $type, $post_id, $user_id, $records );
-		$tables         = Validation_Records::get_tables_progress( $type, $post_id, $user_id, $records );
+
+		return $this->inspect_progress( $type, $post_id, $user_id, $records );
+	}
+
+	/**
+	 * Inspect an identity without clearing findings from other identities.
+	 *
+	 * @param string     $type    The progress type.
+	 * @param int        $post_id The content ID.
+	 * @param int        $user_id The student ID.
+	 * @param array|null $records Shared stored records.
+	 * @return array The inspection result.
+	 */
+	private function inspect_progress( string $type, int $post_id, int $user_id, ?array &$records = null ): array {
+		$records  = $records ?? array();
+		$comments = Validation_Records::get_comments_progress( $type, $post_id, $user_id, $records );
+		$tables   = Validation_Records::get_tables_progress( $type, $post_id, $user_id, $records );
 		// Excluded fields stay visible in the output, but cannot become proposed repair changes.
 		$ignored_fields = array();
+		$cannot_verify  = isset( $records['unverifiable_trash_status'] );
+		if ( $cannot_verify ) {
+			$this->add_error(
+				'Original progress status could not be established for the trashed comment.',
+				array(
+					$type . '_id' => $post_id,
+					'user_id'     => $user_id,
+					'comment_id'  => $records['unverifiable_trash_status'],
+				)
+			);
+			$ignored_fields = array( 'status', 'started_at', 'completed_at' );
+		}
 
 		// HPPS records quiz visits separately. The shared comment can also say passed
 		// after an optional lesson is completed, without proving that its quiz was submitted.
@@ -93,7 +119,7 @@ class Progress_Validation {
 			&& ! $this->has_recorded_quiz_activity( $comments, $records );
 
 		// Only report progress mismatches outside these expected differences between stores.
-		if ( ! $has_expected_quiz_visit_difference && ! $has_only_lesson_activity ) {
+		if ( ! $cannot_verify && ! $has_expected_quiz_visit_difference && ! $has_only_lesson_activity ) {
 			if ( $comments && $tables ) {
 				$this->compare_progress( $comments, $tables );
 
@@ -190,8 +216,8 @@ class Progress_Validation {
 	 */
 	private function validate_progress( string $type ): void {
 		$comment_type = 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status';
+		$inspected    = array();
 
-		// Scan comments for progress that is missing from the tables.
 		foreach ( Validation_Records::get_comments( $comment_type ) as $record ) {
 			$post_id = (int) $record->post_id;
 			$user_id = (int) $record->user_id;
@@ -202,41 +228,21 @@ class Progress_Validation {
 				}
 			}
 
-			$comments_progress = Validation_Records::get_comments_progress( $type, $post_id, $user_id );
-			if ( ! $comments_progress || $comments_progress->get_id() !== (int) $record->id ) {
-				continue;
-			}
-
-			if ( Validation_Records::get_tables_progress( $type, $post_id, $user_id ) ) {
-				continue;
-			}
-
-			// Always report missing course or lesson progress. Quiz progress needs evidence of activity because it shares the lesson comment.
-			if ( ! $comments_progress instanceof Comments_Based_Quiz_Progress || $this->has_recorded_quiz_activity( $comments_progress ) ) {
-				$this->add_missing_progress_error( $type, 'tables', $post_id, $user_id );
+			$key = $post_id . ':' . $user_id;
+			if ( ! isset( $inspected[ $key ] ) ) {
+				$this->inspect_progress( $type, $post_id, $user_id );
+				$inspected[ $key ] = true;
 			}
 		}
 
-		// For each HPPS row, report missing comments or compare progress for the same student and course, lesson, or quiz.
 		foreach ( Validation_Records::get_progress_rows( $type ) as $record ) {
-			$post_id           = (int) $record->post_id;
-			$user_id           = (int) $record->user_id;
-			$comments_progress = Validation_Records::get_comments_progress( $type, $post_id, $user_id );
-			$tables_progress   = Validation_Records::create_tables_progress( $type, $record );
-
-			if ( $tables_progress instanceof Quiz_Progress_Interface
-				&& ( ! $comments_progress || $comments_progress instanceof Comments_Based_Quiz_Progress )
-				&& $this->has_expected_quiz_visit_difference( $tables_progress, $comments_progress )
-			) {
-				continue;
+			$post_id = (int) $record->post_id;
+			$user_id = (int) $record->user_id;
+			$key     = $post_id . ':' . $user_id;
+			if ( ! isset( $inspected[ $key ] ) ) {
+				$this->inspect_progress( $type, $post_id, $user_id );
+				$inspected[ $key ] = true;
 			}
-
-			if ( ! $comments_progress ) {
-				$this->add_missing_progress_error( $type, 'comments', $post_id, $user_id );
-				continue;
-			}
-
-			$this->compare_progress( $comments_progress, $tables_progress );
 		}
 	}
 
