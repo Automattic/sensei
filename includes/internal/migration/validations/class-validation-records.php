@@ -369,6 +369,10 @@ class Validation_Records {
 		} else {
 			$completed = in_array( $status, array( 'complete', 'passed', 'graded' ), true );
 		}
+		if ( 'lesson' === $type && 'failed' === $status ) {
+			$quiz_id   = self::get_quiz_id( (int) $comment->comment_post_ID );
+			$completed = $quiz_id && ! self::get_metadata( 'post', $quiz_id, '_pass_required' );
+		}
 
 		return new $class(
 			(int) $comment->comment_ID,

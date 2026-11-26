@@ -472,7 +472,13 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		$meta_start   = get_comment_meta( (int) $comment->comment_ID, 'start', true );
 		$started_at   = Progress_Start_Date::is_recorded( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : null;
 
-		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
+		$completed = in_array( $comment->comment_approved, array( 'complete', 'passed', 'graded' ), true );
+		if ( 'failed' === $comment->comment_approved ) {
+			$quiz_id   = Sensei()->lesson->lesson_quizzes( $comment->comment_post_ID );
+			$completed = $quiz_id && ! get_post_meta( $quiz_id, '_pass_required', true );
+		}
+
+		if ( $completed ) {
 			$completed_at = new DateTime( $comment->comment_date_gmt, new \DateTimeZone( 'UTC' ) );
 			$completed_at->setTimezone( wp_timezone() );
 		} else {

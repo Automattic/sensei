@@ -414,7 +414,10 @@ class Student_Progress_Migration extends Migration_Abstract {
 				? $comment->comment_approved
 				: Quiz_Progress_Interface::STATUS_IN_PROGRESS;
 			$quiz_completed_at  = $completed_at;
-			if ( Quiz_Progress_Interface::STATUS_IN_PROGRESS === $quiz_status ) {
+			if ( Quiz_Progress_Interface::STATUS_IN_PROGRESS === $quiz_status
+				|| Quiz_Progress_Interface::STATUS_FAILED === $quiz_status
+			) {
+				// A failed optional quiz completes its lesson, but fail() clears the quiz completion date.
 				$quiz_completed_at = null;
 			}
 			if ( Lesson_Progress_Interface::STATUS_COMPLETE === $quiz_status ) {

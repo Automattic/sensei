@@ -3,6 +3,11 @@
 namespace SenseiTest\Internal\Migration\Migrations;
 
 use Sensei\Internal\Migration\Migrations\Student_Progress_Migration;
+use Sensei\Internal\Migration\Validations\Progress_Validation;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
 use Sensei_Factory;
 use Sensei_Utils;
@@ -257,6 +262,82 @@ class Student_Progress_Migration_Test extends \WP_UnitTestCase {
 		self::assertSame( '2024-05-01 15:45:00', $progress->get_completed_at()->format( 'Y-m-d H:i:s' ), 'The original completion date survives migration.' );
 		self::assertSame( 'trash', get_post_status( $course_id ), 'Migration keeps the course in Trash.' );
 		self::assertSame( 'post-trashed', get_comment( $comment_id )->comment_approved, 'Migration leaves the source comment untouched.' );
+	}
+
+	/**
+	 * Failed quizzes stay undated while optional lessons retain their completion.
+	 *
+	 * @dataProvider failed_quiz_completion_cases
+	 * @covers \Sensei\Internal\Migration\Migrations\Student_Progress_Migration::run
+	 */
+	public function testRun_FailedQuizWasSaved_PreservesLessonAndQuizCompletionSemantics(
+		string $pass_required,
+		string $lesson_status,
+		?string $lesson_completed_at
+	): void {
+		global $wpdb;
+		$this->set_progress_storage_mode( 'comments-only' );
+		$course     = $this->factory->get_course_with_lessons();
+		$lesson_id  = $course['lesson_ids'][0];
+		$quiz_id    = $course['quiz_ids'][0];
+		$student_id = $this->factory->user->create();
+		update_post_meta( $quiz_id, '_pass_required', $pass_required );
+		( new Comments_Based_Lesson_Progress_Repository() )->create( $lesson_id, $student_id );
+		$quiz_repository = new Comments_Based_Quiz_Progress_Repository();
+		$quiz_progress   = $quiz_repository->create( $quiz_id, $student_id );
+		$quiz_progress->start( new \DateTimeImmutable( '2024-05-01 10:00:00', new \DateTimeZone( 'UTC' ) ) );
+		$quiz_progress->fail();
+		$quiz_repository->save( $quiz_progress );
+		wp_update_comment(
+			array(
+				'comment_ID'       => $quiz_progress->get_id(),
+				'comment_date'     => '2024-05-01 15:45:00',
+				'comment_date_gmt' => '2024-05-01 15:45:00',
+			)
+		);
+
+		$this->migration->run( false );
+
+		$lesson_comments = ( new Comments_Based_Lesson_Progress_Repository() )->get( $lesson_id, $student_id );
+		$lesson_tables   = ( new Tables_Based_Lesson_Progress_Repository( $wpdb ) )->get( $lesson_id, $student_id );
+		$quiz_comments   = $quiz_repository->get( $quiz_id, $student_id );
+		$quiz_tables     = ( new Tables_Based_Quiz_Progress_Repository( $wpdb ) )->get( $quiz_id, $student_id );
+		$dates           = array();
+		foreach ( array( $lesson_comments, $lesson_tables, $quiz_comments, $quiz_tables ) as $progress ) {
+			$date    = $progress->get_completed_at();
+			$dates[] = $date ? gmdate( 'Y-m-d H:i:s', $date->getTimestamp() ) : null;
+		}
+		self::assertSame(
+			array( $lesson_completed_at, $lesson_completed_at, null, null ),
+			$dates,
+			'Normal reads and migrated reads must agree on completion dates.'
+		);
+		self::assertSame( $lesson_status, $lesson_comments->get_status(), 'Comments normalize optional failed lessons as complete.' );
+		self::assertSame( $lesson_status, $lesson_tables->get_status(), 'Migration preserves the same lesson status.' );
+		self::assertSame( 'failed', $quiz_tables->get_status(), 'A failed optional quiz must not become passed.' );
+		$validation = new Progress_Validation();
+		self::assertSame(
+			array(),
+			$validation->inspect( 'lesson', $lesson_id, $student_id )['errors'],
+			'Lesson validation compares the completion date.'
+		);
+		self::assertSame(
+			array(),
+			$validation->inspect( 'quiz', $quiz_id, $student_id )['errors'],
+			'Quiz validation compares the absent completion date.'
+		);
+	}
+
+	/**
+	 * Passing requirements determine lesson completion, independently of quiz failure.
+	 *
+	 * @return array
+	 */
+	public static function failed_quiz_completion_cases(): array {
+		return array(
+			'optional quiz' => array( '', 'complete', '2024-05-01 15:45:00' ),
+			'required quiz' => array( 'on', 'in-progress', null ),
+		);
 	}
 
 	public function testRun_TimeExceeded_StopsEarlyAndAdvancesCursor(): void {
