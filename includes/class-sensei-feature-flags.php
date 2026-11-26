@@ -34,6 +34,7 @@ class Sensei_Feature_Flags {
 		'production'  => [
 			'enrolment_provider_tooltip' => false,
 			'tables_based_progress'      => false,
+			'course_lessons_table'       => false,
 			'email_customization'        => true,
 			'course_outline_ai'          => true,
 			'tutor_ai'                   => true,
@@ -43,6 +44,7 @@ class Sensei_Feature_Flags {
 		'development' => [
 			'enrolment_provider_tooltip' => false,
 			'tables_based_progress'      => false,
+			'course_lessons_table'       => false,
 			'email_customization'        => true,
 			'course_outline_ai'          => true,
 			'experimental_features_ui'   => true,

@@ -11,7 +11,9 @@ use Sensei\Clock\Clock_Interface;
 use Sensei\Internal\Action_Scheduler\Action_Scheduler;
 use Sensei\Internal\Course_Lessons\Repositories\Course_Lessons_Repository_Interface;
 use Sensei\Internal\Course_Lessons\Repositories\Meta_Based_Course_Lessons_Repository;
+use Sensei\Internal\Course_Lessons\Repositories\Tables_Based_Course_Lessons_Repository;
 use Sensei\Internal\Course_Lessons\Services\Course_Lessons_SQL_Service_Interface;
+use Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service;
 use Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_Query_Service;
 use Sensei\Internal\Course_Lessons\Services\Meta_Based_Course_Lessons_SQL_Service;
 use Sensei\Internal\Emails\Email_Customization;
@@ -876,6 +878,11 @@ class Sensei_Main {
 
 		// Init course lessons query service.
 		( new Meta_Based_Course_Lessons_Query_Service() )->init();
+
+		// Init course lessons sync service.
+		if ( $this->feature_flags->is_enabled( 'course_lessons_table' ) ) {
+			( new Course_Lessons_Sync_Service( $this->course_lessons_repository, new Tables_Based_Course_Lessons_Repository( $wpdb ) ) )->init();
+		}
 
 		// Init student progress handlers.
 		( new Course_Deleted_Handler( $this->course_progress_repository ) )->init();
