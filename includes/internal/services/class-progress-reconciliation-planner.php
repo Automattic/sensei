@@ -663,6 +663,8 @@ class Progress_Reconciliation_Planner {
 			);
 		}
 
+		$available_answers = array_column( $from['answers'], null, 'question_id' )
+			+ array_column( $to['answers'] ?? array(), null, 'question_id' );
 		foreach ( array( 'answers', 'grades' ) as $kind ) {
 			$children = Quiz_Submission_Validation::question_changes( $from[ $kind ], $to[ $kind ] ?? array() );
 			foreach ( $children['extra'] as $question_id => $child ) {
@@ -682,8 +684,6 @@ class Progress_Reconciliation_Planner {
 				}
 				// Table grades point to answer rows, so a grade needs either an
 				// existing destination answer or one we can copy from the source.
-				$available_answers = array_column( $from['answers'], null, 'question_id' )
-					+ array_column( $to['answers'] ?? array(), null, 'question_id' );
 				if ( 'grades' === $kind && 'tables' === $destination && ! isset( $available_answers[ $question_id ] ) ) {
 					$plan['unresolved'][] = 'The grade for question ' . $question_id . ' has no answer and is preserved for review.';
 					continue;
