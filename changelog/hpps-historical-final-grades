@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Preserve missing quiz grades during progress migration and report invalid historical values.

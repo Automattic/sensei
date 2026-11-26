@@ -8,6 +8,9 @@ use Sensei\Internal\Migration\Migrations\Quiz_Migration;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Tables_Based_Grade_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository;
+use Sensei\Internal\Migration\Migration_Job_Scheduler;
+use Sensei\Internal\Migration\Validations\Quiz_Submission_Validation;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei_Factory;
 use Sensei_Utils;
 
@@ -151,6 +154,93 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			),
 		);
 		$this->assertSame( $expected, $this->get_quiz_data( $quiz_id, $user_id ) );
+	}
+
+	/**
+	 * Saved answers keep zero distinct from no grade, and invalid grades remain unresolved.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
+	 * @dataProvider historical_final_grades
+	 * @param string|null $source_grade Stored source grade, or null when its metadata is absent.
+	 * @param float|null  $expected_grade Expected destination grade.
+	 * @param string[]    $migration_errors Expected migration error formats.
+	 * @param string[]    $validation_errors Expected validation error messages.
+	 */
+	public function testRun_SavedAnswersWithHistoricalGrade_PreservesGradeMeaning(
+		?string $source_grade,
+		?float $expected_grade,
+		array $migration_errors,
+		array $validation_errors
+	): void {
+		[ $student_id, , $quiz_id ] = $this->create_quiz_data();
+		$comments_repository        = new Comments_Based_Submission_Repository();
+		$comment_id                 = $comments_repository->get( $quiz_id, $student_id )->get_id();
+		if ( null === $source_grade ) {
+			delete_comment_meta( $comment_id, 'grade' );
+		} else {
+			update_comment_meta( $comment_id, 'grade', $source_grade );
+		}
+		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, true );
+		$validation = new Quiz_Submission_Validation();
+		$repository = new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] );
+
+		$this->migration->run( false );
+		$submission = $repository->get( $quiz_id, $student_id );
+		$validation->run();
+		$run_errors = $validation->get_errors();
+		$inspection = $validation->inspect( $quiz_id, $student_id );
+
+		self::assertSame( $expected_grade, $submission->get_final_grade(), 'The copied grade must retain the stored meaning.' );
+		self::assertSame( $source_grade ?? '', get_comment_meta( $comment_id, 'grade', true ), 'Migration must retain the original source value.' );
+		self::assertSame(
+			array_map(
+				static function ( string $error ) use ( $comment_id ): string {
+					return sprintf( $error, $comment_id );
+				},
+				$migration_errors
+			),
+			$this->migration->get_errors(),
+			'Migration must report invalid grades without turning them into scores.'
+		);
+		self::assertSame(
+			$validation_errors,
+			array_map(
+				static function ( $error ): string {
+					return $error->get_message();
+				},
+				$run_errors
+			),
+			'Full validation must keep invalid source values unresolved.'
+		);
+		self::assertSame(
+			$validation_errors,
+			array_map(
+				static function ( $error ): string {
+					return $error->get_message();
+				},
+				$inspection['errors']
+			),
+			'Targeted inspection must report the same invalid source values.'
+		);
+	}
+
+	/**
+	 * Historical grade values with distinct migration outcomes.
+	 *
+	 * @return array
+	 */
+	public static function historical_final_grades(): array {
+		return array(
+			'numeric zero'  => array( '0', 0.0, array(), array() ),
+			'missing grade' => array( null, null, array(), array() ),
+			'blank grade'   => array( '', null, array(), array() ),
+			'invalid grade' => array(
+				'NAN',
+				null,
+				array( 'Invalid final grade for comment ID %d: the source value was retained without a numeric grade.' ),
+				array( 'Comments-based quiz submission has an invalid final grade.' ),
+			),
+		);
 	}
 
 	/**

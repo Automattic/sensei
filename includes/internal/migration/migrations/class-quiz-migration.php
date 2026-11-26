@@ -203,9 +203,18 @@ class Quiz_Migration extends Migration_Abstract {
 			return null;
 		}
 
-		$final_grade = isset( $quiz_data[ $comment->comment_ID ]['grade'] )
-			? (float) $quiz_data[ $comment->comment_ID ]['grade']
-			: null;
+		$source_grade = $quiz_data[ $comment->comment_ID ]['grade'] ?? '';
+		$final_grade  = is_numeric( $source_grade ) ? (float) $source_grade : null;
+
+		if ( '' !== $source_grade && ! is_numeric( $source_grade ) ) {
+			$this->add_error(
+				sprintf(
+					/* translators: %d: Comment ID. */
+					__( 'Invalid final grade for comment ID %d: the source value was retained without a numeric grade.', 'sensei-lms' ),
+					$comment->comment_ID
+				)
+			);
+		}
 
 		$columns = array(
 			'quiz_id'     => '%d',

@@ -109,6 +109,10 @@ class Quiz_Submission_Validation {
 			}
 		}
 
+		if ( $models['comments'] ) {
+			$this->validate_source_final_grade( $models['comments'], $records );
+		}
+
 		if ( $models['comments'] && $models['tables'] && $copies['comments'] && $copies['tables'] ) {
 			$this->compare_submission( $models['comments'], $models['tables'] );
 			$identity = array(
@@ -191,6 +195,8 @@ class Quiz_Submission_Validation {
 				continue;
 			}
 
+			$this->validate_source_final_grade( $comments_submission );
+
 			if ( ! Validation_Records::get_tables_submission( $quiz_id, $user_id ) ) {
 				$this->add_missing_submission_error( 'tables', $quiz_id, $user_id );
 			}
@@ -245,6 +251,30 @@ class Quiz_Submission_Validation {
 				'grades'
 			);
 		}
+	}
+
+	/**
+	 * Keep invalid stored grades visible after the model reads them as no grade.
+	 *
+	 * @param Submission_Interface $submission The comments submission.
+	 * @param array|null           $records Shared rows for a targeted inspection.
+	 */
+	private function validate_source_final_grade( Submission_Interface $submission, ?array &$records = null ): void {
+		$grade = Validation_Records::get_metadata( 'comment', $submission->get_id(), 'grade', $records );
+		if ( '' === $grade || is_numeric( $grade ) ) {
+			return;
+		}
+
+		$this->add_error(
+			'Comments-based quiz submission has an invalid final grade.',
+			array(
+				'quiz_id'      => $submission->get_quiz_id(),
+				'user_id'      => $submission->get_user_id(),
+				'comment_id'   => $submission->get_id(),
+				'source'       => 'comments',
+				'stored_grade' => $grade,
+			)
+		);
 	}
 
 	/**
