@@ -249,11 +249,11 @@ class Quiz_Submission_Validation {
 	/**
 	 * Normalize saved source answers using the same persisted identity and value fields.
 	 *
-	 * @param array $source The inspected source history.
-	 * @param array $records Shared persisted rows for this identity.
+	 * @param array      $source The inspected source history.
+	 * @param array|null $records Shared persisted rows for this identity.
 	 * @return array
 	 */
-	private function get_source_answers( array $source, array &$records ): array {
+	private function get_source_answers( array $source, ?array &$records ): array {
 		if ( ! $source['answers'] ) {
 			return array();
 		}

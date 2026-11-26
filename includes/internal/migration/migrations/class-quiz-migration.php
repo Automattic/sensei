@@ -88,13 +88,13 @@ class Quiz_Migration extends Migration_Abstract {
 			$records = array();
 			$source  = $quiz_id ? Quiz_Submission_Source::inspect( $quiz_id, (int) $comment->user_id, $records ) : null;
 			foreach ( $source['errors'] ?? array() as $error ) {
-				$this->add_error( $error->get_message() . ' ' . wp_json_encode( $error->get_data() ) );
+				$this->add_error( $error->get_message() . ' ' . (string) wp_json_encode( $error->get_data() ) );
 			}
 
 			$submission_id = $source && $source['can_copy']
 				? $this->insert_quiz_submission( $comment, $quiz_data, $quiz_id )
 				: null;
-			if ( ! $submission_id ) {
+			if ( ! $source || ! $submission_id ) {
 				$last_processed_id = $comment->comment_ID;
 				++$processed;
 				continue;

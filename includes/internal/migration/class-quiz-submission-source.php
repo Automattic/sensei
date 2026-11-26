@@ -22,12 +22,13 @@ class Quiz_Submission_Source {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int   $quiz_id The quiz ID.
-	 * @param int   $student_id The student ID.
-	 * @param array $records Shared persisted rows for this identity.
+	 * @param int        $quiz_id The quiz ID.
+	 * @param int        $student_id The student ID.
+	 * @param array|null $records Shared persisted rows for this identity.
 	 * @return array Submission, representable question data, eligibility, and unresolved errors.
 	 */
-	public static function inspect( int $quiz_id, int $student_id, array &$records ): array {
+	public static function inspect( int $quiz_id, int $student_id, ?array &$records ): array {
+		$records    = $records ?? array();
 		$submission = Validation_Records::get_comments_submission( $quiz_id, $student_id, $records );
 		$comments   = $records['comments'] ?? array();
 		$metadata   = $records['comment_meta'] ?? array();
