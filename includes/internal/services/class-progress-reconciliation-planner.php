@@ -76,9 +76,19 @@ class Progress_Reconciliation_Planner {
 			. $wpdb->prepare( ' ORDER BY %i LIMIT %d', $key, $limit )
 		);
 
+		// Students can share the same content in a page. Inspection resolves it
+		// again before planning, so these lookups need not survive this batch.
+		$mappings = array();
 		foreach ( $rows as $row ) {
-			$units[] = $this->resolve_identity( $type ?? $row->type, (int) $row->$content, (int) $row->user_id );
-			$after   = (int) $row->$key;
+			$record_type = $type ?? $row->type;
+			$mapping_key = $record_type . ':' . $row->$content;
+			if ( ! isset( $mappings[ $mapping_key ] ) ) {
+				$mappings[ $mapping_key ] = $this->resolve_identity( $record_type, (int) $row->$content, (int) $row->user_id );
+			}
+			$identity               = $mappings[ $mapping_key ];
+			$identity['student_id'] = (int) $row->user_id;
+			$units[]                = $identity;
+			$after                  = (int) $row->$key;
 		}
 
 		if ( count( $rows ) < $limit ) {
