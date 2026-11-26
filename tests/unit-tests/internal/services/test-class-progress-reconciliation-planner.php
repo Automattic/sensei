@@ -448,6 +448,61 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Database read failures return a failed result without proposing any copies.
+	 *
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_ProgressReadFailed_ReturnsFailedWithoutProposals(): void {
+		// Arrange.
+		global $wpdb;
+		$this->select_source( 'comments' );
+		$course_id = $this->post( 'course' );
+		$this->progress( 'course', $course_id, 'comments', 'complete' );
+		$comments_table  = $wpdb->comments;
+		$suppress_errors = $wpdb->suppress_errors();
+		// A missing table causes a real SQL failure without changing the stored fixtures.
+		$wpdb->comments .= '_reconciliation_missing';
+
+		// Act.
+		try {
+			$result = ( new Progress_Reconciliation_Planner() )->inspect( 'course', $course_id, $this->student_id, 'comments' );
+		} finally {
+			$wpdb->comments = $comments_table;
+			$wpdb->suppress_errors( $suppress_errors );
+		}
+
+		// Assert.
+		self::assertSame( 'failed', $result['outcome'], 'A persisted read failure must remain an operational failure result.' );
+		self::assertSame( 'Could not read sensei_course_status comment during validation.', $result['error'], 'Keep the failed read identifiable.' );
+		self::assertSame( array(), $result['changes'], 'A failed read must not produce copy proposals.' );
+	}
+
+	/**
+	 * Unexpected reader type errors must reach the caller for diagnosis.
+	 *
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_StoredAnswerHadAnUnexpectedType_PropagatesTheTypeError(): void {
+		// Arrange.
+		$this->select_source( 'comments' );
+		list( $lesson_id, $quiz_id, $question, $comment ) = $this->create_quiz_progress();
+		update_comment_meta( $comment, 'questions_asked', (string) $question );
+		update_comment_meta( $comment, 'quiz_answers', array( $question => array( 'unexpected value' ) ) );
+		$error = null;
+
+		// Act.
+		try {
+			( new Progress_Reconciliation_Planner() )->inspect( 'quiz', $quiz_id, $this->student_id, 'comments' );
+		} catch ( \TypeError $exception ) {
+			$error = $exception;
+		}
+
+		// Assert.
+		self::assertInstanceOf( \TypeError::class, $error, 'Unexpected PHP errors must reach the caller instead of becoming failed results.' );
+		self::assertStringContainsString( 'array given', $error->getMessage(), 'The propagated error must identify the unexpected stored type.' );
+	}
+
+	/**
 	 * Date proposals use the persisted timezone even when this request cached older options.
 	 *
 	 * @dataProvider saved_timezones

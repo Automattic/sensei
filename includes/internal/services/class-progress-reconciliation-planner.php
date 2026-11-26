@@ -15,7 +15,6 @@ use InvalidArgumentException;
 use RuntimeException;
 use Sensei\Internal\Migration\Validations\Quiz_Submission_Validation;
 use Sensei\Internal\Migration\Validations\Validation_Records;
-use Throwable;
 
 /**
  * Work out which progress values can be copied safely, without writing them.
@@ -120,6 +119,7 @@ class Progress_Reconciliation_Planner {
 	 *
 	 * These changes describe the data just read. Read and plan again before
 	 * writing, because ordinary saves may have changed it.
+	 * Unexpected errors and exceptions propagate to the caller for diagnosis.
 	 *
 	 * @since $$next-version$$
 	 * @param string $type Course, lesson, or quiz.
@@ -181,7 +181,7 @@ class Progress_Reconciliation_Planner {
 				$result['equivalent']                = empty( $result['differences'] ) && empty( $result['unresolved'] );
 				$result['outcome']                   = $result['equivalent'] ? 'already_equivalent' : 'unresolved';
 			}
-		} catch ( Throwable $exception ) {
+		} catch ( RuntimeException $exception ) {
 			$result['outcome']                   = 409 === $exception->getCode() ? 'conflicting' : 'failed';
 			$result['supported_fields_verified'] = false;
 			$result['equivalent']                = false;
@@ -201,6 +201,7 @@ class Progress_Reconciliation_Planner {
 	 * @param int    $student_id The student ID.
 	 * @param string $source Store to copy from: comments or tables.
 	 * @return array Whether the copies agree now and what still needs review.
+	 * @throws \Throwable If inspection raises an unexpected error or exception.
 	 */
 	public function verify( string $type, int $content_id, int $student_id, string $source ): array {
 		$result = $this->inspect( $type, $content_id, $student_id, $source );
