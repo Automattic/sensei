@@ -116,6 +116,12 @@ class Quiz_Submission_Source {
 		}
 
 		foreach ( $result['feedback'] as $question_id => $value ) {
+			if ( null !== $value && ! is_scalar( $value ) ) {
+				$add_error( 'Comments-based question feedback is malformed.', array( 'question_id' => $question_id ) );
+				unset( $result['feedback'][ $question_id ] );
+				continue;
+			}
+
 			if ( ! array_key_exists( $question_id, $result['answers'] ) || ! array_key_exists( $question_id, $result['grades'] ) ) {
 				$add_error( 'Comments-based question feedback cannot be copied without numeric points and a saved answer.', array( 'question_id' => $question_id ) );
 			}

@@ -314,9 +314,17 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	 * @dataProvider unsupported_question_data
 	 * @param bool        $has_answer Whether the second answer survives.
 	 * @param string|null $points Stored second-question points, or null when absent.
-	 * @param string      $message Expected unresolved source diagnostic.
+	 * @param mixed       $feedback Stored second-question feedback.
+	 * @param string[]    $expected_messages Expected unresolved source diagnostics.
+	 * @param array       $expected_grades Expected copied points and feedback.
 	 */
-	public function testRun_QuestionDataCannotBeRepresented_PreservesOnlySupportedChildren( bool $has_answer, ?string $points, string $message ): void {
+	public function testRun_QuestionDataWasStored_PreservesSupportedFieldsAndReportsIncompleteCopies(
+		bool $has_answer,
+		?string $points,
+		$feedback,
+		array $expected_messages,
+		array $expected_grades
+	): void {
 		[ $student_id, , $quiz_id ] = $this->create_quiz_data( 2 );
 		$comment_id                 = ( new Comments_Based_Submission_Repository() )->get( $quiz_id, $student_id )->get_id();
 		$answers                    = get_comment_meta( $comment_id, 'quiz_answers', true );
@@ -331,51 +339,106 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		if ( null !== $points ) {
 			$grades[ $second_id ] = $points;
 		}
+		$expected_copies = array();
+		foreach ( $expected_grades as $index => $expected_grade ) {
+			$expected_copies[] = array_merge( array( 'question_id' => $question_ids[ $index ] ), $expected_grade );
+		}
 		update_comment_meta( $comment_id, 'quiz_answers', $answers );
 		update_comment_meta( $comment_id, 'quiz_grades', $grades );
-		update_comment_meta( $comment_id, 'quiz_answers_feedback', array( $second_id => 'retained feedback' ) );
+		update_comment_meta( $comment_id, 'quiz_answers_feedback', array( $second_id => $feedback ) );
 		$before = get_comment_meta( $comment_id );
 		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, true );
 		$validation = new Quiz_Submission_Validation();
 
 		$this->migration->run( false );
 		$validation->run();
-		$messages = array_map(
+		$messages   = array_map(
 			static function ( $error ): string {
 				return $error->get_message();
 			},
 			$validation->get_errors()
 		);
-		$copied   = $this->get_quiz_data( $quiz_id, $student_id );
+		$inspection = $validation->inspect( $quiz_id, $student_id );
+		$preview    = ( new \Sensei_Progress_Recovery_Preview() )->inspect( 'quiz', $quiz_id, $student_id, 'comments' );
+		$submission = ( new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] ) )->get( $quiz_id, $student_id );
+		$copied     = array_map(
+			static function ( $grade ): array {
+				return array(
+					'question_id' => $grade->get_question_id(),
+					'points'      => $grade->get_points(),
+					'feedback'    => $grade->get_feedback(),
+				);
+			},
+			( new Tables_Based_Grade_Repository( $GLOBALS['wpdb'] ) )->get_all( $submission->get_id() )
+		);
 		wp_cache_delete( $comment_id, 'comment_meta' );
 
-		self::assertSame(
-			array(
-				array(
-					'question_id' => $question_id,
-					'points'      => 7,
-					'feedback'    => '',
-				),
-			),
-			$copied['grades'],
-			'Only the grade linked to a saved answer with numeric points may be copied.'
-		);
+		self::assertSame( $expected_copies, $copied, 'Supported points and feedback must survive without coercing unrepresentable feedback.' );
 		self::assertSame( $before, get_comment_meta( $comment_id ), 'Unsupported source data must survive intact.' );
-		self::assertContains( $message, $messages, 'The incomplete child copy must remain unresolved.' );
-		self::assertNotEmpty( $this->migration->get_errors(), 'Migration must report each unrepresentable source field.' );
+		foreach ( $expected_messages as $message ) {
+			self::assertContains( $message, $messages, 'The incomplete child copy must remain unresolved.' );
+		}
+		self::assertSame( empty( $expected_messages ), empty( $messages ), 'Full validation must distinguish supported values from incomplete copies.' );
+		self::assertSame( empty( $expected_messages ), empty( $this->migration->get_errors() ), 'Migration must report unrepresentable fields without rejecting supported scalar feedback.' );
+		self::assertSame( ! empty( $expected_messages ), $inspection['unresolved'], 'Targeted inspection must retain the incomplete-copy diagnostic.' );
+		self::assertSame( $expected_messages ? 'unresolved' : 'equivalent', $preview['records'][0]['submission']['status'], 'Preview must expose incomplete copies without crashing.' );
+		self::assertSame( array(), $preview['records'][0]['submission']['changes'], 'Neither unresolved feedback nor matching scalar feedback should produce a copy proposal.' );
 		self::assertSame( array(), iterator_to_array( Validation_Records::get_grades_without_answers() ), 'No copied grade may lose its real answer link.' );
 	}
 
 	/**
-	 * Distinct ways a grade or feedback cannot be represented safely.
+	 * Question data that is supported or needs an incomplete-copy diagnostic.
 	 *
 	 * @return array
 	 */
 	public static function unsupported_question_data(): array {
+		$grade_without_feedback = array(
+			'points'   => 7,
+			'feedback' => null,
+		);
+
 		return array(
-			'grade without answer'    => array( false, '2', 'Comments-based question grade cannot be copied without its saved answer.' ),
-			'feedback without points' => array( true, null, 'Comments-based question feedback cannot be copied without numeric points and a saved answer.' ),
-			'invalid question points' => array( true, 'NAN', 'Comments-based question grade has invalid points.' ),
+			'grade without answer'    => array(
+				false,
+				'2',
+				'retained feedback',
+				array( 'Comments-based question grade cannot be copied without its saved answer.' ),
+				array( $grade_without_feedback ),
+			),
+			'feedback without points' => array(
+				true,
+				null,
+				'retained feedback',
+				array( 'Comments-based question feedback cannot be copied without numeric points and a saved answer.' ),
+				array( $grade_without_feedback ),
+			),
+			'invalid question points' => array(
+				true,
+				'NAN',
+				'retained feedback',
+				array( 'Comments-based question grade has invalid points.' ),
+				array( $grade_without_feedback ),
+			),
+			'nested feedback value'   => array(
+				true,
+				'7',
+				array( 'historical' => 'nested feedback' ),
+				array( 'Comments-based question feedback is malformed.' ),
+				array( $grade_without_feedback, $grade_without_feedback ),
+			),
+			'numeric scalar feedback' => array(
+				true,
+				'7',
+				25,
+				array(),
+				array(
+					$grade_without_feedback,
+					array(
+						'points'   => 7,
+						'feedback' => '25',
+					),
+				),
+			),
 		);
 	}
 
