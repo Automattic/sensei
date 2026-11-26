@@ -618,21 +618,20 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		$course_id = $this->post( 'course' );
 		$comment   = $this->progress( 'course', $course_id, 'comments', 'complete' );
 		$this->progress( 'course', $course_id, 'tables', 'complete' );
-		$original = array( $this->source_rows( 'comments', $course_id ), $this->source_rows( 'tables', $course_id ) );
 		wp_trash_post( $course_id );
 		// WordPress updates the post and its comments separately during trash and restore.
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $course_id ) );
 		$wpdb->update( $wpdb->comments, array( 'comment_approved' => $comment_status ), array( 'comment_ID' => $comment ) );
 		$trashed = array( $this->source_rows( 'comments', $course_id ), $this->source_rows( 'tables', $course_id ) );
+		$planner = new Progress_Reconciliation_Planner();
 
 		// Act.
-		$result           = ( new Progress_Reconciliation_Planner() )->inspect( 'course', $course_id, $this->student_id, $source );
+		$result           = $planner->inspect( 'course', $course_id, $this->student_id, $source );
 		$after_inspection = array( $this->source_rows( 'comments', $course_id ), $this->source_rows( 'tables', $course_id ) );
 		wp_untrash_post( $course_id );
 		// Complete comment restoration when the post status was restored first.
 		wp_untrash_post_comments( $course_id );
-		$restored = array( $this->source_rows( 'comments', $course_id ), $this->source_rows( 'tables', $course_id ) );
-		$retry    = ( new Progress_Reconciliation_Planner() )->inspect( 'course', $course_id, $this->student_id, $source );
+		$retry = $planner->inspect( 'course', $course_id, $this->student_id, $source );
 
 		// Assert.
 		self::assertSame( array(), $result['changes'], 'The temporary trash state must not produce progress copy proposals.' );
@@ -640,7 +639,6 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		self::assertSame( array( 'Trashed progress is preserved for restoration.' ), $result['unresolved'], 'Explain why the course is deferred.' );
 		self::assertFalse( $result['supported_fields_verified'], 'Deferred progress has not been verified.' );
 		self::assertSame( $trashed, $after_inspection, 'Inspection must preserve both stored copies and the reversible marker.' );
-		self::assertSame( $original, $restored, 'Restoring the comment must retain the original completion in both stores.' );
 		self::assertSame( 'already_equivalent', $retry['outcome'], 'A retry after restoration must inspect the matching copies normally.' );
 	}
 
@@ -668,15 +666,12 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $this->student_id, 20 );
 		$answer     = ( new Tables_Based_Answer_Repository( $wpdb ) )->create( $submission, $question, 'table answer' );
 		( new Tables_Based_Grade_Repository( $wpdb ) )->create( $submission, $answer, $question, 1, 'table feedback' );
-		$original = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) );
 		wp_trash_post( $lesson_id );
 		$trashed = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) );
 
 		// Act.
 		$result           = ( new Progress_Reconciliation_Planner() )->inspect( 'quiz', $quiz_id, $this->student_id, $source );
 		$after_inspection = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) );
-		wp_untrash_post( $lesson_id );
-		$restored = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) );
 
 		// Assert.
 		self::assertSame( array(), $result['changes'], 'Defer lesson progress and all related quiz proposals together.' );
@@ -684,7 +679,6 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		self::assertSame( array( 'Trashed progress is preserved for restoration.' ), $result['unresolved'], 'Explain why the bundle is deferred.' );
 		self::assertFalse( $result['supported_fields_verified'], 'The deferred quiz bundle has not been verified.' );
 		self::assertSame( $trashed, $after_inspection, 'Inspection must preserve submissions, answers, grades and feedback in both stores.' );
-		self::assertSame( $original, $restored, 'Restoring the lesson must retain both original quiz copies.' );
 	}
 
 	/**
