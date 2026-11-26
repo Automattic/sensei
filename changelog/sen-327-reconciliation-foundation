@@ -1,4 +1,4 @@
-Significance: patch
-Type: fixed
+Significance: minor
+Type: added
 
-Prevent invalid stored start dates from blocking progress previews.
+HPPS: Add a shared service that compares progress in comments and tables and suggests repairs without changing saved data.
