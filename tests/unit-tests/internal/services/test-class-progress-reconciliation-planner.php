@@ -646,6 +646,108 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Differing source values can be copied without replacing extra destination children.
+	 *
+	 * @dataProvider opposite_stores
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_QuizChildrenDifferedAndDestinationHadExtras_ProposesOnlySourceChildren( string $source, string $destination ): void {
+		// Arrange.
+		global $wpdb;
+		$this->select_source( $source );
+		list( $lesson_id, $quiz_id, $question, $comment ) = $this->create_quiz_progress();
+		$extra    = $this->post( 'question' );
+		$answers  = array(
+			$source      => array( $question => 'source answer' ),
+			$destination => array(
+				$question => 'old answer',
+				$extra    => 'surviving answer',
+			),
+		);
+		$points   = array(
+			$source      => array( $question => 2 ),
+			$destination => array(
+				$question => 1,
+				$extra    => 3,
+			),
+		);
+		$feedback = array(
+			$source      => array( $question => 'source feedback' ),
+			$destination => array(
+				$question => 'old feedback',
+				$extra    => 'surviving feedback',
+			),
+		);
+		update_comment_meta( $comment, 'questions_asked', implode( ',', array_keys( $answers['comments'] ) ) );
+		update_comment_meta( $comment, 'grade', 80 );
+		update_comment_meta( $comment, 'quiz_answers', $answers['comments'] );
+		update_comment_meta( $comment, 'quiz_grades', $points['comments'] );
+		update_comment_meta( $comment, 'quiz_answers_feedback', $feedback['comments'] );
+		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $this->student_id, 80 );
+		foreach ( $answers['tables'] as $question_id => $value ) {
+			$answer = ( new Tables_Based_Answer_Repository( $wpdb ) )->create( $submission, $question_id, $value );
+			( new Tables_Based_Grade_Repository( $wpdb ) )->create( $submission, $answer, $question_id, $points['tables'][ $question_id ], $feedback['tables'][ $question_id ] );
+		}
+		$before  = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) );
+		$planner = new Progress_Reconciliation_Planner();
+
+		// Act.
+		$result = $planner->inspect( 'quiz', $quiz_id, $this->student_id, $source );
+		$retry  = $planner->inspect( 'quiz', $quiz_id, $this->student_id, $source );
+
+		// Assert.
+		self::assertSame(
+			array(
+				array(
+					'kind'        => 'answers',
+					'destination' => $destination,
+					'data'        => array(
+						'question_id' => $question,
+						'value'       => 'source answer',
+					),
+					'quiz_id'     => $quiz_id,
+					'student_id'  => $this->student_id,
+					'post_id'     => $lesson_id,
+				),
+				array(
+					'kind'        => 'grades',
+					'destination' => $destination,
+					'data'        => array(
+						'question_id' => $question,
+						'points'      => 2,
+						'feedback'    => 'source feedback',
+					),
+					'quiz_id'     => $quiz_id,
+					'student_id'  => $this->student_id,
+					'post_id'     => $lesson_id,
+				),
+			),
+			$result['changes'],
+			'Only the source question receives answer and grade proposals; no collection replacement is proposed.'
+		);
+		self::assertSame(
+			array(
+				array(
+					'kind'        => 'answer',
+					'quiz_id'     => $quiz_id,
+					'question_id' => $extra,
+				),
+				array(
+					'kind'        => 'grade',
+					'quiz_id'     => $quiz_id,
+					'question_id' => $extra,
+				),
+			),
+			$result['destination_only'],
+			'Identify both extra children for preservation.'
+		);
+		self::assertSame( 'unresolved', $result['outcome'], 'Supported changes must not claim full equivalence while extra children survive.' );
+		self::assertFalse( $result['supported_fields_verified'], 'The proposed repairs have not been applied or verified.' );
+		self::assertSame( $result, $retry, 'Retrying the same persisted bundle must return the same plan.' );
+		self::assertSame( $before, array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) ), 'Planning and retrying must preserve both stores, including extra children.' );
+	}
+
+	/**
 	 * A bad start date must not stop a valid status change from being proposed.
 	 *
 	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
