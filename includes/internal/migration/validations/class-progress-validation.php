@@ -92,10 +92,14 @@ class Progress_Validation {
 		$records  = $records ?? array();
 		$comments = Validation_Records::get_comments_progress( $type, $post_id, $user_id, $records );
 		$tables   = Validation_Records::get_tables_progress( $type, $post_id, $user_id, $records );
+
+		$stored_comments = $records['comments'] ?? array();
+		$metadata_keys   = $records['ambiguous_comment_metadata'] ?? array();
+
 		// Excluded fields stay visible in the output, but cannot become proposed repair changes.
 		$ignored_fields         = array();
-		$has_duplicates         = count( $records['comments'] ?? array() ) > 1;
-		$has_duplicate_metadata = ! $has_duplicates && ! empty( $records['ambiguous_comment_metadata'] );
+		$has_duplicates         = count( $stored_comments ) > 1;
+		$has_duplicate_metadata = ! $has_duplicates && ! empty( $metadata_keys );
 		$cannot_verify          = $has_duplicates || $has_duplicate_metadata || isset( $records['unverifiable_trash_status'] );
 
 		if ( $has_duplicates ) {
@@ -104,19 +108,19 @@ class Progress_Validation {
 				array(
 					$type . '_id' => $post_id,
 					'user_id'     => $user_id,
-					'comment_ids' => array_map( 'intval', array_column( $records['comments'], 'comment_ID' ) ),
+					'comment_ids' => array_map( 'intval', array_column( $stored_comments, 'comment_ID' ) ),
 				)
 			);
 		}
 
-		if ( $has_duplicate_metadata ) {
+		if ( $has_duplicate_metadata && isset( $stored_comments[0] ) ) {
 			$this->add_error(
 				'Multiple metadata values match this progress comment; the original progress is ambiguous.',
 				array(
 					$type . '_id'   => $post_id,
 					'user_id'       => $user_id,
-					'comment_id'    => (int) $records['comments'][0]->comment_ID,
-					'metadata_keys' => $records['ambiguous_comment_metadata'],
+					'comment_id'    => (int) $stored_comments[0]->comment_ID,
+					'metadata_keys' => $metadata_keys,
 				)
 			);
 		}

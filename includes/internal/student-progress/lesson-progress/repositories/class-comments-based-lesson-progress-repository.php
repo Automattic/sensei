@@ -474,7 +474,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 
 		$completed = in_array( $comment->comment_approved, array( 'complete', 'passed', 'graded' ), true );
 		if ( 'failed' === $comment->comment_approved ) {
-			$quiz_id   = Sensei()->lesson->lesson_quizzes( $comment->comment_post_ID );
+			$quiz_id   = Sensei()->lesson->lesson_quizzes( (int) $comment->comment_post_ID );
 			$completed = $quiz_id && ! get_post_meta( $quiz_id, '_pass_required', true );
 		}
 
