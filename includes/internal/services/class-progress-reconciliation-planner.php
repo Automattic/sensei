@@ -158,20 +158,27 @@ class Progress_Reconciliation_Planner {
 			$this->require_source( $source );
 			$identity           = $this->resolve_identity( $type, $content_id, $student_id );
 			$result['identity'] = $identity;
+			$identity_problem   = 'quiz' === $identity['type'] ? 'The quiz has no persisted lesson mapping.' : $this->identity_problem( $identity );
 
-			if ( 'quiz' === $identity['type'] ) {
+			if ( null !== $identity_problem ) {
 				$result['outcome']      = 'unresolved';
-				$result['unresolved'][] = 'The quiz has no persisted lesson mapping.';
-			} elseif ( ! $this->identity_exists( $identity ) ) {
-				$result['outcome']      = 'unresolved';
-				$result['unresolved'][] = 'The persisted content or student no longer exists; surviving data is preserved.';
+				$result['unresolved'][] = $identity_problem;
 			} elseif ( ! $this->quiz_matches_lesson( $identity ) ) {
 				$result['outcome']      = 'unresolved';
 				$result['unresolved'][] = 'The quiz and lesson do not have a consistent persisted mapping.';
 			} else {
 				// Supported fields can match while an uncertain date or an extra
 				// destination record still needs review.
-				$bundle                              = $this->inspect_bundle( $identity );
+				$bundle = $this->inspect_bundle( $identity );
+				// WordPress changes posts and comments separately during trash and restore.
+				// Keep a surviving reversible marker out of progress copy proposals too.
+				foreach ( $bundle as $record ) {
+					if ( in_array( 'post-trashed', array_column( $record['rows']['comments'], 'comment_approved' ), true ) ) {
+						$result['outcome']      = 'unresolved';
+						$result['unresolved'][] = 'Trashed progress is preserved for restoration.';
+						return $result;
+					}
+				}
 				$plan                                = $this->plan( $bundle, $identity, $source );
 				$result['changes']                   = $plan['writes'];
 				$result['unresolved']                = $plan['unresolved'];
@@ -230,17 +237,17 @@ class Progress_Reconciliation_Planner {
 	}
 
 	/**
-	 * Check that the student and course or lesson still exist.
+	 * Check for missing identities or trashed content before proposing changes.
 	 *
 	 * @param array $identity The student ID and the IDs for this course or lesson and quiz.
-	 * @return bool
+	 * @return string|null Why the identity cannot be inspected, or null when available.
 	 */
-	private function identity_exists( array $identity ): bool {
+	private function identity_problem( array $identity ): ?string {
 		global $wpdb;
 
 		$content = $this->query(
 			$wpdb->prepare(
-				'SELECT ID FROM %i WHERE ID = %d AND post_type = %s',
+				'SELECT ID, post_status FROM %i WHERE ID = %d AND post_type = %s',
 				$wpdb->posts,
 				$identity['content_id'],
 				$identity['type']
@@ -248,7 +255,13 @@ class Progress_Reconciliation_Planner {
 		);
 		$student = $this->query( $wpdb->prepare( 'SELECT ID FROM %i WHERE ID = %d', $wpdb->users, $identity['student_id'] ) );
 
-		return ! empty( $content ) && ! empty( $student );
+		if ( ! $content || ! $student ) {
+			return 'The persisted content or student no longer exists; surviving data is preserved.';
+		}
+		if ( 'trash' === $content[0]->post_status ) {
+			return 'Trashed progress is preserved for restoration.';
+		}
+		return null;
 	}
 
 	/**

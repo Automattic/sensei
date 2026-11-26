@@ -606,6 +606,88 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Reversible trash state must not replace or erase saved completion progress.
+	 *
+	 * @dataProvider course_trash_states
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_CourseHadReversibleTrashState_PreservesProgressForRestoration( string $source, string $post_status, string $comment_status ): void {
+		// Arrange.
+		global $wpdb;
+		$this->select_source( $source );
+		$course_id = $this->post( 'course' );
+		$comment   = $this->progress( 'course', $course_id, 'comments', 'complete' );
+		$this->progress( 'course', $course_id, 'tables', 'complete' );
+		$original = array( $this->source_rows( 'comments', $course_id ), $this->source_rows( 'tables', $course_id ) );
+		wp_trash_post( $course_id );
+		// WordPress updates the post and its comments separately during trash and restore.
+		$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $course_id ) );
+		$wpdb->update( $wpdb->comments, array( 'comment_approved' => $comment_status ), array( 'comment_ID' => $comment ) );
+		$trashed = array( $this->source_rows( 'comments', $course_id ), $this->source_rows( 'tables', $course_id ) );
+
+		// Act.
+		$result           = ( new Progress_Reconciliation_Planner() )->inspect( 'course', $course_id, $this->student_id, $source );
+		$after_inspection = array( $this->source_rows( 'comments', $course_id ), $this->source_rows( 'tables', $course_id ) );
+		wp_untrash_post( $course_id );
+		// Complete comment restoration when the post status was restored first.
+		wp_untrash_post_comments( $course_id );
+		$restored = array( $this->source_rows( 'comments', $course_id ), $this->source_rows( 'tables', $course_id ) );
+		$retry    = ( new Progress_Reconciliation_Planner() )->inspect( 'course', $course_id, $this->student_id, $source );
+
+		// Assert.
+		self::assertSame( array(), $result['changes'], 'The temporary trash state must not produce progress copy proposals.' );
+		self::assertSame( 'unresolved', $result['outcome'], 'Defer the course while either its post or comment is marked as trashed.' );
+		self::assertSame( array( 'Trashed progress is preserved for restoration.' ), $result['unresolved'], 'Explain why the course is deferred.' );
+		self::assertFalse( $result['supported_fields_verified'], 'Deferred progress has not been verified.' );
+		self::assertSame( $trashed, $after_inspection, 'Inspection must preserve both stored copies and the reversible marker.' );
+		self::assertSame( $original, $restored, 'Restoring the comment must retain the original completion in both stores.' );
+		self::assertSame( 'already_equivalent', $retry['outcome'], 'A retry after restoration must inspect the matching copies normally.' );
+	}
+
+	/**
+	 * A trashed lesson must keep its shared quiz data out of copy proposals.
+	 *
+	 * @dataProvider directions
+	 * @covers \Sensei\Internal\Services\Progress_Reconciliation_Planner::inspect
+	 */
+	public function testInspect_LessonWasTrashed_PreservesTheWholeQuizBundle( string $source ): void {
+		// Arrange.
+		global $wpdb;
+		$this->select_source( $source );
+		$lesson_id = $this->post( 'lesson' );
+		$quiz_id   = $this->post( 'quiz', $lesson_id );
+		$question  = $this->post( 'question' );
+		$comment   = $this->progress( 'lesson', $lesson_id, 'comments', 'passed' );
+		$this->progress( 'lesson', $lesson_id, 'tables', 'complete' );
+		$this->progress( 'quiz', $quiz_id, 'tables', 'passed' );
+		update_comment_meta( $comment, 'questions_asked', (string) $question );
+		update_comment_meta( $comment, 'grade', 80 );
+		update_comment_meta( $comment, 'quiz_answers', array( $question => 'comment answer' ) );
+		update_comment_meta( $comment, 'quiz_grades', array( $question => 2 ) );
+		update_comment_meta( $comment, 'quiz_answers_feedback', array( $question => 'comment feedback' ) );
+		$submission = ( new Tables_Based_Submission_Repository( $wpdb ) )->create( $quiz_id, $this->student_id, 20 );
+		$answer     = ( new Tables_Based_Answer_Repository( $wpdb ) )->create( $submission, $question, 'table answer' );
+		( new Tables_Based_Grade_Repository( $wpdb ) )->create( $submission, $answer, $question, 1, 'table feedback' );
+		$original = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) );
+		wp_trash_post( $lesson_id );
+		$trashed = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) );
+
+		// Act.
+		$result           = ( new Progress_Reconciliation_Planner() )->inspect( 'quiz', $quiz_id, $this->student_id, $source );
+		$after_inspection = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) );
+		wp_untrash_post( $lesson_id );
+		$restored = array( $this->source_rows( 'comments', $lesson_id ), $this->source_rows( 'tables', $lesson_id ) );
+
+		// Assert.
+		self::assertSame( array(), $result['changes'], 'Defer lesson progress and all related quiz proposals together.' );
+		self::assertSame( 'unresolved', $result['outcome'], 'A quiz whose lesson is trashed must remain unresolved.' );
+		self::assertSame( array( 'Trashed progress is preserved for restoration.' ), $result['unresolved'], 'Explain why the bundle is deferred.' );
+		self::assertFalse( $result['supported_fields_verified'], 'The deferred quiz bundle has not been verified.' );
+		self::assertSame( $trashed, $after_inspection, 'Inspection must preserve submissions, answers, grades and feedback in both stores.' );
+		self::assertSame( $original, $restored, 'Restoring the lesson must retain both original quiz copies.' );
+	}
+
+	/**
 	 * A replaced quiz must not exchange historical data with the current lesson comment.
 	 *
 	 * @dataProvider directions
@@ -1094,6 +1176,20 @@ class Progress_Reconciliation_Planner_Test extends \WP_UnitTestCase {
 		return array(
 			'missing content' => array( 'posts' ),
 			'missing student' => array( 'users' ),
+		);
+	}
+
+	/**
+	 * Cover both directions and the separate post/comment lifecycle updates.
+	 *
+	 * @return array
+	 */
+	public static function course_trash_states(): array {
+		return array(
+			'comments source, trashed course'     => array( 'comments', 'trash', 'post-trashed' ),
+			'tables source, trashed course'       => array( 'tables', 'trash', 'post-trashed' ),
+			'comment marker awaiting restoration' => array( 'comments', 'publish', 'post-trashed' ),
+			'post trashed before comments marked' => array( 'tables', 'trash', 'complete' ),
 		);
 	}
 
