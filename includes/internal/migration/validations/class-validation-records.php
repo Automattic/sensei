@@ -348,10 +348,10 @@ class Validation_Records {
 	 * @return array The original comment, metadata and progress table rows.
 	 */
 	public static function get_progress_records( string $type, int $post_id, int $user_id ): array {
-		$records   = array();
-		$lesson_id = 'quiz' === $type ? self::get_lesson_id( $post_id ) : $post_id;
-		if ( $lesson_id ) {
-			self::get_progress_comment( $type, $lesson_id, $user_id, $records );
+		$records         = array();
+		$comment_post_id = 'quiz' === $type ? self::get_lesson_id( $post_id ) : $post_id;
+		if ( $comment_post_id ) {
+			self::get_progress_comment( $type, $comment_post_id, $user_id, $records );
 		}
 		self::get_progress_table_rows( $type, $post_id, $user_id, $records );
 		return $records ?? array();
