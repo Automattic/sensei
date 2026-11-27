@@ -5,10 +5,10 @@
  * @package sensei
  */
 
-use Sensei\Internal\Migration\Validations\Progress_Validation;
-use Sensei\Internal\Migration\Validations\Quiz_Submission_Validation;
 use Sensei\Internal\Migration\Validations\Validation_Error;
+use Sensei\Internal\Migration\Validations\Quiz_Submission_Validation;
 use Sensei\Internal\Migration\Validations\Validation_Records;
+use Sensei\Internal\Services\Progress_Inspection;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -78,59 +78,32 @@ class Sensei_Progress_Recovery_Preview {
 	 * @return array
 	 */
 	private function inspect_record( string $type, int $post_id, int $student_id, ?string $from ): array {
-		$rows       = array();
-		$progress   = ( new Progress_Validation() )->inspect( $type, $post_id, $student_id, $rows );
-		$submission = 'quiz' === $type ? ( new Quiz_Submission_Validation() )->inspect( $post_id, $student_id, $rows ) : null;
-		$groups     = 'quiz' === $type
-			? array( 'comments', 'tables', 'submissions', 'comment_meta', 'answers', 'grades' )
-			: array( 'comments', 'tables', 'comment_meta' );
-		$rows       = array_replace( array_fill_keys( $groups, array() ), $rows ?? array() );
+		$inspection = Progress_Inspection::inspect( $type, $post_id, $student_id );
+		$progress   = $inspection['progress'];
+		$submission = $inspection['submission'];
+		$rows       = $inspection['rows'];
 		$result     = array(
 			'type'       => $type,
 			'content_id' => $post_id,
 			'stored'     => $rows,
 		);
 
-		if ( $this->has_duplicate_identity( $rows ) ) {
+		if ( Validation_Records::has_duplicates( $rows ) ) {
 			$result['status'] = 'ambiguous';
 			$result['review'] = 'Duplicate records or metadata need review; no copy has been selected and no changes are proposed.';
 			return $result;
 		}
 
 		$result['progress'] = $this->describe_difference( $progress, $from, array( 'status', 'started_at', 'completed_at' ) );
+		foreach ( $inspection['invalid_dates'] as $field ) {
+			$result['progress']['warnings'][] = 'Invalid ' . $field . ' is preserved for review.';
+		}
 
 		if ( $submission ) {
 			$result['submission'] = $this->describe_difference( $submission, $from, array( 'final_grade', 'answers', 'grades' ) );
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Reject duplicate identities instead of silently selecting one copy.
-	 *
-	 * @param array $rows Stored records.
-	 * @return bool
-	 */
-	private function has_duplicate_identity( array $rows ): bool {
-		foreach ( array( 'comments', 'tables', 'submissions' ) as $kind ) {
-			if ( count( $rows[ $kind ] ?? array() ) > 1 ) {
-				return true;
-			}
-		}
-
-		foreach ( array(
-			'comment_meta' => 'meta_key',
-			'answers'      => 'question_id',
-			'grades'       => 'question_id',
-		) as $kind => $key ) {
-			$identities = array_column( $rows[ $kind ] ?? array(), $key );
-			if ( count( $identities ) !== count( array_unique( $identities ) ) ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**
@@ -178,23 +151,20 @@ class Sensei_Progress_Recovery_Preview {
 		$withheld_fields = array();
 		if ( $comments && $tables ) {
 			foreach ( array_intersect( $fields, array( 'answers', 'grades' ) ) as $kind ) {
-				$comments_questions = array_column( $comments[ $kind ], null, 'question_id' );
-				$tables_questions   = array_column( $tables[ $kind ], null, 'question_id' );
-
-				foreach ( array_keys( $comments_questions + $tables_questions ) as $question_id ) {
-					if ( isset( $comments_questions[ $question_id ], $tables_questions[ $question_id ] ) ) {
-						continue;
-					}
-
-					$missing_from                 = isset( $comments_questions[ $question_id ] ) ? 'tables' : 'comments';
-					$result['missing_children'][] = array(
-						'kind'         => $kind,
-						'question_id'  => $question_id,
-						'missing_from' => $missing_from,
-					);
-
-					if ( $from === $missing_from ) {
-						$withheld_fields[] = $kind;
+				$questions = Quiz_Submission_Validation::question_changes( $comments[ $kind ], $tables[ $kind ] );
+				foreach ( array(
+					'tables'   => $questions['missing'],
+					'comments' => $questions['extra'],
+				) as $missing_from => $children ) {
+					foreach ( $children as $question_id => $child ) {
+						$result['missing_children'][] = array(
+							'kind'         => $kind,
+							'question_id'  => $question_id,
+							'missing_from' => $missing_from,
+						);
+						if ( $from === $missing_from ) {
+							$withheld_fields[] = $kind;
+						}
 					}
 				}
 			}
@@ -209,11 +179,15 @@ class Sensei_Progress_Recovery_Preview {
 			);
 		}
 
+		// The preview describes whole answer and grade lists. Withhold a list
+		// replacement if it would remove an item that exists only in the target.
 		if ( $withheld_fields ) {
 			$result['withheld_fields'] = array_values( array_unique( $withheld_fields ) );
 			$result['review']         .= ' Collection replacements that would remove a surviving child are withheld.';
 		}
 
+		// --from asks what copying from that store would look like. It does not
+		// confirm that the source is correct or that a missing item was deleted.
 		if ( null === $from ) {
 			$result['alternatives'] = $result['alternatives'] ?? array(
 				'Use comments values only after confirming them.',
@@ -230,18 +204,15 @@ class Sensei_Progress_Recovery_Preview {
 			return $result;
 		}
 
-		foreach ( array_diff( $fields, $inspection['ignored_fields'] ?? array(), $withheld_fields ) as $field ) {
-			if ( $target && $source[ $field ] === $target[ $field ] ) {
-				continue;
-			}
-
-			$result['changes'][] = array(
-				'if_confirmed' => $target ? 'replace' : 'copy',
-				'from'         => $from,
-				'to'           => $to,
-				'field'        => $field,
-				'before'       => $target[ $field ] ?? null,
-				'after'        => $source[ $field ],
+		foreach ( Progress_Inspection::field_changes( $inspection, $from, array_diff( $fields, $withheld_fields ) ) as $field => $change ) {
+			$result['changes'][] = array_merge(
+				array(
+					'if_confirmed' => $target ? 'replace' : 'copy',
+					'from'         => $from,
+					'to'           => $to,
+					'field'        => $field,
+				),
+				$change
 			);
 		}
 

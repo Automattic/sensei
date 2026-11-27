@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Migration\Validations;
 
+use DateTimeZone;
 use RuntimeException;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
@@ -54,17 +55,18 @@ class Quiz_Submission_Validation {
 	 * @internal
 	 * @since $$next-version$$
 	 *
-	 * @param int        $quiz_id The stored quiz ID.
-	 * @param int        $user_id The student ID.
-	 * @param array|null $records Shared rows for this student and quiz, populated by the readers.
+	 * @param int               $quiz_id The stored quiz ID.
+	 * @param int               $user_id The student ID.
+	 * @param array|null        $records Shared rows for this student and quiz, populated by the readers.
+	 * @param DateTimeZone|null $timezone Saved site timezone, or null to use the current WordPress option.
 	 * @return array The normalized bundles and validation differences.
 	 */
-	public function inspect( int $quiz_id, int $user_id, ?array &$records = null ): array {
+	public function inspect( int $quiz_id, int $user_id, ?array &$records = null, ?DateTimeZone $timezone = null ): array {
 		// Share freshly read rows with progress inspection and the raw output so they use the same copies.
 		$this->errors = array();
 		$records      = $records ?? array();
 		$models       = array(
-			'comments' => Validation_Records::get_comments_submission( $quiz_id, $user_id, $records ),
+			'comments' => Validation_Records::get_comments_submission( $quiz_id, $user_id, $records, $timezone ),
 			'tables'   => Validation_Records::get_tables_submission( $quiz_id, $user_id, $records ),
 		);
 		$copies       = array(
@@ -158,7 +160,7 @@ class Quiz_Submission_Validation {
 	 * @param string $message Error message.
 	 * @param array  $data    Error data.
 	 */
-	private function add_error( string $message, array $data = [] ): void {
+	private function add_error( string $message, array $data = array() ): void {
 		$this->errors[] = new Validation_Error( $message, $data );
 	}
 
@@ -317,6 +319,30 @@ class Quiz_Submission_Validation {
 	}
 
 	/**
+	 * Find missing, extra or changed answers and grades by question ID.
+	 *
+	 * @since $$next-version$$
+	 * @param array $source Source answers or grades prepared for comparison.
+	 * @param array $destination Destination answers or grades prepared for comparison.
+	 * @return array Missing and extra items, plus source values to copy, by question ID.
+	 */
+	public static function question_changes( array $source, array $destination ): array {
+		$from    = array_column( $source, null, 'question_id' );
+		$to      = array_column( $destination, null, 'question_id' );
+		$changed = array();
+		foreach ( $from as $question_id => $child ) {
+			if ( ! isset( $to[ $question_id ] ) || $child !== $to[ $question_id ] ) {
+				$changed[ $question_id ] = $child;
+			}
+		}
+		return array(
+			'missing' => array_diff_key( $from, $to ),
+			'extra'   => array_diff_key( $to, $from ),
+			'changed' => $changed,
+		);
+	}
+
+	/**
 	 * Compare answers or grades for each question in the two submissions.
 	 *
 	 * @param array  $comments The values from the comments store.
@@ -340,10 +366,11 @@ class Quiz_Submission_Validation {
 			);
 		}
 
+		$changes  = self::question_changes( $comments, $tables );
 		$comments = array_column( $comments, null, 'question_id' );
 		$tables   = array_column( $tables, null, 'question_id' );
 		foreach ( array_keys( $comments + $tables ) as $question_id ) {
-			if ( ! isset( $comments[ $question_id ], $tables[ $question_id ] ) ) {
+			if ( isset( $changes['missing'][ $question_id ] ) || isset( $changes['extra'][ $question_id ] ) ) {
 				$store = isset( $comments[ $question_id ] ) ? 'tables' : 'comments';
 				$this->add_error(
 					sprintf( '%s missing in %s based %s.', ucfirst( $kind ), $store, $kind ),
@@ -358,7 +385,7 @@ class Quiz_Submission_Validation {
 				continue;
 			}
 
-			if ( $comments[ $question_id ] !== $tables[ $question_id ] ) {
+			if ( isset( $changes['changed'][ $question_id ] ) ) {
 				$this->add_error(
 					sprintf( '%s mismatch.', ucfirst( $kind ) ),
 					array(

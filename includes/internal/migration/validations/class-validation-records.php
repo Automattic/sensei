@@ -303,8 +303,7 @@ class Validation_Records {
 		if ( null !== $records && $rows ) {
 			// Retain metadata before building models so duplicate start dates do not need to be interpreted.
 			$metadata_rows = self::get_comment_metadata_rows( (int) $rows[0]->comment_ID, $records );
-			$keys          = array_column( $metadata_rows, 'meta_key' );
-			if ( count( $keys ) !== count( array_unique( $keys ) ) ) {
+			if ( self::has_duplicates( array( 'comment_meta' => $metadata_rows ) ) ) {
 				return null;
 			}
 		}
@@ -314,17 +313,63 @@ class Validation_Records {
 	}
 
 	/**
+	 * Check for duplicate records, metadata keys, answers or grades before choosing values.
+	 *
+	 * @since $$next-version$$
+	 * @param array $rows The original rows read from the database.
+	 * @return bool Whether more than one row claims the same record, key or question.
+	 */
+	public static function has_duplicates( array $rows ): bool {
+		foreach ( array( 'comments', 'tables', 'submissions' ) as $kind ) {
+			if ( count( $rows[ $kind ] ?? array() ) > 1 ) {
+				return true;
+			}
+		}
+		foreach ( array(
+			'comment_meta' => 'meta_key',
+			'answers'      => 'question_id',
+			'grades'       => 'question_id',
+		) as $kind => $key ) {
+			$keys = array_column( $rows[ $kind ] ?? array(), $key );
+			if ( count( $keys ) !== count( array_unique( $keys ) ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Read progress rows before parsing dates, keeping duplicates for review.
+	 *
+	 * @since $$next-version$$
+	 * @param string $type The progress type.
+	 * @param int    $post_id The stored content ID.
+	 * @param int    $user_id The student ID.
+	 * @return array The original comment, metadata and progress table rows.
+	 */
+	public static function get_progress_records( string $type, int $post_id, int $user_id ): array {
+		$records         = array();
+		$comment_post_id = 'quiz' === $type ? self::get_lesson_id( $post_id ) : $post_id;
+		if ( $comment_post_id ) {
+			self::get_progress_comment( $type, $comment_post_id, $user_id, $records );
+		}
+		self::get_progress_table_rows( $type, $post_id, $user_id, $records );
+		return $records ?? array();
+	}
+
+	/**
 	 * Read comments progress and hydrate the existing progress model.
 	 *
 	 * @since 4.28.0
 	 *
-	 * @param string     $type    The progress type.
-	 * @param int        $post_id The content ID.
-	 * @param int        $user_id The student ID.
-	 * @param array|null $records Shared rows for one targeted inspection, or null for a fresh read.
+	 * @param string            $type    The progress type.
+	 * @param int               $post_id The content ID.
+	 * @param int               $user_id The student ID.
+	 * @param array|null        $records Shared rows for one targeted inspection, or null for a fresh read.
+	 * @param DateTimeZone|null $timezone Saved site timezone, or null to use the current WordPress option.
 	 * @return Comments_Based_Course_Progress|Comments_Based_Lesson_Progress|Comments_Based_Quiz_Progress|null
 	 */
-	public static function get_comments_progress( string $type, int $post_id, int $user_id, ?array &$records = null ): ?object {
+	public static function get_comments_progress( string $type, int $post_id, int $user_id, ?array &$records = null, ?DateTimeZone $timezone = null ): ?object {
 		$lesson_id = 'quiz' === $type ? self::get_lesson_id( $post_id ) : $post_id;
 		$comment   = $lesson_id ? self::get_progress_comment( $type, $lesson_id, $user_id, $records ) : null;
 		if ( ! $comment ) {
@@ -338,7 +383,7 @@ class Validation_Records {
 		);
 		$class   = $classes[ $type ];
 		$start   = self::get_metadata( 'comment', (int) $comment->comment_ID, 'start', $records );
-		$date    = new DateTimeImmutable( $comment->comment_date, wp_timezone() );
+		$date    = new DateTimeImmutable( $comment->comment_date, ( $timezone ?? wp_timezone() ) );
 		$status  = $comment->comment_approved;
 
 		if ( 'course' === $type ) {
@@ -352,7 +397,7 @@ class Validation_Records {
 			'quiz' === $type ? $post_id : (int) $comment->comment_post_ID,
 			(int) $comment->user_id,
 			$status,
-			Progress_Start_Date::is_recorded( $start ) ? new DateTimeImmutable( $start, wp_timezone() ) : null,
+			Progress_Start_Date::is_recorded( $start ) ? new DateTimeImmutable( $start, ( $timezone ?? wp_timezone() ) ) : null,
 			$completed ? new DateTimeImmutable( $comment->comment_date_gmt, new DateTimeZone( 'UTC' ) ) : null,
 			$date,
 			$date
@@ -371,17 +416,30 @@ class Validation_Records {
 	 * @return Tables_Based_Course_Progress|Tables_Based_Lesson_Progress|Tables_Based_Quiz_Progress|null
 	 */
 	public static function get_tables_progress( string $type, int $post_id, int $user_id, ?array &$records = null ): ?object {
+		$rows = self::get_progress_table_rows( $type, $post_id, $user_id, $records );
+
+		return 1 === count( $rows ) ? self::create_tables_progress( $type, $rows[0] ) : null;
+	}
+
+	/**
+	 * Use the same table query for progress models and inspections.
+	 *
+	 * @param string     $type The progress type.
+	 * @param int        $post_id The stored content ID.
+	 * @param int        $user_id The student ID.
+	 * @param array|null $records Rows already read for this inspection, or null for a separate read.
+	 * @return object[] Stored progress rows.
+	 */
+	private static function get_progress_table_rows( string $type, int $post_id, int $user_id, ?array &$records ): array {
 		global $wpdb;
 
-		$rows = self::query(
+		return self::query(
 			'SELECT * FROM %i WHERE type = %s AND post_id = %d AND user_id = %d' . ( null === $records ? ' LIMIT 1' : ' ORDER BY id' ),
 			array( $wpdb->prefix . 'sensei_lms_progress', $type, $post_id, $user_id ),
 			$type . ' progress table',
 			$records,
 			'tables'
 		);
-
-		return 1 === count( $rows ) ? self::create_tables_progress( $type, $rows[0] ) : null;
 	}
 
 	/**
@@ -419,12 +477,13 @@ class Validation_Records {
 	 *
 	 * @since 4.28.0
 	 *
-	 * @param int        $quiz_id The quiz ID.
-	 * @param int        $user_id The student ID.
-	 * @param array|null $records Shared rows for one targeted inspection, or null for a fresh read.
+	 * @param int               $quiz_id The quiz ID.
+	 * @param int               $user_id The student ID.
+	 * @param array|null        $records Shared rows for one targeted inspection, or null for a fresh read.
+	 * @param DateTimeZone|null $timezone Saved site timezone, or null to use the current WordPress option.
 	 * @return Comments_Based_Submission|null
 	 */
-	public static function get_comments_submission( int $quiz_id, int $user_id, ?array &$records = null ): ?Comments_Based_Submission {
+	public static function get_comments_submission( int $quiz_id, int $user_id, ?array &$records = null, ?DateTimeZone $timezone = null ): ?Comments_Based_Submission {
 		$lesson_id = self::get_lesson_id( $quiz_id );
 		$comment   = $lesson_id ? self::get_progress_comment( 'lesson', $lesson_id, $user_id, $records ) : null;
 		if ( ! $comment ) {
@@ -437,7 +496,7 @@ class Validation_Records {
 
 		$grade = self::get_metadata( 'comment', (int) $comment->comment_ID, 'grade', $records );
 		$start = self::get_metadata( 'comment', (int) $comment->comment_ID, 'start', $records );
-		$date  = new DateTimeImmutable( $start ? $start : 'now', wp_timezone() );
+		$date  = new DateTimeImmutable( $start ? $start : 'now', ( $timezone ?? wp_timezone() ) );
 
 		return new Comments_Based_Submission(
 			(int) $comment->comment_ID,

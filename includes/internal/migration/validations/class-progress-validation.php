@@ -8,6 +8,7 @@
 
 namespace Sensei\Internal\Migration\Validations;
 
+use DateTimeZone;
 use RuntimeException;
 use Sensei\Internal\Migration\Migration_Job_Scheduler;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
@@ -66,17 +67,18 @@ class Progress_Validation {
 	 * @internal
 	 * @since $$next-version$$
 	 *
-	 * @param string     $type    The progress type.
-	 * @param int        $post_id The stored content ID.
-	 * @param int        $user_id The student ID.
-	 * @param array|null $records Shared rows for this student and content, populated by the readers.
+	 * @param string            $type    The progress type.
+	 * @param int               $post_id The stored content ID.
+	 * @param int               $user_id The student ID.
+	 * @param array|null        $records Shared rows for this student and content, populated by the readers.
+	 * @param DateTimeZone|null $timezone Saved site timezone, or null to use the current WordPress option.
 	 * @return array Normalized copies, differences, and excluded fields.
 	 */
-	public function inspect( string $type, int $post_id, int $user_id, ?array &$records = null ): array {
+	public function inspect( string $type, int $post_id, int $user_id, ?array &$records = null, ?DateTimeZone $timezone = null ): array {
 		$this->errors   = array();
 		$this->warnings = array();
 		$records        = $records ?? array();
-		$comments       = Validation_Records::get_comments_progress( $type, $post_id, $user_id, $records );
+		$comments       = Validation_Records::get_comments_progress( $type, $post_id, $user_id, $records, $timezone );
 		$tables         = Validation_Records::get_tables_progress( $type, $post_id, $user_id, $records );
 		// Excluded fields stay visible in the output, but cannot become proposed repair changes.
 		$ignored_fields = array();
@@ -170,7 +172,7 @@ class Progress_Validation {
 	 * @param string $message Error message.
 	 * @param array  $data    Error data.
 	 */
-	private function add_error( string $message, array $data = [] ): void {
+	private function add_error( string $message, array $data = array() ): void {
 		$this->errors[] = new Validation_Error( $message, $data );
 	}
 
