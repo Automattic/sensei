@@ -209,7 +209,7 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_set_object_terms
 	 */
-	public function testHandleSetObjectTerms_LessonAddedToModuleOfAnotherCourse_StoresTheCourseRoot(): void {
+	public function testHandleSetObjectTerms_ModuleNotOneOfTheCoursesModules_StoresTheCourseRoot(): void {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$module_id = $this->factory->module->create();
@@ -248,11 +248,12 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$module_id = $this->factory->module->create();
+		// A draft, so the resync is proven not to be limited to published lessons.
 		$lesson_id = $this->factory->lesson->create(
 			array(
-				'meta_input' => array(
+				'post_status' => 'draft',
+				'meta_input'  => array(
 					'_lesson_course'              => $course_id,
-					'_order_' . $course_id        => 3,
 					'_order_module_' . $module_id => 1,
 				),
 			)
@@ -305,6 +306,43 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 					'course_id'      => (string) $course_id,
 					'module_term_id' => '0',
 					'lesson_order'   => null,
+				),
+			),
+			$this->get_rows( $lesson_id )
+		);
+	}
+
+	/**
+	 * Removing a module from a course puts the lessons that carry its term back at the course root.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_deleted_term_relationships
+	 */
+	public function testHandleDeletedTermRelationships_ModuleRemovedFromTheCourse_StoresTheCourseRootForItsLessons(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$module_id = $this->factory->module->create();
+		wp_set_object_terms( $course_id, array( $module_id ), 'module' );
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_' . $course_id        => 3,
+					'_order_module_' . $module_id => 1,
+				),
+			)
+		);
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Act. */
+		wp_remove_object_terms( $course_id, array( $module_id ), 'module' );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				array(
+					'course_id'      => (string) $course_id,
+					'module_term_id' => '0',
+					'lesson_order'   => '3',
 				),
 			),
 			$this->get_rows( $lesson_id )
