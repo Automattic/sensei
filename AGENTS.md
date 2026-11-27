@@ -1,6 +1,7 @@
 See `make help` for the full list of available dev commands.
 
 ## Read before writing code
+- Follow the [WordPress security guidelines](https://developer.wordpress.org/apis/security/) and [plugin best practices](https://developer.wordpress.org/plugins/plugin-basics/best-practices/) when writing or reviewing code.
 - Before deciding whether a change needs a new or updated **test**, read `docs/conventions/unit-tests.md` and inspect the existing coverage for the affected behavior.
 - Writing a **class, hook, meta key, block, or stylesheet**? Read `docs/conventions/naming.md` first.
 
