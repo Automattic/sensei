@@ -107,7 +107,8 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_progress (
 	updated_at datetime NOT NULL,
 	PRIMARY KEY  (id),
 	UNIQUE KEY user_progress (post_id, user_id, type),
-	KEY status (status)
+	KEY status (status),
+	KEY type_post_id (type, post_id)
 ) $collate;
 ",
 			"{$wpdb->prefix}sensei_lms_quiz_submissions" => "
@@ -215,4 +216,3 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_course_lessons (
 		return $tables;
 	}
 }
-

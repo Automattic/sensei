@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Add a composite (type, post_id) index to the HPPS progress table to speed up admin lesson queries.
