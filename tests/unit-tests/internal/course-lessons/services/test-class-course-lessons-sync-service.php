@@ -233,6 +233,53 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Under WPML, rows hold original lessons only: a translation has no row, an original keeps its row.
+	 * WPML is simulated through its filter, which answers with an object.
+	 *
+	 * @dataProvider providerWpmlLanguageDetails
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_meta_change
+	 *
+	 * @param string|null $source_language_code The language the lesson was translated from, null for an original.
+	 * @param int         $expected_rows        Rows the lesson gets.
+	 */
+	public function testHandleMetaChange_LessonUnderWpml_StoresRowsForOriginalsOnly( ?string $source_language_code, int $expected_rows ): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		add_filter(
+			'wpml_element_language_details',
+			function ( $details, $args ) use ( $lesson_id, $source_language_code ) {
+				return (int) $args['element_id'] === $lesson_id
+					? (object) array(
+						'language_code'        => 'es',
+						'source_language_code' => $source_language_code,
+					)
+					: $details;
+			},
+			10,
+			2
+		);
+
+		/* Act. */
+		update_post_meta( $lesson_id, '_lesson_course', $course_id );
+
+		/* Assert. */
+		self::assertCount( $expected_rows, $this->get_rows( $lesson_id ) );
+	}
+
+	/**
+	 * WPML language details of a translation and of an original, and the rows each one gets.
+	 *
+	 * @return array
+	 */
+	public function providerWpmlLanguageDetails(): array {
+		return array(
+			'translation' => array( 'en', 0 ),
+			'original'    => array( null, 1 ),
+		);
+	}
+
+	/**
 	 * A lesson added to a module stores the module and its order in it, not its order in the course.
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_set_object_terms

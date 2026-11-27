@@ -10,6 +10,7 @@ namespace Sensei\Internal\Course_Lessons\Services;
 use Sensei\Internal\Course_Lessons\Models\Course_Lesson;
 use Sensei\Internal\Course_Lessons\Repositories\Course_Lessons_Repository_Interface;
 use Sensei\Internal\Course_Lessons\Repositories\Tables_Based_Course_Lessons_Repository;
+use Sensei\WPML\WPML_API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,6 +28,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Course_Lessons_Sync_Service {
+	use WPML_API;
+
 	/**
 	 * Repository the structure is read from.
 	 *
@@ -127,7 +130,7 @@ class Course_Lessons_Sync_Service {
 	}
 
 	/**
-	 * Write the row of a lesson from its metas, or delete it when the lesson has no course.
+	 * Write the row of a lesson from its metas, or delete it when the lesson has no course or is a translation.
 	 *
 	 * @internal
 	 *
@@ -152,11 +155,11 @@ class Course_Lessons_Sync_Service {
 	 * Compute the row of a lesson from its metas.
 	 *
 	 * @param int $lesson_id Lesson ID.
-	 * @return Course_Lesson|null Null when the lesson has no course.
+	 * @return Course_Lesson|null Null when the lesson has no course or is a WPML translation.
 	 */
 	private function get_course_lesson( int $lesson_id ): ?Course_Lesson {
 		$course_id = $this->meta_repo->get_course_id( $lesson_id );
-		if ( null === $course_id ) {
+		if ( null === $course_id || $this->is_translation( $lesson_id ) ) {
 			return null;
 		}
 
@@ -214,6 +217,18 @@ class Course_Lessons_Sync_Service {
 		sort( $old_tt_ids );
 
 		return $tt_ids === $old_tt_ids;
+	}
+
+	/**
+	 * Whether a lesson is a WPML translation. Rows hold original lessons only, as the progress tables do.
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @return bool
+	 */
+	private function is_translation( int $lesson_id ): bool {
+		$details = $this->get_element_language_details( $lesson_id, 'lesson' );
+
+		return ! empty( $details['source_language_code'] );
 	}
 
 	/**
