@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Keep progress start and completion dates consistent after site timezone changes.

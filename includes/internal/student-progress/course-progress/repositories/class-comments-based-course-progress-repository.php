@@ -135,7 +135,12 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 */
 	private function create_progress_from_comment( WP_Comment $comment ): Comments_Based_Course_Progress {
 		$meta_start = get_comment_meta( (int) $comment->comment_ID, 'start', true );
-		$started_at = Progress_Start_Date::is_recorded( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : null;
+		$started_at = Progress_Start_Date::from_comment(
+			$meta_start,
+			$comment->comment_date,
+			$comment->comment_date_gmt,
+			wp_timezone()
+		);
 
 		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
 		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
@@ -230,6 +235,11 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		if ( $started_at ) {
 			// Comment dates are stored in the site timezone.
 			$metadata['start'] = wp_date( 'Y-m-d H:i:s', $started_at->getTimestamp() );
+		}
+
+		$completed_at = $course_progress->get_completed_at();
+		if ( Course_Progress_Interface::STATUS_COMPLETE === $status && $completed_at ) {
+			$metadata['_sensei_completed_at'] = $completed_at;
 		}
 
 		$comment_id = Sensei_Utils::update_course_status(

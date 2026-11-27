@@ -172,8 +172,15 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 	 */
 	private function item_from_comment( \WP_Comment $comment, string $meta_kind, ?int $requested_post_id = null ): Reports_Item {
 		$start_date = get_comment_meta( (int) $comment->comment_ID, 'start', true );
-		$grade      = null;
-		$percent    = null;
+		$started_at = Progress_Start_Date::from_comment(
+			$start_date,
+			$comment->comment_date,
+			$comment->comment_date_gmt,
+			wp_timezone()
+		);
+
+		$grade   = null;
+		$percent = null;
 
 		if ( 'grade' === $meta_kind ) {
 			$grade_raw = get_comment_meta( (int) $comment->comment_ID, 'grade', true );
@@ -187,7 +194,7 @@ class Comments_Based_Reports_Listing_Service implements Reports_Listing_Service_
 			$requested_post_id ?? (int) $comment->comment_post_ID,
 			(int) $comment->user_id,
 			$comment->comment_approved,
-			Progress_Start_Date::is_recorded( $start_date ) ? $start_date : null,
+			$started_at ? $started_at->format( 'Y-m-d H:i:s' ) : null,
 			$comment->comment_date_gmt ? get_date_from_gmt( $comment->comment_date_gmt ) : null,
 			$grade,
 			$percent
