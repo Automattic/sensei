@@ -93,7 +93,7 @@ class Sensei_Progress_Recovery_Preview {
 
 		if ( $this->has_duplicate_identity( $rows ) ) {
 			$result['status'] = 'ambiguous';
-			$result['review'] = 'Duplicate records or metadata need review; no copy has been selected and no changes are proposed.';
+			$result['review'] = 'Duplicate HPPS records need review; no copy has been selected and no changes are proposed.';
 			return $result;
 		}
 
@@ -107,22 +107,21 @@ class Sensei_Progress_Recovery_Preview {
 	}
 
 	/**
-	 * Reject duplicate identities instead of silently selecting one copy.
+	 * Reject duplicate HPPS identities instead of silently selecting one copy.
 	 *
 	 * @param array $rows Stored records.
 	 * @return bool
 	 */
 	private function has_duplicate_identity( array $rows ): bool {
-		foreach ( array( 'comments', 'tables', 'submissions' ) as $kind ) {
+		foreach ( array( 'tables', 'submissions' ) as $kind ) {
 			if ( count( $rows[ $kind ] ?? array() ) > 1 ) {
 				return true;
 			}
 		}
 
 		foreach ( array(
-			'comment_meta' => 'meta_key',
-			'answers'      => 'question_id',
-			'grades'       => 'question_id',
+			'answers' => 'question_id',
+			'grades'  => 'question_id',
 		) as $kind => $key ) {
 			$identities = array_column( $rows[ $kind ] ?? array(), $key );
 			if ( count( $identities ) !== count( array_unique( $identities ) ) ) {
@@ -158,6 +157,20 @@ class Sensei_Progress_Recovery_Preview {
 			),
 			'changes'  => array(),
 		);
+
+		if ( in_array( 'status', $inspection['ignored_fields'] ?? array(), true ) ) {
+			$result['status'] = 'unverifiable';
+			$result['review'] = implode(
+				' ',
+				array_map(
+					static function ( Validation_Error $error ): string {
+						return $error->get_message();
+					},
+					$errors
+				)
+			);
+			return $result;
+		}
 
 		if ( ! $comments && ! $tables ) {
 			$result['status'] = 'absent';

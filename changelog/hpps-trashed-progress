@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix HPPS migration and validation of trashed progress, duplicate records, and completion dates.

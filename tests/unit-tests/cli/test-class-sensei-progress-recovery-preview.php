@@ -62,6 +62,50 @@ class Sensei_Progress_Recovery_Preview_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Missing trash history cannot provide values for a conditional repair.
+	 *
+	 * @dataProvider missing_trash_history_cases
+	 * @covers \Sensei_Progress_Recovery_Preview::inspect
+	 */
+	public function testInspect_TrashedCommentHadNoSavedStatus_WithholdsChanges( bool $has_tables_copy ): void {
+		$course_id  = ( new \Sensei_Factory() )->course->create();
+		$student_id = self::factory()->user->create();
+		wp_insert_comment(
+			array(
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => 'post-trashed',
+			)
+		);
+		if ( $has_tables_copy ) {
+			$this->create_progress( 'course', $course_id, $student_id, 'tables' );
+		}
+
+		$preview = ( new Sensei_Progress_Recovery_Preview() )->inspect( 'course', $course_id, $student_id, 'tables' );
+
+		self::assertSame( array(), $preview['records'][0]['progress']['changes'], 'Unknown original status must not become a repair value.' );
+		self::assertSame( 'unverifiable', $preview['records'][0]['progress']['status'], 'Unknown history must not be described as a missing comment.' );
+		self::assertSame(
+			'Original progress status could not be established for the trashed comment.',
+			$preview['records'][0]['progress']['review'],
+			'Explain the unknown original status even when neither copy can be hydrated.'
+		);
+	}
+
+	/**
+	 * Unknown trash history remains unverifiable with or without a tables copy.
+	 *
+	 * @return array
+	 */
+	public static function missing_trash_history_cases(): array {
+		return array(
+			'tables copy exists' => array( true ),
+			'no tables copy'     => array( false ),
+		);
+	}
+
+	/**
 	 * An absent hypothetical source must never propose deleting the surviving copy.
 	 *
 	 * @covers \Sensei_Progress_Recovery_Preview::inspect
@@ -480,35 +524,37 @@ class Sensei_Progress_Recovery_Preview_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Duplicate rows need review before any copy is selected.
+	 * Duplicate comments use the lowest-ID progress copy.
 	 *
 	 * @covers \Sensei_Progress_Recovery_Preview::inspect
 	 */
-	public function testInspect_DuplicateCommentsWereStored_ReportsAmbiguity(): void {
+	public function testInspect_DuplicateCommentsWereStored_UsesLowestIdComment(): void {
 		$this->create_progress( 'course', 123, 456, 'comments' );
 		$this->create_progress( 'course', 123, 456, 'comments', 'complete' );
+		$this->create_progress( 'course', 123, 456, 'tables' );
 
 		$preview = ( new Sensei_Progress_Recovery_Preview() )->inspect( 'course', 123, 456, 'comments' );
 
-		self::assertSame( 'ambiguous', $preview['records'][0]['status'], 'Do not silently select the newest duplicate.' );
+		self::assertSame( 'equivalent', $preview['records'][0]['progress']['status'], 'Use the same comment as migration without asking the administrator to choose.' );
 		self::assertCount( 2, $preview['records'][0]['stored']['comments'], 'Show both stored IDs for review.' );
 	}
 
 	/**
-	 * Conflicting start metadata must be reported before interpreting either date.
+	 * Repeated start metadata uses the first stored value.
 	 *
 	 * @covers \Sensei_Progress_Recovery_Preview::inspect
 	 */
-	public function testInspect_DuplicateStartMetadataWasStored_ReportsAmbiguity(): void {
+	public function testInspect_DuplicateStartMetadataWasStored_UsesFirstValue(): void {
 		global $wpdb;
-		$this->create_progress( 'course', 123, 456, 'comments', 'in-progress', 'unparseable date' );
+		$this->create_progress( 'course', 123, 456, 'comments' );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Locate the stored fixture without repository mapping.
 		$comment_id = (int) $wpdb->get_var( $wpdb->prepare( "SELECT comment_ID FROM {$wpdb->comments} WHERE comment_post_ID = %d", 123 ) );
-		add_comment_meta( $comment_id, 'start', '2025-01-01 00:00:00' );
+		add_comment_meta( $comment_id, 'start', 'unparseable date' );
+		$this->create_progress( 'course', 123, 456, 'tables' );
 
 		$preview = ( new Sensei_Progress_Recovery_Preview() )->inspect( 'course', 123, 456, 'comments' );
 
-		self::assertSame( 'ambiguous', $preview['records'][0]['status'], 'Neither conflicting start value should be selected.' );
+		self::assertSame( 'equivalent', $preview['records'][0]['progress']['status'], 'Resolve repeated metadata without asking the administrator to choose.' );
 		self::assertCount( 2, $preview['records'][0]['stored']['comment_meta'], 'Retain both original values for inspection.' );
 	}
 

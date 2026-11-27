@@ -132,12 +132,24 @@ class Quiz_Migration extends Migration_Abstract {
 		global $wpdb;
 
 		$since_comment_id = (int) get_option( self::LAST_COMMENT_ID_OPTION_NAME, 0 );
-		$comments_query   = $wpdb->prepare(
-			"SELECT comments.* FROM $wpdb->comments AS comments
-			INNER JOIN $wpdb->commentmeta AS meta ON comments.comment_ID = meta.comment_id
+		// Match Sensei_Learner::remove_duplicate_progress() by keeping the lowest comment ID.
+		// Keep its quiz data together so later duplicates cannot add to the same submission.
+		// Start with comments so each batch can stop before scanning all quiz metadata.
+		$comments_query = $wpdb->prepare(
+			"SELECT STRAIGHT_JOIN comments.* FROM $wpdb->comments AS comments
 			WHERE comments.comment_type = 'sensei_lesson_status'
 			AND comments.comment_ID > %d
-			AND meta.meta_key = 'quiz_answers'
+			AND EXISTS (
+				SELECT 1 FROM $wpdb->commentmeta AS meta
+				WHERE meta.comment_id = comments.comment_ID AND meta.meta_key = 'quiz_answers'
+			)
+			AND NOT EXISTS (
+				SELECT 1 FROM $wpdb->comments AS earlier
+				WHERE earlier.comment_post_ID = comments.comment_post_ID
+				AND earlier.user_id = comments.user_id
+				AND earlier.comment_type = comments.comment_type
+				AND earlier.comment_ID < comments.comment_ID
+			)
 			ORDER BY comments.comment_ID
 			LIMIT %d",
 			$since_comment_id,
@@ -166,7 +178,7 @@ class Quiz_Migration extends Migration_Abstract {
 		$quiz_meta_query = $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 			"SELECT * FROM
 			$wpdb->commentmeta WHERE meta_key IN ( %s, %s, %s, %s )
-			AND comment_id IN ( " . implode( ',', array_fill( 0, count( $comment_ids ), '%d' ) ) . ' )',
+			AND comment_id IN ( " . implode( ',', array_fill( 0, count( $comment_ids ), '%d' ) ) . ' ) ORDER BY meta_id',
 			'quiz_answers',
 			'quiz_grades',
 			'quiz_answers_feedback',
@@ -182,8 +194,11 @@ class Quiz_Migration extends Migration_Abstract {
 		$quiz_meta = $wpdb->get_results( $quiz_meta_query );
 		$quiz_data = array();
 		foreach ( $quiz_meta as $meta ) {
-			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- We're not doing a meta query here, phpcs is confused.
-			$quiz_data[ $meta->comment_id ][ $meta->meta_key ] = $meta->meta_value;
+			// Match WordPress single-value metadata reads by retaining the lowest meta_id.
+			if ( ! array_key_exists( $meta->meta_key, $quiz_data[ $meta->comment_id ] ?? array() ) ) {
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- We're not doing a meta query here.
+				$quiz_data[ $meta->comment_id ][ $meta->meta_key ] = $meta->meta_value;
+			}
 		}
 
 		return $quiz_data;

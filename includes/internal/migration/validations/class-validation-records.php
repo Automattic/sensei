@@ -19,6 +19,7 @@ use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Models\Tables_Based_Grade;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Comments_Based_Submission;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Tables_Based_Submission;
+use Sensei\Internal\Student_Progress\Comment_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Tables_Based_Course_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
@@ -266,7 +267,11 @@ class Validation_Records {
 	}
 
 	/**
-	 * Read the comment selected by the comments repositories for a student and content.
+	 * Read the lowest-ID progress comment, matching migration and duplicate cleanup.
+	 *
+	 * Historical duplicates can remain until progress is updated again.
+	 *
+	 * @see \Sensei_Learner::remove_duplicate_progress()
 	 *
 	 * @param string     $type    The progress type.
 	 * @param int        $post_id The stored content ID.
@@ -282,35 +287,22 @@ class Validation_Records {
 		}
 
 		$comment_type = 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status';
-		$limit        = 'course' === $type ? 1 : 2;
 		$columns      = null === $records ? '*' : 'comment_ID, comment_post_ID, user_id, comment_approved, comment_date, comment_date_gmt';
-		$order        = null === $records ? ' DESC LIMIT %d' : '';
-		$args         = array( $wpdb->comments, $post_id, $user_id, $comment_type );
-		if ( null === $records ) {
-			$args[] = $limit;
-		}
-
-		$rows = self::query(
+		$rows         = self::query(
 			'SELECT ' . $columns . ' FROM %i
 			WHERE comment_post_ID = %d AND user_id = %d AND comment_type = %s
-			ORDER BY comment_ID' . $order,
-			$args,
+			ORDER BY comment_ID' . ( null === $records ? ' LIMIT 1' : '' ),
+			array( $wpdb->comments, $post_id, $user_id, $comment_type ),
 			$comment_type . ' comment',
 			$records,
 			'comments'
 		);
 
 		if ( null !== $records && $rows ) {
-			// Retain metadata before building models so duplicate start dates do not need to be interpreted.
-			$metadata_rows = self::get_comment_metadata_rows( (int) $rows[0]->comment_ID, $records );
-			$keys          = array_column( $metadata_rows, 'meta_key' );
-			if ( count( $keys ) !== count( array_unique( $keys ) ) ) {
-				return null;
-			}
+			self::get_comment_metadata_rows( (int) $rows[0]->comment_ID, $records );
 		}
 
-		// Targeted inspections retain duplicates for review; ordinary course reads select only the newest.
-		return 1 === count( $rows ) ? $rows[0] : null;
+		return $rows[0] ?? null;
 	}
 
 	/**
@@ -339,13 +331,24 @@ class Validation_Records {
 		$class   = $classes[ $type ];
 		$start   = self::get_metadata( 'comment', (int) $comment->comment_ID, 'start', $records );
 		$date    = new DateTimeImmutable( $comment->comment_date, wp_timezone() );
-		$status  = $comment->comment_approved;
+		$saved   = null;
 
-		if ( 'course' === $type ) {
-			$completed = 'complete' === $status;
-		} else {
-			$completed = in_array( $status, array( 'complete', 'passed', 'graded' ), true );
+		if ( 'post-trashed' === $comment->comment_approved ) {
+			$statuses = self::get_metadata( 'post', (int) $comment->comment_post_ID, '_wp_trash_meta_comments_status' );
+			$saved    = is_array( $statuses ) ? ( $statuses[ $comment->comment_ID ] ?? null ) : null;
 		}
+		$status = Comment_Progress::resolve_status( $type, $comment->comment_approved, $saved );
+		if ( null === $status ) {
+			$records['unverifiable_trash_status'] = (int) $comment->comment_ID;
+			return null;
+		}
+
+		$pass_required = true;
+		if ( 'lesson' === $type && 'failed' === $status ) {
+			$quiz_id       = self::get_quiz_id( (int) $comment->comment_post_ID );
+			$pass_required = ! $quiz_id || (bool) self::get_metadata( 'post', $quiz_id, '_pass_required' );
+		}
+		$completed_at = Comment_Progress::get_completed_at( $type, $status, $comment->comment_date_gmt, $pass_required );
 
 		return new $class(
 			(int) $comment->comment_ID,
@@ -353,7 +356,7 @@ class Validation_Records {
 			(int) $comment->user_id,
 			$status,
 			Progress_Start_Date::is_recorded( $start ) ? new DateTimeImmutable( $start, wp_timezone() ) : null,
-			$completed ? new DateTimeImmutable( $comment->comment_date_gmt, new DateTimeZone( 'UTC' ) ) : null,
+			null !== $completed_at ? new DateTimeImmutable( $completed_at, new DateTimeZone( 'UTC' ) ) : null,
 			$date,
 			$date
 		);
