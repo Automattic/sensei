@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     4.17.0
+ * @version     $$next-version$$
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
-$sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available();
+$sensei_is_quiz_completed = $question_data['quiz_is_completed'];
+$sensei_is_quiz_available = Sensei_Quiz::is_quiz_available();
 ?>
 
 
@@ -37,16 +38,16 @@ $sensei_is_quiz_view_only_mode = $question_data['quiz_is_completed'] || ! Sensei
 		 */
 		echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data['gapfill_pre'] ) ) );
 		?>
-		<?php if ( $sensei_is_quiz_view_only_mode ) { ?>
+		<?php if ( $sensei_is_quiz_completed ) { ?>
 			<span class="wp-block-sensei-lms-question-answers__answer">
-				<?php echo wp_kses_post( $question_data['user_answer_entry'] ); ?>
+				<?php echo wp_kses_post( $question_data['user_answer_entry'] ?? '' ); ?>
 			</span>
 		<?php } else { ?>
 			<input type="text" id="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>"
 				name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>"
-				value="<?php echo esc_attr( $question_data['user_answer_entry'] ); ?>"
+				value="<?php echo esc_attr( $question_data['user_answer_entry'] ?? '' ); ?>"
 				class="gapfill-answer-gap"
-				<?php echo $question_data['quiz_is_completed'] || ! Sensei_Quiz::is_quiz_available() ? 'disabled' : ''; ?>
+				<?php echo $sensei_is_quiz_completed || ! $sensei_is_quiz_available ? 'disabled' : ''; ?>
 			/>
 		<?php } ?>
 		<span class="gapfill-answer-post">
