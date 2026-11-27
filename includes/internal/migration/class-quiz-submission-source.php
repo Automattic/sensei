@@ -74,6 +74,16 @@ class Quiz_Submission_Source {
 			return $result;
 		}
 
+		// Older resets left empty question and grade entries after clearing the attempt.
+		if ( 'in-progress' === $comments[0]->comment_approved
+			&& in_array( 'questions_asked', $keys, true ) && in_array( 'grade', $keys, true )
+			&& '' === $final_grade
+			&& '' === Validation_Records::get_metadata( 'comment', $comment_id, 'questions_asked', $records )
+			&& ! array_intersect( $keys, array( 'quiz_answers', 'quiz_grades', 'quiz_answers_feedback' ) )
+		) {
+			return $result;
+		}
+
 		$result['has_history'] = true;
 		$answers               = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_answers', $records );
 		$grades                = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_grades', $records );

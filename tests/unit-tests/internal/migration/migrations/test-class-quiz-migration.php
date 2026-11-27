@@ -322,16 +322,16 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Course completion can leave a zero grade without a saved quiz attempt.
+	 * Completion and legacy resets can leave progress without a saved quiz attempt.
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
-	 * @dataProvider grade_only_progress
-	 * @param string   $status Stored lesson status.
-	 * @param int      $grade Stored overall grade.
-	 * @param string[] $expected_errors Expected incomplete-history messages.
-	 * @param array    $extra_metadata Other retained quiz metadata.
+	 * @dataProvider progress_without_answers
+	 * @param string     $status Stored lesson status.
+	 * @param int|string $grade Stored overall grade.
+	 * @param string[]   $expected_errors Expected incomplete-history messages.
+	 * @param array      $extra_metadata Other retained quiz metadata.
 	 */
-	public function testRun_GradeOnlyLessonProgressWasStored_PreservesSubmissionAbsence( string $status, int $grade, array $expected_errors, array $extra_metadata ): void {
+	public function testRun_ProgressWithoutAnswersWasStored_PreservesSubmissionAbsence( string $status, $grade, array $expected_errors, array $extra_metadata ): void {
 		$this->set_progress_storage_mode( 'comments-only' );
 		try {
 			$student_id = $this->factory->user->create();
@@ -364,26 +364,38 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			},
 			$validation->get_errors()
 		);
+		$preview  = ( new \Sensei_Progress_Recovery_Preview() )->inspect( 'quiz', $course['quiz_ids'][0], $student_id, 'comments' );
 
-		self::assertSame( $expected_errors, $messages, 'Grade-only completed progress should avoid errors while other quiz history remains unresolved.' );
-		self::assertCount( count( $expected_errors ), $this->migration->get_errors(), 'Migration and validation must agree about grade-only history.' );
-		self::assertNull( $repository->get( $course['quiz_ids'][0], $student_id ), 'Grade-only progress must not create a quiz submission.' );
+		self::assertSame( $expected_errors, $messages, 'Completion and reset records should avoid errors while other quiz history remains unresolved.' );
+		self::assertCount( count( $expected_errors ), $this->migration->get_errors(), 'Migration and validation must agree about progress without saved answers.' );
+		self::assertNull( $repository->get( $course['quiz_ids'][0], $student_id ), 'Progress without saved answers must not create a quiz submission.' );
+		self::assertSame( $expected_errors ? 'unresolved' : 'absent', $preview['records'][0]['submission']['status'], 'Preview must distinguish cleared or absent submissions from incomplete history.' );
 		wp_cache_delete( $comment_id, 'comment_meta' );
 		self::assertSame( $before, get_comment_meta( $comment_id ), 'The original progress metadata must remain unchanged.' );
 	}
 
 	/**
-	 * A placeholder zero on completed progress differs from other grade-only history.
+	 * Completion and cleared reset metadata differ from incomplete quiz history.
 	 *
 	 * @return array
 	 */
-	public static function grade_only_progress(): array {
+	public static function progress_without_answers(): array {
 		$missing_answers = array( 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' );
 		return array(
 			'course marked complete'        => array( 'passed', 0, array(), array() ),
 			'nonzero grade without history' => array( 'passed', 50, $missing_answers, array() ),
 			'unfinished quiz with a grade'  => array( 'in-progress', 0, $missing_answers, array() ),
 			'empty question marker exists'  => array( 'passed', 0, $missing_answers, array( 'questions_asked' => '' ) ),
+			'legacy quiz reset'             => array( 'in-progress', '', array(), array( 'questions_asked' => '' ) ),
+			'legacy reset with grades'      => array(
+				'in-progress',
+				'',
+				$missing_answers,
+				array(
+					'questions_asked' => '',
+					'quiz_grades'     => array(),
+				),
+			),
 		);
 	}
 
