@@ -158,8 +158,9 @@ class Sensei_Progress_Recovery_Preview {
 			'changes'  => array(),
 		);
 
-		if ( in_array( 'status', $inspection['ignored_fields'] ?? array(), true ) ) {
-			$result['status'] = 'unverifiable';
+		$unverifiable = in_array( 'status', $inspection['ignored_fields'] ?? array(), true );
+		if ( $unverifiable || ! empty( $inspection['unresolved'] ) ) {
+			$result['status'] = $unverifiable ? 'unverifiable' : 'unresolved';
 			$result['review'] = implode(
 				' ',
 				array_map(

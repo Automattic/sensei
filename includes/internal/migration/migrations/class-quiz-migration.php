@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Sensei\Internal\Cache_Prefix;
 use Sensei\Internal\Migration\Migration_Abstract;
+use Sensei\Internal\Migration\Quiz_Submission_Source;
+use Sensei\Internal\Migration\Validations\Validation_Records;
 
 /**
  * Class Quiz_Migration.
@@ -82,15 +84,24 @@ class Quiz_Migration extends Migration_Abstract {
 		$last_processed_id = null;
 
 		foreach ( $comments as $comment ) {
-			$submission_id = $this->insert_quiz_submission( $comment, $quiz_data );
-			if ( ! $submission_id ) {
+			$quiz_id = Validation_Records::get_quiz_id( (int) $comment->comment_post_ID );
+			$records = array();
+			$source  = $quiz_id ? Quiz_Submission_Source::inspect( $quiz_id, (int) $comment->user_id, $records ) : null;
+			foreach ( $source['errors'] ?? array() as $error ) {
+				$this->add_error( $error->get_message() . ' ' . (string) wp_json_encode( $error->get_data() ) );
+			}
+
+			$submission_id = $source && $source['can_copy']
+				? $this->insert_quiz_submission( $comment, $quiz_id, $source['submission']->get_final_grade() )
+				: null;
+			if ( ! $source || ! $submission_id ) {
 				$last_processed_id = $comment->comment_ID;
 				++$processed;
 				continue;
 			}
 
-			$answer_ids = $this->insert_quiz_answers( $comment, $quiz_data, $submission_id );
-			$this->insert_quiz_grades( $comment, $quiz_data, $answer_ids );
+			$answer_ids = $source['answers'] ? $this->insert_quiz_answers( $comment, $quiz_data, $submission_id ) : array();
+			$this->insert_quiz_grades( $comment, $source['grades'], $source['feedback'], $answer_ids );
 
 			// Cached misses and partial results can remain even when every row already exists.
 			if ( ! $this->dry_run ) {
@@ -141,7 +152,8 @@ class Quiz_Migration extends Migration_Abstract {
 			AND comments.comment_ID > %d
 			AND EXISTS (
 				SELECT 1 FROM $wpdb->commentmeta AS meta
-				WHERE meta.comment_id = comments.comment_ID AND meta.meta_key = 'quiz_answers'
+				WHERE meta.comment_id = comments.comment_ID
+				AND meta.meta_key IN ('questions_asked', 'quiz_answers', 'grade', 'quiz_grades', 'quiz_answers_feedback')
 			)
 			AND NOT EXISTS (
 				SELECT 1 FROM $wpdb->comments AS earlier
@@ -207,21 +219,13 @@ class Quiz_Migration extends Migration_Abstract {
 	/**
 	 * Insert the quiz submission.
 	 *
-	 * @param object $comment The comment object.
-	 * @param array  $quiz_data The quiz data.
+	 * @param object     $comment The comment object.
+	 * @param int        $quiz_id The persisted lesson-to-quiz mapping.
+	 * @param float|null $final_grade The normalized source final grade.
 	 *
 	 * @return int|null
 	 */
-	private function insert_quiz_submission( object $comment, array $quiz_data ): ?int {
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $comment->comment_post_ID );
-		if ( ! $quiz_id ) {
-			return null;
-		}
-
-		$final_grade = isset( $quiz_data[ $comment->comment_ID ]['grade'] )
-			? (float) $quiz_data[ $comment->comment_ID ]['grade']
-			: null;
-
+	private function insert_quiz_submission( object $comment, int $quiz_id, ?float $final_grade ): ?int {
 		$columns = array(
 			'quiz_id'     => '%d',
 			'user_id'     => '%d',
@@ -376,29 +380,22 @@ class Quiz_Migration extends Migration_Abstract {
 	 * Insert the quiz grades.
 	 *
 	 * @param object $comment The comment object.
-	 * @param array  $quiz_data The quiz metadata.
+	 * @param array  $quiz_grades The numeric source question grades.
+	 * @param array  $quiz_answers_feedback The source question feedback.
 	 * @param array  $answer_ids The answer ids.
 	 *
 	 * @return array
 	 */
-	private function insert_quiz_grades( object $comment, array $quiz_data, array $answer_ids ): array {
-		$quiz_grades = ! empty( $quiz_data[ $comment->comment_ID ]['quiz_grades'] )
-			? maybe_unserialize( $quiz_data[ $comment->comment_ID ]['quiz_grades'] )
-			: array();
-
+	private function insert_quiz_grades( object $comment, array $quiz_grades, array $quiz_answers_feedback, array $answer_ids ): array {
 		if ( ! $quiz_grades ) {
 			return array();
 		}
-
-		$quiz_answers_feedback = ! empty( $quiz_data[ $comment->comment_ID ]['quiz_answers_feedback'] )
-			? maybe_unserialize( $quiz_data[ $comment->comment_ID ]['quiz_answers_feedback'] )
-			: array();
 
 		global $wpdb;
 
 		$grade_ids = array();
 		foreach ( $quiz_grades as $question_id => $points ) {
-			if ( ! isset( $answer_ids[ $question_id ] ) ) {
+			if ( ! isset( $answer_ids[ $question_id ] ) || ! is_numeric( $points ) ) {
 				continue;
 			}
 

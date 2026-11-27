@@ -361,7 +361,24 @@ class Sensei_Progress_Recovery_Preview_Test extends \WP_UnitTestCase {
 		);
 
 		return array(
-			'answer missing from comments' => array( 'answers', 'comments', $empty, $answered, 'comments', array(), array( 'answers' ) ),
+			'answer missing from comments' => array(
+				'answers',
+				'comments',
+				array(
+					'answers' => array( 10 => 'other saved answer' ),
+					'grades'  => array(),
+				),
+				array(
+					'answers' => array(
+						9  => 'retained',
+						10 => 'other saved answer',
+					),
+					'grades'  => array(),
+				),
+				'comments',
+				array(),
+				array( 'answers' ),
+			),
 			'answer missing from tables'   => array( 'answers', 'tables', $answered, $empty, 'tables', array(), array( 'answers' ) ),
 			'grade missing from comments'  => array( 'grades', 'comments', $answered, $graded, 'comments', array(), array( 'grades' ) ),
 			'grade missing from tables'    => array( 'grades', 'tables', $graded, $answered, 'tables', array(), array( 'grades' ) ),

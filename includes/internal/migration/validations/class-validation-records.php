@@ -418,7 +418,7 @@ class Validation_Records {
 	}
 
 	/**
-	 * Read a comments submission, including the metadata identifying it as a submission.
+	 * Read a comments submission identified by saved questions or an overall grade.
 	 *
 	 * @since 4.28.0
 	 *
@@ -434,19 +434,21 @@ class Validation_Records {
 			return null;
 		}
 
-		if ( ! self::get_metadata( 'comment', (int) $comment->comment_ID, 'questions_asked', $records ) ) {
+		$grade = self::get_metadata( 'comment', (int) $comment->comment_ID, 'grade', $records );
+		if ( ! self::get_metadata( 'comment', (int) $comment->comment_ID, 'questions_asked', $records )
+			&& ! is_numeric( $grade ) && 'NAN' !== $grade
+		) {
 			return null;
 		}
 
-		$grade = self::get_metadata( 'comment', (int) $comment->comment_ID, 'grade', $records );
-		$start = self::get_metadata( 'comment', (int) $comment->comment_ID, 'start', $records );
-		$date  = new DateTimeImmutable( $start ? $start : 'now', wp_timezone() );
+		// Quiz migration copies comment timestamps independently of lesson start metadata.
+		$date = new DateTimeImmutable( $comment->comment_date_gmt, new DateTimeZone( 'UTC' ) );
 
 		return new Comments_Based_Submission(
 			(int) $comment->comment_ID,
 			$quiz_id,
 			$user_id,
-			is_numeric( $grade ) ? (float) $grade : null,
+			'NAN' === $grade ? 0.0 : ( is_numeric( $grade ) ? (float) $grade : null ),
 			$date,
 			$date
 		);
