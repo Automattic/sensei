@@ -97,6 +97,8 @@ class Quiz_Submission_Source {
 		}
 
 		foreach ( is_array( $grades ) ? $grades : array() as $question_id => $points ) {
+			// Older auto-grading stored incorrect answers as false instead of zero points.
+			$points = false === $points ? 0 : $points;
 			if ( ! is_numeric( $points ) ) {
 				$add_error(
 					'Comments-based question grade has invalid points.',

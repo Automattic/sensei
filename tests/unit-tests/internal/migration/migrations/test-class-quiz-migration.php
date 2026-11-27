@@ -421,14 +421,14 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
 	 * @dataProvider unsupported_question_data
 	 * @param bool        $has_answer Whether the second answer survives.
-	 * @param string|null $points Stored second-question points, or null when absent.
+	 * @param string|false|null $points Stored second-question points, or null when absent.
 	 * @param mixed       $feedback Stored second-question feedback.
 	 * @param string[]    $expected_messages Expected unresolved source diagnostics.
 	 * @param array       $expected_grades Expected copied points and feedback.
 	 */
 	public function testRun_QuestionDataWasStored_PreservesSupportedFieldsAndReportsIncompleteCopies(
 		bool $has_answer,
-		?string $points,
+		$points,
 		$feedback,
 		array $expected_messages,
 		array $expected_grades
@@ -506,6 +506,19 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		);
 
 		return array(
+			'legacy false points'     => array(
+				true,
+				false,
+				null,
+				array(),
+				array(
+					$grade_without_feedback,
+					array(
+						'points'   => 0,
+						'feedback' => null,
+					),
+				),
+			),
 			'grade without answer'    => array(
 				false,
 				'2',
