@@ -65,7 +65,7 @@ class Course_Lessons_Sync_Service {
 		add_action( 'added_post_meta', array( $this, 'handle_meta_change' ), 10, 3 );
 		add_action( 'updated_post_meta', array( $this, 'handle_meta_change' ), 10, 3 );
 		add_action( 'deleted_post_meta', array( $this, 'handle_meta_change' ), 10, 3 );
-		add_action( 'set_object_terms', array( $this, 'handle_set_object_terms' ), 10, 4 );
+		add_action( 'set_object_terms', array( $this, 'handle_set_object_terms' ), 10, 6 );
 		add_action( 'deleted_term_relationships', array( $this, 'handle_deleted_term_relationships' ), 10, 3 );
 	}
 
@@ -95,12 +95,19 @@ class Course_Lessons_Sync_Service {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int    $object_id Post ID.
-	 * @param array  $terms     Terms set.
-	 * @param array  $tt_ids    Term taxonomy IDs set.
-	 * @param string $taxonomy  Taxonomy.
+	 * @param int    $object_id  Post ID.
+	 * @param array  $terms      Terms set.
+	 * @param array  $tt_ids     Term taxonomy IDs set.
+	 * @param string $taxonomy   Taxonomy.
+	 * @param bool   $append     Whether the terms were appended.
+	 * @param array  $old_tt_ids Term taxonomy IDs the post had before.
 	 */
-	public function handle_set_object_terms( $object_id, $terms, $tt_ids, $taxonomy ): void {
+	public function handle_set_object_terms( $object_id, $terms, $tt_ids, $taxonomy, $append = false, $old_tt_ids = array() ): void {
+		// The action fires even when the terms did not change, on every outline save for example.
+		if ( $this->same_terms( (array) $tt_ids, (array) $old_tt_ids ) ) {
+			return;
+		}
+
 		$this->handle_module_change( (int) $object_id, (string) $taxonomy );
 	}
 
@@ -191,6 +198,22 @@ class Course_Lessons_Sync_Service {
 				$this->sync_lesson( $lesson_id );
 			}
 		}
+	}
+
+	/**
+	 * Whether two lists of term taxonomy IDs hold the same terms.
+	 *
+	 * @param array $tt_ids     Term taxonomy IDs.
+	 * @param array $old_tt_ids Term taxonomy IDs to compare with.
+	 * @return bool
+	 */
+	private function same_terms( array $tt_ids, array $old_tt_ids ): bool {
+		$tt_ids     = array_map( 'intval', $tt_ids );
+		$old_tt_ids = array_map( 'intval', $old_tt_ids );
+		sort( $tt_ids );
+		sort( $old_tt_ids );
+
+		return $tt_ids === $old_tt_ids;
 	}
 
 	/**
