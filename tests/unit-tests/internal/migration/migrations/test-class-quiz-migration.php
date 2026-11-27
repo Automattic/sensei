@@ -322,7 +322,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Completion and legacy resets can leave progress without a saved quiz attempt.
+	 * Completion, legacy resets and quiz views can leave progress without saved answers.
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
 	 * @dataProvider progress_without_answers
@@ -366,7 +366,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		);
 		$preview  = ( new \Sensei_Progress_Recovery_Preview() )->inspect( 'quiz', $course['quiz_ids'][0], $student_id, 'comments' );
 
-		self::assertSame( $expected_errors, $messages, 'Completion and reset records should avoid errors while other quiz history remains unresolved.' );
+		self::assertSame( $expected_errors, $messages, 'Progress-only records should avoid errors while substantive quiz history remains unresolved.' );
 		self::assertCount( count( $expected_errors ), $this->migration->get_errors(), 'Migration and validation must agree about progress without saved answers.' );
 		self::assertNull( $repository->get( $course['quiz_ids'][0], $student_id ), 'Progress without saved answers must not create a quiz submission.' );
 		self::assertSame( $expected_errors ? 'unresolved' : 'absent', $preview['records'][0]['submission']['status'], 'Preview must distinguish cleared or absent submissions from incomplete history.' );
@@ -375,7 +375,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Completion and cleared reset metadata differ from incomplete quiz history.
+	 * Progress-only metadata differs from incomplete saved quiz history.
 	 *
 	 * @return array
 	 */
@@ -394,6 +394,22 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 				array(
 					'questions_asked' => '',
 					'quiz_grades'     => array(),
+				),
+			),
+			'quiz viewed without answers'   => array( 'in-progress', '', array(), array( 'questions_asked' => '123' ) ),
+			'completed quiz later viewed'   => array( 'passed', 0, array(), array( 'questions_asked' => '123' ) ),
+			'graded quiz without answers'   => array( 'graded', '', $missing_answers, array( 'questions_asked' => '123' ) ),
+			'question list with a score'    => array( 'passed', 50, $missing_answers, array( 'questions_asked' => '123' ) ),
+			'question list with points'     => array(
+				'in-progress',
+				'',
+				array(
+					'Comments-based quiz submission is incomplete: saved answers are missing or malformed.',
+					'Comments-based question grade cannot be copied without its saved answer.',
+				),
+				array(
+					'questions_asked' => '123',
+					'quiz_grades'     => array( 123 => 0 ),
 				),
 			),
 		);

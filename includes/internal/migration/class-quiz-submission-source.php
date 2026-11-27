@@ -60,17 +60,18 @@ class Quiz_Submission_Source {
 			$errors[] = new Validation_Error( $message, array_merge( $identity, $data ) );
 		};
 
-		$question_keys        = array( 'questions_asked', 'quiz_answers', 'quiz_grades', 'quiz_answers_feedback' );
-		$has_question_history = (bool) array_intersect( $keys, $question_keys );
+		$has_answer_history   = (bool) array_intersect( $keys, array( 'quiz_answers', 'quiz_grades', 'quiz_answers_feedback' ) );
+		$has_question_history = $has_answer_history || in_array( 'questions_asked', $keys, true );
 		if ( ! $comments || ( ! $has_question_history && ! in_array( 'grade', $keys, true ) ) ) {
 			return $result;
 		}
 
-		$final_grade = Validation_Records::get_metadata( 'comment', $comment_id, 'grade', $records );
+		$final_grade         = Validation_Records::get_metadata( 'comment', $comment_id, 'grade', $records );
+		$questions_asked     = Validation_Records::get_metadata( 'comment', $comment_id, 'questions_asked', $records );
+		$is_completion_grade = 'passed' === $comments[0]->comment_approved
+			&& is_numeric( $final_grade ) && 0.0 === (float) $final_grade;
 		// Marking a course complete can leave a placeholder zero without a quiz attempt.
-		if ( ! $has_question_history && 'passed' === $comments[0]->comment_approved
-			&& is_numeric( $final_grade ) && 0.0 === (float) $final_grade
-		) {
+		if ( ! $has_question_history && $is_completion_grade ) {
 			return $result;
 		}
 
@@ -78,9 +79,21 @@ class Quiz_Submission_Source {
 		if ( 'in-progress' === $comments[0]->comment_approved
 			&& in_array( 'questions_asked', $keys, true ) && in_array( 'grade', $keys, true )
 			&& '' === $final_grade
-			&& '' === Validation_Records::get_metadata( 'comment', $comment_id, 'questions_asked', $records )
-			&& ! array_intersect( $keys, array( 'quiz_answers', 'quiz_grades', 'quiz_answers_feedback' ) )
+			&& '' === $questions_asked && ! $has_answer_history
 		) {
+			return $result;
+		}
+
+		// Older quiz views saved question selections before any answers were saved.
+		// Existing HPPS submissions still need comparison against the source history.
+		if ( ! $has_answer_history && is_string( $questions_asked )
+			&& 1 === preg_match( '/^[1-9][0-9]*(?:,[1-9][0-9]*)*$/D', $questions_asked )
+			&& ( '' === $final_grade || $is_completion_grade )
+			&& ! in_array( $comments[0]->comment_approved, array( 'graded', 'ungraded', 'failed' ), true )
+			&& ! Validation_Records::get_tables_submission( $quiz_id, $student_id, $records )
+			&& empty( $records['submissions'] )
+		) {
+			$result['submission'] = null;
 			return $result;
 		}
 
