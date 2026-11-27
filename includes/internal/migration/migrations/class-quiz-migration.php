@@ -100,7 +100,7 @@ class Quiz_Migration extends Migration_Abstract {
 				continue;
 			}
 
-			$answer_ids = $this->insert_quiz_answers( $comment, $quiz_data, $submission_id );
+			$answer_ids = $source['answers'] ? $this->insert_quiz_answers( $comment, $quiz_data, $submission_id ) : array();
 			$this->insert_quiz_grades( $comment, $source['grades'], $source['feedback'], $answer_ids );
 
 			// Cached misses and partial results can remain even when every row already exists.

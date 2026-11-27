@@ -67,11 +67,13 @@ class Quiz_Submission_Source {
 		}
 
 		$final_grade         = Validation_Records::get_metadata( 'comment', $comment_id, 'grade', $records );
+		$has_final_grade     = is_numeric( $final_grade ) || 'NAN' === $final_grade;
 		$questions_asked     = Validation_Records::get_metadata( 'comment', $comment_id, 'questions_asked', $records );
 		$is_completion_grade = 'passed' === $comments[0]->comment_approved
 			&& is_numeric( $final_grade ) && 0.0 === (float) $final_grade;
 		// Marking a course complete can leave a placeholder zero without a quiz attempt.
 		if ( ! $has_question_history && $is_completion_grade ) {
+			$result['submission'] = null;
 			return $result;
 		}
 
@@ -101,6 +103,7 @@ class Quiz_Submission_Source {
 		$answers               = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_answers', $records );
 		$grades                = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_grades', $records );
 		$feedback              = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_answers_feedback', $records );
+		$has_no_answers        = '' === $answers || array() === $answers;
 		$valid_answers         = is_array( $answers ) && $answers;
 		foreach ( is_array( $answers ) ? $answers : array() as $answer ) {
 			if ( ! is_scalar( $answer ) ) {
@@ -108,23 +111,23 @@ class Quiz_Submission_Source {
 			}
 		}
 
-		if ( ! $valid_answers ) {
-			$add_error( 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' );
-		} elseif ( ! $submission ) {
-			$add_error( 'Comments-based quiz submission is incomplete: questions asked are missing.' );
+		if ( ! $valid_answers && ! ( $has_final_grade && $has_no_answers ) ) {
+			$add_error( 'Unsupported historical data: saved answers are missing or malformed. This cannot be repaired automatically.' );
+		} elseif ( $valid_answers && ! $questions_asked ) {
+			$add_error( 'Unsupported historical data: saved question IDs are missing. This cannot be repaired automatically.' );
 		}
 
 		if ( '' !== $final_grade && 'NAN' !== $final_grade && ! is_numeric( $final_grade ) ) {
-			$add_error( 'Comments-based quiz submission has an invalid final grade.', array( 'stored_grade' => $final_grade ) );
+			$add_error( 'Unsupported historical data: the overall quiz grade is invalid. This cannot be repaired automatically.', array( 'stored_grade' => $final_grade ) );
 		}
 
 		$result['answers']  = $valid_answers ? $answers : array();
 		$result['feedback'] = is_array( $feedback ) ? $feedback : array();
 		if ( $grades && ! is_array( $grades ) ) {
-			$add_error( 'Comments-based question grades are malformed.' );
+			$add_error( 'Unsupported historical data: question grades are malformed. This cannot be repaired automatically.' );
 		}
 		if ( $feedback && ! is_array( $feedback ) ) {
-			$add_error( 'Comments-based question feedback is malformed.' );
+			$add_error( 'Unsupported historical data: question feedback is malformed. This cannot be repaired automatically.' );
 		}
 
 		foreach ( is_array( $grades ) ? $grades : array() as $question_id => $points ) {
@@ -132,7 +135,7 @@ class Quiz_Submission_Source {
 			$points = false === $points ? 0 : $points;
 			if ( ! is_numeric( $points ) ) {
 				$add_error(
-					'Comments-based question grade has invalid points.',
+					'Unsupported historical data: question points are invalid. This cannot be repaired automatically.',
 					array(
 						'question_id'   => $question_id,
 						'stored_points' => $points,
@@ -143,13 +146,13 @@ class Quiz_Submission_Source {
 
 			$result['grades'][ $question_id ] = $points;
 			if ( ! array_key_exists( $question_id, $result['answers'] ) ) {
-				$add_error( 'Comments-based question grade cannot be copied without its saved answer.', array( 'question_id' => $question_id ) );
+				$add_error( 'Unsupported historical data: a question grade has no saved answer. This cannot be repaired automatically.', array( 'question_id' => $question_id ) );
 			}
 		}
 
 		foreach ( $result['feedback'] as $question_id => $value ) {
 			if ( null !== $value && ! is_scalar( $value ) ) {
-				$add_error( 'Comments-based question feedback is malformed.', array( 'question_id' => $question_id ) );
+				$add_error( 'Unsupported historical data: question feedback is malformed. This cannot be repaired automatically.', array( 'question_id' => $question_id ) );
 				unset( $result['feedback'][ $question_id ] );
 				continue;
 			}
@@ -159,11 +162,12 @@ class Quiz_Submission_Source {
 			}
 
 			if ( ! array_key_exists( $question_id, $result['answers'] ) || ! array_key_exists( $question_id, $result['grades'] ) ) {
-				$add_error( 'Comments-based question feedback cannot be copied without numeric points and a saved answer.', array( 'question_id' => $question_id ) );
+				$add_error( 'Unsupported historical data: question feedback requires numeric points and a saved answer. This cannot be repaired automatically.', array( 'question_id' => $question_id ) );
 			}
 		}
 
-		$result['can_copy'] = null !== $submission && $valid_answers;
+		$result['can_copy'] = null !== $submission
+			&& ( ( $valid_answers && $questions_asked ) || ( $has_final_grade && $has_no_answers ) );
 		$result['errors']   = $errors;
 		return $result;
 	}

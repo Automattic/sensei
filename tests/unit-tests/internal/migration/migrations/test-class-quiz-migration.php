@@ -288,8 +288,8 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			'invalid grade' => array(
 				'invalid',
 				null,
-				array( 'Comments-based quiz submission has an invalid final grade.' ),
-				array( 'Comments-based quiz submission has an invalid final grade.' ),
+				array( 'Unsupported historical data: the overall quiz grade is invalid. This cannot be repaired automatically.' ),
+				array( 'Unsupported historical data: the overall quiz grade is invalid. This cannot be repaired automatically.' ),
 			),
 		);
 	}
@@ -322,7 +322,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Completion, legacy resets and quiz views can leave progress without saved answers.
+	 * Overall grades survive missing answers while progress-only records stay absent.
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
 	 * @dataProvider progress_without_answers
@@ -330,8 +330,9 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	 * @param int|string $grade Stored overall grade.
 	 * @param string[]   $expected_errors Expected incomplete-history messages.
 	 * @param array      $extra_metadata Other retained quiz metadata.
+	 * @param float|null $expected_grade Expected copied overall grade, or null without a submission.
 	 */
-	public function testRun_ProgressWithoutAnswersWasStored_PreservesSubmissionAbsence( string $status, $grade, array $expected_errors, array $extra_metadata ): void {
+	public function testRun_ProgressWithoutAnswersWasStored_PreservesSupportedHistory( string $status, $grade, array $expected_errors, array $extra_metadata, ?float $expected_grade = null ): void {
 		$this->set_progress_storage_mode( 'comments-only' );
 		try {
 			$student_id = $this->factory->user->create();
@@ -358,34 +359,60 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 
 		$this->migration->run( false );
 		$validation->run();
-		$messages = array_map(
+		$messages   = array_map(
 			static function ( $error ): string {
 				return $error->get_message();
 			},
 			$validation->get_errors()
 		);
-		$preview  = ( new \Sensei_Progress_Recovery_Preview() )->inspect( 'quiz', $course['quiz_ids'][0], $student_id, 'comments' );
+		$preview    = ( new \Sensei_Progress_Recovery_Preview() )->inspect( 'quiz', $course['quiz_ids'][0], $student_id, 'comments' );
+		$submission = $repository->get( $course['quiz_ids'][0], $student_id );
 
 		self::assertSame( $expected_errors, $messages, 'Progress-only records should avoid errors while substantive quiz history remains unresolved.' );
 		self::assertCount( count( $expected_errors ), $this->migration->get_errors(), 'Migration and validation must agree about progress without saved answers.' );
-		self::assertNull( $repository->get( $course['quiz_ids'][0], $student_id ), 'Progress without saved answers must not create a quiz submission.' );
-		self::assertSame( $expected_errors ? 'unresolved' : 'absent', $preview['records'][0]['submission']['status'], 'Preview must distinguish cleared or absent submissions from incomplete history.' );
+		self::assertSame( null !== $expected_grade, null !== $submission, 'An overall grade can establish a submission without saved answers.' );
+		self::assertSame( $expected_grade, $submission ? $submission->get_final_grade() : null, 'The overall grade must survive independently of answers.' );
+		self::assertSame( $expected_errors ? 'unresolved' : ( null !== $expected_grade ? 'equivalent' : 'absent' ), $preview['records'][0]['submission']['status'], 'Preview must distinguish graded, cleared and incomplete history.' );
+		self::assertSame( array(), $preview['records'][0]['submission']['changes'], 'Migrated overall grades and incomplete history must not propose further changes.' );
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Check that no answers or grades were fabricated for the overall grade.
+		self::assertSame( '0', $wpdb->get_var( "SELECT (SELECT COUNT(*) FROM {$wpdb->prefix}sensei_lms_quiz_answers) + (SELECT COUNT(*) FROM {$wpdb->prefix}sensei_lms_quiz_grades)" ), 'An overall grade must not create answer or question-grade rows.' );
 		wp_cache_delete( $comment_id, 'comment_meta' );
 		self::assertSame( $before, get_comment_meta( $comment_id ), 'The original progress metadata must remain unchanged.' );
 	}
 
 	/**
-	 * Progress-only metadata differs from incomplete saved quiz history.
+	 * Graded history and progress-only metadata can both lack saved answers.
 	 *
 	 * @return array
 	 */
 	public static function progress_without_answers(): array {
-		$missing_answers = array( 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' );
+		$missing_answers = array( 'Unsupported historical data: saved answers are missing or malformed. This cannot be repaired automatically.' );
 		return array(
 			'course marked complete'        => array( 'passed', 0, array(), array() ),
-			'nonzero grade without history' => array( 'passed', 50, $missing_answers, array() ),
-			'unfinished quiz with a grade'  => array( 'in-progress', 0, $missing_answers, array() ),
-			'empty question marker exists'  => array( 'passed', 0, $missing_answers, array( 'questions_asked' => '' ) ),
+			'nonzero grade without history' => array( 'passed', 50, array(), array(), 50.0 ),
+			'unfinished quiz with a grade'  => array( 'in-progress', 0, array(), array(), 0.0 ),
+			'empty question marker exists'  => array( 'passed', 0, array(), array( 'questions_asked' => '' ), 0.0 ),
+			'empty answer map with a grade' => array(
+				'graded',
+				100,
+				array(),
+				array(
+					'questions_asked' => '123',
+					'quiz_answers'    => array(),
+				),
+				100.0,
+			),
+			'NAN grade without answers'     => array( 'graded', 'NAN', array(), array(), 0.0 ),
+			'invalid grade without answers' => array(
+				'graded',
+				'invalid',
+				array(
+					'Unsupported historical data: saved answers are missing or malformed. This cannot be repaired automatically.',
+					'Unsupported historical data: the overall quiz grade is invalid. This cannot be repaired automatically.',
+				),
+				array(),
+			),
 			'legacy quiz reset'             => array( 'in-progress', '', array(), array( 'questions_asked' => '' ) ),
 			'legacy reset with grades'      => array(
 				'in-progress',
@@ -399,13 +426,13 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			'quiz viewed without answers'   => array( 'in-progress', '', array(), array( 'questions_asked' => '123' ) ),
 			'completed quiz later viewed'   => array( 'passed', 0, array(), array( 'questions_asked' => '123' ) ),
 			'graded quiz without answers'   => array( 'graded', '', $missing_answers, array( 'questions_asked' => '123' ) ),
-			'question list with a score'    => array( 'passed', 50, $missing_answers, array( 'questions_asked' => '123' ) ),
+			'question list with a score'    => array( 'passed', 50, array(), array( 'questions_asked' => '123' ), 50.0 ),
 			'question list with points'     => array(
 				'in-progress',
 				'',
 				array(
-					'Comments-based quiz submission is incomplete: saved answers are missing or malformed.',
-					'Comments-based question grade cannot be copied without its saved answer.',
+					'Unsupported historical data: saved answers are missing or malformed. This cannot be repaired automatically.',
+					'Unsupported historical data: a question grade has no saved answer. This cannot be repaired automatically.',
 				),
 				array(
 					'questions_asked' => '123',
@@ -416,19 +443,21 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Incomplete source history stays available for investigation without new table rows.
+	 * Missing answers do not prevent copying an overall grade; unsupported children stay unresolved.
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
 	 * @dataProvider incomplete_submissions
 	 * @param mixed  $answers Stored answer metadata, or null when absent.
 	 * @param bool   $questions_asked Whether the discoverability key survives.
 	 * @param string $message Expected unresolved source diagnostic.
+	 * @param float|null $expected_grade Expected copied grade, or null for malformed history.
 	 * @param bool   $later_answers Whether a later duplicate retains saved answers.
 	 */
-	public function testRun_IncompleteSubmissionWasStored_LeavesItUncopied(
+	public function testRun_IncompleteSubmissionWasStored_PreservesSupportedGrade(
 		$answers,
 		bool $questions_asked,
 		string $message,
+		?float $expected_grade,
 		bool $later_answers = false
 	): void {
 		[ $student_id, $lesson_id, $quiz_id, $question_id ] = $this->create_quiz_data();
@@ -480,7 +509,9 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Check all destination children, including any unreachable rows.
 		$child_count = $wpdb->get_var( "SELECT (SELECT COUNT(*) FROM {$wpdb->prefix}sensei_lms_quiz_answers) + (SELECT COUNT(*) FROM {$wpdb->prefix}sensei_lms_quiz_grades)" );
 
-		self::assertNull( ( new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] ) )->get( $quiz_id, $student_id ), 'Incomplete history must not create a normal submission.' );
+		$submission = ( new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] ) )->get( $quiz_id, $student_id );
+		self::assertSame( null !== $expected_grade, null !== $submission, 'Only supported submission data should be copied.' );
+		self::assertSame( $expected_grade, $submission ? $submission->get_final_grade() : null, 'The overall grade must survive missing answers.' );
 		self::assertSame( '0', $child_count, 'Incomplete history must not create answers or orphaned grades.' );
 		self::assertSame( $before, array_map( 'get_comment_meta', $comment_ids ), 'All historical fields must remain in comments.' );
 		self::assertContains( $message, $messages, 'Validation must identify why the source remains unresolved.' );
@@ -496,14 +527,16 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	 */
 	public static function incomplete_submissions(): array {
 		return array(
-			'missing answers'                 => array( null, true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
-			'empty answers'                   => array( array(), true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
-			'malformed answers'               => array( 'broken answer map', true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
-			'missing questions asked'         => array( array( 123 => 'saved answer' ), false, 'Comments-based quiz submission is incomplete: questions asked are missing.' ),
+			'missing answers'                 => array( null, true, 'Unsupported historical data: a question grade has no saved answer. This cannot be repaired automatically.', 100.0 ),
+			'empty answers'                   => array( array(), true, 'Unsupported historical data: a question grade has no saved answer. This cannot be repaired automatically.', 100.0 ),
+			'missing answers and questions'   => array( null, false, 'Unsupported historical data: a question grade has no saved answer. This cannot be repaired automatically.', 100.0 ),
+			'malformed answers'               => array( 'broken answer map', true, 'Unsupported historical data: saved answers are missing or malformed. This cannot be repaired automatically.', null ),
+			'missing questions asked'         => array( array( 123 => 'saved answer' ), false, 'Unsupported historical data: saved question IDs are missing. This cannot be repaired automatically.', null ),
 			'answers only on later duplicate' => array(
 				null,
 				true,
-				'Comments-based quiz submission is incomplete: saved answers are missing or malformed.',
+				'Unsupported historical data: a question grade has no saved answer. This cannot be repaired automatically.',
+				100.0,
 				true,
 			),
 		);
@@ -615,8 +648,8 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 				'2',
 				'retained feedback',
 				array(
-					'Comments-based question grade cannot be copied without its saved answer.',
-					'Comments-based question feedback cannot be copied without numeric points and a saved answer.',
+					'Unsupported historical data: a question grade has no saved answer. This cannot be repaired automatically.',
+					'Unsupported historical data: question feedback requires numeric points and a saved answer. This cannot be repaired automatically.',
 					'Number of gradings does not match.',
 					'Grades missing in tables based grades.',
 				),
@@ -627,7 +660,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 				'2',
 				'',
 				array(
-					'Comments-based question grade cannot be copied without its saved answer.',
+					'Unsupported historical data: a question grade has no saved answer. This cannot be repaired automatically.',
 					'Number of gradings does not match.',
 					'Grades missing in tables based grades.',
 				),
@@ -651,7 +684,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 				true,
 				null,
 				'retained feedback',
-				array( 'Comments-based question feedback cannot be copied without numeric points and a saved answer.' ),
+				array( 'Unsupported historical data: question feedback requires numeric points and a saved answer. This cannot be repaired automatically.' ),
 				array( $grade_without_feedback ),
 			),
 			'invalid question points'       => array(
@@ -659,8 +692,8 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 				'NAN',
 				'retained feedback',
 				array(
-					'Comments-based question grade has invalid points.',
-					'Comments-based question feedback cannot be copied without numeric points and a saved answer.',
+					'Unsupported historical data: question points are invalid. This cannot be repaired automatically.',
+					'Unsupported historical data: question feedback requires numeric points and a saved answer. This cannot be repaired automatically.',
 				),
 				array( $grade_without_feedback ),
 			),
@@ -668,7 +701,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 				true,
 				'7',
 				array( 'historical' => 'nested feedback' ),
-				array( 'Comments-based question feedback is malformed.' ),
+				array( 'Unsupported historical data: question feedback is malformed. This cannot be repaired automatically.' ),
 				array( $grade_without_feedback, $grade_without_feedback ),
 			),
 			'numeric scalar feedback'       => array(

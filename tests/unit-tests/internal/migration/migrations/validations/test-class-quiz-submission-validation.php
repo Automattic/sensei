@@ -321,7 +321,7 @@ class Quiz_Submission_Validation_Test extends \WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame(
 			array(
-				'Comments-based quiz submission is incomplete: saved answers are missing or malformed.',
+				'Unsupported historical data: saved answers are missing or malformed. This cannot be repaired automatically.',
 				'Number of answers does not match.',
 				'Answers missing in comments based answers.',
 				'Answers missing in comments based answers.',
