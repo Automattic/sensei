@@ -96,9 +96,10 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		self::assertSame(
 			array(
 				array(
-					'course_id'      => (string) $course_id,
-					'module_term_id' => '0',
-					'lesson_order'   => '3',
+					'course_id'              => (string) $course_id,
+					'module_term_id'         => '0',
+					'lesson_order'           => '3',
+					'prerequisite_lesson_id' => '0',
 				),
 			),
 			$this->get_rows( $lesson_id )
@@ -125,9 +126,10 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		self::assertSame(
 			array(
 				array(
-					'course_id'      => (string) $course_id,
-					'module_term_id' => (string) $module_id,
-					'lesson_order'   => '2',
+					'course_id'              => (string) $course_id,
+					'module_term_id'         => (string) $module_id,
+					'lesson_order'           => '2',
+					'prerequisite_lesson_id' => '0',
 				),
 			),
 			$this->get_rows( $lesson_id )
@@ -159,12 +161,95 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		self::assertSame(
 			array(
 				array(
-					'course_id'      => (string) $course_id,
-					'module_term_id' => '0',
-					'lesson_order'   => '3',
+					'course_id'              => (string) $course_id,
+					'module_term_id'         => '0',
+					'lesson_order'           => '3',
+					'prerequisite_lesson_id' => '0',
 				),
 			),
 			$this->get_rows( $lesson_id )
+		);
+	}
+
+	/**
+	 * The prerequisite of a lesson is stored in its row.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_meta_change
+	 */
+	public function testHandleMetaChange_PrerequisiteMetaSet_StoresItAsThePrerequisite(): void {
+		/* Arrange. */
+		$course_id       = $this->factory->course->create();
+		$prerequisite_id = $this->factory->lesson->create();
+		$lesson_id       = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+
+		/* Act. */
+		update_post_meta( $lesson_id, '_lesson_prerequisite', $prerequisite_id );
+
+		/* Assert. */
+		self::assertSame( array( (string) $prerequisite_id ), array_column( $this->get_rows( $lesson_id ), 'prerequisite_lesson_id' ) );
+	}
+
+	/**
+	 * A deleted lesson has no row: deleting the post deletes its course meta, which the meta hook sees.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_meta_change
+	 */
+	public function testHandleMetaChange_LessonDeleted_DeletesItsRow(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+
+		/* Act. */
+		wp_delete_post( $lesson_id, true );
+
+		/* Assert. */
+		self::assertSame( array(), $this->get_rows( $lesson_id ) );
+	}
+
+	/**
+	 * Under WPML, rows hold original lessons only: a translation has no row, an original keeps its row.
+	 * WPML is simulated through its filter, which answers with an object.
+	 *
+	 * @dataProvider providerWpmlLanguageDetails
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_meta_change
+	 *
+	 * @param string|null $source_language_code The language the lesson was translated from, null for an original.
+	 * @param int         $expected_rows        Rows the lesson gets.
+	 */
+	public function testHandleMetaChange_LessonUnderWpml_StoresRowsForOriginalsOnly( ?string $source_language_code, int $expected_rows ): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		add_filter(
+			'wpml_element_language_details',
+			function ( $details, $args ) use ( $lesson_id, $source_language_code ) {
+				return (int) $args['element_id'] === $lesson_id
+					? (object) array(
+						'language_code'        => 'es',
+						'source_language_code' => $source_language_code,
+					)
+					: $details;
+			},
+			10,
+			2
+		);
+
+		/* Act. */
+		update_post_meta( $lesson_id, '_lesson_course', $course_id );
+
+		/* Assert. */
+		self::assertCount( $expected_rows, $this->get_rows( $lesson_id ) );
+	}
+
+	/**
+	 * WPML language details of a translation and of an original, and the rows each one gets.
+	 *
+	 * @return array
+	 */
+	public function providerWpmlLanguageDetails(): array {
+		return array(
+			'translation' => array( 'en', 0 ),
+			'original'    => array( null, 1 ),
 		);
 	}
 
@@ -195,9 +280,10 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		self::assertSame(
 			array(
 				array(
-					'course_id'      => (string) $course_id,
-					'module_term_id' => (string) $module_id,
-					'lesson_order'   => '1',
+					'course_id'              => (string) $course_id,
+					'module_term_id'         => (string) $module_id,
+					'lesson_order'           => '1',
+					'prerequisite_lesson_id' => '0',
 				),
 			),
 			$this->get_rows( $lesson_id )
@@ -230,9 +316,10 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		self::assertSame(
 			array(
 				array(
-					'course_id'      => (string) $course_id,
-					'module_term_id' => '0',
-					'lesson_order'   => '3',
+					'course_id'              => (string) $course_id,
+					'module_term_id'         => '0',
+					'lesson_order'           => '3',
+					'prerequisite_lesson_id' => '0',
 				),
 			),
 			$this->get_rows( $lesson_id )
@@ -267,9 +354,10 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		self::assertSame(
 			array(
 				array(
-					'course_id'      => (string) $course_id,
-					'module_term_id' => (string) $module_id,
-					'lesson_order'   => '1',
+					'course_id'              => (string) $course_id,
+					'module_term_id'         => (string) $module_id,
+					'lesson_order'           => '1',
+					'prerequisite_lesson_id' => '0',
 				),
 			),
 			$this->get_rows( $lesson_id )
@@ -303,9 +391,10 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		self::assertSame(
 			array(
 				array(
-					'course_id'      => (string) $course_id,
-					'module_term_id' => '0',
-					'lesson_order'   => null,
+					'course_id'              => (string) $course_id,
+					'module_term_id'         => '0',
+					'lesson_order'           => null,
+					'prerequisite_lesson_id' => '0',
 				),
 			),
 			$this->get_rows( $lesson_id )
@@ -340,9 +429,10 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		self::assertSame(
 			array(
 				array(
-					'course_id'      => (string) $course_id,
-					'module_term_id' => '0',
-					'lesson_order'   => '3',
+					'course_id'              => (string) $course_id,
+					'module_term_id'         => '0',
+					'lesson_order'           => '3',
+					'prerequisite_lesson_id' => '0',
 				),
 			),
 			$this->get_rows( $lesson_id )
@@ -350,7 +440,7 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Read the rows of a lesson.
+	 * Read the rows of a lesson, without the id and the dates.
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 * @return array[]
@@ -361,7 +451,7 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_results(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->prepare( "SELECT course_id, module_term_id, lesson_order FROM {$wpdb->prefix}sensei_lms_course_lessons WHERE lesson_id = %d ORDER BY id", $lesson_id ),
+			$wpdb->prepare( "SELECT course_id, module_term_id, lesson_order, prerequisite_lesson_id FROM {$wpdb->prefix}sensei_lms_course_lessons WHERE lesson_id = %d ORDER BY id", $lesson_id ),
 			ARRAY_A
 		);
 	}
