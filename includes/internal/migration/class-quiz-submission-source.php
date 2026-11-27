@@ -60,8 +60,17 @@ class Quiz_Submission_Source {
 			$errors[] = new Validation_Error( $message, array_merge( $identity, $data ) );
 		};
 
-		$quiz_keys = array( 'questions_asked', 'quiz_answers', 'grade', 'quiz_grades', 'quiz_answers_feedback' );
-		if ( ! $comments || ! array_intersect( $keys, $quiz_keys ) ) {
+		$question_keys        = array( 'questions_asked', 'quiz_answers', 'quiz_grades', 'quiz_answers_feedback' );
+		$has_question_history = (bool) array_intersect( $keys, $question_keys );
+		if ( ! $comments || ( ! $has_question_history && ! in_array( 'grade', $keys, true ) ) ) {
+			return $result;
+		}
+
+		$final_grade = Validation_Records::get_metadata( 'comment', $comment_id, 'grade', $records );
+		// Marking a course complete can leave a placeholder zero without a quiz attempt.
+		if ( ! $has_question_history && 'passed' === $comments[0]->comment_approved
+			&& is_numeric( $final_grade ) && 0.0 === (float) $final_grade
+		) {
 			return $result;
 		}
 
@@ -69,7 +78,6 @@ class Quiz_Submission_Source {
 		$answers               = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_answers', $records );
 		$grades                = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_grades', $records );
 		$feedback              = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_answers_feedback', $records );
-		$final_grade           = Validation_Records::get_metadata( 'comment', $comment_id, 'grade', $records );
 		$valid_answers         = is_array( $answers ) && $answers;
 		foreach ( is_array( $answers ) ? $answers : array() as $answer ) {
 			if ( ! is_scalar( $answer ) ) {

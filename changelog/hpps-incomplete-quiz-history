@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-HPPS: Fix quiz migration grade handling and duplicate source selection, and consistently report incomplete submissions and unsupported question data.
+HPPS: Fix quiz migration grade handling and duplicate source selection, and report incomplete quiz history without flagging zero-grade records created by course completion.
