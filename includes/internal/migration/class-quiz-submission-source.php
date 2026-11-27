@@ -31,35 +31,34 @@ class Quiz_Submission_Source {
 		$records    = $records ?? array();
 		$submission = Validation_Records::get_comments_submission( $quiz_id, $student_id, $records );
 		$comments   = $records['comments'] ?? array();
-		$metadata   = $records['comment_meta'] ?? array();
-		$keys       = array_column( $metadata, 'meta_key' );
-		$errors     = array();
-		$result     = array(
+		$comment_id = (int) ( $comments[0]->comment_ID ?? 0 );
+		// Other comments remain inspectable but cannot contribute quiz history.
+		$metadata  = array_filter(
+			$records['comment_meta'] ?? array(),
+			static function ( object $row ) use ( $comment_id ): bool {
+				return (int) $row->comment_id === $comment_id;
+			}
+		);
+		$keys      = array_column( $metadata, 'meta_key' );
+		$errors    = array();
+		$result    = array(
 			'submission'  => $submission,
 			'has_history' => false,
-			'ambiguous'   => false,
 			'can_copy'    => false,
 			'answers'     => array(),
 			'grades'      => array(),
 			'feedback'    => array(),
 			'errors'      => array(),
 		);
-		$identity   = array(
+		$identity  = array(
 			'quiz_id'     => $quiz_id,
 			'user_id'     => $student_id,
 			'comment_ids' => array_map( 'intval', array_column( $comments, 'comment_ID' ) ),
 			'source'      => 'comments',
 		);
-		$add_error  = static function ( string $message, array $data = array() ) use ( &$errors, $identity ): void {
+		$add_error = static function ( string $message, array $data = array() ) use ( &$errors, $identity ): void {
 			$errors[] = new Validation_Error( $message, array_merge( $identity, $data ) );
 		};
-
-		if ( count( $comments ) > 1 || count( $keys ) !== count( array_unique( $keys ) ) ) {
-			$result['ambiguous'] = true;
-			$add_error( 'Comments-based quiz submission is ambiguous: duplicate lesson comments or metadata exist.' );
-			$result['errors'] = $errors;
-			return $result;
-		}
 
 		$quiz_keys = array( 'questions_asked', 'quiz_answers', 'grade', 'quiz_grades', 'quiz_answers_feedback' );
 		if ( ! $comments || ! array_intersect( $keys, $quiz_keys ) ) {
@@ -67,7 +66,6 @@ class Quiz_Submission_Source {
 		}
 
 		$result['has_history'] = true;
-		$comment_id            = (int) $comments[0]->comment_ID;
 		$answers               = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_answers', $records );
 		$grades                = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_grades', $records );
 		$feedback              = Validation_Records::get_metadata( 'comment', $comment_id, 'quiz_answers_feedback', $records );

@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Flag incomplete historical quiz submissions and unsupported question data without copying answerless records or combining duplicates.
+Use consistent source comments for quiz migration and report incomplete historical submissions and unsupported question data.

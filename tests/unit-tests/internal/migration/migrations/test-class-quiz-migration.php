@@ -119,19 +119,52 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Migration copies the source submission, answers, grades and feedback.
+	 * Migration copies one coherent source submission, answers, grades and feedback.
+	 *
+	 * @dataProvider quiz_source_cases
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
 	 */
-	public function testRun_HasQuizSubmission_CreatesQuizDataInCustomTables(): void {
+	public function testRun_HasQuizSubmission_CreatesQuizDataInCustomTables( bool $duplicate_metadata, bool $duplicate_comment, int $batch_size ): void {
 		/* Arrange. */
 		[ $user_id, $lesson_id, $quiz_id, $question_id, $answers, $grades, $feedback ] = $this->create_quiz_data();
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$comment_id = (int) $wpdb->get_var( $wpdb->prepare( "SELECT comment_ID FROM {$wpdb->comments} WHERE comment_post_ID = %d AND user_id = %d ORDER BY comment_ID LIMIT 1", $lesson_id, $user_id ) );
+		// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions -- Match the legacy quiz metadata encoding.
+		$later_answer   = base64_encode( serialize( array( 'later answer' ) ) );
+		$later_feedback = base64_encode( serialize( 'later feedback' ) );
+		// phpcs:enable
+		if ( $duplicate_metadata ) {
+			add_comment_meta( $comment_id, 'grade', 98.76 );
+			add_comment_meta( $comment_id, 'quiz_answers', array( $question_id => $later_answer ) );
+			add_comment_meta( $comment_id, 'quiz_grades', array( $question_id => 999 ) );
+			add_comment_meta( $comment_id, 'quiz_answers_feedback', array( $question_id => $later_feedback ) );
+		}
+		if ( $duplicate_comment ) {
+			$extra_question_id = $this->factory->question->create( array( 'quiz_id' => $quiz_id ) );
+			$later_comment_id  = wp_insert_comment(
+				array(
+					'comment_post_ID'  => $lesson_id,
+					'user_id'          => $user_id,
+					'comment_type'     => 'sensei_lesson_status',
+					'comment_approved' => 'graded',
+				)
+			);
+			add_comment_meta( $later_comment_id, 'grade', 98.76 );
+			add_comment_meta( $later_comment_id, 'quiz_answers', get_comment_meta( $comment_id, 'quiz_answers', true ) + array( $extra_question_id => $later_answer ) );
+			add_comment_meta( $later_comment_id, 'quiz_grades', get_comment_meta( $comment_id, 'quiz_grades', true ) + array( $extra_question_id => 999 ) );
+			add_comment_meta( $later_comment_id, 'quiz_answers_feedback', get_comment_meta( $comment_id, 'quiz_answers_feedback', true ) + array( $extra_question_id => $later_feedback ) );
+		}
+		$this->migration = new Quiz_Migration( $batch_size );
 		$this->set_progress_storage_mode( 'tables' );
 		$repository = new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] );
 		$repository->get( $quiz_id, $user_id );
 
 		/* Act. */
-		$this->migration->run( $dry_run = false ); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
+		do {
+			$processed = $this->migration->run( false );
+		} while ( $processed );
 
 		/* Assert. */
 		$expected = array(
@@ -155,6 +188,20 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			),
 		);
 		$this->assertSame( $expected, $this->get_quiz_data( $quiz_id, $user_id ) );
+	}
+
+	/**
+	 * Source duplication must not change the copied quiz bundle.
+	 *
+	 * @return array
+	 */
+	public static function quiz_source_cases(): array {
+		return array(
+			'one source comment'                  => array( false, false, 50 ),
+			'repeated metadata on source comment' => array( true, false, 50 ),
+			'duplicate comments in one batch'     => array( false, true, 50 ),
+			'duplicate comments across batches'   => array( false, true, 1 ),
+		);
 	}
 
 	/**
@@ -251,10 +298,18 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	 * @param mixed  $answers Stored answer metadata, or null when absent.
 	 * @param bool   $questions_asked Whether the discoverability key survives.
 	 * @param string $message Expected unresolved source diagnostic.
+	 * @param bool   $later_answers Whether a later duplicate retains saved answers.
 	 */
-	public function testRun_IncompleteSubmissionWasStored_LeavesItUncopied( $answers, bool $questions_asked, string $message ): void {
-		[ $student_id, , $quiz_id, $question_id ] = $this->create_quiz_data();
-		$comment_id                               = ( new Comments_Based_Submission_Repository() )->get( $quiz_id, $student_id )->get_id();
+	public function testRun_IncompleteSubmissionWasStored_LeavesItUncopied(
+		$answers,
+		bool $questions_asked,
+		string $message,
+		bool $later_answers = false
+	): void {
+		[ $student_id, $lesson_id, $quiz_id, $question_id ] = $this->create_quiz_data();
+		$comment_id    = ( new Comments_Based_Submission_Repository() )->get( $quiz_id, $student_id )->get_id();
+		$comment_ids   = array( $comment_id );
+		$saved_answers = get_comment_meta( $comment_id, 'quiz_answers', true );
 		update_comment_meta( $comment_id, 'grade', '100' );
 		update_comment_meta( $comment_id, 'quiz_grades', array( $question_id => 2 ) );
 		update_comment_meta( $comment_id, 'quiz_answers_feedback', array( $question_id => 'retained feedback' ) );
@@ -266,7 +321,21 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		if ( ! $questions_asked ) {
 			delete_comment_meta( $comment_id, 'questions_asked' );
 		}
-		$before = get_comment_meta( $comment_id );
+		if ( $later_answers ) {
+			$later_id = wp_insert_comment(
+				array(
+					'comment_post_ID'  => $lesson_id,
+					'user_id'          => $student_id,
+					'comment_type'     => 'sensei_lesson_status',
+					'comment_approved' => 'passed',
+				)
+			);
+			update_comment_meta( $later_id, 'questions_asked', (string) $question_id );
+			update_comment_meta( $later_id, 'quiz_answers', $saved_answers );
+			update_comment_meta( $later_id, 'grade', '100' );
+			$comment_ids[] = $later_id;
+		}
+		$before = array_map( 'get_comment_meta', $comment_ids );
 		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, true );
 		$validation = new Quiz_Submission_Validation();
 
@@ -279,14 +348,16 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			$validation->get_errors()
 		);
 		$preview  = ( new \Sensei_Progress_Recovery_Preview() )->inspect( 'quiz', $quiz_id, $student_id, 'comments' );
-		wp_cache_delete( $comment_id, 'comment_meta' );
+		foreach ( $comment_ids as $source_id ) {
+			wp_cache_delete( $source_id, 'comment_meta' );
+		}
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Check all destination children, including any unreachable rows.
 		$child_count = $wpdb->get_var( "SELECT (SELECT COUNT(*) FROM {$wpdb->prefix}sensei_lms_quiz_answers) + (SELECT COUNT(*) FROM {$wpdb->prefix}sensei_lms_quiz_grades)" );
 
 		self::assertNull( ( new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] ) )->get( $quiz_id, $student_id ), 'Incomplete history must not create a normal submission.' );
 		self::assertSame( '0', $child_count, 'Incomplete history must not create answers or orphaned grades.' );
-		self::assertSame( $before, get_comment_meta( $comment_id ), 'All historical fields must remain in comments.' );
+		self::assertSame( $before, array_map( 'get_comment_meta', $comment_ids ), 'All historical fields must remain in comments.' );
 		self::assertContains( $message, $messages, 'Validation must identify why the source remains unresolved.' );
 		self::assertNotEmpty( $this->migration->get_errors(), 'Migration must report the incomplete copy.' );
 		self::assertSame( 'unresolved', $preview['records'][0]['submission']['status'], 'The preview must not describe incomplete history as equivalent or absent.' );
@@ -300,10 +371,16 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	 */
 	public static function incomplete_submissions(): array {
 		return array(
-			'missing answers'         => array( null, true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
-			'empty answers'           => array( array(), true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
-			'malformed answers'       => array( 'broken answer map', true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
-			'missing questions asked' => array( array( 123 => 'saved answer' ), false, 'Comments-based quiz submission is incomplete: questions asked are missing.' ),
+			'missing answers'                 => array( null, true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
+			'empty answers'                   => array( array(), true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
+			'malformed answers'               => array( 'broken answer map', true, 'Comments-based quiz submission is incomplete: saved answers are missing or malformed.' ),
+			'missing questions asked'         => array( array( 123 => 'saved answer' ), false, 'Comments-based quiz submission is incomplete: questions asked are missing.' ),
+			'answers only on later duplicate' => array(
+				null,
+				true,
+				'Comments-based quiz submission is incomplete: saved answers are missing or malformed.',
+				true,
+			),
 		);
 	}
 
@@ -443,13 +520,16 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Duplicate comments are ambiguous even when one has answers and another does not.
+	 * Validation and preview use the selected comment and metadata despite later duplicates.
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
 	 */
-	public function testRun_DuplicateLessonCommentsWereStored_ReportsAmbiguityWithoutCopying(): void {
+	public function testRun_DuplicateSourceRowsWereStored_ValidatesLowestIdSubmission(): void {
 		[ $student_id, $lesson_id, $quiz_id ] = $this->create_quiz_data();
-		$duplicate_id                         = wp_insert_comment(
+		$comment_id                           = ( new Comments_Based_Submission_Repository() )->get( $quiz_id, $student_id )->get_id();
+		add_comment_meta( $comment_id, 'grade', '98.76' );
+		add_comment_meta( $comment_id, 'quiz_answers', 'malformed later metadata' );
+		$duplicate_id = wp_insert_comment(
 			array(
 				'comment_post_ID'  => $lesson_id,
 				'user_id'          => $student_id,
@@ -457,22 +537,29 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 				'comment_approved' => 'passed',
 			)
 		);
-		update_comment_meta( $duplicate_id, 'grade', '100' );
+		update_comment_meta( $duplicate_id, 'grade', 'NAN' );
+		update_comment_meta( $duplicate_id, 'quiz_answers', 'malformed later comment' );
+		$comment_ids = array( $comment_id, $duplicate_id );
+		$before      = array_map( 'get_comment_meta', $comment_ids );
 		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, true );
 		$validation = new Quiz_Submission_Validation();
 
 		$this->migration->run( false );
 		$validation->run();
-		$messages = array_map(
-			static function ( $error ): string {
-				return $error->get_message();
-			},
-			$validation->get_errors()
-		);
+		$errors     = $validation->get_errors();
+		$inspection = $validation->inspect( $quiz_id, $student_id );
+		$preview    = ( new \Sensei_Progress_Recovery_Preview() )->inspect( 'quiz', $quiz_id, $student_id, 'comments' );
+		foreach ( $comment_ids as $source_id ) {
+			wp_cache_delete( $source_id, 'comment_meta' );
+		}
 
-		self::assertSame( array( 'Comments-based quiz submission is ambiguous: duplicate lesson comments or metadata exist.' ), $messages, 'Duplicates must be reported once as ambiguous, never missing.' );
-		self::assertNull( ( new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] ) )->get( $quiz_id, $student_id ), 'Migration must not select or combine duplicate source copies.' );
-		self::assertSame( '100', get_comment_meta( $duplicate_id, 'grade', true ), 'The duplicate source grade must remain untouched.' );
+		self::assertSame( array(), $this->migration->get_errors(), 'Later source rows must not invalidate the selected quiz history.' );
+		self::assertSame( array(), $errors, 'Full validation must compare the lowest-ID source without duplicate errors.' );
+		self::assertSame( $comment_id, $inspection['comments']['id'], 'Targeted inspection must use the selected progress comment.' );
+		self::assertSame( 12.34, $inspection['tables']['final_grade'], 'Later metadata must not replace the selected final grade.' );
+		self::assertFalse( $inspection['unresolved'], 'Later source data must not make the selected submission unresolved.' );
+		self::assertSame( 'equivalent', $preview['records'][0]['submission']['status'], 'Preview must compare the selected submission instead of treating source duplicates as ambiguous.' );
+		self::assertSame( $before, array_map( 'get_comment_meta', $comment_ids ), 'Every source comment and metadata value must remain unchanged.' );
 	}
 
 	/**

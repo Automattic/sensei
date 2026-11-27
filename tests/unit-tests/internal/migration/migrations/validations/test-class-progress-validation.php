@@ -490,6 +490,288 @@ class Progress_Validation_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Saved pre-trash progress must be compared, including completion dates.
+	 *
+	 * @dataProvider trashed_progress_cases
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_ProgressWasTrashed_ValidatesSavedStatus( string $type, string $status ): void {
+		$course     = $this->factory->get_course_with_lessons();
+		$student_id = $this->factory->user->create();
+		$post_id    = 'course' === $type ? $course['course_id'] : $course['lesson_ids'][0];
+		wp_insert_comment(
+			array(
+				'comment_post_ID'  => $post_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status',
+				'comment_approved' => $status,
+				'comment_date_gmt' => '2024-05-01 15:45:00',
+			)
+		);
+		wp_trash_post( $post_id );
+		$this->migrate_progress();
+		$validation = new Progress_Validation();
+
+		$validation->run();
+
+		self::assertSame( array(), $validation->get_errors() );
+	}
+
+	/**
+	 * Saved statuses with distinct course, lesson, and quiz normalization.
+	 *
+	 * @return array
+	 */
+	public static function trashed_progress_cases(): array {
+		return array(
+			'completed course'     => array( 'course', 'complete' ),
+			'course in progress'   => array( 'course', 'in-progress' ),
+			'completed lesson'     => array( 'lesson', 'complete' ),
+			'passed lesson quiz'   => array( 'lesson', 'passed' ),
+			'ungraded lesson quiz' => array( 'lesson', 'ungraded' ),
+		);
+	}
+
+	/**
+	 * Missing history on a shared lesson/quiz comment is one problem per validation run.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_TrashedLessonHistoryWasMissing_ReportsSharedCommentOncePerRun(): void {
+		$course     = $this->factory->get_course_with_lessons();
+		$lesson_id  = $course['lesson_ids'][0];
+		$student_id = $this->factory->user->create();
+		$comment_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $lesson_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'post-trashed',
+			)
+		);
+		$this->mask_migration_as_complete();
+		$validation = new Progress_Validation();
+		$reports    = array();
+
+		for ( $run = 0; $run < 2; ++$run ) {
+			$validation->run();
+			$reports[] = array_map(
+				static function ( $error ): array {
+					return $error->get_data();
+				},
+				$validation->get_errors()
+			);
+		}
+
+		$expected = array(
+			array(
+				'lesson_id'  => $lesson_id,
+				'user_id'    => $student_id,
+				'comment_id' => $comment_id,
+			),
+		);
+		self::assertSame( array( $expected, $expected ), $reports );
+	}
+
+	/**
+	 * A saved completion must still expose a previously migrated incomplete copy.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::inspect
+	 */
+	public function testInspect_CompletedTrashedCourseWasMigratedIncomplete_ReportsMismatch(): void {
+		global $wpdb;
+		$course_id  = $this->factory->course->create();
+		$student_id = $this->factory->user->create();
+		wp_insert_comment(
+			array(
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => 'complete',
+			)
+		);
+		wp_trash_post( $course_id );
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+		$repository->create( $course_id, $student_id );
+
+		$result = ( new Progress_Validation() )->inspect( 'course', $course_id, $student_id );
+
+		self::assertSame( 'complete', $result['comments']['status'], 'Validation uses the saved pre-trash status.' );
+		self::assertSame( 'Data mismatch between comments and tables based progress.', $result['errors'][0]->get_message(), 'The incomplete HPPS copy must remain an error.' );
+	}
+
+	/**
+	 * Missing trash history cannot establish an expected progress value.
+	 *
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::inspect
+	 */
+	public function testInspect_TrashedStatusHistoryWasMissing_ReportsUncertainty(): void {
+		$course_id  = $this->factory->course->create();
+		$student_id = $this->factory->user->create();
+		wp_insert_comment(
+			array(
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => 'post-trashed',
+			)
+		);
+
+		$validation = new Progress_Validation();
+
+		$result        = $validation->inspect( 'course', $course_id, $student_id );
+		$second_result = $validation->inspect( 'course', $course_id, $student_id );
+
+		self::assertSame( 'Original progress status could not be established for the trashed comment.', $result['errors'][0]->get_message(), 'Explain why the status cannot be compared.' );
+		self::assertCount( 1, $second_result['errors'], 'Each targeted inspection must report its own uncertainty.' );
+	}
+
+	/**
+	 * Duplicate progress is compared against the lowest-ID comment used by migration.
+	 *
+	 * @dataProvider duplicate_comment_cases
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::inspect
+	 */
+	public function testInspect_DuplicateProgressCommentsWereStored_ValidatesLowestIdCopy( string $type, bool $migrate, bool $change_copy, array $expected_errors ): void {
+		global $wpdb;
+		$course     = $this->factory->get_course_with_lessons();
+		$student_id = $this->factory->user->create();
+		$post_id    = 'course' === $type ? $course['course_id'] : $course['lesson_ids'][0];
+		$content_id = 'quiz' === $type ? $course['quiz_ids'][0] : $post_id;
+		$statuses   = array( 'course' === $type ? 'complete' : 'graded', 'in-progress' );
+		foreach ( $statuses as $index => $status ) {
+			$comment_id = wp_insert_comment(
+				array(
+					'comment_post_ID'  => $post_id,
+					'user_id'          => $student_id,
+					'comment_type'     => 'course' === $type ? 'sensei_course_status' : 'sensei_lesson_status',
+					'comment_approved' => $status,
+					'comment_date'     => $index ? '2025-01-01 00:00:00' : '2025-02-01 00:00:00',
+					'comment_date_gmt' => $index ? '2025-01-01 00:00:00' : '2025-02-01 00:00:00',
+				)
+			);
+			add_comment_meta( $comment_id, 'start', $index ? '2025-01-01 00:00:00' : '2025-02-01 00:00:00' );
+		}
+		if ( $migrate ) {
+			$this->migrate_progress();
+		}
+		if ( $change_copy ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->update(
+				$wpdb->prefix . 'sensei_lms_progress',
+				array(
+					'status'       => 'in-progress',
+					'completed_at' => null,
+				),
+				array(
+					'post_id' => $content_id,
+					'user_id' => $student_id,
+					'type'    => $type,
+				)
+			);
+		}
+
+		$result = ( new Progress_Validation() )->inspect( $type, $content_id, $student_id );
+
+		self::assertSame(
+			$expected_errors,
+			array_map(
+				static function ( $error ): string {
+					return $error->get_message();
+				},
+				$result['errors']
+			)
+		);
+	}
+
+	/**
+	 * Matching, missing, and different HPPS copies of duplicate progress.
+	 *
+	 * @return array
+	 */
+	public static function duplicate_comment_cases(): array {
+		$mismatch = array( 'Data mismatch between comments and tables based progress.' );
+
+		return array(
+			'course matches first comment' => array( 'course', true, false, array() ),
+			'lesson matches first comment' => array( 'lesson', true, false, array() ),
+			'quiz matches first comment'   => array( 'quiz', true, false, array() ),
+			'lesson without an HPPS copy'  => array( 'lesson', false, false, array( 'Lesson tables based progress not found.' ) ),
+			'course matches later comment' => array( 'course', true, true, $mismatch ),
+			'lesson matches later comment' => array( 'lesson', true, true, $mismatch ),
+			'quiz matches later comment'   => array( 'quiz', true, true, $mismatch ),
+		);
+	}
+
+	/**
+	 * Repeated metadata uses the first stored value, as migration does.
+	 *
+	 * @dataProvider duplicate_metadata_cases
+	 * @covers \Sensei\Internal\Migration\Validations\Progress_Validation::run
+	 */
+	public function testRun_DuplicateStartMetadataWasStored_ValidatesFirstValue( bool $has_tables_copy, bool $has_duplicate_comment ): void {
+		$course_id  = $this->factory->course->create();
+		$student_id = $this->factory->user->create();
+		$comment_id = wp_insert_comment(
+			array(
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $student_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => 'in-progress',
+			)
+		);
+		add_comment_meta( $comment_id, 'start', '2025-01-01 00:00:00' );
+		add_comment_meta( $comment_id, 'start', 'unparseable date' );
+		if ( $has_duplicate_comment ) {
+			wp_insert_comment(
+				array(
+					'comment_post_ID'  => $course_id,
+					'user_id'          => $student_id,
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'complete',
+				)
+			);
+		}
+		if ( $has_tables_copy ) {
+			$this->migrate_progress();
+		}
+		$this->mask_migration_as_complete();
+		$validation = new Progress_Validation();
+
+		$validation->run();
+
+		$errors = $validation->get_errors();
+		self::assertSame(
+			$has_tables_copy ? array() : array( 'Course tables based progress not found.' ),
+			array_map(
+				static function ( $error ): string {
+					return $error->get_message();
+				},
+				$errors
+			),
+			'Duplicates should not require review, but missing progress must still be reported.'
+		);
+		self::assertSame(
+			array( '2025-01-01 00:00:00', 'unparseable date' ),
+			get_comment_meta( $comment_id, 'start', false ),
+			'Validation must retain both original metadata values.'
+		);
+	}
+
+	/**
+	 * Repeated metadata is resolved independently of HPPS copy presence.
+	 *
+	 * @return array
+	 */
+	public static function duplicate_metadata_cases(): array {
+		return array(
+			'no tables copy'           => array( false, false ),
+			'tables copy exists'       => array( true, false ),
+			'duplicate comment exists' => array( true, true ),
+		);
+	}
+
 	private function create_enrolled_quiz_student( array $course_args = array() ): array {
 		$this->set_progress_storage_mode( self::is_hpps_tables_mode() ? 'tables' : 'comments' );
 		add_filter( 'sensei_feature_flag_tables_based_progress', '__return_true' );

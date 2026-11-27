@@ -211,7 +211,7 @@ class Quiz_Submission_Validation {
 			$records = array();
 			$source  = Quiz_Submission_Source::inspect( $quiz_id, $user_id, $records );
 			if ( ! $source['submission'] ) {
-				if ( ! $source['has_history'] && ! $source['ambiguous'] ) {
+				if ( ! $source['has_history'] ) {
 					$this->add_missing_submission_error( 'comments', $quiz_id, $user_id );
 				}
 				continue;
