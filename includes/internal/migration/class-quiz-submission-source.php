@@ -154,6 +154,10 @@ class Quiz_Submission_Source {
 				continue;
 			}
 
+			if ( '' === $value || null === $value ) {
+				continue;
+			}
+
 			if ( ! array_key_exists( $question_id, $result['answers'] ) || ! array_key_exists( $question_id, $result['grades'] ) ) {
 				$add_error( 'Comments-based question feedback cannot be copied without numeric points and a saved answer.', array( 'question_id' => $question_id ) );
 			}

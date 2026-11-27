@@ -577,10 +577,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 
 		self::assertSame( $expected_copies, $copied, 'Supported points and feedback must survive without coercing unrepresentable feedback.' );
 		self::assertSame( $before, get_comment_meta( $comment_id ), 'Unsupported source data must survive intact.' );
-		foreach ( $expected_messages as $message ) {
-			self::assertContains( $message, $messages, 'The incomplete child copy must remain unresolved.' );
-		}
-		self::assertSame( empty( $expected_messages ), empty( $messages ), 'Full validation must distinguish supported values from incomplete copies.' );
+		self::assertSame( $expected_messages, $messages, 'Full validation must report incomplete copies without warning about empty feedback.' );
 		self::assertSame( empty( $expected_messages ), empty( $this->migration->get_errors() ), 'Migration must report unrepresentable fields without rejecting supported scalar feedback.' );
 		self::assertSame( ! empty( $expected_messages ), $inspection['unresolved'], 'Targeted inspection must retain the incomplete-copy diagnostic.' );
 		self::assertSame( $expected_messages ? 'unresolved' : 'equivalent', $preview['records'][0]['submission']['status'], 'Preview must expose incomplete copies without crashing.' );
@@ -600,7 +597,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		);
 
 		return array(
-			'legacy false points'     => array(
+			'legacy false points'           => array(
 				true,
 				false,
 				null,
@@ -613,35 +610,68 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 					),
 				),
 			),
-			'grade without answer'    => array(
+			'grade without answer'          => array(
 				false,
 				'2',
 				'retained feedback',
-				array( 'Comments-based question grade cannot be copied without its saved answer.' ),
+				array(
+					'Comments-based question grade cannot be copied without its saved answer.',
+					'Comments-based question feedback cannot be copied without numeric points and a saved answer.',
+					'Number of gradings does not match.',
+					'Grades missing in tables based grades.',
+				),
 				array( $grade_without_feedback ),
 			),
-			'feedback without points' => array(
+			'empty feedback without answer' => array(
+				false,
+				'2',
+				'',
+				array(
+					'Comments-based question grade cannot be copied without its saved answer.',
+					'Number of gradings does not match.',
+					'Grades missing in tables based grades.',
+				),
+				array( $grade_without_feedback ),
+			),
+			'empty feedback without points' => array(
+				true,
+				null,
+				'',
+				array(),
+				array( $grade_without_feedback ),
+			),
+			'null feedback without points'  => array(
+				true,
+				null,
+				null,
+				array(),
+				array( $grade_without_feedback ),
+			),
+			'feedback without points'       => array(
 				true,
 				null,
 				'retained feedback',
 				array( 'Comments-based question feedback cannot be copied without numeric points and a saved answer.' ),
 				array( $grade_without_feedback ),
 			),
-			'invalid question points' => array(
+			'invalid question points'       => array(
 				true,
 				'NAN',
 				'retained feedback',
-				array( 'Comments-based question grade has invalid points.' ),
+				array(
+					'Comments-based question grade has invalid points.',
+					'Comments-based question feedback cannot be copied without numeric points and a saved answer.',
+				),
 				array( $grade_without_feedback ),
 			),
-			'nested feedback value'   => array(
+			'nested feedback value'         => array(
 				true,
 				'7',
 				array( 'historical' => 'nested feedback' ),
 				array( 'Comments-based question feedback is malformed.' ),
 				array( $grade_without_feedback, $grade_without_feedback ),
 			),
-			'numeric scalar feedback' => array(
+			'numeric scalar feedback'       => array(
 				true,
 				'7',
 				25,
