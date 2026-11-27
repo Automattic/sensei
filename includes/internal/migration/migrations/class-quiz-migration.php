@@ -227,7 +227,7 @@ class Quiz_Migration extends Migration_Abstract {
 	 */
 	private function insert_quiz_submission( object $comment, array $quiz_data, int $quiz_id ): ?int {
 		$source_grade = $quiz_data[ $comment->comment_ID ]['grade'] ?? '';
-		$final_grade  = is_numeric( $source_grade ) ? (float) $source_grade : null;
+		$final_grade  = 'NAN' === $source_grade ? 0.0 : ( is_numeric( $source_grade ) ? (float) $source_grade : null );
 
 		$columns = array(
 			'quiz_id'     => '%d',

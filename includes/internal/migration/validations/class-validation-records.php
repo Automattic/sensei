@@ -446,7 +446,7 @@ class Validation_Records {
 			(int) $comment->comment_ID,
 			$quiz_id,
 			$user_id,
-			is_numeric( $grade ) ? (float) $grade : null,
+			'NAN' === $grade ? 0.0 : ( is_numeric( $grade ) ? (float) $grade : null ),
 			$date,
 			$date
 		);

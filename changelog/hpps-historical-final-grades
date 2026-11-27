@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Preserve missing quiz grades during progress migration and report invalid historical values.
+Preserve missing and blank quiz grades during HPPS migration and treat historical NAN final grades as zero.

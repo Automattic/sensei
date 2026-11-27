@@ -83,7 +83,7 @@ class Quiz_Submission_Source {
 			$add_error( 'Comments-based quiz submission is incomplete: questions asked are missing.' );
 		}
 
-		if ( '' !== $final_grade && ! is_numeric( $final_grade ) ) {
+		if ( '' !== $final_grade && 'NAN' !== $final_grade && ! is_numeric( $final_grade ) ) {
 			$add_error( 'Comments-based quiz submission has an invalid final grade.', array( 'stored_grade' => $final_grade ) );
 		}
 

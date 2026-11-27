@@ -205,7 +205,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Saved answers keep zero distinct from no grade, and invalid grades remain unresolved.
+	 * Saved answers keep zero distinct from no grade, treating historical NAN as zero.
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
 	 * @dataProvider historical_final_grades
@@ -237,6 +237,7 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		$validation->run();
 		$run_errors = $validation->get_errors();
 		$inspection = $validation->inspect( $quiz_id, $student_id );
+		$preview    = ( new \Sensei_Progress_Recovery_Preview() )->inspect( 'quiz', $quiz_id, $student_id, 'comments' );
 		wp_cache_delete( $comment_id, 'comment_meta' );
 
 		self::assertSame( $expected_grade, $submission->get_final_grade(), 'The copied grade must retain the stored meaning.' );
@@ -269,6 +270,8 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			),
 			'Targeted inspection must report the same invalid source values.'
 		);
+		self::assertSame( $validation_errors ? 'unresolved' : 'equivalent', $preview['records'][0]['submission']['status'], 'Preview must accept the migrated grade unless its source remains invalid.' );
+		self::assertSame( array(), $preview['records'][0]['submission']['changes'], 'Matching or unresolved grades must not produce a repair proposal.' );
 	}
 
 	/**
@@ -281,8 +284,9 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 			'numeric zero'  => array( '0', 0.0, array(), array() ),
 			'missing grade' => array( null, null, array(), array() ),
 			'blank grade'   => array( '', null, array(), array() ),
+			'NAN grade'     => array( 'NAN', 0.0, array(), array() ),
 			'invalid grade' => array(
-				'NAN',
+				'invalid',
 				null,
 				array( 'Comments-based quiz submission has an invalid final grade.' ),
 				array( 'Comments-based quiz submission has an invalid final grade.' ),
