@@ -439,8 +439,8 @@ class Validation_Records {
 		}
 
 		$grade = self::get_metadata( 'comment', (int) $comment->comment_ID, 'grade', $records );
-		$start = self::get_metadata( 'comment', (int) $comment->comment_ID, 'start', $records );
-		$date  = new DateTimeImmutable( $start ? $start : 'now', wp_timezone() );
+		// Quiz migration copies comment timestamps independently of lesson start metadata.
+		$date = new DateTimeImmutable( $comment->comment_date_gmt, new DateTimeZone( 'UTC' ) );
 
 		return new Comments_Based_Submission(
 			(int) $comment->comment_ID,

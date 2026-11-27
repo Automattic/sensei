@@ -295,6 +295,33 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Lesson start metadata must not block copying otherwise valid quiz submissions.
+	 *
+	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
+	 */
+	public function testRun_MalformedStartWasStored_MigratesBatchAndAdvancesCursor(): void {
+		[ $student_id, , $quiz_id ]             = $this->create_quiz_data();
+		$comments_repository                    = new Comments_Based_Submission_Repository();
+		$comment_id                             = $comments_repository->get( $quiz_id, $student_id )->get_id();
+		[ $later_student_id, , $later_quiz_id ] = $this->create_quiz_data();
+		$later_comment_id                       = $comments_repository->get( $later_quiz_id, $later_student_id )->get_id();
+		update_comment_meta( $comment_id, 'start', 'not-a-date' );
+		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, true );
+		$validation = new Quiz_Submission_Validation();
+		$repository = new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] );
+
+		$processed = $this->migration->run( false );
+		$validation->run();
+
+		self::assertSame( 2, $processed, 'Both source submissions must be processed.' );
+		self::assertSame( 12.34, $repository->get( $quiz_id, $student_id )->get_final_grade(), 'The malformed lesson start must not prevent copying the quiz grade.' );
+		self::assertSame( 12.34, $repository->get( $later_quiz_id, $later_student_id )->get_final_grade(), 'The later valid submission must also migrate.' );
+		self::assertSame( $later_comment_id, (int) get_option( Quiz_Migration::LAST_COMMENT_ID_OPTION_NAME ), 'The cursor must advance past the whole batch.' );
+		self::assertSame( 'not-a-date', get_comment_meta( $comment_id, 'start', true ), 'Migration must preserve the original start metadata.' );
+		self::assertSame( array(), $validation->get_errors(), 'Quiz submission validation must not depend on the lesson start date.' );
+	}
+
+	/**
 	 * Incomplete source history stays available for investigation without new table rows.
 	 *
 	 * @covers \Sensei\Internal\Migration\Migrations\Quiz_Migration::run
