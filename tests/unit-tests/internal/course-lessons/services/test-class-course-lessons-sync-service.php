@@ -5,8 +5,8 @@ namespace SenseiTest\Internal\Course_Lessons\Services;
 /**
  * Tests for Course_Lessons_Sync_Service.
  *
- * The service registered by Sensei is already hooked to the meta actions (the test bootstrap turns the
- * `course_lessons_table` flag on), so the tests write real metas.
+ * The service registered by Sensei is already hooked to the meta and module term actions (the test
+ * bootstrap turns the `course_lessons_table` flag on), so the tests write real metas and terms.
  *
  * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service
  */
@@ -80,6 +80,164 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A lesson at the course root stores its order in the course.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_meta_change
+	 */
+	public function testHandleMetaChange_CourseOrderMetaSet_StoresItAsTheLessonOrder(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+
+		/* Act. */
+		update_post_meta( $lesson_id, '_order_' . $course_id, 3 );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				array(
+					'course_id'      => (string) $course_id,
+					'module_term_id' => '0',
+					'lesson_order'   => '3',
+				),
+			),
+			$this->get_rows( $lesson_id )
+		);
+	}
+
+	/**
+	 * A lesson in a module stores its order in that module.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_meta_change
+	 */
+	public function testHandleMetaChange_ModuleOrderMetaSet_StoresItAsTheLessonOrder(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Act. */
+		update_post_meta( $lesson_id, '_order_module_' . $module_id, 2 );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				array(
+					'course_id'      => (string) $course_id,
+					'module_term_id' => (string) $module_id,
+					'lesson_order'   => '2',
+				),
+			),
+			$this->get_rows( $lesson_id )
+		);
+	}
+
+	/**
+	 * An order meta of a course the lesson is not in leaves its row as it is.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_meta_change
+	 */
+	public function testHandleMetaChange_OrderMetaOfACourseTheLessonIsNotIn_LeavesTheRowAsItIs(): void {
+		/* Arrange. */
+		$course_id       = $this->factory->course->create();
+		$other_course_id = $this->factory->course->create();
+		$lesson_id       = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'       => $course_id,
+					'_order_' . $course_id => 3,
+				),
+			)
+		);
+
+		/* Act. */
+		update_post_meta( $lesson_id, '_order_' . $other_course_id, 1 );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				array(
+					'course_id'      => (string) $course_id,
+					'module_term_id' => '0',
+					'lesson_order'   => '3',
+				),
+			),
+			$this->get_rows( $lesson_id )
+		);
+	}
+
+	/**
+	 * A lesson added to a module stores the module and its order in it, not its order in the course.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_set_object_terms
+	 */
+	public function testHandleSetObjectTerms_LessonAddedToModule_StoresTheModuleAndItsOrderInIt(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_' . $course_id        => 3,
+					'_order_module_' . $module_id => 1,
+				),
+			)
+		);
+
+		/* Act. */
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				array(
+					'course_id'      => (string) $course_id,
+					'module_term_id' => (string) $module_id,
+					'lesson_order'   => '1',
+				),
+			),
+			$this->get_rows( $lesson_id )
+		);
+	}
+
+	/**
+	 * A lesson removed from its module goes back to the course root, with no order until one is stored.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_deleted_term_relationships
+	 */
+	public function testHandleDeletedTermRelationships_LessonRemovedFromModule_StoresTheCourseRoot(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_module_' . $module_id => 1,
+				),
+			)
+		);
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Act. */
+		wp_remove_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				array(
+					'course_id'      => (string) $course_id,
+					'module_term_id' => '0',
+					'lesson_order'   => null,
+				),
+			),
+			$this->get_rows( $lesson_id )
+		);
+	}
+
+	/**
 	 * Read the rows of a lesson.
 	 *
 	 * @param int $lesson_id Lesson ID.
@@ -91,7 +249,7 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_results(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->prepare( "SELECT course_id FROM {$wpdb->prefix}sensei_lms_course_lessons WHERE lesson_id = %d ORDER BY id", $lesson_id ),
+			$wpdb->prepare( "SELECT course_id, module_term_id, lesson_order FROM {$wpdb->prefix}sensei_lms_course_lessons WHERE lesson_id = %d ORDER BY id", $lesson_id ),
 			ARRAY_A
 		);
 	}

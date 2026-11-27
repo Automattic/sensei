@@ -32,26 +32,26 @@ class Course_Lessons_Sync_Service {
 	 *
 	 * @var Course_Lessons_Repository_Interface
 	 */
-	private $metas;
+	private $meta_repo;
 
 	/**
 	 * Repository the table is written with.
 	 *
 	 * @var Tables_Based_Course_Lessons_Repository
 	 */
-	private $table;
+	private $table_repo;
 
 	/**
 	 * Course_Lessons_Sync_Service constructor.
 	 *
 	 * @internal
 	 *
-	 * @param Course_Lessons_Repository_Interface    $metas Repository the structure is read from.
-	 * @param Tables_Based_Course_Lessons_Repository $table Repository the table is written with.
+	 * @param Course_Lessons_Repository_Interface    $meta_repo  Repository the structure is read from.
+	 * @param Tables_Based_Course_Lessons_Repository $table_repo Repository the table is written with.
 	 */
-	public function __construct( Course_Lessons_Repository_Interface $metas, Tables_Based_Course_Lessons_Repository $table ) {
-		$this->metas = $metas;
-		$this->table = $table;
+	public function __construct( Course_Lessons_Repository_Interface $meta_repo, Tables_Based_Course_Lessons_Repository $table_repo ) {
+		$this->meta_repo  = $meta_repo;
+		$this->table_repo = $table_repo;
 	}
 
 	/**
@@ -65,10 +65,12 @@ class Course_Lessons_Sync_Service {
 		add_action( 'added_post_meta', array( $this, 'handle_meta_change' ), 10, 3 );
 		add_action( 'updated_post_meta', array( $this, 'handle_meta_change' ), 10, 3 );
 		add_action( 'deleted_post_meta', array( $this, 'handle_meta_change' ), 10, 3 );
+		add_action( 'set_object_terms', array( $this, 'handle_set_object_terms' ), 10, 4 );
+		add_action( 'deleted_term_relationships', array( $this, 'handle_deleted_term_relationships' ), 10, 3 );
 	}
 
 	/**
-	 * Write the row of a lesson again when one of its structure metas changes.
+	 * Write the row of a lesson again when its course or one of its order metas changes.
 	 *
 	 * @internal
 	 *
@@ -79,11 +81,42 @@ class Course_Lessons_Sync_Service {
 	 * @param string    $meta_key  Meta key.
 	 */
 	public function handle_meta_change( $meta_ids, $object_id, $meta_key ): void {
-		if ( '_lesson_course' !== $meta_key || 'lesson' !== get_post_type( (int) $object_id ) ) {
+		if ( ! $this->is_structure_meta_key( (string) $meta_key ) || 'lesson' !== get_post_type( (int) $object_id ) ) {
 			return;
 		}
 
 		$this->sync_lesson( (int) $object_id );
+	}
+
+	/**
+	 * Write the row of a lesson again when its module terms are set.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int    $object_id Post ID.
+	 * @param array  $terms     Terms set.
+	 * @param array  $tt_ids    Term taxonomy IDs set.
+	 * @param string $taxonomy  Taxonomy.
+	 */
+	public function handle_set_object_terms( $object_id, $terms, $tt_ids, $taxonomy ): void {
+		$this->handle_module_change( (int) $object_id, (string) $taxonomy );
+	}
+
+	/**
+	 * Write the row of a lesson again when its module terms are removed.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param int    $object_id Post ID.
+	 * @param array  $tt_ids    Term taxonomy IDs removed.
+	 * @param string $taxonomy  Taxonomy.
+	 */
+	public function handle_deleted_term_relationships( $object_id, $tt_ids, $taxonomy ): void {
+		$this->handle_module_change( (int) $object_id, (string) $taxonomy );
 	}
 
 	/**
@@ -98,14 +131,14 @@ class Course_Lessons_Sync_Service {
 	public function sync_lesson( int $lesson_id ): void {
 		$course_lesson = $this->get_course_lesson( $lesson_id );
 		if ( null === $course_lesson ) {
-			$this->table->delete_for_lesson( $lesson_id );
+			$this->table_repo->delete_for_lesson( $lesson_id );
 			return;
 		}
 
 		// Rows are keyed by (course, lesson): when the lesson changed course, the row of the old course
 		// is still there and has to go. Saving first keeps the current row's id.
-		$this->table->save( $course_lesson );
-		$this->table->delete_for_lesson( $lesson_id, $course_lesson->get_course_id() );
+		$this->table_repo->save( $course_lesson );
+		$this->table_repo->delete_for_lesson( $lesson_id, $course_lesson->get_course_id() );
 	}
 
 	/**
@@ -115,11 +148,42 @@ class Course_Lessons_Sync_Service {
 	 * @return Course_Lesson|null Null when the lesson has no course.
 	 */
 	private function get_course_lesson( int $lesson_id ): ?Course_Lesson {
-		$course_id = $this->metas->get_course_id( $lesson_id );
+		$course_id = $this->meta_repo->get_course_id( $lesson_id );
 		if ( null === $course_id ) {
 			return null;
 		}
 
-		return new Course_Lesson( $course_id, $lesson_id );
+		// The order is the position in the lesson's container: its module, or the course root without one.
+		$module         = $this->meta_repo->get_lesson_module( $lesson_id );
+		$module_term_id = $module ? $module->term_id : 0;
+		$lesson_order   = $module
+			? $this->meta_repo->get_lesson_module_order( $lesson_id, $module_term_id )
+			: $this->meta_repo->get_lesson_order( $lesson_id, $course_id );
+
+		return new Course_Lesson( $course_id, $lesson_id, $module_term_id, $lesson_order );
+	}
+
+	/**
+	 * Write the row of a lesson again when its module changed.
+	 *
+	 * @param int    $object_id Post ID.
+	 * @param string $taxonomy  Taxonomy of the terms that changed.
+	 */
+	private function handle_module_change( int $object_id, string $taxonomy ): void {
+		if ( 'module' !== $taxonomy || 'lesson' !== get_post_type( $object_id ) ) {
+			return;
+		}
+
+		$this->sync_lesson( $object_id );
+	}
+
+	/**
+	 * Whether a meta key holds part of a lesson's place in its course.
+	 *
+	 * @param string $meta_key Meta key.
+	 * @return bool
+	 */
+	private function is_structure_meta_key( string $meta_key ): bool {
+		return '_lesson_course' === $meta_key || 1 === preg_match( '/^_order_(module_)?\d+$/', $meta_key );
 	}
 }
