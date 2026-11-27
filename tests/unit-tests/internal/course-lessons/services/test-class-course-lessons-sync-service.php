@@ -114,6 +114,7 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$module_id = $this->factory->module->create();
+		wp_set_object_terms( $course_id, array( $module_id ), 'module' );
 		$lesson_id = $this->factory->lesson->create( array( 'meta_input' => array( '_lesson_course' => $course_id ) ) );
 		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
 
@@ -176,6 +177,7 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$module_id = $this->factory->module->create();
+		wp_set_object_terms( $course_id, array( $module_id ), 'module' );
 		$lesson_id = $this->factory->lesson->create(
 			array(
 				'meta_input' => array(
@@ -203,6 +205,77 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * A module term that is not a module of the lesson's course does not count: the lesson is at the course root.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_set_object_terms
+	 */
+	public function testHandleSetObjectTerms_LessonAddedToModuleOfAnotherCourse_StoresTheCourseRoot(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_' . $course_id        => 3,
+					'_order_module_' . $module_id => 1,
+				),
+			)
+		);
+
+		/* Act. */
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				array(
+					'course_id'      => (string) $course_id,
+					'module_term_id' => '0',
+					'lesson_order'   => '3',
+				),
+			),
+			$this->get_rows( $lesson_id )
+		);
+	}
+
+	/**
+	 * Adding a module to a course puts the lessons that carry its term into that module.
+	 *
+	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_set_object_terms
+	 */
+	public function testHandleSetObjectTerms_ModuleAddedToTheCourse_StoresTheModuleForItsLessons(): void {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+		$module_id = $this->factory->module->create();
+		$lesson_id = $this->factory->lesson->create(
+			array(
+				'meta_input' => array(
+					'_lesson_course'              => $course_id,
+					'_order_' . $course_id        => 3,
+					'_order_module_' . $module_id => 1,
+				),
+			)
+		);
+		wp_set_object_terms( $lesson_id, array( $module_id ), 'module' );
+
+		/* Act. */
+		wp_set_object_terms( $course_id, array( $module_id ), 'module' );
+
+		/* Assert. */
+		self::assertSame(
+			array(
+				array(
+					'course_id'      => (string) $course_id,
+					'module_term_id' => (string) $module_id,
+					'lesson_order'   => '1',
+				),
+			),
+			$this->get_rows( $lesson_id )
+		);
+	}
+
+	/**
 	 * A lesson removed from its module goes back to the course root, with no order until one is stored.
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_deleted_term_relationships
@@ -211,6 +284,7 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 		$module_id = $this->factory->module->create();
+		wp_set_object_terms( $course_id, array( $module_id ), 'module' );
 		$lesson_id = $this->factory->lesson->create(
 			array(
 				'meta_input' => array(

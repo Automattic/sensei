@@ -89,7 +89,7 @@ class Course_Lessons_Sync_Service {
 	}
 
 	/**
-	 * Write the row of a lesson again when its module terms are set.
+	 * Write the rows again when the module terms of a lesson or a course are set.
 	 *
 	 * @internal
 	 *
@@ -105,7 +105,7 @@ class Course_Lessons_Sync_Service {
 	}
 
 	/**
-	 * Write the row of a lesson again when its module terms are removed.
+	 * Write the rows again when module terms are removed from a lesson or a course.
 	 *
 	 * @internal
 	 *
@@ -153,8 +153,13 @@ class Course_Lessons_Sync_Service {
 			return null;
 		}
 
+		// Only a module of the lesson's course counts, as on the course page and in the navigation.
+		$module = $this->meta_repo->get_lesson_module( $lesson_id );
+		if ( $module && ! has_term( $module->term_id, 'module', $course_id ) ) {
+			$module = null;
+		}
+
 		// The order is the position in the lesson's container: its module, or the course root without one.
-		$module         = $this->meta_repo->get_lesson_module( $lesson_id );
 		$module_term_id = $module ? $module->term_id : 0;
 		$lesson_order   = $module
 			? $this->meta_repo->get_lesson_module_order( $lesson_id, $module_term_id )
@@ -164,17 +169,28 @@ class Course_Lessons_Sync_Service {
 	}
 
 	/**
-	 * Write the row of a lesson again when its module changed.
+	 * Write the rows again when the modules of a lesson or a course changed.
 	 *
 	 * @param int    $object_id Post ID.
 	 * @param string $taxonomy  Taxonomy of the terms that changed.
 	 */
 	private function handle_module_change( int $object_id, string $taxonomy ): void {
-		if ( 'module' !== $taxonomy || 'lesson' !== get_post_type( $object_id ) ) {
+		if ( 'module' !== $taxonomy ) {
 			return;
 		}
 
-		$this->sync_lesson( $object_id );
+		$post_type = get_post_type( $object_id );
+		if ( 'lesson' === $post_type ) {
+			$this->sync_lesson( $object_id );
+			return;
+		}
+
+		// The modules of a course decide which of its lessons count as being in a module.
+		if ( 'course' === $post_type ) {
+			foreach ( $this->meta_repo->get_lesson_ids( $object_id, array_keys( get_post_stati() ) ) as $lesson_id ) {
+				$this->sync_lesson( $lesson_id );
+			}
+		}
 	}
 
 	/**
