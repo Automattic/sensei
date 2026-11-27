@@ -77,11 +77,13 @@ class Quiz_Submission_Source {
 			return $result;
 		}
 
-		// Older resets left empty question and grade entries after clearing the attempt.
-		if ( 'in-progress' === $comments[0]->comment_approved
+		// Empty entries left by older resets can survive manual course completion.
+		if ( in_array( $comments[0]->comment_approved, array( 'in-progress', 'passed', 'complete' ), true )
 			&& in_array( 'questions_asked', $keys, true ) && in_array( 'grade', $keys, true )
 			&& '' === $final_grade
 			&& '' === $questions_asked && ! $has_answer_history
+			&& ! Validation_Records::get_tables_submission( $quiz_id, $student_id, $records )
+			&& empty( $records['submissions'] )
 		) {
 			return $result;
 		}

@@ -330,9 +330,10 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 	 * @param int|string $grade Stored overall grade.
 	 * @param string[]   $expected_errors Expected incomplete-history messages.
 	 * @param array      $extra_metadata Other retained quiz metadata.
-	 * @param float|null $expected_grade Expected copied overall grade, or null without a submission.
+	 * @param float|null $expected_grade Expected HPPS overall grade, or null without a submission.
+	 * @param float|null $existing_grade An existing HPPS submission grade, or null when absent.
 	 */
-	public function testRun_ProgressWithoutAnswersWasStored_PreservesSupportedHistory( string $status, $grade, array $expected_errors, array $extra_metadata, ?float $expected_grade = null ): void {
+	public function testRun_ProgressWithoutAnswersWasStored_PreservesSupportedHistory( string $status, $grade, array $expected_errors, array $extra_metadata, ?float $expected_grade = null, ?float $existing_grade = null ): void {
 		$this->set_progress_storage_mode( 'comments-only' );
 		try {
 			$student_id = $this->factory->user->create();
@@ -356,6 +357,9 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 		update_option( Migration_Job_Scheduler::COMPLETED_OPTION_NAME, true );
 		$validation = new Quiz_Submission_Validation();
 		$repository = new Tables_Based_Submission_Repository( $GLOBALS['wpdb'] );
+		if ( null !== $existing_grade ) {
+			$repository->create( $course['quiz_ids'][0], $student_id, $existing_grade );
+		}
 
 		$this->migration->run( false );
 		$validation->run();
@@ -414,6 +418,18 @@ class Quiz_Migration_Test extends \WP_UnitTestCase {
 				array(),
 			),
 			'legacy quiz reset'             => array( 'in-progress', '', array(), array( 'questions_asked' => '' ) ),
+			'reset quiz marked complete'    => array( 'passed', '', array(), array( 'questions_asked' => '' ) ),
+			'completed lesson after reset'  => array( 'complete', '', array(), array( 'questions_asked' => '' ) ),
+			'completed reset with HPPS'     => array( 'passed', '', $missing_answers, array( 'questions_asked' => '' ), 75.0, 75.0 ),
+			'completed reset with grades'   => array(
+				'passed',
+				'',
+				$missing_answers,
+				array(
+					'questions_asked' => '',
+					'quiz_grades'     => array(),
+				),
+			),
 			'legacy reset with grades'      => array(
 				'in-progress',
 				'',
