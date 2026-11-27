@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Fix HPPS quiz migration to preserve unset grades, treat historical NAN final grades as zero, select consistent source comments, and report incomplete submissions and unsupported question data.
+HPPS: Fix historical quiz migration and validation.
