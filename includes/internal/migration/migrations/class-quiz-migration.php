@@ -92,7 +92,7 @@ class Quiz_Migration extends Migration_Abstract {
 			}
 
 			$submission_id = $source && $source['can_copy']
-				? $this->insert_quiz_submission( $comment, $quiz_data, $quiz_id )
+				? $this->insert_quiz_submission( $comment, $quiz_id, $source['submission']->get_final_grade() )
 				: null;
 			if ( ! $source || ! $submission_id ) {
 				$last_processed_id = $comment->comment_ID;
@@ -219,16 +219,13 @@ class Quiz_Migration extends Migration_Abstract {
 	/**
 	 * Insert the quiz submission.
 	 *
-	 * @param object $comment The comment object.
-	 * @param array  $quiz_data The quiz data.
-	 * @param int    $quiz_id The persisted lesson-to-quiz mapping.
+	 * @param object     $comment The comment object.
+	 * @param int        $quiz_id The persisted lesson-to-quiz mapping.
+	 * @param float|null $final_grade The normalized source final grade.
 	 *
 	 * @return int|null
 	 */
-	private function insert_quiz_submission( object $comment, array $quiz_data, int $quiz_id ): ?int {
-		$source_grade = $quiz_data[ $comment->comment_ID ]['grade'] ?? '';
-		$final_grade  = 'NAN' === $source_grade ? 0.0 : ( is_numeric( $source_grade ) ? (float) $source_grade : null );
-
+	private function insert_quiz_submission( object $comment, int $quiz_id, ?float $final_grade ): ?int {
 		$columns = array(
 			'quiz_id'     => '%d',
 			'user_id'     => '%d',
