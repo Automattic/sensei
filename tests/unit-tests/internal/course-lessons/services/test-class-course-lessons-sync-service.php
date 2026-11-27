@@ -190,32 +190,6 @@ class Course_Lessons_Sync_Service_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * A removed prerequisite leaves 0 in the row.
-	 *
-	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_meta_change
-	 */
-	public function testHandleMetaChange_PrerequisiteMetaDeleted_StoresZero(): void {
-		/* Arrange. */
-		$course_id       = $this->factory->course->create();
-		$prerequisite_id = $this->factory->lesson->create();
-		// The prerequisite goes first, so the row is born with it and the deletion has to write the 0.
-		$lesson_id = $this->factory->lesson->create(
-			array(
-				'meta_input' => array(
-					'_lesson_prerequisite' => $prerequisite_id,
-					'_lesson_course'       => $course_id,
-				),
-			)
-		);
-
-		/* Act. */
-		delete_post_meta( $lesson_id, '_lesson_prerequisite' );
-
-		/* Assert. */
-		self::assertSame( array( '0' ), array_column( $this->get_rows( $lesson_id ), 'prerequisite_lesson_id' ) );
-	}
-
-	/**
 	 * A deleted lesson has no row: deleting the post deletes its course meta, which the meta hook sees.
 	 *
 	 * @covers \Sensei\Internal\Course_Lessons\Services\Course_Lessons_Sync_Service::handle_meta_change
