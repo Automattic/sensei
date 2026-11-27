@@ -70,7 +70,7 @@ class Course_Lessons_Sync_Service {
 	}
 
 	/**
-	 * Write the row of a lesson again when its course or one of its order metas changes.
+	 * Write the row of a lesson again when its course, its prerequisite or one of its order metas changes.
 	 *
 	 * @internal
 	 *
@@ -172,7 +172,7 @@ class Course_Lessons_Sync_Service {
 			? $this->meta_repo->get_lesson_module_order( $lesson_id, $module_term_id )
 			: $this->meta_repo->get_lesson_order( $lesson_id, $course_id );
 
-		return new Course_Lesson( $course_id, $lesson_id, $module_term_id, $lesson_order );
+		return new Course_Lesson( $course_id, $lesson_id, $module_term_id, $lesson_order, $this->meta_repo->get_lesson_prerequisite_id( $lesson_id ) ?? 0 );
 	}
 
 	/**
@@ -223,6 +223,6 @@ class Course_Lessons_Sync_Service {
 	 * @return bool
 	 */
 	private function is_structure_meta_key( string $meta_key ): bool {
-		return '_lesson_course' === $meta_key || 1 === preg_match( '/^_order_(module_)?\d+$/', $meta_key );
+		return in_array( $meta_key, array( '_lesson_course', '_lesson_prerequisite' ), true ) || 1 === preg_match( '/^_order_(module_)?\d+$/', $meta_key );
 	}
 }
