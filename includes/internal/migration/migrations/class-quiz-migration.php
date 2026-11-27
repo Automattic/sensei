@@ -134,8 +134,9 @@ class Quiz_Migration extends Migration_Abstract {
 		$since_comment_id = (int) get_option( self::LAST_COMMENT_ID_OPTION_NAME, 0 );
 		// Match Sensei_Learner::remove_duplicate_progress() by keeping the lowest comment ID.
 		// Keep its quiz data together so later duplicates cannot add to the same submission.
+		// Start with comments so each batch can stop before scanning all quiz metadata.
 		$comments_query = $wpdb->prepare(
-			"SELECT comments.* FROM $wpdb->comments AS comments
+			"SELECT STRAIGHT_JOIN comments.* FROM $wpdb->comments AS comments
 			WHERE comments.comment_type = 'sensei_lesson_status'
 			AND comments.comment_ID > %d
 			AND EXISTS (
