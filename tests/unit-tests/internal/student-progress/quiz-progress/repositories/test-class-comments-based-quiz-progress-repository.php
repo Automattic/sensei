@@ -105,7 +105,12 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
-	public function testSave_StartedAtInDifferentTimezone_StoresStartMetaInSiteTimezone(): void {
+	/**
+	 * Saving passed quiz progress stores the original timestamps.
+	 *
+	 * @covers \Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository::save
+	 */
+	public function testSave_DatesInDifferentTimezone_StoresCommentDatesInSiteTimezone(): void {
 		/* Arrange. */
 		update_option( 'timezone_string', 'America/New_York' );
 		$lesson_id  = $this->factory->lesson->create();
@@ -115,15 +120,15 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
 		$created = $repository->create( $quiz_id, $user_id );
 
-		// A started_at instant expressed in UTC (as a cached table read would produce).
-		$started_at = new \DateTimeImmutable( '2026-06-09 19:49:33', new \DateTimeZone( 'UTC' ) );
-		$progress   = new Comments_Based_Quiz_Progress(
+		$started_at   = new \DateTimeImmutable( '2026-06-09 19:49:33', new \DateTimeZone( 'UTC' ) );
+		$completed_at = new \DateTimeImmutable( '2026-06-09 19:49:44', new \DateTimeZone( 'UTC' ) );
+		$progress     = new Comments_Based_Quiz_Progress(
 			$created->get_id(),
 			$quiz_id,
 			$user_id,
-			$created->get_status(),
+			Quiz_Progress_Interface::STATUS_PASSED,
 			$started_at,
-			null,
+			$completed_at,
 			$created->get_created_at(),
 			$created->get_updated_at()
 		);
@@ -137,6 +142,9 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 			get_comment_meta( $created->get_id(), 'start', true ),
 			'Start meta should be stored in the site timezone, not UTC.'
 		);
+		$comment = get_comment( $created->get_id() );
+		self::assertSame( '2026-06-09 15:49:44', $comment->comment_date, 'The comment should keep the completion date in the site timezone.' );
+		self::assertSame( '2026-06-09 19:49:44', $comment->comment_date_gmt, 'The GMT column should keep the completion date in UTC.' );
 	}
 
 	public function testCreate_WhenLessonStatusFound_ReturnsQuizProgress(): void {

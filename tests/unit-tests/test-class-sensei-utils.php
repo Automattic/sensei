@@ -929,14 +929,15 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	public function testUserCompleteCourse_CompletedCourseWithUnknownStartAndNewLesson_PreservesCompletion(): void {
 		$this->maybe_enable_hpps_tables_repository();
 		try {
-			$user_id   = $this->factory->user->create();
-			$course    = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
-			$course_id = $course['course_id'];
+			$user_id      = $this->factory->user->create();
+			$course       = $this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+			$course_id    = $course['course_id'];
+			$completed_at = new DateTimeImmutable( '2024-05-01 15:45:00', wp_timezone() );
 
 			$lesson_progress = Sensei()->lesson_progress_repository->create( $course['lesson_ids'][0], $user_id );
 			$lesson_progress->complete();
 			Sensei()->lesson_progress_repository->save( $lesson_progress );
-			$this->factory->create_completed_course_progress( $course_id, $user_id, null );
+			$this->factory->create_completed_course_progress( $course_id, $user_id, null, $completed_at );
 
 			$this->factory->lesson->create(
 				array(
@@ -951,6 +952,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 
 			self::assertSame( 'complete', $progress->get_status(), 'The new lesson should leave the course complete.' );
 			self::assertNull( $progress->get_started_at(), 'Recalculating the course should leave its start unknown.' );
+			self::assertSame( $completed_at->getTimestamp(), $progress->get_completed_at()->getTimestamp(), 'The original completion time should remain recorded.' );
 		} finally {
 			$this->maybe_reset_hpps_repository();
 		}

@@ -308,8 +308,9 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 * @param int                    $course_id Course ID.
 	 * @param int                    $user_id Student ID.
 	 * @param DateTimeInterface|null $started_at Recorded start date, if known.
+	 * @param DateTimeInterface|null $completed_at Recorded completion date, if supplied.
 	 */
-	public function create_completed_course_progress( int $course_id, int $user_id, ?DateTimeInterface $started_at ): void {
+	public function create_completed_course_progress( int $course_id, int $user_id, ?DateTimeInterface $started_at, ?DateTimeInterface $completed_at = null ): void {
 		global $wpdb;
 
 		$repositories = array(
@@ -322,7 +323,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			if ( $started_at ) {
 				$progress->set_started_at( $started_at );
 			}
-			$progress->complete();
+			$progress->complete( $completed_at );
 			$repository->save( $progress );
 		}
 	}
